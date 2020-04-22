@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:pinput/pin_put/pin_put.dart';
@@ -6,7 +7,8 @@ import 'package:noq/services/authService.dart';
 
 final TextEditingController _pinPutController = TextEditingController();
 final FocusNode _pinPutFocusNode = FocusNode();
-String _pin = null;
+String _pin;
+String _errorMessage;
 
 BoxDecoration get _pinPutDecoration {
   return BoxDecoration(
@@ -92,14 +94,25 @@ Future<bool> smsOTPDialog(BuildContext context, String verificationId) {
               onPressed: () {
                 print("OTP Submitted");
                 //  print('$_pinPutController.text');
-                print('pin ::' + _pin);
-                AuthService()
-                    .signInWithOTP(_pin, verificationId, context)
-                    .then(() {
-                  //Navigator.of(context).pop();
-                  Navigator.of(context).pushReplacementNamed('/landingPage');
-                });
-                print("Error: invalid OTP");
+                try {
+                  FirebaseAuth.instance.currentUser().then((user) {
+                    if (user != null) {
+                      Navigator.of(context).pop();
+                      Navigator.of(context).pushReplacementNamed('/dashboard');
+                    } else {
+                      AuthService()
+                          .signInWithOTP(_pin, verificationId, context)
+                          .then(() {
+                        //Navigator.of(context).pop();
+                        Navigator.of(context)
+                            .pushReplacementNamed('/landingPage');
+                      });
+                    }
+                  });
+                } catch (err) {
+                  print("$err.toString()");
+                  _errorMessage = err.toString();
+                }
 
                 //     : verifyPhone(_mobile);
                 //if success proceed to next screen
@@ -107,7 +120,13 @@ Future<bool> smsOTPDialog(BuildContext context, String verificationId) {
                 // Navigator.of(context).pushReplacementNamed('/landingPage');
                 //else go back to signin page
               },
-            )
+            ),
+            (_errorMessage != null
+                ? Text(
+                    _errorMessage,
+                    style: TextStyle(color: Colors.red),
+                  )
+                : Container()),
           ],
         );
       });

@@ -13,9 +13,10 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
+  String _errorMsg;
   String _mobile, smsCode;
   String verificationId;
-  final formKey = new GlobalKey<FormState>();
+  final _formKey = new GlobalKey<FormState>();
   bool codeSent = false;
   bool _autoValidate = false;
   bool isButtonPressed = false;
@@ -54,7 +55,7 @@ class _LoginPageState extends State<LoginPage> {
           color: Colors.white,
           margin: new EdgeInsets.all(5.0),
           child: new Form(
-            key: formKey,
+            key: _formKey,
             autovalidate: _autoValidate,
             child: formUI(context),
           ),
@@ -73,16 +74,24 @@ class _LoginPageState extends State<LoginPage> {
         WhitelistingTextInputFormatter.digitsOnly,
       ],
       keyboardType: TextInputType.phone,
+
       decoration: InputDecoration(
+        // errorStyle: errorTextStyle,
+        // labelStyle: labelTextStyle,
+        // hintStyle: hintTextStyle,
         labelText: 'Enter 10 digit Mobile Number',
         enabledBorder:
             UnderlineInputBorder(borderSide: BorderSide(color: Colors.grey)),
-        focusedBorder: UnderlineInputBorder(
-            borderSide: BorderSide(color: Colors.red[400])),
+        focusedBorder:
+            UnderlineInputBorder(borderSide: BorderSide(color: Colors.orange)),
       ),
       validator: validateMobile,
+      onSaved: (value) => _mobile = "+91" + value,
       onChanged: (value) {
         setState(() {
+          if (_errorMsg != null) {
+            _errorMsg = null;
+          }
           this._mobile = "+91" + value;
         });
       },
@@ -102,8 +111,8 @@ class _LoginPageState extends State<LoginPage> {
         labelText: 'Enter OTP',
         enabledBorder:
             UnderlineInputBorder(borderSide: BorderSide(color: Colors.grey)),
-        focusedBorder: UnderlineInputBorder(
-            borderSide: BorderSide(color: Colors.red[400])),
+        focusedBorder:
+            UnderlineInputBorder(borderSide: BorderSide(color: Colors.orange)),
       ),
       validator: validateMobile,
       onChanged: (value) {
@@ -130,6 +139,7 @@ class _LoginPageState extends State<LoginPage> {
         ),
       ),
     );
+
     return new Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
@@ -146,17 +156,29 @@ class _LoginPageState extends State<LoginPage> {
             children: <Widget>[headingText, loginText]),
         SizedBox(height: 30.0),
         phNumField,
-        codeSent ? otpNumField : Container(child: Text("")),
+        //codeSent ? otpNumField : Container(child: Text("")),
         SizedBox(height: 10.0),
-        loginButon
+        loginButon,
+        SizedBox(height: 10.0),
+        (_errorMsg != null
+            ? Text('$_errorMsg', style: errorTextStyle)
+            : Container()),
       ],
     );
   }
 
   void submitForm() {
-    codeSent
-        ? AuthService().signInWithOTP(smsCode, verificationId, context)
-        : verifyPhone(_mobile);
+    if (_formKey.currentState.validate()) {
+      _formKey.currentState.save();
+      codeSent
+          ? AuthService().signInWithOTP(smsCode, verificationId, context)
+          : verifyPhone(_mobile);
+    } else {
+      setState(() {
+        _autoValidate = true;
+      });
+    }
+
     //verifyPhone(_mobile);
     // if (codeSent) {
     //   if (smsOTPDialog(context, codeSent) != null) {
@@ -189,10 +211,14 @@ class _LoginPageState extends State<LoginPage> {
       final PhoneVerificationFailed verificationFailed =
           (AuthException authException) {
         print('$authException.message');
+        handleError(authException);
       };
 
       final PhoneCodeSent otpSent = (String verId, [int forceResend]) {
         this.verificationId = verId;
+        smsOTPDialog(context, verificationId).then((value) {
+          print('sign in');
+        });
         // smsOTPDialog(context, this.verificationId);
         setState(() {
           this.codeSent = true;
@@ -211,7 +237,34 @@ class _LoginPageState extends State<LoginPage> {
           codeSent: otpSent,
           codeAutoRetrievalTimeout: autoTimeout);
     } catch (e) {
+      setState(() {
+        _errorMsg = "Invalid phone number.";
+      });
       print(e.toString());
+      handleError(e);
+    }
+  }
+
+  handleError(AuthException error) {
+    print(error);
+    switch (error.code) {
+      case 'ERROR_INVALID_VERIFICATION_CODE':
+        // FocusScope.of(context).requestFocus(new FocusNode());
+        setState(() {
+          _errorMsg = 'Invalid OTP Code';
+        });
+        break;
+      case 'firebaseAuth':
+        setState(() {
+          _errorMsg = 'Invalid phone number';
+        });
+        break;
+      default:
+        setState(() {
+          _errorMsg = 'Oops, something went wrong. Try again.';
+        });
+
+        break;
     }
   }
 }

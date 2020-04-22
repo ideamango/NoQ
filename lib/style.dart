@@ -33,20 +33,18 @@ final inputTextStyle = TextStyle(
   fontSize: 18,
   height: 2,
 );
+
 final labelTextStyle = TextStyle(
     color: Colors.black,
     letterSpacing: 0.5,
     fontFamily: 'Montserrat',
     fontSize: 10.0);
-
-// final labelTextStyle = TextStyle(
-//   color: Colors.black,
-//   //fontWeight: FontWeight.w800,
-//   fontFamily: 'Monsterrat',
-
-//   fontSize: 10,
-//   //height: 2,
-// );
+final errorTextStyle = TextStyle(
+    color: Colors.red,
+    letterSpacing: 0.5,
+    //fontWeight: FontWeight.w500,
+    fontFamily: 'Monsterrat',
+    fontSize: 15);
 
 final lightSubTextStyle = TextStyle(
   color: Colors.blueGrey,
