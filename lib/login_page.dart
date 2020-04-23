@@ -1,7 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:noq/dashboard.dart';
+
 import 'pages/alertDialog.dart';
 import 'style.dart';
 import 'package:noq/constants.dart';
@@ -39,12 +39,12 @@ class _LoginPageState extends State<LoginPage> {
     textAlign: TextAlign.left,
     //textDirection: TextDirection.ltr,
     //textWidthBasis: TextWidthBasis.longestLine,
-    style: labelTextStyle,
+    style: headingTextStyle,
   );
-  final loginText = Text(
+  final subHeadingText = Text(
     loginSubTxt,
     textAlign: TextAlign.left,
-    style: subLabelTextStyle,
+    style: subHeadingTextStyle,
   );
 
   @override
@@ -153,7 +153,7 @@ class _LoginPageState extends State<LoginPage> {
         Column(
             //mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[headingText, loginText]),
+            children: <Widget>[headingText, subHeadingText]),
         SizedBox(height: 30.0),
         phNumField,
         //codeSent ? otpNumField : Container(child: Text("")),

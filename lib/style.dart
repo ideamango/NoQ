@@ -1,5 +1,14 @@
 import 'package:flutter/material.dart';
 
+final buttonStyle = Material(
+  elevation: 5.0,
+  //borderRadius: BorderRadius.circular(30.0),
+  color: Colors.indigo,
+  child: MaterialButton(
+    padding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
+    onPressed: () {},
+  ),
+);
 final buttonTextStyle = TextStyle(
   color: Colors.white,
   //fontWeight: FontWeight.w800,
@@ -8,25 +17,9 @@ final buttonTextStyle = TextStyle(
   fontSize: 20,
   //height: 2,
 );
-final buttonStyle = Material(
-  elevation: 5.0,
-  //borderRadius: BorderRadius.circular(30.0),
-  color: Colors.orange,
-  child: MaterialButton(
-    padding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
-    onPressed: () {},
-  ),
-);
-final descTextStyle = TextStyle(
-  color: Colors.blueGrey[300],
-  fontWeight: FontWeight.w800,
-  fontFamily: 'Montserrat-Regular',
-  letterSpacing: 0.5,
-  fontSize: 18,
-  height: 2,
-);
+
 final inputTextStyle = TextStyle(
-  color: Colors.blueGrey[300],
+  color: Colors.blueGrey[400],
   //fontWeight: FontWeight.w800,
   fontFamily: 'Montserrat',
   letterSpacing: 0.5,
@@ -35,10 +28,11 @@ final inputTextStyle = TextStyle(
 );
 
 final labelTextStyle = TextStyle(
-    color: Colors.black,
+    color: Colors.blueGrey[800],
     letterSpacing: 0.5,
     fontFamily: 'Montserrat',
     fontSize: 10.0);
+
 final errorTextStyle = TextStyle(
     color: Colors.red,
     letterSpacing: 0.5,
@@ -51,14 +45,20 @@ final lightSubTextStyle = TextStyle(
   // fontWeight: FontWeight.w800,
   fontFamily: 'Monsterrat',
   letterSpacing: 0.5,
-  fontSize: 10,
+  fontSize: 10.0,
   //height: 2,
 );
 final hintTextStyle = TextStyle(
     color: Colors.blueGrey[300], fontFamily: 'Montserrat', fontSize: 20.0);
 
-final subLabelTextStyle = TextStyle(
-    color: Colors.blueGrey[300], fontFamily: 'Montserrat', fontSize: 14.0);
+final subHeadingTextStyle = TextStyle(
+    color: Colors.blueGrey[300], fontFamily: 'Montserrat', fontSize: 12.0);
 
-final headingStyle = TextStyle();
-final subHeadingStyle = TextStyle();
+final headingTextStyle = TextStyle(
+    color: Colors.blueGrey[800],
+    letterSpacing: 0.5,
+    fontFamily: 'Montserrat',
+    fontSize: 15.0);
+
+final Color highlightColor = Colors.amber[600];
+final Color unselectedColor = Colors.blueGrey[700];

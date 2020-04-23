@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:map_launcher/map_launcher.dart';
+import 'package:noq/repository/StoreRepository.dart';
 import 'style.dart';
 import 'models/Store.dart';
-import 'services/authService.dart';
-import 'view/userHomePage.dart';
+import 'view/allPagesWidgets.dart';
 
 class LandingPage extends StatefulWidget {
   @override
@@ -50,7 +50,7 @@ class _LandingPageState extends State<LandingPage> {
   ];
   //Getting dummy list of stores from store class and storing in local variable
 
-  List<Store> _stores = xstores;
+  List<Store> _stores = getDummyList();
   int i;
   TextStyle optionStyle = TextStyle(fontSize: 30, fontWeight: FontWeight.bold);
 
@@ -83,17 +83,11 @@ class _LandingPageState extends State<LandingPage> {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'My Dashboard',
-      theme: ThemeData.light().copyWith(),
+      //theme: ThemeData.light().copyWith(),
       home: Scaffold(
-          appBar: AppBar(title: Text(''), actions: <Widget>[
-            IconButton(
-              icon: Icon(Icons.search),
-              autofocus: false,
-              padding: EdgeInsets.all(2),
-              iconSize: 20.0,
-              onPressed: _onSearch,
-            )
-          ]),
+          appBar: AppBar(title: Text(''), backgroundColor: Colors.indigo,
+              //Theme.of(context).primaryColor,
+              actions: <Widget>[]),
           body: Center(
             child: PageView(
               physics: NeverScrollableScrollPhysics(),
@@ -117,10 +111,7 @@ class _LandingPageState extends State<LandingPage> {
             child: ListView(
               children: <Widget>[
                 DrawerHeader(
-                  child: Text(
-                    "DRAWER HEADER..",
-                    style: TextStyle(color: Colors.white),
-                  ),
+                  child: Image.asset('logo.png'),
                   decoration: BoxDecoration(
                     color: Theme.of(context).primaryColor,
                   ),
@@ -135,14 +126,14 @@ class _LandingPageState extends State<LandingPage> {
                       leading: Icon(
                         item['icon'],
                         color: _page == index
-                            ? Theme.of(context).primaryColor
+                            ? highlightColor
                             : Theme.of(context).textTheme.title.color,
                       ),
                       title: Text(
                         item['name'],
                         style: TextStyle(
                           color: _page == index
-                              ? Theme.of(context).primaryColor
+                              ? highlightColor
                               : Theme.of(context).textTheme.title.color,
                         ),
                       ),
@@ -179,11 +170,10 @@ class _LandingPageState extends State<LandingPage> {
           title: Text('My Account'),
         ),
       ],
-      selectedItemColor: Colors.amber[800],
+      unselectedItemColor: unselectedColor,
+      selectedItemColor: highlightColor,
     );
   }
-
-  void _onSearch() {}
 
   void _onBottomBarItemTapped(int index) {
     setState(() {
@@ -227,10 +217,6 @@ class _LandingPageState extends State<LandingPage> {
     return shareAppPage(context);
   }
 
-  Widget _logout() {
-    return logoutPage(context);
-  }
-
   Widget _userAccount() {
     return userAccountPage(context);
   }
@@ -254,133 +240,190 @@ class _LandingPageState extends State<LandingPage> {
   Widget _buildItem(Store str) {
     return Card(
         elevation: 10,
-        child: new Column(children: <Widget>[
-          Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
+        child: new Row(
+          children: <Widget>[
+            Column(
+              children: <Widget>[
                 new Container(
                   margin: EdgeInsets.fromLTRB(10, 10, 5, 5),
+                  padding: EdgeInsets.all(5),
                   alignment: Alignment.center,
                   decoration: ShapeDecoration(
                     shape: CircleBorder(),
-                    color: Colors.orange[300],
+                    color: Theme.of(context).primaryColor,
                   ),
                   child: Icon(
                     Icons.shopping_cart,
                     color: Colors.white,
                     size: 20,
                   ),
-                ),
-                new Container(
-                  padding: EdgeInsets.fromLTRB(10.0, 5.0, 0, 0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      Container(
-                        padding: EdgeInsets.fromLTRB(0, 5, 5, 5),
-                        child:
-                            Column(crossAxisAlignment: CrossAxisAlignment.start,
-                                // mainAxisAlignment: MainAxisAlignment.start,
-                                children: [
-                              Text(
-                                str.name.toString(),
-                              ),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.end,
+                )
+              ],
+            ),
+            Column(children: <Widget>[
+              Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    new Container(
+                      padding: EdgeInsets.fromLTRB(10.0, 5.0, 0, 0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          Container(
+                            padding: EdgeInsets.fromLTRB(0, 5, 5, 5),
+                            child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
-                                children: <Widget>[
-                                  Text(
-                                    str.adrs,
-                                  ),
-                                  Container(
-                                    width: 20.0,
-                                    height: 20.0,
-                                    child: IconButton(
-                                      alignment: Alignment.center,
-                                      padding: EdgeInsets.all(0),
-                                      onPressed: () => {
-                                        launchURL(str.name, str.adrs, str.lat,
-                                            str.long),
-                                      },
-                                      highlightColor: Colors.orange[300],
-                                      icon: Icon(
-                                        Icons.location_on,
-                                        color: Colors.blueGrey,
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    // crossAxisAlignment: CrossAxisAlignment.center,
+                                    children: <Widget>[
+                                      Text(
+                                        str.name.toString(),
                                       ),
-                                    ),
+                                    ],
                                   ),
-                                ],
-                              )
-                            ]),
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.end,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: <Widget>[
+                                      Text(
+                                        str.adrs,
+                                      ),
+                                    ],
+                                  )
+                                ]),
+                          ),
+                          Row(
+                            children: <Widget>[
+                              Text('Stores opens on days: ',
+                                  style: lightSubTextStyle),
+                              DefaultTextStyle.merge(
+                                child: Container(
+                                    child: Row(children: [
+                                  Icon(Icons.remove_circle,
+                                      size: 18.0, color: Colors.blueGrey[300]),
+                                  Icon(Icons.add_circle,
+                                      size: 18.0, color: Colors.orange),
+                                  Icon(Icons.remove_circle,
+                                      size: 18.0, color: Colors.blueGrey[300]),
+                                  Icon(Icons.remove_circle,
+                                      size: 18.0, color: Colors.blueGrey[300]),
+                                  Icon(Icons.remove_circle,
+                                      size: 18.0, color: Colors.blueGrey[300]),
+                                ])),
+                              ),
+                            ],
+                          ),
+                          Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  //mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                  children: [
+                                    //Icon(Icons.play_circle_filled, color: Colors.blueGrey[300]),
+                                    Text('Opens at:', style: labelTextStyle),
+                                    Text(str.opensAt, style: lightSubTextStyle),
+                                  ],
+                                ),
+                                Container(child: Text('   ')),
+                                Row(
+                                  children: [
+                                    //Icon(Icons.pause_circle_filled, color: Colors.blueGrey[300]),
+                                    Text('Closes at:', style: labelTextStyle),
+                                    Text(str.closesAt,
+                                        style: lightSubTextStyle),
+                                  ],
+                                ),
+                              ]),
+                        ],
                       ),
-                      DefaultTextStyle.merge(
-                        child: Container(
-                            child: Row(children: [
-                          Icon(Icons.remove_circle,
-                              color: Colors.blueGrey[300]),
-                          Icon(Icons.add_circle, color: Colors.orange),
-                          Icon(Icons.remove_circle,
-                              color: Colors.blueGrey[300]),
-                          Icon(Icons.remove_circle,
-                              color: Colors.blueGrey[300]),
-                          Icon(Icons.remove_circle,
-                              color: Colors.blueGrey[300]),
-                        ])),
-                      ),
-                    ],
-                  ),
-                ),
-              ]),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              Row(
-                children: <Widget>[],
-              ),
-              Row(
-                //mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  //Icon(Icons.play_circle_filled, color: Colors.blueGrey[300]),
-                  Text('Opens at:', style: labelTextStyle),
-                  Text(str.opensAt, style: lightSubTextStyle),
-                ],
-              ),
-              Row(
-                children: [
-                  //Icon(Icons.pause_circle_filled, color: Colors.blueGrey[300]),
-                  Text('Closes at:', style: labelTextStyle),
-                  Text(str.closesAt, style: lightSubTextStyle),
-                ],
-              ),
-              Row(
+                    ),
+                  ]),
+            ]),
+            Column(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: <Widget>[
-                  new Container(
-                    width: 40.0,
-                    height: 20.0,
-                    child: MaterialButton(
-                      color: Colors.orange,
-                      child: Text(
-                        "Book Slot",
-                        style: new TextStyle(
-                            fontFamily: 'Montserrat',
-                            letterSpacing: 0.5,
-                            color: Colors.white,
-                            fontSize: 10),
-                      ),
-                      onPressed: () => {
-                        //onPressed_bookSlotBtn();
-                      },
+                  Container(
+                    height: 22,
+                    width: 20,
+                    // margin: EdgeInsets.fromLTRB(10, 10, 5, 5),
+                    alignment: Alignment.center,
+                    decoration: ShapeDecoration(
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(6)),
+                          side: BorderSide.none),
+                      color: Theme.of(context).primaryColor,
+                    ),
+                    child: IconButton(
+                      //alignment: Alignment.center,
+                      padding: EdgeInsets.all(2),
+                      onPressed: () => {},
                       highlightColor: Colors.orange[300],
+                      iconSize: 14,
+                      icon: Icon(
+                        Icons.favorite,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                  Container(
+                    //margin: EdgeInsets.fromLTRB(20, 10, 5, 5),
+                    width: 20.0,
+                    height: 20.0,
+                    alignment: Alignment.center,
+                    decoration: ShapeDecoration(
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(4)),
+                          side: BorderSide.none),
+                      color: Theme.of(context).primaryColor,
+                    ),
+                    child: IconButton(
+                      padding: EdgeInsets.all(2),
+                      iconSize: 14,
+                      //alignment: Alignment.center,
+                      highlightColor: Colors.orange[300],
+                      icon: Icon(
+                        Icons.location_on,
+                        color: Colors.white,
+                        //size: 17,
+                      ),
+                      onPressed: () =>
+                          launchURL(str.name, str.adrs, str.lat, str.long),
+                    ),
+                  ),
+                  Container(
+                    width: 20.0,
+                    height: 20.0,
+                    alignment: Alignment.center,
+                    decoration: ShapeDecoration(
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(2)),
+                          side: BorderSide.none),
+                      color: Theme.of(context).primaryColor,
+                    ),
+                    child: IconButton(
+                      //alignment: Alignment.center,
+                      padding: EdgeInsets.all(2),
+                      iconSize: 14,
+                      highlightColor: Colors.orange[300],
+                      icon: Icon(
+                        Icons.check,
+                        color: Colors.white,
+                      ),
+                      onPressed: () => {},
                     ),
                   )
-                ],
-              ),
-            ],
-          )
-        ]));
+                ]),
+          ],
+        ));
   }
 
   launchURL(String tit, String addr, double lat, double long) async {

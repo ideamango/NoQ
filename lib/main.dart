@@ -18,16 +18,21 @@ class MyApp extends StatelessWidget {
       },
       theme: ThemeData(
         brightness: Brightness.light,
-        primaryColor: Colors.orange,
-        accentColor: Colors.orangeAccent,
+        primaryColor: Colors.indigo,
+        accentColor: Colors.indigoAccent,
+
         // Define the default font family..
-        //fontFamily: 'Monsterrat',
+        fontFamily: 'Monsterrat',
         // Define the default TextTheme. Use this to specify the default
         // text styling for headlines, titles, bodies of text, and more.
         textTheme: TextTheme(
           headline: TextStyle(fontSize: 72.0, fontWeight: FontWeight.bold),
-          title: TextStyle(fontSize: 36.0, fontStyle: FontStyle.italic),
-          body1: TextStyle(fontSize: 14.0, fontFamily: 'Hind'),
+          title: TextStyle(
+              color: Colors.indigo,
+              fontSize: 36.0,
+              fontStyle: FontStyle.italic),
+          body1: TextStyle(
+              color: Colors.indigo, fontSize: 14.0, fontFamily: 'Monsterrat'),
         ),
       ),
       home: AuthService().handleAuth(),
