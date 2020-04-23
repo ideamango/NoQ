@@ -1,6 +1,6 @@
 import "dart:convert";
 import "package:http/http.dart";
-import "../models/Store.dart";
+import "package:noq/models/store.dart";
 
 // Get list of Stores from Server
 

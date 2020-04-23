@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:noq/repository/StoreRepository.dart';
 import 'package:noq/style.dart';
-import 'package:noq/models/Store.dart';
+import 'package:noq/models/store.dart';
 import 'package:noq/services/color.dart';
 
 class UserFavStoresListPage extends StatelessWidget {

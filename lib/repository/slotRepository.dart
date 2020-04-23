@@ -4,7 +4,7 @@
 
 import 'dart:convert';
 import 'package:http/http.dart';
-import '../models/Slot.dart';
+import 'package:noq/models/slot.dart';
 
 class SlotsRepository {
   Future<List<Slot>> getSlots() async {

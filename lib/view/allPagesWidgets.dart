@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:noq/login_page.dart';
 import 'package:noq/services/authService.dart';
 import 'package:noq/view/userFavStoresPage.dart';
+import 'package:noq/view/userMyAccountPage.dart';
 
 Widget userAccountPage(BuildContext context) {
   Widget _userSettingsPage;
@@ -28,7 +29,10 @@ Widget userAccountPage(BuildContext context) {
       ),
     ])),
   ]));
-  return _userSettingsPage;
+  //return _userSettingsPage;
+  return UserMyAccountPage(
+    storage: Storage(),
+  );
 }
 
 Widget userHomePage(BuildContext context) {

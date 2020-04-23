@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:map_launcher/map_launcher.dart';
 import 'package:noq/repository/StoreRepository.dart';
 import 'style.dart';
-import 'models/Store.dart';
+import 'models/store.dart';
 import 'view/allPagesWidgets.dart';
 
 class LandingPage extends StatefulWidget {
