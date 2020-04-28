@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:map_launcher/map_launcher.dart';
 import 'package:noq/repository/StoreRepository.dart';
+import 'package:noq/services/mapService.dart';
 import 'style.dart';
 import 'models/store.dart';
 import 'view/allPagesWidgets.dart';
+import 'package:noq/models/localDB.dart';
+import 'package:noq/repository/local_db_repository.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LandingPage extends StatefulWidget {
   @override
@@ -11,6 +15,7 @@ class LandingPage extends StatefulWidget {
 }
 
 class _LandingPageState extends State<LandingPage> {
+  SharedPreferences _prefs;
   PageController _pageController;
   int _page = 0;
 
@@ -52,19 +57,75 @@ class _LandingPageState extends State<LandingPage> {
 
   List<Store> _stores = getDummyList();
   int i;
+  var _userProfile;
+  var fUserProfile;
   TextStyle optionStyle = TextStyle(fontSize: 30, fontWeight: FontWeight.bold);
-
+  String _phone;
   int _index = 0;
   int _botBarIndex = 0;
   int _pageIndex = 0;
+  String _userName;
+  int _userId;
   void navigationTapped(int page) {
     _pageController.jumpToPage(page);
+  }
+
+  _initializeUserProfile() async {
+//Read data from file and then validate phone number - if same,load all other details
+    await readData().then((fUser) {
+      fUserProfile = fUser;
+    });
+
+    var userProfile;
+    _prefs = await SharedPreferences.getInstance();
+    _phone = _prefs.getString("phone");
+    if (fUserProfile != null) {
+      userProfile = fUserProfile;
+    }
+    // else {
+    //   //TODO:fetch from server
+    // }
+
+    //If not on server then create dummy object.
+
+    else {
+//Start - Save User profile in file
+      List<BookingAppData> pastBookings = new List<BookingAppData>();
+
+      // pastBookings.add(new BookingAppData(
+      //     'IKEA', '12:00am,-12:30am', 'T1-9844969', 'expired'));
+      List<BookingAppData> upcomingBookings = new List();
+      // upcomingBookings.add(
+      //     new BookingAppData('Vijetha', '9:00a,-9:30am', 'T0-1231234', 'new'));
+
+      userProfile = new UserAppData(1, '', '$_phone', '', upcomingBookings,
+          pastBookings, null, new SettingsAppData(notificationOn: true));
+    }
+    setState(() {
+      _userProfile = userProfile;
+    });
+    writeData(_userProfile);
+
+    setState(() {
+      _userName = (_userProfile != null) ? _userProfile.name : 'User';
+      _userId = (_userProfile != null) ? _userProfile.id : 0;
+    });
+    _prefs.setString("userName", _userName);
+    _prefs.setInt("userId", _userId);
+
+    //write userProfile to file
+
+    print('UserProfile in file $_userProfile');
+
+//End - Save User profile in file
   }
 
   @override
   void initState() {
     super.initState();
+
     _pageController = PageController(initialPage: 7);
+    _initializeUserProfile();
   }
 
   @override
@@ -111,7 +172,7 @@ class _LandingPageState extends State<LandingPage> {
             child: ListView(
               children: <Widget>[
                 DrawerHeader(
-                  child: Image.asset('logo.png'),
+                  child: Text('Hello $_userName !!', style: inputTextStyle),
                   decoration: BoxDecoration(
                     color: Theme.of(context).primaryColor,
                   ),
@@ -194,11 +255,11 @@ class _LandingPageState extends State<LandingPage> {
   }
 
   Widget _userBookingPage() {
-    return userBookingPage(context);
+    return userBookingPage(context, _userProfile);
   }
 
   Widget _userFavStores() {
-    return userFavStoresPage(context);
+    return userFavStoresPage(context, _userProfile);
   }
 
   Widget _userNotifications() {
@@ -424,19 +485,5 @@ class _LandingPageState extends State<LandingPage> {
                 ]),
           ],
         ));
-  }
-
-  launchURL(String tit, String addr, double lat, double long) async {
-    final title = tit;
-    final description = addr;
-    final coords = Coords(lat, long);
-    if (await MapLauncher.isMapAvailable(MapType.google)) {
-      await MapLauncher.launchMap(
-        mapType: MapType.google,
-        coords: coords,
-        title: title,
-        description: description,
-      );
-    }
   }
 }

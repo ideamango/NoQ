@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:noq/login_page.dart';
+import 'package:noq/models/localDB.dart';
 import 'package:noq/services/authService.dart';
+import 'package:noq/view/showSlotsPage.dart';
+import 'package:noq/view/userBookingPage.dart';
 import 'package:noq/view/userFavStoresPage.dart';
 import 'package:noq/view/userMyAccountPage.dart';
+import 'package:noq/view/userNotificationsPage.dart';
 
 Widget userAccountPage(BuildContext context) {
   Widget _userSettingsPage;
@@ -12,7 +16,7 @@ Widget userAccountPage(BuildContext context) {
         child: Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
       Text('Logout'),
       Container(
-        width: 20.0,
+        width: 40.0,
         height: 20.0,
         child: IconButton(
           //alignment: Alignment.center,
@@ -29,10 +33,10 @@ Widget userAccountPage(BuildContext context) {
       ),
     ])),
   ]));
-  //return _userSettingsPage;
-  return UserMyAccountPage(
-    storage: Storage(),
-  );
+  return _userSettingsPage;
+  // return UserMyAccountPage(
+  //   storage: Storage(),
+  // );
 }
 
 Widget userHomePage(BuildContext context) {
@@ -45,17 +49,11 @@ Widget userHomePage(BuildContext context) {
   return _userAccountPage;
 }
 
-Widget userBookingPage(BuildContext context) {
-  Widget _userAccountPage;
-  _userAccountPage = Container(
-      child: Column(children: <Widget>[
-    Text("Welcome to user userBookingPage"),
-    Text("Welcome to user userBookingPage"),
-  ]));
-  return _userAccountPage;
+Widget userBookingPage(BuildContext context, UserAppData userProfile) {
+  return UserBookingPage();
 }
 
-Widget userFavStoresPage(BuildContext context) {
+Widget userFavStoresPage(BuildContext context, UserAppData userProfile) {
   // Widget _userFavStoresPage;
   // _userFavStoresPage = Container(
   //     child: Column(children: <Widget>[
@@ -72,7 +70,7 @@ Widget userNotifications(BuildContext context) {
     Text("Welcome to user _userNotifications"),
     Text("Welcome to user _userNotifications"),
   ]));
-  return _userNotifications;
+  return UserNotificationsPage();
 }
 
 Widget rateAppPage(BuildContext context) {
@@ -109,4 +107,8 @@ Widget logoutPage(BuildContext context) {
   // AuthService().signOut(context);
 
   return null;
+}
+
+Widget slotsPage(BuildContext context) {
+  return ShowSlotsPage();
 }

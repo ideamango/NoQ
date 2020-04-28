@@ -59,6 +59,8 @@ final headingTextStyle = TextStyle(
     letterSpacing: 0.5,
     fontFamily: 'Montserrat',
     fontSize: 15.0);
+final Color darkIcon = Colors.indigo;
+final Color lightIcon = Colors.indigo;
 
 final Color highlightColor = Colors.amber[600];
 final Color unselectedColor = Colors.blueGrey[700];

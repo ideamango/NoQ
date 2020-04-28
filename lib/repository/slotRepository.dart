@@ -6,8 +6,6 @@ import 'dart:convert';
 import 'package:http/http.dart';
 import 'package:noq/models/slot.dart';
 
-class SlotsRepository {
-  Future<List<Slot>> getSlots() async {
-    return null;
-  }
+Future<List<Slot>> getSlotsForStore(String storeId, DateTime dateTime) async {
+  return null;
 }

@@ -1,0 +1,8 @@
+//To generate json serializable data model part.
+flutter pub run build_runner build
+
+//Retrieve value from firebase snapshot
+
+Map<dynamic, dynamic> map = snapshot.data.snapshot.value;
+
+map.values.toList()[index]["pic"]
