@@ -17,6 +17,14 @@ final buttonTextStyle = TextStyle(
   fontSize: 20,
   //height: 2,
 );
+final buttonSmlTextStyle = TextStyle(
+  color: Colors.white,
+  //fontWeight: FontWeight.w800,
+  fontFamily: 'Montserrat-Regular',
+
+  fontSize: 10,
+  //height: 2,
+);
 
 final inputTextStyle = TextStyle(
   color: Colors.blueGrey[400],

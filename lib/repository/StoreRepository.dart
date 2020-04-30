@@ -21,7 +21,7 @@ Future<List<Store>> getStores() async {
     var data = json.decode(res.body);
     var resStores = data["stores"] as List;
 
-    stores = resStores.map<Store>((data) => Store.fromJSON(data)).toList();
+    stores = resStores.map<Store>((data) => Store.fromJson(data)).toList();
     return stores;
   }
   return null;

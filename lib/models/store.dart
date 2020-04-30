@@ -1,3 +1,7 @@
+import 'package:json_annotation/json_annotation.dart';
+part 'store.g.dart';
+
+@JsonSerializable()
 class Store {
   final int id;
   final String name;
@@ -12,20 +16,35 @@ class Store {
 
   Store(this.id, this.name, this.adrs, this.regNum, this.lat, this.long,
       this.opensAt, this.closesAt, this.daysClosed, this.insideAptFlg);
+  factory Store.fromJson(Map<String, dynamic> json) => _$StoreFromJson(json);
 
-  factory Store.fromJSON(Map<String, dynamic> jsonMap) {
-    return Store(
-        jsonMap['id'],
-        jsonMap['name'],
-        jsonMap['adrs'],
-        jsonMap['regNum'],
-        jsonMap['lat'],
-        jsonMap['long'],
-        jsonMap['opensAt'],
-        jsonMap['closesAt'],
-        jsonMap['daysClosed'],
-        jsonMap['insideAptFlg']);
-  }
+  // Map<String, dynamic> toJson() => _$SlotToJson(this);
+  // factory Store.fromJSON(Map<String, dynamic> jsonMap) {
+  //   return Store(
+  //       jsonMap['id'],
+  //       jsonMap['name'],
+  //       jsonMap['adrs'],
+  //       jsonMap['regNum'],
+  //       jsonMap['lat'],
+  //       jsonMap['long'],
+  //       jsonMap['opensAt'],
+  //       jsonMap['closesAt'],
+  //       jsonMap['daysClosed'],
+  //       jsonMap['insideAptFlg']);
+  // }
+  // factory Store.fromJSON(Map<String, dynamic> jsonMap) {
+  //   return Store(
+  //       id: jsonMap['id'],
+  //       name: jsonMap['name'],
+  //       adrs: jsonMap['adrs'],
+  //       regNum: jsonMap['regNum'],
+  //       lat: jsonMap['lat'],
+  //       long: jsonMap['long'],
+  //       opensAt: jsonMap['opensAt'],
+  //       closesAt: jsonMap['closesAt'],
+  //       daysClosed: jsonMap['daysClosed'],
+  //       insideAptFlg: jsonMap['insideAptFlg']);
+  // }
 }
 
 final xstores = [

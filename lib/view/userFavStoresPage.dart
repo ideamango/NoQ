@@ -4,6 +4,7 @@ import 'package:noq/models/localDB.dart';
 import 'package:noq/pages/slotsDialog.dart';
 import 'package:noq/repository/StoreRepository.dart';
 import 'package:noq/repository/local_db_repository.dart';
+import 'package:noq/repository/slotRepository.dart';
 import 'package:noq/services/mapService.dart';
 import 'package:noq/style.dart';
 import 'package:noq/models/store.dart';
@@ -22,7 +23,7 @@ class _UserFavStoresListPageState extends State<UserFavStoresListPage> {
   String _favStoreStatus;
   UserAppData fUserProfile;
   bool isFavourited = true;
-  DateTime dateTime;
+  DateTime dateTime = DateTime.now();
 
   @override
   void initState() {
@@ -72,8 +73,10 @@ class _UserFavStoresListPageState extends State<UserFavStoresListPage> {
     }
   }
 
-  void showSlots(int storeId) {
-    showSlotsDialog(context, storeId, dateTime);
+  void showSlots(int storeId, DateTime dateTime) {
+    getSlotsForStore(storeId, dateTime).then((slotsList) {
+      showSlotsDialog(context, slotsList, dateTime);
+    });
   }
 
   Widget _emptyFavStorePage() {
@@ -285,7 +288,7 @@ class _UserFavStoresListPageState extends State<UserFavStoresListPage> {
                       Icons.arrow_forward,
                       color: darkIcon,
                     ),
-                    onPressed: () => showSlots(str.id)),
+                    onPressed: () => showSlots(str.id, dateTime)),
               )
             ]),
           ],

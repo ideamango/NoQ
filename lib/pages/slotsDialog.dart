@@ -6,129 +6,183 @@ import 'package:pinput/pin_put/pin_put.dart';
 import 'package:noq/style.dart';
 import 'package:noq/services/authService.dart';
 
-final TextEditingController _pinPutController = TextEditingController();
-final FocusNode _pinPutFocusNode = FocusNode();
-String _pin;
+//final TextEditingController _pinPutController = TextEditingController();
+//final FocusNode _pinPutFocusNode = FocusNode();
+//String _pin;
 String status;
+bool _isPressed = false;
+Slot selectedSlot;
 String _errorMessage;
-List slots = new List();
-
-BoxDecoration get _pinPutDecoration {
-  return BoxDecoration(
-    border: Border.all(color: Colors.orange),
-    //borderRadius: BorderRadius.circular(15),
-  );
-}
-
-void _submitPin(String pin, BuildContext context) {
-  _pin = pin;
-  // final snackBar = SnackBar(
-  //   duration: Duration(seconds: 3),
-  //   content: Container(
-  //       height: 80.0,
-  //       child: Center(
-  //         child: Text(
-  //           'Pin Submitted. Value: $pin',
-  //           style: TextStyle(fontSize: 25.0),
-  //         ),
-  //       )),
-  //   backgroundColor: deepPurpleAccent[200],
-  // );
-  // Scaffold.of(context).hideCurrentSnackBar();
-  // Scaffold.of(context).showSnackBar(snackBar);
-}
+List<Slot> _slotList;
+//   '9:00am',
+//   '9:30am',
+//   '10:00am',
+//   '10:30am',
+//   '11:30am',
+//   '12:00pm',
+//   '12:30pm',
+//   '1:00am',
+//   '10:30am',
+//   '11:30am'
+// ];
 
 Future<bool> showSlotsDialog(
-    BuildContext context, int storeId, DateTime dateTime) {
-  dateTime = DateTime.fromMicrosecondsSinceEpoch(10000);
-  slots.add('9:00am');
-  slots.add('9:30am');
-  slots.add('10:00am');
-  slots.add('10:30am');
-  slots.add('11:00am');
-  slots.add('11:30am');
-  slots.add('12:00pm');
-  slots.add('12:30pm');
-  slots.add('1:00pm');
+    BuildContext context, List<Slot> slots, DateTime dateTime) {
+  _slotList = slots;
+  dateTime = DateTime.now();
 
   return showDialog(
       context: context,
       barrierDismissible: true,
       builder: (BuildContext context) {
-        return new AlertDialog(
-          title: Text('Slots for date $dateTime',
-              style: TextStyle(
-                fontSize: 20,
-                color: Colors.grey,
-              )),
-          backgroundColor: Colors.grey[200],
-          titleTextStyle: inputTextStyle,
-          elevation: 10.0,
-          content: new Container(
-            // Specify some width
-            width: MediaQuery.of(context).size.width * .7,
-            child: GridView.builder(
-              itemCount: slots.length,
-              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 4,
-                  crossAxisSpacing: 4.0,
-                  mainAxisSpacing: 4.0),
-              itemBuilder: (BuildContext context, int index) {
-                return Text('$slots[index]');
-              },
+        return StatefulBuilder(builder: (context, setState) {
+          return new AlertDialog(
+            title: Text('Slots for date $dateTime',
+                style: TextStyle(
+                  fontSize: 20,
+                  color: Colors.grey,
+                )),
+            //backgroundColor: Colors.grey[200],
+            titleTextStyle: inputTextStyle,
+            elevation: 10.0,
+            content: new Container(
+              decoration: BoxDecoration(
+                border: Border.all(
+                  color: Colors.indigo[500],
+                ),
+                borderRadius: BorderRadius.circular(5.0),
+              ),
+
+              //color: Colors.indigo[50],
+              // Specify some width
+              width: MediaQuery.of(context).size.width * .7,
+              child: GridView.builder(
+                itemCount: _slotList.length,
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 6,
+                    crossAxisSpacing: 4.0,
+                    mainAxisSpacing: 1.0),
+                itemBuilder: _buildGridItems,
+              ),
             ),
+
+            // SizedBox(height: 10),
+
+            actions: <Widget>[
+              FlatButton(
+                color: Colors.orange,
+                textColor: Colors.white,
+                child: Text('Clear All'),
+                onPressed: () {},
+              ),
+              FlatButton(
+                color: Colors.orange,
+                textColor: Colors.white,
+                child: Text('Book'),
+                onPressed: bookSlot,
+              ),
+              (_errorMessage != null
+                  ? Text(
+                      _errorMessage,
+                      style: TextStyle(color: Colors.red),
+                    )
+                  : Container()),
+            ],
+          );
+        });
+      });
+}
+
+Widget _buildGridItems(BuildContext context, int index) {
+  int x, y = 0;
+  int gridRowLength = 5;
+  x = (index / gridRowLength).floor();
+  y = (index % gridRowLength);
+
+  return GestureDetector(
+    onTap: () => _gridItemTapped(x, y),
+    child: GridTile(
+      child: Container(
+        padding: EdgeInsets.all(4),
+        // decoration:
+        //     BoxDecoration(border: Border.all(color: Colors.black, width: 0.5)),
+        child: Center(
+          child: _buildGridItem(index),
+        ),
+      ),
+    ),
+  );
+}
+
+void _gridItemTapped(int x, int y) {
+  print("Grid item tapped");
+}
+
+Widget _buildGridItem(int index) {
+  Slot sl = _slotList[index];
+  return StatefulBuilder(builder: (context, setState) {
+    return RaisedButton(
+        elevation: (sl.slotSelected == "true") ? 0.0 : 10.0,
+        autofocus: false,
+        color: (sl.slotSelected == "true")
+            ? Colors.greenAccent
+            : Colors.indigo[200],
+        textColor: Colors.indigo,
+        textTheme: ButtonTextTheme.normal,
+        highlightColor: Colors.green,
+        highlightElevation: 10.0,
+        splashColor: highlightColor,
+        shape: (sl.slotSelected == "true")
+            ? RoundedRectangleBorder(
+                borderRadius: new BorderRadius.circular(5.0),
+                side: BorderSide(color: Colors.black),
+              )
+            : RoundedRectangleBorder(
+                borderRadius: new BorderRadius.circular(5.0),
+                side: BorderSide(color: Colors.white),
+              ),
+        onPressed: () {
+          setState(() {
+            //unselect previously selected slot
+            _slotList.forEach((element) => element.slotSelected = "false");
+
+            sl.slotSelected = "true";
+            selectedSlot = sl;
+          });
+
+          print(sl.slotStrTime);
+          print(sl.slotSelected);
+        },
+        child: new Text(sl.slotStrTime));
+  });
+}
+
+void bookSlot() {
+  print('Selected slot for time: $selectedSlot');
+}
+
+Future<bool> newDiallog(BuildContext context) {
+  return showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        int selectedRadio = 0;
+        return AlertDialog(
+          content: StatefulBuilder(
+            builder: (BuildContext context, StateSetter setState) {
+              return Column(
+                mainAxisSize: MainAxisSize.min,
+                children: List<Widget>.generate(4, (int index) {
+                  return Radio<int>(
+                    value: index,
+                    groupValue: selectedRadio,
+                    onChanged: (int value) {
+                      setState(() => selectedRadio = value);
+                    },
+                  );
+                }),
+              );
+            },
           ),
-
-          // SizedBox(height: 10),
-
-          actions: <Widget>[
-            FlatButton(
-              color: Colors.orange,
-              textColor: Colors.white,
-              child: Text('Clear All'),
-              onPressed: () => status = 'OnPress',
-            ),
-            FlatButton(
-              color: Colors.orange,
-              textColor: Colors.white,
-              child: Text('Submit'),
-              onPressed: () {
-                // print("OTP Submitted");
-                // //  print('$_pinPutController.text');
-                // try {
-                //   FirebaseAuth.instance.currentUser().then((user) {
-                //     if (user != null) {
-                //       Navigator.of(context).pop();
-                //       Navigator.of(context).pushReplacementNamed('/dashboard');
-                //     } else {
-                //       AuthService()
-                //           .signInWithOTP(_pin, verificationId, context)
-                //           .then(() {
-                //         //Navigator.of(context).pop();
-                //         Navigator.of(context)
-                //             .pushReplacementNamed('/landingPage');
-                //       });
-                //     }
-                //   });
-                // } catch (err) {
-                //   print("$err.toString()");
-                //   _errorMessage = err.toString();
-                // }
-
-                // //     : verifyPhone(_mobile);
-                // //if success proceed to next screen
-                // // Navigator.of(context).pop();
-                // // Navigator.of(context).pushReplacementNamed('/landingPage');
-                // //else go back to signin page
-              },
-            ),
-            (_errorMessage != null
-                ? Text(
-                    _errorMessage,
-                    style: TextStyle(color: Colors.red),
-                  )
-                : Container()),
-          ],
         );
       });
 }

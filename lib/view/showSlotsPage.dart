@@ -15,11 +15,12 @@ class ShowSlotsPage extends StatefulWidget {
 }
 
 class _ShowSlotsPageState extends State<ShowSlotsPage> {
-  String _storeId;
+  int _storeId;
   DateTime _date;
   List<Slot> _slots;
   @override
   void initState() {
+    _date = DateTime.now();
     super.initState();
     _loadSlots();
   }
@@ -27,8 +28,9 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
   void _loadSlots() async {
     //Load details from local files
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    _storeId = prefs.getString('storeIdForSlots');
+    _storeId = prefs.getInt('storeIdForSlots');
     //Fetch details from server
+
     await getSlotsForStore(_storeId, _date).then((slotList) {
       _slots = slotList;
       if (_slots != null) {
@@ -58,18 +60,23 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
   }
 
   Widget _buildSlotsPage() {
-    return Center(
-      child: Container(
-        margin: EdgeInsets.fromLTRB(10, 10, 10, 10),
-        child: ListView.builder(
-            itemCount: _slots.length,
-            itemBuilder: (BuildContext context, int index) {
-              return Container(
-                child: new Column(children: _slots.map(_buildItem).toList()),
-                //children: <Widget>[firstRow, secondRow],
-              );
-            }),
+    return AlertDialog(
+      content: Container(
+        color: Colors.indigo,
+        height: 20.0,
+        width: 20.0,
       ),
+      actions: <Widget>[
+        FlatButton(
+          child: Text('Switch'),
+          onPressed: () {},
+          //  => setState(() {
+          //       _c == Colors.redAccent
+          //           ? _c = Colors.blueAccent
+          //           : _c = Colors.redAccent;
+          //     }))
+        )
+      ],
     );
   }
 
@@ -77,7 +84,7 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
     return Card(
         elevation: 10,
         child: new Row(
-          children: <Widget>[],
+          children: <Widget>[Text(_slots[0].id)],
         ));
   }
 }

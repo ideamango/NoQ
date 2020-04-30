@@ -1,9 +1,10 @@
 class Slot {
-  int id;
+  String id;
   String storeId;
   String slotStrTime;
   String slotEndTime;
-  int slotAvlFlg;
+  String slotAvlFlg;
+  String slotSelected = "false";
 
   Slot({
     this.id,
@@ -11,19 +12,18 @@ class Slot {
     this.slotStrTime,
     this.slotEndTime,
     this.slotAvlFlg,
+    this.slotSelected,
   });
+  // factory Slot.fromJson(Map<String, dynamic> json) => _$SlotFromJson(json);
 
-  // factory Store.fromJSON(Map<String, dynamic> jsonMap) {
-  //   return Store(
-  //       id: jsonMap['id'],
-  //       name: jsonMap['name'],
-  //       adrs: jsonMap['adrs'],
-  //       regNum: jsonMap['regNum'],
-  //       lat: jsonMap['lat'],
-  //       long: jsonMap['long'],
-  //       opensAt: jsonMap['opensAt'],
-  //       closesAt: jsonMap['closesAt'],
-  //       daysClosed: jsonMap['daysClosed'],
-  //       insideAptFlg: jsonMap['insideAptFlg']);
-  // }
+  // Map<String, dynamic> toJson() => _$SlotToJson(this);
+  factory Slot.fromJSON(Map<String, dynamic> jsonMap) {
+    return Slot(
+        id: jsonMap['id'],
+        storeId: jsonMap['storeId'],
+        slotStrTime: jsonMap['slotStrTime'],
+        slotEndTime: jsonMap['slotEndTime'],
+        slotAvlFlg: jsonMap['slotAvlFlg'],
+        slotSelected: jsonMap['slotSelected']);
+  }
 }
