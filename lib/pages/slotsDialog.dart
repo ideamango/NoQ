@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:noq/models/slot.dart';
+import 'package:noq/view/showSlotsPage.dart';
 import 'package:pinput/pin_put/pin_put.dart';
 import 'package:noq/style.dart';
 import 'package:noq/services/authService.dart';
@@ -36,59 +37,7 @@ Future<bool> showSlotsDialog(
       barrierDismissible: true,
       builder: (BuildContext context) {
         return StatefulBuilder(builder: (context, setState) {
-          return new AlertDialog(
-            title: Text('Slots for date $dateTime',
-                style: TextStyle(
-                  fontSize: 20,
-                  color: Colors.grey,
-                )),
-            //backgroundColor: Colors.grey[200],
-            titleTextStyle: inputTextStyle,
-            elevation: 10.0,
-            content: new Container(
-              decoration: BoxDecoration(
-                border: Border.all(
-                  color: Colors.indigo[500],
-                ),
-                borderRadius: BorderRadius.circular(5.0),
-              ),
-
-              //color: Colors.indigo[50],
-              // Specify some width
-              width: MediaQuery.of(context).size.width * .7,
-              child: GridView.builder(
-                itemCount: _slotList.length,
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 6,
-                    crossAxisSpacing: 4.0,
-                    mainAxisSpacing: 1.0),
-                itemBuilder: _buildGridItems,
-              ),
-            ),
-
-            // SizedBox(height: 10),
-
-            actions: <Widget>[
-              FlatButton(
-                color: Colors.orange,
-                textColor: Colors.white,
-                child: Text('Clear All'),
-                onPressed: () {},
-              ),
-              FlatButton(
-                color: Colors.orange,
-                textColor: Colors.white,
-                child: Text('Book'),
-                onPressed: bookSlot,
-              ),
-              (_errorMessage != null
-                  ? Text(
-                      _errorMessage,
-                      style: TextStyle(color: Colors.red),
-                    )
-                  : Container()),
-            ],
-          );
+          return ShowSlotsPage();
         });
       });
 }
