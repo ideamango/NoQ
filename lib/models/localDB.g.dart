@@ -8,7 +8,7 @@ part of 'localDB.dart';
 
 UserAppData _$UserAppDataFromJson(Map<String, dynamic> json) {
   return UserAppData(
-    json['id'] as int,
+    json['id'] as String,
     json['name'] as String,
     json['phone'] as String,
     json['adrs'] as String,
@@ -46,7 +46,7 @@ Map<String, dynamic> _$UserAppDataToJson(UserAppData instance) =>
 
 StoreAppData _$StoreAppDataFromJson(Map<String, dynamic> json) {
   return StoreAppData(
-    json['id'] as int,
+    json['id'] as String,
     json['name'] as String,
     json['adrs'] as String,
     (json['lat'] as num)?.toDouble(),

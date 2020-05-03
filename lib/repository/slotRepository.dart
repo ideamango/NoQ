@@ -6,11 +6,11 @@ import 'dart:convert';
 import 'package:http/http.dart';
 import 'package:noq/models/slot.dart';
 
-Future<List<Slot>> getSlotsForStore(int storeId, DateTime dateTime) async {
+Future<List<Slot>> getSlotsForStore(String storeId, DateTime dateTime) async {
   List<Slot> slots;
   String resBody;
   String jsonString =
-      '[{"id": "1", "storeId": "21","slotStrTime": "9:00","slotEndTime": "9:30","slotAvlFlg": "true","slotSelected":"false"},{"id": "2", "storeId": "21","slotStrTime": "9:30","slotEndTime": "10:00","slotAvlFlg": "true","slotSelected":"false"},{"id": "3", "storeId": "21","slotStrTime": "10:00","slotEndTime": "10:30","slotAvlFlg": "false","slotSelected":"false"},{"id": "4", "storeId": "21","slotStrTime": "10:30","slotEndTime": "11:00","slotAvlFlg": "true","slotSelected":"false"}]';
+      '[{"id": "1", "storeId": "21","slotStrTime": "9:00","slotEndTime": "9:30","slotAvlFlg": "true","slotSelected":"false"},{"id": "2", "storeId": "21","slotStrTime": "9:30","slotEndTime": "10:00","slotAvlFlg": "true","slotSelected":"false"},{"id": "3", "storeId": "21","slotStrTime": "10:00","slotEndTime": "10:30","slotAvlFlg": "false","slotSelected":"false"},{"id": "4", "storeId": "21","slotStrTime": "10:30","slotEndTime": "11:00","slotAvlFlg": "true","slotSelected":"false"},{"id": "1", "storeId": "21","slotStrTime": "9:00","slotEndTime": "9:30","slotAvlFlg": "true","slotSelected":"false"},{"id": "2", "storeId": "21","slotStrTime": "9:30","slotEndTime": "10:00","slotAvlFlg": "true","slotSelected":"false"},{"id": "3", "storeId": "21","slotStrTime": "10:00","slotEndTime": "10:30","slotAvlFlg": "false","slotSelected":"false"},{"id": "4", "storeId": "21","slotStrTime": "10:30","slotEndTime": "11:00","slotAvlFlg": "true","slotSelected":"false"},{"id": "1", "storeId": "21","slotStrTime": "9:00","slotEndTime": "9:30","slotAvlFlg": "true","slotSelected":"false"},{"id": "2", "storeId": "21","slotStrTime": "9:30","slotEndTime": "10:00","slotAvlFlg": "true","slotSelected":"false"},{"id": "3", "storeId": "21","slotStrTime": "10:00","slotEndTime": "10:30","slotAvlFlg": "false","slotSelected":"false"},{"id": "4", "storeId": "21","slotStrTime": "10:30","slotEndTime": "11:00","slotAvlFlg": "true","slotSelected":"false"},{"id": "1", "storeId": "21","slotStrTime": "9:00","slotEndTime": "9:30","slotAvlFlg": "true","slotSelected":"false"},{"id": "2", "storeId": "21","slotStrTime": "9:30","slotEndTime": "10:00","slotAvlFlg": "true","slotSelected":"false"},{"id": "3", "storeId": "21","slotStrTime": "10:00","slotEndTime": "10:30","slotAvlFlg": "false","slotSelected":"false"},{"id": "4", "storeId": "21","slotStrTime": "10:30","slotEndTime": "11:00","slotAvlFlg": "true","slotSelected":"false"},{"id": "1", "storeId": "21","slotStrTime": "9:00","slotEndTime": "9:30","slotAvlFlg": "true","slotSelected":"false"},{"id": "2", "storeId": "21","slotStrTime": "9:30","slotEndTime": "10:00","slotAvlFlg": "true","slotSelected":"false"},{"id": "3", "storeId": "21","slotStrTime": "10:00","slotEndTime": "10:30","slotAvlFlg": "false","slotSelected":"false"},{"id": "4", "storeId": "21","slotStrTime": "10:30","slotEndTime": "11:00","slotAvlFlg": "true","slotSelected":"false"}]';
 
   // String url = "https://jsonplaceholder.typicode.com/posts";
   // Response res =
@@ -32,7 +32,8 @@ Future<List<Slot>> getSlotsForStore(int storeId, DateTime dateTime) async {
   return slots;
 }
 
-Future<bool> bookSlotForStore(int storeId, Slot slot, DateTime dateTime) async {
+Future<bool> bookSlotForStore(
+    String storeId, Slot slot, DateTime dateTime) async {
   Slot slot;
   String resBody;
   String reqBody;
@@ -53,6 +54,7 @@ Future<bool> bookSlotForStore(int storeId, Slot slot, DateTime dateTime) async {
   // //   //resBody = res.body;
   // resBody = jsonString;
   // var data = json.decode(resBody);
+
   // var resSlots = data as List;
 
   // slots = resSlots.map((slot) => Slot.fromJSON(slot)).toList();

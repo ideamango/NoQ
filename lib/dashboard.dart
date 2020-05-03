@@ -1,13 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:map_launcher/map_launcher.dart';
+import 'package:noq/pages/slotsDialog.dart';
 import 'package:noq/repository/StoreRepository.dart';
+import 'package:noq/repository/slotRepository.dart';
 import 'package:noq/services/mapService.dart';
+import 'package:noq/utils.dart';
 import 'style.dart';
 import 'models/store.dart';
 import 'view/allPagesWidgets.dart';
 import 'package:noq/models/localDB.dart';
 import 'package:noq/repository/local_db_repository.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:intl/intl.dart';
 
 class LandingPage extends StatefulWidget {
   @override
@@ -55,7 +59,7 @@ class _LandingPageState extends State<LandingPage> {
   ];
   //Getting dummy list of stores from store class and storing in local variable
 
-  List<Store> _stores = getDummyList();
+  List<StoreAppData> _stores = getDummyList();
   int i;
   var _userProfile;
   var fUserProfile;
@@ -65,7 +69,15 @@ class _LandingPageState extends State<LandingPage> {
   int _botBarIndex = 0;
   int _pageIndex = 0;
   String _userName;
-  int _userId;
+  String _userId;
+  String _userAdrs;
+
+  bool isFavourited = false;
+  DateTime dateTime = DateTime.now();
+  final dtFormat = new DateFormat('dd');
+  final dtFormatSlot = new DateFormat('EEE, MMM d');
+  List<DateTime> _dateList = new List<DateTime>();
+
   void navigationTapped(int page) {
     _pageController.jumpToPage(page);
   }
@@ -79,27 +91,44 @@ class _LandingPageState extends State<LandingPage> {
     var userProfile;
     _prefs = await SharedPreferences.getInstance();
     _phone = _prefs.getString("phone");
+    _userName = _prefs.getString("userName");
+    _userId = _prefs.getString("userId");
+    _userAdrs = _prefs.getString("userAdrs");
+
     if (fUserProfile != null) {
       userProfile = fUserProfile;
     }
     // else {
     //   //TODO:fetch from server
+
+    //Save in local DB objects and file for perusal.
+    // writeData(_userProfile);
+    //   _prefs.setString("userName", _userName);
+    // _prefs.setString("userId", _userId);
     // }
 
-    //If not on server then create dummy object.
-
     else {
+      //If not on server then create new user object.
 //Start - Save User profile in file
       List<BookingAppData> pastBookings = new List<BookingAppData>();
 
+      List<BookingAppData> upcomingBookings = new List();
+
+      List<StoreAppData> stores = new List<StoreAppData>();
       // pastBookings.add(new BookingAppData(
       //     'IKEA', '12:00am,-12:30am', 'T1-9844969', 'expired'));
-      List<BookingAppData> upcomingBookings = new List();
       // upcomingBookings.add(
       //     new BookingAppData('Vijetha', '9:00a,-9:30am', 'T0-1231234', 'new'));
 
-      userProfile = new UserAppData(1, '', '$_phone', '', upcomingBookings,
-          pastBookings, null, new SettingsAppData(notificationOn: true));
+      userProfile = new UserAppData(
+          _userId,
+          _userName,
+          _phone,
+          _userAdrs,
+          upcomingBookings,
+          pastBookings,
+          stores,
+          new SettingsAppData(notificationOn: true));
     }
     setState(() {
       _userProfile = userProfile;
@@ -108,10 +137,10 @@ class _LandingPageState extends State<LandingPage> {
 
     setState(() {
       _userName = (_userProfile != null) ? _userProfile.name : 'User';
-      _userId = (_userProfile != null) ? _userProfile.id : 0;
+      //_userId = (_userProfile != null) ? _userProfile.id : '0';
     });
     _prefs.setString("userName", _userName);
-    _prefs.setInt("userId", _userId);
+    _prefs.setString("userId", _userId);
 
     //write userProfile to file
 
@@ -126,6 +155,29 @@ class _LandingPageState extends State<LandingPage> {
 
     _pageController = PageController(initialPage: 7);
     _initializeUserProfile();
+  }
+
+  void _prepareDateList() {
+    _dateList.clear();
+    _dateList.add(dateTime);
+    DateTime dt = DateTime.now();
+    for (int i = 1; i <= 4; i++) {
+      print(i);
+      _dateList.add(dt.add(Duration(days: i)));
+      print('dateLIst is $_dateList');
+    }
+  }
+
+  void modifyStoreList(StoreAppData strData) {}
+  void toggleFavorite(StoreAppData strData) {
+    setState(() {
+      isFavourited = !isFavourited;
+      if (strData.isFavourite == true) {
+        (_userProfile as UserAppData).favStores.add(strData);
+      }
+      // widget.onFavoriteChanged(isFavourited);
+    });
+    modifyStoreList(strData);
   }
 
   @override
@@ -282,6 +334,10 @@ class _LandingPageState extends State<LandingPage> {
     return userAccountPage(context);
   }
 
+  void _initializeStoresList() {
+    _prepareDateList();
+  }
+
   Widget _storesListPage() {
     return Center(
       child: Container(
@@ -298,20 +354,25 @@ class _LandingPageState extends State<LandingPage> {
     );
   }
 
-  Widget _buildItem(Store str) {
+  Widget _buildItem(StoreAppData str) {
+    _initializeStoresList();
+    //_buildDateGridItems(str.id);
+    print('after buildDateGrid called');
     return Card(
         elevation: 10,
         child: new Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
             Column(
               children: <Widget>[
                 new Container(
                   margin: EdgeInsets.fromLTRB(10, 10, 5, 5),
                   padding: EdgeInsets.all(5),
-                  alignment: Alignment.center,
+                  alignment: Alignment.topCenter,
                   decoration: ShapeDecoration(
                     shape: CircleBorder(),
-                    color: Theme.of(context).primaryColor,
+                    color: darkIcon,
                   ),
                   child: Icon(
                     Icons.shopping_cart,
@@ -360,26 +421,13 @@ class _LandingPageState extends State<LandingPage> {
                                   )
                                 ]),
                           ),
-                          Row(
-                            children: <Widget>[
-                              Text('Stores opens on days: ',
-                                  style: lightSubTextStyle),
-                              DefaultTextStyle.merge(
-                                child: Container(
-                                    child: Row(children: [
-                                  Icon(Icons.remove_circle,
-                                      size: 18.0, color: Colors.blueGrey[300]),
-                                  Icon(Icons.add_circle,
-                                      size: 18.0, color: Colors.orange),
-                                  Icon(Icons.remove_circle,
-                                      size: 18.0, color: Colors.blueGrey[300]),
-                                  Icon(Icons.remove_circle,
-                                      size: 18.0, color: Colors.blueGrey[300]),
-                                  Icon(Icons.remove_circle,
-                                      size: 18.0, color: Colors.blueGrey[300]),
-                                ])),
-                              ),
-                            ],
+                          Container(
+                            width: MediaQuery.of(context).size.width * .5,
+                            //padding: EdgeInsets.fromLTRB(0, 5, 5, 5),
+                            child: Row(
+                              children: _buildDateGridItems(
+                                  str.id, str.name, str.daysClosed),
+                            ),
                           ),
                           Row(
                               mainAxisAlignment: MainAxisAlignment.center,
@@ -409,81 +457,148 @@ class _LandingPageState extends State<LandingPage> {
                   ]),
             ]),
             Column(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
                   Container(
+                    margin: EdgeInsets.fromLTRB(0, 0, 10, 0),
                     height: 22,
                     width: 20,
                     // margin: EdgeInsets.fromLTRB(10, 10, 5, 5),
-                    alignment: Alignment.center,
-                    decoration: ShapeDecoration(
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(6)),
-                          side: BorderSide.none),
-                      color: Theme.of(context).primaryColor,
-                    ),
+                    // alignment: Alignment.topRight,
+                    // decoration: ShapeDecoration(
+                    //   shape: RoundedRectangleBorder(
+                    //       borderRadius: BorderRadius.all(Radius.circular(6)),
+                    //       side: BorderSide.none),
+                    //   color: Theme.of(context).primaryColor,
+                    // ),
                     child: IconButton(
-                      //alignment: Alignment.center,
-                      padding: EdgeInsets.all(2),
-                      onPressed: () => {},
+                      alignment: Alignment.topRight,
+                      //padding: EdgeInsets.all(2),
+                      onPressed: () => toggleFavorite(str),
                       highlightColor: Colors.orange[300],
-                      iconSize: 14,
-                      icon: Icon(
-                        Icons.favorite,
-                        color: Colors.white,
-                      ),
+                      iconSize: 16,
+                      icon: !isFavourited
+                          ? Icon(
+                              Icons.star,
+                              color: darkIcon,
+                            )
+                          : Icon(
+                              Icons.star_border,
+                              color: darkIcon,
+                            ),
                     ),
                   ),
                   Container(
                     //margin: EdgeInsets.fromLTRB(20, 10, 5, 5),
+
+                    height: 22.0,
                     width: 20.0,
-                    height: 20.0,
-                    alignment: Alignment.center,
-                    decoration: ShapeDecoration(
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(4)),
-                          side: BorderSide.none),
-                      color: Theme.of(context).primaryColor,
-                    ),
+                    //alignment: Alignment.center,
+                    // decoration: ShapeDecoration(
+                    //   shape: RoundedRectangleBorder(
+                    //       borderRadius: BorderRadius.all(Radius.circular(4)),
+                    //       side: BorderSide.none),
+                    //   color: Theme.of(context).primaryColor,
+                    // ),
                     child: IconButton(
-                      padding: EdgeInsets.all(2),
-                      iconSize: 14,
-                      //alignment: Alignment.center,
+                      // padding: EdgeInsets.all(2),
+                      //iconSize: 14,
+                      alignment: Alignment.centerRight,
                       highlightColor: Colors.orange[300],
                       icon: Icon(
                         Icons.location_on,
-                        color: Colors.white,
-                        //size: 17,
+                        color: darkIcon,
+                        size: 20,
                       ),
                       onPressed: () =>
                           launchURL(str.name, str.adrs, str.lat, str.long),
                     ),
                   ),
-                  Container(
-                    width: 20.0,
-                    height: 20.0,
-                    alignment: Alignment.center,
-                    decoration: ShapeDecoration(
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(2)),
-                          side: BorderSide.none),
-                      color: Theme.of(context).primaryColor,
-                    ),
-                    child: IconButton(
-                      //alignment: Alignment.center,
-                      padding: EdgeInsets.all(2),
-                      iconSize: 14,
-                      highlightColor: Colors.orange[300],
-                      icon: Icon(
-                        Icons.check,
-                        color: Colors.white,
-                      ),
-                      onPressed: () => {},
-                    ),
-                  )
+                  // Container(
+                  //   width: 20.0,
+                  //   height: 22.0,
+                  //   // alignment: Alignment.center,
+                  //   // decoration: ShapeDecoration(
+                  //   //   shape: RoundedRectangleBorder(
+                  //   //       borderRadius: BorderRadius.all(Radius.circular(2)),
+                  //   //       side: BorderSide.none),
+                  //   //   color: Theme.of(context).primaryColor,
+                  //   // ),
+                  //   child: IconButton(
+                  //       alignment: Alignment.bottomCenter,
+                  //       padding: EdgeInsets.all(2),
+                  //       iconSize: 25,
+                  //       highlightColor: highlightColor,
+                  //       icon: Icon(
+                  //         Icons.arrow_forward,
+                  //         color: darkIcon,
+                  //       ),
+                  //       onPressed: () => showSlots(str.id, dateTime)),
+                  // ),
                 ]),
           ],
         ));
+  }
+
+  void showSlots(String storeId, String storeName, DateTime dateTime) {
+    //_prefs = await SharedPreferences.getInstance();
+    String dateFormatted = dtFormatSlot.format(dateTime);
+    _prefs.setString("storeName", storeName);
+    _prefs.setString("dateFormatted", dateFormatted);
+    getSlotsForStore(storeId, dateTime).then((slotsList) {
+      showSlotsDialog(context, slotsList, dateTime);
+    });
+  }
+
+  List<Widget> _buildDateGridItems(
+      String sid, String sname, List<String> daysClosed) {
+    bool isClosed = false;
+    String dayOfWeek;
+
+    var dateWidgets = List<Widget>();
+    for (var date in _dateList) {
+      isClosed = (daysClosed.contains(date.weekday.toString())) ? true : false;
+      dayOfWeek = Utils.getDayOfWeek(date);
+      dateWidgets.add(buildDateItem(sid, sname, isClosed, date, dayOfWeek));
+      print('Widget build from datelist  called');
+    }
+    return dateWidgets;
+  }
+
+  Widget buildDateItem(
+      String sid, String sname, bool isClosed, DateTime dt, String dayOfWeek) {
+    Widget dtItem = Container(
+      margin: EdgeInsets.all(2),
+      child: SizedBox.fromSize(
+        size: Size(34, 34), // button width and height
+        child: ClipOval(
+          child: Material(
+            color: isClosed ? Colors.grey : Colors.lightGreen, // button color
+            child: InkWell(
+              splashColor: isClosed ? null : highlightColor, // splash color
+              onTap: () {
+                if (isClosed) {
+                  return null;
+                } else {
+                  print("tapped");
+                  showSlots(sid, sname, dt);
+                }
+              }, // button pressed
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Text(dtFormat.format(dt),
+                      style: TextStyle(fontSize: 15, color: Colors.white)),
+                  Text(dayOfWeek,
+                      style:
+                          TextStyle(fontSize: 8, color: Colors.white)), // text
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+    return dtItem;
   }
 }

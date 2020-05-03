@@ -8,6 +8,7 @@ import 'package:noq/style.dart';
 import 'package:noq/models/store.dart';
 import 'package:noq/services/color.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:intl/intl.dart';
 
 class ShowSlotsPage extends StatefulWidget {
   @override
@@ -15,14 +16,18 @@ class ShowSlotsPage extends StatefulWidget {
 }
 
 class _ShowSlotsPageState extends State<ShowSlotsPage> {
-  int _storeId;
+  String _storeId;
   String _errorMessage;
   DateTime _date;
+  String dt;
   List<Slot> _slotList;
+  final dateFormat = new DateFormat('dd');
   Slot selectedSlot;
+  String _storeName;
+  String _dateFormatted;
   @override
   void initState() {
-    _date = DateTime.now();
+    //dt = dateFormat.format(DateTime.now());
     super.initState();
     _loadSlots();
   }
@@ -30,7 +35,10 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
   void _loadSlots() async {
     //Load details from local files
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    _storeId = prefs.getInt('storeIdForSlots');
+    _storeId = prefs.getString('storeIdForSlots');
+    _storeName = prefs.getString("storeName");
+    _dateFormatted = prefs.getString("dateFormatted");
+
     //Fetch details from server
 
     await getSlotsForStore(_storeId, _date).then((slotList) {
@@ -53,13 +61,27 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
   Widget build(BuildContext context) {
     if (_slotList != null) {
       return new AlertDialog(
-        title: Text('Slots for date $_date',
-            style: TextStyle(
-              fontSize: 20,
-              color: Colors.grey,
-            )),
+        title: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Text(
+              _storeName,
+              style: TextStyle(
+                fontSize: 23,
+                color: Colors.black,
+              ),
+            ),
+            Text(
+              _dateFormatted,
+              style: TextStyle(
+                fontSize: 15,
+                color: Colors.indigo,
+              ),
+            )
+          ],
+        ),
         //backgroundColor: Colors.grey[200],
-        titleTextStyle: inputTextStyle,
+        titleTextStyle: labelTextStyle,
         elevation: 10.0,
         content: new Container(
           decoration: BoxDecoration(
@@ -68,9 +90,6 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
             ),
             borderRadius: BorderRadius.circular(5.0),
           ),
-
-          //color: Colors.indigo[50],
-          // Specify some width
           width: MediaQuery.of(context).size.width * .7,
           child: Container(
               child: new GridView.builder(
@@ -176,6 +195,11 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
   }
 
   void bookSlot() {
+    // final f = new DateFormat('yyyy-MM-dd hh:mm');
     print(selectedSlot.slotStrTime);
+    String strDate = new DateFormat.yMMMd().format(new DateTime.now());
+    print(strDate);
+    DateTime d = DateTime.parse(strDate);
+    print(d);
   }
 }

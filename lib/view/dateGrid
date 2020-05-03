@@ -1,0 +1,46 @@
+Row(
+                            children: <Widget>[
+                              Text('Stores opens on days: ',
+                                  style: lightSubTextStyle),
+                              Container(
+                                  child: new GridView.builder(
+                                itemCount: _dateList.length,
+                                gridDelegate:
+                                    SliverGridDelegateWithFixedCrossAxisCount(
+                                        crossAxisCount: 6,
+                                        crossAxisSpacing: 4.0,
+                                        mainAxisSpacing: 1.0),
+                                itemBuilder: (BuildContext context, int index) {
+                                  return new GridTile(
+                                    child: Container(
+                                      padding: EdgeInsets.all(4),
+                                      // decoration:
+                                      //     BoxDecoration(border: Border.all(color: Colors.black, width: 0.5)),
+                                      child: Center(
+                                        child: _buildDateGridItem(index),
+                                      ),
+                                    ),
+                                  );
+                                },
+                              )),
+                            ],
+                          )
+
+
+                           Widget _buildDateGridItem(int index) {
+    return new Container(
+        child: RaisedButton(
+            child: Text(dtFormat.format(_dateList[index])),
+            color: highlightColor,
+            shape: CircleBorder(),
+            onPressed: () {
+              print('DateBtnPressed');
+              print(dtFormat.format(dateTime));
+            }));
+  }
+
+  void _prepareDateList() {
+    for (int i = 0; i <= 6; i++) {
+      _dateList.add(dateTime.add(Duration(days: i)));
+    }
+  }

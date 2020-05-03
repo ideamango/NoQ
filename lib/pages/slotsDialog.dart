@@ -30,7 +30,6 @@ List<Slot> _slotList;
 Future<bool> showSlotsDialog(
     BuildContext context, List<Slot> slots, DateTime dateTime) {
   _slotList = slots;
-  dateTime = DateTime.now();
 
   return showDialog(
       context: context,

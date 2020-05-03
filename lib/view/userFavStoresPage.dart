@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:noq/dashboard.dart';
 import 'package:noq/models/localDB.dart';
 import 'package:noq/pages/slotsDialog.dart';
@@ -11,6 +12,7 @@ import 'package:noq/models/store.dart';
 import 'package:noq/services/color.dart';
 import 'package:noq/view/showSlotsPage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:intl/intl.dart';
 
 class UserFavStoresListPage extends StatefulWidget {
   @override
@@ -24,11 +26,21 @@ class _UserFavStoresListPageState extends State<UserFavStoresListPage> {
   UserAppData fUserProfile;
   bool isFavourited = true;
   DateTime dateTime = DateTime.now();
+  final dtFormat = new DateFormat('dd');
+  List<DateTime> _dateList = new List<DateTime>();
+  var dateWidgets = List<Widget>();
 
   @override
   void initState() {
     super.initState();
     _loadFavStores();
+    _prepareDateList();
+  }
+
+  void _prepareDateList() {
+    for (int i = 0; i <= 4; i++) {
+      _dateList.add(dateTime.add(Duration(days: i)));
+    }
   }
 
   void toggleFavorite(StoreAppData strData) {
@@ -45,17 +57,19 @@ class _UserFavStoresListPageState extends State<UserFavStoresListPage> {
   void _loadFavStores() async {
     //Load details from local files
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    int userId = prefs.getInt('userId');
+    String userId = prefs.getString('userId');
     //Fetch details from server
 
     await readData().then((fUser) {
       fUserProfile = fUser;
-      if (fUserProfile.favStores.length != 0) {
-        setState(() {
-          _favStoreStatus = 'Success';
+      if (fUserProfile.favStores != null) {
+        if (fUserProfile.favStores.length != 0) {
+          setState(() {
+            _favStoreStatus = 'Success';
 
-          _stores = fUserProfile.favStores;
-        });
+            _stores = fUserProfile.favStores;
+          });
+        }
       } else {
         setState(() {
           _favStoreStatus = 'NoFavStore';
@@ -73,7 +87,7 @@ class _UserFavStoresListPageState extends State<UserFavStoresListPage> {
     }
   }
 
-  void showSlots(int storeId, DateTime dateTime) {
+  void showSlots(String storeId, DateTime dateTime) {
     getSlotsForStore(storeId, dateTime).then((slotsList) {
       showSlotsDialog(context, slotsList, dateTime);
     });
@@ -105,16 +119,19 @@ class _UserFavStoresListPageState extends State<UserFavStoresListPage> {
   }
 
   Widget _buildItem(StoreAppData str) {
+    _buildDateGridItems(str.id);
     return Card(
         elevation: 10,
         child: new Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
             Column(
               children: <Widget>[
                 new Container(
                   margin: EdgeInsets.fromLTRB(10, 10, 5, 5),
                   padding: EdgeInsets.all(5),
-                  alignment: Alignment.center,
+                  alignment: Alignment.topCenter,
                   decoration: ShapeDecoration(
                     shape: CircleBorder(),
                     color: darkIcon,
@@ -166,6 +183,13 @@ class _UserFavStoresListPageState extends State<UserFavStoresListPage> {
                                   )
                                 ]),
                           ),
+                          Container(
+                            width: MediaQuery.of(context).size.width * .5,
+                            //padding: EdgeInsets.fromLTRB(0, 5, 5, 5),
+                            child: Row(
+                              children: dateWidgets,
+                            ),
+                          ),
                           Row(
                             children: <Widget>[
                               Text('Stores opens on days: ',
@@ -214,85 +238,126 @@ class _UserFavStoresListPageState extends State<UserFavStoresListPage> {
                     ),
                   ]),
             ]),
-            Column(children: <Widget>[
-              Container(
-                height: 22,
-                width: 20,
-                // margin: EdgeInsets.fromLTRB(10, 10, 5, 5),
-                // alignment: Alignment.topRight,
-                // decoration: ShapeDecoration(
-                //   shape: RoundedRectangleBorder(
-                //       borderRadius: BorderRadius.all(Radius.circular(6)),
-                //       side: BorderSide.none),
-                //   color: Theme.of(context).primaryColor,
-                // ),
-                child: IconButton(
-                  alignment: Alignment.topRight,
-                  //padding: EdgeInsets.all(2),
-                  onPressed: () => toggleFavorite(str),
-                  highlightColor: Colors.orange[300],
-                  iconSize: 16,
-                  icon: isFavourited
-                      ? Icon(
-                          Icons.star,
-                          color: darkIcon,
-                        )
-                      : Icon(
-                          Icons.star_border,
-                          color: darkIcon,
-                        ),
-                ),
-              ),
-              Container(
-                //margin: EdgeInsets.fromLTRB(20, 10, 5, 5),
-
-                height: 22.0,
-                width: 20.0,
-                //alignment: Alignment.center,
-                // decoration: ShapeDecoration(
-                //   shape: RoundedRectangleBorder(
-                //       borderRadius: BorderRadius.all(Radius.circular(4)),
-                //       side: BorderSide.none),
-                //   color: Theme.of(context).primaryColor,
-                // ),
-                child: IconButton(
-                  // padding: EdgeInsets.all(2),
-                  //iconSize: 14,
-                  alignment: Alignment.centerRight,
-                  highlightColor: Colors.orange[300],
-                  icon: Icon(
-                    Icons.location_on,
-                    color: darkIcon,
-                    size: 20,
-                  ),
-                  onPressed: () =>
-                      launchURL(str.name, str.adrs, str.lat, str.long),
-                ),
-              ),
-              Container(
-                width: 20.0,
-                height: 22.0,
-                // alignment: Alignment.center,
-                // decoration: ShapeDecoration(
-                //   shape: RoundedRectangleBorder(
-                //       borderRadius: BorderRadius.all(Radius.circular(2)),
-                //       side: BorderSide.none),
-                //   color: Theme.of(context).primaryColor,
-                // ),
-                child: IconButton(
-                    alignment: Alignment.bottomCenter,
-                    padding: EdgeInsets.all(2),
-                    iconSize: 25,
-                    highlightColor: highlightColor,
-                    icon: Icon(
-                      Icons.arrow_forward,
-                      color: darkIcon,
+            Column(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                  Container(
+                    margin: EdgeInsets.fromLTRB(0, 0, 10, 0),
+                    height: 22,
+                    width: 20,
+                    // margin: EdgeInsets.fromLTRB(10, 10, 5, 5),
+                    // alignment: Alignment.topRight,
+                    // decoration: ShapeDecoration(
+                    //   shape: RoundedRectangleBorder(
+                    //       borderRadius: BorderRadius.all(Radius.circular(6)),
+                    //       side: BorderSide.none),
+                    //   color: Theme.of(context).primaryColor,
+                    // ),
+                    child: IconButton(
+                      alignment: Alignment.topRight,
+                      //padding: EdgeInsets.all(2),
+                      onPressed: () => toggleFavorite(str),
+                      highlightColor: Colors.orange[300],
+                      iconSize: 16,
+                      icon: isFavourited
+                          ? Icon(
+                              Icons.star,
+                              color: darkIcon,
+                            )
+                          : Icon(
+                              Icons.star_border,
+                              color: darkIcon,
+                            ),
                     ),
-                    onPressed: () => showSlots(str.id, dateTime)),
-              )
-            ]),
+                  ),
+                  Container(
+                    //margin: EdgeInsets.fromLTRB(20, 10, 5, 5),
+
+                    height: 22.0,
+                    width: 20.0,
+                    //alignment: Alignment.center,
+                    // decoration: ShapeDecoration(
+                    //   shape: RoundedRectangleBorder(
+                    //       borderRadius: BorderRadius.all(Radius.circular(4)),
+                    //       side: BorderSide.none),
+                    //   color: Theme.of(context).primaryColor,
+                    // ),
+                    child: IconButton(
+                      // padding: EdgeInsets.all(2),
+                      //iconSize: 14,
+                      alignment: Alignment.centerRight,
+                      highlightColor: Colors.orange[300],
+                      icon: Icon(
+                        Icons.location_on,
+                        color: darkIcon,
+                        size: 20,
+                      ),
+                      onPressed: () =>
+                          launchURL(str.name, str.adrs, str.lat, str.long),
+                    ),
+                  ),
+                  // Container(
+                  //   width: 20.0,
+                  //   height: 22.0,
+                  //   // alignment: Alignment.center,
+                  //   // decoration: ShapeDecoration(
+                  //   //   shape: RoundedRectangleBorder(
+                  //   //       borderRadius: BorderRadius.all(Radius.circular(2)),
+                  //   //       side: BorderSide.none),
+                  //   //   color: Theme.of(context).primaryColor,
+                  //   // ),
+                  //   child: IconButton(
+                  //       alignment: Alignment.bottomCenter,
+                  //       padding: EdgeInsets.all(2),
+                  //       iconSize: 25,
+                  //       highlightColor: highlightColor,
+                  //       icon: Icon(
+                  //         Icons.arrow_forward,
+                  //         color: darkIcon,
+                  //       ),
+                  //       onPressed: () => showSlots(str.id, dateTime)),
+                  // ),
+                ]),
           ],
         ));
+  }
+
+  void _buildDateGridItems(String sid) {
+    for (var date in _dateList) {
+      dateWidgets.add(buildDateItem(sid, date, 'Mon'));
+    }
+  }
+
+  Widget buildDateItem(String sid, DateTime dt, String text) {
+    Widget dtItem = Container(
+      margin: EdgeInsets.all(2),
+      child: SizedBox.fromSize(
+        size: Size(34, 34), // button width and height
+        child: ClipOval(
+          child: Material(
+            color: Colors.indigo, // button color
+            child: InkWell(
+              splashColor: highlightColor, // splash color
+              onTap: () {
+                print("tapped");
+                showSlots(sid, dt);
+              }, // button pressed
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Text(dtFormat.format(dt),
+                      style: TextStyle(fontSize: 15, color: Colors.white)),
+                  Text(text,
+                      style:
+                          TextStyle(fontSize: 8, color: Colors.white)), // text
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+    return dtItem;
   }
 
 // class FavoritesStores {

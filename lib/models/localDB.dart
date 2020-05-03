@@ -3,7 +3,7 @@ part 'localDB.g.dart';
 
 @JsonSerializable()
 class UserAppData {
-  final int id;
+  final String id;
   final String name;
   final String phone;
   final String adrs;
@@ -34,13 +34,14 @@ class UserAppData {
 
 @JsonSerializable()
 class StoreAppData {
-  final int id;
+  final String id;
   final String name;
   final String adrs;
   final double lat;
   final double long;
   final String opensAt;
   final String closesAt;
+
   final List<String> daysClosed;
   final bool insideAptFlg;
   bool isFavourite;
