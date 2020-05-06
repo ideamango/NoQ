@@ -5,6 +5,7 @@ import 'package:noq/repository/StoreRepository.dart';
 import 'package:noq/repository/slotRepository.dart';
 import 'package:noq/services/mapService.dart';
 import 'package:noq/utils.dart';
+import 'package:noq/view/SearchStoresPage.dart';
 import 'style.dart';
 import 'models/store.dart';
 import 'view/allPagesWidgets.dart';
@@ -75,7 +76,7 @@ class _LandingPageState extends State<LandingPage> {
   bool isFavourited = false;
   DateTime dateTime = DateTime.now();
   final dtFormat = new DateFormat('dd');
-  final dtFormatSlot = new DateFormat('EEE, MMM d');
+
   List<DateTime> _dateList = new List<DateTime>();
 
   void navigationTapped(int page) {
@@ -216,6 +217,7 @@ class _LandingPageState extends State<LandingPage> {
                 _shareApp(),
                 _userHomePage(),
                 _storesListPage(),
+                //SearchStoresPage(),
                 _userAccount(),
               ],
             ),
@@ -542,9 +544,11 @@ class _LandingPageState extends State<LandingPage> {
 
   void showSlots(String storeId, String storeName, DateTime dateTime) {
     //_prefs = await SharedPreferences.getInstance();
-    String dateFormatted = dtFormatSlot.format(dateTime);
+    String dateForSlot = dateTime.toString();
+
     _prefs.setString("storeName", storeName);
-    _prefs.setString("dateFormatted", dateFormatted);
+    _prefs.setString("storeIdForSlots", storeId);
+    _prefs.setString("dateForSlot", dateForSlot);
     getSlotsForStore(storeId, dateTime).then((slotsList) {
       showSlotsDialog(context, slotsList, dateTime);
     });

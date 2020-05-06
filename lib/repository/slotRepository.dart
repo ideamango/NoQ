@@ -32,11 +32,8 @@ Future<List<Slot>> getSlotsForStore(String storeId, DateTime dateTime) async {
   return slots;
 }
 
-Future<bool> bookSlotForStore(
-    String storeId, Slot slot, DateTime dateTime) async {
-  Slot slot;
-  String resBody;
-  String reqBody;
+Future<String> bookSlotForStore(
+    String storeId, String userId, String slot, DateTime dateTime) async {
   // String jsonString =
   //     '[{"id": "1", "storeId": "21","slotStrTime": "9:00","slotEndTime": "9:30","slotAvlFlg": "true","slotSelected":"false"},{"id": "2", "storeId": "21","slotStrTime": "9:30","slotEndTime": "10:00","slotAvlFlg": "true","slotSelected":"false"},{"id": "3", "storeId": "21","slotStrTime": "10:00","slotEndTime": "10:30","slotAvlFlg": "false","slotSelected":"false"},{"id": "4", "storeId": "21","slotStrTime": "10:30","slotEndTime": "11:00","slotAvlFlg": "true","slotSelected":"false"}]';
 
@@ -58,5 +55,5 @@ Future<bool> bookSlotForStore(
   // var resSlots = data as List;
 
   // slots = resSlots.map((slot) => Slot.fromJSON(slot)).toList();
-  return true;
+  return "tok123";
 }

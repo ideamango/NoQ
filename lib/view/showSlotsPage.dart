@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:noq/models/localDB.dart';
 import 'package:noq/models/slot.dart';
+import 'package:noq/pages/progress_indicator.dart';
+import 'package:noq/pages/token_alert.dart';
 import 'package:noq/repository/slotRepository.dart';
 
 import 'package:noq/services/mapService.dart';
@@ -9,6 +11,9 @@ import 'package:noq/models/store.dart';
 import 'package:noq/services/color.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:intl/intl.dart';
+import 'package:progress_dialog/progress_dialog.dart';
+
+import '../constants.dart';
 
 class ShowSlotsPage extends StatefulWidget {
   @override
@@ -17,14 +22,19 @@ class ShowSlotsPage extends StatefulWidget {
 
 class _ShowSlotsPageState extends State<ShowSlotsPage> {
   String _storeId;
+  String _token;
   String _errorMessage;
   DateTime _date;
+  String _dateFormatted;
   String dt;
   List<Slot> _slotList;
   final dateFormat = new DateFormat('dd');
   Slot selectedSlot;
   String _storeName;
-  String _dateFormatted;
+  String _userId;
+  String _strDateForSlot;
+  bool _showProgressInd = false;
+  ProgressDialog pr;
   @override
   void initState() {
     //dt = dateFormat.format(DateTime.now());
@@ -36,8 +46,14 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
     //Load details from local files
     SharedPreferences prefs = await SharedPreferences.getInstance();
     _storeId = prefs.getString('storeIdForSlots');
+    //_userId = prefs.getString('userId');
     _storeName = prefs.getString("storeName");
-    _dateFormatted = prefs.getString("dateFormatted");
+    //Get date to fetch available slots for this date.
+    _strDateForSlot = prefs.getString("dateForSlot");
+    _date = DateTime.parse(_strDateForSlot);
+    //Format date to display in UI
+    final dtFormat = new DateFormat(dateDisplayFormat);
+    _dateFormatted = dtFormat.format(_date);
 
     //Fetch details from server
 
@@ -59,6 +75,12 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
 
   @override
   Widget build(BuildContext context) {
+    pr = new ProgressDialog(context);
+    pr.style(
+      message: 'Please wait...',
+      backgroundColor: Colors.amber[50],
+      elevation: 10.0,
+    );
     if (_slotList != null) {
       return new AlertDialog(
         title: Column(
@@ -103,7 +125,7 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
                   // decoration:
                   //     BoxDecoration(border: Border.all(color: Colors.black, width: 0.5)),
                   child: Center(
-                    child: _buildGridItem(index),
+                    child: _buildGridItem(context, index),
                   ),
                 ),
               );
@@ -144,7 +166,7 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
     }
   }
 
-  Widget _buildGridItem(int index) {
+  Widget _buildGridItem(BuildContext context, int index) {
     Slot sl = _slotList[index];
 
     return RaisedButton(
@@ -195,11 +217,32 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
   }
 
   void bookSlot() {
-    // final f = new DateFormat('yyyy-MM-dd hh:mm');
-    print(selectedSlot.slotStrTime);
-    String strDate = new DateFormat.yMMMd().format(new DateTime.now());
-    print(strDate);
-    DateTime d = DateTime.parse(strDate);
-    print(d);
+    String tokenText;
+
+    setState(() {
+      _showProgressInd = true;
+    });
+
+    //pr.show();
+
+    // Future.delayed(Duration(seconds: 1)).then((value) {
+    //   pr.hide().whenComplete(() {
+    bookSlotForStore(_storeId, _userId, selectedSlot.slotStrTime, _date)
+        .then((value) {
+      _token = value;
+      // tokenText = _token + '-' + _storeName + '-' + selectedSlot.slotStrTime;
+      Navigator.of(context).pop();
+      //Navigator.push(context,
+      // MaterialPageRoute(builder: (context) => ShowTokenAlert()));
+      showTokenAlert(context, _token, _storeName, selectedSlot.slotStrTime);
+    });
   }
+  // );
+  //   }
+  //   );
+
+  //   // Call Repository method for getting token number.
+
+  //   //Navigator.of(_keyLoader.currentContext, rootNavigator: true).pop();
+  // }
 }

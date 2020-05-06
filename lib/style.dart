@@ -17,6 +17,14 @@ final buttonTextStyle = TextStyle(
   fontSize: 20,
   //height: 2,
 );
+final whiteBoldTextStyle = TextStyle(
+  color: Colors.white,
+  fontWeight: FontWeight.w800,
+  fontFamily: 'Montserrat-Regular',
+  letterSpacing: 0.5,
+  fontSize: 20,
+  //height: 2,
+);
 final buttonSmlTextStyle = TextStyle(
   color: Colors.white,
   //fontWeight: FontWeight.w800,
@@ -69,6 +77,11 @@ final headingTextStyle = TextStyle(
     fontSize: 15.0);
 final Color darkIcon = Colors.indigo;
 final Color lightIcon = Colors.indigo;
+final Color highlightText = Colors.indigo;
+final highlightSubTextStyle = TextStyle(
+    color: Colors.blueGrey[800], fontFamily: 'Montserrat', fontSize: 12.0);
+final highlightTextStyle =
+    TextStyle(color: Colors.indigo, fontFamily: 'Montserrat', fontSize: 20.0);
 
 final Color highlightColor = Colors.amber[600];
 final Color unselectedColor = Colors.blueGrey[700];

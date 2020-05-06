@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:noq/dashboard.dart';
 import 'package:noq/login_page.dart';
 import 'package:noq/push_notifications.dart';
+import 'package:noq/view/init_screen.dart';
 
 import 'services/authService.dart';
 
@@ -42,7 +43,8 @@ class MyApp extends StatelessWidget {
               color: Colors.indigo, fontSize: 14.0, fontFamily: 'Monsterrat'),
         ),
       ),
-      home: AuthService().handleAuth(),
+      home: SplashScreen(),
+      // home: AuthService().handleAuth(),
     );
   }
 }
