@@ -89,7 +89,9 @@ class _UserFavStoresListPageState extends State<UserFavStoresListPage> {
 
   void showSlots(String storeId, DateTime dateTime) {
     getSlotsForStore(storeId, dateTime).then((slotsList) {
-      showSlotsDialog(context, slotsList, dateTime);
+      showSlotsDialog(context, slotsList, dateTime).then((val) {
+        print('Retuen value from show dialog: $val');
+      });
     });
   }
 

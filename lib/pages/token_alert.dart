@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../style.dart';
 
@@ -36,7 +37,7 @@ class _ShowTokenAlertState extends State<ShowTokenAlert> {
   }
 }
 
-Future<bool> showTokenAlert(
+Future<String> showTokenAlert(
     BuildContext context, String tokenNo, String storeName, String time) {
   return showDialog(
       context: context,
@@ -67,7 +68,7 @@ Future<bool> showTokenAlert(
                     ),
                     child: Text(tokenNo, style: whiteBoldTextStyle),
                   ),
-                  Text("Be on time for $storeName at $time.",
+                  Text("Show up on time to $storeName at $time.",
                       style: highlightSubTextStyle),
                 ],
               )),
@@ -81,12 +82,15 @@ Future<bool> showTokenAlert(
                 textColor: Colors.white,
                 child: Text('Ok'),
                 onPressed: () {
-                  Navigator.of(context).pop();
-                  // Navigator.of(context).pushReplacement(StoreLiPage());
+                  //Navigator.of(context).pushReplacement(StoreLiPage());
+                  Navigator.of(context).pop(tokenNo);
                 },
               ),
             ),
           ],
         );
-      });
+      }).then((val) {
+    print(val);
+    return val;
+  });
 }

@@ -75,7 +75,11 @@ Map<String, dynamic> _$StoreAppDataToJson(StoreAppData instance) =>
 
 BookingAppData _$BookingAppDataFromJson(Map<String, dynamic> json) {
   return BookingAppData(
+    json['storeId'] as String,
     json['storeName'] as String,
+    json['bookingDate'] == null
+        ? null
+        : DateTime.parse(json['bookingDate'] as String),
     json['timing'] as String,
     json['tokenNum'] as String,
     json['status'] as String,
@@ -84,7 +88,9 @@ BookingAppData _$BookingAppDataFromJson(Map<String, dynamic> json) {
 
 Map<String, dynamic> _$BookingAppDataToJson(BookingAppData instance) =>
     <String, dynamic>{
+      'storeId': instance.storeId,
       'storeName': instance.storeName,
+      'bookingDate': instance.bookingDate?.toIso8601String(),
       'timing': instance.timing,
       'tokenNum': instance.tokenNum,
       'status': instance.status,

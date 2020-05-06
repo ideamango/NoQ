@@ -30,6 +30,7 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
   List<Slot> _slotList;
   final dateFormat = new DateFormat('dd');
   Slot selectedSlot;
+  Slot bookedSlot;
   String _storeName;
   String _userId;
   String _strDateForSlot;
@@ -54,6 +55,8 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
     //Format date to display in UI
     final dtFormat = new DateFormat(dateDisplayFormat);
     _dateFormatted = dtFormat.format(_date);
+
+    //Get booked slots
 
     //Fetch details from server
 
@@ -136,16 +139,6 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
         // SizedBox(height: 10),
 
         actions: <Widget>[
-          // FlatButton(
-          //   color: Colors.orange,
-          //   textColor: Colors.white,
-          //   child: Text('Clear All'),
-          //   onPressed: () {
-          //     setState(() {
-          //       selectedSlot = null;
-          //     });
-          //   },
-          // ),
           RaisedButton(
             elevation: 12.0,
             color: (selectedSlot != null) ? Colors.orange : Colors.grey,
@@ -180,9 +173,11 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
       ),
 
       autofocus: false,
-      color: (sl.slotAvlFlg == "true" && sl.slotSelected == "true")
-          ? highlightColor
-          : (sl.slotAvlFlg == "false") ? Colors.grey : Colors.indigo,
+      color: (sl.slotBooked == true)
+          ? Colors.green
+          : ((sl.slotAvlFlg == "true" && sl.slotSelected == "true")
+              ? highlightColor
+              : (sl.slotAvlFlg == "false") ? Colors.grey : Colors.indigo),
       textColor: Colors.indigo[800],
       disabledColor: Colors.grey,
       //textTheme: ButtonTextTheme.normal,
@@ -217,8 +212,6 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
   }
 
   void bookSlot() {
-    String tokenText;
-
     setState(() {
       _showProgressInd = true;
     });
@@ -230,19 +223,26 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
     bookSlotForStore(_storeId, _userId, selectedSlot.slotStrTime, _date)
         .then((value) {
       _token = value;
-      // tokenText = _token + '-' + _storeName + '-' + selectedSlot.slotStrTime;
-      Navigator.of(context).pop();
-      //Navigator.push(context,
-      // MaterialPageRoute(builder: (context) => ShowTokenAlert()));
-      showTokenAlert(context, _token, _storeName, selectedSlot.slotStrTime);
+
+      showTokenAlert(context, _token, _storeName, selectedSlot.slotStrTime)
+          .then((value) {
+        _returnValues(value);
+        bookedSlot = selectedSlot;
+        setState(() {
+          selectedSlot.slotBooked = true;
+        });
+//Update local file with new booking.
+
+        String returnVal = value + '-' + selectedSlot.slotStrTime;
+        Navigator.of(context).pop(returnVal);
+        // print(value);
+      });
     });
   }
-  // );
-  //   }
-  //   );
 
-  //   // Call Repository method for getting token number.
-
-  //   //Navigator.of(_keyLoader.currentContext, rootNavigator: true).pop();
-  // }
+  void _returnValues(String value) async {
+    //Load details from local files
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setString('tokenNum', value);
+  }
 }

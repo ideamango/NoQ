@@ -82,12 +82,15 @@ class StoreAppData {
 
 @JsonSerializable()
 class BookingAppData {
+  String storeId;
   String storeName;
+  DateTime bookingDate;
   String timing;
   String tokenNum;
   String status;
 
-  BookingAppData(this.storeName, this.timing, this.tokenNum, this.status);
+  BookingAppData(this.storeId, this.storeName, this.bookingDate, this.timing,
+      this.tokenNum, this.status);
   factory BookingAppData.fromJson(Map<String, dynamic> json) =>
       _$BookingAppDataFromJson(json);
 

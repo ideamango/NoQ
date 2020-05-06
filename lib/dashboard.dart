@@ -6,6 +6,7 @@ import 'package:noq/repository/slotRepository.dart';
 import 'package:noq/services/mapService.dart';
 import 'package:noq/utils.dart';
 import 'package:noq/view/SearchStoresPage.dart';
+import 'package:noq/view/showSlotsPage.dart';
 import 'style.dart';
 import 'models/store.dart';
 import 'view/allPagesWidgets.dart';
@@ -84,29 +85,30 @@ class _LandingPageState extends State<LandingPage> {
   }
 
   _initializeUserProfile() async {
-//Read data from file and then validate phone number - if same,load all other details
+    var userProfile;
+//Read data from global variables
+    _prefs = await SharedPreferences.getInstance();
+    _phone = _prefs.getString("phone");
+    // _userName = _prefs.getString("userName");
+    // _userId = _prefs.getString("userId");
+    //_userAdrs = _prefs.getString("userAdrs");
+
+//Fetch data from file and then validate phone number - if same,load all other details
     await readData().then((fUser) {
       fUserProfile = fUser;
     });
 
-    var userProfile;
-    _prefs = await SharedPreferences.getInstance();
-    _phone = _prefs.getString("phone");
-    _userName = _prefs.getString("userName");
-    _userId = _prefs.getString("userId");
-    _userAdrs = _prefs.getString("userAdrs");
-
     if (fUserProfile != null) {
       userProfile = fUserProfile;
     }
-    // else {
+    //  else {
     //   //TODO:fetch from server
 
     //Save in local DB objects and file for perusal.
     // writeData(_userProfile);
     //   _prefs.setString("userName", _userName);
     // _prefs.setString("userId", _userId);
-    // }
+    //}
 
     else {
       //If not on server then create new user object.
@@ -120,7 +122,10 @@ class _LandingPageState extends State<LandingPage> {
       //     'IKEA', '12:00am,-12:30am', 'T1-9844969', 'expired'));
       // upcomingBookings.add(
       //     new BookingAppData('Vijetha', '9:00a,-9:30am', 'T0-1231234', 'new'));
-
+      //REMOVE default values
+      _userId = "ForTesting123";
+      _userName = 'User';
+      _userAdrs = 'UserAdrs';
       userProfile = new UserAppData(
           _userId,
           _userName,
@@ -134,6 +139,7 @@ class _LandingPageState extends State<LandingPage> {
     setState(() {
       _userProfile = userProfile;
     });
+    //write userProfile to file
     writeData(_userProfile);
 
     setState(() {
@@ -142,8 +148,6 @@ class _LandingPageState extends State<LandingPage> {
     });
     _prefs.setString("userName", _userName);
     _prefs.setString("userId", _userId);
-
-    //write userProfile to file
 
     print('UserProfile in file $_userProfile');
 
@@ -549,8 +553,33 @@ class _LandingPageState extends State<LandingPage> {
     _prefs.setString("storeName", storeName);
     _prefs.setString("storeIdForSlots", storeId);
     _prefs.setString("dateForSlot", dateForSlot);
-    getSlotsForStore(storeId, dateTime).then((slotsList) {
-      showSlotsDialog(context, slotsList, dateTime);
+    getSlotsForStore(storeId, dateTime).then((slotsList) async {
+      // Navigator.push(
+      //   context,
+      //   MaterialPageRoute(builder: (context) => showSlotsDialog(context, slotsList, dateTime)),
+      // );
+
+      // showSlotsDialog(context, slotsList, dateTime);
+      //return
+      String val = await showDialog(
+          context: context,
+          barrierDismissible: true,
+          builder: (BuildContext context) {
+            return StatefulBuilder(builder: (context, setState) {
+              return ShowSlotsPage();
+            });
+          });
+      if (val != null) {
+        //Add Slot booking in user data, Save locally
+        print('Upcoming bookings');
+        List<String> s = val.split("-");
+        BookingAppData upcomingBooking =
+            new BookingAppData(storeId, storeName, dateTime, s[1], s[0], "New");
+        setState(() {
+          (_userProfile as UserAppData).upcomingBookings.add(upcomingBooking);
+        });
+      }
+      print('After showDialog: $val');
     });
   }
 
