@@ -74,9 +74,9 @@ class _LandingPageState extends State<LandingPage> {
   String _userId;
   String _userAdrs;
 
-  bool isFavourited = false;
   DateTime dateTime = DateTime.now();
   final dtFormat = new DateFormat('dd');
+  final compareDateFormat = new DateFormat('YYYYMMDD');
 
   List<DateTime> _dateList = new List<DateTime>();
 
@@ -173,16 +173,26 @@ class _LandingPageState extends State<LandingPage> {
     }
   }
 
-  void modifyStoreList(StoreAppData strData) {}
+  void updateFavStores(StoreAppData strData) {
+    UserAppData user = _userProfile as UserAppData;
+    for (StoreAppData store in user.favStores) {
+      if (store.id == strData.id) {
+        user.favStores.remove(store);
+      } else {
+        user.favStores.add(store);
+      }
+    }
+    writeData(user);
+  }
+
   void toggleFavorite(StoreAppData strData) {
     setState(() {
-      isFavourited = !isFavourited;
+      strData.isFavourite = !strData.isFavourite;
       if (strData.isFavourite == true) {
         (_userProfile as UserAppData).favStores.add(strData);
       }
-      // widget.onFavoriteChanged(isFavourited);
     });
-    modifyStoreList(strData);
+    updateFavStores(strData);
   }
 
   @override
@@ -349,7 +359,7 @@ class _LandingPageState extends State<LandingPage> {
       child: Container(
         margin: EdgeInsets.fromLTRB(10, 10, 10, 10),
         child: ListView.builder(
-            itemCount: _stores.length,
+            itemCount: 1,
             itemBuilder: (BuildContext context, int index) {
               return Container(
                 child: new Column(children: _stores.map(_buildItem).toList()),
@@ -462,85 +472,49 @@ class _LandingPageState extends State<LandingPage> {
                     ),
                   ]),
             ]),
-            Column(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            Column(mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                // crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
                   Container(
                     margin: EdgeInsets.fromLTRB(0, 0, 10, 0),
                     height: 22,
                     width: 20,
-                    // margin: EdgeInsets.fromLTRB(10, 10, 5, 5),
-                    // alignment: Alignment.topRight,
-                    // decoration: ShapeDecoration(
-                    //   shape: RoundedRectangleBorder(
-                    //       borderRadius: BorderRadius.all(Radius.circular(6)),
-                    //       side: BorderSide.none),
-                    //   color: Theme.of(context).primaryColor,
-                    // ),
                     child: IconButton(
                       alignment: Alignment.topRight,
-                      //padding: EdgeInsets.all(2),
                       onPressed: () => toggleFavorite(str),
                       highlightColor: Colors.orange[300],
                       iconSize: 16,
-                      icon: !isFavourited
+                      icon: str.isFavourite
                           ? Icon(
-                              Icons.star,
-                              color: darkIcon,
+                              Icons.favorite,
+                              color: Colors.red[800],
                             )
                           : Icon(
-                              Icons.star_border,
-                              color: darkIcon,
+                              Icons.favorite_border,
+                              color: Colors.red[800],
                             ),
                     ),
                   ),
                   Container(
-                    //margin: EdgeInsets.fromLTRB(20, 10, 5, 5),
-
+                    width: 20,
+                    height: 40,
+                  ),
+                  Container(
+                    margin: EdgeInsets.fromLTRB(0, 0, 15, 0),
                     height: 22.0,
                     width: 20.0,
-                    //alignment: Alignment.center,
-                    // decoration: ShapeDecoration(
-                    //   shape: RoundedRectangleBorder(
-                    //       borderRadius: BorderRadius.all(Radius.circular(4)),
-                    //       side: BorderSide.none),
-                    //   color: Theme.of(context).primaryColor,
-                    // ),
                     child: IconButton(
-                      // padding: EdgeInsets.all(2),
-                      //iconSize: 14,
-                      alignment: Alignment.centerRight,
+                      alignment: Alignment.bottomRight,
                       highlightColor: Colors.orange[300],
                       icon: Icon(
                         Icons.location_on,
                         color: darkIcon,
-                        size: 20,
+                        size: 25,
                       ),
                       onPressed: () =>
                           launchURL(str.name, str.adrs, str.lat, str.long),
                     ),
                   ),
-                  // Container(
-                  //   width: 20.0,
-                  //   height: 22.0,
-                  //   // alignment: Alignment.center,
-                  //   // decoration: ShapeDecoration(
-                  //   //   shape: RoundedRectangleBorder(
-                  //   //       borderRadius: BorderRadius.all(Radius.circular(2)),
-                  //   //       side: BorderSide.none),
-                  //   //   color: Theme.of(context).primaryColor,
-                  //   // ),
-                  //   child: IconButton(
-                  //       alignment: Alignment.bottomCenter,
-                  //       padding: EdgeInsets.all(2),
-                  //       iconSize: 25,
-                  //       highlightColor: highlightColor,
-                  //       icon: Icon(
-                  //         Icons.arrow_forward,
-                  //         color: darkIcon,
-                  //       ),
-                  //       onPressed: () => showSlots(str.id, dateTime)),
-                  // ),
                 ]),
           ],
         ));
@@ -578,6 +552,7 @@ class _LandingPageState extends State<LandingPage> {
         setState(() {
           (_userProfile as UserAppData).upcomingBookings.add(upcomingBooking);
         });
+        writeData(_userProfile);
       }
       print('After showDialog: $val');
     });
@@ -600,13 +575,28 @@ class _LandingPageState extends State<LandingPage> {
 
   Widget buildDateItem(
       String sid, String sname, bool isClosed, DateTime dt, String dayOfWeek) {
+    bool dateBooked = false;
+    UserAppData user = _userProfile as UserAppData;
+    for (BookingAppData obj in (user.upcomingBookings)) {
+      if ((compareDateFormat
+                  .format(dt)
+                  .compareTo(compareDateFormat.format(obj.bookingDate)) ==
+              0) &&
+          (obj.storeId == sid)) {
+        dateBooked = true;
+      }
+    }
     Widget dtItem = Container(
       margin: EdgeInsets.all(2),
       child: SizedBox.fromSize(
         size: Size(34, 34), // button width and height
         child: ClipOval(
           child: Material(
-            color: isClosed ? Colors.grey : Colors.lightGreen, // button color
+            color: isClosed
+                ? Colors.grey
+                : (dateBooked
+                    ? highlightColor
+                    : Colors.lightGreen), // button color
             child: InkWell(
               splashColor: isClosed ? null : highlightColor, // splash color
               onTap: () {

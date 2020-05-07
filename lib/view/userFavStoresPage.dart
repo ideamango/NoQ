@@ -109,7 +109,7 @@ class _UserFavStoresListPageState extends State<UserFavStoresListPage> {
       child: Container(
         margin: EdgeInsets.fromLTRB(10, 10, 10, 10),
         child: ListView.builder(
-            itemCount: _stores.length,
+            itemCount: 1,
             itemBuilder: (BuildContext context, int index) {
               return Container(
                 child: new Column(children: _stores.map(_buildItem).toList()),
