@@ -60,7 +60,6 @@ class _LandingPageState extends State<LandingPage> {
     // },
   ];
   //Getting dummy list of stores from store class and storing in local variable
-
   List<StoreAppData> _stores = getDummyList();
   int i;
   var _userProfile;
@@ -182,6 +181,7 @@ class _LandingPageState extends State<LandingPage> {
         user.favStores.add(store);
       }
     }
+
     writeData(user);
   }
 
@@ -190,9 +190,11 @@ class _LandingPageState extends State<LandingPage> {
       strData.isFavourite = !strData.isFavourite;
       if (strData.isFavourite == true) {
         (_userProfile as UserAppData).favStores.add(strData);
+      } else {
+        (_userProfile as UserAppData).favStores.remove(strData);
       }
+      writeData(_userProfile);
     });
-    updateFavStores(strData);
   }
 
   @override
@@ -224,14 +226,14 @@ class _LandingPageState extends State<LandingPage> {
               children: <Widget>[
                 _userAccount(),
                 _userBookingPage(),
-                _userFavStores(),
+                SearchStoresPage(forPage: 'Favourite'),
                 _userNotifications(),
                 _rateApp(),
                 _needHelp(),
                 _shareApp(),
                 _userHomePage(),
-                _storesListPage(),
-                //SearchStoresPage(),
+                //_storesListPage(),
+                SearchStoresPage(forPage: 'Search'),
                 _userAccount(),
               ],
             ),
@@ -355,6 +357,7 @@ class _LandingPageState extends State<LandingPage> {
   }
 
   Widget _storesListPage() {
+    // List<StoreAppData> _stores = getDummyList();
     return Center(
       child: Container(
         margin: EdgeInsets.fromLTRB(10, 10, 10, 10),
@@ -378,144 +381,157 @@ class _LandingPageState extends State<LandingPage> {
         elevation: 10,
         child: new Row(
           crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          // mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
-            Column(
-              children: <Widget>[
-                new Container(
-                  margin: EdgeInsets.fromLTRB(10, 10, 5, 5),
-                  padding: EdgeInsets.all(5),
-                  alignment: Alignment.topCenter,
-                  decoration: ShapeDecoration(
-                    shape: CircleBorder(),
-                    color: darkIcon,
-                  ),
-                  child: Icon(
-                    Icons.shopping_cart,
-                    color: Colors.white,
-                    size: 20,
-                  ),
-                )
-              ],
+            Container(
+              width: MediaQuery.of(context).size.width * .1,
+              child: Column(
+                children: <Widget>[
+                  new Container(
+                    margin: EdgeInsets.fromLTRB(10, 10, 5, 5),
+                    padding: EdgeInsets.all(5),
+                    alignment: Alignment.topCenter,
+                    decoration: ShapeDecoration(
+                      shape: CircleBorder(),
+                      color: darkIcon,
+                    ),
+                    child: Icon(
+                      Icons.shopping_cart,
+                      color: Colors.white,
+                      size: 20,
+                    ),
+                  )
+                ],
+              ),
             ),
-            Column(children: <Widget>[
-              Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    new Container(
-                      padding: EdgeInsets.fromLTRB(10.0, 5.0, 0, 0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          Container(
-                            padding: EdgeInsets.fromLTRB(0, 5, 5, 5),
-                            child: Column(
+            Container(
+              width: MediaQuery.of(context).size.width * .7,
+              child: Column(children: <Widget>[
+                Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      new Container(
+                        padding: EdgeInsets.fromLTRB(10.0, 5.0, 0, 0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            Container(
+                              padding: EdgeInsets.fromLTRB(0, 5, 5, 5),
+                              child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  children: [
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      // crossAxisAlignment: CrossAxisAlignment.center,
+                                      children: <Widget>[
+                                        Text(
+                                          str.name.toString(),
+                                        ),
+                                      ],
+                                    ),
+                                    Row(
+                                      mainAxisAlignment: MainAxisAlignment.end,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: <Widget>[
+                                        Text(
+                                          str.adrs,
+                                          style: lightSubTextStyle,
+                                        ),
+                                      ],
+                                    )
+                                  ]),
+                            ),
+                            Container(
+                              width: MediaQuery.of(context).size.width * .5,
+                              //padding: EdgeInsets.fromLTRB(0, 5, 5, 5),
+                              child: Row(
+                                children: _buildDateGridItems(
+                                    str.id, str.name, str.daysClosed),
+                              ),
+                            ),
+                            Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
                                 crossAxisAlignment: CrossAxisAlignment.start,
-                                mainAxisAlignment: MainAxisAlignment.start,
                                 children: [
                                   Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    // crossAxisAlignment: CrossAxisAlignment.center,
-                                    children: <Widget>[
-                                      Text(
-                                        str.name.toString(),
-                                      ),
+                                    //mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                    children: [
+                                      //Icon(Icons.play_circle_filled, color: Colors.blueGrey[300]),
+                                      Text('Opens at:', style: labelTextStyle),
+                                      Text(str.opensAt,
+                                          style: lightSubTextStyle),
                                     ],
                                   ),
+                                  Container(child: Text('   ')),
                                   Row(
-                                    mainAxisAlignment: MainAxisAlignment.end,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: <Widget>[
-                                      Text(
-                                        str.adrs,
-                                      ),
+                                    children: [
+                                      //Icon(Icons.pause_circle_filled, color: Colors.blueGrey[300]),
+                                      Text('Closes at:', style: labelTextStyle),
+                                      Text(str.closesAt,
+                                          style: lightSubTextStyle),
                                     ],
-                                  )
+                                  ),
                                 ]),
-                          ),
-                          Container(
-                            width: MediaQuery.of(context).size.width * .5,
-                            //padding: EdgeInsets.fromLTRB(0, 5, 5, 5),
-                            child: Row(
-                              children: _buildDateGridItems(
-                                  str.id, str.name, str.daysClosed),
-                            ),
-                          ),
-                          Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Row(
-                                  //mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                  children: [
-                                    //Icon(Icons.play_circle_filled, color: Colors.blueGrey[300]),
-                                    Text('Opens at:', style: labelTextStyle),
-                                    Text(str.opensAt, style: lightSubTextStyle),
-                                  ],
-                                ),
-                                Container(child: Text('   ')),
-                                Row(
-                                  children: [
-                                    //Icon(Icons.pause_circle_filled, color: Colors.blueGrey[300]),
-                                    Text('Closes at:', style: labelTextStyle),
-                                    Text(str.closesAt,
-                                        style: lightSubTextStyle),
-                                  ],
-                                ),
-                              ]),
-                        ],
+                          ],
+                        ),
+                      ),
+                    ]),
+              ]),
+            ),
+            Container(
+              width: MediaQuery.of(context).size.width * .1,
+              child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  // crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Container(
+                      margin: EdgeInsets.fromLTRB(0, 0, 10, 0),
+                      height: 22,
+                      width: 20,
+                      child: IconButton(
+                        alignment: Alignment.topRight,
+                        onPressed: () => toggleFavorite(str),
+                        highlightColor: Colors.orange[300],
+                        iconSize: 16,
+                        icon: str.isFavourite
+                            ? Icon(
+                                Icons.favorite,
+                                color: Colors.red[800],
+                              )
+                            : Icon(
+                                Icons.favorite_border,
+                                color: Colors.red[800],
+                              ),
+                      ),
+                    ),
+                    Container(
+                      width: 20,
+                      height: 40,
+                    ),
+                    Container(
+                      margin: EdgeInsets.fromLTRB(0, 0, 15, 0),
+                      height: 22.0,
+                      width: 20.0,
+                      child: IconButton(
+                        alignment: Alignment.bottomRight,
+                        highlightColor: Colors.orange[300],
+                        icon: Icon(
+                          Icons.location_on,
+                          color: darkIcon,
+                          size: 25,
+                        ),
+                        onPressed: () =>
+                            launchURL(str.name, str.adrs, str.lat, str.long),
                       ),
                     ),
                   ]),
-            ]),
-            Column(mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                // crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Container(
-                    margin: EdgeInsets.fromLTRB(0, 0, 10, 0),
-                    height: 22,
-                    width: 20,
-                    child: IconButton(
-                      alignment: Alignment.topRight,
-                      onPressed: () => toggleFavorite(str),
-                      highlightColor: Colors.orange[300],
-                      iconSize: 16,
-                      icon: str.isFavourite
-                          ? Icon(
-                              Icons.favorite,
-                              color: Colors.red[800],
-                            )
-                          : Icon(
-                              Icons.favorite_border,
-                              color: Colors.red[800],
-                            ),
-                    ),
-                  ),
-                  Container(
-                    width: 20,
-                    height: 40,
-                  ),
-                  Container(
-                    margin: EdgeInsets.fromLTRB(0, 0, 15, 0),
-                    height: 22.0,
-                    width: 20.0,
-                    child: IconButton(
-                      alignment: Alignment.bottomRight,
-                      highlightColor: Colors.orange[300],
-                      icon: Icon(
-                        Icons.location_on,
-                        color: darkIcon,
-                        size: 25,
-                      ),
-                      onPressed: () =>
-                          launchURL(str.name, str.adrs, str.lat, str.long),
-                    ),
-                  ),
-                ]),
+            )
           ],
         ));
   }

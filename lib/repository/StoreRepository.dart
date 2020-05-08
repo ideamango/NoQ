@@ -32,8 +32,8 @@ List<StoreAppData> getDummyList() {
   List<StoreAppData> searchStores = [
     new StoreAppData(
         "1",
-        "IKEA",
-        "MyHome Vihanga, Gachibowli, Hyderabad",
+        "Apartment vendor",
+        "Aparna Cyberzon, Hyderabad",
         17.441903,
         78.375869,
         "9:00 am",
@@ -44,10 +44,23 @@ List<StoreAppData> getDummyList() {
         ],
         true,
         false),
-    new StoreAppData("2", "Vijetha", "MyHome Vihanga, Gachibowli, Hyderabad",
-        17.432400, 78.331858, "9:00 am", "10:00 pm", ["7"], true, true),
-    new StoreAppData("3", "Vijetha", "MyHome Vihanga Gachibowli Hyderabad",
-        17.435436, 78.386707, "9:00 am", "10:00 pm", ["0"], true, false)
+    new StoreAppData(
+        "2",
+        "Vijetha",
+        "MyHome Vihanga, rthrthertherhtrherth,Gachibowli, Hyderabad",
+        17.432400,
+        78.331858,
+        "9:00 am",
+        "10:00 pm",
+        ["7"],
+        true,
+        false),
+    new StoreAppData("3", "IKEA", "Hitech City, Madhapur, Hyderabad", 17.435436,
+        78.386707, "9:00 am", "10:00 pm", ["0"], false, false),
+    new StoreAppData("4", "Inorbit", "Kavuri Hills, Hyderabad", 17.435436,
+        78.386707, "9:00 am", "10:00 pm", ["0"], false, false),
+    new StoreAppData("5", "PVR", "Kavuri Hills, Hyderabad", 17.435436,
+        78.386707, "8:00 am", "11:00 pm", ["0"], false, false)
   ];
   return searchStores;
 }

@@ -57,11 +57,11 @@ final errorTextStyle = TextStyle(
     fontSize: 15);
 
 final lightSubTextStyle = TextStyle(
-  color: Colors.blueGrey,
+  color: Colors.blueGrey[700],
   // fontWeight: FontWeight.w800,
   fontFamily: 'Monsterrat',
   letterSpacing: 0.5,
-  fontSize: 10.0,
+  fontSize: 11.0,
   //height: 2,
 );
 final hintTextStyle = TextStyle(

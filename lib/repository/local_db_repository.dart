@@ -41,3 +41,16 @@ Future<UserAppData> readData() async {
     return null;
   }
 }
+
+// Future<List<StoreAppData>> getFavStoresList() async {
+//   await readData().then((fUserProfile) {
+//     if (fUserProfile.favStores != null) {
+//       if (fUserProfile.favStores.length != 0) {
+//         List<StoreAppData> _stores = fUserProfile.favStores;
+//         return _stores;
+//       }
+//     } else
+//       return null;
+//   });
+//   return null;
+// }
