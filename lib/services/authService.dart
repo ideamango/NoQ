@@ -29,16 +29,22 @@ class AuthService {
   }
 
 //SignIn
-  signIn(AuthCredential authCreds, BuildContext context) {
-    FirebaseAuth.instance.signInWithCredential(authCreds);
-    Navigator.pop(context);
-    Navigator.push(
-        context, MaterialPageRoute(builder: (context) => LandingPage()));
+  AuthResult signIn(AuthCredential authCreds, BuildContext context) {
+    AuthResult result;
+    FirebaseAuth.instance
+        .signInWithCredential(authCreds)
+        .then((AuthResult authResult) {
+      result = authResult;
+    });
+    return result;
+    // Navigator.pop(context);
+    // Navigator.push(
+    //   context, MaterialPageRoute(builder: (context) => LandingPage()));
   }
 
-  signInWithOTP(smsCode, verId, context) {
+  AuthResult signInWithOTP(smsCode, verId, context) {
     AuthCredential authCreds = PhoneAuthProvider.getCredential(
         verificationId: verId, smsCode: smsCode);
-    signIn(authCreds, context);
+    return signIn(authCreds, context);
   }
 }

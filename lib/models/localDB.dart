@@ -4,16 +4,16 @@ part 'localDB.g.dart';
 @JsonSerializable()
 class UserAppData {
   final String id;
-  final String name;
+  //final String name;
   final String phone;
-  final String adrs;
+  // final String adrs;
   final List<BookingAppData> upcomingBookings;
-  final List<BookingAppData> pastBookings;
-  final List<StoreAppData> favStores;
+  List<StoreAppData> storesAccessed;
+
   final SettingsAppData settings;
 
-  UserAppData(this.id, this.name, this.phone, this.adrs, this.upcomingBookings,
-      this.pastBookings, this.favStores, this.settings);
+  UserAppData(this.id, this.phone, this.upcomingBookings, this.storesAccessed,
+      this.settings);
 
   factory UserAppData.fromJson(Map<String, dynamic> json) =>
       _$UserAppDataFromJson(json);
@@ -35,19 +35,31 @@ class UserAppData {
 @JsonSerializable()
 class StoreAppData {
   final String id;
+  final String storeType;
   final String name;
   final String adrs;
+  final String phone;
   final double lat;
   final double long;
   final String opensAt;
   final String closesAt;
-
   final List<String> daysClosed;
   final bool insideAptFlg;
   bool isFavourite;
 
-  StoreAppData(this.id, this.name, this.adrs, this.lat, this.long, this.opensAt,
-      this.closesAt, this.daysClosed, this.insideAptFlg, this.isFavourite);
+  StoreAppData(
+      this.id,
+      this.storeType,
+      this.name,
+      this.adrs,
+      this.phone,
+      this.lat,
+      this.long,
+      this.opensAt,
+      this.closesAt,
+      this.daysClosed,
+      this.insideAptFlg,
+      this.isFavourite);
   factory StoreAppData.fromJson(Map<String, dynamic> json) =>
       _$StoreAppDataFromJson(json);
 
@@ -83,14 +95,13 @@ class StoreAppData {
 @JsonSerializable()
 class BookingAppData {
   String storeId;
-  String storeName;
   DateTime bookingDate;
   String timing;
   String tokenNum;
   String status;
 
-  BookingAppData(this.storeId, this.storeName, this.bookingDate, this.timing,
-      this.tokenNum, this.status);
+  BookingAppData(
+      this.storeId, this.bookingDate, this.timing, this.tokenNum, this.status);
   factory BookingAppData.fromJson(Map<String, dynamic> json) =>
       _$BookingAppDataFromJson(json);
 
@@ -124,3 +135,10 @@ class SettingsAppData {
 //   new LocalUser(1, "IKEA", "MyHome Vihanga, Gachibowli, Hyderabad", "9:00 am",
 //       "10:00 pm", ["ew", "er", "er"], false),
 // ];
+
+class BookingListItem {
+  StoreAppData storeInfo;
+  BookingAppData bookingInfo;
+
+  BookingListItem(this.storeInfo, this.bookingInfo);
+}

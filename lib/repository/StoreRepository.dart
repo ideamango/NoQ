@@ -28,12 +28,14 @@ Future<List<Store>> getStores() async {
   return null;
 }
 
-List<StoreAppData> getDummyList() {
+List<StoreAppData> getLocalStoreList() {
   List<StoreAppData> searchStores = [
     new StoreAppData(
         "1",
+        "GR",
         "Apartment vendor",
         "Aparna Cyberzon, Hyderabad",
+        "123456789",
         17.441903,
         78.375869,
         "9:00 am",
@@ -46,8 +48,10 @@ List<StoreAppData> getDummyList() {
         false),
     new StoreAppData(
         "2",
+        "GR",
         "Vijetha",
         "MyHome Vihanga, rthrthertherhtrherth,Gachibowli, Hyderabad",
+        "123456789",
         17.432400,
         78.331858,
         "9:00 am",
@@ -55,12 +59,86 @@ List<StoreAppData> getDummyList() {
         ["7"],
         true,
         false),
-    new StoreAppData("3", "IKEA", "Hitech City, Madhapur, Hyderabad", 17.435436,
-        78.386707, "9:00 am", "10:00 pm", ["0"], false, false),
-    new StoreAppData("4", "Inorbit", "Kavuri Hills, Hyderabad", 17.435436,
-        78.386707, "9:00 am", "10:00 pm", ["0"], false, false),
-    new StoreAppData("5", "PVR", "Kavuri Hills, Hyderabad", 17.435436,
-        78.386707, "8:00 am", "11:00 pm", ["0"], false, false)
+    new StoreAppData(
+        "3",
+        "GR",
+        "IKEA",
+        "Hitech City, Madhapur, Hyderabad",
+        "123456789",
+        17.435436,
+        78.386707,
+        "9:00 am",
+        "10:00 pm",
+        ["0"],
+        false,
+        false),
+    new StoreAppData(
+        "4",
+        "GR",
+        "Inorbit",
+        "Kavuri Hills, Hyderabad",
+        "123456789",
+        17.435436,
+        78.386707,
+        "9:00 am",
+        "10:00 pm",
+        ["0"],
+        false,
+        false),
+    new StoreAppData("5", "GR", "PVR", "Kavuri Hills, Hyderabad", "123456789",
+        17.435436, 78.386707, "8:00 am", "11:00 pm", ["0"], false, false)
+  ];
+  return searchStores;
+}
+
+List<StoreAppData> getStoreListServer() {
+  List<StoreAppData> searchStores = [
+    new StoreAppData(
+        "6",
+        "GR",
+        "Fruits vendor",
+        "Aparna Cyberzon, Hyderabad",
+        "123456789",
+        17.441903,
+        78.375869,
+        "9:00 am",
+        "10:00 pm",
+        [
+          "1",
+          "6",
+        ],
+        true,
+        false),
+    new StoreAppData(
+        "7",
+        "GR",
+        "Ravi Veggies",
+        "MyHome Vihanga, rthrthertherhtrherth,Gachibowli, Hyderabad",
+        "123456789",
+        17.432400,
+        78.331858,
+        "9:00 am",
+        "10:00 pm",
+        ["7"],
+        true,
+        false),
+    new StoreAppData(
+        "8",
+        "GR",
+        "ABC",
+        "Hitech City, Madhapur, Hyderabad",
+        "123456789",
+        17.435436,
+        78.386707,
+        "9:00 am",
+        "10:00 pm",
+        ["0"],
+        false,
+        false),
+    new StoreAppData("9", "GR", "XYZ", "Kavuri Hills, Hyderabad", "123456789",
+        17.435436, 78.386707, "9:00 am", "10:00 pm", ["0"], false, false),
+    new StoreAppData("10", "GR", "PVR", "Kavuri Hills, Hyderabad", "123456789",
+        17.435436, 78.386707, "8:00 am", "11:00 pm", ["0"], false, false)
   ];
   return searchStores;
 }

@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 final buttonStyle = Material(
   elevation: 5.0,
   //borderRadius: BorderRadius.circular(30.0),
-  color: Colors.indigo,
+  color: Colors.teal,
   child: MaterialButton(
     padding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
     onPressed: () {},
@@ -18,9 +19,9 @@ final buttonTextStyle = TextStyle(
   //height: 2,
 );
 final whiteBoldTextStyle = TextStyle(
-  color: Colors.white,
-  fontWeight: FontWeight.w800,
-  fontFamily: 'Montserrat-Regular',
+  color: Colors.grey[200],
+  // fontWeight: FontWeight.w800,
+  fontFamily: 'Montserrat',
   letterSpacing: 0.5,
   fontSize: 20,
   //height: 2,
@@ -44,17 +45,17 @@ final inputTextStyle = TextStyle(
 );
 
 final labelTextStyle = TextStyle(
-    color: Colors.blueGrey[800],
+    color: Colors.blueGrey,
     letterSpacing: 0.5,
-    fontFamily: 'Montserrat',
-    fontSize: 10.0);
+    fontFamily: 'Roboto-Bold',
+    fontSize: 11.0);
 
 final errorTextStyle = TextStyle(
     color: Colors.red,
     letterSpacing: 0.5,
     //fontWeight: FontWeight.w500,
-    fontFamily: 'Monsterrat',
-    fontSize: 15);
+    fontFamily: 'Roboto',
+    fontSize: 12);
 
 final lightSubTextStyle = TextStyle(
   color: Colors.blueGrey[700],
@@ -75,13 +76,34 @@ final headingTextStyle = TextStyle(
     letterSpacing: 0.5,
     fontFamily: 'Montserrat',
     fontSize: 15.0);
-final Color darkIcon = Colors.indigo;
+final Color tealIcon = Colors.teal;
+
 final Color lightIcon = Colors.indigo;
-final Color highlightText = Colors.indigo;
+final Color highlightText = Colors.teal;
 final highlightSubTextStyle = TextStyle(
     color: Colors.blueGrey[800], fontFamily: 'Montserrat', fontSize: 12.0);
+
+final tokenTextStyle = TextStyle(
+    color: Colors.black,
+    fontWeight: FontWeight.w600,
+    fontFamily: 'Montserrat',
+    letterSpacing: 3,
+    // decoration: TextDecoration.underline,
+    fontSize: 25.0);
+
+final tokenDataTextStyle = TextStyle(
+    color: Colors.blueGrey[300],
+    //fontWeight: FontWeight.w500,
+    fontFamily: 'Montserrat',
+    fontSize: 14.0);
+final tokenDateTextStyle = TextStyle(
+    color: Colors.blueGrey[300],
+    fontWeight: FontWeight.w500,
+    fontFamily: 'Montserrat',
+    fontSize: 18.0);
+
 final highlightTextStyle =
-    TextStyle(color: Colors.indigo, fontFamily: 'Montserrat', fontSize: 20.0);
+    TextStyle(color: Colors.teal, fontFamily: 'Montserrat', fontSize: 20.0);
 
 final Color highlightColor = Colors.amber[600];
 final Color unselectedColor = Colors.blueGrey[700];

@@ -25,7 +25,7 @@ class _UserNotificationsPageState extends State<UserNotificationsPage> {
   void _loadNotifications() async {
     //Load details from local files
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    int userId = prefs.getInt('userId');
+    //int userId = prefs.getInt('userId');
     //Fetch details from server
 
     await readData().then((fUser) {
@@ -94,8 +94,8 @@ class _UserNotificationsPageState extends State<UserNotificationsPage> {
                                 // mainAxisAlignment: MainAxisAlignment.start,
                                 children: [
                               Text(
-                                str.storeName.toString(),
-                              ),
+                                  //TODOD : str.storeInfo.name.toString(),
+                                  'notifications'),
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.end,
                                 crossAxisAlignment: CrossAxisAlignment.start,

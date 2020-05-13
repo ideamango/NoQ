@@ -24,7 +24,7 @@ void writeData(UserAppData user) async {
   // json = jsonEncode(dummyUser);
   final file = await localFile;
   String fileData = generateJson(user);
-  print('Writing in file $file , data: $fileData');
+  //print('Writing in file $file , data: $fileData');
   file.writeAsString("$fileData");
 }
 

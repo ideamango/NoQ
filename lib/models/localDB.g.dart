@@ -9,20 +9,13 @@ part of 'localDB.dart';
 UserAppData _$UserAppDataFromJson(Map<String, dynamic> json) {
   return UserAppData(
     json['id'] as String,
-    json['name'] as String,
     json['phone'] as String,
-    json['adrs'] as String,
     (json['upcomingBookings'] as List)
         ?.map((e) => e == null
             ? null
             : BookingAppData.fromJson(e as Map<String, dynamic>))
         ?.toList(),
-    (json['pastBookings'] as List)
-        ?.map((e) => e == null
-            ? null
-            : BookingAppData.fromJson(e as Map<String, dynamic>))
-        ?.toList(),
-    (json['favStores'] as List)
+    (json['storesAccessed'] as List)
         ?.map((e) =>
             e == null ? null : StoreAppData.fromJson(e as Map<String, dynamic>))
         ?.toList(),
@@ -35,20 +28,19 @@ UserAppData _$UserAppDataFromJson(Map<String, dynamic> json) {
 Map<String, dynamic> _$UserAppDataToJson(UserAppData instance) =>
     <String, dynamic>{
       'id': instance.id,
-      'name': instance.name,
       'phone': instance.phone,
-      'adrs': instance.adrs,
       'upcomingBookings': instance.upcomingBookings,
-      'pastBookings': instance.pastBookings,
-      'favStores': instance.favStores,
+      'storesAccessed': instance.storesAccessed,
       'settings': instance.settings,
     };
 
 StoreAppData _$StoreAppDataFromJson(Map<String, dynamic> json) {
   return StoreAppData(
     json['id'] as String,
+    json['storeType'] as String,
     json['name'] as String,
     json['adrs'] as String,
+    json['phone'] as String,
     (json['lat'] as num)?.toDouble(),
     (json['long'] as num)?.toDouble(),
     json['opensAt'] as String,
@@ -62,8 +54,10 @@ StoreAppData _$StoreAppDataFromJson(Map<String, dynamic> json) {
 Map<String, dynamic> _$StoreAppDataToJson(StoreAppData instance) =>
     <String, dynamic>{
       'id': instance.id,
+      'storeType': instance.storeType,
       'name': instance.name,
       'adrs': instance.adrs,
+      'phone': instance.phone,
       'lat': instance.lat,
       'long': instance.long,
       'opensAt': instance.opensAt,
@@ -76,7 +70,6 @@ Map<String, dynamic> _$StoreAppDataToJson(StoreAppData instance) =>
 BookingAppData _$BookingAppDataFromJson(Map<String, dynamic> json) {
   return BookingAppData(
     json['storeId'] as String,
-    json['storeName'] as String,
     json['bookingDate'] == null
         ? null
         : DateTime.parse(json['bookingDate'] as String),
@@ -89,7 +82,6 @@ BookingAppData _$BookingAppDataFromJson(Map<String, dynamic> json) {
 Map<String, dynamic> _$BookingAppDataToJson(BookingAppData instance) =>
     <String, dynamic>{
       'storeId': instance.storeId,
-      'storeName': instance.storeName,
       'bookingDate': instance.bookingDate?.toIso8601String(),
       'timing': instance.timing,
       'tokenNum': instance.tokenNum,

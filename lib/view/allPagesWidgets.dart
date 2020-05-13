@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:noq/login_page.dart';
 import 'package:noq/models/localDB.dart';
 import 'package:noq/services/authService.dart';
+import 'package:noq/userHomePage.dart';
 import 'package:noq/view/showSlotsPage.dart';
 import 'package:noq/view/userBookingPage.dart';
 import 'package:noq/view/userFavStoresPage.dart';
@@ -43,25 +44,24 @@ Widget userHomePage(BuildContext context) {
   Widget _userAccountPage;
   _userAccountPage = Container(
       child: Column(children: <Widget>[
-    Text("Welcome to user userHomePage"),
-    Text("Welcome to user userHomePage"),
+    Text("Welcome to user Account Page"),
   ]));
-  return _userAccountPage;
+  return UserHomePage();
 }
 
 Widget userBookingPage(BuildContext context, UserAppData userProfile) {
   return UserBookingPage();
 }
 
-Widget userFavStoresPage(BuildContext context, UserAppData userProfile) {
-  // Widget _userFavStoresPage;
-  // _userFavStoresPage = Container(
-  //     child: Column(children: <Widget>[
-  //   Text("Welcome to user _userFavStoresPage"),
-  //   Text("Welcome to user _userFavStoresPage"),
-  // ]));
-  return UserFavStoresListPage();
-}
+// Widget userFavStoresPage(BuildContext context, UserAppData userProfile) {
+//   // Widget _userFavStoresPage;
+//   // _userFavStoresPage = Container(
+//   //     child: Column(children: <Widget>[
+//   //   Text("Welcome to user _userFavStoresPage"),
+//   //   Text("Welcome to user _userFavStoresPage"),
+//   // ]));
+//   //return UserFavStoresListPage();
+// }
 
 Widget userNotifications(BuildContext context) {
   Widget _userNotifications;

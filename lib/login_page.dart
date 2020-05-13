@@ -1,9 +1,10 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:noq/pages/otp_dialog.dart';
+import 'package:noq/pages/otpdialog.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'pages/alertDialog.dart';
 import 'style.dart';
 import 'package:noq/constants.dart';
 import 'services/authService.dart';
@@ -81,7 +82,8 @@ class _LoginPageState extends State<LoginPage> {
         // errorStyle: errorTextStyle,
         // labelStyle: labelTextStyle,
         // hintStyle: hintTextStyle,
-        labelText: 'Enter 10 digit Mobile Number',
+        prefixText: '+91',
+        labelText: 'Phone Number',
         enabledBorder:
             UnderlineInputBorder(borderSide: BorderSide(color: Colors.grey)),
         focusedBorder:
@@ -91,9 +93,9 @@ class _LoginPageState extends State<LoginPage> {
       onSaved: (value) => _mobile = "+91" + value,
       onChanged: (value) {
         setState(() {
-          if (_errorMsg != null) {
-            _errorMsg = null;
-          }
+          // if (_errorMsg != null) {
+          //   _errorMsg = null;
+          // }
           this._mobile = "+91" + value;
           _prefs.then((SharedPreferences prefs) {
             prefs.setString("phone", '$_mobile');
@@ -130,9 +132,10 @@ class _LoginPageState extends State<LoginPage> {
     );
     final loginButon = Material(
       elevation: 10.0,
-      color: isButtonPressed
-          ? Theme.of(context).primaryColor
-          : Theme.of(context).accentColor,
+      color: Colors.teal,
+      //  isButtonPressed
+      //     ? Theme.of(context).primaryColor
+      //     : Theme.of(context).accentColor,
       child: MaterialButton(
         minWidth: MediaQuery.of(context).size.width,
         // padding: EdgeInsets.fromLTRB(10.0, 7.5, 10.0, 7.5),
@@ -215,15 +218,27 @@ class _LoginPageState extends State<LoginPage> {
 
       final PhoneVerificationFailed verificationFailed =
           (AuthException authException) {
-        print('$authException.message');
-        handleError(authException);
+        setState(() {
+          _errorMsg = '${authException.message}';
+
+          print("Error message: " + _errorMsg);
+          if (authException.message.contains('not authorized'))
+            _errorMsg = 'Something has gone wrong, please try later';
+          else if (authException.message.contains('Network'))
+            _errorMsg = 'Please check your internet connection and try again';
+          else
+            _errorMsg = 'Something has gone wrong, please try later';
+        });
+        //handleError(authException);
       };
 
       final PhoneCodeSent otpSent = (String verId, [int forceResend]) {
         this.verificationId = verId;
-        smsOTPDialog(context, verificationId).then((value) {
-          print('sign in');
-        });
+        print("before dialog callhbksdjfhskjfyhewroiuytfewqorhy");
+        showDialogForOtp(verId);
+        //smsOTPDialog(context, verificationId).then((value) {
+        //print('sign in');
+        // });
         // smsOTPDialog(context, this.verificationId);
         setState(() {
           this.codeSent = true;
@@ -248,6 +263,17 @@ class _LoginPageState extends State<LoginPage> {
       print(e.toString());
       handleError(e);
     }
+  }
+
+  showDialogForOtp(String verId) async {
+    String val = await showDialog(
+        context: context,
+        barrierDismissible: true,
+        builder: (BuildContext context) {
+          return StatefulBuilder(builder: (context, setState) {
+            return OTPDialog(verificationId: verId);
+          });
+        });
   }
 
   handleError(AuthException error) {

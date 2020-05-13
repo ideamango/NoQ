@@ -4,7 +4,7 @@ import 'package:noq/login_page.dart';
 import 'package:noq/push_notifications.dart';
 import 'package:noq/view/init_screen.dart';
 
-import 'services/authService.dart';
+//import 'services/authService.dart';
 
 void main() => runApp(MyApp());
 
@@ -26,7 +26,7 @@ class MyApp extends StatelessWidget {
       },
       theme: ThemeData(
         brightness: Brightness.light,
-        primaryColor: Colors.indigo,
+        primaryColor: Colors.teal[900],
         accentColor: Colors.indigoAccent,
 
         // Define the default font family..

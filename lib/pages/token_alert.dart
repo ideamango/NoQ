@@ -52,7 +52,7 @@ Future<String> showTokenAlert(
           titleTextStyle: inputTextStyle,
           elevation: 10.0,
           content: Container(
-              width: MediaQuery.of(context).size.width,
+              width: double.infinity,
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: <Widget>[

@@ -18,12 +18,14 @@ class SearchStoresPage extends StatefulWidget {
 }
 
 class _SearchStoresPageState extends State<SearchStoresPage> {
+  bool initCompleted = false;
   bool isFavourited = false;
   DateTime dateTime = DateTime.now();
   final dtFormat = new DateFormat('dd');
   SharedPreferences _prefs;
   UserAppData _userProfile;
-  List<StoreAppData> _stores;
+  List<StoreAppData> _stores = new List<StoreAppData>();
+  bool fetchFromServer = false;
 
   final compareDateFormat = new DateFormat('YYYYMMDD');
 
@@ -33,11 +35,15 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
   void initState() {
     super.initState();
     // _getUserData();
-    getPrefInstance();
-    getList();
+    getPrefInstance().then((action) {
+      getList();
+      setState(() {
+        initCompleted = true;
+      });
+    });
   }
 
-  void getPrefInstance() async {
+  Future<void> getPrefInstance() async {
     _prefs = await SharedPreferences.getInstance();
   }
 
@@ -54,22 +60,58 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
     await readData().then((fUser) {
       _userProfile = fUser;
     });
-    _stores = getDummyList();
+
+    //Load details from local files
+    if (_userProfile != null) {
+      if (_userProfile.storesAccessed != null) {
+        _stores = _userProfile.storesAccessed;
+      }
+    }
+    List<StoreAppData> newList;
+    if (fetchFromServer || _userProfile.storesAccessed == null) {
+      //API call to fecth stores from server
+      newList = getStoreListServer();
+      // Compare and add new stores fetched to _stores list
+      if (_stores.length != 0) {
+        for (StoreAppData newStore in newList) {
+          for (StoreAppData localStore in _stores) {
+            if (newStore.id == localStore.id)
+              return;
+            else
+              newList.add(newStore);
+          }
+        }
+      }
+    }
+    setState(() {
+      if (newList != null) {
+        _stores.addAll(newList);
+      }
+    });
+    _userProfile.storesAccessed = _stores;
+
+    writeData(_userProfile);
   }
 
   void getFavStoresList() async {
-    List<StoreAppData> list;
+    List<StoreAppData> list = new List<StoreAppData>();
     await readData().then((fUser) {
       _userProfile = fUser;
     });
 //Load details from local files
     if (_userProfile != null) {
-      if (_userProfile.favStores != null) {
-        list = _userProfile.favStores;
-        setState(() {
-          _stores = list;
-        });
+      if ((_userProfile.storesAccessed != null) &&
+          (_userProfile.storesAccessed.length != 0)) {
+        list = _userProfile.storesAccessed
+            .where((item) => item.isFavourite == true)
+            .toList();
       }
+      setState(() {
+        if (list.length == 0)
+          _stores = null;
+        else
+          _stores = list;
+      });
     }
   }
 
@@ -110,18 +152,12 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
   void toggleFavorite(StoreAppData strData) {
     setState(() {
       strData.isFavourite = !strData.isFavourite;
-      if (strData.isFavourite == true) {
-        for (StoreAppData store in _userProfile.favStores) {
-          if (store.id == strData.id) return;
-        }
-        _userProfile.favStores.add(strData);
-      } else {
-        _userProfile.favStores.remove(strData);
+      if (!strData.isFavourite && widget.forPage == 'Favourite') {
+        _stores.remove(strData);
       }
     });
     writeData(_userProfile);
-    if ((_userProfile.favStores.length == 0) &&
-        (widget.forPage == "Favourite")) {
+    if ((_stores.length == 0) && (widget.forPage == 'Favourite')) {
       setState(() {
         _stores = null;
       });
@@ -136,8 +172,7 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
-                    Text('No favourite stores yet!! ',
-                        style: highlightTextStyle),
+                    Text('No favourites yet!! ', style: highlightTextStyle),
                     Text('Add your favourite places to quickly browse later!! ',
                         style: highlightSubTextStyle),
                   ],
@@ -146,22 +181,45 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
 
   @override
   Widget build(BuildContext context) {
-    if (_stores == null) {
-      return _emptyStorePage();
-    } else {
+// build widget only after init has completed, till then show progress indicator.
+    if (!initCompleted) {
       return Center(
-        child: Container(
-          margin: EdgeInsets.fromLTRB(10, 10, 10, 10),
-          child: ListView.builder(
-              itemCount: 1,
-              itemBuilder: (BuildContext context, int index) {
-                return Container(
-                  child: new Column(children: _stores.map(_buildItem).toList()),
-                  //children: <Widget>[firstRow, secondRow],
-                );
-              }),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Padding(padding: EdgeInsets.only(top: 20.0)),
+            Text(
+              "Loading..",
+              style: TextStyle(fontSize: 20.0, color: Colors.indigo),
+            ),
+            Padding(padding: EdgeInsets.only(top: 20.0)),
+            CircularProgressIndicator(
+              backgroundColor: Colors.indigo,
+              valueColor: AlwaysStoppedAnimation<Color>(Colors.amber),
+              strokeWidth: 3,
+            )
+          ],
         ),
       );
+    } else {
+      if (_stores == null) {
+        return _emptyStorePage();
+      } else {
+        return Center(
+          child: Container(
+            margin: EdgeInsets.fromLTRB(10, 10, 10, 10),
+            child: ListView.builder(
+                itemCount: 1,
+                itemBuilder: (BuildContext context, int index) {
+                  return Container(
+                    child:
+                        new Column(children: _stores.map(_buildItem).toList()),
+                    //children: <Widget>[firstRow, secondRow],
+                  );
+                }),
+          ),
+        );
+      }
     }
   }
 
@@ -180,12 +238,17 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
               child: Column(
                 children: <Widget>[
                   new Container(
-                    margin: EdgeInsets.fromLTRB(10, 10, 5, 5),
-                    padding: EdgeInsets.all(5),
+                    margin: EdgeInsets.fromLTRB(
+                        MediaQuery.of(context).size.width * .01,
+                        MediaQuery.of(context).size.width * .01,
+                        MediaQuery.of(context).size.width * .005,
+                        MediaQuery.of(context).size.width * .005),
+                    padding:
+                        EdgeInsets.all(MediaQuery.of(context).size.width * .01),
                     alignment: Alignment.topCenter,
                     decoration: ShapeDecoration(
                       shape: CircleBorder(),
-                      color: darkIcon,
+                      color: tealIcon,
                     ),
                     child: Icon(
                       Icons.shopping_cart,
@@ -197,138 +260,156 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
               ),
             ),
             Container(
-              width: MediaQuery.of(context).size.width * .7,
-              child: Column(children: <Widget>[
-                Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      new Container(
-                        padding: EdgeInsets.fromLTRB(10.0, 5.0, 0, 0),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            Container(
-                              padding: EdgeInsets.fromLTRB(0, 5, 5, 5),
-                              child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  children: [
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      // crossAxisAlignment: CrossAxisAlignment.center,
-                                      children: <Widget>[
-                                        Text(
-                                          str.name.toString(),
-                                        ),
-                                      ],
+              width: MediaQuery.of(context).size.width * .8,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  Container(
+                    width: MediaQuery.of(context).size.width * .8,
+                    // padding: EdgeInsets.fromLTRB(0, 5, 5, 5),
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(0, 5, 0, 3),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        // crossAxisAlignment: CrossAxisAlignment.center,
+                        children: <Widget>[
+                          Text(
+                            str.name.toString(),
+                          ),
+                          Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              // crossAxisAlignment: CrossAxisAlignment.start,
+                              children: <Widget>[
+                                Container(
+                                  padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
+                                  margin: EdgeInsets.fromLTRB(0, 0, 0, 0),
+                                  height: 22.0,
+                                  width: 28.0,
+                                  child: IconButton(
+                                    alignment: Alignment.topCenter,
+                                    highlightColor: Colors.orange[300],
+                                    icon: Icon(
+                                      Icons.phone,
+                                      color: tealIcon,
+                                      size: 20,
                                     ),
-                                    Row(
-                                      mainAxisAlignment: MainAxisAlignment.end,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: <Widget>[
-                                        Text(
-                                          str.adrs,
-                                          style: lightSubTextStyle,
-                                        ),
-                                      ],
-                                    )
-                                  ]),
-                            ),
-                            Container(
-                              width: MediaQuery.of(context).size.width * .5,
-                              //padding: EdgeInsets.fromLTRB(0, 5, 5, 5),
-                              child: Row(
-                                children: _buildDateGridItems(
-                                    str.id, str.name, str.daysClosed),
-                              ),
-                            ),
-                            Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Row(
-                                    //mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                    children: [
-                                      //Icon(Icons.play_circle_filled, color: Colors.blueGrey[300]),
-                                      Text('Opens at:', style: labelTextStyle),
-                                      Text(str.opensAt,
-                                          style: lightSubTextStyle),
-                                    ],
+                                    onPressed: () => callPhone('+919611009823'),
                                   ),
-                                  Container(child: Text('   ')),
-                                  Row(
-                                    children: [
-                                      //Icon(Icons.pause_circle_filled, color: Colors.blueGrey[300]),
-                                      Text('Closes at:', style: labelTextStyle),
-                                      Text(str.closesAt,
-                                          style: lightSubTextStyle),
-                                    ],
+                                ),
+                                Container(
+                                  padding: EdgeInsets.fromLTRB(0, 0, 5, 5),
+                                  margin: EdgeInsets.fromLTRB(0, 0, 0, 0),
+                                  height: 22.0,
+                                  width: 28.0,
+                                  child: IconButton(
+                                    alignment: Alignment.topCenter,
+                                    highlightColor: Colors.orange[300],
+                                    icon: Icon(
+                                      Icons.location_on,
+                                      color: tealIcon,
+                                      size: 20,
+                                    ),
+                                    onPressed: () => launchURL(
+                                        str.name, str.adrs, str.lat, str.long),
                                   ),
-                                ]),
+                                ),
+                                Container(
+                                  padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
+                                  margin: EdgeInsets.fromLTRB(0, 0, 0, 0),
+                                  height: 22,
+                                  width: 25,
+                                  child: IconButton(
+                                    alignment: Alignment.topRight,
+                                    onPressed: () => toggleFavorite(str),
+                                    highlightColor: Colors.orange[300],
+                                    iconSize: 20,
+                                    icon: str.isFavourite
+                                        ? Icon(
+                                            Icons.favorite,
+                                            color: Colors.red[800],
+                                          )
+                                        : Icon(
+                                            Icons.favorite_border,
+                                            color: tealIcon,
+                                          ),
+                                  ),
+                                ),
+                              ])
+                        ],
+                      ),
+                    ),
+                  ),
+                  // SizedBox(
+                  //   width: MediaQuery.of(context).size.width * .4,
+                  //   child: Divider(
+                  //     thickness: 1.0,
+                  //     color: Colors.teal,
+                  //     height: 5,
+                  //   ),
+                  // ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: <Widget>[
+                      Container(
+                        width: MediaQuery.of(context).size.width * .67,
+                        child: Text(
+                          str.adrs,
+                          overflow: TextOverflow.ellipsis,
+                          style: lightSubTextStyle,
+                        ),
+                      ),
+                    ],
+                  ),
+                  Container(
+                      width: MediaQuery.of(context).size.width * .68,
+                      //padding: EdgeInsets.fromLTRB(0, 5, 5, 5),
+                      child: Row(
+                        children: <Widget>[
+                          Text(
+                            '',
+                            style: highlightSubTextStyle,
+                          ),
+                          Row(
+                            children: _buildDateGridItems(
+                                str, str.id, str.name, str.daysClosed),
+                          ),
+                        ],
+                      )),
+                  Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        Row(
+                          //mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            //Icon(Icons.play_circle_filled, color: Colors.blueGrey[300]),
+                            Text('Opens at:', style: labelTextStyle),
+                            Text(str.opensAt, style: lightSubTextStyle),
                           ],
                         ),
-                      ),
-                    ]),
-              ]),
-            ),
-            Container(
-              width: MediaQuery.of(context).size.width * .1,
-              child: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  // crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    Container(
-                      margin: EdgeInsets.fromLTRB(0, 0, 10, 0),
-                      height: 22,
-                      width: 20,
-                      child: IconButton(
-                        alignment: Alignment.topRight,
-                        onPressed: () => toggleFavorite(str),
-                        highlightColor: Colors.orange[300],
-                        iconSize: 16,
-                        icon: str.isFavourite
-                            ? Icon(
-                                Icons.favorite,
-                                color: Colors.red[800],
-                              )
-                            : Icon(
-                                Icons.favorite_border,
-                                color: Colors.red[800],
-                              ),
-                      ),
-                    ),
-                    Container(
-                      width: 20,
-                      height: 40,
-                    ),
-                    Container(
-                      margin: EdgeInsets.fromLTRB(0, 0, 15, 0),
-                      height: 22.0,
-                      width: 20.0,
-                      child: IconButton(
-                        alignment: Alignment.bottomRight,
-                        highlightColor: Colors.orange[300],
-                        icon: Icon(
-                          Icons.location_on,
-                          color: darkIcon,
-                          size: 25,
+                        Container(
+                            width: MediaQuery.of(context).size.width * .02,
+                            child: Text('')),
+                        Row(
+                          children: [
+                            //Icon(Icons.pause_circle_filled, color: Colors.blueGrey[300]),
+                            Text('Closes at:', style: labelTextStyle),
+                            Text(str.closesAt, style: lightSubTextStyle),
+                          ],
                         ),
-                        onPressed: () =>
-                            launchURL(str.name, str.adrs, str.lat, str.long),
-                      ),
-                    ),
-                  ]),
-            )
+                      ]),
+                ],
+              ),
+            ),
           ],
         ));
   }
 
-  void showSlots(String storeId, String storeName, DateTime dateTime) {
+  void showSlots(
+      StoreAppData store, String storeId, String storeName, DateTime dateTime) {
     //_prefs = await SharedPreferences.getInstance();
     String dateForSlot = dateTime.toString();
 
@@ -356,7 +437,7 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
         print('Upcoming bookings');
         List<String> s = val.split("-");
         BookingAppData upcomingBooking =
-            new BookingAppData(storeId, storeName, dateTime, s[1], s[0], "New");
+            new BookingAppData(store.id, dateTime, s[1], s[0], "New");
         setState(() {
           _userProfile.upcomingBookings.add(upcomingBooking);
         });
@@ -367,7 +448,7 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
   }
 
   List<Widget> _buildDateGridItems(
-      String sid, String sname, List<String> daysClosed) {
+      StoreAppData store, String sid, String sname, List<String> daysClosed) {
     bool isClosed = false;
     String dayOfWeek;
 
@@ -375,16 +456,18 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
     for (var date in _dateList) {
       isClosed = (daysClosed.contains(date.weekday.toString())) ? true : false;
       dayOfWeek = Utils.getDayOfWeek(date);
-      dateWidgets.add(buildDateItem(sid, sname, isClosed, date, dayOfWeek));
+      dateWidgets
+          .add(buildDateItem(store, sid, sname, isClosed, date, dayOfWeek));
       print('Widget build from datelist  called');
     }
     return dateWidgets;
   }
 
-  Widget buildDateItem(
-      String sid, String sname, bool isClosed, DateTime dt, String dayOfWeek) {
+  Widget buildDateItem(StoreAppData store, String sid, String sname,
+      bool isClosed, DateTime dt, String dayOfWeek) {
     bool dateBooked = false;
     UserAppData user = _userProfile;
+
     for (BookingAppData obj in (user.upcomingBookings)) {
       if ((compareDateFormat
                   .format(dt)
@@ -402,9 +485,7 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
           child: Material(
             color: isClosed
                 ? Colors.grey
-                : (dateBooked
-                    ? highlightColor
-                    : Colors.lightGreen), // button color
+                : (dateBooked ? highlightColor : Colors.indigo), // button color
             child: InkWell(
               splashColor: isClosed ? null : highlightColor, // splash color
               onTap: () {
@@ -412,7 +493,7 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
                   return null;
                 } else {
                   print("tapped");
-                  showSlots(sid, sname, dt);
+                  showSlots(store, sid, sname, dt);
                 }
               }, // button pressed
               child: Column(

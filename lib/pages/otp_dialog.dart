@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:pinput/pin_put/pin_put.dart';
 import 'package:noq/style.dart';
@@ -19,20 +20,44 @@ BoxDecoration get _pinPutDecoration {
 
 void _submitPin(String pin, BuildContext context) {
   _pin = pin;
-  // final snackBar = SnackBar(
-  //   duration: Duration(seconds: 3),
-  //   content: Container(
-  //       height: 80.0,
-  //       child: Center(
-  //         child: Text(
-  //           'Pin Submitted. Value: $pin',
-  //           style: TextStyle(fontSize: 25.0),
-  //         ),
-  //       )),
-  //   backgroundColor: deepPurpleAccent[200],
-  // );
-  // Scaffold.of(context).hideCurrentSnackBar();
-  // Scaffold.of(context).showSnackBar(snackBar);
+  print(_pin);
+  final snackBar = SnackBar(
+    //duration: Duration(seconds: 3),
+    content: Container(
+        height: 80.0,
+        child: Center(
+          child: Text(
+            'Pin Submitted. Value: $pin',
+            style: TextStyle(fontSize: 25.0),
+          ),
+        )),
+    backgroundColor: Colors.teal,
+  );
+  Scaffold.of(context).hideCurrentSnackBar();
+  Scaffold.of(context).showSnackBar(snackBar);
+}
+
+handleError(PlatformException error) {
+  print(error);
+  switch (error.code) {
+    case "ERROR_INVALID_VERIFICATION_CODE":
+      // FocusScope.of(context).requestFocus(new FocusNode());
+
+      _errorMessage = 'Invalid OTP Code';
+      print(_errorMessage);
+
+      break;
+    case 'firebaseAuth':
+      _errorMessage = 'Invalid phone number';
+      print(_errorMessage);
+
+      break;
+    default:
+      _errorMessage = 'Oops, something went wrong. Try again.';
+      print(_errorMessage);
+
+      break;
+  }
 }
 
 Future<bool> smsOTPDialog(BuildContext context, String verificationId) {
@@ -82,8 +107,10 @@ Future<bool> smsOTPDialog(BuildContext context, String verificationId) {
           contentPadding: EdgeInsets.all(10),
           actions: <Widget>[
             FlatButton(
-              color: Colors.orange,
-              textColor: Colors.white,
+              color: Colors.transparent,
+              textColor: Colors.orange,
+              shape: RoundedRectangleBorder(
+                  side: BorderSide(color: Colors.orange)),
               child: Text('Clear All'),
               onPressed: () => _pinPutController.text = '',
             ),
@@ -93,6 +120,7 @@ Future<bool> smsOTPDialog(BuildContext context, String verificationId) {
               child: Text('Submit'),
               onPressed: () {
                 print("OTP Submitted");
+                print(_pinPutController.text);
                 //  print('$_pinPutController.text');
                 try {
                   FirebaseAuth.instance.currentUser().then((user) {
@@ -100,13 +128,28 @@ Future<bool> smsOTPDialog(BuildContext context, String verificationId) {
                       Navigator.of(context).pop();
                       Navigator.of(context).pushReplacementNamed('/dashboard');
                     } else {
-                      AuthService()
-                          .signInWithOTP(_pin, verificationId, context)
-                          .then(() {
-                        //Navigator.of(context).pop();
-                        Navigator.of(context)
-                            .pushReplacementNamed('/landingPage');
-                      });
+                      if (_pin == null) {
+                        _errorMessage = "Enter 6 digit otp sent on your phone.";
+                      } else {
+                        AuthCredential authCreds =
+                            PhoneAuthProvider.getCredential(
+                                verificationId: verificationId, smsCode: _pin);
+                        FirebaseAuth.instance
+                            .signInWithCredential(authCreds)
+                            .then((AuthResult authResult) {
+                          // AuthService()
+                          //     .signInWithOTP(_pin, verificationId, context)
+                          // .then(() {
+                          print("inside then");
+                          //Navigator.of(context).pop();
+                          Navigator.of(context)
+                              .pushReplacementNamed('/landingPage');
+                        }).catchError((onError) {
+                          print("printing Errorrrrrrrrrr");
+                          // print(onError.toString());
+                          handleError(onError);
+                        });
+                      }
                     }
                   });
                 } catch (err) {

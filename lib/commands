@@ -6,3 +6,29 @@ flutter pub run build_runner build
 Map<dynamic, dynamic> map = snapshot.data.snapshot.value;
 
 map.values.toList()[index]["pic"]
+
+To give rounded box
+// decoration: BoxDecoration(
+//                 color: Colors.orange,
+//                 shape: BoxShape.rectangle,
+//                 borderRadius: BorderRadius.only(
+//                     topLeft: Radius.circular(25.0),
+//                     bottomRight: Radius.circular(25.0))),
+
+ void _showSnackBar(String pin, BuildContext context) {
+    final snackBar = SnackBar(
+      duration: Duration(seconds: 3),
+      content: Container(
+          height: 80.0,
+          child: Center(
+            child: Text(
+              'Pin Submitted. Value: $pin',
+              style: TextStyle(fontSize: 25.0),
+            ),
+          )),
+      backgroundColor: Colors.deepPurpleAccent,
+    );
+    Scaffold.of(context).hideCurrentSnackBar();
+    Scaffold.of(context).showSnackBar(snackBar);
+  }
+}
