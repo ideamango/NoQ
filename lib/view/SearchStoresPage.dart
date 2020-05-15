@@ -68,7 +68,7 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
       }
     }
     List<StoreAppData> newList;
-    if (fetchFromServer || _userProfile.storesAccessed == null) {
+    if (fetchFromServer || Utils.isNullOrEmpty(_userProfile.storesAccessed)) {
       //API call to fecth stores from server
       newList = getStoreListServer();
       // Compare and add new stores fetched to _stores list
@@ -84,7 +84,7 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
       }
     }
     setState(() {
-      if (newList != null) {
+      if (!Utils.isNullOrEmpty(newList)) {
         _stores.addAll(newList);
       }
     });

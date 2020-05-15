@@ -29,9 +29,9 @@ final whiteBoldTextStyle = TextStyle(
 final buttonSmlTextStyle = TextStyle(
   color: Colors.white,
   //fontWeight: FontWeight.w800,
-  fontFamily: 'Montserrat-Regular',
+  fontFamily: 'Montserrat',
 
-  fontSize: 10,
+  fontSize: 12,
   //height: 2,
 );
 
@@ -101,6 +101,12 @@ final tokenDateTextStyle = TextStyle(
     fontWeight: FontWeight.w500,
     fontFamily: 'Montserrat',
     fontSize: 18.0);
+final homeMsgStyle = TextStyle(
+    color: Colors.blueGrey[800], fontFamily: 'Montserrat', fontSize: 11.0);
+final homeMsgStyle2 =
+    TextStyle(color: Colors.teal, fontFamily: 'Roboto', fontSize: 18.0);
+final homeMsgStyle3 =
+    TextStyle(color: highlightColor, fontFamily: 'Montserrat', fontSize: 20.0);
 
 final highlightTextStyle =
     TextStyle(color: Colors.teal, fontFamily: 'Montserrat', fontSize: 20.0);

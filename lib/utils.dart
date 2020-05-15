@@ -28,4 +28,11 @@ class Utils {
         break;
     }
   }
+
+  static bool isNullOrEmpty(List<dynamic> list) {
+    if (list == null) return true;
+    if (list.length == 0) return true;
+
+    return false;
+  }
 }

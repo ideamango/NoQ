@@ -147,7 +147,7 @@ class _OTPDialogState extends State<OTPDialog> {
                 followingFieldDecoration: _pinPutDecoration.copyWith(
                   borderRadius: BorderRadius.circular(5),
                   border: Border.all(
-                    color: Colors.indigo.withOpacity(.5),
+                    color: Colors.indigo,
                   ),
                 ),
               ),

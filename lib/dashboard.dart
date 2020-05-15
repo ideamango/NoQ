@@ -1,14 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:map_launcher/map_launcher.dart';
-import 'package:noq/pages/slotsDialog.dart';
-import 'package:noq/repository/StoreRepository.dart';
-import 'package:noq/repository/slotRepository.dart';
-import 'package:noq/services/mapService.dart';
-import 'package:noq/utils.dart';
+
 import 'package:noq/view/SearchStoresPage.dart';
-import 'package:noq/view/showSlotsPage.dart';
+
 import 'style.dart';
-import 'models/store.dart';
+
 import 'view/allPagesWidgets.dart';
 import 'package:noq/models/localDB.dart';
 import 'package:noq/repository/local_db_repository.dart';

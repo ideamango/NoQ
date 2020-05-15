@@ -7,6 +7,9 @@ import 'package:noq/style.dart';
 import 'package:intl/intl.dart';
 import 'package:noq/view/circular_progress.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:barcode_scan/barcode_scan.dart';
+import 'package:flutter/services.dart';
+//import 'path';
 
 class UserHomePage extends StatefulWidget {
   @override
@@ -21,11 +24,38 @@ class _UserHomePageState extends State<UserHomePage> {
   UserAppData _userProfile;
   DateTime now = DateTime.now();
   final dtFormat = new DateFormat(dateDisplayFormat);
+//Qr code scan result
+  ScanResult scanResult;
 
   @override
   void initState() {
     super.initState();
     _loadBookings();
+  }
+
+  Future scan() async {
+    try {
+      var result = await BarcodeScanner.scan();
+
+      setState(() => scanResult = result);
+    } on PlatformException catch (e) {
+      var result = ScanResult(
+        type: ResultType.Error,
+        format: BarcodeFormat.unknown,
+      );
+
+      if (e.code == BarcodeScanner.cameraAccessDenied) {
+        setState(() {
+          result.rawContent = 'The user did not grant the camera permission!';
+        });
+      } else {
+        result.rawContent = 'Unknown error: $e';
+      }
+      setState(() {
+        scanResult = result;
+        print(scanResult);
+      });
+    }
   }
 
   void _loadBookings() async {
@@ -57,6 +87,10 @@ class _UserHomePageState extends State<UserHomePage> {
             _newBookingsList = newBookings;
             _upcomingBkgStatus = 'Success';
           });
+        } else {
+          setState(() {
+            _upcomingBkgStatus = 'NoBookings';
+          });
         }
       } else {
         setState(() {
@@ -69,56 +103,104 @@ class _UserHomePageState extends State<UserHomePage> {
   @override
   Widget build(BuildContext context) {
     if (_upcomingBkgStatus == 'Success') {
-      // return Container(
-      //   margin: EdgeInsets.fromLTRB(10, 10, 10, 10),
-      //   child: ListView.builder(
-      //       itemCount: 1,
-      //       itemBuilder: (BuildContext context, int index) {
-      //         return Container(
-      //           child: new Column(children: _bookings.map(_buildItem).toList()),
-      //           //children: <Widget>[firstRow, secondRow],
-      //         );
-      //       }),
-      // );
-
       return ListView(
         children: <Widget>[
           Column(
             children: <Widget>[
-              ExpansionTile(
-                //key: PageStorageKey(this.widget.headerTitle),
-                initiallyExpanded: true,
-                title: Text(
-                  "Upcoming Bookings",
-                  style: TextStyle(color: Colors.blueGrey[700], fontSize: 17),
-                ),
-                backgroundColor: Colors.white,
-                leading: Icon(
-                  Icons.date_range,
-                  color: tealIcon,
-                ),
-                children: <Widget>[
-                  Container(
-                    decoration: BoxDecoration(
-                        shape: BoxShape.rectangle,
-                        borderRadius: BorderRadius.all(Radius.circular(8.0))),
-                    height: MediaQuery.of(context).size.height * .6,
-                    margin: EdgeInsets.fromLTRB(10, 10, 10, 10),
-                    child: ListView.builder(
-                      shrinkWrap: true,
-                      //scrollDirection: Axis.vertical,
-                      itemBuilder: (BuildContext context, int index) {
-                        return Container(
-                          child: new Column(
-                              children:
-                                  _newBookingsList.map(_buildItem).toList()),
-                          //children: <Widget>[firstRow, secondRow],
-                        );
-                      },
-                      itemCount: 1,
-                    ),
+              Card(
+                elevation: 20,
+                child: Container(
+                  padding: EdgeInsets.all(5),
+                  child: Column(
+                    children: <Widget>[
+                      Container(
+                        color: Colors.teal,
+                        padding: EdgeInsets.all(3),
+                        child: Image.asset(
+                          'assets/noq_home_bookPremises.png',
+                          width: MediaQuery.of(context).size.width * .95,
+                        ),
+                      ),
+                      // Text(homeScreenMsgTxt, style: homeMsgStyle),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: <Widget>[
+                          Column(
+                            children: <Widget>[
+                              Text(homeScreenMsgTxt2, style: homeMsgStyle2),
+                              Text(
+                                homeScreenMsgTxt3,
+                                style: homeMsgStyle3,
+                              ),
+                            ],
+                          ),
+                          RaisedButton(
+                            padding: EdgeInsets.all(1),
+                            autofocus: false,
+                            clipBehavior: Clip.none,
+                            elevation: 20,
+                            color: highlightColor,
+                            child: Row(
+                              children: <Widget>[
+                                Text('Scan QR', style: buttonSmlTextStyle),
+                                SizedBox(width: 5),
+                                Icon(
+                                  Icons.camera,
+                                  color: tealIcon,
+                                  size: 26,
+                                ),
+                              ],
+                            ),
+                            onPressed: scan,
+                          )
+                        ],
+                      )
+                    ],
                   ),
-                ],
+                ),
+                //child: Image.asset('assets/noq_home.png'),
+              ),
+              Card(
+                elevation: 20,
+                child: ExpansionTile(
+                  //key: PageStorageKey(this.widget.headerTitle),
+                  initiallyExpanded: true,
+                  title: Text(
+                    "Upcoming Bookings",
+                    style: TextStyle(color: Colors.blueGrey[700], fontSize: 17),
+                  ),
+                  backgroundColor: Colors.white,
+                  leading: Icon(
+                    Icons.date_range,
+                    color: tealIcon,
+                  ),
+                  children: <Widget>[
+                    ConstrainedBox(
+                      constraints: new BoxConstraints(
+                        maxHeight: MediaQuery.of(context).size.height * .6,
+                      ),
+                      child:
+                          // decoration: BoxDecoration(
+                          //     shape: BoxShape.rectangle,
+                          //     borderRadius: BorderRadius.all(Radius.circular(8.0))),
+                          // height: MediaQuery.of(context).size.height * .6,
+                          // margin: EdgeInsets.fromLTRB(10, 10, 10, 10),
+                          ListView.builder(
+                        shrinkWrap: true,
+                        //scrollDirection: Axis.vertical,
+                        itemBuilder: (BuildContext context, int index) {
+                          return Container(
+                            child: new Column(
+                                children:
+                                    _newBookingsList.map(_buildItem).toList()),
+                            //children: <Widget>[firstRow, secondRow],
+                          );
+                        },
+                        itemCount: 1,
+                      ),
+                    ),
+                  ],
+                ),
               ),
               Card(
                 elevation: 20,
@@ -210,13 +292,16 @@ class _UserHomePageState extends State<UserHomePage> {
                       children: <Widget>[],
                     ),
                     Container(
+                      alignment: Alignment.centerLeft,
                       child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.start,
                         crossAxisAlignment: CrossAxisAlignment.end,
                         children: <Widget>[
-                          Text('T-1030-14',
-                              // booking.bookingInfo.tokenNum,
-                              style: tokenTextStyle),
+                          Text(
+                            'T-1030-14',
+                            // booking.bookingInfo.tokenNum,
+                            style: tokenTextStyle, textAlign: TextAlign.left,
+                          ),
                         ],
                       ),
                     ),
@@ -225,18 +310,17 @@ class _UserHomePageState extends State<UserHomePage> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
                         Container(
+                          alignment: Alignment.centerLeft,
                           width: MediaQuery.of(context).size.width * .2,
                           //Text('Where: ', style: tokenHeadingTextStyle),
                           child: Text(
                             booking.storeInfo.name,
-                            // ' , ' +
-                            // booking.storeInfo.adrs,
-                            textAlign: TextAlign.right,
                             overflow: TextOverflow.ellipsis,
                             style: tokenDataTextStyle,
                           ),
                         ),
                         Container(
+                          alignment: Alignment.centerLeft,
                           width: MediaQuery.of(context).size.width * .4,
                           //Text('Where: ', style: tokenHeadingTextStyle),
                           child: Row(
