@@ -26,8 +26,9 @@ class _LandingPageState extends State<LandingPage> {
       "name": "My Account",
     },
     {
-      "icon": Icons.date_range,
-      "name": "My Bookings",
+      "icon": Icons.dashboard,
+      "name": "Register/Manage Services",
+      "children": {}
     },
     {
       "icon": Icons.favorite,
@@ -218,6 +219,7 @@ class _LandingPageState extends State<LandingPage> {
                 _userHomePage(),
                 //_storesListPage(),
                 SearchStoresPage(forPage: 'Search'),
+                SearchStoresPage(forPage: 'Favourite'),
                 _userAccount(),
               ],
             ),
@@ -287,6 +289,10 @@ class _LandingPageState extends State<LandingPage> {
         BottomNavigationBarItem(
           icon: Icon(Icons.search),
           title: Text('Search'),
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.favorite),
+          title: Text('My Favourites'),
         ),
         BottomNavigationBarItem(
           icon: Icon(Icons.account_circle),

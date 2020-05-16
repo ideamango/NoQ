@@ -3,6 +3,8 @@ import 'package:noq/constants.dart';
 import 'package:noq/models/localDB.dart';
 import 'package:noq/repository/local_db_repository.dart';
 import 'package:noq/services/mapService.dart';
+import 'package:noq/services/qr_code_generate.dart';
+import 'package:noq/services/qrcode_scan.dart';
 import 'package:noq/style.dart';
 import 'package:intl/intl.dart';
 import 'package:noq/view/circular_progress.dart';
@@ -134,25 +136,28 @@ class _UserHomePageState extends State<UserHomePage> {
                               ),
                             ],
                           ),
-                          RaisedButton(
-                            padding: EdgeInsets.all(1),
-                            autofocus: false,
-                            clipBehavior: Clip.none,
-                            elevation: 20,
-                            color: highlightColor,
-                            child: Row(
-                              children: <Widget>[
-                                Text('Scan QR', style: buttonSmlTextStyle),
-                                SizedBox(width: 5),
-                                Icon(
-                                  Icons.camera,
-                                  color: tealIcon,
-                                  size: 26,
-                                ),
-                              ],
-                            ),
-                            onPressed: scan,
-                          )
+                          QrCodeScanner().build(context),
+
+                          //GenerateScreen(),
+                          // RaisedButton(
+                          //   padding: EdgeInsets.all(1),
+                          //   autofocus: false,
+                          //   clipBehavior: Clip.none,
+                          //   elevation: 20,
+                          //   color: highlightColor,
+                          //   child: Row(
+                          //     children: <Widget>[
+                          //       Text('Scan QR', style: buttonSmlTextStyle),
+                          //       SizedBox(width: 5),
+                          //       Icon(
+                          //         Icons.camera,
+                          //         color: tealIcon,
+                          //         size: 26,
+                          //       ),
+                          //     ],
+                          //   ),
+                          //   onPressed: scan,
+                          // )
                         ],
                       )
                     ],

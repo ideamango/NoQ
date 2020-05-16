@@ -1,118 +1,50 @@
 import 'dart:io';
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:noq/services/authService.dart';
+import 'package:noq/services/qr_code_generate.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:flutter/foundation.dart';
 
 class UserMyAccountPage extends StatefulWidget {
-  final Storage storage;
-  UserMyAccountPage({Key key, @required this.storage}) : super(key: key);
   @override
   _UserMyAccountPageState createState() => _UserMyAccountPageState();
 }
 
 class _UserMyAccountPageState extends State<UserMyAccountPage> {
-  TextEditingController textEditingController = TextEditingController();
   String state;
-  Future<Directory> _appDocDir;
-
-  String userNickName = 'Smita';
 
   @override
   void initState() {
     super.initState();
-    widget.storage.readData().then((String value) {
-      setState(() {
-        state = value;
-      });
-    });
-  }
-
-  Future<File> writeData() async {
-    setState(() {
-      state = textEditingController.text;
-      textEditingController.text = '';
-    });
-    return widget.storage.writeData(state);
-  }
-
-  void getAppDirectory() {
-    setState(() {
-      _appDocDir = getApplicationDocumentsDirectory();
-    });
   }
 
   @override
   Widget build(BuildContext context) {
     return Container(
-        child: Column(
-      children: <Widget>[
-        Text('${state ?? "File is Empty"}'),
-        TextField(
-          controller: textEditingController,
+        child: Column(children: <Widget>[
+      Card(
+          child:
+              Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
+        Text('Logout'),
+        Container(
+          width: 40.0,
+          height: 20.0,
+          child: IconButton(
+            //alignment: Alignment.center,
+            padding: EdgeInsets.all(0),
+            onPressed: () {
+              AuthService().signOut(context);
+            },
+            highlightColor: Colors.orange[300],
+            icon: Icon(
+              Icons.exit_to_app,
+              color: Colors.blueGrey,
+            ),
+          ),
         ),
-        RaisedButton(
-          autofocus: false,
-          child: Text("Write to file"),
-          onPressed: writeData,
-        ),
-        RaisedButton(
-          autofocus: false,
-          child: Text("Get Directory"),
-          onPressed: getAppDirectory,
-        ),
-        FutureBuilder<Directory>(
-          future: _appDocDir,
-          builder: (BuildContext context, AsyncSnapshot<Directory> snapshot) {
-            Text text = Text('');
-            if (snapshot.connectionState == ConnectionState.done) {
-              if (snapshot.hasError) {
-                text = Text('Error: ${snapshot.error}');
-              } else if (snapshot.hasData) {
-                text = Text('Path: ${snapshot.data.path}');
-              } else {
-                text = Text('Unavailable');
-              }
-            }
-            return new Container(
-              child: text,
-            );
-          },
-        ),
-        Text(
-          'Testing save n read',
-          style: TextStyle(color: Colors.red),
-        ),
-      ],
-    ));
-  }
-}
-
-class Storage {
-  Future<String> get localPath async {
-    final directory = await getApplicationDocumentsDirectory();
-    return directory.path;
-  }
-
-  Future<File> get localFile async {
-    final path = await localPath;
-    return File('$path/db.txt');
-  }
-
-  Future<String> readData() async {
-    try {
-      final file = await localFile;
-      String body = await file.readAsString();
-      return body;
-    } catch (e) {
-      print("Couldn't read file");
-      return e.toString();
-    }
-  }
-
-  Future<File> writeData(String dataToSave) async {
-    final file = await localFile;
-
-    return file.writeAsString("$dataToSave");
+      ])),
+      GenerateScreen(),
+    ]));
   }
 }
