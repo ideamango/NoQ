@@ -13,7 +13,7 @@ class MyApp extends StatelessWidget {
 
   void initState() {
     //super.initState();
-    new FirebaseNotifications().setUpFirebase();
+    //  new FirebaseNotifications().setUpFirebase();
   }
 
   @override

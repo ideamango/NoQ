@@ -25,15 +25,11 @@ class _LandingPageState extends State<LandingPage> {
       "icon": Icons.account_circle,
       "name": "My Account",
     },
-    {
-      "icon": Icons.dashboard,
-      "name": "Register/Manage Services",
-      "children": {}
-    },
-    {
-      "icon": Icons.favorite,
-      "name": "My Favourites",
-    },
+
+    {"icon": Icons.home, "name": "Manage Apartment"},
+    {"icon": Icons.store, "name": "Manage Commercial Space"},
+    {"icon": Icons.business, "name": "Manage Office"},
+
     {
       "icon": Icons.notifications,
       "name": "Notifications",
@@ -142,7 +138,7 @@ class _LandingPageState extends State<LandingPage> {
   void initState() {
     super.initState();
 
-    _pageController = PageController(initialPage: 7);
+    _pageController = PageController(initialPage: 8);
     _initializeUserProfile();
   }
 
@@ -210,12 +206,14 @@ class _LandingPageState extends State<LandingPage> {
               onPageChanged: onPageChanged,
               children: <Widget>[
                 _userAccount(),
-                _userBookingPage(),
-                SearchStoresPage(forPage: 'Favourite'),
+                _manageApartmentPage(),
+                _manageCommSpacePage(),
+                _manageOffSpacePage(),
                 _userNotifications(),
                 _rateApp(),
                 _needHelp(),
                 _shareApp(),
+
                 _userHomePage(),
                 //_storesListPage(),
                 SearchStoresPage(forPage: 'Search'),
@@ -238,7 +236,7 @@ class _LandingPageState extends State<LandingPage> {
                   ),
                   // child: Text('Hello $_userName !!', style: inputTextStyle),
                   decoration: BoxDecoration(
-                    color: Theme.of(context).primaryColor,
+                    color: Colors.teal,
                   ),
                 ),
                 ListView.builder(
@@ -247,26 +245,80 @@ class _LandingPageState extends State<LandingPage> {
                   itemCount: drawerItems.length,
                   itemBuilder: (BuildContext context, int index) {
                     Map item = drawerItems[index];
-                    return ListTile(
-                      leading: Icon(
-                        item['icon'],
-                        color: _page == index
-                            ? highlightColor
-                            : Theme.of(context).textTheme.title.color,
-                      ),
-                      title: Text(
-                        item['name'],
-                        style: TextStyle(
+                    if (item['children'] != null) {
+                      return ExpansionTile(
+                        leading: Icon(
+                          item['icon'],
                           color: _page == index
                               ? highlightColor
                               : Theme.of(context).textTheme.title.color,
                         ),
-                      ),
-                      onTap: () {
-                        _pageController.jumpToPage(index);
-                        Navigator.pop(context);
-                      },
-                    );
+                        title: Text(
+                          item['name'],
+                          style: TextStyle(
+                            color: _page == index
+                                ? highlightColor
+                                : Theme.of(context).textTheme.title.color,
+                          ),
+                        ),
+                        children: <Widget>[
+                          ListView.builder(
+                            physics: NeverScrollableScrollPhysics(),
+                            shrinkWrap: true,
+                            itemCount: item['children'].length,
+                            itemBuilder: (BuildContext context, int i) {
+                              int pageIndex = drawerItems.length - 1 + i;
+                              Map subItem = item['children'][i];
+                              print('........' + i.toString());
+                              return ListTile(
+                                leading: Icon(
+                                  subItem['icon'],
+                                  color: _page == index
+                                      ? highlightColor
+                                      : Theme.of(context).textTheme.title.color,
+                                ),
+                                title: Text(
+                                  subItem['name'],
+                                  style: TextStyle(
+                                    color: _page == index
+                                        ? highlightColor
+                                        : Theme.of(context)
+                                            .textTheme
+                                            .title
+                                            .color,
+                                  ),
+                                ),
+                                onTap: () {
+                                  _pageController.jumpToPage(pageIndex);
+                                  Navigator.pop(context);
+                                },
+                              );
+                            },
+                          ),
+                        ],
+                      );
+                    } else {
+                      return ListTile(
+                        leading: Icon(
+                          item['icon'],
+                          color: _page == index
+                              ? highlightColor
+                              : Theme.of(context).textTheme.title.color,
+                        ),
+                        title: Text(
+                          item['name'],
+                          style: TextStyle(
+                            color: _page == index
+                                ? highlightColor
+                                : Theme.of(context).textTheme.title.color,
+                          ),
+                        ),
+                        onTap: () {
+                          _pageController.jumpToPage(index);
+                          Navigator.pop(context);
+                        },
+                      );
+                    }
                   },
                 ),
               ],
@@ -332,6 +384,30 @@ class _LandingPageState extends State<LandingPage> {
 
   Widget _userNotifications() {
     return userNotifications(context);
+  }
+
+  Widget _manageApartmentPage() {
+    return Container(
+      child: Center(
+        child: Text("Add new Apartment"),
+      ),
+    );
+  }
+
+  Widget _manageCommSpacePage() {
+    return Container(
+      child: Center(
+        child: Text("Add new Comm"),
+      ),
+    );
+  }
+
+  Widget _manageOffSpacePage() {
+    return Container(
+      child: Center(
+        child: Text("Add new Office"),
+      ),
+    );
   }
 
   Widget _rateApp() {

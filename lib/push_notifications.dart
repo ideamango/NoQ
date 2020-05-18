@@ -1,30 +1,30 @@
-import 'package:firebase_messaging/firebase_messaging.dart';
+// import 'package:firebase_messaging/firebase_messaging.dart';
 
-import 'dart:io';
+// import 'dart:io';
 
-class FirebaseNotifications {
-  FirebaseMessaging _firebaseMessaging;
+// class FirebaseNotifications {
+//   FirebaseMessaging _firebaseMessaging;
 
-  void setUpFirebase() {
-    _firebaseMessaging = FirebaseMessaging();
-    firebaseCloudMessaging_Listeners();
-  }
+//   void setUpFirebase() {
+//     _firebaseMessaging = FirebaseMessaging();
+//     firebaseCloudMessaging_Listeners();
+//   }
 
-  void firebaseCloudMessaging_Listeners() {
-    _firebaseMessaging.getToken().then((token) {
-      print(token);
-    });
+//   void firebaseCloudMessaging_Listeners() {
+//     _firebaseMessaging.getToken().then((token) {
+//       print(token);
+//     });
 
-    _firebaseMessaging.configure(
-      onMessage: (Map<String, dynamic> message) async {
-        print('on message $message');
-      },
-      onResume: (Map<String, dynamic> message) async {
-        print('on resume $message');
-      },
-      onLaunch: (Map<String, dynamic> message) async {
-        print('on launch $message');
-      },
-    );
-  }
-}
+//     _firebaseMessaging.configure(
+//       onMessage: (Map<String, dynamic> message) async {
+//         print('on message $message');
+//       },
+//       onResume: (Map<String, dynamic> message) async {
+//         print('on resume $message');
+//       },
+//       onLaunch: (Map<String, dynamic> message) async {
+//         print('on launch $message');
+//       },
+//     );
+//   }
+// }
