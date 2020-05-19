@@ -10,6 +10,10 @@ final buttonStyle = Material(
     onPressed: () {},
   ),
 );
+final transBtnshape =
+    RoundedRectangleBorder(side: BorderSide(color: Colors.orange));
+final transBtnColor = Colors.transparent;
+
 final buttonTextStyle = TextStyle(
   color: Colors.white,
   //fontWeight: FontWeight.w800,
@@ -63,6 +67,14 @@ final lightSubTextStyle = TextStyle(
   fontFamily: 'Monsterrat',
   letterSpacing: 0.5,
   fontSize: 11.0,
+  //height: 2,
+);
+final infoTextStyle = TextStyle(
+  color: Colors.blueGrey[700],
+  // fontWeight: FontWeight.w800,
+  fontFamily: 'Roboto',
+  letterSpacing: 0.5,
+  fontSize: 8.0,
   //height: 2,
 );
 final hintTextStyle = TextStyle(

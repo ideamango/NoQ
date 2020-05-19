@@ -32,3 +32,50 @@ To give rounded box
     Scaffold.of(context).showSnackBar(snackBar);
   }
 }
+
+
+
+Container(
+              width: double.infinity,
+              decoration: BoxDecoration(
+                  border: Border.all(color: Colors.indigo),
+                  color: Colors.grey[50],
+                  shape: BoxShape.rectangle,
+                  borderRadius: BorderRadius.all(Radius.circular(5.0))),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: <Widget>[
+                  adrsField1,
+                  adrsField2,
+                  Row(
+                    children: <Widget>[
+                      localityField,
+                      cityField,
+                    ],
+                  ),
+                  Row(
+                    children: <Widget>[
+                      pinField,
+                      countryField,
+                    ],
+                  ),
+
+                  // if (_isPositionSet == true)
+                  //   new Flexible(
+                  //       child: ListView.builder(
+                  //           itemCount: _addressList.length,
+                  //           itemBuilder: (BuildContext cxt, int index) {
+                  //             return Container(
+                  //               child: new Column(
+                  //                   children: _addressList
+                  //                       .map(_buildAddress)
+                  //                       .toList()),
+                  //               //children: <Widget>[firstRow, secondRow],
+                  //             );
+                  //           })),
+                  MaterialButton(
+                    minWidth: MediaQuery.of(context).size.width,
+                    autofocus: false,
+                    onPressed: _getCurrLocation,
+                    child: Text('Auto populate using current location'),
+                  ),
