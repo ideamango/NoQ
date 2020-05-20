@@ -30,6 +30,11 @@ class _UserMyAccountPageState extends State<UserMyAccountPage> {
   TextEditingController _pinController = TextEditingController();
   // List<String> _addressList = new List<String>();
 
+  TextEditingController _ctNameController = TextEditingController();
+
+  List<ContactPerson> contactList = new List<ContactPerson>();
+  bool _addPerson = false;
+
   bool _isPositionSet = false;
   //bool _autoPopulate = false;
   bool _isEditPressed = false;
@@ -43,6 +48,8 @@ class _UserMyAccountPageState extends State<UserMyAccountPage> {
 
   String _color = '';
   String state;
+
+  bool addNewClicked = false;
 
   @override
   void initState() {
@@ -125,6 +132,50 @@ class _UserMyAccountPageState extends State<UserMyAccountPage> {
     });
   }
 
+  void addPerson() {
+    ContactPerson cp = new ContactPerson();
+    contactList.add(cp);
+    setState(() {
+      _addPerson = true;
+    });
+  }
+
+  Widget _buildContactPerson(ContactPerson contactPerson) {
+    return Container(
+        width: MediaQuery.of(context).size.width * .94,
+        decoration: BoxDecoration(
+            border: Border.all(color: highlightColor),
+            color: Colors.grey[50],
+            shape: BoxShape.rectangle,
+            borderRadius: BorderRadius.all(Radius.circular(5.0))),
+        padding: EdgeInsets.all(5.0),
+        child: Column(
+          children: <Widget>[
+            TextFormField(
+              obscureText: false,
+              maxLines: 1,
+              minLines: 1,
+              style: textInputTextStyle,
+              keyboardType: TextInputType.text,
+              //   controller: _ctNameController,
+              decoration: InputDecoration(
+                labelText: 'Name',
+                enabledBorder: UnderlineInputBorder(
+                    borderSide: BorderSide(color: Colors.grey)),
+                focusedBorder: UnderlineInputBorder(
+                    borderSide: BorderSide(color: Colors.orange)),
+              ),
+              // validator: (String value) {
+
+              // },
+              onSaved: (String value) {
+                contactPerson.perName = value;
+              },
+            )
+          ],
+        ));
+  }
+
   // Widget _buildAddress(String add) {
   //   print("Sumant");
   //   return Text(add);
@@ -136,38 +187,79 @@ class _UserMyAccountPageState extends State<UserMyAccountPage> {
       obscureText: false,
       maxLines: 1,
       minLines: 1,
-      style: lightSubTextStyle,
+      style: textInputTextStyle,
       keyboardType: TextInputType.text,
-      decoration: InputDecoration(
-        labelText: 'Name',
-        enabledBorder:
-            UnderlineInputBorder(borderSide: BorderSide(color: Colors.grey)),
-        focusedBorder:
-            UnderlineInputBorder(borderSide: BorderSide(color: Colors.orange)),
-      ),
+      decoration:
+          CommonStyle.textFieldStyle(labelTextStr: "Name", hintTextStr: ""),
       validator: validateText,
     );
+    final regNumField = TextFormField(
+      obscureText: false,
+      maxLines: 1,
+      minLines: 1,
+      style: textInputTextStyle,
+      keyboardType: TextInputType.text,
+      decoration: CommonStyle.textFieldStyle(
+          labelTextStr: "Registration Number", hintTextStr: ""),
+      validator: validateText,
+    );
+    final entityType = TextFormField(
+      obscureText: false,
+      maxLines: 1,
+      minLines: 1,
+      style: textInputTextStyle,
+      keyboardType: TextInputType.text,
+      decoration: CommonStyle.textFieldStyle(
+          labelTextStr: "Type of Establishment", hintTextStr: ""),
+      validator: validateText,
+    );
+    final opensTimeField = TextFormField(
+      obscureText: false,
+      maxLines: 1,
+      minLines: 1,
+      style: textInputTextStyle,
+      keyboardType: TextInputType.text,
+      decoration: CommonStyle.textFieldStyle(
+          labelTextStr: "Opening Time", hintTextStr: ""),
+      validator: validateText,
+    );
+    final closeTimeField = TextFormField(
+      obscureText: false,
+      maxLines: 1,
+      minLines: 1,
+      style: textInputTextStyle,
+      keyboardType: TextInputType.text,
+      decoration: CommonStyle.textFieldStyle(
+          labelTextStr: "Closing Time", hintTextStr: ""),
+      validator: validateText,
+    );
+    final daysClosedField = TextFormField(
+      obscureText: false,
+      maxLines: 1,
+      minLines: 1,
+      style: textInputTextStyle,
+      keyboardType: TextInputType.text,
+      decoration: CommonStyle.textFieldStyle(
+          labelTextStr: "Weekly Closure Days", hintTextStr: ""),
+      validator: validateText,
+    );
+
     final adrsField1 = TextFormField(
       obscureText: false,
       maxLines: 1,
       minLines: 1,
-      style: lightSubTextStyle,
+      style: textInputTextStyle,
       keyboardType: TextInputType.text,
       controller: _adrs1Controller,
-      decoration: InputDecoration(
-        labelText: "Apartment/ House No./ Lane",
-        enabledBorder:
-            UnderlineInputBorder(borderSide: BorderSide(color: Colors.grey)),
-        focusedBorder:
-            UnderlineInputBorder(borderSide: BorderSide(color: Colors.orange)),
-      ),
+      decoration: CommonStyle.textFieldStyle(
+          labelTextStr: "Apartment/ House No./ Lane", hintTextStr: ""),
       validator: validateText,
     );
     final landmarkField2 = TextFormField(
       obscureText: false,
       maxLines: 1,
       minLines: 1,
-      style: lightSubTextStyle,
+      style: textInputTextStyle,
       keyboardType: TextInputType.text,
       controller: _landController,
       decoration: InputDecoration(
@@ -183,7 +275,7 @@ class _UserMyAccountPageState extends State<UserMyAccountPage> {
       obscureText: false,
       maxLines: 1,
       minLines: 1,
-      style: lightSubTextStyle,
+      style: textInputTextStyle,
       controller: _localityController,
       keyboardType: TextInputType.text,
       decoration: InputDecoration(
@@ -199,7 +291,7 @@ class _UserMyAccountPageState extends State<UserMyAccountPage> {
       obscureText: false,
       maxLines: 1,
       minLines: 1,
-      style: lightSubTextStyle,
+      style: textInputTextStyle,
       keyboardType: TextInputType.text,
       controller: _cityController,
       decoration: InputDecoration(
@@ -215,7 +307,7 @@ class _UserMyAccountPageState extends State<UserMyAccountPage> {
       obscureText: false,
       maxLines: 1,
       minLines: 1,
-      style: lightSubTextStyle,
+      style: textInputTextStyle,
       keyboardType: TextInputType.text,
       controller: _stateController,
       decoration: InputDecoration(
@@ -231,7 +323,7 @@ class _UserMyAccountPageState extends State<UserMyAccountPage> {
       obscureText: false,
       maxLines: 1,
       minLines: 1,
-      style: lightSubTextStyle,
+      style: textInputTextStyle,
       keyboardType: TextInputType.text,
       controller: _countryController,
       decoration: InputDecoration(
@@ -247,7 +339,7 @@ class _UserMyAccountPageState extends State<UserMyAccountPage> {
       obscureText: false,
       maxLines: 1,
       minLines: 1,
-      style: lightSubTextStyle,
+      style: textInputTextStyle,
       keyboardType: TextInputType.number,
       controller: _pinController,
       decoration: InputDecoration(
@@ -259,6 +351,7 @@ class _UserMyAccountPageState extends State<UserMyAccountPage> {
       ),
       validator: validateText,
     );
+    final _msgText = Text('This is the message');
     return new SafeArea(
       // top: true,
       // bottom: true,
@@ -269,6 +362,11 @@ class _UserMyAccountPageState extends State<UserMyAccountPage> {
           padding: const EdgeInsets.symmetric(horizontal: 5.0),
           children: <Widget>[
             nameField,
+            entityType,
+            regNumField,
+            opensTimeField,
+            closeTimeField,
+            daysClosedField,
             SizedBox(
               height: 7,
             ),
@@ -282,81 +380,121 @@ class _UserMyAccountPageState extends State<UserMyAccountPage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
-                  Text(
-                    "Address",
-                    style: TextStyle(color: Colors.blueGrey[700], fontSize: 17),
-                  ),
-
-                  new Container(
-                      width: MediaQuery.of(context).size.width * .94,
-                      decoration: BoxDecoration(
-                          border: Border.all(color: highlightColor),
-                          color: Colors.grey[50],
-                          shape: BoxShape.rectangle,
-                          borderRadius: BorderRadius.all(Radius.circular(5.0))),
-                      padding: EdgeInsets.all(5.0),
-                      child: Row(
-                        children: <Widget>[
-                          Icon(Icons.info, color: Colors.teal),
-                          SizedBox(
-                            width: 3,
-                          ),
-                          Expanded(
-                            child: Text(
-                                'The address is auto-populated using the current location, and same will be used by customers when searching your location.',
-                                style: lightSubTextStyle),
-                          ),
-                          // RichText(
-                          //   text: TextSpan(children: [
-                          //     TextSpan(
-                          //         text: 'The address is populated using the  ',
-                          //         style: lightSubTextStyle),
-                          //     TextSpan(
-                          //         text: 'location, and same will be used by ',
-                          //         style: lightSubTextStyle),
-                          //     TextSpan(
-                          //         text:
-                          //             'customers when searching your location.',
-                          //         style: lightSubTextStyle),
-                          //   ]),
-                          // ),
-                        ],
-                      )
-
-                      // padding: const EdgeInsets.only(left: 5.0, right: 5.0),
-                      //   Row(
-                      // mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      // children: <Widget>[
-                      //   FlatButton(
-                      //     color: (_isEditPressed)
-                      //         ? highlightColor
-                      //         : Colors.transparent,
-                      //     splashColor: Colors.teal,
-                      //     textColor:
-                      //         (_isEditPressed) ? Colors.white : Colors.orange,
-                      //     shape: RoundedRectangleBorder(
-                      //         side: BorderSide(color: Colors.orange)),
-                      //     child: Text('Auto-fill using current location'),
-                      //     onPressed: _getCurrLocation,
-                      //   ),
-                      //   FlatButton(
-                      //     color: (_isEditPressed)
-                      //         ? highlightColor
-                      //         : Colors.transparent,
-                      //     splashColor: Colors.teal,
-                      //     textColor:
-                      //         (_isEditPressed) ? Colors.white : Colors.orange,
-                      //     shape: RoundedRectangleBorder(
-                      //         side: BorderSide(color: Colors.orange)),
-                      //     child: Text('Edit location'),
-                      //     onPressed: () => _editLocation,
-                      //   ),
-                      //],
-                      //)
-                      ),
-                  //if (_autoPopulate == false)
                   Column(
                     children: <Widget>[
+                      ExpansionTile(
+                        //key: PageStorageKey(this.widget.headerTitle),
+                        initiallyExpanded: false,
+                        title: Text(
+                          "Address",
+                          style: TextStyle(
+                              color: Colors.blueGrey[700], fontSize: 17),
+                        ),
+                        backgroundColor: Colors.white,
+                        trailing: Icon(
+                          Icons.info,
+                          color: tealIcon,
+                        ),
+                        children: <Widget>[
+                          new Container(
+                            width: MediaQuery.of(context).size.width * .94,
+                            decoration: BoxDecoration(
+                                border: Border.all(color: highlightColor),
+                                color: Colors.grey[50],
+                                shape: BoxShape.rectangle,
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(5.0))),
+                            padding: EdgeInsets.all(5.0),
+                            child: Expanded(
+                              child: Text(
+                                  'The address is using the current location, and same will be used by customers when searching your location.',
+                                  style: textInputTextStyle),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+
+                  // new Container(
+                  //     width: MediaQuery.of(context).size.width * .94,
+                  //     decoration: BoxDecoration(
+                  //         border: Border.all(color: highlightColor),
+                  //         color: Colors.grey[50],
+                  //         shape: BoxShape.rectangle,
+                  //         borderRadius: BorderRadius.all(Radius.circular(5.0))),
+                  //     padding: EdgeInsets.all(5.0),
+                  //     child: Row(
+                  //       children: <Widget>[
+                  //         SizedBox(
+                  //           width: 3,
+                  //         ),
+                  //         Expanded(
+                  //           child: Text(
+                  //               'The address is auto-populated using the current location, and same will be used by customers when searching your location.',
+                  //               style: textInputTextStyle),
+                  //         ),
+                  //         // RichText(
+                  //         //   text: TextSpan(children: [
+                  //         //     TextSpan(
+                  //         //         text: 'The address is populated using the  ',
+                  //         //         style: textInputTextStyle),
+                  //         //     TextSpan(
+                  //         //         text: 'location, and same will be used by ',
+                  //         //         style: textInputTextStyle),
+                  //         //     TextSpan(
+                  //         //         text:
+                  //         //             'customers when searching your location.',
+                  //         //         style: textInputTextStyle),
+                  //         //   ]),
+                  //         // ),
+                  //       ],
+                  //     )
+
+                  //     // padding: const EdgeInsets.only(left: 5.0, right: 5.0),
+                  //     //   Row(
+                  //     // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  //     // children: <Widget>[
+                  //     //   FlatButton(
+                  //     //     color: (_isEditPressed)
+                  //     //         ? highlightColor
+                  //     //         : Colors.transparent,
+                  //     //     splashColor: Colors.teal,
+                  //     //     textColor:
+                  //     //         (_isEditPressed) ? Colors.white : Colors.orange,
+                  //     //     shape: RoundedRectangleBorder(
+                  //     //         side: BorderSide(color: Colors.orange)),
+                  //     //     child: Text('Auto-fill using current location'),
+                  //     //     onPressed: _getCurrLocation,
+                  //     //   ),
+                  //     //   FlatButton(
+                  //     //     color: (_isEditPressed)
+                  //     //         ? highlightColor
+                  //     //         : Colors.transparent,
+                  //     //     splashColor: Colors.teal,
+                  //     //     textColor:
+                  //     //         (_isEditPressed) ? Colors.white : Colors.orange,
+                  //     //     shape: RoundedRectangleBorder(
+                  //     //         side: BorderSide(color: Colors.orange)),
+                  //     //     child: Text('Edit location'),
+                  //     //     onPressed: () => _editLocation,
+                  //     //   ),
+                  //     //],
+                  //     //)
+                  //     ),
+                  // //if (_autoPopulate == false)
+                  Column(
+                    children: <Widget>[
+                      RaisedButton(
+                        elevation: 20,
+                        color: Colors.teal,
+                        splashColor: highlightColor,
+                        textColor: Colors.white,
+                        // shape: RoundedRectangleBorder(
+                        //     side: BorderSide(color: Colors.orange)),
+                        child: Text('Use current location'),
+                        onPressed: _getCurrLocation,
+                      ),
                       adrsField1,
                       landmarkField2,
                       localityField,
@@ -366,12 +504,6 @@ class _UserMyAccountPageState extends State<UserMyAccountPage> {
                       countryField,
                     ],
                   ),
-
-                  // if (_autoPopulate == true)
-                  //   Column(children: <Widget>[
-                  //     Text("Area :" + _subArea),
-                  //   ]),
-                  // landmarkField2,
                 ],
               ),
             ),
@@ -385,42 +517,76 @@ class _UserMyAccountPageState extends State<UserMyAccountPage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
-                  Text(
-                    "Contact Person",
-                    style: TextStyle(color: Colors.blueGrey[700], fontSize: 17),
-                  ),
-                  new Container(
-                      width: MediaQuery.of(context).size.width * .94,
-                      decoration: BoxDecoration(
-                          border: Border.all(color: highlightColor),
-                          color: Colors.grey[50],
-                          shape: BoxShape.rectangle,
-                          borderRadius: BorderRadius.all(Radius.circular(5.0))),
-                      padding: EdgeInsets.all(5.0),
-                      child: Row(
-                        children: <Widget>[
-                          Icon(Icons.info, color: Colors.teal),
-                          SizedBox(
-                            width: 3,
-                          ),
-                          Expanded(
-                            child: Text(
-                                'The address is auto-populated using the current location, and same will be used by customers when searching your location.',
-                                style: lightSubTextStyle),
-                          ),
-                        ],
-                      )),
                   Column(
                     children: <Widget>[
-                      adrsField1,
-                      landmarkField2,
-                      localityField,
-                      cityField,
-                      stateField,
-                      pinField,
-                      countryField,
+                      ExpansionTile(
+                        //key: PageStorageKey(this.widget.headerTitle),
+                        initiallyExpanded: false,
+                        title: Text(
+                          "Contact Person",
+                          style: TextStyle(
+                              color: Colors.blueGrey[700], fontSize: 16),
+                        ),
+                        backgroundColor: Colors.white,
+                        trailing: Icon(
+                          Icons.info,
+                          color: tealIcon,
+                        ),
+                        children: <Widget>[
+                          new Container(
+                            width: MediaQuery.of(context).size.width * .94,
+                            decoration: BoxDecoration(
+                                border: Border.all(color: highlightColor),
+                                color: Colors.grey[50],
+                                shape: BoxShape.rectangle,
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(5.0))),
+                            padding: EdgeInsets.all(5.0),
+                            child: Expanded(
+                              child: Text(
+                                  'The perosn who can be contacted for any queries regarding your services.',
+                                  style: textInputTextStyle),
+                            ),
+                          ),
+                        ],
+                      ),
                     ],
                   ),
+                  Column(children: <Widget>[
+                    FloatingActionButton(
+                      backgroundColor: highlightColor,
+                      child: Icon(Icons.add, color: Colors.white),
+                      splashColor: highlightColor,
+                      onPressed: () {
+                        addPerson();
+                      },
+                    ),
+                    if (_addPerson == true)
+                      Center(
+                        child: Container(
+                          margin: EdgeInsets.fromLTRB(10, 10, 10, 10),
+                          child: ListView.builder(
+                              itemCount: contactList.length,
+                              itemBuilder: (BuildContext context, int index) {
+                                return Container(
+                                  child: Card(
+                                    //  margin: EdgeInsets.all(10.0),
+
+                                    color: Colors.white,
+                                    elevation: 10,
+                                    child: new Column(
+                                      children: <Widget>[
+                                        _buildItem(contactList[index]),
+                                      ],
+                                    ),
+                                  ),
+                                  // contactList.map(_buildItem).toList()),
+                                  //children: <Widget>[firstRow, secondRow],
+                                );
+                              }),
+                        ),
+                      )
+                  ]),
                 ],
               ),
             ),
@@ -473,14 +639,29 @@ class _UserMyAccountPageState extends State<UserMyAccountPage> {
     //   ),
     // );
   }
+
+  Widget _buildItem(ContactPerson person) {
+    return Card(
+      //  margin: EdgeInsets.all(10.0),
+
+      color: Colors.white,
+      elevation: 10,
+      child: new Column(
+        children: <Widget>[
+          Text(person.empId),
+        ],
+      ),
+    );
+  }
 }
 
-// class Address {
-//   String subArea;
-//   String mainArea;
-//   String city;
-//   String country;
-//   String pincode;
-
-//   Address(this.subArea, this.mainArea, this.city, this.country, this.pincode);
-// }
+class ContactPerson {
+  String perName;
+  String empId;
+  String perPhone1;
+  String perPhone2;
+  String role;
+  String shiftStartTime;
+  String shiftEndTime;
+  ContactPerson();
+}

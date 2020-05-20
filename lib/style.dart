@@ -44,7 +44,7 @@ final inputTextStyle = TextStyle(
   //fontWeight: FontWeight.w800,
   fontFamily: 'Montserrat',
   letterSpacing: 0.5,
-  fontSize: 18,
+  fontSize: 16,
   height: 2,
 );
 
@@ -67,6 +67,14 @@ final lightSubTextStyle = TextStyle(
   fontFamily: 'Monsterrat',
   letterSpacing: 0.5,
   fontSize: 11.0,
+  //height: 2,
+);
+final textInputTextStyle = TextStyle(
+  color: Colors.blueGrey[700],
+  // fontWeight: FontWeight.w800,
+  fontFamily: 'Monsterrat',
+  letterSpacing: 0.5,
+  fontSize: 15.0,
   //height: 2,
 );
 final infoTextStyle = TextStyle(
@@ -125,3 +133,18 @@ final highlightTextStyle =
 
 final Color highlightColor = Colors.amber[600];
 final Color unselectedColor = Colors.blueGrey[700];
+
+class CommonStyle {
+  static InputDecoration textFieldStyle(
+      {String labelTextStr = "", String hintTextStr = ""}) {
+    return InputDecoration(
+      //contentPadding: EdgeInsets.all(12),
+      labelText: labelTextStr,
+      hintText: hintTextStr,
+      enabledBorder:
+          UnderlineInputBorder(borderSide: BorderSide(color: Colors.grey)),
+      focusedBorder:
+          UnderlineInputBorder(borderSide: BorderSide(color: Colors.orange)),
+    );
+  }
+}

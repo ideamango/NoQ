@@ -358,7 +358,7 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
                         child: Text(
                           str.adrs,
                           overflow: TextOverflow.ellipsis,
-                          style: lightSubTextStyle,
+                          style: textInputTextStyle,
                         ),
                       ),
                     ],
@@ -387,7 +387,7 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
                           children: [
                             //Icon(Icons.play_circle_filled, color: Colors.blueGrey[300]),
                             Text('Opens at:', style: labelTextStyle),
-                            Text(str.opensAt, style: lightSubTextStyle),
+                            Text(str.opensAt, style: textInputTextStyle),
                           ],
                         ),
                         Container(
@@ -397,7 +397,7 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
                           children: [
                             //Icon(Icons.pause_circle_filled, color: Colors.blueGrey[300]),
                             Text('Closes at:', style: labelTextStyle),
-                            Text(str.closesAt, style: lightSubTextStyle),
+                            Text(str.closesAt, style: textInputTextStyle),
                           ],
                         ),
                       ]),
