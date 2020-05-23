@@ -32,10 +32,18 @@ final whiteBoldTextStyle = TextStyle(
 );
 final buttonSmlTextStyle = TextStyle(
   color: Colors.white,
-  //fontWeight: FontWeight.w800,
+  fontWeight: FontWeight.w700,
   fontFamily: 'Montserrat',
 
   fontSize: 12,
+  //height: 2,
+);
+final buttonMedTextStyle = TextStyle(
+  color: Colors.white,
+  //fontWeight: FontWeight.w800,
+  fontFamily: 'Montserrat',
+
+  fontSize: 10,
   //height: 2,
 );
 
@@ -71,6 +79,14 @@ final lightSubTextStyle = TextStyle(
 );
 final textInputTextStyle = TextStyle(
   color: Colors.blueGrey[700],
+  // fontWeight: FontWeight.w800,
+  fontFamily: 'Monsterrat',
+  letterSpacing: 0.5,
+  fontSize: 15.0,
+  //height: 2,
+);
+final labelMedTextStyle = TextStyle(
+  color: Colors.grey[700],
   // fontWeight: FontWeight.w800,
   fontFamily: 'Monsterrat',
   letterSpacing: 0.5,
@@ -136,11 +152,14 @@ final Color unselectedColor = Colors.blueGrey[700];
 
 class CommonStyle {
   static InputDecoration textFieldStyle(
-      {String labelTextStr = "", String hintTextStr = ""}) {
+      {String labelTextStr = "",
+      String hintTextStr = "",
+      String prefixText = ""}) {
     return InputDecoration(
       //contentPadding: EdgeInsets.all(12),
       labelText: labelTextStr,
       hintText: hintTextStr,
+      prefixText: prefixText,
       enabledBorder:
           UnderlineInputBorder(borderSide: BorderSide(color: Colors.grey)),
       focusedBorder:

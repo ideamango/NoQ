@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:noq/pages/otp_dialog.dart';
 import 'package:noq/pages/otpdialog.dart';
+import 'package:noq/utils.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'style.dart';
@@ -24,17 +25,6 @@ class _LoginPageState extends State<LoginPage> {
   bool _autoValidate = false;
   bool isButtonPressed = false;
   //METHODS
-  String validateMobile(String value) {
-    var potentialNumber = int.tryParse(value);
-    if (potentialNumber == null) {
-      return 'Enter a phone number';
-    } else if ((value.length > 10)) {
-      return 'Enter a valid phone number';
-    } else if ((value.length < 8)) {
-      return 'Enter a valid phone number';
-    } else
-      return null;
-  }
 
   //UI ELEMENTS
   final headingText = Text(
@@ -89,7 +79,7 @@ class _LoginPageState extends State<LoginPage> {
         focusedBorder:
             UnderlineInputBorder(borderSide: BorderSide(color: Colors.orange)),
       ),
-      validator: validateMobile,
+      validator: Utils.validateMobile,
       onSaved: (value) => _mobile = "+91" + value,
       onChanged: (value) {
         setState(() {
@@ -100,31 +90,6 @@ class _LoginPageState extends State<LoginPage> {
           _prefs.then((SharedPreferences prefs) {
             prefs.setString("phone", '$_mobile');
           });
-        });
-      },
-      // onSaved: (value) => _mobile = value,
-      //onSubmitted: _phoneNumberValidator,
-    );
-    final otpNumField = TextFormField(
-      obscureText: false,
-      maxLines: 1,
-      minLines: 1,
-      style: inputTextStyle,
-      inputFormatters: <TextInputFormatter>[
-        WhitelistingTextInputFormatter.digitsOnly,
-      ],
-      keyboardType: TextInputType.phone,
-      decoration: InputDecoration(
-        labelText: 'Enter OTP',
-        enabledBorder:
-            UnderlineInputBorder(borderSide: BorderSide(color: Colors.grey)),
-        focusedBorder:
-            UnderlineInputBorder(borderSide: BorderSide(color: Colors.orange)),
-      ),
-      validator: validateMobile,
-      onChanged: (value) {
-        setState(() {
-          this.smsCode = value;
         });
       },
       // onSaved: (value) => _mobile = value,

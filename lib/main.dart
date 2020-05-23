@@ -28,6 +28,7 @@ class MyApp extends StatelessWidget {
         brightness: Brightness.light,
         primaryColor: Colors.teal[900],
         accentColor: Colors.indigoAccent,
+        unselectedWidgetColor: Colors.teal,
 
         // Define the default font family..
         fontFamily: 'Monsterrat',

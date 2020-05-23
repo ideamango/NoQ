@@ -2,12 +2,16 @@ import 'dart:io';
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:intl/intl.dart';
 import 'package:noq/services/authService.dart';
 import 'package:noq/services/qr_code_generate.dart';
 import 'package:noq/style.dart';
+import 'package:noq/utils.dart';
+import 'package:noq/widget/weekday_selector.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:flutter/foundation.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 
 class UserMyAccountPage extends StatefulWidget {
   @override
@@ -30,9 +34,23 @@ class _UserMyAccountPageState extends State<UserMyAccountPage> {
   TextEditingController _pinController = TextEditingController();
   // List<String> _addressList = new List<String>();
 
-  TextEditingController _ctNameController = TextEditingController();
+  TextEditingController _closeTimeController = TextEditingController();
+  TextEditingController _openTimeController = TextEditingController();
+  List<String> _closedOnDays = List<String>();
 
-  List<ContactPerson> contactList = new List<ContactPerson>();
+  //ContactPerson Fields
+  TextEditingController _ctNameController = TextEditingController();
+  TextEditingController _ctEmpIdController = TextEditingController();
+  TextEditingController _ctPhn1controller = TextEditingController();
+  TextEditingController _ctPhn2controller = TextEditingController();
+  TextEditingController _ctRoleTypecontroller = TextEditingController();
+  TextEditingController _ctAvlFromTimeController = TextEditingController();
+  TextEditingController _ctAvlTillTimeController = TextEditingController();
+
+  List<String> _daysOff = List<String>();
+
+  List<ContactPerson> newList = new List<ContactPerson>();
+
   bool _addPerson = false;
 
   bool _isPositionSet = false;
@@ -55,12 +73,21 @@ class _UserMyAccountPageState extends State<UserMyAccountPage> {
   void initState() {
     super.initState();
     _getCurrLocation();
+    // addPerson();
   }
 
   String validateText(String value) {
     if (value == null) {
       return 'Field is empty';
     }
+    return null;
+  }
+
+  String validateTime(String value) {
+    if (value == null) {
+      return 'Field is empty';
+    }
+
     return null;
   }
 
@@ -132,12 +159,29 @@ class _UserMyAccountPageState extends State<UserMyAccountPage> {
     });
   }
 
-  void addPerson() {
-    ContactPerson cp = new ContactPerson();
-    contactList.add(cp);
-    setState(() {
-      _addPerson = true;
-    });
+  void initializePersonList() {
+    ContactPerson cp1 =
+        new ContactPerson.values('a', 'b', 'c', 'd', 'e', 'f', 'g');
+    // ContactPerson cp2 =
+    //     new ContactPerson.values('a', 'b', 'c', 'd', 'e', 'f', 'g');
+
+    newList.add(cp1);
+    //newList.add(cp2);
+  }
+
+  Future<List> getList() async {
+    List<ContactPerson> contactList = new List<ContactPerson>();
+    ContactPerson cp =
+        new ContactPerson.values('a', 'b', 'c', 'd', 'e', 'f', 'g');
+    // ContactPerson cp4 =
+    //     new ContactPerson.values('a', 'b', 'c', 'd', 'e', 'f', 'g');
+    // contactList.add(cp1);
+    // contactList.add(cp2);
+    print('list contakajsgdsdfklsjhdk');
+
+    newList.add(cp);
+    contactList = newList;
+    return contactList;
   }
 
   Widget _buildContactPerson(ContactPerson contactPerson) {
@@ -183,6 +227,12 @@ class _UserMyAccountPageState extends State<UserMyAccountPage> {
 
   @override
   Widget build(BuildContext context) {
+    final BoxDecoration indigoContainer = new BoxDecoration(
+        border: Border.all(color: Colors.indigo),
+        shape: BoxShape.rectangle,
+        color: Colors.indigo,
+        borderRadius: BorderRadius.all(Radius.circular(5.0)));
+    //Basic details field
     final nameField = TextFormField(
       obscureText: false,
       maxLines: 1,
@@ -216,34 +266,136 @@ class _UserMyAccountPageState extends State<UserMyAccountPage> {
     final opensTimeField = TextFormField(
       obscureText: false,
       maxLines: 1,
+      readOnly: true,
       minLines: 1,
       style: textInputTextStyle,
+      onTap: () {
+        DatePicker.showTime12hPicker(context, showTitleActions: true,
+            onChanged: (date) {
+          print('change $date in time zone ' +
+              date.timeZoneOffset.inHours.toString());
+        }, onConfirm: (date) {
+          print('confirm $date');
+          //  String time = "${date.hour}:${date.minute} ${date.";
+
+          String time = DateFormat.jm().format(date);
+          print(time);
+
+          _openTimeController.text = time.toLowerCase();
+        }, currentTime: DateTime.now());
+      },
+      controller: _openTimeController,
       keyboardType: TextInputType.text,
-      decoration: CommonStyle.textFieldStyle(
-          labelTextStr: "Opening Time", hintTextStr: ""),
-      validator: validateText,
+      decoration: InputDecoration(
+          // suffixIcon: IconButton(
+          //   icon: Icon(Icons.schedule),
+          //   onPressed: () {
+          //     DatePicker.showTime12hPicker(context, showTitleActions: true,
+          //         onChanged: (date) {
+          //       print('change $date in time zone ' +
+          //           date.timeZoneOffset.inHours.toString());
+          //     }, onConfirm: (date) {
+          //       print('confirm $date');
+          //       //  String time = "${date.hour}:${date.minute} ${date.";
+
+          //       String time = DateFormat.jm().format(date);
+          //       print(time);
+
+          //       _openTimeController.text = time.toLowerCase();
+          //     }, currentTime: DateTime.now());
+          //   },
+          // ),
+          labelText: "Opening time",
+          hintText: "HH:MM am/pm",
+          enabledBorder:
+              UnderlineInputBorder(borderSide: BorderSide(color: Colors.grey)),
+          focusedBorder: UnderlineInputBorder(
+              borderSide: BorderSide(color: Colors.orange))),
+      validator: validateTime,
     );
     final closeTimeField = TextFormField(
+      enabled: true,
       obscureText: false,
+      readOnly: true,
       maxLines: 1,
       minLines: 1,
+      controller: _closeTimeController,
       style: textInputTextStyle,
-      keyboardType: TextInputType.text,
-      decoration: CommonStyle.textFieldStyle(
-          labelTextStr: "Closing Time", hintTextStr: ""),
-      validator: validateText,
-    );
-    final daysClosedField = TextFormField(
-      obscureText: false,
-      maxLines: 1,
-      minLines: 1,
-      style: textInputTextStyle,
-      keyboardType: TextInputType.text,
-      decoration: CommonStyle.textFieldStyle(
-          labelTextStr: "Weekly Closure Days", hintTextStr: ""),
-      validator: validateText,
-    );
+      onTap: () {
+        DatePicker.showTime12hPicker(context, showTitleActions: true,
+            onChanged: (date) {
+          print('change $date in time zone ' +
+              date.timeZoneOffset.inHours.toString());
+        }, onConfirm: (date) {
+          print('confirm $date');
+          //  String time = "${date.hour}:${date.minute} ${date.";
 
+          String time = DateFormat.jm().format(date);
+          print(time);
+
+          _closeTimeController.text = time.toLowerCase();
+        }, currentTime: DateTime.now());
+      },
+      decoration: InputDecoration(
+          labelText: "Closing time",
+          hintText: "HH:MM am/pm",
+          enabledBorder:
+              UnderlineInputBorder(borderSide: BorderSide(color: Colors.grey)),
+          focusedBorder: UnderlineInputBorder(
+              borderSide: BorderSide(color: Colors.orange))),
+      validator: validateTime,
+    );
+    final daysClosedField = Padding(
+      padding: EdgeInsets.only(top: 12, bottom: 8),
+      child: Row(
+        children: <Widget>[
+          Text(
+            'Closed on ',
+            style: TextStyle(
+              color: Colors.grey[600],
+              // fontWeight: FontWeight.w800,
+              fontFamily: 'Monsterrat',
+              letterSpacing: 0.5,
+              fontSize: 15.0,
+              //height: 2,
+            ),
+            textAlign: TextAlign.left,
+          ),
+          new WeekDaySelectorFormField(
+            displayDays: [
+              days.monday,
+              days.tuesday,
+              days.wednesday,
+              days.thursday,
+              days.friday,
+              days.saturday,
+              days.sunday
+            ],
+            initialValue: [days.sunday],
+            borderRadius: 20,
+            elevation: 10,
+            textStyle: buttonMedTextStyle,
+            fillColor: Colors.blueGrey[400],
+            selectedFillColor: highlightColor,
+            boxConstraints: BoxConstraints(
+                minHeight: 25, minWidth: 25, maxHeight: 28, maxWidth: 28),
+            borderSide: BorderSide(color: Colors.white, width: 0),
+            language: lang.en,
+            onChange: (days) {
+              print("Selected Days: " + days.toString());
+              _closedOnDays.clear();
+              days.forEach((element) {
+                var day = element.toString().substring(5);
+                _closedOnDays.add(day);
+              });
+              print(_closedOnDays.length);
+              print(_closedOnDays.toString());
+            },
+          ),
+        ],
+      ),
+    );
+//Address fields
     final adrsField1 = TextFormField(
       obscureText: false,
       maxLines: 1,
@@ -351,7 +503,200 @@ class _UserMyAccountPageState extends State<UserMyAccountPage> {
       ),
       validator: validateText,
     );
-    final _msgText = Text('This is the message');
+    //Contact person
+    final ctNameField = TextFormField(
+      obscureText: false,
+      maxLines: 1,
+      minLines: 1,
+      style: textInputTextStyle,
+      keyboardType: TextInputType.text,
+      controller: _ctNameController,
+      decoration:
+          CommonStyle.textFieldStyle(labelTextStr: "Name", hintTextStr: ""),
+      validator: validateText,
+    );
+    final ctEmpIdField = TextFormField(
+      obscureText: false,
+      maxLines: 1,
+      minLines: 1,
+      style: textInputTextStyle,
+      keyboardType: TextInputType.text,
+      controller: _ctEmpIdController,
+      decoration: CommonStyle.textFieldStyle(
+          labelTextStr: "Person Id", hintTextStr: ""),
+      validator: validateText,
+    );
+    final ctPhn1Field = TextFormField(
+      obscureText: false,
+      maxLines: 1,
+      minLines: 1,
+      style: textInputTextStyle,
+      keyboardType: TextInputType.phone,
+      controller: _ctPhn1controller,
+      decoration: CommonStyle.textFieldStyle(
+          prefixText: '+91', labelTextStr: "Primary Phone", hintTextStr: ""),
+      validator: Utils.validateMobile,
+      onSaved: (value) => value = "+91" + value,
+    );
+    final ctPhn2Field = TextFormField(
+      obscureText: false,
+      maxLines: 1,
+      minLines: 1,
+      style: textInputTextStyle,
+      keyboardType: TextInputType.phone,
+      controller: _ctPhn2controller,
+      decoration: CommonStyle.textFieldStyle(
+          prefixText: '+91', labelTextStr: "Alternate Phone", hintTextStr: ""),
+      validator: Utils.validateMobile,
+      onSaved: (value) => value = "+91" + value,
+    );
+
+    final ctRoleType = TextFormField(
+      obscureText: false,
+      maxLines: 1,
+      minLines: 1,
+      style: textInputTextStyle,
+      keyboardType: TextInputType.text,
+      controller: _ctRoleTypecontroller,
+      decoration: CommonStyle.textFieldStyle(
+          labelTextStr: "Role Type", hintTextStr: ""),
+      validator: validateText,
+    );
+
+    final ctAvlFromTimeField = TextFormField(
+      obscureText: false,
+      maxLines: 1,
+      readOnly: true,
+      minLines: 1,
+      style: textInputTextStyle,
+      controller: _ctAvlFromTimeController,
+      keyboardType: TextInputType.text,
+      onTap: () {
+        DatePicker.showTime12hPicker(context, showTitleActions: true,
+            onChanged: (date) {
+          print('change $date in time zone ' +
+              date.timeZoneOffset.inHours.toString());
+        }, onConfirm: (date) {
+          print('confirm $date');
+          //  String time = "${date.hour}:${date.minute} ${date.";
+
+          String time = DateFormat.jm().format(date);
+          print(time);
+
+          _ctAvlFromTimeController.text = time.toLowerCase();
+        }, currentTime: DateTime.now());
+      },
+      decoration: InputDecoration(
+          // suffixIcon: IconButton(
+          //   icon: Icon(Icons.schedule),
+          //   onPressed: () {
+          //     DatePicker.showTime12hPicker(context, showTitleActions: true,
+          //         onChanged: (date) {
+          //       print('change $date in time zone ' +
+          //           date.timeZoneOffset.inHours.toString());
+          //     }, onConfirm: (date) {
+          //       print('confirm $date');
+          //       //  String time = "${date.hour}:${date.minute} ${date.";
+
+          //       String time = DateFormat.jm().format(date);
+          //       print(time);
+
+          //       _openTimeController.text = time.toLowerCase();
+          //     }, currentTime: DateTime.now());
+          //   },
+          // ),
+          labelText: "Available from",
+          hintText: "HH:MM am/pm",
+          enabledBorder:
+              UnderlineInputBorder(borderSide: BorderSide(color: Colors.grey)),
+          focusedBorder: UnderlineInputBorder(
+              borderSide: BorderSide(color: Colors.orange))),
+      validator: validateTime,
+    );
+    final ctAvlTillTimeField = TextFormField(
+      enabled: true,
+      obscureText: false,
+      readOnly: true,
+      maxLines: 1,
+      minLines: 1,
+      controller: _ctAvlTillTimeController,
+      style: textInputTextStyle,
+      onTap: () {
+        DatePicker.showTime12hPicker(context, showTitleActions: true,
+            onChanged: (date) {
+          print('change $date in time zone ' +
+              date.timeZoneOffset.inHours.toString());
+        }, onConfirm: (date) {
+          print('confirm $date');
+          //  String time = "${date.hour}:${date.minute} ${date.";
+
+          String time = DateFormat.jm().format(date);
+          print(time);
+
+          _ctAvlTillTimeController.text = time.toLowerCase();
+        }, currentTime: DateTime.now());
+      },
+      decoration: InputDecoration(
+          labelText: "Available till",
+          hintText: "HH:MM am/pm",
+          enabledBorder:
+              UnderlineInputBorder(borderSide: BorderSide(color: Colors.grey)),
+          focusedBorder: UnderlineInputBorder(
+              borderSide: BorderSide(color: Colors.orange))),
+      validator: validateTime,
+    );
+    final daysOffField = Padding(
+      padding: EdgeInsets.only(top: 12, bottom: 8),
+      child: Row(
+        children: <Widget>[
+          Text(
+            'Days off: ',
+            style: TextStyle(
+              color: Colors.grey[600],
+              // fontWeight: FontWeight.w800,
+              fontFamily: 'Monsterrat',
+              letterSpacing: 0.5,
+              fontSize: 15.0,
+              //height: 2,
+            ),
+            textAlign: TextAlign.left,
+          ),
+          SizedBox(width: 5),
+          new WeekDaySelectorFormField(
+            displayDays: [
+              days.monday,
+              days.tuesday,
+              days.wednesday,
+              days.thursday,
+              days.friday,
+              days.saturday,
+              days.sunday
+            ],
+            initialValue: [days.sunday],
+            borderRadius: 20,
+            elevation: 10,
+            textStyle: buttonMedTextStyle,
+            fillColor: Colors.blueGrey[400],
+            selectedFillColor: highlightColor,
+            boxConstraints: BoxConstraints(
+                minHeight: 25, minWidth: 25, maxHeight: 28, maxWidth: 28),
+            borderSide: BorderSide(color: Colors.white, width: 0),
+            language: lang.en,
+            onChange: (days) {
+              print("Days off: " + days.toString());
+              _daysOff.clear();
+              days.forEach((element) {
+                var day = element.toString().substring(5);
+                _daysOff.add(day);
+              });
+              print(_daysOff.length);
+              print(_daysOff.toString());
+            },
+          ),
+        ],
+      ),
+    );
+
     return new SafeArea(
       // top: true,
       // bottom: true,
@@ -361,12 +706,75 @@ class _UserMyAccountPageState extends State<UserMyAccountPage> {
         child: new ListView(
           padding: const EdgeInsets.symmetric(horizontal: 5.0),
           children: <Widget>[
-            nameField,
-            entityType,
-            regNumField,
-            opensTimeField,
-            closeTimeField,
-            daysClosedField,
+            Container(
+              decoration: BoxDecoration(
+                  border: Border.all(color: Colors.indigo),
+                  color: Colors.grey[50],
+                  shape: BoxShape.rectangle,
+                  borderRadius: BorderRadius.all(Radius.circular(5.0))),
+              padding: EdgeInsets.all(5.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Column(
+                    children: <Widget>[
+                      Container(
+                        decoration: indigoContainer,
+                        child: Theme(
+                          data: ThemeData(
+                            unselectedWidgetColor: Colors.white,
+                            accentColor: Colors.grey[50],
+                          ),
+                          child: ExpansionTile(
+                            //key: PageStorageKey(this.widget.headerTitle),
+                            initiallyExpanded: false,
+                            title: Row(
+                              children: <Widget>[
+                                Text(
+                                  "Basic Details",
+                                  style: TextStyle(
+                                      color: Colors.white, fontSize: 15),
+                                ),
+                                SizedBox(width: 5),
+                                Icon(
+                                  Icons.info,
+                                  color: Colors.white,
+                                ),
+                              ],
+                            ),
+                            backgroundColor: Colors.indigo,
+
+                            children: <Widget>[
+                              new Container(
+                                width: MediaQuery.of(context).size.width * .94,
+                                decoration: BoxDecoration(
+                                    border: Border.all(color: Colors.indigo),
+                                    color: Colors.grey[50],
+                                    shape: BoxShape.rectangle,
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(5.0))),
+                                padding: EdgeInsets.all(2.0),
+                                child: Expanded(
+                                  child: Text(
+                                      'These are important details of the establishment, Same will be shown to customer while search.',
+                                      style: lightSubTextStyle),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      nameField,
+                      entityType,
+                      regNumField,
+                      opensTimeField,
+                      closeTimeField,
+                      daysClosedField,
+                    ],
+                  ),
+                ],
+              ),
+            ),
             SizedBox(
               height: 7,
             ),
@@ -382,107 +790,54 @@ class _UserMyAccountPageState extends State<UserMyAccountPage> {
                 children: <Widget>[
                   Column(
                     children: <Widget>[
-                      ExpansionTile(
-                        //key: PageStorageKey(this.widget.headerTitle),
-                        initiallyExpanded: false,
-                        title: Text(
-                          "Address",
-                          style: TextStyle(
-                              color: Colors.blueGrey[700], fontSize: 17),
-                        ),
-                        backgroundColor: Colors.white,
-                        trailing: Icon(
-                          Icons.info,
-                          color: tealIcon,
-                        ),
-                        children: <Widget>[
-                          new Container(
-                            width: MediaQuery.of(context).size.width * .94,
-                            decoration: BoxDecoration(
-                                border: Border.all(color: highlightColor),
-                                color: Colors.grey[50],
-                                shape: BoxShape.rectangle,
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(5.0))),
-                            padding: EdgeInsets.all(5.0),
-                            child: Expanded(
-                              child: Text(
-                                  'The address is using the current location, and same will be used by customers when searching your location.',
-                                  style: textInputTextStyle),
-                            ),
+                      Container(
+                        decoration: indigoContainer,
+                        child: Theme(
+                          data: ThemeData(
+                            unselectedWidgetColor: Colors.white,
+                            accentColor: Colors.grey[50],
                           ),
-                        ],
+                          child: ExpansionTile(
+                            //key: PageStorageKey(this.widget.headerTitle),
+                            initiallyExpanded: false,
+                            title: Row(
+                              children: <Widget>[
+                                Text(
+                                  "Address",
+                                  style: TextStyle(
+                                      color: Colors.white, fontSize: 15),
+                                ),
+                                SizedBox(width: 5),
+                                Icon(
+                                  Icons.info,
+                                  color: Colors.white,
+                                ),
+                              ],
+                            ),
+                            backgroundColor: Colors.indigo,
+
+                            children: <Widget>[
+                              new Container(
+                                width: MediaQuery.of(context).size.width * .94,
+                                decoration: BoxDecoration(
+                                    border: Border.all(color: Colors.indigo),
+                                    color: Colors.grey[50],
+                                    shape: BoxShape.rectangle,
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(5.0))),
+                                padding: EdgeInsets.all(2.0),
+                                child: Expanded(
+                                  child: Text(
+                                      'The address is using the current location, and same will be used by customers when searching your location.',
+                                      style: lightSubTextStyle),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
                       ),
                     ],
                   ),
-
-                  // new Container(
-                  //     width: MediaQuery.of(context).size.width * .94,
-                  //     decoration: BoxDecoration(
-                  //         border: Border.all(color: highlightColor),
-                  //         color: Colors.grey[50],
-                  //         shape: BoxShape.rectangle,
-                  //         borderRadius: BorderRadius.all(Radius.circular(5.0))),
-                  //     padding: EdgeInsets.all(5.0),
-                  //     child: Row(
-                  //       children: <Widget>[
-                  //         SizedBox(
-                  //           width: 3,
-                  //         ),
-                  //         Expanded(
-                  //           child: Text(
-                  //               'The address is auto-populated using the current location, and same will be used by customers when searching your location.',
-                  //               style: textInputTextStyle),
-                  //         ),
-                  //         // RichText(
-                  //         //   text: TextSpan(children: [
-                  //         //     TextSpan(
-                  //         //         text: 'The address is populated using the  ',
-                  //         //         style: textInputTextStyle),
-                  //         //     TextSpan(
-                  //         //         text: 'location, and same will be used by ',
-                  //         //         style: textInputTextStyle),
-                  //         //     TextSpan(
-                  //         //         text:
-                  //         //             'customers when searching your location.',
-                  //         //         style: textInputTextStyle),
-                  //         //   ]),
-                  //         // ),
-                  //       ],
-                  //     )
-
-                  //     // padding: const EdgeInsets.only(left: 5.0, right: 5.0),
-                  //     //   Row(
-                  //     // mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  //     // children: <Widget>[
-                  //     //   FlatButton(
-                  //     //     color: (_isEditPressed)
-                  //     //         ? highlightColor
-                  //     //         : Colors.transparent,
-                  //     //     splashColor: Colors.teal,
-                  //     //     textColor:
-                  //     //         (_isEditPressed) ? Colors.white : Colors.orange,
-                  //     //     shape: RoundedRectangleBorder(
-                  //     //         side: BorderSide(color: Colors.orange)),
-                  //     //     child: Text('Auto-fill using current location'),
-                  //     //     onPressed: _getCurrLocation,
-                  //     //   ),
-                  //     //   FlatButton(
-                  //     //     color: (_isEditPressed)
-                  //     //         ? highlightColor
-                  //     //         : Colors.transparent,
-                  //     //     splashColor: Colors.teal,
-                  //     //     textColor:
-                  //     //         (_isEditPressed) ? Colors.white : Colors.orange,
-                  //     //     shape: RoundedRectangleBorder(
-                  //     //         side: BorderSide(color: Colors.orange)),
-                  //     //     child: Text('Edit location'),
-                  //     //     onPressed: () => _editLocation,
-                  //     //   ),
-                  //     //],
-                  //     //)
-                  //     ),
-                  // //if (_autoPopulate == false)
                   Column(
                     children: <Widget>[
                       RaisedButton(
@@ -507,6 +862,9 @@ class _UserMyAccountPageState extends State<UserMyAccountPage> {
                 ],
               ),
             ),
+            SizedBox(
+              height: 7,
+            ),
             Container(
               decoration: BoxDecoration(
                   border: Border.all(color: Colors.indigo),
@@ -519,74 +877,120 @@ class _UserMyAccountPageState extends State<UserMyAccountPage> {
                 children: <Widget>[
                   Column(
                     children: <Widget>[
-                      ExpansionTile(
-                        //key: PageStorageKey(this.widget.headerTitle),
-                        initiallyExpanded: false,
-                        title: Text(
-                          "Contact Person",
-                          style: TextStyle(
-                              color: Colors.blueGrey[700], fontSize: 16),
-                        ),
-                        backgroundColor: Colors.white,
-                        trailing: Icon(
-                          Icons.info,
-                          color: tealIcon,
-                        ),
-                        children: <Widget>[
-                          new Container(
-                            width: MediaQuery.of(context).size.width * .94,
-                            decoration: BoxDecoration(
-                                border: Border.all(color: highlightColor),
-                                color: Colors.grey[50],
-                                shape: BoxShape.rectangle,
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(5.0))),
-                            padding: EdgeInsets.all(5.0),
-                            child: Expanded(
-                              child: Text(
-                                  'The perosn who can be contacted for any queries regarding your services.',
-                                  style: textInputTextStyle),
-                            ),
+                      Container(
+                        decoration: indigoContainer,
+                        child: Theme(
+                          data: ThemeData(
+                            unselectedWidgetColor: Colors.white,
+                            accentColor: Colors.grey[50],
                           ),
-                        ],
+                          child: ExpansionTile(
+                            //key: PageStorageKey(this.widget.headerTitle),
+                            initiallyExpanded: false,
+                            title: Row(
+                              children: <Widget>[
+                                Text(
+                                  "Contact Person",
+                                  style: TextStyle(
+                                      color: Colors.white, fontSize: 15),
+                                ),
+                                SizedBox(width: 5),
+                                Icon(
+                                  Icons.info,
+                                  color: Colors.white,
+                                ),
+                              ],
+                            ),
+                            backgroundColor: Colors.indigo,
+
+                            children: <Widget>[
+                              new Container(
+                                width: MediaQuery.of(context).size.width * .94,
+                                decoration: BoxDecoration(
+                                    border: Border.all(color: Colors.indigo),
+                                    color: Colors.grey[50],
+                                    shape: BoxShape.rectangle,
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(5.0))),
+                                padding: EdgeInsets.all(2.0),
+                                child: Expanded(
+                                  child: Text(
+                                      'The perosn who can be contacted for any queries regarding your services.',
+                                      style: lightSubTextStyle),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
                       ),
                     ],
                   ),
-                  Column(children: <Widget>[
-                    FloatingActionButton(
-                      backgroundColor: highlightColor,
-                      child: Icon(Icons.add, color: Colors.white),
-                      splashColor: highlightColor,
-                      onPressed: () {
-                        addPerson();
-                      },
-                    ),
-                    if (_addPerson == true)
-                      Center(
-                        child: Container(
-                          margin: EdgeInsets.fromLTRB(10, 10, 10, 10),
-                          child: ListView.builder(
-                              itemCount: contactList.length,
-                              itemBuilder: (BuildContext context, int index) {
-                                return Container(
-                                  child: Card(
-                                    //  margin: EdgeInsets.all(10.0),
-
-                                    color: Colors.white,
-                                    elevation: 10,
-                                    child: new Column(
-                                      children: <Widget>[
-                                        _buildItem(contactList[index]),
-                                      ],
-                                    ),
-                                  ),
-                                  // contactList.map(_buildItem).toList()),
-                                  //children: <Widget>[firstRow, secondRow],
-                                );
-                              }),
+                  Container(
+                      child: Column(
+                    children: <Widget>[
+                      ctNameField,
+                      ctEmpIdField,
+                      ctPhn1Field,
+                      ctPhn2Field,
+                      ctRoleType,
+                      daysOffField,
+                      Divider(
+                        thickness: .7,
+                        color: Colors.grey[600],
+                      ),
+                      ctAvlFromTimeField,
+                      ctAvlTillTimeField,
+                    ],
+                  )),
+                  Container(
+                    alignment: Alignment.center,
+                    width: MediaQuery.of(context).size.width,
+                    child: Material(
+                      elevation: 20.0,
+                      color: highlightColor,
+                      //  isButtonPressed
+                      //     ? Theme.of(context).primaryColor
+                      //     : Theme.of(context).accentColor,
+                      child: MaterialButton(
+                        minWidth: MediaQuery.of(context).size.width,
+                        // padding: EdgeInsets.fromLTRB(10.0, 7.5, 10.0, 7.5),
+                        onPressed: () {
+                          if (_formKey.currentState.validate()) {
+                            _formKey.currentState.save();
+                            // Navigator.push(
+                            //     context,
+                            //     MaterialPageRoute(
+                            //         builder: (context) =>
+                            //             Result(model: this.model)));
+                          }
+                        },
+                        child: Text(
+                          'Save & Submit',
+                          style: buttonTextStyle,
                         ),
-                      )
-                  ]),
+                      ),
+                    ),
+                  )
+
+                  // Column(children: <Widget>[
+                  //   Center(
+                  //     child: FloatingActionButton(
+                  //       backgroundColor: highlightColor,
+                  //       child: Icon(Icons.add, color: Colors.white),
+                  //       splashColor: highlightColor,
+                  //       onPressed: () {
+                  //         // addPerson();
+                  //       },
+                  //     ),
+                  //   ),
+                  //   // _createChildren(),
+                  //   // Expanded(
+                  //   //     child: new ListView.builder(
+                  //   //         itemCount: contactList.length,
+                  //   //         itemBuilder: (BuildContext ctxt, int index) {
+                  //   //           return new Text(contactList[index].perName);
+                  //   //         })),
+                  // ]),
                 ],
               ),
             ),
@@ -664,4 +1068,6 @@ class ContactPerson {
   String shiftStartTime;
   String shiftEndTime;
   ContactPerson();
+  ContactPerson.values(this.perName, this.empId, this.perPhone1, this.perPhone2,
+      this.role, this.shiftStartTime, this.shiftEndTime);
 }
