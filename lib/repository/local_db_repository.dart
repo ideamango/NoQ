@@ -42,6 +42,22 @@ Future<UserAppData> readData() async {
   }
 }
 
+void saveEntityDetails(EntityAppData str) async {
+  final file = await localFile;
+  UserAppData _userProfile;
+//Read current data in file
+  await readData().then((fUser) {
+    _userProfile = fUser;
+  });
+// Add new data and save
+
+// TOICOC _userProfile. = str;
+
+  String fileData = generateJson(_userProfile);
+  //print('Writing in file $file , data: $fileData');
+  file.writeAsString("$fileData");
+}
+
 // Future<List<StoreAppData>> getFavStoresList() async {
 //   await readData().then((fUserProfile) {
 //     if (fUserProfile.favStores != null) {

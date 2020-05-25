@@ -25,7 +25,7 @@ class _UserBookingPageState extends State<UserBookingPage> {
     _loadUpcomingBookings();
   }
 
-  void toggleFavorite(StoreAppData strData) {
+  void toggleFavorite(EntityAppData strData) {
     setState(() {
       strData.isFavourite = !strData.isFavourite;
       print("Fav changed ---- booking");
@@ -56,7 +56,7 @@ class _UserBookingPageState extends State<UserBookingPage> {
         setState(() {
           _upcomingBkgStatus = 'Success';
           for (BookingAppData bk in bookings) {
-            for (StoreAppData str in _userProfile.storesAccessed) {
+            for (EntityAppData str in _userProfile.storesAccessed) {
               if (str.id == bk.storeId)
                 newList.add(new BookingListItem(str, bk));
             }
@@ -226,7 +226,7 @@ class _UserBookingPageState extends State<UserBookingPage> {
                                 ),
                                 onPressed: () => launchURL(
                                     booking.storeInfo.name,
-                                    booking.storeInfo.adrs,
+                                    booking.storeInfo.adrs.toString(),
                                     booking.storeInfo.lat,
                                     booking.storeInfo.long),
                               ),

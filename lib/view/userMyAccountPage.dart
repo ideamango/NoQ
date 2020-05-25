@@ -3,6 +3,8 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
+import 'package:noq/models/localDB.dart';
+import 'package:noq/repository/local_db_repository.dart';
 import 'package:noq/services/authService.dart';
 import 'package:noq/services/qr_code_generate.dart';
 import 'package:noq/style.dart';
@@ -48,8 +50,10 @@ class _UserMyAccountPageState extends State<UserMyAccountPage> {
   TextEditingController _ctAvlTillTimeController = TextEditingController();
 
   List<String> _daysOff = List<String>();
+  ContactAppData cp1 = new ContactAppData();
+  EntityAppData entity = new EntityAppData();
 
-  List<ContactPerson> newList = new List<ContactPerson>();
+  List<ContactAppData> newList = new List<ContactAppData>();
 
   bool _addPerson = false;
 
@@ -159,20 +163,20 @@ class _UserMyAccountPageState extends State<UserMyAccountPage> {
     });
   }
 
-  void initializePersonList() {
-    ContactPerson cp1 =
-        new ContactPerson.values('a', 'b', 'c', 'd', 'e', 'f', 'g');
-    // ContactPerson cp2 =
-    //     new ContactPerson.values('a', 'b', 'c', 'd', 'e', 'f', 'g');
+  // void initializePersonList() {
+  //   ContactPerson cp1 =
+  //       new ContactPerson.values('a', 'b', 'c', 'd', 'e', 'f', 'g');
+  //   // ContactPerson cp2 =
+  //   //     new ContactPerson.values('a', 'b', 'c', 'd', 'e', 'f', 'g');
 
-    newList.add(cp1);
-    //newList.add(cp2);
-  }
+  //   newList.add(cp1);
+  //   //newList.add(cp2);
+  // }
 
   Future<List> getList() async {
-    List<ContactPerson> contactList = new List<ContactPerson>();
-    ContactPerson cp =
-        new ContactPerson.values('a', 'b', 'c', 'd', 'e', 'f', 'g');
+    List<ContactAppData> contactList = new List<ContactAppData>();
+    ContactAppData cp = new ContactAppData.values(
+        'a', 'b', 'c', 'd', Role.Employee, 'f', 'g', []);
     // ContactPerson cp4 =
     //     new ContactPerson.values('a', 'b', 'c', 'd', 'e', 'f', 'g');
     // contactList.add(cp1);
@@ -184,7 +188,7 @@ class _UserMyAccountPageState extends State<UserMyAccountPage> {
     return contactList;
   }
 
-  Widget _buildContactPerson(ContactPerson contactPerson) {
+  Widget _buildContactPerson(ContactAppData contactPerson) {
     return Container(
         width: MediaQuery.of(context).size.width * .94,
         decoration: BoxDecoration(
@@ -514,6 +518,9 @@ class _UserMyAccountPageState extends State<UserMyAccountPage> {
       decoration:
           CommonStyle.textFieldStyle(labelTextStr: "Name", hintTextStr: ""),
       validator: validateText,
+      onSaved: (String value) {
+        cp1.perName = value;
+      },
     );
     final ctEmpIdField = TextFormField(
       obscureText: false,
@@ -525,6 +532,9 @@ class _UserMyAccountPageState extends State<UserMyAccountPage> {
       decoration: CommonStyle.textFieldStyle(
           labelTextStr: "Person Id", hintTextStr: ""),
       validator: validateText,
+      onSaved: (String value) {
+        cp1.empId = value;
+      },
     );
     final ctPhn1Field = TextFormField(
       obscureText: false,
@@ -536,7 +546,10 @@ class _UserMyAccountPageState extends State<UserMyAccountPage> {
       decoration: CommonStyle.textFieldStyle(
           prefixText: '+91', labelTextStr: "Primary Phone", hintTextStr: ""),
       validator: Utils.validateMobile,
-      onSaved: (value) => value = "+91" + value,
+      onSaved: (value) {
+        value = "+91" + value;
+        cp1.perPhone1 = value;
+      },
     );
     final ctPhn2Field = TextFormField(
       obscureText: false,
@@ -548,7 +561,10 @@ class _UserMyAccountPageState extends State<UserMyAccountPage> {
       decoration: CommonStyle.textFieldStyle(
           prefixText: '+91', labelTextStr: "Alternate Phone", hintTextStr: ""),
       validator: Utils.validateMobile,
-      onSaved: (value) => value = "+91" + value,
+      onSaved: (value) {
+        value = "+91" + value;
+        cp1.perPhone2 = value;
+      },
     );
 
     final ctRoleType = TextFormField(
@@ -561,6 +577,9 @@ class _UserMyAccountPageState extends State<UserMyAccountPage> {
       decoration: CommonStyle.textFieldStyle(
           labelTextStr: "Role Type", hintTextStr: ""),
       validator: validateText,
+      onSaved: (String value) {
+        // cp1.role = value;
+      },
     );
 
     final ctAvlFromTimeField = TextFormField(
@@ -612,6 +631,9 @@ class _UserMyAccountPageState extends State<UserMyAccountPage> {
           focusedBorder: UnderlineInputBorder(
               borderSide: BorderSide(color: Colors.orange))),
       validator: validateTime,
+      onSaved: (String value) {
+        cp1.avlFromTime = value;
+      },
     );
     final ctAvlTillTimeField = TextFormField(
       enabled: true,
@@ -644,6 +666,9 @@ class _UserMyAccountPageState extends State<UserMyAccountPage> {
           focusedBorder: UnderlineInputBorder(
               borderSide: BorderSide(color: Colors.orange))),
       validator: validateTime,
+      onSaved: (String value) {
+        cp1.avlTillTime = value;
+      },
     );
     final daysOffField = Padding(
       padding: EdgeInsets.only(top: 12, bottom: 8),
@@ -689,6 +714,7 @@ class _UserMyAccountPageState extends State<UserMyAccountPage> {
                 var day = element.toString().substring(5);
                 _daysOff.add(day);
               });
+              cp1.daysOff = _daysOff;
               print(_daysOff.length);
               print(_daysOff.toString());
             },
@@ -940,37 +966,38 @@ class _UserMyAccountPageState extends State<UserMyAccountPage> {
                       ),
                       ctAvlFromTimeField,
                       ctAvlTillTimeField,
+                      new FormField(
+                        builder: (FormFieldState state) {
+                          return InputDecorator(
+                            decoration: InputDecoration(
+                              icon: const Icon(Icons.color_lens),
+                              labelText: 'Color',
+                            ),
+                            isEmpty: _color == '',
+                            child: new DropdownButtonHideUnderline(
+                              child: new DropdownButton(
+                                value: _color,
+                                isDense: true,
+                                onChanged: (String newValue) {
+                                  setState(() {
+                                    // newContact.favoriteColor = newValue;
+                                    _color = newValue;
+                                    state.didChange(newValue);
+                                  });
+                                },
+                                items: _colors.map((String value) {
+                                  return new DropdownMenuItem(
+                                    value: value,
+                                    child: new Text(value),
+                                  );
+                                }).toList(),
+                              ),
+                            ),
+                          );
+                        },
+                      ),
                     ],
                   )),
-                  Container(
-                    alignment: Alignment.center,
-                    width: MediaQuery.of(context).size.width,
-                    child: Material(
-                      elevation: 20.0,
-                      color: highlightColor,
-                      //  isButtonPressed
-                      //     ? Theme.of(context).primaryColor
-                      //     : Theme.of(context).accentColor,
-                      child: MaterialButton(
-                        minWidth: MediaQuery.of(context).size.width,
-                        // padding: EdgeInsets.fromLTRB(10.0, 7.5, 10.0, 7.5),
-                        onPressed: () {
-                          if (_formKey.currentState.validate()) {
-                            _formKey.currentState.save();
-                            // Navigator.push(
-                            //     context,
-                            //     MaterialPageRoute(
-                            //         builder: (context) =>
-                            //             Result(model: this.model)));
-                          }
-                        },
-                        child: Text(
-                          'Save & Submit',
-                          style: buttonTextStyle,
-                        ),
-                      ),
-                    ),
-                  )
 
                   // Column(children: <Widget>[
                   //   Center(
@@ -994,41 +1021,46 @@ class _UserMyAccountPageState extends State<UserMyAccountPage> {
                 ],
               ),
             ),
+            SizedBox(
+              height: 7,
+            ),
+            Container(
+              alignment: Alignment.center,
+              decoration: BoxDecoration(
+                  borderRadius: BorderRadius.all(Radius.circular(5.0))),
+              width: MediaQuery.of(context).size.width,
+              child: Material(
+                elevation: 20.0,
+                color: highlightColor,
+                //  isButtonPressed
+                //     ? Theme.of(context).primaryColor
+                //     : Theme.of(context).accentColor,
+                child: MaterialButton(
+                  minWidth: MediaQuery.of(context).size.width,
+                  // padding: EdgeInsets.fromLTRB(10.0, 7.5, 10.0, 7.5),
+                  onPressed: () {
+                    if (_formKey.currentState.validate()) {
+                      _formKey.currentState.save();
+                      saveEntityDetails(entity);
+                      // Navigator.push(
+                      //     context,
+                      //     MaterialPageRoute(
+                      //         builder: (context) =>
+                      //             Result(model: this.model)));
+                    }
+                  },
+                  child: Text(
+                    'Save & Submit',
+                    style: buttonTextStyle,
+                  ),
+                ),
+              ),
+            ),
           ],
         ),
       ),
     );
 
-    //         new FormField(
-    //           builder: (FormFieldState state) {
-    //             return InputDecorator(
-    //               decoration: InputDecoration(
-    //                 icon: const Icon(Icons.color_lens),
-    //                 labelText: 'Color',
-    //               ),
-    //               isEmpty: _color == '',
-    //               child: new DropdownButtonHideUnderline(
-    //                 child: new DropdownButton(
-    //                   value: _color,
-    //                   isDense: true,
-    //                   onChanged: (String newValue) {
-    //                     setState(() {
-    //                       // newContact.favoriteColor = newValue;
-    //                       _color = newValue;
-    //                       state.didChange(newValue);
-    //                     });
-    //                   },
-    //                   items: _colors.map((String value) {
-    //                     return new DropdownMenuItem(
-    //                       value: value,
-    //                       child: new Text(value),
-    //                     );
-    //                   }).toList(),
-    //                 ),
-    //               ),
-    //             );
-    //           },
-    //         ),
     //         new Container(
     //             padding: const EdgeInsets.only(left: 40.0, top: 20.0),
     //             child: new RaisedButton(
@@ -1044,7 +1076,7 @@ class _UserMyAccountPageState extends State<UserMyAccountPage> {
     // );
   }
 
-  Widget _buildItem(ContactPerson person) {
+  Widget _buildItem(ContactAppData person) {
     return Card(
       //  margin: EdgeInsets.all(10.0),
 
@@ -1057,17 +1089,4 @@ class _UserMyAccountPageState extends State<UserMyAccountPage> {
       ),
     );
   }
-}
-
-class ContactPerson {
-  String perName;
-  String empId;
-  String perPhone1;
-  String perPhone2;
-  String role;
-  String shiftStartTime;
-  String shiftEndTime;
-  ContactPerson();
-  ContactPerson.values(this.perName, this.empId, this.perPhone1, this.perPhone2,
-      this.role, this.shiftStartTime, this.shiftEndTime);
 }

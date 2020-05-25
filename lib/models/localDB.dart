@@ -8,7 +8,7 @@ class UserAppData {
   final String phone;
   // final String adrs;
   final List<BookingAppData> upcomingBookings;
-  List<StoreAppData> storesAccessed;
+  List<EntityAppData> storesAccessed;
 
   final SettingsAppData settings;
 
@@ -32,38 +32,50 @@ class UserAppData {
   // }
 }
 
-@JsonSerializable()
-class StoreAppData {
-  final String id;
-  final String storeType;
-  final String name;
-  final String adrs;
-  final String phone;
-  final double lat;
-  final double long;
-  final String opensAt;
-  final String closesAt;
-  final List<String> daysClosed;
-  final bool insideAptFlg;
-  bool isFavourite;
+enum EntityType { SuperMart, HyperMart, MedicalStore, Apartment, Office, Mall }
 
-  StoreAppData(
+@JsonSerializable()
+class EntityAppData {
+  String id;
+  EntityType eType;
+  String name;
+  String regNum;
+  AddressAppData adrs;
+  double lat;
+  double long;
+  String opensAt;
+  String breakTimeFrom;
+  String breakTimeTo;
+  String closesAt;
+  List<String> daysClosed;
+  List<ContactAppData> contactPersons;
+  List<ChildEntityAppData> childCollection;
+  bool isFavourite;
+  bool publicAccess;
+
+  EntityAppData();
+
+  EntityAppData.values(
       this.id,
-      this.storeType,
+      this.eType,
       this.name,
+      this.regNum,
       this.adrs,
-      this.phone,
       this.lat,
       this.long,
       this.opensAt,
+      this.breakTimeFrom,
+      this.breakTimeTo,
       this.closesAt,
       this.daysClosed,
-      this.insideAptFlg,
-      this.isFavourite);
-  factory StoreAppData.fromJson(Map<String, dynamic> json) =>
-      _$StoreAppDataFromJson(json);
+      this.contactPersons,
+      this.childCollection,
+      this.isFavourite,
+      this.publicAccess);
+  factory EntityAppData.fromJson(Map<String, dynamic> json) =>
+      _$EntityAppDataFromJson(json);
 
-  Map<String, dynamic> toJson() => _$StoreAppDataToJson(this);
+  Map<String, dynamic> toJson() => _$EntityAppDataToJson(this);
 
   // factory LocalStore.fromJSON(Map<String, dynamic> jsonMap) {
   //   return LocalStore(
@@ -92,6 +104,90 @@ class StoreAppData {
   // }
 }
 
+enum ChildType {
+  SwimmingPool,
+  Canteen,
+  Gym,
+  GroceryStore,
+  OutdoorGames,
+  IndoorGames
+}
+
+@JsonSerializable()
+class ChildEntityAppData {
+  String id;
+  ChildType cType;
+  String name;
+  String regNum;
+  AddressAppData adrs;
+  double lat;
+  double long;
+  String opensAt;
+  String breakTime;
+  String closesAt;
+  List<String> daysClosed;
+  List<ContactAppData> contactPersons;
+  bool isFavourite;
+  bool publicAccess;
+
+  ChildEntityAppData(
+      this.id,
+      this.cType,
+      this.name,
+      this.regNum,
+      this.adrs,
+      this.lat,
+      this.long,
+      this.opensAt,
+      this.breakTime,
+      this.closesAt,
+      this.daysClosed,
+      this.contactPersons,
+      this.isFavourite,
+      this.publicAccess);
+  factory ChildEntityAppData.fromJson(Map<String, dynamic> json) =>
+      _$ChildEntityAppDataFromJson(json);
+
+  Map<String, dynamic> toJson() => _$ChildEntityAppDataToJson(this);
+}
+
+enum Role { Manager, Admin, ContactPerson, Employee }
+
+@JsonSerializable()
+class ContactAppData {
+  String perName;
+  String empId;
+  String perPhone1;
+  String perPhone2;
+  Role role;
+  String avlFromTime;
+  String avlTillTime;
+  List<String> daysOff;
+  ContactAppData();
+
+  ContactAppData.values(
+      this.perName,
+      this.empId,
+      this.perPhone1,
+      this.perPhone2,
+      this.role,
+      this.avlFromTime,
+      this.avlTillTime,
+      this.daysOff);
+  factory ContactAppData.fromJson(Map<String, dynamic> json) =>
+      _$ContactAppDataFromJson(json);
+
+  Map<String, dynamic> toJson() => _$ContactAppDataToJson(this);
+
+  // factory BookingAppData.fromJSON(Map<String, dynamic> jsonMap) {
+  //   return BookingAppData(
+  //       storeName: jsonMap['storeName'],
+  //       timing: jsonMap['timing'],
+  //       tokenNum: jsonMap['tokenNum'],
+  //       status: jsonMap['status']);
+  // }
+}
+
 @JsonSerializable()
 class BookingAppData {
   String storeId;
@@ -117,6 +213,42 @@ class BookingAppData {
 }
 
 @JsonSerializable()
+class AddressAppData {
+  String addressLine1;
+  String locality;
+  String landmark;
+  String city;
+  String state;
+  String country;
+  String postalCode;
+
+  AddressAppData(
+      {this.addressLine1,
+      this.locality,
+      this.landmark,
+      this.city,
+      this.state,
+      this.country,
+      this.postalCode});
+  @override
+  String toString() {
+    String adrsStr;
+    adrsStr = addressLine1 + locality + city + postalCode;
+
+    return adrsStr;
+  }
+
+  factory AddressAppData.fromJson(Map<String, dynamic> json) =>
+      _$AddressAppDataFromJson(json);
+
+  Map<String, dynamic> toJson() => _$AddressAppDataToJson(this);
+
+  // factory SettingsAppData.fromJSON(Map<String, dynamic> jsonMap) {
+  //   return SettingsAppData(notificationOn: jsonMap['notificationOn']);
+  // }
+}
+
+@JsonSerializable()
 class SettingsAppData {
   bool notificationOn;
 
@@ -137,7 +269,7 @@ class SettingsAppData {
 // ];
 
 class BookingListItem {
-  StoreAppData storeInfo;
+  EntityAppData storeInfo;
   BookingAppData bookingInfo;
 
   BookingListItem(this.storeInfo, this.bookingInfo);

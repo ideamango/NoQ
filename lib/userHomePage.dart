@@ -23,9 +23,12 @@ class _UserHomePageState extends State<UserHomePage> {
   List<BookingListItem> _pastBookingsList;
   List<BookingListItem> _newBookingsList;
   String _upcomingBkgStatus;
+  String _pastBkgStatus;
   UserAppData _userProfile;
   DateTime now = DateTime.now();
   final dtFormat = new DateFormat(dateDisplayFormat);
+  bool isUpcomingSet = false;
+  bool isPastSet = false;
 //Qr code scan result
   ScanResult scanResult;
 
@@ -65,7 +68,8 @@ class _UserHomePageState extends State<UserHomePage> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     //int userId = prefs.getInt('userId');
     //Fetch details from server
-
+    _upcomingBkgStatus = 'Loading';
+    _pastBkgStatus = 'Loading';
     await readData().then((fUser) {
       _userProfile = fUser;
       if (_userProfile != null) {
@@ -76,7 +80,7 @@ class _UserHomePageState extends State<UserHomePage> {
 
           setState(() {
             for (BookingAppData bk in bookings) {
-              for (StoreAppData str in _userProfile.storesAccessed) {
+              for (EntityAppData str in _userProfile.storesAccessed) {
                 if (str.id == bk.storeId) {
                   if (bk.bookingDate.isBefore(now))
                     pastBookings.add(new BookingListItem(str, bk));
@@ -87,15 +91,23 @@ class _UserHomePageState extends State<UserHomePage> {
             }
             _pastBookingsList = pastBookings;
             _newBookingsList = newBookings;
-            _upcomingBkgStatus = 'Success';
+            if (_pastBookingsList.length != 0) {
+              _pastBkgStatus = 'Success';
+            } else
+              _pastBkgStatus = 'NoBookings';
+            if (_newBookingsList.length != 0) {
+              _upcomingBkgStatus = 'Success';
+            }
           });
         } else {
           setState(() {
             _upcomingBkgStatus = 'NoBookings';
+            _pastBkgStatus = 'NoBookings';
           });
         }
       } else {
         setState(() {
+          _pastBkgStatus = 'NoBookings';
           _upcomingBkgStatus = 'NoBookings';
         });
       }
@@ -104,93 +116,94 @@ class _UserHomePageState extends State<UserHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    if (_upcomingBkgStatus == 'Success') {
-      return ListView(
-        children: <Widget>[
-          Column(
-            children: <Widget>[
-              Card(
-                elevation: 20,
-                child: Container(
-                  padding: EdgeInsets.all(5),
-                  child: Column(
-                    children: <Widget>[
-                      Container(
-                        color: Colors.teal,
-                        padding: EdgeInsets.all(3),
-                        child: Image.asset(
-                          'assets/noq_home_bookPremises.png',
-                          width: MediaQuery.of(context).size.width * .95,
-                        ),
-                      ),
-                      // Text(homeScreenMsgTxt, style: homeMsgStyle),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: <Widget>[
-                          Column(
-                            children: <Widget>[
-                              Text(homeScreenMsgTxt2, style: homeMsgStyle2),
-                              Text(
-                                homeScreenMsgTxt3,
-                                style: homeMsgStyle3,
-                              ),
-                            ],
-                          ),
-                          QrCodeScanner().build(context),
-
-                          //GenerateScreen(),
-                          // RaisedButton(
-                          //   padding: EdgeInsets.all(1),
-                          //   autofocus: false,
-                          //   clipBehavior: Clip.none,
-                          //   elevation: 20,
-                          //   color: highlightColor,
-                          //   child: Row(
-                          //     children: <Widget>[
-                          //       Text('Scan QR', style: buttonSmlTextStyle),
-                          //       SizedBox(width: 5),
-                          //       Icon(
-                          //         Icons.camera,
-                          //         color: tealIcon,
-                          //         size: 26,
-                          //       ),
-                          //     ],
-                          //   ),
-                          //   onPressed: scan,
-                          // )
-                        ],
-                      )
-                    ],
-                  ),
-                ),
-                //child: Image.asset('assets/noq_home.png'),
-              ),
-              Card(
-                elevation: 20,
-                child: ExpansionTile(
-                  //key: PageStorageKey(this.widget.headerTitle),
-                  initiallyExpanded: true,
-                  title: Text(
-                    "Upcoming Bookings",
-                    style: TextStyle(color: Colors.blueGrey[700], fontSize: 17),
-                  ),
-                  backgroundColor: Colors.white,
-                  leading: Icon(
-                    Icons.date_range,
-                    color: tealIcon,
-                  ),
+    //if (_upcomingBkgStatus == 'Success') {
+    return ListView(
+      children: <Widget>[
+        Column(
+          children: <Widget>[
+            Card(
+              elevation: 20,
+              child: Container(
+                padding: EdgeInsets.all(5),
+                child: Column(
                   children: <Widget>[
+                    Container(
+                      color: Colors.teal,
+                      padding: EdgeInsets.all(3),
+                      child: Image.asset(
+                        'assets/noq_home_bookPremises.png',
+                        width: MediaQuery.of(context).size.width * .95,
+                      ),
+                    ),
+                    // Text(homeScreenMsgTxt, style: homeMsgStyle),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: <Widget>[
+                        Column(
+                          children: <Widget>[
+                            Text(homeScreenMsgTxt2, style: homeMsgStyle2),
+                            Text(
+                              homeScreenMsgTxt3,
+                              style: homeMsgStyle3,
+                            ),
+                          ],
+                        ),
+                        QrCodeScanner().build(context),
+
+                        //GenerateScreen(),
+                        // RaisedButton(
+                        //   padding: EdgeInsets.all(1),
+                        //   autofocus: false,
+                        //   clipBehavior: Clip.none,
+                        //   elevation: 20,
+                        //   color: highlightColor,
+                        //   child: Row(
+                        //     children: <Widget>[
+                        //       Text('Scan QR', style: buttonSmlTextStyle),
+                        //       SizedBox(width: 5),
+                        //       Icon(
+                        //         Icons.camera,
+                        //         color: tealIcon,
+                        //         size: 26,
+                        //       ),
+                        //     ],
+                        //   ),
+                        //   onPressed: scan,
+                        // )
+                      ],
+                    )
+                  ],
+                ),
+              ),
+              //child: Image.asset('assets/noq_home.png'),
+            ),
+            Card(
+              elevation: 20,
+              child: ExpansionTile(
+                //key: PageStorageKey(this.widget.headerTitle),
+                initiallyExpanded: true,
+                title: Text(
+                  "Upcoming Bookings",
+                  style: TextStyle(color: Colors.blueGrey[700], fontSize: 17),
+                ),
+                backgroundColor: Colors.white,
+                leading: Icon(
+                  Icons.date_range,
+                  color: tealIcon,
+                ),
+                children: <Widget>[
+                  if (_upcomingBkgStatus == 'Success')
                     ConstrainedBox(
                       constraints: new BoxConstraints(
                         maxHeight: MediaQuery.of(context).size.height * .6,
                       ),
-                      child:
-                          // decoration: BoxDecoration(
-                          //     shape: BoxShape.rectangle,
-                          //     borderRadius: BorderRadius.all(Radius.circular(8.0))),
-                          // height: MediaQuery.of(context).size.height * .6,
-                          // margin: EdgeInsets.fromLTRB(10, 10, 10, 10),
-                          ListView.builder(
+
+                      // decoration: BoxDecoration(
+                      //     shape: BoxShape.rectangle,
+                      //     borderRadius: BorderRadius.all(Radius.circular(8.0))),
+                      // height: MediaQuery.of(context).size.height * .6,
+                      // margin: EdgeInsets.fromLTRB(10, 10, 10, 10),
+                      child: ListView.builder(
                         shrinkWrap: true,
                         //scrollDirection: Axis.vertical,
                         itemBuilder: (BuildContext context, int index) {
@@ -204,24 +217,29 @@ class _UserHomePageState extends State<UserHomePage> {
                         itemCount: 1,
                       ),
                     ),
-                  ],
-                ),
+                  if (_upcomingBkgStatus == 'NoBookings')
+                    _emptyStorePage(
+                        "No bookings yet.. ", "Book now to save time later!! "),
+                  if (_upcomingBkgStatus == 'Loading') showCircularProgress(),
+                ],
               ),
-              Card(
-                elevation: 20,
-                child: ExpansionTile(
-                  title: Text(
-                    "Past Bookings",
-                    style: TextStyle(color: Colors.blueGrey[700], fontSize: 17),
-                  ),
-                  backgroundColor: Colors.white,
-                  leading: Icon(
-                    Icons.access_time,
-                    color: lightIcon,
-                  ),
-                  children: <Widget>[
-                    Column(
-                      children: <Widget>[
+            ),
+            Card(
+              elevation: 20,
+              child: ExpansionTile(
+                title: Text(
+                  "Past Bookings",
+                  style: TextStyle(color: Colors.blueGrey[700], fontSize: 17),
+                ),
+                backgroundColor: Colors.white,
+                leading: Icon(
+                  Icons.access_time,
+                  color: lightIcon,
+                ),
+                children: <Widget>[
+                  Column(
+                    children: <Widget>[
+                      if (_pastBkgStatus == "Success")
                         Container(
                           //height: MediaQuery.of(context).size.width * .5,
                           child: ListView.builder(
@@ -239,23 +257,28 @@ class _UserHomePageState extends State<UserHomePage> {
                             itemCount: 1,
                           ),
                         ),
-                      ],
-                    )
-                  ],
-                ),
+                      if (_pastBkgStatus == 'NoBookings')
+                        _emptyStorePage("No bookings in past..",
+                            "Book now to save time later!! "),
+                      if (_pastBkgStatus == 'Loading') showCircularProgress(),
+                    ],
+                  )
+                ],
               ),
-            ],
-          ),
-        ],
-      );
-    } else if (_upcomingBkgStatus == 'NoBookings') {
-      return _emptyStorePage();
-    } else {
-      return showCircularProgress();
-    }
+            ),
+          ],
+        ),
+      ],
+    );
+    //} else
+    // if (_upcomingBkgStatus == 'NoBookings') {
+    //   return _emptyStorePage();
+    // } else {
+    //   return showCircularProgress();
+    // }
   }
 
-  Widget _emptyStorePage() {
+  Widget _emptyStorePage(String msg1, String msg2) {
     return Center(
         child: Center(
             child: Container(
@@ -263,9 +286,8 @@ class _UserHomePageState extends State<UserHomePage> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
-                    Text('No favourites yet!! ', style: highlightTextStyle),
-                    Text('Add your favourite places to quickly browse later!! ',
-                        style: highlightSubTextStyle),
+                    Text(msg1, style: highlightTextStyle),
+                    Text(msg2, style: highlightSubTextStyle),
                   ],
                 ))));
   }
@@ -370,7 +392,7 @@ class _UserHomePageState extends State<UserHomePage> {
                                   ),
                                   onPressed: () => launchURL(
                                       booking.storeInfo.name,
-                                      booking.storeInfo.adrs,
+                                      booking.storeInfo.adrs.toString(),
                                       booking.storeInfo.lat,
                                       booking.storeInfo.long),
                                 ),

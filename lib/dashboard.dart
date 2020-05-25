@@ -107,7 +107,7 @@ class _LandingPageState extends State<LandingPage> {
 
       List<BookingAppData> upcomingBookings = new List();
 
-      List<StoreAppData> localSavedStores = new List<StoreAppData>();
+      List<EntityAppData> localSavedStores = new List<EntityAppData>();
 
       //REMOVE default values
       _userId = "ForTesting123";

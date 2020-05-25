@@ -24,7 +24,7 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
   final dtFormat = new DateFormat('dd');
   SharedPreferences _prefs;
   UserAppData _userProfile;
-  List<StoreAppData> _stores = new List<StoreAppData>();
+  List<EntityAppData> _stores = new List<EntityAppData>();
   bool fetchFromServer = false;
 
   final compareDateFormat = new DateFormat('YYYYMMDD');
@@ -67,14 +67,14 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
         _stores = _userProfile.storesAccessed;
       }
     }
-    List<StoreAppData> newList;
+    List<EntityAppData> newList;
     if (fetchFromServer || Utils.isNullOrEmpty(_userProfile.storesAccessed)) {
       //API call to fecth stores from server
       newList = getStoreListServer();
       // Compare and add new stores fetched to _stores list
       if (_stores.length != 0) {
-        for (StoreAppData newStore in newList) {
-          for (StoreAppData localStore in _stores) {
+        for (EntityAppData newStore in newList) {
+          for (EntityAppData localStore in _stores) {
             if (newStore.id == localStore.id)
               return;
             else
@@ -94,7 +94,7 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
   }
 
   void getFavStoresList() async {
-    List<StoreAppData> list = new List<StoreAppData>();
+    List<EntityAppData> list = new List<EntityAppData>();
     await readData().then((fUser) {
       _userProfile = fUser;
     });
@@ -149,7 +149,7 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
   //   }
   // }
 
-  void toggleFavorite(StoreAppData strData) {
+  void toggleFavorite(EntityAppData strData) {
     setState(() {
       strData.isFavourite = !strData.isFavourite;
       if (!strData.isFavourite && widget.forPage == 'Favourite') {
@@ -223,7 +223,7 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
     }
   }
 
-  Widget _buildItem(StoreAppData str) {
+  Widget _buildItem(EntityAppData str) {
     _prepareDateList();
     //_buildDateGridItems(str.id);
     print('after buildDateGrid called');
@@ -311,8 +311,8 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
                                       color: tealIcon,
                                       size: 20,
                                     ),
-                                    onPressed: () => launchURL(
-                                        str.name, str.adrs, str.lat, str.long),
+                                    onPressed: () => launchURL(str.name,
+                                        str.adrs.toString(), str.lat, str.long),
                                   ),
                                 ),
                                 Container(
@@ -356,7 +356,7 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
                       Container(
                         width: MediaQuery.of(context).size.width * .67,
                         child: Text(
-                          str.adrs,
+                          str.adrs.toString(),
                           overflow: TextOverflow.ellipsis,
                           style: textInputTextStyle,
                         ),
@@ -408,8 +408,8 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
         ));
   }
 
-  void showSlots(
-      StoreAppData store, String storeId, String storeName, DateTime dateTime) {
+  void showSlots(EntityAppData store, String storeId, String storeName,
+      DateTime dateTime) {
     //_prefs = await SharedPreferences.getInstance();
     String dateForSlot = dateTime.toString();
 
@@ -448,7 +448,7 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
   }
 
   List<Widget> _buildDateGridItems(
-      StoreAppData store, String sid, String sname, List<String> daysClosed) {
+      EntityAppData store, String sid, String sname, List<String> daysClosed) {
     bool isClosed = false;
     String dayOfWeek;
 
@@ -463,7 +463,7 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
     return dateWidgets;
   }
 
-  Widget buildDateItem(StoreAppData store, String sid, String sname,
+  Widget buildDateItem(EntityAppData store, String sid, String sname,
       bool isClosed, DateTime dt, String dayOfWeek) {
     bool dateBooked = false;
     UserAppData user = _userProfile;
