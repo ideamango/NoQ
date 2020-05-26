@@ -2,7 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:noq/models/slot.dart';
-import 'package:noq/view/showSlotsPage.dart';
+import 'package:noq/pages/showSlotsPage.dart';
 import 'package:pinput/pin_put/pin_put.dart';
 import 'package:noq/style.dart';
 import 'package:noq/services/authService.dart';

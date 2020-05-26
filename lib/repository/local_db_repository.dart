@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/foundation.dart';
+import 'package:noq/utils.dart';
 import 'dart:async';
 import 'package:path_provider/path_provider.dart';
 import 'package:noq/models/localDB.dart';
@@ -45,11 +46,17 @@ Future<UserAppData> readData() async {
 void saveEntityDetails(EntityAppData str) async {
   final file = await localFile;
   UserAppData _userProfile;
+
 //Read current data in file
   await readData().then((fUser) {
     _userProfile = fUser;
   });
+  if (Utils.isNullOrEmpty(_userProfile.managedEntities)) {
+    _userProfile.managedEntities = new List<EntityAppData>();
+  }
+
 // Add new data and save
+  _userProfile.managedEntities.add(str);
 
 // TOICOC _userProfile. = str;
 

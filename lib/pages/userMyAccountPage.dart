@@ -3,7 +3,9 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
+import 'package:noq/constants.dart';
 import 'package:noq/models/localDB.dart';
+import 'package:noq/pages/child_entity_details_form.dart';
 import 'package:noq/repository/local_db_repository.dart';
 import 'package:noq/services/authService.dart';
 import 'package:noq/services/qr_code_generate.dart';
@@ -68,7 +70,8 @@ class _UserMyAccountPageState extends State<UserMyAccountPage> {
   String _state;
   String _mainArea;
 
-  String _color = '';
+  String _role;
+  String _entityType;
   String state;
 
   bool addNewClicked = false;
@@ -77,6 +80,9 @@ class _UserMyAccountPageState extends State<UserMyAccountPage> {
   void initState() {
     super.initState();
     _getCurrLocation();
+    entity.contactPersons = new List<ContactAppData>();
+    entity.adrs = new AddressAppData();
+    entity.contactPersons.add(cp1);
     // addPerson();
   }
 
@@ -243,9 +249,12 @@ class _UserMyAccountPageState extends State<UserMyAccountPage> {
       minLines: 1,
       style: textInputTextStyle,
       keyboardType: TextInputType.text,
-      decoration:
-          CommonStyle.textFieldStyle(labelTextStr: "Name", hintTextStr: ""),
+      decoration: CommonStyle.textFieldStyle(
+          labelTextStr: "Name of Establishment", hintTextStr: ""),
       validator: validateText,
+      onSaved: (String value) {
+        entity.name = value;
+      },
     );
     final regNumField = TextFormField(
       obscureText: false,
@@ -256,17 +265,59 @@ class _UserMyAccountPageState extends State<UserMyAccountPage> {
       decoration: CommonStyle.textFieldStyle(
           labelTextStr: "Registration Number", hintTextStr: ""),
       validator: validateText,
+      onSaved: (String value) {
+        entity.regNum = value;
+      },
     );
-    final entityType = TextFormField(
-      obscureText: false,
-      maxLines: 1,
-      minLines: 1,
-      style: textInputTextStyle,
-      keyboardType: TextInputType.text,
-      decoration: CommonStyle.textFieldStyle(
-          labelTextStr: "Type of Establishment", hintTextStr: ""),
-      validator: validateText,
+    final entityType = new FormField(
+      builder: (FormFieldState state) {
+        return InputDecorator(
+          decoration: InputDecoration(
+            //  icon: const Icon(Icons.person),
+            labelText: 'Type of Establishment',
+          ),
+          child: new DropdownButtonHideUnderline(
+            child: new DropdownButton(
+              value: _entityType,
+              isDense: true,
+              onChanged: (newValue) {
+                setState(() {
+                  // newContact.favoriteColor = newValue;
+                  _entityType = newValue;
+                  state.didChange(newValue);
+                });
+              },
+              items: entityTypes.map((type) {
+                return DropdownMenuItem(
+                  value: type,
+                  child: new Text(
+                    type.toString(),
+                    style: textInputTextStyle,
+                  ),
+                );
+              }).toList(),
+            ),
+          ),
+        );
+      },
+      onSaved: (String value) {
+        entity.eType = value;
+      },
     );
+
+    // final entityType2 = TextFormField(
+    //   obscureText: false,
+    //   maxLines: 1,
+    //   minLines: 1,
+    //   style: textInputTextStyle,
+    //   keyboardType: TextInputType.text,
+    //   decoration: CommonStyle.textFieldStyle(
+    //       labelTextStr: "Type of Establishment", hintTextStr: ""),
+    //   validator: validateText,
+    //    onSaved: (String value) {
+    //     entity.eType = value;
+    //   },
+    // );
     final opensTimeField = TextFormField(
       obscureText: false,
       maxLines: 1,
@@ -316,6 +367,9 @@ class _UserMyAccountPageState extends State<UserMyAccountPage> {
           focusedBorder: UnderlineInputBorder(
               borderSide: BorderSide(color: Colors.orange))),
       validator: validateTime,
+      onSaved: (String value) {
+        entity.opensAt = value;
+      },
     );
     final closeTimeField = TextFormField(
       enabled: true,
@@ -348,6 +402,9 @@ class _UserMyAccountPageState extends State<UserMyAccountPage> {
           focusedBorder: UnderlineInputBorder(
               borderSide: BorderSide(color: Colors.orange))),
       validator: validateTime,
+      onSaved: (String value) {
+        entity.closesAt = value;
+      },
     );
     final daysClosedField = Padding(
       padding: EdgeInsets.only(top: 12, bottom: 8),
@@ -378,7 +435,7 @@ class _UserMyAccountPageState extends State<UserMyAccountPage> {
             initialValue: [days.sunday],
             borderRadius: 20,
             elevation: 10,
-            textStyle: buttonMedTextStyle,
+            textStyle: buttonXSmlTextStyle,
             fillColor: Colors.blueGrey[400],
             selectedFillColor: highlightColor,
             boxConstraints: BoxConstraints(
@@ -392,6 +449,7 @@ class _UserMyAccountPageState extends State<UserMyAccountPage> {
                 var day = element.toString().substring(5);
                 _closedOnDays.add(day);
               });
+              entity.daysClosed = _closedOnDays;
               print(_closedOnDays.length);
               print(_closedOnDays.toString());
             },
@@ -410,6 +468,9 @@ class _UserMyAccountPageState extends State<UserMyAccountPage> {
       decoration: CommonStyle.textFieldStyle(
           labelTextStr: "Apartment/ House No./ Lane", hintTextStr: ""),
       validator: validateText,
+      onSaved: (String value) {
+        entity.adrs.addressLine1 = value;
+      },
     );
     final landmarkField2 = TextFormField(
       obscureText: false,
@@ -426,6 +487,9 @@ class _UserMyAccountPageState extends State<UserMyAccountPage> {
             UnderlineInputBorder(borderSide: BorderSide(color: Colors.orange)),
       ),
       validator: validateText,
+      onSaved: (String value) {
+        entity.adrs.landmark = value;
+      },
     );
     final localityField = TextFormField(
       obscureText: false,
@@ -442,6 +506,9 @@ class _UserMyAccountPageState extends State<UserMyAccountPage> {
             UnderlineInputBorder(borderSide: BorderSide(color: Colors.orange)),
       ),
       validator: validateText,
+      onSaved: (String value) {
+        entity.adrs.locality = value;
+      },
     );
     final cityField = TextFormField(
       obscureText: false,
@@ -458,6 +525,9 @@ class _UserMyAccountPageState extends State<UserMyAccountPage> {
             UnderlineInputBorder(borderSide: BorderSide(color: Colors.orange)),
       ),
       validator: validateText,
+      onSaved: (String value) {
+        entity.adrs.city = value;
+      },
     );
     final stateField = TextFormField(
       obscureText: false,
@@ -474,6 +544,9 @@ class _UserMyAccountPageState extends State<UserMyAccountPage> {
             UnderlineInputBorder(borderSide: BorderSide(color: Colors.orange)),
       ),
       validator: validateText,
+      onSaved: (String value) {
+        entity.adrs.state = value;
+      },
     );
     final countryField = TextFormField(
       obscureText: false,
@@ -490,6 +563,9 @@ class _UserMyAccountPageState extends State<UserMyAccountPage> {
             UnderlineInputBorder(borderSide: BorderSide(color: Colors.orange)),
       ),
       validator: validateText,
+      onSaved: (String value) {
+        entity.adrs.country = value;
+      },
     );
     final pinField = TextFormField(
       obscureText: false,
@@ -506,6 +582,9 @@ class _UserMyAccountPageState extends State<UserMyAccountPage> {
             UnderlineInputBorder(borderSide: BorderSide(color: Colors.orange)),
       ),
       validator: validateText,
+      onSaved: (String value) {
+        entity.adrs.postalCode = value;
+      },
     );
     //Contact person
     final ctNameField = TextFormField(
@@ -566,22 +645,6 @@ class _UserMyAccountPageState extends State<UserMyAccountPage> {
         cp1.perPhone2 = value;
       },
     );
-
-    final ctRoleType = TextFormField(
-      obscureText: false,
-      maxLines: 1,
-      minLines: 1,
-      style: textInputTextStyle,
-      keyboardType: TextInputType.text,
-      controller: _ctRoleTypecontroller,
-      decoration: CommonStyle.textFieldStyle(
-          labelTextStr: "Role Type", hintTextStr: ""),
-      validator: validateText,
-      onSaved: (String value) {
-        // cp1.role = value;
-      },
-    );
-
     final ctAvlFromTimeField = TextFormField(
       obscureText: false,
       maxLines: 1,
@@ -700,7 +763,7 @@ class _UserMyAccountPageState extends State<UserMyAccountPage> {
             initialValue: [days.sunday],
             borderRadius: 20,
             elevation: 10,
-            textStyle: buttonMedTextStyle,
+            textStyle: buttonXSmlTextStyle,
             fillColor: Colors.blueGrey[400],
             selectedFillColor: highlightColor,
             boxConstraints: BoxConstraints(
@@ -868,8 +931,8 @@ class _UserMyAccountPageState extends State<UserMyAccountPage> {
                     children: <Widget>[
                       RaisedButton(
                         elevation: 20,
-                        color: Colors.teal,
-                        splashColor: highlightColor,
+                        color: highlightColor,
+                        splashColor: Colors.orange,
                         textColor: Colors.white,
                         // shape: RoundedRectangleBorder(
                         //     side: BorderSide(color: Colors.orange)),
@@ -958,7 +1021,6 @@ class _UserMyAccountPageState extends State<UserMyAccountPage> {
                       ctEmpIdField,
                       ctPhn1Field,
                       ctPhn2Field,
-                      ctRoleType,
                       daysOffField,
                       Divider(
                         thickness: .7,
@@ -970,25 +1032,27 @@ class _UserMyAccountPageState extends State<UserMyAccountPage> {
                         builder: (FormFieldState state) {
                           return InputDecorator(
                             decoration: InputDecoration(
-                              icon: const Icon(Icons.color_lens),
-                              labelText: 'Color',
+                              icon: const Icon(Icons.person),
+                              labelText: 'Role ',
                             ),
-                            isEmpty: _color == '',
                             child: new DropdownButtonHideUnderline(
                               child: new DropdownButton(
-                                value: _color,
+                                value: _role,
                                 isDense: true,
-                                onChanged: (String newValue) {
+                                onChanged: (newValue) {
                                   setState(() {
                                     // newContact.favoriteColor = newValue;
-                                    _color = newValue;
+                                    _role = newValue;
                                     state.didChange(newValue);
                                   });
                                 },
-                                items: _colors.map((String value) {
-                                  return new DropdownMenuItem(
-                                    value: value,
-                                    child: new Text(value),
+                                items: roleTypes.map((role) {
+                                  return DropdownMenuItem(
+                                    value: role,
+                                    child: new Text(
+                                      role.toString(),
+                                      style: textInputTextStyle,
+                                    ),
                                   );
                                 }).toList(),
                               ),
@@ -1021,71 +1085,74 @@ class _UserMyAccountPageState extends State<UserMyAccountPage> {
                 ],
               ),
             ),
-            SizedBox(
-              height: 7,
-            ),
             Container(
+              padding: EdgeInsets.all(8),
               alignment: Alignment.center,
-              decoration: BoxDecoration(
-                  borderRadius: BorderRadius.all(Radius.circular(5.0))),
-              width: MediaQuery.of(context).size.width,
-              child: Material(
-                elevation: 20.0,
-                color: highlightColor,
-                //  isButtonPressed
-                //     ? Theme.of(context).primaryColor
-                //     : Theme.of(context).accentColor,
-                child: MaterialButton(
-                  minWidth: MediaQuery.of(context).size.width,
-                  // padding: EdgeInsets.fromLTRB(10.0, 7.5, 10.0, 7.5),
-                  onPressed: () {
-                    if (_formKey.currentState.validate()) {
-                      _formKey.currentState.save();
-                      saveEntityDetails(entity);
-                      // Navigator.push(
-                      //     context,
-                      //     MaterialPageRoute(
-                      //         builder: (context) =>
-                      //             Result(model: this.model)));
-                    }
-                  },
-                  child: Text(
-                    'Save & Submit',
-                    style: buttonTextStyle,
+              // decoration: BoxDecoration(
+              //     borderRadius: BorderRadius.all(Radius.circular(5.0))),
+              //height: MediaQuery.of(context).size.width * .2,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: <Widget>[
+                  RaisedButton(
+                    color: highlightColor,
+                    splashColor: Colors.orange,
+                    onPressed: () {
+                      if (_formKey.currentState.validate()) {
+                        _formKey.currentState.save();
+                        saveEntityDetails(entity);
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => ChildEntityDetailsPage(
+                                    entity: this.entity)));
+                      }
+                    },
+                    child: Column(
+                      children: <Widget>[
+                        Text(
+                          'Save & Submit',
+                          style: buttonMedTextStyle,
+                        ),
+                        Text(
+                          'For now, rest of details later.',
+                          style: buttonXSmlTextStyle,
+                        ),
+                      ],
+                    ),
                   ),
-                ),
+                  RaisedButton(
+                    color: highlightColor,
+                    splashColor: Colors.orange,
+                    onPressed: () {
+                      //  if (_formKey.currentState.validate()) {
+                      //_formKey.currentState.save();
+                      saveEntityDetails(entity);
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) =>
+                                  ChildEntityDetailsPage(entity: this.entity)));
+                      // }
+                    },
+                    child: Column(
+                      children: <Widget>[
+                        Text(
+                          'Save & Next',
+                          style: buttonMedTextStyle,
+                        ),
+                        Text(
+                          'Fill services detail now.',
+                          style: buttonXSmlTextStyle,
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
               ),
             ),
           ],
         ),
-      ),
-    );
-
-    //         new Container(
-    //             padding: const EdgeInsets.only(left: 40.0, top: 20.0),
-    //             child: new RaisedButton(
-    //               child: const Text('Submit'),
-    //               onPressed: null,
-    //             )),
-    //       ],
-    //       //     ),
-    //       //   ),
-    //       // ],
-    //     ),
-    //   ),
-    // );
-  }
-
-  Widget _buildItem(ContactAppData person) {
-    return Card(
-      //  margin: EdgeInsets.all(10.0),
-
-      color: Colors.white,
-      elevation: 10,
-      child: new Column(
-        children: <Widget>[
-          Text(person.empId),
-        ],
       ),
     );
   }

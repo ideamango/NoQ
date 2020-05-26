@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
-
-import 'package:noq/view/SearchStoresPage.dart';
+import 'package:noq/pages/SearchStoresPage.dart';
+import 'package:noq/pages/allPagesWidgets.dart';
 
 import 'style.dart';
 
-import 'view/allPagesWidgets.dart';
 import 'package:noq/models/localDB.dart';
 import 'package:noq/repository/local_db_repository.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -109,12 +108,19 @@ class _LandingPageState extends State<LandingPage> {
 
       List<EntityAppData> localSavedStores = new List<EntityAppData>();
 
+      List<EntityAppData> managedStores = new List<EntityAppData>();
+
       //REMOVE default values
       _userId = "ForTesting123";
       _userName = 'User';
       _userAdrs = 'UserAdrs';
-      userProfile = new UserAppData(_userId, _phone, upcomingBookings,
-          localSavedStores, new SettingsAppData(notificationOn: true));
+      userProfile = new UserAppData(
+          _userId,
+          _phone,
+          upcomingBookings,
+          localSavedStores,
+          managedStores,
+          new SettingsAppData(notificationOn: true));
     }
     setState(() {
       _userProfile = userProfile;

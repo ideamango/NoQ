@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:noq/models/localDB.dart';
+import 'package:noq/pages/showSlotsPage.dart';
 import 'package:noq/repository/StoreRepository.dart';
 import 'package:noq/repository/local_db_repository.dart';
 import 'package:noq/repository/slotRepository.dart';
 import 'package:noq/services/mapService.dart';
 import 'package:noq/style.dart';
 import 'package:noq/utils.dart';
-import 'package:noq/view/showSlotsPage.dart';
+
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SearchStoresPage extends StatefulWidget {

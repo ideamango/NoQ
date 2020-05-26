@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:noq/dashboard.dart';
 import 'package:noq/login_page.dart';
 import 'package:noq/push_notifications.dart';
-import 'package:noq/view/init_screen.dart';
+import 'package:noq/services/init_screen.dart';
 
 //import 'services/authService.dart';
 

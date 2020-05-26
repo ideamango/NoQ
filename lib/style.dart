@@ -30,6 +30,14 @@ final whiteBoldTextStyle = TextStyle(
   fontSize: 20,
   //height: 2,
 );
+final buttonMedTextStyle = TextStyle(
+  color: Colors.white,
+  fontWeight: FontWeight.w700,
+  fontFamily: 'Montserrat',
+
+  fontSize: 15,
+  //height: 2,
+);
 final buttonSmlTextStyle = TextStyle(
   color: Colors.white,
   fontWeight: FontWeight.w700,
@@ -38,7 +46,7 @@ final buttonSmlTextStyle = TextStyle(
   fontSize: 12,
   //height: 2,
 );
-final buttonMedTextStyle = TextStyle(
+final buttonXSmlTextStyle = TextStyle(
   color: Colors.white,
   //fontWeight: FontWeight.w800,
   fontFamily: 'Montserrat',
@@ -121,7 +129,7 @@ final highlightSubTextStyle = TextStyle(
 
 final tokenTextStyle = TextStyle(
     color: Colors.black,
-    fontWeight: FontWeight.w600,
+    //fontWeight: FontWeight.w600,
     fontFamily: 'Montserrat',
     letterSpacing: 3,
     // decoration: TextDecoration.underline,

@@ -32,7 +32,8 @@ List<EntityAppData> getLocalStoreList() {
   List<EntityAppData> searchStores = [
     new EntityAppData.values(
         "AQ1",
-        EntityType.Apartment,
+        "Owner1",
+        'Apartment',
         "Aparna CyberZon Apartment",
         "Reg123",
         null,
@@ -52,7 +53,8 @@ List<EntityAppData> getLocalStoreList() {
         false),
     new EntityAppData.values(
         "VJ2",
-        EntityType.HyperMart,
+        "Owner1",
+        'HyperMart',
         "Vijetha Store",
         "123456789",
         null,
@@ -69,7 +71,8 @@ List<EntityAppData> getLocalStoreList() {
         true),
     new EntityAppData.values(
         "AB34",
-        EntityType.MedicalStore,
+        "Owner2",
+        'MedicalStore',
         "Medplus Pharmacy",
         "123456789",
         null,
@@ -86,7 +89,8 @@ List<EntityAppData> getLocalStoreList() {
         false),
     new EntityAppData.values(
         "In77",
-        EntityType.HyperMart,
+        "Owner3",
+        'HyperMart',
         "Reliance Mart",
         "123456789",
         null,
@@ -103,7 +107,8 @@ List<EntityAppData> getLocalStoreList() {
         true),
     new EntityAppData.values(
         "IK12",
-        EntityType.Mall,
+        'Owner4',
+        'Mall',
         "IKEA Store",
         "123456789",
         null,
@@ -126,7 +131,8 @@ List<EntityAppData> getStoreListServer() {
   List<EntityAppData> searchStores = [
     new EntityAppData.values(
         "1231",
-        EntityType.Apartment,
+        'Owner8',
+        'Apartment',
         "Aparna CyberZon Apartment",
         "Reg123",
         null,
@@ -146,7 +152,8 @@ List<EntityAppData> getStoreListServer() {
         false),
     new EntityAppData.values(
         "157777231",
-        EntityType.Apartment,
+        'Owner9',
+        'Apartment',
         "Aparna Sarovar Apartment",
         "Reg123",
         null,
@@ -166,7 +173,8 @@ List<EntityAppData> getStoreListServer() {
         false),
     new EntityAppData.values(
         "erwer1231",
-        EntityType.Apartment,
+        'Owner10',
+        'Apartment',
         "Aparna CyberLife Apartment",
         "Reg123",
         null,

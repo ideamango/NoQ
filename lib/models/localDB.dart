@@ -1,4 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
+import 'package:noq/constants.dart';
 part 'localDB.g.dart';
 
 @JsonSerializable()
@@ -9,11 +10,12 @@ class UserAppData {
   // final String adrs;
   final List<BookingAppData> upcomingBookings;
   List<EntityAppData> storesAccessed;
+  List<EntityAppData> managedEntities;
 
   final SettingsAppData settings;
 
   UserAppData(this.id, this.phone, this.upcomingBookings, this.storesAccessed,
-      this.settings);
+      this.managedEntities, this.settings);
 
   factory UserAppData.fromJson(Map<String, dynamic> json) =>
       _$UserAppDataFromJson(json);
@@ -32,12 +34,11 @@ class UserAppData {
   // }
 }
 
-enum EntityType { SuperMart, HyperMart, MedicalStore, Apartment, Office, Mall }
-
 @JsonSerializable()
 class EntityAppData {
   String id;
-  EntityType eType;
+  String ownedById;
+  String eType;
   String name;
   String regNum;
   AddressAppData adrs;
@@ -57,6 +58,7 @@ class EntityAppData {
 
   EntityAppData.values(
       this.id,
+      this.ownedById,
       this.eType,
       this.name,
       this.regNum,
@@ -150,8 +152,6 @@ class ChildEntityAppData {
 
   Map<String, dynamic> toJson() => _$ChildEntityAppDataToJson(this);
 }
-
-enum Role { Manager, Admin, ContactPerson, Employee }
 
 @JsonSerializable()
 class ContactAppData {

@@ -20,6 +20,11 @@ UserAppData _$UserAppDataFromJson(Map<String, dynamic> json) {
             ? null
             : EntityAppData.fromJson(e as Map<String, dynamic>))
         ?.toList(),
+    (json['managedEntities'] as List)
+        ?.map((e) => e == null
+            ? null
+            : EntityAppData.fromJson(e as Map<String, dynamic>))
+        ?.toList(),
     json['settings'] == null
         ? null
         : SettingsAppData.fromJson(json['settings'] as Map<String, dynamic>),
@@ -32,13 +37,15 @@ Map<String, dynamic> _$UserAppDataToJson(UserAppData instance) =>
       'phone': instance.phone,
       'upcomingBookings': instance.upcomingBookings,
       'storesAccessed': instance.storesAccessed,
+      'managedEntities': instance.managedEntities,
       'settings': instance.settings,
     };
 
 EntityAppData _$EntityAppDataFromJson(Map<String, dynamic> json) {
   return EntityAppData()
     ..id = json['id'] as String
-    ..eType = _$enumDecodeNullable(_$EntityTypeEnumMap, json['eType'])
+    ..ownedById = json['ownedById'] as String
+    ..eType = json['eType'] as String
     ..name = json['name'] as String
     ..regNum = json['regNum'] as String
     ..adrs = json['adrs'] == null
@@ -69,7 +76,8 @@ EntityAppData _$EntityAppDataFromJson(Map<String, dynamic> json) {
 Map<String, dynamic> _$EntityAppDataToJson(EntityAppData instance) =>
     <String, dynamic>{
       'id': instance.id,
-      'eType': _$EntityTypeEnumMap[instance.eType],
+      'ownedById': instance.ownedById,
+      'eType': instance.eType,
       'name': instance.name,
       'regNum': instance.regNum,
       'adrs': instance.adrs,
@@ -85,47 +93,6 @@ Map<String, dynamic> _$EntityAppDataToJson(EntityAppData instance) =>
       'isFavourite': instance.isFavourite,
       'publicAccess': instance.publicAccess,
     };
-
-T _$enumDecode<T>(
-  Map<T, dynamic> enumValues,
-  dynamic source, {
-  T unknownValue,
-}) {
-  if (source == null) {
-    throw ArgumentError('A value must be provided. Supported values: '
-        '${enumValues.values.join(', ')}');
-  }
-
-  final value = enumValues.entries
-      .singleWhere((e) => e.value == source, orElse: () => null)
-      ?.key;
-
-  if (value == null && unknownValue == null) {
-    throw ArgumentError('`$source` is not one of the supported values: '
-        '${enumValues.values.join(', ')}');
-  }
-  return value ?? unknownValue;
-}
-
-T _$enumDecodeNullable<T>(
-  Map<T, dynamic> enumValues,
-  dynamic source, {
-  T unknownValue,
-}) {
-  if (source == null) {
-    return null;
-  }
-  return _$enumDecode<T>(enumValues, source, unknownValue: unknownValue);
-}
-
-const _$EntityTypeEnumMap = {
-  EntityType.SuperMart: 'SuperMart',
-  EntityType.HyperMart: 'HyperMart',
-  EntityType.MedicalStore: 'MedicalStore',
-  EntityType.Apartment: 'Apartment',
-  EntityType.Office: 'Office',
-  EntityType.Mall: 'Mall',
-};
 
 ChildEntityAppData _$ChildEntityAppDataFromJson(Map<String, dynamic> json) {
   return ChildEntityAppData(
@@ -169,6 +136,38 @@ Map<String, dynamic> _$ChildEntityAppDataToJson(ChildEntityAppData instance) =>
       'isFavourite': instance.isFavourite,
       'publicAccess': instance.publicAccess,
     };
+
+T _$enumDecode<T>(
+  Map<T, dynamic> enumValues,
+  dynamic source, {
+  T unknownValue,
+}) {
+  if (source == null) {
+    throw ArgumentError('A value must be provided. Supported values: '
+        '${enumValues.values.join(', ')}');
+  }
+
+  final value = enumValues.entries
+      .singleWhere((e) => e.value == source, orElse: () => null)
+      ?.key;
+
+  if (value == null && unknownValue == null) {
+    throw ArgumentError('`$source` is not one of the supported values: '
+        '${enumValues.values.join(', ')}');
+  }
+  return value ?? unknownValue;
+}
+
+T _$enumDecodeNullable<T>(
+  Map<T, dynamic> enumValues,
+  dynamic source, {
+  T unknownValue,
+}) {
+  if (source == null) {
+    return null;
+  }
+  return _$enumDecode<T>(enumValues, source, unknownValue: unknownValue);
+}
 
 const _$ChildTypeEnumMap = {
   ChildType.SwimmingPool: 'SwimmingPool',
