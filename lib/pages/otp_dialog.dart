@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
+import 'package:noq/db/db_service/db_main.dart';
 import 'package:pinput/pin_put/pin_put.dart';
 import 'package:noq/style.dart';
 import 'package:noq/services/authService.dart';
@@ -142,6 +143,7 @@ Future<bool> smsOTPDialog(BuildContext context, String verificationId) {
                           // .then(() {
                           print("inside then");
                           //Navigator.of(context).pop();
+
                           Navigator.of(context)
                               .pushReplacementNamed('/landingPage');
                         }).catchError((onError) {

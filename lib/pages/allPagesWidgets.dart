@@ -59,23 +59,31 @@ Widget needHelpPage(BuildContext context) {
 
 Widget shareAppPage(BuildContext context) {
   Widget _shareAppPage;
-  _shareAppPage = Center(
-      child: Container(
-          margin: EdgeInsets.fromLTRB(10, 10, 10, 10),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              Text("Share and spread happiness!!", style: highlightTextStyle),
-              Text('Be Safe | Save Time.', style: highlightSubTextStyle),
-            ],
-          )));
-  return _shareAppPage;
-}
 
-Widget logoutPage(BuildContext context) {
+  // _shareAppPage = Center(
+  //     child: Container(
+  //         margin: EdgeInsets.fromLTRB(10, 10, 10, 10),
+  //         child: Column(
+  //           mainAxisAlignment: MainAxisAlignment.center,
+  //           children: <Widget>[
+  //             Text("Share and spread happiness!!", style: highlightTextStyle),
+  //             Text('Be Safe | Save Time.', style: highlightSubTextStyle),
+  //           ],
+  //         )));
+  // return _shareAppPage;
+
+  void _logout() {
+    AuthService().signOut(context);
+  }
   // AuthService().signOut(context);
 
-  return null;
+  return Container(
+      child: RaisedButton(
+    color: Colors.grey,
+    elevation: 20,
+    onPressed: _logout,
+    child: Text('Logout', style: buttonMedTextStyle),
+  ));
 }
 
 Widget slotsPage(BuildContext context) {

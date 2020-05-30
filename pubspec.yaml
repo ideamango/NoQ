@@ -28,6 +28,8 @@ dependencies:
   shared_preferences: ^0.5.7
   flutter_datetime_picker: ^1.3.8
   weekday_selector_formfield: ^1.0.4
+  cloud_firestore: ^0.13.5
+  geoflutterfire: ^2.1.0
  
   intl: ^0.16.1
   progress_dialog: ^1.2.2
