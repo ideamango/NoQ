@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:noq/pages/SearchStoresPage.dart';
 import 'package:noq/pages/allPagesWidgets.dart';
+import 'package:noq/services/authService.dart';
 
 import 'style.dart';
 
@@ -204,7 +205,17 @@ class _LandingPageState extends State<LandingPage> {
       home: Scaffold(
           appBar: AppBar(title: Text(''), backgroundColor: Colors.teal,
               //Theme.of(context).primaryColor,
-              actions: <Widget>[]),
+              actions: <Widget>[
+                IconButton(
+                  iconSize: 20,
+                  autofocus: false,
+                  padding: EdgeInsets.all(2),
+                  alignment: Alignment.center,
+                  color: Colors.white,
+                  icon: Icon(Icons.exit_to_app),
+                  //onPressed: AuthService().signOut(context),
+                ),
+              ]),
           body: Center(
             child: PageView(
               physics: NeverScrollableScrollPhysics(),

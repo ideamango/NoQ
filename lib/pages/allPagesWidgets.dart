@@ -73,7 +73,7 @@ Widget shareAppPage(BuildContext context) {
 }
 
 Widget logoutPage(BuildContext context) {
-  // AuthService().signOut(context);
+  AuthService().signOut(context);
 
   return null;
 }

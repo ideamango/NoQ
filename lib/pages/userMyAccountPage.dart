@@ -24,7 +24,6 @@ class UserMyAccountPage extends StatefulWidget {
 
 class _UserMyAccountPageState extends State<UserMyAccountPage> {
   final GlobalKey<FormState> _formKey = new GlobalKey<FormState>();
-  List<String> _colors = <String>['', 'red', 'green', 'blue', 'orange'];
   final String title = "Managers Form";
   final Geolocator geolocator = Geolocator()..forceAndroidLocationManager;
 
@@ -47,12 +46,12 @@ class _UserMyAccountPageState extends State<UserMyAccountPage> {
   TextEditingController _ctEmpIdController = TextEditingController();
   TextEditingController _ctPhn1controller = TextEditingController();
   TextEditingController _ctPhn2controller = TextEditingController();
-  TextEditingController _ctRoleTypecontroller = TextEditingController();
   TextEditingController _ctAvlFromTimeController = TextEditingController();
   TextEditingController _ctAvlTillTimeController = TextEditingController();
 
   List<String> _daysOff = List<String>();
   ContactAppData cp1 = new ContactAppData();
+  AddressAppData adrs = new AddressAppData();
   EntityAppData entity = new EntityAppData();
 
   List<ContactAppData> newList = new List<ContactAppData>();
@@ -61,8 +60,7 @@ class _UserMyAccountPageState extends State<UserMyAccountPage> {
 
   bool _isPositionSet = false;
   //bool _autoPopulate = false;
-  bool _isEditPressed = false;
-  // Address _address = new Address('', '', '', '', '');
+
   String _currentCity;
   String _postalCode;
   String _country;
@@ -128,7 +126,6 @@ class _UserMyAccountPageState extends State<UserMyAccountPage> {
         _currentCity = place.locality;
         _postalCode = place.postalCode;
         _country = place.country;
-        _isPositionSet = true;
 
         // _address = new Address(
         //     _subArea, _mainArea, _currentCity, _country, _postalCode);
@@ -162,23 +159,6 @@ class _UserMyAccountPageState extends State<UserMyAccountPage> {
     }
   }
 
-  void _editLocation() {
-    setState(() {
-      _isEditPressed = true;
-      // _autoPopulate = false;
-    });
-  }
-
-  // void initializePersonList() {
-  //   ContactPerson cp1 =
-  //       new ContactPerson.values('a', 'b', 'c', 'd', 'e', 'f', 'g');
-  //   // ContactPerson cp2 =
-  //   //     new ContactPerson.values('a', 'b', 'c', 'd', 'e', 'f', 'g');
-
-  //   newList.add(cp1);
-  //   //newList.add(cp2);
-  // }
-
   Future<List> getList() async {
     List<ContactAppData> contactList = new List<ContactAppData>();
     ContactAppData cp = new ContactAppData.values(
@@ -194,46 +174,13 @@ class _UserMyAccountPageState extends State<UserMyAccountPage> {
     return contactList;
   }
 
-  Widget _buildContactPerson(ContactAppData contactPerson) {
-    return Container(
-        width: MediaQuery.of(context).size.width * .94,
-        decoration: BoxDecoration(
-            border: Border.all(color: highlightColor),
-            color: Colors.grey[50],
-            shape: BoxShape.rectangle,
-            borderRadius: BorderRadius.all(Radius.circular(5.0))),
-        padding: EdgeInsets.all(5.0),
-        child: Column(
-          children: <Widget>[
-            TextFormField(
-              obscureText: false,
-              maxLines: 1,
-              minLines: 1,
-              style: textInputTextStyle,
-              keyboardType: TextInputType.text,
-              //   controller: _ctNameController,
-              decoration: InputDecoration(
-                labelText: 'Name',
-                enabledBorder: UnderlineInputBorder(
-                    borderSide: BorderSide(color: Colors.grey)),
-                focusedBorder: UnderlineInputBorder(
-                    borderSide: BorderSide(color: Colors.orange)),
-              ),
-              // validator: (String value) {
+  saveDetails() async {
+    List<Placemark> placemark = await Geolocator().placemarkFromAddress(
+        "My Home Vihanga, Financial District, Gachibowli, Hyderabad, Telangana, India");
 
-              // },
-              onSaved: (String value) {
-                contactPerson.perName = value;
-              },
-            )
-          ],
-        ));
+    print(placemark);
+    saveEntityDetails(entity);
   }
-
-  // Widget _buildAddress(String add) {
-  //   print("Sumant");
-  //   return Text(add);
-  // }
 
   @override
   Widget build(BuildContext context) {
@@ -305,19 +252,6 @@ class _UserMyAccountPageState extends State<UserMyAccountPage> {
       },
     );
 
-    // final entityType2 = TextFormField(
-    //   obscureText: false,
-    //   maxLines: 1,
-    //   minLines: 1,
-    //   style: textInputTextStyle,
-    //   keyboardType: TextInputType.text,
-    //   decoration: CommonStyle.textFieldStyle(
-    //       labelTextStr: "Type of Establishment", hintTextStr: ""),
-    //   validator: validateText,
-    //    onSaved: (String value) {
-    //     entity.eType = value;
-    //   },
-    // );
     final opensTimeField = TextFormField(
       obscureText: false,
       maxLines: 1,
@@ -1127,7 +1061,7 @@ class _UserMyAccountPageState extends State<UserMyAccountPage> {
                     onPressed: () {
                       //  if (_formKey.currentState.validate()) {
                       //_formKey.currentState.save();
-                      saveEntityDetails(entity);
+                      saveDetails();
                       Navigator.push(
                           context,
                           MaterialPageRoute(
