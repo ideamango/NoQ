@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:noq/db/db_service/db_main.dart';
 import 'package:noq/pages/SearchStoresPage.dart';
 import 'package:noq/pages/allPagesWidgets.dart';
+import 'package:noq/pages/manage_apartment_page.dart';
 import 'package:noq/services/authService.dart';
 
 import 'style.dart';
@@ -208,43 +209,6 @@ class _LandingPageState extends State<LandingPage> {
       title: 'My Dashboard',
       //theme: ThemeData.light().copyWith(),
       home: Scaffold(
-<<<<<<< HEAD
-          appBar: AppBar(title: Text(''), backgroundColor: Colors.teal,
-              //Theme.of(context).primaryColor,
-              actions: <Widget>[
-                IconButton(
-                  iconSize: 20,
-                  autofocus: false,
-                  padding: EdgeInsets.all(2),
-                  alignment: Alignment.center,
-                  color: Colors.white,
-                  icon: Icon(Icons.exit_to_app),
-                  //onPressed: AuthService().signOut(context),
-                ),
-              ]),
-          body: Center(
-            child: PageView(
-              physics: NeverScrollableScrollPhysics(),
-              controller: _pageController,
-              onPageChanged: onPageChanged,
-              children: <Widget>[
-                _userAccount(),
-                _manageApartmentPage(),
-                _manageCommSpacePage(),
-                _manageOffSpacePage(),
-                _userNotifications(),
-                _rateApp(),
-                _needHelp(),
-                _shareApp(),
-
-                _userHomePage(),
-                //_storesListPage(),
-                SearchStoresPage(forPage: 'Search'),
-                SearchStoresPage(forPage: 'Favourite'),
-                _userAccount(),
-              ],
-            ),
-=======
         appBar: AppBar(title: Text(''), backgroundColor: Colors.teal,
             //Theme.of(context).primaryColor,
             actions: <Widget>[]),
@@ -262,14 +226,12 @@ class _LandingPageState extends State<LandingPage> {
               _rateApp(),
               _needHelp(),
               _shareApp(),
-
               _userHomePage(),
               //_storesListPage(),
               SearchStoresPage(forPage: 'Search'),
               SearchStoresPage(forPage: 'Favourite'),
               _userAccount(),
             ],
->>>>>>> 897c46f29680fe53bd6e1f7382156066b3254791
           ),
         ),
         drawer: Drawer(
@@ -372,11 +334,11 @@ class _LandingPageState extends State<LandingPage> {
           ),
         ),
         bottomNavigationBar: buildBottomItems(),
-        floatingActionButton: FloatingActionButton(
-          onPressed: dbCall,
-          tooltip: 'Increment',
-          child: Icon(Icons.add),
-        ),
+        // floatingActionButton: FloatingActionButton(
+        //   onPressed: dbCall,
+        //   tooltip: 'Increment',
+        //   child: Icon(Icons.add),
+        // ),
       ),
     );
   }
@@ -440,11 +402,7 @@ class _LandingPageState extends State<LandingPage> {
   }
 
   Widget _manageApartmentPage() {
-    return Container(
-      child: Center(
-        child: Text("Add new Apartment"),
-      ),
-    );
+    return ManageApartmentPage();
   }
 
   Widget _manageCommSpacePage() {

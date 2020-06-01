@@ -19,3 +19,15 @@ List<String> entityTypes = [
   'Office',
   'Mall'
 ];
+List<String> subEntityTypes = [
+  'Swimming Pool',
+  'Gym',
+  'Medical Store',
+  'Grocery Store',
+  'Library',
+  'Game Parlors',
+  'Commercial Space',
+  'Cafe',
+  'Restaurant',
+  'Others'
+];
