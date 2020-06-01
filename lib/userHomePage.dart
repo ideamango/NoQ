@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:noq/constants.dart';
+import 'package:noq/db/db_service/db_main.dart';
 import 'package:noq/models/localDB.dart';
 import 'package:noq/repository/local_db_repository.dart';
 import 'package:noq/services/circular_progress.dart';
@@ -61,6 +62,10 @@ class _UserHomePageState extends State<UserHomePage> {
         print(scanResult);
       });
     }
+  }
+
+  void dbCall() {
+    DBLayer.addRecord();
   }
 
   void _loadBookings() async {
@@ -265,6 +270,11 @@ class _UserHomePageState extends State<UserHomePage> {
                   )
                 ],
               ),
+            ),
+            RaisedButton(
+              color: Colors.blue,
+              onPressed: dbCall,
+              child: Icon(Icons.add),
             ),
           ],
         ),

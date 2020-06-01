@@ -17,14 +17,13 @@ import 'package:flutter/foundation.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 
-class UserMyAccountPage extends StatefulWidget {
+class ManageApartmentPage extends StatefulWidget {
   @override
-  _UserMyAccountPageState createState() => _UserMyAccountPageState();
+  _ManageApartmentPageState createState() => _ManageApartmentPageState();
 }
 
-class _UserMyAccountPageState extends State<UserMyAccountPage> {
+class _ManageApartmentPageState extends State<ManageApartmentPage> {
   final GlobalKey<FormState> _formKey = new GlobalKey<FormState>();
-  List<String> _colors = <String>['', 'red', 'green', 'blue', 'orange'];
   final String title = "Managers Form";
   final Geolocator geolocator = Geolocator()..forceAndroidLocationManager;
 
@@ -40,6 +39,10 @@ class _UserMyAccountPageState extends State<UserMyAccountPage> {
 
   TextEditingController _closeTimeController = TextEditingController();
   TextEditingController _openTimeController = TextEditingController();
+  TextEditingController _breakStartController = TextEditingController();
+  TextEditingController _breakEndController = TextEditingController();
+
+  TextEditingController _maxPeopleController = TextEditingController();
   List<String> _closedOnDays = List<String>();
 
   //ContactPerson Fields
@@ -47,12 +50,12 @@ class _UserMyAccountPageState extends State<UserMyAccountPage> {
   TextEditingController _ctEmpIdController = TextEditingController();
   TextEditingController _ctPhn1controller = TextEditingController();
   TextEditingController _ctPhn2controller = TextEditingController();
-  TextEditingController _ctRoleTypecontroller = TextEditingController();
   TextEditingController _ctAvlFromTimeController = TextEditingController();
   TextEditingController _ctAvlTillTimeController = TextEditingController();
 
   List<String> _daysOff = List<String>();
   ContactAppData cp1 = new ContactAppData();
+  AddressAppData adrs = new AddressAppData();
   EntityAppData entity = new EntityAppData();
 
   List<ContactAppData> newList = new List<ContactAppData>();
@@ -61,8 +64,7 @@ class _UserMyAccountPageState extends State<UserMyAccountPage> {
 
   bool _isPositionSet = false;
   //bool _autoPopulate = false;
-  bool _isEditPressed = false;
-  // Address _address = new Address('', '', '', '', '');
+
   String _currentCity;
   String _postalCode;
   String _country;
@@ -128,7 +130,6 @@ class _UserMyAccountPageState extends State<UserMyAccountPage> {
         _currentCity = place.locality;
         _postalCode = place.postalCode;
         _country = place.country;
-        _isPositionSet = true;
 
         // _address = new Address(
         //     _subArea, _mainArea, _currentCity, _country, _postalCode);
@@ -162,23 +163,6 @@ class _UserMyAccountPageState extends State<UserMyAccountPage> {
     }
   }
 
-  void _editLocation() {
-    setState(() {
-      _isEditPressed = true;
-      // _autoPopulate = false;
-    });
-  }
-
-  // void initializePersonList() {
-  //   ContactPerson cp1 =
-  //       new ContactPerson.values('a', 'b', 'c', 'd', 'e', 'f', 'g');
-  //   // ContactPerson cp2 =
-  //   //     new ContactPerson.values('a', 'b', 'c', 'd', 'e', 'f', 'g');
-
-  //   newList.add(cp1);
-  //   //newList.add(cp2);
-  // }
-
   Future<List> getList() async {
     List<ContactAppData> contactList = new List<ContactAppData>();
     ContactAppData cp = new ContactAppData.values(
@@ -194,46 +178,13 @@ class _UserMyAccountPageState extends State<UserMyAccountPage> {
     return contactList;
   }
 
-  Widget _buildContactPerson(ContactAppData contactPerson) {
-    return Container(
-        width: MediaQuery.of(context).size.width * .94,
-        decoration: BoxDecoration(
-            border: Border.all(color: highlightColor),
-            color: Colors.grey[50],
-            shape: BoxShape.rectangle,
-            borderRadius: BorderRadius.all(Radius.circular(5.0))),
-        padding: EdgeInsets.all(5.0),
-        child: Column(
-          children: <Widget>[
-            TextFormField(
-              obscureText: false,
-              maxLines: 1,
-              minLines: 1,
-              style: textInputTextStyle,
-              keyboardType: TextInputType.text,
-              //   controller: _ctNameController,
-              decoration: InputDecoration(
-                labelText: 'Name',
-                enabledBorder: UnderlineInputBorder(
-                    borderSide: BorderSide(color: Colors.grey)),
-                focusedBorder: UnderlineInputBorder(
-                    borderSide: BorderSide(color: Colors.orange)),
-              ),
-              // validator: (String value) {
+  saveDetails() async {
+    List<Placemark> placemark = await Geolocator().placemarkFromAddress(
+        "My Home Vihanga, Financial District, Gachibowli, Hyderabad, Telangana, India");
 
-              // },
-              onSaved: (String value) {
-                contactPerson.perName = value;
-              },
-            )
-          ],
-        ));
+    print(placemark);
+    saveEntityDetails(entity);
   }
-
-  // Widget _buildAddress(String add) {
-  //   print("Sumant");
-  //   return Text(add);
-  // }
 
   @override
   Widget build(BuildContext context) {
@@ -304,20 +255,6 @@ class _UserMyAccountPageState extends State<UserMyAccountPage> {
         entity.eType = value;
       },
     );
-
-    // final entityType2 = TextFormField(
-    //   obscureText: false,
-    //   maxLines: 1,
-    //   minLines: 1,
-    //   style: textInputTextStyle,
-    //   keyboardType: TextInputType.text,
-    //   decoration: CommonStyle.textFieldStyle(
-    //       labelTextStr: "Type of Establishment", hintTextStr: ""),
-    //   validator: validateText,
-    //    onSaved: (String value) {
-    //     entity.eType = value;
-    //   },
-    // );
     final opensTimeField = TextFormField(
       obscureText: false,
       maxLines: 1,
@@ -406,6 +343,95 @@ class _UserMyAccountPageState extends State<UserMyAccountPage> {
         entity.closesAt = value;
       },
     );
+    final breakSartTimeField = TextFormField(
+      obscureText: false,
+      maxLines: 1,
+      readOnly: true,
+      minLines: 1,
+      style: textInputTextStyle,
+      onTap: () {
+        DatePicker.showTime12hPicker(context, showTitleActions: true,
+            onChanged: (date) {
+          print('change $date in time zone ' +
+              date.timeZoneOffset.inHours.toString());
+        }, onConfirm: (date) {
+          print('confirm $date');
+          //  String time = "${date.hour}:${date.minute} ${date.";
+
+          String time = DateFormat.jm().format(date);
+          print(time);
+
+          _breakStartController.text = time.toLowerCase();
+        }, currentTime: DateTime.now());
+      },
+      controller: _breakStartController,
+      keyboardType: TextInputType.text,
+      decoration: InputDecoration(
+          // suffixIcon: IconButton(
+          //   icon: Icon(Icons.schedule),
+          //   onPressed: () {
+          //     DatePicker.showTime12hPicker(context, showTitleActions: true,
+          //         onChanged: (date) {
+          //       print('change $date in time zone ' +
+          //           date.timeZoneOffset.inHours.toString());
+          //     }, onConfirm: (date) {
+          //       print('confirm $date');
+          //       //  String time = "${date.hour}:${date.minute} ${date.";
+
+          //       String time = DateFormat.jm().format(date);
+          //       print(time);
+
+          //       _openTimeController.text = time.toLowerCase();
+          //     }, currentTime: DateTime.now());
+          //   },
+          // ),
+          labelText: "Break start at",
+          hintText: "HH:MM am/pm",
+          enabledBorder:
+              UnderlineInputBorder(borderSide: BorderSide(color: Colors.grey)),
+          focusedBorder: UnderlineInputBorder(
+              borderSide: BorderSide(color: Colors.orange))),
+      validator: validateTime,
+      onSaved: (String value) {
+        // entity.opensAt = value;
+      },
+    );
+    final breakEndTimeField = TextFormField(
+      enabled: true,
+      obscureText: false,
+      readOnly: true,
+      maxLines: 1,
+      minLines: 1,
+      controller: _breakEndController,
+      style: textInputTextStyle,
+      onTap: () {
+        DatePicker.showTime12hPicker(context, showTitleActions: true,
+            onChanged: (date) {
+          print('change $date in time zone ' +
+              date.timeZoneOffset.inHours.toString());
+        }, onConfirm: (date) {
+          print('confirm $date');
+          //  String time = "${date.hour}:${date.minute} ${date.";
+
+          String time = DateFormat.jm().format(date);
+          print(time);
+
+          _breakEndController.text = time.toLowerCase();
+        }, currentTime: DateTime.now());
+      },
+      decoration: InputDecoration(
+          labelText: "Break ends at",
+          hintText: "HH:MM am/pm",
+          enabledBorder:
+              UnderlineInputBorder(borderSide: BorderSide(color: Colors.grey)),
+          focusedBorder: UnderlineInputBorder(
+              borderSide: BorderSide(color: Colors.orange))),
+      validator: validateTime,
+      onSaved: (String value) {
+        entity.closesAt = value;
+      },
+    );
+
     final daysClosedField = Padding(
       padding: EdgeInsets.only(top: 12, bottom: 8),
       child: Row(
@@ -457,6 +483,26 @@ class _UserMyAccountPageState extends State<UserMyAccountPage> {
         ],
       ),
     );
+    final maxpeopleInASlot = TextFormField(
+      obscureText: false,
+      maxLines: 1,
+      minLines: 1,
+      style: textInputTextStyle,
+      keyboardType: TextInputType.number,
+      controller: _maxPeopleController,
+      decoration: InputDecoration(
+        labelText: 'Max. people allowed in a given time slot',
+        enabledBorder:
+            UnderlineInputBorder(borderSide: BorderSide(color: Colors.grey)),
+        focusedBorder:
+            UnderlineInputBorder(borderSide: BorderSide(color: Colors.orange)),
+      ),
+      validator: validateText,
+      onSaved: (String value) {
+        // entity. = value;
+      },
+    );
+
 //Address fields
     final adrsField1 = TextFormField(
       obscureText: false,
@@ -858,7 +904,10 @@ class _UserMyAccountPageState extends State<UserMyAccountPage> {
                       regNumField,
                       opensTimeField,
                       closeTimeField,
+                      breakSartTimeField,
+                      breakEndTimeField,
                       daysClosedField,
+                      maxpeopleInASlot,
                     ],
                   ),
                 ],
@@ -1092,42 +1141,15 @@ class _UserMyAccountPageState extends State<UserMyAccountPage> {
               //     borderRadius: BorderRadius.all(Radius.circular(5.0))),
               //height: MediaQuery.of(context).size.width * .2,
               child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
                   RaisedButton(
                     color: highlightColor,
                     splashColor: Colors.orange,
                     onPressed: () {
-                      if (_formKey.currentState.validate()) {
-                        _formKey.currentState.save();
-                        saveEntityDetails(entity);
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => ChildEntityDetailsPage(
-                                    entity: this.entity)));
-                      }
-                    },
-                    child: Column(
-                      children: <Widget>[
-                        Text(
-                          'Save & Submit',
-                          style: buttonMedTextStyle,
-                        ),
-                        Text(
-                          'For now, rest of details later.',
-                          style: buttonXSmlTextStyle,
-                        ),
-                      ],
-                    ),
-                  ),
-                  RaisedButton(
-                    color: highlightColor,
-                    splashColor: Colors.orange,
-                    onPressed: () {
-                      //  if (_formKey.currentState.validate()) {
-                      //_formKey.currentState.save();
-                      saveEntityDetails(entity);
+                      // if (_formKey.currentState.validate()) {
+                      //   _formKey.currentState.save();
+                      saveDetails();
                       Navigator.push(
                           context,
                           MaterialPageRoute(
@@ -1135,17 +1157,20 @@ class _UserMyAccountPageState extends State<UserMyAccountPage> {
                                   ChildEntityDetailsPage(entity: this.entity)));
                       // }
                     },
-                    child: Column(
-                      children: <Widget>[
-                        Text(
-                          'Save & Next',
-                          style: buttonMedTextStyle,
-                        ),
-                        Text(
-                          'Fill services detail now.',
-                          style: buttonXSmlTextStyle,
-                        ),
-                      ],
+                    child: Container(
+                      width: MediaQuery.of(context).size.width * .8,
+                      child: Column(
+                        children: <Widget>[
+                          Text(
+                            'Add Amenities',
+                            style: buttonMedTextStyle,
+                          ),
+                          Text(
+                            'Details of amenities/services',
+                            style: buttonXSmlTextStyle,
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ],

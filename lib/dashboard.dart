@@ -3,6 +3,8 @@ import 'package:noq/db/db_service/db_main.dart';
 import 'package:noq/db/db_service/token_service.dart';
 import 'package:noq/pages/SearchStoresPage.dart';
 import 'package:noq/pages/allPagesWidgets.dart';
+import 'package:noq/pages/manage_apartment_page.dart';
+import 'package:noq/services/authService.dart';
 
 import 'db/db_model/user_token.dart';
 import 'style.dart';
@@ -231,7 +233,6 @@ class _LandingPageState extends State<LandingPage> {
               _rateApp(),
               _needHelp(),
               _shareApp(),
-
               _userHomePage(),
               //_storesListPage(),
               SearchStoresPage(forPage: 'Search'),
@@ -340,11 +341,11 @@ class _LandingPageState extends State<LandingPage> {
           ),
         ),
         bottomNavigationBar: buildBottomItems(),
-        floatingActionButton: FloatingActionButton(
-          onPressed: dbCall,
-          tooltip: 'Increment',
-          child: Icon(Icons.add),
-        ),
+        // floatingActionButton: FloatingActionButton(
+        //   onPressed: dbCall,
+        //   tooltip: 'Increment',
+        //   child: Icon(Icons.add),
+        // ),
       ),
     );
   }
@@ -408,11 +409,7 @@ class _LandingPageState extends State<LandingPage> {
   }
 
   Widget _manageApartmentPage() {
-    return Container(
-      child: Center(
-        child: Text("Add new Apartment"),
-      ),
-    );
+    return ManageApartmentPage();
   }
 
   Widget _manageCommSpacePage() {
