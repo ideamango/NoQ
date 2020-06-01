@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:noq/db/db_service/db_main.dart';
+import 'package:noq/db/db_service/token_service.dart';
 import 'package:noq/pages/SearchStoresPage.dart';
 import 'package:noq/pages/allPagesWidgets.dart';
 
+import 'db/db_model/user_token.dart';
 import 'style.dart';
 
 import 'package:noq/models/localDB.dart';
@@ -197,8 +199,13 @@ class _LandingPageState extends State<LandingPage> {
     });
   }
 
-  void dbCall() {
+  void dbCall() async {
     DBLayer.addRecord();
+    UserToken tok = await TokenService()
+        .generateToken("entityId001", new DateTime(2020, 6, 1, 9, 30, 0, 0));
+
+    await TokenService().cancelToken(
+        "entityId001#2020~5~31#13~28#93hKw20HwFaVdHRsujOlpjaouoL2");
   }
 
   @override
