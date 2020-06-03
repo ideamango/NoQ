@@ -106,19 +106,10 @@ class EntityAppData {
   // }
 }
 
-enum ChildType {
-  SwimmingPool,
-  Canteen,
-  Gym,
-  GroceryStore,
-  OutdoorGames,
-  IndoorGames
-}
-
 @JsonSerializable()
 class ChildEntityAppData {
   String id;
-  ChildType cType;
+  String cType;
   String name;
   String regNum;
   AddressAppData adrs;
@@ -131,22 +122,26 @@ class ChildEntityAppData {
   List<ContactAppData> contactPersons;
   bool isFavourite;
   bool publicAccess;
+  ChildEntityAppData();
 
-  ChildEntityAppData(
-      this.id,
-      this.cType,
-      this.name,
-      this.regNum,
-      this.adrs,
-      this.lat,
-      this.long,
-      this.opensAt,
-      this.breakTime,
-      this.closesAt,
-      this.daysClosed,
-      this.contactPersons,
-      this.isFavourite,
-      this.publicAccess);
+  ChildEntityAppData.cType(this.cType);
+
+  ChildEntityAppData.allValues(
+    this.id,
+    this.cType,
+    this.name,
+    this.regNum,
+    this.adrs,
+    this.lat,
+    this.long,
+    this.opensAt,
+    this.breakTime,
+    this.closesAt,
+    this.daysClosed,
+    this.contactPersons,
+    this.isFavourite,
+    this.publicAccess,
+  );
   factory ChildEntityAppData.fromJson(Map<String, dynamic> json) =>
       _$ChildEntityAppDataFromJson(json);
 
