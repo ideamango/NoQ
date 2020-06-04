@@ -6,6 +6,7 @@ import 'package:noq/pages/allPagesWidgets.dart';
 import 'package:noq/pages/manage_apartment_page.dart';
 import 'package:noq/services/authService.dart';
 
+import 'db/db_model/entity_slots.dart';
 import 'db/db_model/user_token.dart';
 import 'style.dart';
 
@@ -199,15 +200,6 @@ class _LandingPageState extends State<LandingPage> {
     setState(() {
       _page = page;
     });
-  }
-
-  void dbCall() async {
-    DBLayer.addRecord();
-    UserToken tok = await TokenService()
-        .generateToken("entityId001", new DateTime(2020, 6, 1, 9, 30, 0, 0));
-
-    await TokenService().cancelToken(
-        "entityId001#2020~5~31#13~28#93hKw20HwFaVdHRsujOlpjaouoL2");
   }
 
   @override

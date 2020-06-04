@@ -1,23 +1,23 @@
 class Slot {
   Slot(
-      {this.entityId,
+      {this.slotId,
       this.currentNumber,
       this.maxAllowed,
       this.dateTime,
       this.slotDuration,
       this.isFull});
 
-  //SlotDocumentId is entityID#20~06~01#9~30 it is not auto-generated, will help in not duplicating the record
+  //SlotId is entityID#20~06~01#9~30
 
-  String entityId;
+  String slotId;
   int currentNumber;
   int maxAllowed;
   DateTime dateTime;
   int slotDuration;
-  bool isFull;
+  bool isFull = false;
 
   Map<String, dynamic> toJson() => {
-        'entityId': entityId,
+        'slotId': slotId,
         'currentNumber': currentNumber,
         'maxAllowed': maxAllowed,
         'dateTime': dateTime,
@@ -27,13 +27,12 @@ class Slot {
 
   static Slot fromJson(Map<String, dynamic> json) {
     return new Slot(
-      entityId: json['entityId'].toString(),
-      currentNumber: json['currentNumber'],
-      maxAllowed: json['maxAllowed'],
-      dateTime: new DateTime.fromMillisecondsSinceEpoch(
-          json['dateTime'].seconds * 1000),
-      slotDuration: json['slotDuration'],
-      isFull: json['isFull'],
-    );
+        slotId: json['slotId'].toString(),
+        currentNumber: json['currentNumber'],
+        maxAllowed: json['maxAllowed'],
+        dateTime: new DateTime.fromMillisecondsSinceEpoch(
+            json['dateTime'].seconds * 1000),
+        slotDuration: json['slotDuration'],
+        isFull: json['isFull']);
   }
 }

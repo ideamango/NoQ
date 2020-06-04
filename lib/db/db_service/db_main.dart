@@ -23,7 +23,7 @@ class DBLayer {
         _firestore.collection('users').add(u.toJson());
 
     Slot sl = new Slot();
-    sl.entityId = "TestEntId";
+    sl.slotId = "TestEntId";
     sl.currentNumber = 10;
     sl.dateTime = DateTime.now();
     sl.maxAllowed = 60;
