@@ -2,11 +2,11 @@ import 'package:noq/db/db_model/slot.dart';
 
 class EntitySlots {
   EntitySlots(
-      {this.entityId,
+      {this.slots,
+      this.entityId,
       this.maxAllowed,
       this.date,
       this.slotDuration,
-      this.slots,
       this.closedOn,
       this.breakStartHour,
       this.breakStartMinute,
@@ -22,7 +22,7 @@ class EntitySlots {
   int maxAllowed;
   DateTime date;
   int slotDuration;
-  List<Slot> slots = [];
+  List<Slot> slots;
   List<String> closedOn;
   int breakStartHour;
   int breakStartMinute;
@@ -76,7 +76,7 @@ class EntitySlots {
         'maxAllowed': maxAllowed,
         'date': date,
         'slotDuration': slotDuration,
-        'slots': slots,
+        'slots': slotsToJson(slots),
         'closedOn': closedOn,
         'breakStartHour': breakStartHour,
         'breakStartMinute': breakStartMinute,
@@ -87,4 +87,12 @@ class EntitySlots {
         'endTimeHour': endTimeHour,
         'endTimeMinute': endTimeMinute
       };
+
+  List<dynamic> slotsToJson(List<Slot> slots) {
+    List<dynamic> slotsJson = new List<dynamic>();
+    for (Slot sl in slots) {
+      slotsJson.add(sl.toJson());
+    }
+    return slotsJson;
+  }
 }

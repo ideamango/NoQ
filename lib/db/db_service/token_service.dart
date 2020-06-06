@@ -5,6 +5,7 @@ import 'package:noq/db/db_model/entity_slots.dart';
 import 'package:noq/db/db_service/slot_full_exception.dart';
 import 'package:noq/db/db_model/user_token.dart';
 import 'package:noq/db/db_model/slot.dart';
+import 'package:noq/db/db_service/token_already_exists_exception.dart';
 import 'package:noq/db/db_service/token_not_exist_exception.dart';
 
 class TokenService {
@@ -22,7 +23,7 @@ class TokenService {
         date.day.toString();
 
     final DocumentReference entitySlotsRef =
-        fStore.document('tokens/' + entitySlotsDocId);
+        fStore.document('slots/' + entitySlotsDocId);
 
     DocumentSnapshot doc = await entitySlotsRef.get();
 
@@ -30,8 +31,6 @@ class TokenService {
       Map<String, dynamic> map = doc.data;
 
       es = EntitySlots.fromJson(map);
-
-      var slots = doc.data['slots'];
     }
 
     return es;
@@ -70,6 +69,11 @@ class TokenService {
         DocumentSnapshot entitySlotsSnapshot = await tx.get(entitySlotsRef);
         EntitySlots es;
         if (entitySlotsSnapshot.exists) {
+          DocumentSnapshot tokenSnapshot = await tx.get(tokRef);
+          if (tokenSnapshot.exists) {
+            throw new TokenAlreadyExistsException(
+                "Token for this user is already booked");
+          }
           //atleast one token is issued for the given entity for that day
           es = EntitySlots.fromJson(entitySlotsSnapshot.data);
           int maxAllowed = es.maxAllowed;
@@ -90,10 +94,10 @@ class TokenService {
               newNumber = sl.currentNumber + 1;
 
               if (sl.maxAllowed == newNumber) {
-                //TODO: set the isFull for that slot to true
+                // set the isFull for that slot to true
                 sl.isFull = true;
               }
-              //TODO: set the current number to be incremented
+              // set the current number to be incremented
               sl.currentNumber = newNumber;
 
               slotExist = true;
@@ -102,9 +106,9 @@ class TokenService {
           }
 
           if (!slotExist) {
-            //TODO: Create a new Slot with current number as 1 and add to the Slots list of Entity_Slots object
+            // Create a new Slot with current number as 1 and add to the Slots list of Entity_Slots object
             Slot sl = new Slot(
-                currentNumber: newNumber,
+                currentNumber: 1,
                 slotId: slotId,
                 maxAllowed: es.maxAllowed,
                 dateTime: dateTime,
@@ -113,7 +117,7 @@ class TokenService {
             es.slots.add(sl);
           }
 
-          //TODO: Save the EntitySlots using set method
+          // Save the EntitySlots using set method
           await tx.set(entitySlotsRef, es.toJson());
 
           Map<String, dynamic> tokenJson = <String, dynamic>{
@@ -143,6 +147,9 @@ class TokenService {
           int endTimeMinute = 30;
 
           EntitySlots es = new EntitySlots(
+              slots: new List<Slot>(),
+              entityId: entityId,
+              date: new DateTime(dateTime.year, dateTime.month, dateTime.day),
               maxAllowed: maxAllowed,
               slotDuration: slotDuration,
               closedOn: closedOn,
@@ -173,9 +180,10 @@ class TokenService {
             'maxAllowed': maxAllowed
           };
 
-          //create Slot
+          //create EntitySlots with one slot in it
           await tx.set(entitySlotsRef, es.toJson());
           //create Token
+
           await tx.set(tokRef, tokenJson);
 
           token = UserToken.fromJson(tokenJson);
@@ -211,16 +219,31 @@ class TokenService {
           }
 
           String slotId = tokenSnapshot.data['slotId'];
-          int maxAllowed = tokenSnapshot.data['maxAllowed'];
+          List<String> parts = slotId.split("#");
 
-          final DocumentReference slotRef = fStore.document('slots/' + slotId);
+          String entitySlotsDocId = parts[0] + "#" + parts[1];
+
+          final DocumentReference entitySlotsRef =
+              fStore.document('slots/' + entitySlotsDocId);
+
+          DocumentSnapshot doc = await entitySlotsRef.get();
+
+          Map<String, dynamic> map = doc.data;
+
+          EntitySlots es = EntitySlots.fromJson(map);
+          for (Slot sl in es.slots) {
+            if (sl.slotId == slotId) {
+              sl.maxAllowed++;
+              sl.isFull = false;
+              break;
+            }
+          }
 
           //update the token with number as -1
           await tx.update(tokRef, <String, dynamic>{'number': -1});
 
           //change the max allowed by 1, if a token is cancelled
-          await tx
-              .update(slotRef, <String, dynamic>{'maxAllowed': maxAllowed + 1});
+          await tx.set(entitySlotsRef, es.toJson());
 
           isCancelled = true;
         } else {

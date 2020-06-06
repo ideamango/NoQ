@@ -32,7 +32,7 @@ class UserToken {
         userId: json['userId'].toString(),
         number: json['currentNumber'],
         dateTime: new DateTime.fromMillisecondsSinceEpoch(
-            json['dateTime'].seconds * 1000),
+            json['dateTime'].millisecondsSinceEpoch),
         maxAllowed: json['maxAllowed']);
   }
 }
