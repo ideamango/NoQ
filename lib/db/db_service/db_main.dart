@@ -3,10 +3,11 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:noq/db/db_model/my_geo_fire_point.dart';
 
 import 'package:geoflutterfire/geoflutterfire.dart';
+import 'package:noq/db/db_model/slot.dart';
 import 'package:noq/db/db_model/user.dart';
 
 class DBLayer {
-  static void addRecord() {
+  static void addRecord() async {
     Geoflutterfire geo = Geoflutterfire();
     Firestore _firestore = Firestore.instance;
 
@@ -20,6 +21,26 @@ class DBLayer {
 
     Future<DocumentReference> doc =
         _firestore.collection('users').add(u.toJson());
+
+    Slot sl = new Slot();
+    sl.slotId = "TestEntId";
+    sl.currentNumber = 10;
+    sl.dateTime = DateTime.now();
+    sl.maxAllowed = 60;
+    sl.slotDuration = 30;
+
+    final CollectionReference slotsRef =
+        Firestore.instance.collection('/slots');
+
+    var postID = "1";
+
+    try {
+      Map<String, dynamic> slData = sl.toJson();
+      await slotsRef.document(postID).setData(slData);
+    } catch (e) {
+      print(
+          "Error occured as tried creating slot with same id: " + e.toString());
+    }
 
     GeoFirePoint center = geo.point(latitude: 12.960632, longitude: 77.641603);
 

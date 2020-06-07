@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:noq/constants.dart';
 import 'package:noq/db/db_service/db_main.dart';
+import 'package:noq/db/db_service/token_service.dart';
 import 'package:noq/models/localDB.dart';
 import 'package:noq/repository/local_db_repository.dart';
 import 'package:noq/services/circular_progress.dart';
@@ -12,6 +13,9 @@ import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:barcode_scan/barcode_scan.dart';
 import 'package:flutter/services.dart';
+
+import 'db/db_model/entity_slots.dart';
+import 'db/db_model/user_token.dart';
 //import 'path';
 
 class UserHomePage extends StatefulWidget {
@@ -64,8 +68,18 @@ class _UserHomePageState extends State<UserHomePage> {
     }
   }
 
-  void dbCall() {
-    DBLayer.addRecord();
+  void dbCall() async {
+    // DBLayer.addRecord();
+    UserToken tok = await TokenService()
+        .generateToken("entityId001", new DateTime(2020, 6, 6, 10, 30, 0, 0));
+
+    EntitySlots es = await TokenService()
+        .getEntitySlots('entityId001', new DateTime(2020, 6, 6));
+
+    int i = 0;
+
+    await TokenService()
+        .cancelToken("entityId001#2020~6~6#10~30#93hKw20HwFaVdHRsujOlpjaouoL2");
   }
 
   void _loadBookings() async {

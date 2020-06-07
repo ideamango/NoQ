@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:noq/db/db_service/db_main.dart';
+import 'package:noq/db/db_service/token_service.dart';
 import 'package:noq/pages/SearchStoresPage.dart';
 import 'package:noq/pages/allPagesWidgets.dart';
 import 'package:noq/pages/manage_apartment_page.dart';
 import 'package:noq/services/authService.dart';
 
+import 'db/db_model/entity_slots.dart';
+import 'db/db_model/user_token.dart';
 import 'style.dart';
 
 import 'package:noq/models/localDB.dart';
@@ -197,10 +200,6 @@ class _LandingPageState extends State<LandingPage> {
     setState(() {
       _page = page;
     });
-  }
-
-  void dbCall() {
-    DBLayer.addRecord();
   }
 
   @override
