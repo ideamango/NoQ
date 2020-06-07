@@ -84,11 +84,12 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
     super.initState();
     serviceEntity = widget.serviceEntity;
     var uuid = new Uuid();
-    serviceEntity.id = uuid.toString();
+    serviceEntity.id = uuid.v1();
     _getCurrLocation();
+    initializeEntity();
 
     //load the service details
-    loadServiceEntity();
+    //loadServiceEntity(serviceEntity.id);
 
     serviceEntity.contactPersons = new List<ContactAppData>();
     serviceEntity.adrs = new AddressAppData();
@@ -96,7 +97,14 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
     // addPerson();
   }
 
-  loadServiceEntity() {}
+  initializeEntity() {
+    _nameController.text = serviceEntity.name;
+    _regNumController.text = serviceEntity.regNum;
+  }
+
+  loadServiceEntity(String serviceEntityId) {
+    // serviceEntity = getEntity(serviceEntityId);
+  }
 
   Future<void> getPrefInstance() async {
     _prefs = await SharedPreferences.getInstance();
@@ -213,6 +221,7 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
       minLines: 1,
       style: textInputTextStyle,
       controller: _nameController,
+      //initialValue: serviceEntity.name,
       keyboardType: TextInputType.text,
       decoration: CommonStyle.textFieldStyle(
           labelTextStr: "Name of Establishment", hintTextStr: ""),
@@ -233,41 +242,6 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
       validator: validateText,
       onSaved: (String value) {
         serviceEntity.regNum = value;
-      },
-    );
-    final entityType = new FormField(
-      builder: (FormFieldState state) {
-        return InputDecorator(
-          decoration: InputDecoration(
-            //  icon: const Icon(Icons.person),
-            labelText: 'Type of Establishment',
-          ),
-          child: new DropdownButtonHideUnderline(
-            child: new DropdownButton(
-              value: _entityType,
-              isDense: true,
-              onChanged: (newValue) {
-                setState(() {
-                  // newContact.favoriteColor = newValue;
-                  _entityType = newValue;
-                  state.didChange(newValue);
-                });
-              },
-              items: entityTypes.map((type) {
-                return DropdownMenuItem(
-                  value: type,
-                  child: new Text(
-                    type.toString(),
-                    style: textInputTextStyle,
-                  ),
-                );
-              }).toList(),
-            ),
-          ),
-        );
-      },
-      onSaved: (String value) {
-        serviceEntity.cType = value;
       },
     );
 

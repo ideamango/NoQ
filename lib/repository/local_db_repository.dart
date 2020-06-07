@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/foundation.dart';
+import 'package:noq/db/db_service/entity_service.dart';
 import 'package:noq/utils.dart';
 import 'dart:async';
 import 'package:path_provider/path_provider.dart';
@@ -75,7 +76,7 @@ getEntity(String entityId) async {
         if (entity.id == entityId) return entity;
       }
       //TODO:Fetch entity from Server
-
+      return EntityService().getEntity(entityId);
     }
     return null;
   });
