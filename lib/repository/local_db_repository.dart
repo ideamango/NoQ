@@ -43,6 +43,44 @@ Future<UserAppData> readData() async {
   }
 }
 
+saveChildEntity(ChildEntityAppData serviceEntity) async {
+  final file = await localFile;
+  String entityId = serviceEntity.entityId;
+//Read current data in file
+  await readData().then((fUser) {
+    if (Utils.isNullOrEmpty(fUser.managedEntities)) {
+      for (var entity in fUser.managedEntities) {
+        if (entity.id == entityId) {
+          for (var child in entity.childCollection) {
+            if (child.id == serviceEntity.id) {
+              child = serviceEntity;
+
+              String fileData = generateJson(fUser);
+              //print('Writing in file $file , data: $fileData');
+              file.writeAsString("$fileData");
+            }
+          }
+        }
+      }
+    }
+    return null;
+  });
+}
+
+getEntity(String entityId) async {
+//Read current data in file
+  await readData().then((fUser) {
+    if (Utils.isNullOrEmpty(fUser.managedEntities)) {
+      for (var entity in fUser.managedEntities) {
+        if (entity.id == entityId) return entity;
+      }
+      //TODO:Fetch entity from Server
+
+    }
+    return null;
+  });
+}
+
 void saveEntityDetails(EntityAppData str) async {
   final file = await localFile;
   UserAppData _userProfile;
@@ -50,30 +88,17 @@ void saveEntityDetails(EntityAppData str) async {
 //Read current data in file
   await readData().then((fUser) {
     _userProfile = fUser;
-  });
-  if (Utils.isNullOrEmpty(_userProfile.managedEntities)) {
-    _userProfile.managedEntities = new List<EntityAppData>();
-  }
+    if (Utils.isNullOrEmpty(_userProfile.managedEntities)) {
+      _userProfile.managedEntities = new List<EntityAppData>();
+    }
 
 // Add new data and save
-  _userProfile.managedEntities.add(str);
+    _userProfile.managedEntities.add(str);
 
 // TOICOC _userProfile. = str;
 
-  String fileData = generateJson(_userProfile);
-  //print('Writing in file $file , data: $fileData');
-  file.writeAsString("$fileData");
+    String fileData = generateJson(_userProfile);
+    //print('Writing in file $file , data: $fileData');
+    file.writeAsString("$fileData");
+  });
 }
-
-// Future<List<StoreAppData>> getFavStoresList() async {
-//   await readData().then((fUserProfile) {
-//     if (fUserProfile.favStores != null) {
-//       if (fUserProfile.favStores.length != 0) {
-//         List<StoreAppData> _stores = fUserProfile.favStores;
-//         return _stores;
-//       }
-//     } else
-//       return null;
-//   });
-//   return null;
-// }

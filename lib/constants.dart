@@ -22,6 +22,7 @@ List<String> entityTypes = [
 List<String> subEntityTypes = [
   'Swimming Pool',
   'Gym',
+  'Salon',
   'Medical Store',
   'Grocery Store',
   'Library',

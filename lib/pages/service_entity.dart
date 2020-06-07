@@ -5,7 +5,6 @@ import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:noq/constants.dart';
 import 'package:noq/models/localDB.dart';
-import 'package:noq/pages/child_entity_details_form.dart';
 import 'package:noq/pages/service_entity_details_page.dart';
 import 'package:noq/repository/local_db_repository.dart';
 import 'package:noq/services/authService.dart';

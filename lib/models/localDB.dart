@@ -49,6 +49,7 @@ class EntityAppData {
   String breakTimeTo;
   String closesAt;
   List<String> daysClosed;
+  String maxPeopleAllowed;
   List<ContactAppData> contactPersons;
   List<ChildEntityAppData> childCollection;
   bool isFavourite;
@@ -70,6 +71,7 @@ class EntityAppData {
       this.breakTimeTo,
       this.closesAt,
       this.daysClosed,
+      this.maxPeopleAllowed,
       this.contactPersons,
       this.childCollection,
       this.isFavourite,
@@ -109,6 +111,7 @@ class EntityAppData {
 @JsonSerializable()
 class ChildEntityAppData {
   String id;
+  String entityId;
   String cType;
   String name;
   String regNum;
@@ -116,18 +119,21 @@ class ChildEntityAppData {
   double lat;
   double long;
   String opensAt;
-  String breakTime;
+  String breakTimeFrom;
+  String breakTimeTo;
   String closesAt;
   List<String> daysClosed;
+  String maxPeopleAllowed;
   List<ContactAppData> contactPersons;
   bool isFavourite;
   bool publicAccess;
   ChildEntityAppData();
 
-  ChildEntityAppData.cType(this.cType);
+  ChildEntityAppData.cType(this.cType, this.entityId);
 
   ChildEntityAppData.allValues(
     this.id,
+    this.entityId,
     this.cType,
     this.name,
     this.regNum,
@@ -135,9 +141,11 @@ class ChildEntityAppData {
     this.lat,
     this.long,
     this.opensAt,
-    this.breakTime,
+    this.breakTimeFrom,
+    this.breakTimeTo,
     this.closesAt,
     this.daysClosed,
+    this.maxPeopleAllowed,
     this.contactPersons,
     this.isFavourite,
     this.publicAccess,

@@ -5,7 +5,8 @@ import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:noq/constants.dart';
 import 'package:noq/models/localDB.dart';
-import 'package:noq/pages/child_entity_details_form.dart';
+import 'package:noq/pages/entity_services_list_page.dart';
+
 import 'package:noq/repository/local_db_repository.dart';
 import 'package:noq/services/authService.dart';
 import 'package:noq/services/qr_code_generate.dart';
@@ -16,6 +17,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:flutter/foundation.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
+import 'package:uuid/uuid.dart';
 
 class ManageApartmentPage extends StatefulWidget {
   @override
@@ -59,7 +61,7 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
   List<String> _daysOff = List<String>();
   ContactAppData cp1 = new ContactAppData();
   AddressAppData adrs = new AddressAppData();
-  EntityAppData entity = new EntityAppData();
+  EntityAppData newEntity = new EntityAppData();
 
   List<ContactAppData> newList = new List<ContactAppData>();
 
@@ -85,9 +87,11 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
   void initState() {
     super.initState();
     _getCurrLocation();
-    entity.contactPersons = new List<ContactAppData>();
-    entity.adrs = new AddressAppData();
-    entity.contactPersons.add(cp1);
+
+    getEntityDetails();
+    newEntity.contactPersons = new List<ContactAppData>();
+    newEntity.adrs = new AddressAppData();
+    newEntity.contactPersons.add(cp1);
     // addPerson();
   }
 
@@ -181,12 +185,19 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
     return contactList;
   }
 
+  getEntityDetails() {
+    //if new entity then generate guid and assign.
+
+    var uuid = new Uuid();
+    newEntity.id = uuid.v1();
+  }
+
   saveDetails() async {
     List<Placemark> placemark = await Geolocator().placemarkFromAddress(
         "My Home Vihanga, Financial District, Gachibowli, Hyderabad, Telangana, India");
 
     print(placemark);
-    saveEntityDetails(entity);
+    saveEntityDetails(newEntity);
   }
 
   @override
@@ -208,7 +219,7 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
           labelTextStr: "Name of Establishment", hintTextStr: ""),
       validator: validateText,
       onSaved: (String value) {
-        entity.name = value;
+        newEntity.name = value;
       },
     );
     final regNumField = TextFormField(
@@ -222,7 +233,7 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
           labelTextStr: "Registration Number", hintTextStr: ""),
       validator: validateText,
       onSaved: (String value) {
-        entity.regNum = value;
+        newEntity.regNum = value;
       },
     );
     final entityType = new FormField(
@@ -257,7 +268,7 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
         );
       },
       onSaved: (String value) {
-        entity.eType = value;
+        newEntity.eType = value;
       },
     );
     final opensTimeField = TextFormField(
@@ -310,7 +321,7 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
               borderSide: BorderSide(color: Colors.orange))),
       validator: validateTime,
       onSaved: (String value) {
-        entity.opensAt = value;
+        newEntity.opensAt = value;
       },
     );
     final closeTimeField = TextFormField(
@@ -345,7 +356,7 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
               borderSide: BorderSide(color: Colors.orange))),
       validator: validateTime,
       onSaved: (String value) {
-        entity.closesAt = value;
+        newEntity.closesAt = value;
       },
     );
     final breakSartTimeField = TextFormField(
@@ -398,7 +409,7 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
               borderSide: BorderSide(color: Colors.orange))),
       validator: validateTime,
       onSaved: (String value) {
-        // entity.opensAt = value;
+        newEntity.opensAt = value;
       },
     );
     final breakEndTimeField = TextFormField(
@@ -433,7 +444,7 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
               borderSide: BorderSide(color: Colors.orange))),
       validator: validateTime,
       onSaved: (String value) {
-        entity.closesAt = value;
+        newEntity.closesAt = value;
       },
     );
 
@@ -480,7 +491,7 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
                 var day = element.toString().substring(5);
                 _closedOnDays.add(day);
               });
-              entity.daysClosed = _closedOnDays;
+              newEntity.daysClosed = _closedOnDays;
               print(_closedOnDays.length);
               print(_closedOnDays.toString());
             },
@@ -504,7 +515,7 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
       ),
       validator: validateText,
       onSaved: (String value) {
-        // entity. = value;
+        newEntity.maxPeopleAllowed = value;
       },
     );
 
@@ -520,7 +531,7 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
           labelTextStr: "Apartment/ House No./ Lane", hintTextStr: ""),
       validator: validateText,
       onSaved: (String value) {
-        entity.adrs.addressLine1 = value;
+        newEntity.adrs.addressLine1 = value;
       },
     );
     final landmarkField2 = TextFormField(
@@ -539,7 +550,7 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
       ),
       validator: validateText,
       onSaved: (String value) {
-        entity.adrs.landmark = value;
+        newEntity.adrs.landmark = value;
       },
     );
     final localityField = TextFormField(
@@ -558,7 +569,7 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
       ),
       validator: validateText,
       onSaved: (String value) {
-        entity.adrs.locality = value;
+        newEntity.adrs.locality = value;
       },
     );
     final cityField = TextFormField(
@@ -577,7 +588,7 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
       ),
       validator: validateText,
       onSaved: (String value) {
-        entity.adrs.city = value;
+        newEntity.adrs.city = value;
       },
     );
     final stateField = TextFormField(
@@ -596,7 +607,7 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
       ),
       validator: validateText,
       onSaved: (String value) {
-        entity.adrs.state = value;
+        newEntity.adrs.state = value;
       },
     );
     final countryField = TextFormField(
@@ -615,7 +626,7 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
       ),
       validator: validateText,
       onSaved: (String value) {
-        entity.adrs.country = value;
+        newEntity.adrs.country = value;
       },
     );
     final pinField = TextFormField(
@@ -634,7 +645,7 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
       ),
       validator: validateText,
       onSaved: (String value) {
-        entity.adrs.postalCode = value;
+        newEntity.adrs.postalCode = value;
       },
     );
     //Contact person
@@ -1158,8 +1169,8 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
                       Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) =>
-                                  ChildEntityDetailsPage(entity: this.entity)));
+                              builder: (context) => EntityServicesListPage(
+                                  entity: this.newEntity)));
                       // }
                     },
                     child: Container(
@@ -1167,7 +1178,7 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
                       child: Column(
                         children: <Widget>[
                           Text(
-                            'Add Amenities',
+                            'Save & Add Amenities',
                             style: buttonMedTextStyle,
                           ),
                           Text(

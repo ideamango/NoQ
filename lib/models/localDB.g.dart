@@ -59,6 +59,7 @@ EntityAppData _$EntityAppDataFromJson(Map<String, dynamic> json) {
     ..closesAt = json['closesAt'] as String
     ..daysClosed =
         (json['daysClosed'] as List)?.map((e) => e as String)?.toList()
+    ..maxPeopleAllowed = json['maxPeopleAllowed'] as String
     ..contactPersons = (json['contactPersons'] as List)
         ?.map((e) => e == null
             ? null
@@ -88,6 +89,7 @@ Map<String, dynamic> _$EntityAppDataToJson(EntityAppData instance) =>
       'breakTimeTo': instance.breakTimeTo,
       'closesAt': instance.closesAt,
       'daysClosed': instance.daysClosed,
+      'maxPeopleAllowed': instance.maxPeopleAllowed,
       'contactPersons': instance.contactPersons,
       'childCollection': instance.childCollection,
       'isFavourite': instance.isFavourite,
@@ -97,6 +99,7 @@ Map<String, dynamic> _$EntityAppDataToJson(EntityAppData instance) =>
 ChildEntityAppData _$ChildEntityAppDataFromJson(Map<String, dynamic> json) {
   return ChildEntityAppData()
     ..id = json['id'] as String
+    ..entityId = json['entityId'] as String
     ..cType = json['cType'] as String
     ..name = json['name'] as String
     ..regNum = json['regNum'] as String
@@ -106,10 +109,12 @@ ChildEntityAppData _$ChildEntityAppDataFromJson(Map<String, dynamic> json) {
     ..lat = (json['lat'] as num)?.toDouble()
     ..long = (json['long'] as num)?.toDouble()
     ..opensAt = json['opensAt'] as String
-    ..breakTime = json['breakTime'] as String
+    ..breakTimeFrom = json['breakTimeFrom'] as String
+    ..breakTimeTo = json['breakTimeTo'] as String
     ..closesAt = json['closesAt'] as String
     ..daysClosed =
         (json['daysClosed'] as List)?.map((e) => e as String)?.toList()
+    ..maxPeopleAllowed = json['maxPeopleAllowed'] as String
     ..contactPersons = (json['contactPersons'] as List)
         ?.map((e) => e == null
             ? null
@@ -122,6 +127,7 @@ ChildEntityAppData _$ChildEntityAppDataFromJson(Map<String, dynamic> json) {
 Map<String, dynamic> _$ChildEntityAppDataToJson(ChildEntityAppData instance) =>
     <String, dynamic>{
       'id': instance.id,
+      'entityId': instance.entityId,
       'cType': instance.cType,
       'name': instance.name,
       'regNum': instance.regNum,
@@ -129,9 +135,11 @@ Map<String, dynamic> _$ChildEntityAppDataToJson(ChildEntityAppData instance) =>
       'lat': instance.lat,
       'long': instance.long,
       'opensAt': instance.opensAt,
-      'breakTime': instance.breakTime,
+      'breakTimeFrom': instance.breakTimeFrom,
+      'breakTimeTo': instance.breakTimeTo,
       'closesAt': instance.closesAt,
       'daysClosed': instance.daysClosed,
+      'maxPeopleAllowed': instance.maxPeopleAllowed,
       'contactPersons': instance.contactPersons,
       'isFavourite': instance.isFavourite,
       'publicAccess': instance.publicAccess,

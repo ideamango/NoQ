@@ -12,6 +12,7 @@ import 'package:flutter/foundation.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:uuid/uuid.dart';
 
 class ServiceEntityDetailsPage extends StatefulWidget {
   final ChildEntityAppData serviceEntity;
@@ -57,7 +58,7 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
   List<String> _daysOff = List<String>();
   ContactAppData cp1 = new ContactAppData();
   AddressAppData adrs = new AddressAppData();
-  ChildEntityAppData childEntity = new ChildEntityAppData();
+  ChildEntityAppData serviceEntity;
 
   List<ContactAppData> newList = new List<ContactAppData>();
 
@@ -73,7 +74,7 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
   String _role;
   String _entityType;
   String state;
-  ChildEntityAppData serviceEntity;
+// ChildEntityAppData serviceEntity;
 
   SharedPreferences _prefs;
   UserAppData _userProfile;
@@ -82,30 +83,20 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
   void initState() {
     super.initState();
     serviceEntity = widget.serviceEntity;
+    var uuid = new Uuid();
+    serviceEntity.id = uuid.toString();
     _getCurrLocation();
 
-    getPrefInstance().then((action) {
-      getEntity();
-    });
+    //load the service details
+    loadServiceEntity();
 
-    childEntity.contactPersons = new List<ContactAppData>();
-    childEntity.adrs = new AddressAppData();
-    childEntity.contactPersons.add(cp1);
+    serviceEntity.contactPersons = new List<ContactAppData>();
+    serviceEntity.adrs = new AddressAppData();
+    serviceEntity.contactPersons.add(cp1);
     // addPerson();
   }
 
-  getEntity() async {
-    // await readData().then((fUser) {
-    //   _userProfile = fUser;
-    // });
-
-    // //Load details from local files
-    // if (_userProfile != null) {
-    //   if (_userProfile.managedEntities != null) {
-    //     //_stores = _userProfile.storesAccessed;
-    //   }
-    // }
-  }
+  loadServiceEntity() {}
 
   Future<void> getPrefInstance() async {
     _prefs = await SharedPreferences.getInstance();
@@ -227,7 +218,7 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
           labelTextStr: "Name of Establishment", hintTextStr: ""),
       validator: validateText,
       onSaved: (String value) {
-        childEntity.name = value;
+        serviceEntity.name = value;
       },
     );
     final regNumField = TextFormField(
@@ -241,7 +232,7 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
           labelTextStr: "Registration Number", hintTextStr: ""),
       validator: validateText,
       onSaved: (String value) {
-        childEntity.regNum = value;
+        serviceEntity.regNum = value;
       },
     );
     final entityType = new FormField(
@@ -276,7 +267,7 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
         );
       },
       onSaved: (String value) {
-        childEntity.cType = value;
+        serviceEntity.cType = value;
       },
     );
 
@@ -312,7 +303,7 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
               borderSide: BorderSide(color: Colors.orange))),
       validator: validateTime,
       onSaved: (String value) {
-        childEntity.opensAt = value;
+        serviceEntity.opensAt = value;
       },
     );
     final closeTimeField = TextFormField(
@@ -347,7 +338,7 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
               borderSide: BorderSide(color: Colors.orange))),
       validator: validateTime,
       onSaved: (String value) {
-        childEntity.closesAt = value;
+        serviceEntity.closesAt = value;
       },
     );
     final breakSartTimeField = TextFormField(
@@ -435,7 +426,7 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
               borderSide: BorderSide(color: Colors.orange))),
       validator: validateTime,
       onSaved: (String value) {
-        childEntity.closesAt = value;
+        serviceEntity.closesAt = value;
       },
     );
 
@@ -482,7 +473,7 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
                 var day = element.toString().substring(5);
                 _closedOnDays.add(day);
               });
-              childEntity.daysClosed = _closedOnDays;
+              serviceEntity.daysClosed = _closedOnDays;
               print(_closedOnDays.length);
               print(_closedOnDays.toString());
             },
@@ -521,7 +512,7 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
           labelTextStr: "Apartment/ House No./ Lane", hintTextStr: ""),
       validator: validateText,
       onSaved: (String value) {
-        childEntity.adrs.addressLine1 = value;
+        serviceEntity.adrs.addressLine1 = value;
       },
     );
     final landmarkField2 = TextFormField(
@@ -540,7 +531,7 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
       ),
       validator: validateText,
       onSaved: (String value) {
-        childEntity.adrs.landmark = value;
+        serviceEntity.adrs.landmark = value;
       },
     );
     final localityField = TextFormField(
@@ -559,7 +550,7 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
       ),
       validator: validateText,
       onSaved: (String value) {
-        childEntity.adrs.locality = value;
+        serviceEntity.adrs.locality = value;
       },
     );
     final cityField = TextFormField(
@@ -578,7 +569,7 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
       ),
       validator: validateText,
       onSaved: (String value) {
-        childEntity.adrs.city = value;
+        serviceEntity.adrs.city = value;
       },
     );
     final stateField = TextFormField(
@@ -597,7 +588,7 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
       ),
       validator: validateText,
       onSaved: (String value) {
-        childEntity.adrs.state = value;
+        serviceEntity.adrs.state = value;
       },
     );
     final countryField = TextFormField(
@@ -616,7 +607,7 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
       ),
       validator: validateText,
       onSaved: (String value) {
-        childEntity.adrs.country = value;
+        serviceEntity.adrs.country = value;
       },
     );
     final pinField = TextFormField(
@@ -635,7 +626,7 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
       ),
       validator: validateText,
       onSaved: (String value) {
-        childEntity.adrs.postalCode = value;
+        serviceEntity.adrs.postalCode = value;
       },
     );
     //Contact person
@@ -819,6 +810,20 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
         ],
       ),
     );
+
+    void saveFormDetails() {
+      print("saving ");
+      if (_form2Key.currentState.validate()) {
+        _form2Key.currentState.save();
+      }
+      saveChildEntity(serviceEntity);
+    }
+
+    void updateModel() {
+//Read local file and update the entities.
+      print("saving locally");
+    }
+
     return MaterialApp(
       title: 'Add child entities',
       //theme: ThemeData.light().copyWith(),
@@ -828,10 +833,17 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
               children: <Widget>[
                 IconButton(
                   icon: Icon(Icons.arrow_back),
-                  onPressed: () => Navigator.of(context).pop(),
+                  onPressed: () {
+                    print("going back");
+                    //Save form details, then go back.
+                    saveFormDetails();
+                    updateModel();
+                    //go back
+                    Navigator.of(context).pop();
+                  },
                 ),
                 Text(
-                  'Apartment Amenities',
+                  serviceEntity.cType,
                 ),
               ],
             ),

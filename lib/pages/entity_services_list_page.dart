@@ -15,14 +15,14 @@ import 'package:noq/utils.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:flutter/foundation.dart';
 
-class ChildEntityDetailsPage extends StatefulWidget {
+class EntityServicesListPage extends StatefulWidget {
   final EntityAppData entity;
-  ChildEntityDetailsPage({Key key, @required this.entity}) : super(key: key);
+  EntityServicesListPage({Key key, @required this.entity}) : super(key: key);
   @override
-  _ChildEntityDetailsPageState createState() => _ChildEntityDetailsPageState();
+  _EntityServicesListPageState createState() => _EntityServicesListPageState();
 }
 
-class _ChildEntityDetailsPageState extends State<ChildEntityDetailsPage> {
+class _EntityServicesListPageState extends State<EntityServicesListPage> {
   String _msg;
   final GlobalKey<FormState> _formKey = new GlobalKey<FormState>();
   List<ChildEntityAppData> servicesList = new List<ChildEntityAppData>();
@@ -39,12 +39,19 @@ class _ChildEntityDetailsPageState extends State<ChildEntityDetailsPage> {
   void initState() {
     super.initState();
     entity = widget.entity;
-    entity.childCollection = new List<ChildEntityAppData>();
+    if (entity.childCollection == null)
+      entity.childCollection = new List<ChildEntityAppData>();
+
+    servicesList = entity.childCollection;
   }
 
   void _addNewServiceRow() {
     setState(() {
-      servicesList.add(new ChildEntityAppData.cType(_subEntityType));
+      ChildEntityAppData c =
+          new ChildEntityAppData.cType(_subEntityType, entity.id);
+      servicesList.add(c);
+      //  entity.childCollection.add(c);
+      saveEntityDetails(entity);
       _count = _count + 1;
     });
   }
@@ -55,11 +62,11 @@ class _ChildEntityDetailsPageState extends State<ChildEntityDetailsPage> {
 
   @override
   Widget build(BuildContext context) {
-    List<Widget> _contatos = new List.generate(
-        _count,
-        (int i) => new ServiceRow(
-              childEntity: null,
-            ));
+    // List<Widget> _contatos = new List.generate(
+    //     _count,
+    //     (int i) => new ServiceRow(
+    //           childEntity: null,
+    //         ));
 
     final BoxDecoration indigoContainer = new BoxDecoration(
         border: Border.all(color: Colors.indigo),
@@ -103,7 +110,9 @@ class _ChildEntityDetailsPageState extends State<ChildEntityDetailsPage> {
         setState(() {
           _msg = null;
         });
-        entity.childCollection.add(new ChildEntityAppData.cType(value));
+        // entity.childCollection
+        //    .add(new ChildEntityAppData.cType(value, entity.id));
+        //   saveEntityDetails(entity);
       },
     );
 
@@ -116,7 +125,10 @@ class _ChildEntityDetailsPageState extends State<ChildEntityDetailsPage> {
               children: <Widget>[
                 IconButton(
                   icon: Icon(Icons.arrow_back),
-                  onPressed: () => Navigator.of(context).pop(),
+                  onPressed: () {
+                    saveEntityDetails(entity);
+                    Navigator.of(context).pop();
+                  },
                 ),
                 Text(
                   'Apartment Amenities',
