@@ -1,28 +1,57 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:noq/db/db_model/entity.dart';
+import 'package:noq/db/db_model/user.dart';
+import 'package:noq/db/db_service/AccessDeniedException.dart';
 
 class EntityService {
   Future<bool> upsertEntity(Entity entity) async {
+    final FirebaseUser user = await FirebaseAuth.instance.currentUser();
+    Firestore fStore = Firestore.instance;
+    String userId = user.uid;
+
+    final DocumentReference entityRef =
+        fStore.document('entities/' + entity.entityId);
+
+    DocumentSnapshot doc = await entityRef.get();
+
+    if (doc.exists) {
+      //check if the current user is admin
+      Map<String, dynamic> map = doc.data;
+      entity = Entity.fromJson(map);
+
+      bool accessAllowed = false;
+
+      for (User usr in entity.admins) {
+        if (usr.firebaseId == userId) {
+          accessAllowed = true;
+          break;
+        }
+      }
+
+      if (!accessAllowed) {
+        throw new AccessDeniedException(
+            "User is not admin and can't update the entity");
+      }
+    }
+
     return false;
   }
 
   Future<Entity> getEntity(String entityId) async {
-    Firestore _firestore = Firestore.instance;
-    Entity e;
+    Firestore fStore = Firestore.instance;
+    Entity entity;
 
-    final DocumentReference entityRef =
-        _firestore.document('entities/' + entityId);
+    final DocumentReference entityRef = fStore.document('entities/' + entityId);
 
     DocumentSnapshot doc = await entityRef.get();
 
     if (doc.exists) {
       Map<String, dynamic> map = doc.data;
-
-      e = Entity.fromJson(map);
+      entity = Entity.fromJson(map);
     }
 
-    return e;
+    return entity;
   }
 
   Future<bool> deleteEntity(String entityId) async {
