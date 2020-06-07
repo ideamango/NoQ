@@ -1,4 +1,5 @@
 import 'package:noq/db/db_model/address.dart';
+import 'package:noq/db/db_model/employee.dart';
 import 'package:noq/db/db_model/meta_entity.dart';
 import 'package:noq/db/db_model/my_geo_fire_point.dart';
 import 'package:noq/db/db_model/user.dart';
@@ -11,7 +12,8 @@ class Entity {
       this.advanceDays,
       this.isPublic,
       this.admins,
-      this.children,
+      this.managers,
+      this.childEntities,
       this.geo,
       this.maxAllowed,
       this.slotDuration,
@@ -34,8 +36,8 @@ class Entity {
   int advanceDays;
   bool isPublic;
   List<User> admins;
-  List<User> managers;
-  List<MetaEntity> children;
+  List<Employee> managers;
+  List<MetaEntity> childEntities;
   MyGeoFirePoint geo;
   int maxAllowed;
   int slotDuration;
@@ -51,6 +53,54 @@ class Entity {
   String parentId;
   String type;
 
+  Map<String, dynamic> toJson() => {
+        'entityId': entityId,
+        'name': name,
+        'address': address.toJson(),
+        'advanceDays': advanceDays,
+        'isPublic': isPublic,
+        'admins': usersToJson(admins),
+        'managers': employeesToJson(managers),
+        'childEntities': metaEntitiesToJson(childEntities),
+        'maxAllowed': maxAllowed,
+        'slotDuration': slotDuration,
+        'closedOn': closedOn,
+        'breakStartHour': breakStartHour,
+        'breakStartMinute': breakStartMinute,
+        'breakEndHour': breakEndHour,
+        'breakEndMinute': breakEndMinute,
+        'startTimeHour': startTimeHour,
+        'startTimeMinute': startTimeMinute,
+        'endTimeHour': endTimeHour,
+        'endTimeMinute': endTimeMinute,
+        'parentId': parentId,
+        'type': type
+      };
+
+  List<dynamic> usersToJson(List<User> users) {
+    List<dynamic> usersJson = new List<dynamic>();
+    for (User usr in users) {
+      usersJson.add(usr.toJson());
+    }
+    return usersJson;
+  }
+
+  List<dynamic> employeesToJson(List<Employee> emps) {
+    List<dynamic> usersJson = new List<dynamic>();
+    for (Employee emp in emps) {
+      usersJson.add(emp.toJson());
+    }
+    return usersJson;
+  }
+
+  List<dynamic> metaEntitiesToJson(List<MetaEntity> metaEntities) {
+    List<dynamic> usersJson = new List<dynamic>();
+    for (MetaEntity meta in metaEntities) {
+      usersJson.add(meta.toJson());
+    }
+    return usersJson;
+  }
+
   static Entity fromJson(Map<String, dynamic> json) {
     return new Entity(
         entityId: json['entityId'].toString(),
@@ -58,9 +108,11 @@ class Entity {
         address: Address.fromJson(json['address']),
         advanceDays: json['advanceDays'],
         isPublic: json['isPublic'],
+        admins: convertToUsersFromJson(json['admins']),
+        managers: convertToEmployeesFromJson(json['managers']),
+        childEntities: convertToMetaEntitiesFromJson(json['childEntities']),
         maxAllowed: json['maxAllowed'],
         slotDuration: json['slotDuration'],
-        slots: convertToSlotsFromJson(json['slots']),
         closedOn: convertToClosedOnArrayFromJson(json['closedOn']),
         breakStartHour: json['breakStartHour'],
         breakStartMinute: json['breakStartMinute'],
@@ -69,22 +121,44 @@ class Entity {
         startTimeHour: json['startTimeHour'],
         startTimeMinute: json['startTimeMinute'],
         endTimeHour: json['endTimeHour'],
-        endTimeMinute: json['endTimeMinute']);
+        endTimeMinute: json['endTimeMinute'],
+        parentId: json['parentId'],
+        type: json['type']);
   }
 
-  static Address convertToAddressFromJson(Map<String, dynamic> json)
-  {
-    return Address.fromJson(json)
+  static Address convertToAddressFromJson(Map<String, dynamic> json) {
+    return Address.fromJson(json);
   }
 
-  static List<Slot> convertToSlotsFromJson(List<dynamic> slotsJson) {
-    List<Slot> slots = new List<Slot>();
+  static List<User> convertToUsersFromJson(List<dynamic> usersJson) {
+    List<User> users = new List<User>();
 
-    for (Map<String, dynamic> json in slotsJson) {
-      Slot sl = Slot.fromJson(json);
-      slots.add(sl);
+    for (Map<String, dynamic> json in usersJson) {
+      User sl = User.fromJson(json);
+      users.add(sl);
     }
-    return slots;
+    return users;
+  }
+
+  static List<Employee> convertToEmployeesFromJson(List<dynamic> usersJson) {
+    List<User> users = new List<User>();
+
+    for (Map<String, dynamic> json in usersJson) {
+      Employee emp = Employee.fromJson(json);
+      users.add(emp);
+    }
+    return users;
+  }
+
+  static List<MetaEntity> convertToMetaEntitiesFromJson(
+      List<dynamic> metaEntityJson) {
+    List<MetaEntity> metaEntities = new List<MetaEntity>();
+
+    for (Map<String, dynamic> json in metaEntityJson) {
+      MetaEntity metaEnt = MetaEntity.fromJson(json);
+      metaEntities.add(metaEnt);
+    }
+    return metaEntities;
   }
 
   static List<String> convertToClosedOnArrayFromJson(List<dynamic> daysJson) {
@@ -94,30 +168,5 @@ class Entity {
       days.add(day);
     }
     return days;
-  }
-
-  Map<String, dynamic> toJson() => {
-        'entityId': entityId,
-        'maxAllowed': maxAllowed,
-        'date': date,
-        'slotDuration': slotDuration,
-        'slots': slotsToJson(slots),
-        'closedOn': closedOn,
-        'breakStartHour': breakStartHour,
-        'breakStartMinute': breakStartMinute,
-        'breakEndHour': breakEndHour,
-        'breakEndMinute': breakEndMinute,
-        'startTimeHour': startTimeHour,
-        'startTimeMinute': startTimeMinute,
-        'endTimeHour': endTimeHour,
-        'endTimeMinute': endTimeMinute
-      };
-
-  List<dynamic> slotsToJson(List<Slot> slots) {
-    List<dynamic> slotsJson = new List<dynamic>();
-    for (Slot sl in slots) {
-      slotsJson.add(sl.toJson());
-    }
-    return slotsJson;
   }
 }
