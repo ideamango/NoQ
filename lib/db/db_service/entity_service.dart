@@ -35,7 +35,9 @@ class EntityService {
       }
     }
 
-    return false;
+    await entityRef.setData(entity.toJson(), merge: false);
+
+    return true;
   }
 
   Future<Entity> getEntity(String entityId) async {
