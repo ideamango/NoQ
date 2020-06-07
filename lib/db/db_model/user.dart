@@ -21,7 +21,7 @@ class User {
 
   static User fromJson(Map<String, dynamic> json) {
     return new User(
-      id: json['id'].toString(),
+      id: json['id'],
       firebaseId: json['firebaseId'],
       fn: json['fn'],
       ln: json['ln'],

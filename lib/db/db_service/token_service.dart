@@ -40,7 +40,7 @@ class TokenService {
     final FirebaseUser user = await FirebaseAuth.instance.currentUser();
     Firestore fStore = Firestore.instance;
     String userId = user.uid;
-    //TODO: To run the validation on DateTime for holidays, break and during closing hours
+    //TODO: To run the validation on DateTime for holidays, break, advnanceDays and during closing hours
 
     String entitySlotsDocId = entityId +
         "#" +
