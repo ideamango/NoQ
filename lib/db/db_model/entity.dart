@@ -28,7 +28,8 @@ class Entity {
       this.endTimeMinute,
       this.parentId,
       this.type,
-      this.isBookable});
+      this.isBookable,
+      this.isActive});
 
   //SlotDocumentId is entityID#20~06~01 it is not auto-generated, will help in not duplicating the record
   String entityId;
@@ -54,6 +55,7 @@ class Entity {
   String parentId;
   String type;
   bool isBookable;
+  bool isActive;
 
   Map<String, dynamic> toJson() => {
         'entityId': entityId,
@@ -77,7 +79,8 @@ class Entity {
         'endTimeMinute': endTimeMinute,
         'parentId': parentId,
         'type': type,
-        'isBookable': isBookable
+        'isBookable': isBookable,
+        'isActive': isActive
       };
 
   List<dynamic> usersToJson(List<User> users) {
@@ -130,7 +133,8 @@ class Entity {
         endTimeMinute: json['endTimeMinute'],
         parentId: json['parentId'],
         type: json['type'],
-        isBookable: json['isBookable']);
+        isBookable: json['isBookable'],
+        isActive: json['isActive']);
   }
 
   static Address convertToAddressFromJson(Map<String, dynamic> json) {

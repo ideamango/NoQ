@@ -120,6 +120,8 @@ class _UserHomePageState extends State<UserHomePage> {
 
     Entity ent = await EntityService().getEntity('Entity101');
 
+    bool isDeleted = await EntityService().deleteEntity('Entity101');
+
     int i = 0;
   }
 
