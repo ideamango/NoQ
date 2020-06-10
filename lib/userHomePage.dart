@@ -13,6 +13,7 @@ import 'package:noq/services/qr_code_generate.dart';
 import 'package:noq/services/qrcode_scan.dart';
 import 'package:noq/style.dart';
 import 'package:intl/intl.dart';
+import 'package:noq/widget/widgets.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:barcode_scan/barcode_scan.dart';
 import 'package:flutter/services.dart';
@@ -360,16 +361,18 @@ class _UserHomePageState extends State<UserHomePage> {
 
   Widget _emptyStorePage(String msg1, String msg2) {
     return Center(
-        child: Center(
-            child: Container(
-                margin: EdgeInsets.fromLTRB(10, 10, 10, 10),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    Text(msg1, style: highlightTextStyle),
-                    Text(msg2, style: highlightSubTextStyle),
-                  ],
-                ))));
+        child: Column(children: <Widget>[
+      myDivider,
+      Container(
+          margin: EdgeInsets.fromLTRB(10, 10, 10, 10),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Text(msg1, style: highlightTextStyle),
+              Text(msg2, style: highlightSubTextStyle),
+            ],
+          ))
+    ]));
   }
 
   Widget _buildItem(BookingListItem booking) {

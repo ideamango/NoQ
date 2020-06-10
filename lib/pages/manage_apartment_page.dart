@@ -903,50 +903,52 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
                   Column(
                     children: <Widget>[
                       Container(
+                        height: MediaQuery.of(context).size.width * .1,
                         decoration: indigoContainer,
-                        child: Theme(
-                          data: ThemeData(
-                            unselectedWidgetColor: Colors.white,
-                            accentColor: Colors.grey[50],
-                          ),
-                          child: ExpansionTile(
-                            //key: PageStorageKey(this.widget.headerTitle),
-                            initiallyExpanded: false,
-                            title: Row(
-                              children: <Widget>[
-                                Text(
-                                  "Basic Details",
-                                  style: TextStyle(
-                                      color: Colors.white, fontSize: 15),
-                                ),
-                                SizedBox(width: 5),
-                                Icon(
-                                  Icons.info,
-                                  color: Colors.white,
-                                ),
-                              ],
+                        alignment: Alignment.centerLeft,
+                        // child: Theme(
+                        //   data: ThemeData(
+                        //     unselectedWidgetColor: Colors.white,
+                        //     accentColor: Colors.grey[50],
+                        //   ),
+                        child: Row(
+                          children: <Widget>[
+                            Text(
+                              "Basic Details",
+                              style:
+                                  TextStyle(color: Colors.white, fontSize: 15),
                             ),
-                            backgroundColor: Colors.indigo,
-
-                            children: <Widget>[
-                              new Container(
-                                width: MediaQuery.of(context).size.width * .94,
-                                decoration: BoxDecoration(
-                                    border: Border.all(color: Colors.indigo),
-                                    color: Colors.grey[50],
-                                    shape: BoxShape.rectangle,
-                                    borderRadius:
-                                        BorderRadius.all(Radius.circular(5.0))),
-                                padding: EdgeInsets.all(2.0),
-                                child: Expanded(
-                                  child: Text(
-                                      'These are important details of the establishment, Same will be shown to customer while search.',
-                                      style: lightSubTextStyle),
-                                ),
-                              ),
-                            ],
-                          ),
+                            SizedBox(width: 5),
+                            IconButton(
+                              icon: Icon(Icons.info),
+                              color: Colors.white,
+                              onPressed: () => {},
+                            ),
+                          ],
                         ),
+                        //backgroundColor: Colors.indigo,
+
+                        // children: <Widget>[
+                        // new Container(
+                        //   width: MediaQuery.of(context).size.width * .94,
+                        //   decoration: BoxDecoration(
+                        //       border: Border.all(color: Colors.indigo),
+                        //       color: Colors.grey[50],
+                        //       shape: BoxShape.rectangle,
+                        //       borderRadius:
+                        //           BorderRadius.all(Radius.circular(5.0))),
+                        //   padding: EdgeInsets.all(2.0),
+                        //   child: Expanded(
+                        // child:
+                        //  Text(
+                        //     'These are important details of the establishment, Same will be shown to customer while search.',
+                        //     style: lightSubTextStyle),
+                        // ),
+                        //),
+                        // ],
+                        //     ),
+                        //   ),
+                        // ),
                       ),
                       nameField,
                       //entityType,
@@ -995,10 +997,6 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
                                       color: Colors.white, fontSize: 15),
                                 ),
                                 SizedBox(width: 5),
-                                Icon(
-                                  Icons.info,
-                                  color: Colors.white,
-                                ),
                               ],
                             ),
                             backgroundColor: Colors.indigo,

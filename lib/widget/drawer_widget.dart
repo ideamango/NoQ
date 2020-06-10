@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:noq/style.dart';
 
+import '../constants.dart';
+
 class DrawerWidget extends StatefulWidget {
   @override
   _DrawerWidgetState createState() => _DrawerWidgetState();
@@ -44,103 +46,119 @@ class _DrawerWidgetState extends State<DrawerWidget> {
   @override
   Widget build(BuildContext context) {
     return Drawer(
-        child: ListView(
-      children: <Widget>[
-        DrawerHeader(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: <Widget>[
-              Text('Stay safe !!', style: whiteBoldTextStyle1),
-              Text('Avoid rush hours !!', style: whiteBoldTextStyle1),
-              Text('Save time !!', style: whiteBoldTextStyle1),
-            ],
-          ),
-          // child: Text('Hello $_userName !!', style: inputTextStyle),
-          decoration: BoxDecoration(
-            color: Colors.teal,
-          ),
-        ),
-        ListView.builder(
-          physics: NeverScrollableScrollPhysics(),
-          shrinkWrap: true,
-          itemCount: drawerItems.length,
-          itemBuilder: (BuildContext context, int index) {
-            Map item = drawerItems[index];
-            if (item['children'] != null) {
-              return ExpansionTile(
-                leading: Icon(
-                  item['icon'],
-                  color: _page == index
-                      ? highlightColor
-                      : Theme.of(context).textTheme.subtitle1.color,
+      child: ListView(
+        children: <Widget>[
+          DrawerHeader(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: <Widget>[
+                RichText(
+                  text:
+                      TextSpan(style: whiteBoldTextStyle1, children: <TextSpan>[
+                    TextSpan(text: drawerHeaderTxt11),
+                    TextSpan(
+                        text: drawerHeaderTxt12, style: highlightBoldTextStyle),
+                    TextSpan(text: drawerHeaderTxt21),
+                    TextSpan(
+                        text: drawerHeaderTxt22, style: highlightBoldTextStyle),
+                    TextSpan(
+                      text: drawerHeaderTxt31,
+                    ),
+                    TextSpan(
+                      text: drawerHeaderTxt32,
+                    ),
+                    TextSpan(
+                        text: drawerHeaderTxt41, style: highlightBoldTextStyle),
+                  ]),
                 ),
-                title: Text(
-                  item['name'],
-                  style: TextStyle(
+              ],
+            ),
+            // child: Text('Hello $_userName !!', style: inputTextStyle),
+            decoration: BoxDecoration(
+              color: Colors.teal,
+            ),
+          ),
+          ListView.builder(
+            physics: NeverScrollableScrollPhysics(),
+            shrinkWrap: true,
+            itemCount: drawerItems.length,
+            itemBuilder: (BuildContext context, int index) {
+              Map item = drawerItems[index];
+              if (item['children'] != null) {
+                return ExpansionTile(
+                  leading: Icon(
+                    item['icon'],
                     color: _page == index
                         ? highlightColor
-                        : Theme.of(context).textTheme.subtitle1.color,
+                        : Theme.of(context).textTheme.title.color,
                   ),
-                ),
-                children: <Widget>[
-                  ListView.builder(
-                    physics: NeverScrollableScrollPhysics(),
-                    shrinkWrap: true,
-                    itemCount: item['children'].length,
-                    itemBuilder: (BuildContext context, int i) {
-                      int pageIndex = drawerItems.length - 1 + i;
-                      Map subItem = item['children'][i];
-                      print('........' + i.toString());
-                      return ListTile(
-                        leading: Icon(
-                          subItem['icon'],
-                          color: _page == index
-                              ? highlightColor
-                              : Theme.of(context).textTheme.subtitle1.color,
-                        ),
-                        title: Text(
-                          subItem['name'],
-                          style: TextStyle(
+                  title: Text(
+                    item['name'],
+                    style: TextStyle(
+                      color: _page == index
+                          ? highlightColor
+                          : Theme.of(context).textTheme.title.color,
+                    ),
+                  ),
+                  children: <Widget>[
+                    ListView.builder(
+                      physics: NeverScrollableScrollPhysics(),
+                      shrinkWrap: true,
+                      itemCount: item['children'].length,
+                      itemBuilder: (BuildContext context, int i) {
+                        int pageIndex = drawerItems.length - 1 + i;
+                        Map subItem = item['children'][i];
+                        print('........' + i.toString());
+                        return ListTile(
+                          leading: Icon(
+                            subItem['icon'],
                             color: _page == index
                                 ? highlightColor
-                                : Theme.of(context).textTheme.subtitle1.color,
+                                : Theme.of(context).textTheme.title.color,
                           ),
-                        ),
-                        onTap: () {
-                          _pageController.jumpToPage(pageIndex);
-                          Navigator.pop(context);
-                        },
-                      );
-                    },
-                  ),
-                ],
-              );
-            } else {
-              return ListTile(
-                leading: Icon(
-                  item['icon'],
-                  color: _page == index
-                      ? highlightColor
-                      : Theme.of(context).textTheme.subtitle1.color,
-                ),
-                title: Text(
-                  item['name'],
-                  style: TextStyle(
+                          title: Text(
+                            subItem['name'],
+                            style: TextStyle(
+                              color: _page == index
+                                  ? highlightColor
+                                  : Theme.of(context).textTheme.title.color,
+                            ),
+                          ),
+                          onTap: () {
+                            _pageController.jumpToPage(pageIndex);
+                            Navigator.pop(context);
+                          },
+                        );
+                      },
+                    ),
+                  ],
+                );
+              } else {
+                return ListTile(
+                  leading: Icon(
+                    item['icon'],
                     color: _page == index
                         ? highlightColor
-                        : Theme.of(context).textTheme.subtitle1.color,
+                        : Theme.of(context).textTheme.title.color,
                   ),
-                ),
-                onTap: () {
-                  //_pageController.jumpToPage(index);
-                  String returnIndex = index.toString();
-                  Navigator.of(context).pop(returnIndex);
-                },
-              );
-            }
-          },
-        ),
-      ],
-    ));
+                  title: Text(
+                    item['name'],
+                    style: TextStyle(
+                      color: _page == index
+                          ? highlightColor
+                          : Theme.of(context).textTheme.title.color,
+                    ),
+                  ),
+                  onTap: () {
+                    _pageController.jumpToPage(index);
+                    Navigator.pop(context);
+                  },
+                );
+              }
+            },
+          ),
+        ],
+      ),
+    );
   }
 }
