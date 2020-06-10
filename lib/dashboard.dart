@@ -400,8 +400,8 @@ class _LandingPageState extends State<LandingPage> {
     return userNotifications(context);
   }
 
-  Widget _manageApartmentPage() {
-    return ManageApartmentPage();
+  _manageApartmentPage() {
+    return manageApartmentPages(context);
   }
 
   Widget _manageCommSpacePage() {

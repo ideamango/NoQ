@@ -1,36 +1,24 @@
-import 'dart:io';
-import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:intl/intl.dart';
-import 'package:noq/constants.dart';
 import 'package:noq/models/localDB.dart';
 import 'package:noq/pages/entity_services_details_page.dart';
-import 'package:noq/repository/local_db_repository.dart';
-import 'package:noq/services/authService.dart';
-import 'package:noq/services/qr_code_generate.dart';
+import 'package:noq/pages/manage_apartment_page.dart';
 import 'package:noq/style.dart';
-import 'package:noq/utils.dart';
-import 'package:noq/widget/weekday_selector.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:flutter/foundation.dart';
-import 'package:geolocator/geolocator.dart';
-import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 
-class ServiceRow extends StatefulWidget {
-  final ChildEntityAppData childEntity;
-  ServiceRow({Key key, @required this.childEntity}) : super(key: key);
+class EntityRow extends StatefulWidget {
+  final EntityAppData entity;
+  EntityRow({Key key, @required this.entity}) : super(key: key);
   @override
-  State<StatefulWidget> createState() => new ServiceRowState();
+  State<StatefulWidget> createState() => new EntityRowState();
 }
 
-class ServiceRowState extends State<ServiceRow> {
-  ChildEntityAppData serviceEntity;
+class EntityRowState extends State<EntityRow> {
+  EntityAppData entity;
 
   @override
   void initState() {
     super.initState();
-    serviceEntity = widget.childEntity;
+    entity = widget.entity;
   }
 
   @override
@@ -39,8 +27,7 @@ class ServiceRowState extends State<ServiceRow> {
       Navigator.push(
           context,
           MaterialPageRoute(
-              builder: (context) =>
-                  ServiceEntityDetailsPage(serviceEntity: this.serviceEntity)));
+              builder: (context) => ManageApartmentPage(entity: this.entity)));
     }
 
     return new Card(
@@ -57,13 +44,13 @@ class ServiceRowState extends State<ServiceRow> {
           title: Column(
             children: <Widget>[
               Text(
-                serviceEntity.cType,
+                entity.eType,
                 //  "Swimming Pool",
                 style: TextStyle(color: Colors.blueGrey[700], fontSize: 17),
               ),
-              if (serviceEntity.name != null)
+              if (entity.name != null)
                 Text(
-                  serviceEntity.name,
+                  entity.name,
                   style: labelTextStyle,
                 ),
             ],

@@ -48,6 +48,7 @@ dependencies:
   barcode_scan: ^3.0.1
   qr_flutter: ^3.1.0
   share: ^0.6.2+3
+  grouped_list: ^3.1.0
 
 
   

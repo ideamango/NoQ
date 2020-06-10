@@ -1,73 +1,73 @@
-import 'dart:io';
-import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:intl/intl.dart';
 import 'package:noq/constants.dart';
 import 'package:noq/models/localDB.dart';
+import 'package:noq/pages/entity_item.dart';
 import 'package:noq/pages/service_entity.dart';
 import 'package:noq/repository/local_db_repository.dart';
-import 'package:noq/services/authService.dart';
-import 'package:noq/services/qr_code_generate.dart';
 import 'package:noq/style.dart';
 import 'package:noq/utils.dart';
+import 'package:uuid/uuid.dart';
 
-import 'package:path_provider/path_provider.dart';
-import 'package:flutter/foundation.dart';
-
-class EntityServicesListPage extends StatefulWidget {
-  final EntityAppData entity;
-  EntityServicesListPage({Key key, @required this.entity}) : super(key: key);
+class ManageApartmentsListPage extends StatefulWidget {
   @override
-  _EntityServicesListPageState createState() => _EntityServicesListPageState();
+  _ManageApartmentsListPageState createState() =>
+      _ManageApartmentsListPageState();
 }
 
-class _EntityServicesListPageState extends State<EntityServicesListPage> {
+class _ManageApartmentsListPageState extends State<ManageApartmentsListPage> {
   String _msg;
   final GlobalKey<FormState> _formKey = new GlobalKey<FormState>();
-  List<ChildEntityAppData> servicesList = new List<ChildEntityAppData>();
+  List<EntityAppData> entitiesList;
   final String title = "Services Detail Form";
 
   EntityAppData entity;
-  String _subEntityType;
-
-//Add service Row
+  String _entityType;
 
   int _count = 0;
 
   @override
   void initState() {
     super.initState();
-    entity = widget.entity;
-    if (entity.childCollection == null)
-      entity.childCollection = new List<ChildEntityAppData>();
 
-    servicesList = entity.childCollection;
+    // if (entity.childCollection == null)
+    //   entity.childCollection = new List<ChildEntityAppData>();
+    getEntityList();
+  }
+
+  void getEntityList() async {
+    await readData().then((fUser) {
+      if (Utils.isNullOrEmpty(fUser.managedEntities))
+        entitiesList = new List<EntityAppData>();
+      else
+        setState(() {
+          // fUser.managedEntities.clear();
+          //   writeData(fUser);
+          entitiesList = fUser.managedEntities;
+
+          //  saveEntityDetails(new EntityAppData());
+        });
+    });
   }
 
   void _addNewServiceRow() {
     setState(() {
-      ChildEntityAppData c =
-          new ChildEntityAppData.cType(_subEntityType, entity.id, entity.adrs);
-      servicesList.add(c);
+      var uuid = new Uuid();
+      String _entityId = uuid.v1();
+      EntityAppData en = new EntityAppData.eType(_entityType, _entityId);
+      entitiesList.add(en);
       //  entity.childCollection.add(c);
-      saveEntityDetails(entity);
+      saveEntityDetails(en);
+      //saveEntityDetails();
       _count = _count + 1;
     });
   }
 
-  Widget _buildServiceItem(ChildEntityAppData childEntity) {
-    return new ServiceRow(childEntity: childEntity);
+  Widget _buildServiceItem(EntityAppData childEntity) {
+    return new EntityRow(entity: childEntity);
   }
 
   @override
   Widget build(BuildContext context) {
-    // List<Widget> _contatos = new List.generate(
-    //     _count,
-    //     (int i) => new ServiceRow(
-    //           childEntity: null,
-    //         ));
-
     final BoxDecoration indigoContainer = new BoxDecoration(
         border: Border.all(color: Colors.indigo),
         shape: BoxShape.rectangle,
@@ -78,21 +78,20 @@ class _EntityServicesListPageState extends State<EntityServicesListPage> {
       builder: (FormFieldState state) {
         return InputDecorator(
           decoration: InputDecoration(
-            //  icon: const Icon(Icons.person),
-            labelText: 'Type of Service',
+            labelText: 'Type of Entity',
           ),
           child: new DropdownButtonHideUnderline(
             child: new DropdownButton(
-              hint: new Text("Select Type of Service"),
-              value: _subEntityType,
+              hint: new Text("Select Type of Entity"),
+              value: _entityType,
               isDense: true,
               onChanged: (newValue) {
                 setState(() {
-                  _subEntityType = newValue;
+                  _entityType = newValue;
                   state.didChange(newValue);
                 });
               },
-              items: subEntityTypes.map((type) {
+              items: entityTypes.map((type) {
                 return DropdownMenuItem(
                   value: type,
                   child: new Text(
@@ -106,7 +105,7 @@ class _EntityServicesListPageState extends State<EntityServicesListPage> {
         );
       },
       onSaved: (String value) {
-        _subEntityType = value;
+        _entityType = value;
         setState(() {
           _msg = null;
         });
@@ -220,7 +219,7 @@ class _EntityServicesListPageState extends State<EntityServicesListPage> {
                                   shape: RoundedRectangleBorder(
                                       side: BorderSide(color: highlightColor)),
                                   onPressed: () {
-                                    if (_subEntityType != null) {
+                                    if (_entityType != null) {
                                       setState(() {
                                         _msg = null;
                                       });
@@ -262,33 +261,23 @@ class _EntityServicesListPageState extends State<EntityServicesListPage> {
                       ),
                     ),
                   ),
-
-                  // new Expanded(
-                  //   child: new ListView.builder(
-                  //     itemBuilder: (BuildContext context, int index) {
-                  //       return Container(
-                  //         child: new Column(children: _contatos),
-                  //         //children: <Widget>[firstRow, secondRow],
-                  //       );
-                  //     },
-                  //     itemCount: 1,
-                  //   ),
-                  // ),
-                  new Expanded(
-                    child: ListView.builder(
-                      shrinkWrap: true,
-                      //scrollDirection: Axis.vertical,
-                      itemBuilder: (BuildContext context, int index) {
-                        return Container(
-                          child: new Column(
-                              children:
-                                  servicesList.map(_buildServiceItem).toList()),
-                          //children: <Widget>[firstRow, secondRow],
-                        );
-                      },
-                      itemCount: 1,
+                  if (!Utils.isNullOrEmpty(entitiesList))
+                    new Expanded(
+                      child: ListView.builder(
+                        shrinkWrap: true,
+                        //scrollDirection: Axis.vertical,
+                        itemBuilder: (BuildContext context, int index) {
+                          return Container(
+                            child: new Column(
+                                children: entitiesList
+                                    .map(_buildServiceItem)
+                                    .toList()),
+                            //children: <Widget>[firstRow, secondRow],
+                          );
+                        },
+                        itemCount: 1,
+                      ),
                     ),
-                  ),
 
                   // new Column(
                   //   children: _contatos,

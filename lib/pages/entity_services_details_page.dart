@@ -100,6 +100,23 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
   initializeEntity() {
     _nameController.text = serviceEntity.name;
     _regNumController.text = serviceEntity.regNum;
+    _openTimeController.text = serviceEntity.opensAt;
+    _closeTimeController.text = serviceEntity.closesAt;
+    _breakStartController.text = serviceEntity.breakTimeFrom;
+    _breakEndController.text = serviceEntity.breakTimeTo;
+    if (serviceEntity.daysClosed != null) _daysOff = serviceEntity.daysClosed;
+    _maxPeopleController.text = serviceEntity.maxPeopleAllowed;
+    //address
+
+    _adrs1Controller.text = serviceEntity.adrs.addressLine1;
+    _localityController.text = serviceEntity.adrs.locality;
+    _landController.text = serviceEntity.adrs.landmark;
+    _cityController.text = serviceEntity.adrs.city;
+    _stateController.text = serviceEntity.adrs.state;
+    _countryController.text = serviceEntity.adrs.country;
+    _pinController.text = serviceEntity.adrs.postalCode;
+//contact person
+    //  _ctNameController.text = serviceEntity.contactPersons[0].perName;
   }
 
   loadServiceEntity(String serviceEntityId) {
@@ -403,7 +420,6 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
         serviceEntity.closesAt = value;
       },
     );
-
     final daysClosedField = Padding(
       padding: EdgeInsets.only(top: 12, bottom: 8),
       child: Row(
@@ -475,20 +491,21 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
       },
     );
 //Address fields
-    final adrsField1 = TextFormField(
-      obscureText: false,
-      maxLines: 1,
-      minLines: 1,
-      style: textInputTextStyle,
-      keyboardType: TextInputType.text,
-      controller: _adrs1Controller,
-      decoration: CommonStyle.textFieldStyle(
-          labelTextStr: "Apartment/ House No./ Lane", hintTextStr: ""),
-      validator: validateText,
-      onSaved: (String value) {
-        serviceEntity.adrs.addressLine1 = value;
-      },
+    final adrsField1 = RichText(
+      text: TextSpan(
+        // style: textInputTextStyle,
+        children: <TextSpan>[
+          TextSpan(text: serviceEntity.adrs.addressLine1),
+          TextSpan(text: serviceEntity.adrs.landmark),
+          TextSpan(text: serviceEntity.adrs.locality),
+          TextSpan(text: serviceEntity.adrs.city),
+          TextSpan(text: serviceEntity.adrs.postalCode),
+          TextSpan(text: serviceEntity.adrs.state),
+          TextSpan(text: serviceEntity.adrs.country),
+        ],
+      ),
     );
+
     final landmarkField2 = TextFormField(
       obscureText: false,
       maxLines: 1,
@@ -891,7 +908,7 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
                             ),
                           ),
                           nameField,
-                          entityType,
+                          // entityType,
                           regNumField,
                           opensTimeField,
                           closeTimeField,
@@ -981,13 +998,16 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
                             child: Text('Use current location'),
                             onPressed: _getCurrLocation,
                           ),
+                          Text("sdgfsfgdf"),
                           adrsField1,
-                          landmarkField2,
-                          localityField,
-                          cityField,
-                          stateField,
-                          pinField,
-                          countryField,
+
+                          Text("aaaaaaaa"),
+                          //landmarkField2,
+                          // localityField,
+                          //cityField,
+                          //stateField,
+                          //pinField,
+                          //countryField,
                         ],
                       ),
                     ],

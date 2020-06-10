@@ -20,6 +20,8 @@ import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:uuid/uuid.dart';
 
 class ManageApartmentPage extends StatefulWidget {
+  final EntityAppData entity;
+  ManageApartmentPage({Key key, @required this.entity}) : super(key: key);
   @override
   _ManageApartmentPageState createState() => _ManageApartmentPageState();
 }
@@ -61,7 +63,7 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
   List<String> _daysOff = List<String>();
   ContactAppData cp1 = new ContactAppData();
   AddressAppData adrs = new AddressAppData();
-  EntityAppData newEntity = new EntityAppData();
+  EntityAppData entity;
 
   List<ContactAppData> newList = new List<ContactAppData>();
 
@@ -78,7 +80,7 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
   String _mainArea;
 
   String _role;
-  String _entityType;
+//  String _entityType;
   String state;
 
   bool addNewClicked = false;
@@ -87,12 +89,38 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
   void initState() {
     super.initState();
     _getCurrLocation();
+    entity = this.widget.entity;
 
-    getEntityDetails();
-    newEntity.contactPersons = new List<ContactAppData>();
-    newEntity.adrs = new AddressAppData();
-    newEntity.contactPersons.add(cp1);
+    //  getEntityDetails();
+    initializeEntity();
+    entity.contactPersons = new List<ContactAppData>();
+    entity.adrs = new AddressAppData();
+    entity.contactPersons.add(cp1);
     // addPerson();
+  }
+
+  initializeEntity() {
+    _nameController.text = entity.name;
+    // _entityType = entity.eType;
+    _regNumController.text = entity.regNum;
+    _openTimeController.text = entity.opensAt;
+    _closeTimeController.text = entity.closesAt;
+    _breakStartController.text = entity.breakTimeFrom;
+    _breakEndController.text = entity.breakTimeTo;
+    if (entity.daysClosed != null) _daysOff = entity.daysClosed;
+    _maxPeopleController.text = entity.maxPeopleAllowed;
+    //address
+    if (entity.adrs != null) {
+      _adrs1Controller.text = entity.adrs.addressLine1;
+      _localityController.text = entity.adrs.locality;
+      _landController.text = entity.adrs.landmark;
+      _cityController.text = entity.adrs.city;
+      _stateController.text = entity.adrs.state;
+      _countryController.text = entity.adrs.country;
+      _pinController.text = entity.adrs.postalCode;
+    }
+//contact person
+    //  _ctNameController.text = entity.contactPersons[0].perName;
   }
 
   String validateText(String value) {
@@ -186,10 +214,14 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
   }
 
   getEntityDetails() {
-    //if new entity then generate guid and assign.
-
-    var uuid = new Uuid();
-    newEntity.id = uuid.v1();
+    if (entity == null) {
+      //if new entity then generate guid and assign.
+      entity = new EntityAppData();
+      var uuid = new Uuid();
+      entity.id = uuid.v1();
+    } else
+      //if already existing entity load details from server
+      getEntity(entity.id).then((en) => entity = en);
   }
 
   saveDetails() async {
@@ -197,7 +229,7 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
         "My Home Vihanga, Financial District, Gachibowli, Hyderabad, Telangana, India");
 
     print(placemark);
-    saveEntityDetails(newEntity);
+    saveEntityDetails(entity);
   }
 
   @override
@@ -219,7 +251,7 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
           labelTextStr: "Name of Establishment", hintTextStr: ""),
       validator: validateText,
       onSaved: (String value) {
-        newEntity.name = value;
+        entity.name = value;
       },
     );
     final regNumField = TextFormField(
@@ -233,44 +265,45 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
           labelTextStr: "Registration Number", hintTextStr: ""),
       validator: validateText,
       onSaved: (String value) {
-        newEntity.regNum = value;
+        entity.regNum = value;
       },
     );
-    final entityType = new FormField(
-      builder: (FormFieldState state) {
-        return InputDecorator(
-          decoration: InputDecoration(
-            //  icon: const Icon(Icons.person),
-            labelText: 'Type of Establishment',
-          ),
-          child: new DropdownButtonHideUnderline(
-            child: new DropdownButton(
-              value: _entityType,
-              isDense: true,
-              onChanged: (newValue) {
-                setState(() {
-                  // newContact.favoriteColor = newValue;
-                  _entityType = newValue;
-                  state.didChange(newValue);
-                });
-              },
-              items: entityTypes.map((type) {
-                return DropdownMenuItem(
-                  value: type,
-                  child: new Text(
-                    type.toString(),
-                    style: textInputTextStyle,
-                  ),
-                );
-              }).toList(),
-            ),
-          ),
-        );
-      },
-      onSaved: (String value) {
-        newEntity.eType = value;
-      },
-    );
+    // final entityType = new FormField(
+    //   builder: (FormFieldState state) {
+    //     return InputDecorator(
+    //       decoration: InputDecoration(
+    //         //  icon: const Icon(Icons.person),
+    //         labelText: 'Type of Establishment',
+    //       ),
+    //       child: new DropdownButtonHideUnderline(
+    //         child: new DropdownButton(
+    //           value: _entityType,
+    //           isDense: true,
+    //           onChanged: (newValue) {
+    //             setState(() {
+    //               // newContact.favoriteColor = newValue;
+    //               _entityType = newValue;
+    //               state.didChange(newValue);
+    //             });
+    //           },
+    //           items: entityTypes.map((type) {
+    //             return DropdownMenuItem(
+    //               value: type,
+    //               child: new Text(
+    //                 type.toString(),
+    //                 style: textInputTextStyle,
+    //               ),
+    //             );
+    //           }).toList(),
+    //         ),
+    //       ),
+    //     );
+    //   },
+    //   onSaved: (String value) {
+    //     entity.eType = value;
+    //   },
+    // );
+
     final opensTimeField = TextFormField(
       obscureText: false,
       maxLines: 1,
@@ -321,7 +354,7 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
               borderSide: BorderSide(color: Colors.orange))),
       validator: validateTime,
       onSaved: (String value) {
-        newEntity.opensAt = value;
+        entity.opensAt = value;
       },
     );
     final closeTimeField = TextFormField(
@@ -356,7 +389,7 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
               borderSide: BorderSide(color: Colors.orange))),
       validator: validateTime,
       onSaved: (String value) {
-        newEntity.closesAt = value;
+        entity.closesAt = value;
       },
     );
     final breakSartTimeField = TextFormField(
@@ -409,7 +442,7 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
               borderSide: BorderSide(color: Colors.orange))),
       validator: validateTime,
       onSaved: (String value) {
-        newEntity.opensAt = value;
+        entity.opensAt = value;
       },
     );
     final breakEndTimeField = TextFormField(
@@ -444,7 +477,7 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
               borderSide: BorderSide(color: Colors.orange))),
       validator: validateTime,
       onSaved: (String value) {
-        newEntity.closesAt = value;
+        entity.closesAt = value;
       },
     );
 
@@ -491,7 +524,7 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
                 var day = element.toString().substring(5);
                 _closedOnDays.add(day);
               });
-              newEntity.daysClosed = _closedOnDays;
+              entity.daysClosed = _closedOnDays;
               print(_closedOnDays.length);
               print(_closedOnDays.toString());
             },
@@ -515,7 +548,7 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
       ),
       validator: validateText,
       onSaved: (String value) {
-        newEntity.maxPeopleAllowed = value;
+        entity.maxPeopleAllowed = value;
       },
     );
 
@@ -531,7 +564,7 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
           labelTextStr: "Apartment/ House No./ Lane", hintTextStr: ""),
       validator: validateText,
       onSaved: (String value) {
-        newEntity.adrs.addressLine1 = value;
+        entity.adrs.addressLine1 = value;
       },
     );
     final landmarkField2 = TextFormField(
@@ -550,7 +583,7 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
       ),
       validator: validateText,
       onSaved: (String value) {
-        newEntity.adrs.landmark = value;
+        entity.adrs.landmark = value;
       },
     );
     final localityField = TextFormField(
@@ -569,7 +602,7 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
       ),
       validator: validateText,
       onSaved: (String value) {
-        newEntity.adrs.locality = value;
+        entity.adrs.locality = value;
       },
     );
     final cityField = TextFormField(
@@ -588,7 +621,7 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
       ),
       validator: validateText,
       onSaved: (String value) {
-        newEntity.adrs.city = value;
+        entity.adrs.city = value;
       },
     );
     final stateField = TextFormField(
@@ -607,7 +640,7 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
       ),
       validator: validateText,
       onSaved: (String value) {
-        newEntity.adrs.state = value;
+        entity.adrs.state = value;
       },
     );
     final countryField = TextFormField(
@@ -626,7 +659,7 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
       ),
       validator: validateText,
       onSaved: (String value) {
-        newEntity.adrs.country = value;
+        entity.adrs.country = value;
       },
     );
     final pinField = TextFormField(
@@ -645,7 +678,7 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
       ),
       validator: validateText,
       onSaved: (String value) {
-        newEntity.adrs.postalCode = value;
+        entity.adrs.postalCode = value;
       },
     );
     //Contact person
@@ -916,7 +949,7 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
                         ),
                       ),
                       nameField,
-                      entityType,
+                      //entityType,
                       regNumField,
                       opensTimeField,
                       closeTimeField,
@@ -1164,13 +1197,13 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
                     splashColor: Colors.orange,
                     onPressed: () {
                       // if (_formKey.currentState.validate()) {
-                      //   _formKey.currentState.save();
+                      _formKey.currentState.save();
                       saveDetails();
                       Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => EntityServicesListPage(
-                                  entity: this.newEntity)));
+                              builder: (context) =>
+                                  EntityServicesListPage(entity: this.entity)));
                       // }
                     },
                     child: Container(

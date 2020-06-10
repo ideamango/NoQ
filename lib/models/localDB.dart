@@ -56,6 +56,7 @@ class EntityAppData {
   bool publicAccess;
 
   EntityAppData();
+  EntityAppData.eType(this.eType, this.id);
 
   EntityAppData.values(
       this.id,
@@ -129,7 +130,7 @@ class ChildEntityAppData {
   bool publicAccess;
   ChildEntityAppData();
 
-  ChildEntityAppData.cType(this.cType, this.entityId);
+  ChildEntityAppData.cType(this.cType, this.entityId, this.adrs);
 
   ChildEntityAppData.allValues(
     this.id,

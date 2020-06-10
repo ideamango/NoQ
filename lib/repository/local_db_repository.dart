@@ -44,6 +44,40 @@ Future<UserAppData> readData() async {
   }
 }
 
+void saveEntityDetails(EntityAppData str) async {
+  bool entityExists = false;
+  final file = await localFile;
+  UserAppData _userProfile;
+
+//Read current data in file
+  await readData().then((fUser) {
+    _userProfile = fUser;
+    if (Utils.isNullOrEmpty(_userProfile.managedEntities)) {
+      _userProfile.managedEntities = new List<EntityAppData>();
+    }
+//if exists then update else add
+
+    _userProfile.managedEntities.forEach((element) {
+      if (element.id == str.id) {
+        entityExists = true;
+        element = str;
+      }
+    });
+    if (entityExists == false)
+// Add new data and save
+      _userProfile.managedEntities.add(str);
+
+    //Update on server
+    //EntityService().upsertEntity(str);
+
+// TOICOC _userProfile. = str;
+
+    String fileData = generateJson(_userProfile);
+    //print('Writing in file $file , data: $fileData');
+    file.writeAsString("$fileData");
+  });
+}
+
 saveChildEntity(ChildEntityAppData serviceEntity) async {
   final file = await localFile;
   String entityId = serviceEntity.entityId;
@@ -68,38 +102,30 @@ saveChildEntity(ChildEntityAppData serviceEntity) async {
   });
 }
 
-getEntity(String entityId) async {
+Future<List<EntityAppData>> getEntityList() async {
+  await readData().then((fUser) {
+    if (Utils.isNullOrEmpty(fUser.managedEntities))
+      return null;
+    else {
+      fUser.managedEntities.clear();
+      writeData(fUser);
+
+      return fUser.managedEntities;
+    }
+  });
+}
+
+Future<EntityAppData> getEntity(String entityId) async {
 //Read current data in file
   await readData().then((fUser) {
-    if (Utils.isNullOrEmpty(fUser.managedEntities)) {
+    if (!Utils.isNullOrEmpty(fUser.managedEntities)) {
       for (var entity in fUser.managedEntities) {
         if (entity.id == entityId) return entity;
       }
       //TODO:Fetch entity from Server
-      return EntityService().getEntity(entityId);
+      // return EntityService().getEntity(entityId);
     }
     return null;
   });
-}
-
-void saveEntityDetails(EntityAppData str) async {
-  final file = await localFile;
-  UserAppData _userProfile;
-
-//Read current data in file
-  await readData().then((fUser) {
-    _userProfile = fUser;
-    if (Utils.isNullOrEmpty(_userProfile.managedEntities)) {
-      _userProfile.managedEntities = new List<EntityAppData>();
-    }
-
-// Add new data and save
-    _userProfile.managedEntities.add(str);
-
-// TOICOC _userProfile. = str;
-
-    String fileData = generateJson(_userProfile);
-    //print('Writing in file $file , data: $fileData');
-    file.writeAsString("$fileData");
-  });
+  return null;
 }
