@@ -6,6 +6,15 @@ String homeScreenMsgTxt =
 
 String homeScreenMsgTxt2 = "Avoid rush hours";
 String homeScreenMsgTxt3 = "Be Safe | Save time.";
+
+String drawerHeaderTxt11 = 'Stay ';
+String drawerHeaderTxt12 = 'Safe!!  ';
+String drawerHeaderTxt21 = 'Maintain ';
+String drawerHeaderTxt22 = 'Social distance!!  ';
+String drawerHeaderTxt31 = 'Avoid ';
+String drawerHeaderTxt32 = 'rush hours !!  ';
+String drawerHeaderTxt41 = 'Save time !!';
+
 enum Role { Manager, Admin, ContactPerson, Employee }
 List<String> roleTypes = [
   'Manager',

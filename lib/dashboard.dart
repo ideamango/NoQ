@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:noq/constants.dart';
 import 'package:noq/db/db_service/db_main.dart';
 import 'package:noq/db/db_service/token_service.dart';
 import 'package:noq/pages/SearchStoresPage.dart';
 import 'package:noq/pages/allPagesWidgets.dart';
 import 'package:noq/pages/manage_apartment_page.dart';
 import 'package:noq/services/authService.dart';
+import 'package:noq/widget/appbar.dart';
 
 import 'db/db_model/entity_slots.dart';
 import 'db/db_model/user_token.dart';
@@ -21,6 +23,7 @@ class LandingPage extends StatefulWidget {
 }
 
 class _LandingPageState extends State<LandingPage> {
+  final GlobalKey _scaffoldKey = new GlobalKey();
   SharedPreferences _prefs;
   PageController _pageController;
   int _page = 0;
@@ -69,6 +72,7 @@ class _LandingPageState extends State<LandingPage> {
   String _userName;
   String _userId;
   String _userAdrs;
+  String _appBarTitle;
 
   DateTime dateTime = DateTime.now();
   final dtFormat = new DateFormat('dd');
@@ -208,9 +212,23 @@ class _LandingPageState extends State<LandingPage> {
       title: 'My Dashboard',
       //theme: ThemeData.light().copyWith(),
       home: Scaffold(
-        appBar: AppBar(title: Text(''), backgroundColor: Colors.teal,
-            //Theme.of(context).primaryColor,
-            actions: <Widget>[]),
+        key: _scaffoldKey,
+        appBar: CustomAppBar(),
+        // AppBar(
+        //   title: Text(''),
+        //   backgroundColor: Colors.white,
+        //   //Theme.of(context).primaryColor,
+        //   actions: <Widget>[],
+        //   leading: Builder(
+        //     builder: (BuildContext context) {
+        //       return IconButton(
+        //         color: Colors.teal,
+        //         icon: Icon(Icons.more_vert),
+        //         onPressed: () => Scaffold.of(context).openDrawer(),
+        //       );
+        //     },
+        //   ),
+        // ),
         body: Center(
           child: PageView(
             physics: NeverScrollableScrollPhysics(),
@@ -240,9 +258,29 @@ class _LandingPageState extends State<LandingPage> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: <Widget>[
-                    Text('Stay safe !!', style: whiteBoldTextStyle),
-                    Text('Avoid rush hours !!', style: whiteBoldTextStyle),
-                    Text('Save time !!', style: whiteBoldTextStyle),
+                    RichText(
+                      text: TextSpan(
+                          style: whiteBoldTextStyle1,
+                          children: <TextSpan>[
+                            TextSpan(text: drawerHeaderTxt11),
+                            TextSpan(
+                                text: drawerHeaderTxt12,
+                                style: highlightBoldTextStyle),
+                            TextSpan(text: drawerHeaderTxt21),
+                            TextSpan(
+                                text: drawerHeaderTxt22,
+                                style: highlightBoldTextStyle),
+                            TextSpan(
+                              text: drawerHeaderTxt31,
+                            ),
+                            TextSpan(
+                              text: drawerHeaderTxt32,
+                            ),
+                            TextSpan(
+                                text: drawerHeaderTxt41,
+                                style: highlightBoldTextStyle),
+                          ]),
+                    ),
                   ],
                 ),
                 // child: Text('Hello $_userName !!', style: inputTextStyle),
@@ -400,7 +438,7 @@ class _LandingPageState extends State<LandingPage> {
     return userNotifications(context);
   }
 
-  _manageApartmentPage() {
+  Widget _manageApartmentPage() {
     return manageApartmentPages(context);
   }
 

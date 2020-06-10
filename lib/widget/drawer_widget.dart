@@ -50,9 +50,9 @@ class _DrawerWidgetState extends State<DrawerWidget> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: <Widget>[
-              Text('Stay safe !!', style: whiteBoldTextStyle),
-              Text('Avoid rush hours !!', style: whiteBoldTextStyle),
-              Text('Save time !!', style: whiteBoldTextStyle),
+              Text('Stay safe !!', style: whiteBoldTextStyle1),
+              Text('Avoid rush hours !!', style: whiteBoldTextStyle1),
+              Text('Save time !!', style: whiteBoldTextStyle1),
             ],
           ),
           // child: Text('Hello $_userName !!', style: inputTextStyle),

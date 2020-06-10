@@ -120,24 +120,17 @@ class _EntityServicesListPageState extends State<EntityServicesListPage> {
       title: 'Add child entities',
       //theme: ThemeData.light().copyWith(),
       home: Scaffold(
-        appBar: AppBar(
-            title: Row(
-              children: <Widget>[
-                IconButton(
-                  icon: Icon(Icons.arrow_back),
-                  onPressed: () {
-                    saveEntityDetails(entity);
-                    Navigator.of(context).pop();
-                  },
-                ),
-                Text(
-                  'Apartment Amenities',
-                ),
-              ],
-            ),
-            backgroundColor: Colors.teal,
-            //Theme.of(context).primaryColor,
-            actions: <Widget>[]),
+        // appBar: AppBar(
+        //     title: Row(
+        //       children: <Widget>[
+        //         Text(
+        //           'Apartment Amenities',
+        //         ),
+        //       ],
+        //     ),
+        //     backgroundColor: Colors.teal,
+        //     //Theme.of(context).primaryColor,
+        //     actions: <Widget>[]),
         body: Center(
           child: new Form(
             key: _formKey,
@@ -146,6 +139,18 @@ class _EntityServicesListPageState extends State<EntityServicesListPage> {
               padding: const EdgeInsets.all(5.0),
               child: Column(
                 children: <Widget>[
+                  Row(
+                    children: <Widget>[
+                      IconButton(
+                        icon: Icon(Icons.arrow_back,
+                            color: Colors.teal, size: 40),
+                        onPressed: () {
+                          saveEntityDetails(entity);
+                          Navigator.of(context).pop();
+                        },
+                      ),
+                    ],
+                  ),
                   Card(
                     elevation: 20,
                     child: Container(

@@ -819,28 +819,17 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
       title: 'Add child entities',
       //theme: ThemeData.light().copyWith(),
       home: Scaffold(
-        appBar: AppBar(
-            title: Row(
-              children: <Widget>[
-                IconButton(
-                  icon: Icon(Icons.arrow_back),
-                  onPressed: () {
-                    print("going back");
-                    //Save form details, then go back.
-                    saveFormDetails();
-                    updateModel();
-                    //go back
-                    Navigator.of(context).pop();
-                  },
-                ),
-                Text(
-                  serviceEntity.cType,
-                ),
-              ],
-            ),
-            backgroundColor: Colors.teal,
-            //Theme.of(context).primaryColor,
-            actions: <Widget>[]),
+        // appBar: AppBar(
+        //     title: Row(
+        //       children: <Widget>[
+        //         Text(
+        //           serviceEntity.cType,
+        //         ),
+        //       ],
+        //     ),
+        //     backgroundColor: Colors.teal,
+        //     //Theme.of(context).primaryColor,
+        //     actions: <Widget>[]),
         body: SafeArea(
           child: new Form(
             key: _form2Key,
@@ -848,6 +837,22 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
             child: ListView(
               // crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
+                Row(
+                  children: <Widget>[
+                    IconButton(
+                      icon:
+                          Icon(Icons.arrow_back, color: Colors.teal, size: 40),
+                      onPressed: () {
+                        print("going back");
+                        //Save form details, then go back.
+                        saveFormDetails();
+                        updateModel();
+                        //go back
+                        Navigator.of(context).pop();
+                      },
+                    ),
+                  ],
+                ),
                 Container(
                   decoration: BoxDecoration(
                       border: Border.all(color: Colors.indigo),

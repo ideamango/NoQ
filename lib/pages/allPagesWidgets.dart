@@ -16,10 +16,8 @@ Widget userAccountPage(BuildContext context) {
   return UserAccountPage();
 }
 
-manageApartmentPages(BuildContext context) {
-  Navigator.push(context,
-      MaterialPageRoute(builder: (context) => ManageApartmentsListPage()));
-  //return ManageApartmentsListPage();
+Widget manageApartmentPages(BuildContext context) {
+  return ManageApartmentsListPage();
 }
 
 Widget userHomePage(BuildContext context) {
