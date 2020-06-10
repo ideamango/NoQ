@@ -9,7 +9,8 @@ class MetaEntity {
       this.startTimeHour,
       this.startTimeMinute,
       this.endTimeHour,
-      this.endTimeMinute});
+      this.endTimeMinute,
+      this.isActive});
 
   //SlotDocumentId is entityID#20~06~01 it is not auto-generated, will help in not duplicating the record
   String entityId;
@@ -22,6 +23,7 @@ class MetaEntity {
   int startTimeMinute;
   int endTimeHour;
   int endTimeMinute;
+  bool isActive;
 
   static MetaEntity fromJson(Map<String, dynamic> json) {
     return new MetaEntity(
@@ -34,7 +36,8 @@ class MetaEntity {
         startTimeHour: json['startTimeHour'],
         startTimeMinute: json['startTimeMinute'],
         endTimeHour: json['endTimeHour'],
-        endTimeMinute: json['endTimeMinute']);
+        endTimeMinute: json['endTimeMinute'],
+        isActive: json['isActive']);
   }
 
   static List<String> convertToClosedOnArrayFromJson(List<dynamic> daysJson) {
@@ -55,6 +58,7 @@ class MetaEntity {
         'startTimeHour': startTimeHour,
         'startTimeMinute': startTimeMinute,
         'endTimeHour': endTimeHour,
-        'endTimeMinute': endTimeMinute
+        'endTimeMinute': endTimeMinute,
+        'isActive': isActive
       };
 }

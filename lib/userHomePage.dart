@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:noq/constants.dart';
+import 'package:noq/db/db_model/address.dart';
+import 'package:noq/db/db_model/my_geo_fire_point.dart';
 import 'package:noq/db/db_service/db_main.dart';
+import 'package:noq/db/db_service/entity_service.dart';
 import 'package:noq/db/db_service/token_service.dart';
 import 'package:noq/models/localDB.dart';
 import 'package:noq/repository/local_db_repository.dart';
@@ -14,6 +17,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:barcode_scan/barcode_scan.dart';
 import 'package:flutter/services.dart';
 
+import 'db/db_model/entity.dart';
 import 'db/db_model/entity_slots.dart';
 import 'db/db_model/user_token.dart';
 //import 'path';
@@ -70,16 +74,55 @@ class _UserHomePageState extends State<UserHomePage> {
 
   void dbCall() async {
     // DBLayer.addRecord();
-    UserToken tok = await TokenService()
-        .generateToken("entityId001", new DateTime(2020, 6, 6, 10, 30, 0, 0));
+    // UserToken tok = await TokenService()
+    //     .generateToken("entityId001", new DateTime(2020, 6, 6, 10, 30, 0, 0));
 
-    EntitySlots es = await TokenService()
-        .getEntitySlots('entityId001', new DateTime(2020, 6, 6));
+    // EntitySlots es = await TokenService()
+    //     .getEntitySlots('entityId001', new DateTime(2020, 6, 6));
+
+    // int i = 0;
+
+    // await TokenService()
+    //     .cancelToken("entityId001#2020~6~6#10~30#93hKw20HwFaVdHRsujOlpjaouoL2");
+
+    MyGeoFirePoint geoPoint = new MyGeoFirePoint(68, 78);
+    Address adrs = new Address(
+        city: "Hyderbad",
+        state: "Telangana",
+        country: "India",
+        address: "Shop 10, Gachibowli");
+    Entity entity = new Entity(
+        entityId: "Entity101",
+        name: "Vijetha",
+        address: adrs,
+        advanceDays: 3,
+        isPublic: true,
+        geo: geoPoint,
+        maxAllowed: 60,
+        slotDuration: 60,
+        closedOn: ["Saturday", "Sunday"],
+        breakStartHour: 13,
+        breakStartMinute: 15,
+        breakEndHour: 14,
+        breakEndMinute: 30,
+        startTimeHour: 10,
+        startTimeMinute: 30,
+        endTimeHour: 21,
+        endTimeMinute: 0,
+        parentId: null,
+        type: "Grocery");
+
+    try {
+      await EntityService().upsertEntity(entity);
+    } catch (e) {
+      print("Exception occured " + e);
+    }
+
+    Entity ent = await EntityService().getEntity('Entity101');
+
+    bool isDeleted = await EntityService().deleteEntity('Entity101');
 
     int i = 0;
-
-    await TokenService()
-        .cancelToken("entityId001#2020~6~6#10~30#93hKw20HwFaVdHRsujOlpjaouoL2");
   }
 
   void _loadBookings() async {

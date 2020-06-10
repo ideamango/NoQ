@@ -27,7 +27,9 @@ class Entity {
       this.endTimeHour,
       this.endTimeMinute,
       this.parentId,
-      this.type});
+      this.type,
+      this.isBookable,
+      this.isActive});
 
   //SlotDocumentId is entityID#20~06~01 it is not auto-generated, will help in not duplicating the record
   String entityId;
@@ -52,6 +54,8 @@ class Entity {
   int endTimeMinute;
   String parentId;
   String type;
+  bool isBookable;
+  bool isActive;
 
   Map<String, dynamic> toJson() => {
         'entityId': entityId,
@@ -74,11 +78,14 @@ class Entity {
         'endTimeHour': endTimeHour,
         'endTimeMinute': endTimeMinute,
         'parentId': parentId,
-        'type': type
+        'type': type,
+        'isBookable': isBookable,
+        'isActive': isActive
       };
 
   List<dynamic> usersToJson(List<User> users) {
     List<dynamic> usersJson = new List<dynamic>();
+    if (users == null) return usersJson;
     for (User usr in users) {
       usersJson.add(usr.toJson());
     }
@@ -87,6 +94,7 @@ class Entity {
 
   List<dynamic> employeesToJson(List<Employee> emps) {
     List<dynamic> usersJson = new List<dynamic>();
+    if (emps == null) return usersJson;
     for (Employee emp in emps) {
       usersJson.add(emp.toJson());
     }
@@ -95,6 +103,7 @@ class Entity {
 
   List<dynamic> metaEntitiesToJson(List<MetaEntity> metaEntities) {
     List<dynamic> usersJson = new List<dynamic>();
+    if (metaEntities == null) return usersJson;
     for (MetaEntity meta in metaEntities) {
       usersJson.add(meta.toJson());
     }
@@ -123,7 +132,9 @@ class Entity {
         endTimeHour: json['endTimeHour'],
         endTimeMinute: json['endTimeMinute'],
         parentId: json['parentId'],
-        type: json['type']);
+        type: json['type'],
+        isBookable: json['isBookable'],
+        isActive: json['isActive']);
   }
 
   static Address convertToAddressFromJson(Map<String, dynamic> json) {
@@ -141,7 +152,7 @@ class Entity {
   }
 
   static List<Employee> convertToEmployeesFromJson(List<dynamic> usersJson) {
-    List<User> users = new List<User>();
+    List<Employee> users = new List<Employee>();
 
     for (Map<String, dynamic> json in usersJson) {
       Employee emp = Employee.fromJson(json);
