@@ -8,6 +8,10 @@ class UserAccountPage extends StatefulWidget {
 class _UserAccountPageState extends State<UserAccountPage> {
   @override
   Widget build(BuildContext context) {
-    return Container(child: Text("Account Pgae"));
+    return Container(
+        child: RaisedButton(
+      child: Text("Back"),
+      onPressed: () => Navigator.of(context).pop(),
+    ));
   }
 }

@@ -176,6 +176,11 @@ final highlightTextStyle =
 
 final Color highlightColor = Colors.amber[600];
 final Color unselectedColor = Colors.blueGrey[700];
+final BoxDecoration indigoContainer = new BoxDecoration(
+    border: Border.all(color: Colors.blueGrey[500]),
+    shape: BoxShape.rectangle,
+    color: Colors.blueGrey[500],
+    borderRadius: BorderRadius.all(Radius.circular(4.0)));
 
 class CommonStyle {
   static InputDecoration textFieldStyle(

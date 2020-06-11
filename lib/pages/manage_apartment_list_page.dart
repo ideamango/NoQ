@@ -19,7 +19,7 @@ class _ManageApartmentsListPageState extends State<ManageApartmentsListPage> {
   String _msg;
   final GlobalKey<FormState> _formKey = new GlobalKey<FormState>();
   List<EntityAppData> entitiesList;
-  final String title = "Services Detail Form";
+  //final String title = "Services Detail Form";
 
   EntityAppData entity;
   String _entityType;
@@ -70,10 +70,10 @@ class _ManageApartmentsListPageState extends State<ManageApartmentsListPage> {
   @override
   Widget build(BuildContext context) {
     final BoxDecoration indigoContainer = new BoxDecoration(
-        border: Border.all(color: Colors.indigo),
+        border: Border.all(color: Colors.blueGrey[400]),
         shape: BoxShape.rectangle,
-        color: Colors.indigo,
-        borderRadius: BorderRadius.all(Radius.circular(5.0)));
+        color: Colors.blueGrey[500],
+        borderRadius: BorderRadius.all(Radius.circular(4.0)));
 
     final subEntityType = new FormField(
       builder: (FormFieldState state) {
@@ -115,35 +115,35 @@ class _ManageApartmentsListPageState extends State<ManageApartmentsListPage> {
         //   saveEntityDetails(entity);
       },
     );
-
+    String title = "Manage Entities";
     return MaterialApp(
       // title: 'Add child entities',
       theme: ThemeData.light().copyWith(),
       home: Scaffold(
+        appBar: AppBar(
+            actions: <Widget>[],
+            backgroundColor: Colors.teal,
+            leading: IconButton(
+                padding: EdgeInsets.all(0),
+                alignment: Alignment.center,
+                highlightColor: Colors.orange[300],
+                icon: Icon(Icons.arrow_back),
+                color: Colors.white,
+                onPressed: () {
+                  //saveEntityDetails(entity);
+                  Navigator.of(context).pop();
+                }),
+            title: Text(
+              title,
+              style: TextStyle(color: Colors.white, fontSize: 16),
+              overflow: TextOverflow.ellipsis,
+            )),
         body: Center(
           child: new Form(
             key: _formKey,
             autovalidate: true,
             child: Column(
               children: <Widget>[
-                // Container(
-                //   //width: MediaQuery.of(context).size.width,
-                //   child: Row(
-                //     children: <Widget>[
-                //       IconButton(
-                //         icon: Icon(Icons.arrow_back),
-                //         onPressed: () {
-                //           saveEntityDetails(entity);
-                //           Navigator.of(context).pop();
-                //         },
-                //       ),
-                //       Text(
-                //         'Apartment Amenities',
-                //       ),
-                //     ],
-                //   ),
-                // ),
-
                 Card(
                   elevation: 20,
                   child: Container(
@@ -194,68 +194,68 @@ class _ManageApartmentsListPageState extends State<ManageApartmentsListPage> {
                         //     ),
                         //   ),
                         // ),
-
-                        subEntityType,
+                        Container(
+                          height: MediaQuery.of(context).size.width * .1,
+                          padding: EdgeInsets.fromLTRB(6, 0, 0, 0),
+                          decoration: indigoContainer,
+                          child: Row(
+                            children: <Widget>[
+                              Icon(
+                                Icons.business,
+                                size: 35,
+                                color: Colors.white,
+                              ),
+                              SizedBox(width: 12),
+                              Text(
+                                "Add Entities to manage",
+                                style: TextStyle(
+                                    color: Colors.white, fontSize: 15),
+                              ),
+                            ],
+                          ),
+                        ),
+                        // subEntityType,
                         (_msg != null)
                             ? Text(
                                 _msg,
                                 style: errorTextStyle,
                               )
                             : Container(),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: <Widget>[
-                            //                           subEntityType,
-                            Container(
-                              padding: EdgeInsets.fromLTRB(0, 0, 5, 0),
-                              decoration: BoxDecoration(
-                                  borderRadius:
-                                      BorderRadius.all(Radius.circular(5.0))),
-                              //height: MediaQuery.of(context).size.width * .2,
-                              child: RaisedButton(
-                                color: Colors.amberAccent,
-                                elevation: 20,
-                                splashColor: Colors.orange,
-                                shape: RoundedRectangleBorder(
-                                    side: BorderSide(color: highlightColor)),
-                                onPressed: () {
-                                  if (_entityType != null) {
-                                    setState(() {
-                                      _msg = null;
-                                    });
-                                    if (_formKey.currentState.validate()) {
-                                      _formKey.currentState.save();
-                                      _addNewServiceRow();
-                                      //   _subEntityType = "Select";
-                                      // } else {
-                                      //   _msg = "Select service type";
-                                      // }
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(8.0, 0, 8, 0),
+                          child: Row(
+                            // mainAxisAlignment: MainAxisAlignment.end,
+                            children: <Widget>[
+                              Expanded(
+                                child: subEntityType,
+                              ),
+                              Container(
+                                child: IconButton(
+                                  icon: Icon(Icons.add_circle,
+                                      color: highlightColor, size: 40),
+                                  onPressed: () {
+                                    if (_entityType != null) {
+                                      setState(() {
+                                        _msg = null;
+                                      });
+                                      if (_formKey.currentState.validate()) {
+                                        _formKey.currentState.save();
+                                        _addNewServiceRow();
+                                        //   _subEntityType = "Select";
+                                        // } else {
+                                        //   _msg = "Select service type";
+                                        // }
+                                      }
+                                    } else {
+                                      setState(() {
+                                        _msg = "Select service type";
+                                      });
                                     }
-                                  } else {
-                                    setState(() {
-                                      _msg = "Select service type";
-                                    });
-                                  }
-                                },
-                                child: Container(
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.end,
-                                    children: <Widget>[
-                                      Text(
-                                        'Add Amenities',
-                                        style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 16,
-                                        ),
-                                      ),
-                                      Icon(Icons.add_circle,
-                                          size: 30, color: Colors.white),
-                                    ],
-                                  ),
+                                  },
                                 ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
                       ],
                     ),

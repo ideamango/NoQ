@@ -1,18 +1,9 @@
-import 'dart:io';
-import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:intl/intl.dart';
 import 'package:noq/constants.dart';
 import 'package:noq/models/localDB.dart';
 import 'package:noq/pages/service_entity.dart';
 import 'package:noq/repository/local_db_repository.dart';
-import 'package:noq/services/authService.dart';
-import 'package:noq/services/qr_code_generate.dart';
 import 'package:noq/style.dart';
-import 'package:noq/utils.dart';
-
-import 'package:path_provider/path_provider.dart';
 import 'package:flutter/foundation.dart';
 
 class EntityServicesListPage extends StatefulWidget {
@@ -62,17 +53,11 @@ class _EntityServicesListPageState extends State<EntityServicesListPage> {
 
   @override
   Widget build(BuildContext context) {
-    // List<Widget> _contatos = new List.generate(
-    //     _count,
-    //     (int i) => new ServiceRow(
-    //           childEntity: null,
-    //         ));
-
     final BoxDecoration indigoContainer = new BoxDecoration(
-        border: Border.all(color: Colors.indigo),
+        border: Border.all(color: Colors.blueGrey[400]),
         shape: BoxShape.rectangle,
-        color: Colors.indigo,
-        borderRadius: BorderRadius.all(Radius.circular(5.0)));
+        color: Colors.blueGrey[500],
+        borderRadius: BorderRadius.all(Radius.circular(4.0)));
 
     final subEntityType = new FormField(
       builder: (FormFieldState state) {
@@ -115,22 +100,29 @@ class _EntityServicesListPageState extends State<EntityServicesListPage> {
         //   saveEntityDetails(entity);
       },
     );
-
+    String title = "Manage Services in " + ((entity.name) ?? (entity.eType));
     return MaterialApp(
       title: 'Add child entities',
       //theme: ThemeData.light().copyWith(),
       home: Scaffold(
-        // appBar: AppBar(
-        //     title: Row(
-        //       children: <Widget>[
-        //         Text(
-        //           'Apartment Amenities',
-        //         ),
-        //       ],
-        //     ),
-        //     backgroundColor: Colors.teal,
-        //     //Theme.of(context).primaryColor,
-        //     actions: <Widget>[]),
+        appBar: AppBar(
+            actions: <Widget>[],
+            backgroundColor: Colors.teal,
+            leading: IconButton(
+                padding: EdgeInsets.all(0),
+                alignment: Alignment.center,
+                highlightColor: Colors.orange[300],
+                icon: Icon(Icons.arrow_back),
+                color: Colors.white,
+                onPressed: () {
+                  saveEntityDetails(entity);
+                  Navigator.of(context).pop();
+                }),
+            title: Text(
+              title,
+              style: TextStyle(color: Colors.white, fontSize: 16),
+              overflow: TextOverflow.ellipsis,
+            )),
         body: Center(
           child: new Form(
             key: _formKey,
@@ -139,18 +131,6 @@ class _EntityServicesListPageState extends State<EntityServicesListPage> {
               padding: const EdgeInsets.all(5.0),
               child: Column(
                 children: <Widget>[
-                  Row(
-                    children: <Widget>[
-                      IconButton(
-                        icon: Icon(Icons.arrow_back,
-                            color: Colors.teal, size: 40),
-                        onPressed: () {
-                          saveEntityDetails(entity);
-                          Navigator.of(context).pop();
-                        },
-                      ),
-                    ],
-                  ),
                   Card(
                     elevation: 20,
                     child: Container(
@@ -159,126 +139,83 @@ class _EntityServicesListPageState extends State<EntityServicesListPage> {
                           color: Colors.white,
                           shape: BoxShape.rectangle,
                           borderRadius: BorderRadius.all(Radius.circular(5.0))),
-                      // padding: EdgeInsets.all(5.0),
-
                       child: Column(
                         children: <Widget>[
                           Container(
-                            height: MediaQuery.of(context).size.width * .13,
+                            height: MediaQuery.of(context).size.width * .1,
+                            padding: EdgeInsets.fromLTRB(6, 0, 0, 0),
                             decoration: indigoContainer,
-                            child: ListTile(
-                              //key: PageStorageKey(this.widget.headerTitle),
-                              leading: Padding(
-                                padding:
-                                    const EdgeInsets.fromLTRB(0, 0, 0, 10.0),
-                                child: Icon(
-                                  Icons.home,
+                            child: Row(
+                              children: <Widget>[
+                                Icon(
+                                  Icons.business,
                                   size: 35,
                                   color: Colors.white,
                                 ),
-                              ),
-                              title: Row(
-                                children: <Widget>[
-                                  Column(
-                                    children: <Widget>[
-                                      Text(
-                                        //entity.name
-                                        "My Home Vihanga",
-                                        style: TextStyle(
-                                            color: Colors.white, fontSize: 15),
-                                      ),
-                                      Text(
-                                        // entity.adrs.locality +
-                                        //     ", " +
-                                        //     entity.adrs.city +
-                                        //     "."
-                                        "Gachibowli, Hyderabad",
-                                        style: buttonXSmlTextStyle,
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              ),
+                                SizedBox(width: 12),
+                                Column(
+                                  children: <Widget>[
+                                    Text(
+                                      (entity.name) ?? (entity.eType),
+                                      style: TextStyle(
+                                          color: Colors.white, fontSize: 15),
+                                    ),
+                                    Text(
+                                      (entity.adrs.locality +
+                                              ", " +
+                                              entity.adrs.city +
+                                              ".") ??
+                                          "",
+                                      style: buttonXSmlTextStyle,
+                                    ),
+                                  ],
+                                ),
+                              ],
                             ),
                           ),
-                          subEntityType,
+                          //subEntityType,
                           (_msg != null)
                               ? Text(
                                   _msg,
                                   style: errorTextStyle,
                                 )
                               : Container(),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            children: <Widget>[
-                              //                           subEntityType,
-                              Container(
-                                padding: EdgeInsets.fromLTRB(0, 0, 5, 0),
-                                decoration: BoxDecoration(
-                                    borderRadius:
-                                        BorderRadius.all(Radius.circular(5.0))),
-                                //height: MediaQuery.of(context).size.width * .2,
-                                child: RaisedButton(
-                                  color: Colors.amberAccent,
-                                  elevation: 20,
-                                  splashColor: Colors.orange,
-                                  shape: RoundedRectangleBorder(
-                                      side: BorderSide(color: highlightColor)),
-                                  onPressed: () {
-                                    if (_subEntityType != null) {
-                                      setState(() {
-                                        _msg = null;
-                                      });
-                                      if (_formKey.currentState.validate()) {
-                                        _formKey.currentState.save();
-                                        _addNewServiceRow();
-                                        //   _subEntityType = "Select";
-                                        // } else {
-                                        //   _msg = "Select service type";
-                                        // }
+                          Padding(
+                            padding: const EdgeInsets.fromLTRB(8.0, 0, 8, 0),
+                            child: Row(
+                              // mainAxisAlignment: MainAxisAlignment.end,
+                              children: <Widget>[
+                                Expanded(
+                                  child: subEntityType,
+                                ),
+                                Container(
+                                  child: IconButton(
+                                    icon: Icon(Icons.add_circle,
+                                        color: highlightColor, size: 40),
+                                    onPressed: () {
+                                      if (_subEntityType != null) {
+                                        setState(() {
+                                          _msg = null;
+                                        });
+                                        if (_formKey.currentState.validate()) {
+                                          _formKey.currentState.save();
+                                          _addNewServiceRow();
+                                        }
+                                      } else {
+                                        setState(() {
+                                          _msg = "Select service type";
+                                        });
                                       }
-                                    } else {
-                                      setState(() {
-                                        _msg = "Select service type";
-                                      });
-                                    }
-                                  },
-                                  child: Container(
-                                    child: Row(
-                                      mainAxisAlignment: MainAxisAlignment.end,
-                                      children: <Widget>[
-                                        Text(
-                                          'Add Amenities',
-                                          style: TextStyle(
-                                            color: Colors.white,
-                                            fontSize: 16,
-                                          ),
-                                        ),
-                                        Icon(Icons.add_circle,
-                                            size: 30, color: Colors.white),
-                                      ],
-                                    ),
+                                    },
                                   ),
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
                         ],
                       ),
                     ),
                   ),
-
-                  // new Expanded(
-                  //   child: new ListView.builder(
-                  //     itemBuilder: (BuildContext context, int index) {
-                  //       return Container(
-                  //         child: new Column(children: _contatos),
-                  //         //children: <Widget>[firstRow, secondRow],
-                  //       );
-                  //     },
-                  //     itemCount: 1,
-                  //   ),
-                  // ),
                   new Expanded(
                     child: ListView.builder(
                       shrinkWrap: true,
@@ -288,16 +225,11 @@ class _EntityServicesListPageState extends State<EntityServicesListPage> {
                           child: new Column(
                               children:
                                   servicesList.map(_buildServiceItem).toList()),
-                          //children: <Widget>[firstRow, secondRow],
                         );
                       },
                       itemCount: 1,
                     ),
                   ),
-
-                  // new Column(
-                  //   children: _contatos,
-                  // ),
                 ],
               ),
             ),

@@ -33,15 +33,15 @@ class _CustomAppBarState extends State<CustomAppBar> {
             color: Colors.white,
             onPressed: _logout)
       ],
-      leading: Builder(
-        builder: (BuildContext context) {
-          return IconButton(
-            color: Colors.white,
-            icon: Icon(Icons.more_vert),
-            onPressed: () => Scaffold.of(context).openDrawer(),
-          );
-        },
-      ),
+      // leading: Builder(
+      //   builder: (BuildContext context) {
+      //     return IconButton(
+      //       color: Colors.white,
+      //       icon: Icon(Icons.more_vert),
+      //       onPressed: () => Scaffold.of(context).openDrawer(),
+      //     );
+      //   },
+      // ),
     );
   }
 }

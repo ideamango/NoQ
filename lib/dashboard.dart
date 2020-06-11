@@ -4,7 +4,13 @@ import 'package:noq/db/db_service/db_main.dart';
 import 'package:noq/db/db_service/token_service.dart';
 import 'package:noq/pages/SearchStoresPage.dart';
 import 'package:noq/pages/allPagesWidgets.dart';
+import 'package:noq/pages/help_page.dart';
+import 'package:noq/pages/manage_apartment_list_page.dart';
 import 'package:noq/pages/manage_apartment_page.dart';
+import 'package:noq/pages/notifications_page.dart';
+import 'package:noq/pages/rate_app.dart';
+import 'package:noq/pages/share_app_page.dart';
+import 'package:noq/pages/userAccountPage.dart';
 import 'package:noq/services/authService.dart';
 import 'package:noq/widget/appbar.dart';
 
@@ -32,27 +38,44 @@ class _LandingPageState extends State<LandingPage> {
     {
       "icon": Icons.account_circle,
       "name": "My Account",
+      "pageRoute": UserAccountPage(),
     },
 
-    {"icon": Icons.home, "name": "Manage Apartment"},
-    {"icon": Icons.store, "name": "Manage Commercial Space"},
-    {"icon": Icons.business, "name": "Manage Office"},
+    {
+      "icon": Icons.home,
+      "name": "Manage Apartment",
+      "pageRoute": ManageApartmentsListPage(),
+    },
+    {
+      "icon": Icons.store,
+      "name": "Manage Commercial Space",
+      "pageRoute": ManageApartmentsListPage(),
+    },
+    {
+      "icon": Icons.business,
+      "name": "Manage Office",
+      "pageRoute": ManageApartmentsListPage(),
+    },
 
     {
       "icon": Icons.notifications,
       "name": "Notifications",
+      "pageRoute": UserNotificationsPage(),
     },
     {
       "icon": Icons.grade,
       "name": "Rate our app",
+      "pageRoute": RateAppPage(),
     },
     {
       "icon": Icons.help_outline,
       "name": "Need Help?",
+      "pageRoute": HelpPage(),
     },
     {
       "icon": Icons.share,
       "name": "Share our app",
+      "pageRoute": ShareAppPage(),
     },
     // {
     //   "icon": Icons.exit_to_app,
@@ -154,45 +177,9 @@ class _LandingPageState extends State<LandingPage> {
   void initState() {
     super.initState();
 
-    _pageController = PageController(initialPage: 8);
+    _pageController = PageController(initialPage: 0);
     _initializeUserProfile();
   }
-
-  // void _prepareDateList() {
-  //   _dateList.clear();
-  //   _dateList.add(dateTime);
-  //   DateTime dt = DateTime.now();
-  //   for (int i = 1; i <= 4; i++) {
-  //     print(i);
-  //     _dateList.add(dt.add(Duration(days: i)));
-  //     print('dateLIst is $_dateList');
-  //   }
-  // }
-
-  // void updateFavStores(StoreAppData strData) {
-  //   UserAppData user = _userProfile as UserAppData;
-  //   for (StoreAppData store in user.favStores) {
-  //     if (store.id == strData.id) {
-  //       user.favStores.remove(store);
-  //     } else {
-  //       user.favStores.add(store);
-  //     }
-  //   }
-
-  //   writeData(user);
-  // }
-
-  // void toggleFavorite(StoreAppData strData) {
-  //   setState(() {
-  //     strData.isFavourite = !strData.isFavourite;
-  //     if (strData.isFavourite == true) {
-  //       (_userProfile as UserAppData).favStores.add(strData);
-  //     } else {
-  //       (_userProfile as UserAppData).favStores.remove(strData);
-  //     }
-  //     writeData(_userProfile);
-  //   });
-  // }
 
   @override
   void dispose() {
@@ -235,14 +222,14 @@ class _LandingPageState extends State<LandingPage> {
             controller: _pageController,
             onPageChanged: onPageChanged,
             children: <Widget>[
-              _userAccount(),
-              _manageApartmentPage(),
-              _manageCommSpacePage(),
-              _manageOffSpacePage(),
-              _userNotifications(),
-              _rateApp(),
-              _needHelp(),
-              _shareApp(),
+              // _userAccount(),
+              // _manageApartmentPage(),
+              // _manageCommSpacePage(),
+              // _manageOffSpacePage(),
+              // _userNotifications(),
+              // _rateApp(),
+              // _needHelp(),
+              // _shareApp(),
               _userHomePage(),
               //_storesListPage(),
               SearchStoresPage(forPage: 'Search'),
@@ -335,7 +322,9 @@ class _LandingPageState extends State<LandingPage> {
                                 ),
                               ),
                               onTap: () {
-                                _pageController.jumpToPage(pageIndex);
+                                //_pageController.jumpToPage(pageIndex);
+                                Navigator.pushReplacementNamed(
+                                    context, subItem['pageRoute']);
                                 Navigator.pop(context);
                               },
                             );
@@ -360,8 +349,12 @@ class _LandingPageState extends State<LandingPage> {
                         ),
                       ),
                       onTap: () {
-                        _pageController.jumpToPage(index);
+                        //   _pageController.jumpToPage(index);
                         Navigator.pop(context);
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => item['pageRoute']));
                       },
                     );
                   }
@@ -410,7 +403,7 @@ class _LandingPageState extends State<LandingPage> {
 
   void _onBottomBarItemTapped(int index) {
     setState(() {
-      _pageIndex = (drawerItems.length) + index;
+      _pageIndex = index;
       _botBarIndex = index;
     });
     _pageController.animateToPage(
@@ -433,10 +426,6 @@ class _LandingPageState extends State<LandingPage> {
   // Widget _userFavStores() {
   //   return userFavStoresPage(context, _userProfile);
   // }
-
-  Widget _userNotifications() {
-    return userNotifications(context);
-  }
 
   Widget _manageApartmentPage() {
     return manageApartmentPages(context);

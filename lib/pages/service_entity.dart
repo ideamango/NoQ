@@ -54,6 +54,7 @@ class ServiceRowState extends State<ServiceRow> {
         // padding: EdgeInsets.all(5.0),
 
         child: ListTile(
+          isThreeLine: false,
           title: Column(
             children: <Widget>[
               Text(

@@ -7,7 +7,6 @@ import 'package:noq/pages/showSlotsPage.dart';
 import 'package:noq/pages/userAccountPage.dart';
 import 'package:noq/pages/userBookingPage.dart';
 
-import 'package:noq/pages/userNotificationsPage.dart';
 import 'package:noq/services/authService.dart';
 import 'package:noq/style.dart';
 import 'package:noq/userHomePage.dart';
@@ -26,10 +25,6 @@ Widget userHomePage(BuildContext context) {
 
 Widget userBookingPage(BuildContext context, UserAppData userProfile) {
   return UserBookingPage();
-}
-
-Widget userNotifications(BuildContext context) {
-  return UserNotificationsPage();
 }
 
 Widget rateAppPage(BuildContext context) {
