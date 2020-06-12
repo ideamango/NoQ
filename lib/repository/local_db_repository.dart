@@ -78,6 +78,40 @@ void saveEntityDetails(EntityAppData str) async {
   });
 }
 
+void deleteEntityFromDb(EntityAppData str) async {
+  bool entityExists = false;
+  final file = await localFile;
+  UserAppData _userProfile;
+
+//Read current data in file
+  await readData().then((fUser) {
+    _userProfile = fUser;
+    if (Utils.isNullOrEmpty(_userProfile.managedEntities)) {
+      _userProfile.managedEntities = new List<EntityAppData>();
+    }
+//if exists then update else add
+
+    _userProfile.managedEntities.forEach((element) {
+      if (element.id == str.id) {
+        entityExists = true;
+        element = str;
+      }
+    });
+    if (entityExists == false)
+// Add new data and save
+      _userProfile.managedEntities.add(str);
+
+    //Update on server
+    //EntityService().upsertEntity(str);
+
+// TOICOC _userProfile. = str;
+
+    String fileData = generateJson(_userProfile);
+    //print('Writing in file $file , data: $fileData');
+    file.writeAsString("$fileData");
+  });
+}
+
 saveChildEntity(ChildEntityAppData serviceEntity) async {
   final file = await localFile;
   String entityId = serviceEntity.entityId;

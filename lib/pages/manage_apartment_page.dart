@@ -233,6 +233,10 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
     saveEntityDetails(entity);
   }
 
+  deleteEntity() {
+    deleteEntityFromDb(entity);
+  }
+
   @override
   Widget build(BuildContext context) {
     //Basic details field
@@ -876,6 +880,22 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
         ],
       ),
     );
+    TextEditingController _txtController = new TextEditingController();
+    bool _delEnabled = false;
+    saveRoute() {
+      _formKey.currentState.save();
+      saveDetails();
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) =>
+                  EntityServicesListPage(entity: this.entity)));
+    }
+
+    processSaveWithTimer() async {
+      var duration = new Duration(seconds: 1);
+      return new Timer(duration, saveRoute);
+    }
 
     return MaterialApp(
       // title: 'Add child entities',
@@ -1184,48 +1204,254 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
                       ],
                     ),
                   ),
-                  Container(
-                    padding: EdgeInsets.all(8),
-                    alignment: Alignment.center,
-                    // decoration: BoxDecoration(
-                    //     borderRadius: BorderRadius.all(Radius.circular(5.0))),
-                    //height: MediaQuery.of(context).size.width * .2,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        RaisedButton(
-                          color: lightIcon,
-                          splashColor: highlightColor,
-                          onPressed: () {
-                            // if (_formKey.currentState.validate()) {
-                            _formKey.currentState.save();
-                            saveDetails();
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) =>
-                                        EntityServicesListPage(
-                                            entity: this.entity)));
-                            // }
-                          },
-                          child: Container(
-                            width: MediaQuery.of(context).size.width * .8,
-                            child: Column(
-                              children: <Widget>[
-                                Text(
-                                  'Save & Add Amenities',
-                                  style: buttonMedTextStyle,
-                                ),
-                                Text(
-                                  'Details of amenities/services',
-                                  style: buttonXSmlTextStyle,
-                                ),
-                              ],
-                            ),
+                  Builder(
+                    builder: (context) => RaisedButton(
+                        color: Colors.blueGrey[400],
+                        splashColor: highlightColor,
+                        child: Container(
+                          //width: MediaQuery.of(context).size.width * .35,
+                          child: Column(
+                            children: <Widget>[
+                              Text(
+                                'Delete',
+                                style: buttonMedTextStyle,
+                              ),
+                              Text(
+                                'Delete this entity and all its amenities/services',
+                                style: buttonXSmlTextStyle,
+                              ),
+                            ],
                           ),
                         ),
-                      ],
-                    ),
+                        onPressed: () {
+                          showDialog(
+                              context: context,
+                              barrierDismissible: true,
+                              builder: (BuildContext context) {
+                                return StatefulBuilder(
+                                    builder: (context, setState) {
+                                  return new AlertDialog(
+                                    title: RichText(
+                                      text: TextSpan(
+                                          style: lightSubTextStyle,
+                                          children: <TextSpan>[
+                                            TextSpan(text: "Enter "),
+                                            TextSpan(
+                                                text: "DELETE ",
+                                                style: errorTextStyle),
+                                            TextSpan(
+                                                text:
+                                                    "to remove this entity from your managed ones."),
+                                          ]),
+                                    ),
+                                    backgroundColor: Colors.grey[200],
+                                    // titleTextStyle: inputTextStyle,
+                                    elevation: 10.0,
+                                    content: new Row(
+                                      children: <Widget>[
+                                        new Expanded(
+                                          child: new TextField(
+                                            style: inputTextStyle,
+                                            controller: _txtController,
+                                            onChanged: (value) {
+                                              if (value == "DELETE")
+                                                setState(() {
+                                                  _delEnabled = true;
+                                                });
+                                            },
+                                            autofocus: true,
+                                            decoration: new InputDecoration(
+                                                hintText: 'eg. DELETE'),
+                                          ),
+                                        )
+                                      ],
+                                    ),
+                                    // content: Container(
+                                    //   height: 50,
+                                    //   child: Column(
+                                    //     mainAxisSize: MainAxisSize.max,
+                                    //     children: <Widget>[
+                                    //       Container(
+                                    //         //color: Colors.black,
+                                    //         //margin: EdgeInsets.all(5),
+                                    //         // padding: EdgeInsets.all(0),
+                                    //         child: Row(
+                                    //           children: <Widget>[
+                                    //             TextField(
+                                    //               controller: _txtController,
+                                    //               onChanged: (value) {
+                                    //                 if (value == "DELETE")
+                                    //                   setState(() {
+                                    //                     _delEnabled = true;
+                                    //                   });
+                                    //               },
+                                    //             ),
+                                    //             RaisedButton(
+                                    //               color: (_delEnabled)
+                                    //                   ? lightIcon
+                                    //                   : Colors.blueGrey[400],
+                                    //               disabledColor:
+                                    //                   Colors.blueGrey[200],
+                                    //               disabledElevation: 0,
+                                    //               elevation: 15,
+                                    //               onPressed: () {
+                                    //                 deleteEntity();
+                                    //               },
+                                    //               splashColor: highlightColor,
+                                    //               child: Text("Delete",
+                                    //                   style: TextStyle(
+                                    //                       color: Colors.white)),
+                                    //             ),
+                                    //           ],
+                                    //         ),
+                                    //       ),
+                                    //       // SizedBox(height: 10),
+                                    //       //Divider(),
+                                    //     ],
+                                    //   ),
+                                    // ),
+
+                                    contentPadding: EdgeInsets.all(10),
+                                    actions: <Widget>[
+                                      RaisedButton(
+                                        color: (_delEnabled)
+                                            ? lightIcon
+                                            : Colors.blueGrey[400],
+                                        elevation: (_delEnabled) ? 15 : 0,
+                                        onPressed: () {
+                                          deleteEntity();
+                                          Navigator.pop(context);
+                                        },
+                                        splashColor: highlightColor,
+                                        child: Text("Delete",
+                                            style:
+                                                TextStyle(color: Colors.white)),
+                                      ),
+                                      // (_errorMessage != null
+                                      //     ? Text(
+                                      //         _errorMessage,
+                                      //         style: TextStyle(color: Colors.red),
+                                      //       )
+                                      //     : Container()),
+                                    ],
+                                  );
+                                });
+                              });
+                          // final snackBar1 = SnackBar(
+                          //   shape: Border.all(
+                          //     color: tealIcon,
+                          //     width: 2,
+                          //   ),
+                          //   // action: SnackBarAction(
+                          //   //   label: 'Delete!',
+                          //   //   onPressed: () {
+                          //   //     deleteEntity();
+                          //   //   },
+                          //   // ),
+                          //   backgroundColor: Colors.grey[200],
+                          //   content: Container(
+                          //     height: MediaQuery.of(context).size.width * .25,
+                          //     child: Column(
+                          //       children: <Widget>[
+                          //         RichText(
+                          //           text: TextSpan(
+                          //               style: lightSubTextStyle,
+                          //               children: <TextSpan>[
+                          //                 TextSpan(text: "Enter "),
+                          //                 TextSpan(
+                          //                     text: "DELETE ",
+                          //                     style: homeMsgStyle3),
+                          //                 TextSpan(
+                          //                     text:
+                          //                         "to remove this entity from your managed ones."),
+                          //               ]),
+                          //         ),
+                          //         Row(
+                          //           children: <Widget>[
+                          //             // TextField(
+                          //             //   //   controller: _txtController,
+                          //             //   onChanged: (value) {
+                          //             //     if (value == "DELETE")
+                          //             //       _delEnabled = true;
+                          //             //   },
+                          //             // ),
+                          //             RaisedButton(
+                          //               color: (_delEnabled)
+                          //                   ? lightIcon
+                          //                   : Colors.blueGrey[400],
+                          //               disabledColor: Colors.blueGrey[200],
+                          //               disabledElevation: 0,
+                          //               elevation: 15,
+                          //               onPressed: () {
+                          //                 deleteEntity();
+                          //               },
+                          //               splashColor: highlightColor,
+                          //               child: Text("Delete",
+                          //                   style:
+                          //                       TextStyle(color: Colors.white)),
+                          //             ),
+                          //           ],
+                          //         )
+                          //       ],
+                          //     ),
+                          //   ),
+                          //   //duration: Duration(seconds: 3),
+                          // );
+                          // Scaffold.of(context).showSnackBar(snackBar1);
+                        }),
+                  ),
+                  Builder(
+                    builder: (context) => RaisedButton(
+                        color: lightIcon,
+                        splashColor: highlightColor,
+                        child: Container(
+                          // width: MediaQuery.of(context).size.width * .35,
+                          child: Column(
+                            children: <Widget>[
+                              Text(
+                                'Save',
+                                style: buttonMedTextStyle,
+                              ),
+                              Text(
+                                'Details of amenities/services',
+                                style: buttonXSmlTextStyle,
+                              ),
+                            ],
+                          ),
+                        ),
+                        onPressed: () {
+                          final snackBar = SnackBar(
+                            // shape: Border.all(
+                            //   color: tealIcon,
+                            //   width: 2,
+                            // ),
+                            backgroundColor:
+                                Colors.blueGrey[500].withOpacity(.95),
+                            content: Container(
+                              alignment: Alignment.center,
+                              height: MediaQuery.of(context).size.width * .25,
+                              child: Text("Saving details ... ",
+                                  style: buttonTextStyle),
+                              // Column(
+                              //   children: <Widget>[
+                              //     RichText(
+                              //       text: TextSpan(
+                              //           style: highlightBoldTextStyle,
+                              //           children: <TextSpan>[
+                              //             TextSpan(
+                              //               text: "Saving details ... ",
+                              //             ),
+                              //           ]),
+                              //     ),
+                              //   ],
+                              // ),
+                            ),
+                            duration: Duration(seconds: 1),
+                          );
+
+                          Scaffold.of(context).showSnackBar(snackBar);
+                          processSaveWithTimer();
+                        }),
                   ),
                 ],
               ),
