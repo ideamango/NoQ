@@ -163,7 +163,7 @@ class ContactAppData {
   String empId;
   String perPhone1;
   String perPhone2;
-  Role role;
+  String role;
   String avlFromTime;
   String avlTillTime;
   List<String> daysOff;

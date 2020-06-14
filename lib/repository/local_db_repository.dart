@@ -45,32 +45,27 @@ Future<UserAppData> readData() async {
 }
 
 void saveEntityDetails(EntityAppData str) async {
-  bool entityExists = false;
   final file = await localFile;
   UserAppData _userProfile;
 
 //Read current data in file
   await readData().then((fUser) {
     _userProfile = fUser;
-    if (Utils.isNullOrEmpty(_userProfile.managedEntities)) {
-      _userProfile.managedEntities = new List<EntityAppData>();
-    }
+    if (!Utils.isNullOrEmpty(_userProfile.managedEntities)) {
 //if exists then update else add
 
-    _userProfile.managedEntities.forEach((element) {
-      if (element.id == str.id) {
-        entityExists = true;
-        element = str;
-      }
-    });
-    if (entityExists == false)
-// Add new data and save
+      _userProfile.managedEntities.forEach((element) {
+        if (element.id == str.id) {
+          element = str;
+        }
+      });
+    } else {
+      _userProfile.managedEntities = new List<EntityAppData>();
       _userProfile.managedEntities.add(str);
+    }
 
-    //Update on server
+    //TODO: Update on server
     //EntityService().upsertEntity(str);
-
-// TOICOC _userProfile. = str;
 
     String fileData = generateJson(_userProfile);
     //print('Writing in file $file , data: $fileData');
@@ -78,61 +73,96 @@ void saveEntityDetails(EntityAppData str) async {
   });
 }
 
-void deleteEntityFromDb(EntityAppData str) async {
-  bool entityExists = false;
+void deleteServiceFromDb(ChildEntityAppData str) async {
   final file = await localFile;
   UserAppData _userProfile;
 
 //Read current data in file
   await readData().then((fUser) {
     _userProfile = fUser;
-    if (Utils.isNullOrEmpty(_userProfile.managedEntities)) {
-      _userProfile.managedEntities = new List<EntityAppData>();
-    }
+    if (!Utils.isNullOrEmpty(_userProfile.managedEntities)) {
+//if exists then delete
+
+      _userProfile.managedEntities.forEach((managedEntity) {
+        if (managedEntity.id == str.entityId) {
+          if (!Utils.isNullOrEmpty(managedEntity.childCollection)) {
 //if exists then update else add
 
-    _userProfile.managedEntities.forEach((element) {
-      if (element.id == str.id) {
-        entityExists = true;
-        element = str;
-      }
-    });
-    if (entityExists == false)
-// Add new data and save
-      _userProfile.managedEntities.add(str);
+            managedEntity.childCollection.forEach((element) {
+              if (element.id == str.id) {
+                managedEntity.childCollection.remove(element);
+              }
+            });
+          }
+        }
+      });
+//Update info in local DB
+      String fileData = generateJson(_userProfile);
+      //print('Writing in file $file , data: $fileData');
+      file.writeAsString("$fileData");
 
-    //Update on server
-    //EntityService().upsertEntity(str);
+      //TODO: Update on server
+      //EntityService().upsertEntity(str);
+    }
+  });
+}
 
-// TOICOC _userProfile. = str;
+void deleteEntityFromDb(EntityAppData str) async {
+  final file = await localFile;
+  UserAppData _userProfile;
 
-    String fileData = generateJson(_userProfile);
-    //print('Writing in file $file , data: $fileData');
-    file.writeAsString("$fileData");
+//Read current data in file
+  await readData().then((fUser) {
+    _userProfile = fUser;
+    if (!Utils.isNullOrEmpty(_userProfile.managedEntities)) {
+//if exists then delete
+
+      _userProfile.managedEntities.forEach((element) {
+        if (element.id == str.id) {
+          _userProfile.managedEntities.remove(element);
+        }
+      });
+//Update info in local DB
+      String fileData = generateJson(_userProfile);
+      //print('Writing in file $file , data: $fileData');
+      file.writeAsString("$fileData");
+
+      //TODO: Update on server
+      //EntityService().upsertEntity(str);
+    }
   });
 }
 
 saveChildEntity(ChildEntityAppData serviceEntity) async {
   final file = await localFile;
+  bool serviceExists;
   String entityId = serviceEntity.entityId;
 //Read current data in file
   await readData().then((fUser) {
-    if (Utils.isNullOrEmpty(fUser.managedEntities)) {
+    if (!Utils.isNullOrEmpty(fUser.managedEntities)) {
       for (var entity in fUser.managedEntities) {
         if (entity.id == entityId) {
-          for (var child in entity.childCollection) {
-            if (child.id == serviceEntity.id) {
-              child = serviceEntity;
+          if (!Utils.isNullOrEmpty(entity.childCollection)) {
+//if exists then update else add
 
-              String fileData = generateJson(fUser);
-              //print('Writing in file $file , data: $fileData');
-              file.writeAsString("$fileData");
-            }
+            entity.childCollection.forEach((element) {
+              if (element.id == serviceEntity.id) {
+                element = serviceEntity;
+              }
+            });
+          } else {
+            entity.childCollection = new List<ChildEntityAppData>();
+            entity.childCollection.add(serviceEntity);
           }
+          String fileData = generateJson(fUser);
+          //print('Writing in file $file , data: $fileData');
+          file.writeAsString("$fileData");
+
+          //TODO: Update on server
+          //EntityService().upsertEntity(str);
         }
       }
     }
-    return null;
   });
 }
 

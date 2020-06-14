@@ -151,7 +151,7 @@ ContactAppData _$ContactAppDataFromJson(Map<String, dynamic> json) {
     ..empId = json['empId'] as String
     ..perPhone1 = json['perPhone1'] as String
     ..perPhone2 = json['perPhone2'] as String
-    ..role = _$enumDecodeNullable(_$RoleEnumMap, json['role'])
+    ..role = json['role'] as String
     ..avlFromTime = json['avlFromTime'] as String
     ..avlTillTime = json['avlTillTime'] as String
     ..daysOff = (json['daysOff'] as List)?.map((e) => e as String)?.toList();
@@ -163,50 +163,11 @@ Map<String, dynamic> _$ContactAppDataToJson(ContactAppData instance) =>
       'empId': instance.empId,
       'perPhone1': instance.perPhone1,
       'perPhone2': instance.perPhone2,
-      'role': _$RoleEnumMap[instance.role],
+      'role': instance.role,
       'avlFromTime': instance.avlFromTime,
       'avlTillTime': instance.avlTillTime,
       'daysOff': instance.daysOff,
     };
-
-T _$enumDecode<T>(
-  Map<T, dynamic> enumValues,
-  dynamic source, {
-  T unknownValue,
-}) {
-  if (source == null) {
-    throw ArgumentError('A value must be provided. Supported values: '
-        '${enumValues.values.join(', ')}');
-  }
-
-  final value = enumValues.entries
-      .singleWhere((e) => e.value == source, orElse: () => null)
-      ?.key;
-
-  if (value == null && unknownValue == null) {
-    throw ArgumentError('`$source` is not one of the supported values: '
-        '${enumValues.values.join(', ')}');
-  }
-  return value ?? unknownValue;
-}
-
-T _$enumDecodeNullable<T>(
-  Map<T, dynamic> enumValues,
-  dynamic source, {
-  T unknownValue,
-}) {
-  if (source == null) {
-    return null;
-  }
-  return _$enumDecode<T>(enumValues, source, unknownValue: unknownValue);
-}
-
-const _$RoleEnumMap = {
-  Role.Manager: 'Manager',
-  Role.Admin: 'Admin',
-  Role.ContactPerson: 'ContactPerson',
-  Role.Employee: 'Employee',
-};
 
 BookingAppData _$BookingAppDataFromJson(Map<String, dynamic> json) {
   return BookingAppData(

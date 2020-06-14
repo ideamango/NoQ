@@ -205,8 +205,8 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
 
   Future<List> getList() async {
     List<ContactAppData> contactList = new List<ContactAppData>();
-    ContactAppData cp = new ContactAppData.values(
-        'a', 'b', 'c', 'd', Role.Employee, 'f', 'g', []);
+    ContactAppData cp =
+        new ContactAppData.values('a', 'b', 'c', 'd', "Manager", 'f', 'g', []);
     // ContactPerson cp4 =
     //     new ContactPerson.values('a', 'b', 'c', 'd', 'e', 'f', 'g');
     // contactList.add(cp1);
@@ -224,6 +224,10 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
 
     print(placemark);
     //saveEntityDetails(childEntity);
+  }
+
+  deleteEntity() {
+    deleteServiceFromDb(serviceEntity);
   }
 
   @override
@@ -811,6 +815,23 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
       print("saving locally");
     }
 
+    TextEditingController _txtController = new TextEditingController();
+    bool _delEnabled = false;
+    saveRoute() {
+      _form2Key.currentState.save();
+      saveDetails();
+      // Navigator.push(
+      //     context,
+      //     MaterialPageRoute(
+      //         builder: (context) =>
+      //             EntityServicesListPage(entity: this.entity)));
+    }
+
+    processSaveWithTimer() async {
+      var duration = new Duration(seconds: 1);
+      return new Timer(duration, saveRoute);
+    }
+
     String title = serviceEntity.cType;
     return MaterialApp(
       title: 'Add child entities',
@@ -889,8 +910,7 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
                                       decoration: indigoContainer,
                                       padding: EdgeInsets.all(2.0),
                                       child: Expanded(
-                                        child: Text(
-                                            'These are important details of the establishment, Same will be shown to customer while search.',
+                                        child: Text(basicInfoStr,
                                             style: buttonXSmlTextStyle),
                                       ),
                                     ),
@@ -963,8 +983,7 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
                                       decoration: indigoContainer,
                                       padding: EdgeInsets.all(2.0),
                                       child: Expanded(
-                                        child: Text(
-                                            'The address is using the current location, and same will be used by customers when searching your location.',
+                                        child: Text(addressInfoStr,
                                             style: buttonXSmlTextStyle),
                                       ),
                                     ),
@@ -1048,8 +1067,7 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
                                       decoration: indigoContainer,
                                       padding: EdgeInsets.all(2.0),
                                       child: Expanded(
-                                        child: Text(
-                                            'The perosn who can be contacted for any queries regarding your services.',
+                                        child: Text(contactInfoStr,
                                             style: buttonXSmlTextStyle),
                                       ),
                                     ),
@@ -1111,48 +1129,255 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
                       ],
                     ),
                   ),
-                  Container(
-                    padding: EdgeInsets.all(8),
-                    alignment: Alignment.center,
-                    // decoration: BoxDecoration(
-                    //     borderRadius: BorderRadius.all(Radius.circular(5.0))),
-                    //height: MediaQuery.of(context).size.width * .2,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        RaisedButton(
-                          color: lightIcon,
-                          splashColor: highlightColor,
-                          onPressed: () {
-                            // if (_formKey.currentState.validate()) {
-                            _form2Key.currentState.save();
-                            //  saveDetails();
-                            // Navigator.push(
-                            //     context,
-                            //     MaterialPageRoute(
-                            //         builder: (context) =>
-                            //             ChildEntityDetailsPage(
-                            //                 entity: this.entity)));
-                            // }
-                          },
-                          child: Container(
-                            width: MediaQuery.of(context).size.width * .8,
-                            child: Column(
-                              children: <Widget>[
-                                Text(
-                                  'Add Amenities',
-                                  style: buttonMedTextStyle,
-                                ),
-                                Text(
-                                  'Details of amenities/services',
-                                  style: buttonXSmlTextStyle,
-                                ),
-                              ],
-                            ),
+                  Builder(
+                    builder: (context) => RaisedButton(
+                        color: lightIcon,
+                        splashColor: highlightColor,
+                        child: Container(
+                          // width: MediaQuery.of(context).size.width * .35,
+                          child: Column(
+                            children: <Widget>[
+                              Text(
+                                'Save',
+                                style: buttonMedTextStyle,
+                              ),
+                              Text(
+                                'Save this service',
+                                style: buttonXSmlTextStyle,
+                              ),
+                            ],
                           ),
                         ),
-                      ],
-                    ),
+                        onPressed: () {
+                          final snackBar = SnackBar(
+                            // shape: Border.all(
+                            //   color: tealIcon,
+                            //   width: 2,
+                            // ),
+                            backgroundColor:
+                                Colors.blueGrey[500].withOpacity(.95),
+                            content: Container(
+                              alignment: Alignment.center,
+                              height: MediaQuery.of(context).size.width * .25,
+                              child: Text("Saving details ... ",
+                                  style: buttonTextStyle),
+                              // Column(
+                              //   children: <Widget>[
+                              //     RichText(
+                              //       text: TextSpan(
+                              //           style: highlightBoldTextStyle,
+                              //           children: <TextSpan>[
+                              //             TextSpan(
+                              //               text: "Saving details ... ",
+                              //             ),
+                              //           ]),
+                              //     ),
+                              //   ],
+                              // ),
+                            ),
+                            duration: Duration(seconds: 1),
+                          );
+
+                          Scaffold.of(context).showSnackBar(snackBar);
+                          processSaveWithTimer();
+                        }),
+                  ),
+                  Builder(
+                    builder: (context) => RaisedButton(
+                        color: Colors.blueGrey[400],
+                        splashColor: highlightColor,
+                        child: Container(
+                          //width: MediaQuery.of(context).size.width * .35,
+                          child: Column(
+                            children: <Widget>[
+                              Text(
+                                'Delete',
+                                style: buttonMedTextStyle,
+                              ),
+                              Text(
+                                'Delete this entity and all its amenities/services',
+                                style: buttonXSmlTextStyle,
+                              ),
+                            ],
+                          ),
+                        ),
+                        onPressed: () {
+                          String _errorMessage;
+                          showDialog(
+                              context: context,
+                              barrierDismissible: true,
+                              builder: (BuildContext context) {
+                                return StatefulBuilder(
+                                    builder: (context, setState) {
+                                  return new AlertDialog(
+                                    backgroundColor: Colors.grey[200],
+                                    // titleTextStyle: inputTextStyle,
+                                    elevation: 10.0,
+                                    content: Column(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: <Widget>[
+                                        RichText(
+                                          text: TextSpan(
+                                              style: lightSubTextStyle,
+                                              children: <TextSpan>[
+                                                TextSpan(text: "Enter "),
+                                                TextSpan(
+                                                    text: "DELETE ",
+                                                    style: errorTextStyle),
+                                                TextSpan(
+                                                    text:
+                                                        "to permanently delete this entity and all its services. Once deleted you cannot restore them. "),
+                                              ]),
+                                        ),
+                                        new Row(
+                                          children: <Widget>[
+                                            new Expanded(
+                                              child: new TextField(
+                                                style: inputTextStyle,
+                                                textCapitalization:
+                                                    TextCapitalization
+                                                        .characters,
+                                                controller: _txtController,
+                                                decoration: InputDecoration(
+                                                  hintText: 'eg. delete',
+                                                  enabledBorder:
+                                                      UnderlineInputBorder(
+                                                          borderSide:
+                                                              BorderSide(
+                                                                  color: Colors
+                                                                      .grey)),
+                                                  focusedBorder:
+                                                      UnderlineInputBorder(
+                                                          borderSide:
+                                                              BorderSide(
+                                                                  color: Colors
+                                                                      .orange)),
+                                                ),
+                                                onEditingComplete: () {
+                                                  print(_txtController.text);
+                                                },
+                                                onChanged: (value) {
+                                                  if (value.toUpperCase() ==
+                                                      "DELETE".toUpperCase())
+                                                    setState(() {
+                                                      _delEnabled = true;
+                                                      _errorMessage = null;
+                                                    });
+                                                  else
+                                                    setState(() {
+                                                      _errorMessage =
+                                                          "You have to enter DELETE to proceed.";
+                                                    });
+                                                },
+                                                autofocus: false,
+                                              ),
+                                            )
+                                          ],
+                                        ),
+                                        (_errorMessage != null
+                                            ? Text(
+                                                _errorMessage,
+                                                style: errorTextStyle,
+                                              )
+                                            : Container()),
+                                      ],
+                                    ),
+
+                                    contentPadding: EdgeInsets.all(10),
+                                    actions: <Widget>[
+                                      RaisedButton(
+                                        color: (_delEnabled)
+                                            ? lightIcon
+                                            : Colors.blueGrey[400],
+                                        elevation: (_delEnabled) ? 20 : 0,
+                                        onPressed: () {
+                                          deleteEntity();
+                                          Navigator.pop(context);
+                                        },
+                                        splashColor: highlightColor,
+                                        child: Container(
+                                          width: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                              .3,
+                                          alignment: Alignment.center,
+                                          child: Text("Delete",
+                                              style: TextStyle(
+                                                  color: Colors.white)),
+                                        ),
+                                      ),
+                                      // (_errorMessage != null
+                                      //     ? Text(
+                                      //         _errorMessage,
+                                      //         style: TextStyle(color: Colors.red),
+                                      //       )
+                                      //     : Container()),
+                                    ],
+                                  );
+                                });
+                              });
+                          // final snackBar1 = SnackBar(
+                          //   shape: Border.all(
+                          //     color: tealIcon,
+                          //     width: 2,
+                          //   ),
+                          //   // action: SnackBarAction(
+                          //   //   label: 'Delete!',
+                          //   //   onPressed: () {
+                          //   //     deleteEntity();
+                          //   //   },
+                          //   // ),
+                          //   backgroundColor: Colors.grey[200],
+                          //   content: Container(
+                          //     height: MediaQuery.of(context).size.width * .25,
+                          //     child: Column(
+                          //       children: <Widget>[
+                          //         RichText(
+                          //           text: TextSpan(
+                          //               style: lightSubTextStyle,
+                          //               children: <TextSpan>[
+                          //                 TextSpan(text: "Enter "),
+                          //                 TextSpan(
+                          //                     text: "DELETE ",
+                          //                     style: homeMsgStyle3),
+                          //                 TextSpan(
+                          //                     text:
+                          //                         "to remove this entity from your managed ones."),
+                          //               ]),
+                          //         ),
+                          //         Row(
+                          //           children: <Widget>[
+                          //             // TextField(
+                          //             //   //   controller: _txtController,
+                          //             //   onChanged: (value) {
+                          //             //     if (value == "DELETE")
+                          //             //       _delEnabled = true;
+                          //             //   },
+                          //             // ),
+                          //             RaisedButton(
+                          //               color: (_delEnabled)
+                          //                   ? lightIcon
+                          //                   : Colors.blueGrey[400],
+                          //               disabledColor: Colors.blueGrey[200],
+                          //               disabledElevation: 0,
+                          //               elevation: 15,
+                          //               onPressed: () {
+                          //                 deleteEntity();
+                          //               },
+                          //               splashColor: highlightColor,
+                          //               child: Text("Delete",
+                          //                   style:
+                          //                       TextStyle(color: Colors.white)),
+                          //             ),
+                          //           ],
+                          //         )
+                          //       ],
+                          //     ),
+                          //   ),
+                          //   //duration: Duration(seconds: 3),
+                          // );
+                          // Scaffold.of(context).showSnackBar(snackBar1);
+                        }),
                   ),
                 ],
               ),

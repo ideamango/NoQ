@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:noq/constants.dart';
 import 'package:noq/models/localDB.dart';
+import 'package:noq/pages/contact_item.dart';
 import 'package:noq/pages/entity_services_list_page.dart';
 
 import 'package:noq/repository/local_db_repository.dart';
@@ -66,7 +67,8 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
   AddressAppData adrs = new AddressAppData();
   EntityAppData entity;
 
-  List<ContactAppData> newList = new List<ContactAppData>();
+  List<ContactAppData> contactList = new List<ContactAppData>();
+  int _contactCount = 0;
 
   bool _addPerson = false;
 
@@ -85,6 +87,7 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
   String state;
 
   bool addNewClicked = false;
+  String _roleType;
 
   @override
   void initState() {
@@ -121,6 +124,11 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
       _pinController.text = entity.adrs.postalCode;
     }
 //contact person
+    if (!(Utils.isNullOrEmpty(entity.contactPersons))) {
+      contactList = entity.contactPersons;
+    } else
+      contactList = new List<ContactAppData>();
+
     //  _ctNameController.text = entity.contactPersons[0].perName;
   }
 
@@ -199,20 +207,20 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
     }
   }
 
-  Future<List> getList() async {
-    List<ContactAppData> contactList = new List<ContactAppData>();
-    ContactAppData cp = new ContactAppData.values(
-        'a', 'b', 'c', 'd', Role.Employee, 'f', 'g', []);
-    // ContactPerson cp4 =
-    //     new ContactPerson.values('a', 'b', 'c', 'd', 'e', 'f', 'g');
-    // contactList.add(cp1);
-    // contactList.add(cp2);
-    print('list contakajsgdsdfklsjhdk');
+  // Future<List> getList() async {
+  //   List<ContactAppData> contactList = new List<ContactAppData>();
+  //   ContactAppData cp = new ContactAppData.values(
+  //       'a', 'b', 'c', 'd', Role.Employee, 'f', 'g', []);
+  //   // ContactPerson cp4 =
+  //   //     new ContactPerson.values('a', 'b', 'c', 'd', 'e', 'f', 'g');
+  //   // contactList.add(cp1);
+  //   // contactList.add(cp2);
+  //   print('list contakajsgdsdfklsjhdk');
 
-    newList.add(cp);
-    contactList = newList;
-    return contactList;
-  }
+  //   newList.add(cp);
+  //   contactList = newList;
+  //   return contactList;
+  // }
 
   getEntityDetails() {
     if (entity == null) {
@@ -235,6 +243,21 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
 
   deleteEntity() {
     deleteEntityFromDb(entity);
+  }
+
+  void _addNewContactRow() {
+    setState(() {
+      ContactAppData contact = new ContactAppData();
+      contactList.add(contact);
+      //  entity.childCollection.add(c);
+      // saveEntityDetails(en);
+      //saveEntityDetails();
+      _contactCount = _contactCount + 1;
+    });
+  }
+
+  Widget _buildContactItem(ContactAppData contact) {
+    return new ContactRow(contact: contact);
   }
 
   @override
@@ -897,6 +920,61 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
       return new Timer(duration, saveRoute);
     }
 
+    void saveFormDetails() {
+      print("saving ");
+      if (_formKey.currentState.validate()) {
+        _formKey.currentState.save();
+      }
+      saveEntityDetails(entity);
+    }
+
+    void updateModel() {
+//Read local file and update the entities.
+      print("saving locally");
+    }
+
+    String _msg;
+
+    final roleType = new FormField(
+      builder: (FormFieldState state) {
+        return InputDecorator(
+          decoration: InputDecoration(
+            labelText: 'Role Type',
+          ),
+          child: new DropdownButtonHideUnderline(
+            child: new DropdownButton(
+              hint: new Text("Select Role of Person"),
+              value: _roleType,
+              isDense: true,
+              onChanged: (newValue) {
+                setState(() {
+                  _roleType = newValue;
+                  state.didChange(newValue);
+                });
+              },
+              items: roleTypes.map((type) {
+                return DropdownMenuItem(
+                  value: type,
+                  child: new Text(
+                    type.toString(),
+                    style: textInputTextStyle,
+                  ),
+                );
+              }).toList(),
+            ),
+          ),
+        );
+      },
+      onSaved: (String value) {
+        _roleType = value;
+        // setState(() {
+        //   _msg = null;
+        // });
+        // entity.childCollection
+        //    .add(new ChildEntityAppData.cType(value, entity.id));
+        //   saveEntityDetails(entity);
+      },
+    );
     return MaterialApp(
       // title: 'Add child entities',
       theme: ThemeData.light().copyWith(),
@@ -905,12 +983,20 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
             actions: <Widget>[],
             backgroundColor: Colors.teal,
             leading: IconButton(
-                padding: EdgeInsets.all(0),
-                alignment: Alignment.center,
-                highlightColor: highlightColor,
-                icon: Icon(Icons.arrow_back),
-                color: Colors.white,
-                onPressed: () => Navigator.of(context).pop()),
+              padding: EdgeInsets.all(0),
+              alignment: Alignment.center,
+              highlightColor: highlightColor,
+              icon: Icon(Icons.arrow_back),
+              color: Colors.white,
+              onPressed: () {
+                print("going back");
+                //Save form details, then go back.
+                saveFormDetails();
+                updateModel();
+                //go back
+                Navigator.of(context).pop();
+              },
+            ),
             title: Text(entity.eType)),
         body: Center(
           child: new SafeArea(
@@ -963,8 +1049,7 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
                                       decoration: indigoContainer,
                                       padding: EdgeInsets.all(2.0),
                                       child: Expanded(
-                                        child: Text(
-                                            'The basic detail description.',
+                                        child: Text(basicInfoStr,
                                             style: buttonXSmlTextStyle),
                                       ),
                                     ),
@@ -1038,8 +1123,7 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
                                       decoration: indigoContainer,
                                       padding: EdgeInsets.all(2.0),
                                       child: Expanded(
-                                        child: Text(
-                                            'The address is using the current location, and same will be used by customers when searching your location.',
+                                        child: Text(addressInfoStr,
                                             style: buttonXSmlTextStyle),
                                       ),
                                     ),
@@ -1121,8 +1205,7 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
                                       decoration: indigoContainer,
                                       padding: EdgeInsets.all(2.0),
                                       child: Expanded(
-                                        child: Text(
-                                            'The perosn who can be contacted for any queries regarding your services.',
+                                        child: Text(contactInfoStr,
                                             style: buttonXSmlTextStyle),
                                       ),
                                     ),
@@ -1130,57 +1213,93 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
                                 ),
                               ),
                             ),
+                            Padding(
+                              padding: const EdgeInsets.fromLTRB(8.0, 0, 8, 0),
+                              child: Row(
+                                // mainAxisAlignment: MainAxisAlignment.end,
+                                children: <Widget>[
+                                  Expanded(
+                                    child: roleType,
+                                  ),
+                                  Container(
+                                    child: IconButton(
+                                      icon: Icon(Icons.add_circle,
+                                          color: highlightColor, size: 40),
+                                      onPressed: () {
+                                        if (_roleType != null) {
+                                          setState(() {
+                                            _msg = null;
+                                          });
+                                          _addNewContactRow();
+                                        } else {
+                                          setState(() {
+                                            _msg = "Select service type";
+                                          });
+                                        }
+                                      },
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            (_msg != null)
+                                ? Text(
+                                    _msg,
+                                    style: errorTextStyle,
+                                  )
+                                : Container(),
                           ],
                         ),
-                        Container(
-                            padding: EdgeInsets.only(left: 5.0, right: 5),
-                            child: Column(
-                              children: <Widget>[
-                                ctNameField,
-                                ctEmpIdField,
-                                ctPhn1Field,
-                                ctPhn2Field,
-                                daysOffField,
-                                Divider(
-                                  thickness: .7,
-                                  color: Colors.grey[600],
-                                ),
-                                ctAvlFromTimeField,
-                                ctAvlTillTimeField,
-                                new FormField(
-                                  builder: (FormFieldState state) {
-                                    return InputDecorator(
-                                      decoration: InputDecoration(
-                                        icon: const Icon(Icons.person),
-                                        labelText: 'Role ',
-                                      ),
-                                      child: new DropdownButtonHideUnderline(
-                                        child: new DropdownButton(
-                                          value: _role,
-                                          isDense: true,
-                                          onChanged: (newValue) {
-                                            setState(() {
-                                              // newContact.favoriteColor = newValue;
-                                              _role = newValue;
-                                              state.didChange(newValue);
-                                            });
-                                          },
-                                          items: roleTypes.map((role) {
-                                            return DropdownMenuItem(
-                                              value: role,
-                                              child: new Text(
-                                                role.toString(),
-                                                style: textInputTextStyle,
-                                              ),
-                                            );
-                                          }).toList(),
-                                        ),
-                                      ),
-                                    );
-                                  },
-                                ),
-                              ],
-                            )),
+
+                        // Container(
+                        //     padding: EdgeInsets.only(left: 5.0, right: 5),
+                        //     child: Column(
+                        //       children: <Widget>[
+                        //         ctNameField,
+                        //         ctEmpIdField,
+                        //         ctPhn1Field,
+                        //         ctPhn2Field,
+                        //         daysOffField,
+                        //         Divider(
+                        //           thickness: .7,
+                        //           color: Colors.grey[600],
+                        //         ),
+                        //         ctAvlFromTimeField,
+                        //         ctAvlTillTimeField,
+                        //         new FormField(
+                        //           builder: (FormFieldState state) {
+                        //             return InputDecorator(
+                        //               decoration: InputDecoration(
+                        //                 icon: const Icon(Icons.person),
+                        //                 labelText: 'Role ',
+                        //               ),
+                        //               child: new DropdownButtonHideUnderline(
+                        //                 child: new DropdownButton(
+                        //                   value: _role,
+                        //                   isDense: true,
+                        //                   onChanged: (newValue) {
+                        //                     setState(() {
+                        //                       // newContact.favoriteColor = newValue;
+                        //                       _role = newValue;
+                        //                       state.didChange(newValue);
+                        //                     });
+                        //                   },
+                        //                   items: roleTypes.map((role) {
+                        //                     return DropdownMenuItem(
+                        //                       value: role,
+                        //                       child: new Text(
+                        //                         role.toString(),
+                        //                         style: textInputTextStyle,
+                        //                       ),
+                        //                     );
+                        //                   }).toList(),
+                        //                 ),
+                        //               ),
+                        //             );
+                        //           },
+                        //         ),
+                        //       ],
+                        //     )),
 
                         // Column(children: <Widget>[
                         //   Center(
@@ -1204,202 +1323,24 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
                       ],
                     ),
                   ),
-                  Builder(
-                    builder: (context) => RaisedButton(
-                        color: Colors.blueGrey[400],
-                        splashColor: highlightColor,
-                        child: Container(
-                          //width: MediaQuery.of(context).size.width * .35,
-                          child: Column(
-                            children: <Widget>[
-                              Text(
-                                'Delete',
-                                style: buttonMedTextStyle,
-                              ),
-                              Text(
-                                'Delete this entity and all its amenities/services',
-                                style: buttonXSmlTextStyle,
-                              ),
-                            ],
-                          ),
-                        ),
-                        onPressed: () {
-                          showDialog(
-                              context: context,
-                              barrierDismissible: true,
-                              builder: (BuildContext context) {
-                                return StatefulBuilder(
-                                    builder: (context, setState) {
-                                  return new AlertDialog(
-                                    title: RichText(
-                                      text: TextSpan(
-                                          style: lightSubTextStyle,
-                                          children: <TextSpan>[
-                                            TextSpan(text: "Enter "),
-                                            TextSpan(
-                                                text: "DELETE ",
-                                                style: errorTextStyle),
-                                            TextSpan(
-                                                text:
-                                                    "to remove this entity from your managed ones."),
-                                          ]),
-                                    ),
-                                    backgroundColor: Colors.grey[200],
-                                    // titleTextStyle: inputTextStyle,
-                                    elevation: 10.0,
-                                    content: new Row(
-                                      children: <Widget>[
-                                        new Expanded(
-                                          child: new TextField(
-                                            style: inputTextStyle,
-                                            controller: _txtController,
-                                            onChanged: (value) {
-                                              if (value == "DELETE")
-                                                setState(() {
-                                                  _delEnabled = true;
-                                                });
-                                            },
-                                            autofocus: true,
-                                            decoration: new InputDecoration(
-                                                hintText: 'eg. DELETE'),
-                                          ),
-                                        )
-                                      ],
-                                    ),
-                                    // content: Container(
-                                    //   height: 50,
-                                    //   child: Column(
-                                    //     mainAxisSize: MainAxisSize.max,
-                                    //     children: <Widget>[
-                                    //       Container(
-                                    //         //color: Colors.black,
-                                    //         //margin: EdgeInsets.all(5),
-                                    //         // padding: EdgeInsets.all(0),
-                                    //         child: Row(
-                                    //           children: <Widget>[
-                                    //             TextField(
-                                    //               controller: _txtController,
-                                    //               onChanged: (value) {
-                                    //                 if (value == "DELETE")
-                                    //                   setState(() {
-                                    //                     _delEnabled = true;
-                                    //                   });
-                                    //               },
-                                    //             ),
-                                    //             RaisedButton(
-                                    //               color: (_delEnabled)
-                                    //                   ? lightIcon
-                                    //                   : Colors.blueGrey[400],
-                                    //               disabledColor:
-                                    //                   Colors.blueGrey[200],
-                                    //               disabledElevation: 0,
-                                    //               elevation: 15,
-                                    //               onPressed: () {
-                                    //                 deleteEntity();
-                                    //               },
-                                    //               splashColor: highlightColor,
-                                    //               child: Text("Delete",
-                                    //                   style: TextStyle(
-                                    //                       color: Colors.white)),
-                                    //             ),
-                                    //           ],
-                                    //         ),
-                                    //       ),
-                                    //       // SizedBox(height: 10),
-                                    //       //Divider(),
-                                    //     ],
-                                    //   ),
-                                    // ),
+                  if (!Utils.isNullOrEmpty(contactList))
+                    new Expanded(
+                      child: ListView.builder(
+                        shrinkWrap: true,
+                        //scrollDirection: Axis.vertical,
+                        itemBuilder: (BuildContext context, int index) {
+                          return Container(
+                            child: new Column(
+                                children: contactList
+                                    .map(_buildContactItem)
+                                    .toList()),
+                            //children: <Widget>[firstRow, secondRow],
+                          );
+                        },
+                        itemCount: 1,
+                      ),
+                    ),
 
-                                    contentPadding: EdgeInsets.all(10),
-                                    actions: <Widget>[
-                                      RaisedButton(
-                                        color: (_delEnabled)
-                                            ? lightIcon
-                                            : Colors.blueGrey[400],
-                                        elevation: (_delEnabled) ? 15 : 0,
-                                        onPressed: () {
-                                          deleteEntity();
-                                          Navigator.pop(context);
-                                        },
-                                        splashColor: highlightColor,
-                                        child: Text("Delete",
-                                            style:
-                                                TextStyle(color: Colors.white)),
-                                      ),
-                                      // (_errorMessage != null
-                                      //     ? Text(
-                                      //         _errorMessage,
-                                      //         style: TextStyle(color: Colors.red),
-                                      //       )
-                                      //     : Container()),
-                                    ],
-                                  );
-                                });
-                              });
-                          // final snackBar1 = SnackBar(
-                          //   shape: Border.all(
-                          //     color: tealIcon,
-                          //     width: 2,
-                          //   ),
-                          //   // action: SnackBarAction(
-                          //   //   label: 'Delete!',
-                          //   //   onPressed: () {
-                          //   //     deleteEntity();
-                          //   //   },
-                          //   // ),
-                          //   backgroundColor: Colors.grey[200],
-                          //   content: Container(
-                          //     height: MediaQuery.of(context).size.width * .25,
-                          //     child: Column(
-                          //       children: <Widget>[
-                          //         RichText(
-                          //           text: TextSpan(
-                          //               style: lightSubTextStyle,
-                          //               children: <TextSpan>[
-                          //                 TextSpan(text: "Enter "),
-                          //                 TextSpan(
-                          //                     text: "DELETE ",
-                          //                     style: homeMsgStyle3),
-                          //                 TextSpan(
-                          //                     text:
-                          //                         "to remove this entity from your managed ones."),
-                          //               ]),
-                          //         ),
-                          //         Row(
-                          //           children: <Widget>[
-                          //             // TextField(
-                          //             //   //   controller: _txtController,
-                          //             //   onChanged: (value) {
-                          //             //     if (value == "DELETE")
-                          //             //       _delEnabled = true;
-                          //             //   },
-                          //             // ),
-                          //             RaisedButton(
-                          //               color: (_delEnabled)
-                          //                   ? lightIcon
-                          //                   : Colors.blueGrey[400],
-                          //               disabledColor: Colors.blueGrey[200],
-                          //               disabledElevation: 0,
-                          //               elevation: 15,
-                          //               onPressed: () {
-                          //                 deleteEntity();
-                          //               },
-                          //               splashColor: highlightColor,
-                          //               child: Text("Delete",
-                          //                   style:
-                          //                       TextStyle(color: Colors.white)),
-                          //             ),
-                          //           ],
-                          //         )
-                          //       ],
-                          //     ),
-                          //   ),
-                          //   //duration: Duration(seconds: 3),
-                          // );
-                          // Scaffold.of(context).showSnackBar(snackBar1);
-                        }),
-                  ),
                   Builder(
                     builder: (context) => RaisedButton(
                         color: lightIcon,
@@ -1453,6 +1394,202 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
                           processSaveWithTimer();
                         }),
                   ),
+                  Builder(
+                      builder: (context) => RaisedButton(
+                          color: Colors.blueGrey[400],
+                          splashColor: highlightColor,
+                          child: Container(
+                            //width: MediaQuery.of(context).size.width * .35,
+                            child: Column(
+                              children: <Widget>[
+                                Text(
+                                  'Delete',
+                                  style: buttonMedTextStyle,
+                                ),
+                                Text(
+                                  'Delete this entity and all its amenities/services',
+                                  style: buttonXSmlTextStyle,
+                                ),
+                              ],
+                            ),
+                          ),
+                          onPressed: () {
+                            String _errorMessage;
+                            showDialog(
+                                context: context,
+                                barrierDismissible: true,
+                                builder: (BuildContext context) {
+                                  return StatefulBuilder(
+                                      builder: (context, setState) {
+                                    return new AlertDialog(
+                                      backgroundColor: Colors.grey[200],
+                                      // titleTextStyle: inputTextStyle,
+                                      elevation: 10.0,
+                                      content: Column(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: <Widget>[
+                                          RichText(
+                                            text: TextSpan(
+                                                style: lightSubTextStyle,
+                                                children: <TextSpan>[
+                                                  TextSpan(text: "Enter "),
+                                                  TextSpan(
+                                                      text: "DELETE ",
+                                                      style: errorTextStyle),
+                                                  TextSpan(
+                                                      text:
+                                                          "to permanently delete this entity and all its services. Once deleted you cannot restore them. "),
+                                                ]),
+                                          ),
+                                          new Row(
+                                            children: <Widget>[
+                                              new Expanded(
+                                                child: new TextField(
+                                                  style: inputTextStyle,
+                                                  textCapitalization:
+                                                      TextCapitalization
+                                                          .characters,
+                                                  controller: _txtController,
+                                                  decoration: InputDecoration(
+                                                    hintText: 'eg. delete',
+                                                    enabledBorder:
+                                                        UnderlineInputBorder(
+                                                            borderSide:
+                                                                BorderSide(
+                                                                    color: Colors
+                                                                        .grey)),
+                                                    focusedBorder:
+                                                        UnderlineInputBorder(
+                                                            borderSide: BorderSide(
+                                                                color: Colors
+                                                                    .orange)),
+                                                  ),
+                                                  onEditingComplete: () {
+                                                    print(_txtController.text);
+                                                  },
+                                                  onChanged: (value) {
+                                                    if (value.toUpperCase() ==
+                                                        "DELETE".toUpperCase())
+                                                      setState(() {
+                                                        _delEnabled = true;
+                                                        _errorMessage = null;
+                                                      });
+                                                    else
+                                                      setState(() {
+                                                        _errorMessage =
+                                                            "You have to enter DELETE to proceed.";
+                                                      });
+                                                  },
+                                                  autofocus: false,
+                                                ),
+                                              )
+                                            ],
+                                          ),
+                                          (_errorMessage != null
+                                              ? Text(
+                                                  _errorMessage,
+                                                  style: errorTextStyle,
+                                                )
+                                              : Container()),
+                                        ],
+                                      ),
+
+                                      contentPadding: EdgeInsets.all(10),
+                                      actions: <Widget>[
+                                        RaisedButton(
+                                          color: (_delEnabled)
+                                              ? lightIcon
+                                              : Colors.blueGrey[400],
+                                          elevation: (_delEnabled) ? 20 : 0,
+                                          onPressed: () {
+                                            deleteEntity();
+                                            Navigator.pop(context);
+                                          },
+                                          splashColor: highlightColor,
+                                          child: Container(
+                                            width: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                .3,
+                                            alignment: Alignment.center,
+                                            child: Text("Delete",
+                                                style: TextStyle(
+                                                    color: Colors.white)),
+                                          ),
+                                        ),
+                                        // (_errorMessage != null
+                                        //     ? Text(
+                                        //         _errorMessage,
+                                        //         style: TextStyle(color: Colors.red),
+                                        //       )
+                                        //     : Container()),
+                                      ],
+                                    );
+                                  });
+                                });
+                          })),
+                  // final snackBar1 = SnackBar(
+                  //   shape: Border.all(
+                  //     color: tealIcon,
+                  //     width: 2,
+                  //   ),
+                  //   // action: SnackBarAction(
+                  //   //   label: 'Delete!',
+                  //   //   onPressed: () {
+                  //   //     deleteEntity();
+                  //   //   },
+                  //   // ),
+                  //   backgroundColor: Colors.grey[200],
+                  //   content: Container(
+                  //     height: MediaQuery.of(context).size.width * .25,
+                  //     child: Column(
+                  //       children: <Widget>[
+                  //         RichText(
+                  //           text: TextSpan(
+                  //               style: lightSubTextStyle,
+                  //               children: <TextSpan>[
+                  //                 TextSpan(text: "Enter "),
+                  //                 TextSpan(
+                  //                     text: "DELETE ",
+                  //                     style: homeMsgStyle3),
+                  //                 TextSpan(
+                  //                     text:
+                  //                         "to remove this entity from your managed ones."),
+                  //               ]),
+                  //         ),
+                  //         Row(
+                  //           children: <Widget>[
+                  //             // TextField(
+                  //             //   //   controller: _txtController,
+                  //             //   onChanged: (value) {
+                  //             //     if (value == "DELETE")
+                  //             //       _delEnabled = true;
+                  //             //   },
+                  //             // ),
+                  //             RaisedButton(
+                  //               color: (_delEnabled)
+                  //                   ? lightIcon
+                  //                   : Colors.blueGrey[400],
+                  //               disabledColor: Colors.blueGrey[200],
+                  //               disabledElevation: 0,
+                  //               elevation: 15,
+                  //               onPressed: () {
+                  //                 deleteEntity();
+                  //               },
+                  //               splashColor: highlightColor,
+                  //               child: Text("Delete",
+                  //                   style:
+                  //                       TextStyle(color: Colors.white)),
+                  //             ),
+                  //           ],
+                  //         )
+                  //       ],
+                  //     ),
+                  //   ),
+                  //   //duration: Duration(seconds: 3),
+                  // );
+                  //         // Scaffold.of(context).showSnackBar(snackBar1);
+                  //       }),),
                 ],
               ),
             ),
