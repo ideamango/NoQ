@@ -266,21 +266,23 @@ class ContactRowState extends State<ContactRow> {
             borderRadius: BorderRadius.all(Radius.circular(5.0))),
         // padding: EdgeInsets.all(5.0),
 
-        child: ListTile(
-          title: Column(
-            children: <Widget>[
-              ctNameField,
-              ctEmpIdField,
-              ctPhn1Field,
-              ctPhn2Field,
-              daysOffField,
-              Divider(
-                thickness: .7,
-                color: Colors.grey[600],
-              ),
-              ctAvlFromTimeField,
-              ctAvlTillTimeField,
-            ],
+        child: new Form(
+          child: ListTile(
+            title: Column(
+              children: <Widget>[
+                ctNameField,
+                ctEmpIdField,
+                ctPhn1Field,
+                ctPhn2Field,
+                daysOffField,
+                Divider(
+                  thickness: .7,
+                  color: Colors.grey[600],
+                ),
+                ctAvlFromTimeField,
+                ctAvlTillTimeField,
+              ],
+            ),
           ),
         ),
 

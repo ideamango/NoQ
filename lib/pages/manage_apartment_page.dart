@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'dart:async';
+import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
@@ -43,6 +44,7 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
 
   TextEditingController _maxPeopleController = TextEditingController();
   List<String> _closedOnDays = List<String>();
+  List<String> _daysOff = List<String>();
 
   // TextEditingController _subAreaController = TextEditingController();
   TextEditingController _adrs1Controller = TextEditingController();
@@ -55,19 +57,13 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
   // List<String> _addressList = new List<String>();
 
   //ContactPerson Fields
-  TextEditingController _ctNameController = TextEditingController();
-  TextEditingController _ctEmpIdController = TextEditingController();
-  TextEditingController _ctPhn1controller = TextEditingController();
-  TextEditingController _ctPhn2controller = TextEditingController();
-  TextEditingController _ctAvlFromTimeController = TextEditingController();
-  TextEditingController _ctAvlTillTimeController = TextEditingController();
 
-  List<String> _daysOff = List<String>();
   ContactAppData cp1 = new ContactAppData();
   AddressAppData adrs = new AddressAppData();
   EntityAppData entity;
 
   List<ContactAppData> contactList = new List<ContactAppData>();
+  List<Widget> contactRowWidgets = new List<Widget>();
   int _contactCount = 0;
 
   bool _addPerson = false;
@@ -248,6 +244,9 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
   void _addNewContactRow() {
     setState(() {
       ContactAppData contact = new ContactAppData();
+
+      contactRowWidgets.insert(0, new ContactRow(contact: contact));
+
       contactList.add(contact);
       //  entity.childCollection.add(c);
       // saveEntityDetails(en);
@@ -704,205 +703,6 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
         entity.adrs.postalCode = value;
       },
     );
-    //Contact person
-    final ctNameField = TextFormField(
-      obscureText: false,
-      maxLines: 1,
-      minLines: 1,
-      style: textInputTextStyle,
-      keyboardType: TextInputType.text,
-      controller: _ctNameController,
-      decoration:
-          CommonStyle.textFieldStyle(labelTextStr: "Name", hintTextStr: ""),
-      validator: validateText,
-      onSaved: (String value) {
-        cp1.perName = value;
-      },
-    );
-    final ctEmpIdField = TextFormField(
-      obscureText: false,
-      maxLines: 1,
-      minLines: 1,
-      style: textInputTextStyle,
-      keyboardType: TextInputType.text,
-      controller: _ctEmpIdController,
-      decoration: CommonStyle.textFieldStyle(
-          labelTextStr: "Person Id", hintTextStr: ""),
-      validator: validateText,
-      onSaved: (String value) {
-        cp1.empId = value;
-      },
-    );
-    final ctPhn1Field = TextFormField(
-      obscureText: false,
-      maxLines: 1,
-      minLines: 1,
-      style: textInputTextStyle,
-      keyboardType: TextInputType.phone,
-      controller: _ctPhn1controller,
-      decoration: CommonStyle.textFieldStyle(
-          prefixText: '+91', labelTextStr: "Primary Phone", hintTextStr: ""),
-      validator: Utils.validateMobile,
-      onSaved: (value) {
-        value = "+91" + value;
-        cp1.perPhone1 = value;
-      },
-    );
-    final ctPhn2Field = TextFormField(
-      obscureText: false,
-      maxLines: 1,
-      minLines: 1,
-      style: textInputTextStyle,
-      keyboardType: TextInputType.phone,
-      controller: _ctPhn2controller,
-      decoration: CommonStyle.textFieldStyle(
-          prefixText: '+91', labelTextStr: "Alternate Phone", hintTextStr: ""),
-      validator: Utils.validateMobile,
-      onSaved: (value) {
-        value = "+91" + value;
-        cp1.perPhone2 = value;
-      },
-    );
-    final ctAvlFromTimeField = TextFormField(
-      obscureText: false,
-      maxLines: 1,
-      readOnly: true,
-      minLines: 1,
-      style: textInputTextStyle,
-      controller: _ctAvlFromTimeController,
-      keyboardType: TextInputType.text,
-      onTap: () {
-        DatePicker.showTime12hPicker(context, showTitleActions: true,
-            onChanged: (date) {
-          print('change $date in time zone ' +
-              date.timeZoneOffset.inHours.toString());
-        }, onConfirm: (date) {
-          print('confirm $date');
-          //  String time = "${date.hour}:${date.minute} ${date.";
-
-          String time = DateFormat.jm().format(date);
-          print(time);
-
-          _ctAvlFromTimeController.text = time.toLowerCase();
-        }, currentTime: DateTime.now());
-      },
-      decoration: InputDecoration(
-          // suffixIcon: IconButton(
-          //   icon: Icon(Icons.schedule),
-          //   onPressed: () {
-          //     DatePicker.showTime12hPicker(context, showTitleActions: true,
-          //         onChanged: (date) {
-          //       print('change $date in time zone ' +
-          //           date.timeZoneOffset.inHours.toString());
-          //     }, onConfirm: (date) {
-          //       print('confirm $date');
-          //       //  String time = "${date.hour}:${date.minute} ${date.";
-
-          //       String time = DateFormat.jm().format(date);
-          //       print(time);
-
-          //       _openTimeController.text = time.toLowerCase();
-          //     }, currentTime: DateTime.now());
-          //   },
-          // ),
-          labelText: "Available from",
-          hintText: "HH:MM am/pm",
-          enabledBorder:
-              UnderlineInputBorder(borderSide: BorderSide(color: Colors.grey)),
-          focusedBorder: UnderlineInputBorder(
-              borderSide: BorderSide(color: Colors.orange))),
-      validator: validateTime,
-      onSaved: (String value) {
-        cp1.avlFromTime = value;
-      },
-    );
-    final ctAvlTillTimeField = TextFormField(
-      enabled: true,
-      obscureText: false,
-      readOnly: true,
-      maxLines: 1,
-      minLines: 1,
-      controller: _ctAvlTillTimeController,
-      style: textInputTextStyle,
-      onTap: () {
-        DatePicker.showTime12hPicker(context, showTitleActions: true,
-            onChanged: (date) {
-          print('change $date in time zone ' +
-              date.timeZoneOffset.inHours.toString());
-        }, onConfirm: (date) {
-          print('confirm $date');
-          //  String time = "${date.hour}:${date.minute} ${date.";
-
-          String time = DateFormat.jm().format(date);
-          print(time);
-
-          _ctAvlTillTimeController.text = time.toLowerCase();
-        }, currentTime: DateTime.now());
-      },
-      decoration: InputDecoration(
-          labelText: "Available till",
-          hintText: "HH:MM am/pm",
-          enabledBorder:
-              UnderlineInputBorder(borderSide: BorderSide(color: Colors.grey)),
-          focusedBorder: UnderlineInputBorder(
-              borderSide: BorderSide(color: Colors.orange))),
-      validator: validateTime,
-      onSaved: (String value) {
-        cp1.avlTillTime = value;
-      },
-    );
-    final daysOffField = Padding(
-      padding: EdgeInsets.only(top: 12, bottom: 8),
-      child: Row(
-        children: <Widget>[
-          Text(
-            'Days off: ',
-            style: TextStyle(
-              color: Colors.grey[600],
-              // fontWeight: FontWeight.w800,
-              fontFamily: 'Monsterrat',
-              letterSpacing: 0.5,
-              fontSize: 15.0,
-              //height: 2,
-            ),
-            textAlign: TextAlign.left,
-          ),
-          SizedBox(width: 5),
-          new WeekDaySelectorFormField(
-            displayDays: [
-              days.monday,
-              days.tuesday,
-              days.wednesday,
-              days.thursday,
-              days.friday,
-              days.saturday,
-              days.sunday
-            ],
-            initialValue: [days.sunday],
-            borderRadius: 20,
-            elevation: 10,
-            textStyle: buttonXSmlTextStyle,
-            fillColor: Colors.blueGrey[400],
-            selectedFillColor: highlightColor,
-            boxConstraints: BoxConstraints(
-                minHeight: 25, minWidth: 25, maxHeight: 28, maxWidth: 28),
-            borderSide: BorderSide(color: Colors.white, width: 0),
-            language: lang.en,
-            onChange: (days) {
-              print("Days off: " + days.toString());
-              _daysOff.clear();
-              days.forEach((element) {
-                var day = element.toString().substring(5);
-                _daysOff.add(day);
-              });
-              cp1.daysOff = _daysOff;
-              print(_daysOff.length);
-              print(_daysOff.toString());
-            },
-          ),
-        ],
-      ),
-    );
     TextEditingController _txtController = new TextEditingController();
     bool _delEnabled = false;
     saveRoute() {
@@ -1250,96 +1050,11 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
                                 : Container(),
                           ],
                         ),
-
-                        // Container(
-                        //     padding: EdgeInsets.only(left: 5.0, right: 5),
-                        //     child: Column(
-                        //       children: <Widget>[
-                        //         ctNameField,
-                        //         ctEmpIdField,
-                        //         ctPhn1Field,
-                        //         ctPhn2Field,
-                        //         daysOffField,
-                        //         Divider(
-                        //           thickness: .7,
-                        //           color: Colors.grey[600],
-                        //         ),
-                        //         ctAvlFromTimeField,
-                        //         ctAvlTillTimeField,
-                        //         new FormField(
-                        //           builder: (FormFieldState state) {
-                        //             return InputDecorator(
-                        //               decoration: InputDecoration(
-                        //                 icon: const Icon(Icons.person),
-                        //                 labelText: 'Role ',
-                        //               ),
-                        //               child: new DropdownButtonHideUnderline(
-                        //                 child: new DropdownButton(
-                        //                   value: _role,
-                        //                   isDense: true,
-                        //                   onChanged: (newValue) {
-                        //                     setState(() {
-                        //                       // newContact.favoriteColor = newValue;
-                        //                       _role = newValue;
-                        //                       state.didChange(newValue);
-                        //                     });
-                        //                   },
-                        //                   items: roleTypes.map((role) {
-                        //                     return DropdownMenuItem(
-                        //                       value: role,
-                        //                       child: new Text(
-                        //                         role.toString(),
-                        //                         style: textInputTextStyle,
-                        //                       ),
-                        //                     );
-                        //                   }).toList(),
-                        //                 ),
-                        //               ),
-                        //             );
-                        //           },
-                        //         ),
-                        //       ],
-                        //     )),
-
-                        // Column(children: <Widget>[
-                        //   Center(
-                        //     child: FloatingActionButton(
-                        //       backgroundColor: highlightColor,
-                        //       child: Icon(Icons.add, color: Colors.white),
-                        //       splashColor: highlightColor,
-                        //       onPressed: () {
-                        //         // addPerson();
-                        //       },
-                        //     ),
-                        //   ),
-                        //   // _createChildren(),
-                        //   // Expanded(
-                        //   //     child: new ListView.builder(
-                        //   //         itemCount: contactList.length,
-                        //   //         itemBuilder: (BuildContext ctxt, int index) {
-                        //   //           return new Text(contactList[index].perName);
-                        //   //         })),
-                        // ]),
                       ],
                     ),
                   ),
                   if (!Utils.isNullOrEmpty(contactList))
-                    new Expanded(
-                      child: ListView.builder(
-                        shrinkWrap: true,
-                        //scrollDirection: Axis.vertical,
-                        itemBuilder: (BuildContext context, int index) {
-                          return Container(
-                            child: new Column(
-                                children: contactList
-                                    .map(_buildContactItem)
-                                    .toList()),
-                            //children: <Widget>[firstRow, secondRow],
-                          );
-                        },
-                        itemCount: 1,
-                      ),
-                    ),
+                    Column(children: contactRowWidgets),
 
                   Builder(
                     builder: (context) => RaisedButton(
