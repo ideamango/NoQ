@@ -4,6 +4,8 @@ import 'dart:async';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:noq/constants.dart';
+import 'package:noq/pages/contact_item.dart';
+import 'package:noq/pages/entity_services_list_page.dart';
 import 'package:noq/repository/local_db_repository.dart';
 import 'package:noq/style.dart';
 import 'package:noq/utils.dart';
@@ -79,6 +81,10 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
 
   SharedPreferences _prefs;
   UserAppData _userProfile;
+  List<ContactAppData> contactList = new List<ContactAppData>();
+  List<Widget> contactRowWidgets = new List<Widget>();
+  int _contactCount = 0;
+  String _roleType;
 
   @override
   void initState() {
@@ -92,9 +98,9 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
     //load the service details
     //loadServiceEntity(serviceEntity.id);
 
-    serviceEntity.contactPersons = new List<ContactAppData>();
+    //  serviceEntity.contactPersons = new List<ContactAppData>();
     serviceEntity.adrs = new AddressAppData();
-    serviceEntity.contactPersons.add(cp1);
+    // serviceEntity.contactPersons.add(cp1);
     // addPerson();
   }
 
@@ -117,7 +123,10 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
     _countryController.text = serviceEntity.adrs.country;
     _pinController.text = serviceEntity.adrs.postalCode;
 //contact person
-    //  _ctNameController.text = serviceEntity.contactPersons[0].perName;
+    if (!(Utils.isNullOrEmpty(serviceEntity.contactPersons))) {
+      contactList = serviceEntity.contactPersons;
+    } else
+      contactList = new List<ContactAppData>();
   }
 
   loadServiceEntity(String serviceEntityId) {
@@ -228,6 +237,20 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
 
   deleteEntity() {
     deleteServiceFromDb(serviceEntity);
+  }
+
+  void _addNewContactRow() {
+    setState(() {
+      ContactAppData contact = new ContactAppData.type(_roleType);
+
+      contactRowWidgets.insert(0, new ContactRow(contact: contact));
+
+      contactList.add(contact);
+      serviceEntity.contactPersons = contactList;
+      // saveEntityDetails(en);
+      //saveEntityDetails();
+      _contactCount = _contactCount + 1;
+    });
   }
 
   @override
@@ -493,7 +516,7 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
 //Address fields
     final adrsField1 = RichText(
       text: TextSpan(
-        // style: textInputTextStyle,
+        style: textInputTextStyle,
         children: <TextSpan>[
           TextSpan(text: serviceEntity.adrs.addressLine1),
           TextSpan(text: serviceEntity.adrs.landmark),
@@ -833,6 +856,50 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
     }
 
     String title = serviceEntity.cType;
+
+    String _msg;
+
+    final roleType = new FormField(
+      builder: (FormFieldState state) {
+        return InputDecorator(
+          decoration: InputDecoration(
+            labelText: 'Role Type',
+          ),
+          child: new DropdownButtonHideUnderline(
+            child: new DropdownButton(
+              hint: new Text("Select Role of Person"),
+              value: _roleType,
+              isDense: true,
+              onChanged: (newValue) {
+                setState(() {
+                  _roleType = newValue;
+                  state.didChange(newValue);
+                });
+              },
+              items: roleTypes.map((type) {
+                return DropdownMenuItem(
+                  value: type,
+                  child: new Text(
+                    type.toString(),
+                    style: textInputTextStyle,
+                  ),
+                );
+              }).toList(),
+            ),
+          ),
+        );
+      },
+      onSaved: (String value) {
+        _roleType = value;
+        // setState(() {
+        //   _msg = null;
+        // });
+        // entity.childCollection
+        //    .add(new ChildEntityAppData.cType(value, entity.id));
+        //   saveEntityDetails(entity);
+      },
+    );
+
     return MaterialApp(
       title: 'Add child entities',
       theme: ThemeData.light().copyWith(),
@@ -1032,13 +1099,14 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
                         color: Colors.grey[50],
                         shape: BoxShape.rectangle,
                         borderRadius: BorderRadius.all(Radius.circular(5.0))),
-                    //  padding: EdgeInsets.all(5.0),
+                    // padding: EdgeInsets.all(5.0),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
                         Column(
                           children: <Widget>[
                             Container(
+                              //padding: EdgeInsets.only(left: 5),
                               decoration: indigoContainer,
                               child: Theme(
                                 data: ThemeData(
@@ -1075,60 +1143,152 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
                                 ),
                               ),
                             ),
+                            Padding(
+                              padding: const EdgeInsets.fromLTRB(8.0, 0, 8, 0),
+                              child: Row(
+                                // mainAxisAlignment: MainAxisAlignment.end,
+                                children: <Widget>[
+                                  Expanded(
+                                    child: roleType,
+                                  ),
+                                  Container(
+                                    child: IconButton(
+                                      icon: Icon(Icons.add_circle,
+                                          color: highlightColor, size: 40),
+                                      onPressed: () {
+                                        if (_roleType != null) {
+                                          setState(() {
+                                            _msg = null;
+                                          });
+                                          _addNewContactRow();
+                                        } else {
+                                          setState(() {
+                                            _msg = "Select service type";
+                                          });
+                                        }
+                                      },
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            (_msg != null)
+                                ? Text(
+                                    _msg,
+                                    style: errorTextStyle,
+                                  )
+                                : Container(),
                           ],
                         ),
-                        Container(
-                            padding: EdgeInsets.only(left: 5.0, right: 5),
-                            child: Column(
-                              children: <Widget>[
-                                ctNameField,
-                                ctEmpIdField,
-                                ctPhn1Field,
-                                ctPhn2Field,
-                                daysOffField,
-                                Divider(
-                                  thickness: .7,
-                                  color: Colors.grey[600],
-                                ),
-                                ctAvlFromTimeField,
-                                ctAvlTillTimeField,
-                                new FormField(
-                                  builder: (FormFieldState state) {
-                                    return InputDecorator(
-                                      decoration: InputDecoration(
-                                        icon: const Icon(Icons.person),
-                                        labelText: 'Role ',
-                                      ),
-                                      child: new DropdownButtonHideUnderline(
-                                        child: new DropdownButton(
-                                          value: _role,
-                                          isDense: true,
-                                          onChanged: (newValue) {
-                                            setState(() {
-                                              // newContact.favoriteColor = newValue;
-                                              _role = newValue;
-                                              state.didChange(newValue);
-                                            });
-                                          },
-                                          items: roleTypes.map((role) {
-                                            return DropdownMenuItem(
-                                              value: role,
-                                              child: new Text(
-                                                role.toString(),
-                                                style: textInputTextStyle,
-                                              ),
-                                            );
-                                          }).toList(),
-                                        ),
-                                      ),
-                                    );
-                                  },
-                                ),
-                              ],
-                            )),
                       ],
                     ),
                   ),
+                  if (!Utils.isNullOrEmpty(contactList))
+                    Column(children: contactRowWidgets),
+
+                  // Container(
+                  //   decoration: BoxDecoration(
+                  //       border: Border.all(color: Colors.indigo),
+                  //       color: Colors.grey[50],
+                  //       shape: BoxShape.rectangle,
+                  //       borderRadius: BorderRadius.all(Radius.circular(5.0))),
+                  //   //  padding: EdgeInsets.all(5.0),
+                  //   child: Column(
+                  //     crossAxisAlignment: CrossAxisAlignment.start,
+                  //     children: <Widget>[
+                  //       Column(
+                  //         children: <Widget>[
+                  //           Container(
+                  //             decoration: indigoContainer,
+                  //             child: Theme(
+                  //               data: ThemeData(
+                  //                 unselectedWidgetColor: Colors.white,
+                  //                 accentColor: Colors.grey[50],
+                  //               ),
+                  //               child: CustomExpansionTile(
+                  //                 //key: PageStorageKey(this.widget.headerTitle),
+                  //                 initiallyExpanded: false,
+                  //                 title: Row(
+                  //                   children: <Widget>[
+                  //                     Text(
+                  //                       "Contact Person",
+                  //                       style: TextStyle(
+                  //                           color: Colors.white, fontSize: 15),
+                  //                     ),
+                  //                     SizedBox(width: 5),
+                  //                   ],
+                  //                 ),
+                  //                 backgroundColor: Colors.blueGrey[500],
+
+                  //                 children: <Widget>[
+                  //                   new Container(
+                  //                     width: MediaQuery.of(context).size.width *
+                  //                         .94,
+                  //                     decoration: indigoContainer,
+                  //                     padding: EdgeInsets.all(2.0),
+                  //                     child: Expanded(
+                  //                       child: Text(contactInfoStr,
+                  //                           style: buttonXSmlTextStyle),
+                  //                     ),
+                  //                   ),
+                  //                 ],
+                  //               ),
+                  //             ),
+                  //           ),
+                  //         ],
+                  //       ),
+                  //       Container(
+                  //           padding: EdgeInsets.only(left: 5.0, right: 5),
+                  //           child: Column(
+                  //             children: <Widget>[
+                  //               ctNameField,
+                  //               ctEmpIdField,
+                  //               ctPhn1Field,
+                  //               ctPhn2Field,
+                  //               daysOffField,
+                  //               Divider(
+                  //                 thickness: .7,
+                  //                 color: Colors.grey[600],
+                  //               ),
+                  //               ctAvlFromTimeField,
+                  //               ctAvlTillTimeField,
+                  //               new FormField(
+                  //                 builder: (FormFieldState state) {
+                  //                   return InputDecorator(
+                  //                     decoration: InputDecoration(
+                  //                       icon: const Icon(Icons.person),
+                  //                       labelText: 'Role ',
+                  //                     ),
+                  //                     child: new DropdownButtonHideUnderline(
+                  //                       child: new DropdownButton(
+                  //                         value: _role,
+                  //                         isDense: true,
+                  //                         onChanged: (newValue) {
+                  //                           setState(() {
+                  //                             // newContact.favoriteColor = newValue;
+                  //                             _role = newValue;
+                  //                             state.didChange(newValue);
+                  //                           });
+                  //                         },
+                  //                         items: roleTypes.map((role) {
+                  //                           return DropdownMenuItem(
+                  //                             value: role,
+                  //                             child: new Text(
+                  //                               role.toString(),
+                  //                               style: textInputTextStyle,
+                  //                             ),
+                  //                           );
+                  //                         }).toList(),
+                  //                       ),
+                  //                     ),
+                  //                   );
+                  //                 },
+                  //               ),
+                  //             ],
+                  //           )),
+                  //     ],
+                  //   ),
+                  // ),
                   Builder(
                     builder: (context) => RaisedButton(
                         color: lightIcon,
@@ -1195,7 +1355,7 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
                                 style: buttonMedTextStyle,
                               ),
                               Text(
-                                'Delete this entity and all its amenities/services',
+                                'Delete this amenity/service',
                                 style: buttonXSmlTextStyle,
                               ),
                             ],
@@ -1293,6 +1453,15 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
                                         onPressed: () {
                                           deleteEntity();
                                           Navigator.pop(context);
+                                          print("COMINGJHGVEGYHFUYERFGTUERYG");
+                                          //TODO: Return to list page
+                                          // Navigator.push(
+                                          //     context,
+                                          //     MaterialPageRoute(
+                                          //         builder: (context) =>
+                                          //             EntityServicesListPage(
+                                          //                 entity:
+                                          //                     this.entity)));
                                         },
                                         splashColor: highlightColor,
                                         child: Container(

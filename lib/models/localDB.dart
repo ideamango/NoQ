@@ -168,6 +168,7 @@ class ContactAppData {
   String avlTillTime;
   List<String> daysOff;
   ContactAppData();
+  ContactAppData.type(this.role);
 
   ContactAppData.values(
       this.perName,

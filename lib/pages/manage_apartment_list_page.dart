@@ -42,7 +42,7 @@ class _ManageApartmentsListPageState extends State<ManageApartmentsListPage> {
       else
         setState(() {
           // fUser.managedEntities.clear();
-          //   writeData(fUser);
+          //  writeData(fUser);
           entitiesList = fUser.managedEntities;
 
           //  saveEntityDetails(new EntityAppData());

@@ -45,7 +45,7 @@ Future<UserAppData> readData() async {
 }
 
 void saveEntityDetails(EntityAppData str) async {
-  final file = await localFile;
+  // final file = await localFile;
   UserAppData _userProfile;
 
 //Read current data in file
@@ -54,22 +54,23 @@ void saveEntityDetails(EntityAppData str) async {
     if (!Utils.isNullOrEmpty(_userProfile.managedEntities)) {
 //if exists then update else add
 
-      _userProfile.managedEntities.forEach((element) {
+      for (var element in _userProfile.managedEntities) {
         if (element.id == str.id) {
           element = str;
+          writeData(_userProfile);
+          return;
         }
-      });
+      }
     } else {
       _userProfile.managedEntities = new List<EntityAppData>();
-      _userProfile.managedEntities.add(str);
     }
+    _userProfile.managedEntities.add(str);
+    writeData(_userProfile);
+    return;
 
     //TODO: Update on server
     //EntityService().upsertEntity(str);
-
-    String fileData = generateJson(_userProfile);
-    //print('Writing in file $file , data: $fileData');
-    file.writeAsString("$fileData");
+    //_userProfile.managedEntities.clear();
   });
 }
 
@@ -83,19 +84,20 @@ void deleteServiceFromDb(ChildEntityAppData str) async {
     if (!Utils.isNullOrEmpty(_userProfile.managedEntities)) {
 //if exists then delete
 
-      _userProfile.managedEntities.forEach((managedEntity) {
+      for (var managedEntity in _userProfile.managedEntities) {
         if (managedEntity.id == str.entityId) {
-          if (!Utils.isNullOrEmpty(managedEntity.childCollection)) {
-//if exists then update else add
+//           if (!Utils.isNullOrEmpty(managedEntity.childCollection)) {
+// //if exists then update else add
 
-            managedEntity.childCollection.forEach((element) {
-              if (element.id == str.id) {
-                managedEntity.childCollection.remove(element);
-              }
-            });
-          }
+//             managedEntity.childCollection.forEach((element) {
+//               if (element.id == str.id) {
+//                 managedEntity.childCollection.remove(element);
+//               }
+//             });
+//           }
+          managedEntity.childCollection.remove(str);
         }
-      });
+      }
 //Update info in local DB
       String fileData = generateJson(_userProfile);
       //print('Writing in file $file , data: $fileData');

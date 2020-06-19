@@ -93,9 +93,9 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
 
     //  getEntityDetails();
     initializeEntity();
-    entity.contactPersons = new List<ContactAppData>();
+    //entity.contactPersons = new List<ContactAppData>();
     entity.adrs = new AddressAppData();
-    entity.contactPersons.add(cp1);
+    //entity.contactPersons.add(cp1);
     // addPerson();
   }
 
@@ -132,6 +132,7 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
     if (value == null) {
       return 'Field is empty';
     }
+    _formKey.currentState.save();
     return null;
   }
 
@@ -229,26 +230,18 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
       getEntity(entity.id).then((en) => entity = en);
   }
 
-  saveDetails() async {
-    List<Placemark> placemark = await Geolocator().placemarkFromAddress(
-        "My Home Vihanga, Financial District, Gachibowli, Hyderabad, Telangana, India");
-
-    print(placemark);
-    saveEntityDetails(entity);
-  }
-
   deleteEntity() {
     deleteEntityFromDb(entity);
   }
 
   void _addNewContactRow() {
     setState(() {
-      ContactAppData contact = new ContactAppData();
+      ContactAppData contact = new ContactAppData.type(_roleType);
 
       contactRowWidgets.insert(0, new ContactRow(contact: contact));
 
       contactList.add(contact);
-      //  entity.childCollection.add(c);
+      entity.contactPersons = contactList;
       // saveEntityDetails(en);
       //saveEntityDetails();
       _contactCount = _contactCount + 1;
@@ -464,7 +457,7 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
               borderSide: BorderSide(color: Colors.orange))),
       validator: validateTime,
       onSaved: (String value) {
-        entity.opensAt = value;
+        entity.breakTimeFrom = value;
       },
     );
     final breakEndTimeField = TextFormField(
@@ -499,7 +492,7 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
               borderSide: BorderSide(color: Colors.orange))),
       validator: validateTime,
       onSaved: (String value) {
-        entity.closesAt = value;
+        entity.breakTimeTo = value;
       },
     );
 
@@ -705,9 +698,30 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
     );
     TextEditingController _txtController = new TextEditingController();
     bool _delEnabled = false;
+
+    void saveFormDetails() async {
+      print("saving ");
+
+      if (_formKey.currentState.validate()) {
+        _formKey.currentState.save();
+      }
+      // String address = entity.adrs.addressLine1 ??
+      //     entity.adrs.addressLine1 +
+      //         entity.adrs.locality +
+      //         entity.adrs.city +
+      //         entity.adrs.state +
+      //         entity.adrs.country;
+      // List<Placemark> placemark =
+      //     await Geolocator().placemarkFromAddress(address);
+
+      // print(placemark);
+      // entity.lat = placemark[0].position.latitude;
+      // entity.long = placemark[0].position.longitude;
+    }
+
     saveRoute() {
-      _formKey.currentState.save();
-      saveDetails();
+      saveFormDetails();
+      saveEntityDetails(entity);
       Navigator.push(
           context,
           MaterialPageRoute(
@@ -718,14 +732,6 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
     processSaveWithTimer() async {
       var duration = new Duration(seconds: 1);
       return new Timer(duration, saveRoute);
-    }
-
-    void saveFormDetails() {
-      print("saving ");
-      if (_formKey.currentState.validate()) {
-        _formKey.currentState.save();
-      }
-      saveEntityDetails(entity);
     }
 
     void updateModel() {
@@ -963,6 +969,7 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
                   SizedBox(
                     height: 7,
                   ),
+                  //THIS CONTAINER
                   Container(
                     decoration: BoxDecoration(
                         border: Border.all(color: Colors.indigo),
