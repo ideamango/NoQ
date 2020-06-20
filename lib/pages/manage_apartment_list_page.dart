@@ -17,21 +17,20 @@ class ManageApartmentsListPage extends StatefulWidget {
 
 class _ManageApartmentsListPageState extends State<ManageApartmentsListPage> {
   String _msg;
-  final GlobalKey<FormState> _formKey = new GlobalKey<FormState>();
+  final GlobalKey<FormState> _entityListFormKey = new GlobalKey<FormState>();
   List<EntityAppData> entitiesList;
-  //final String title = "Services Detail Form";
-
   EntityAppData entity;
   String _entityType;
-
   int _count = 0;
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
 
   @override
   void initState() {
     super.initState();
-
-    // if (entity.childCollection == null)
-    //   entity.childCollection = new List<ChildEntityAppData>();
     getEntityList();
   }
 
@@ -39,14 +38,14 @@ class _ManageApartmentsListPageState extends State<ManageApartmentsListPage> {
     await readData().then((fUser) {
       if (Utils.isNullOrEmpty(fUser.managedEntities))
         entitiesList = new List<EntityAppData>();
-      else
-        setState(() {
-          // fUser.managedEntities.clear();
-          //  writeData(fUser);
-          entitiesList = fUser.managedEntities;
 
-          //  saveEntityDetails(new EntityAppData());
-        });
+      setState(() {
+// //TODO: Hack to clear list manually , remove later
+//           fUser.managedEntities.clear();
+//           writeData(fUser);
+// //TODO:End
+        entitiesList = fUser.managedEntities;
+      });
     });
   }
 
@@ -56,9 +55,7 @@ class _ManageApartmentsListPageState extends State<ManageApartmentsListPage> {
       String _entityId = uuid.v1();
       EntityAppData en = new EntityAppData.eType(_entityType, _entityId);
       entitiesList.add(en);
-      //  entity.childCollection.add(c);
       saveEntityDetails(en);
-      //saveEntityDetails();
       _count = _count + 1;
     });
   }
@@ -74,7 +71,6 @@ class _ManageApartmentsListPageState extends State<ManageApartmentsListPage> {
         shape: BoxShape.rectangle,
         color: Colors.blueGrey[500],
         borderRadius: BorderRadius.all(Radius.circular(4.0)));
-
     final subEntityType = new FormField(
       builder: (FormFieldState state) {
         return InputDecorator(
@@ -117,7 +113,6 @@ class _ManageApartmentsListPageState extends State<ManageApartmentsListPage> {
     );
     String title = "Manage Entities";
     return MaterialApp(
-      // title: 'Add child entities',
       theme: ThemeData.light().copyWith(),
       home: Scaffold(
         appBar: AppBar(
@@ -140,7 +135,7 @@ class _ManageApartmentsListPageState extends State<ManageApartmentsListPage> {
             )),
         body: Center(
           child: new Form(
-            key: _formKey,
+            key: _entityListFormKey,
             autovalidate: true,
             child: Column(
               children: <Widget>[
@@ -152,8 +147,6 @@ class _ManageApartmentsListPageState extends State<ManageApartmentsListPage> {
                         color: Colors.white,
                         shape: BoxShape.rectangle,
                         borderRadius: BorderRadius.all(Radius.circular(5.0))),
-                    // padding: EdgeInsets.all(5.0),
-
                     child: Column(
                       children: <Widget>[
                         // Container(
@@ -238,8 +231,9 @@ class _ManageApartmentsListPageState extends State<ManageApartmentsListPage> {
                                       setState(() {
                                         _msg = null;
                                       });
-                                      if (_formKey.currentState.validate()) {
-                                        _formKey.currentState.save();
+                                      if (_entityListFormKey.currentState
+                                          .validate()) {
+                                        _entityListFormKey.currentState.save();
                                         _addNewServiceRow();
                                         //   _subEntityType = "Select";
                                         // } else {
@@ -265,21 +259,16 @@ class _ManageApartmentsListPageState extends State<ManageApartmentsListPage> {
                   new Expanded(
                     child: ListView.builder(
                       shrinkWrap: true,
-                      //scrollDirection: Axis.vertical,
                       itemBuilder: (BuildContext context, int index) {
                         return Container(
                           child: new Column(
                               children:
                                   entitiesList.map(_buildServiceItem).toList()),
-                          //children: <Widget>[firstRow, secondRow],
                         );
                       },
                       itemCount: 1,
                     ),
                   ),
-                // new Column(
-                //   children: _contatos,
-                // ),
               ],
             ),
             // bottomNavigationBar: buildBottomItems()

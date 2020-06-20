@@ -45,27 +45,23 @@ Future<UserAppData> readData() async {
 }
 
 void saveEntityDetails(EntityAppData str) async {
-  // final file = await localFile;
-  UserAppData _userProfile;
-
 //Read current data in file
   await readData().then((fUser) {
-    _userProfile = fUser;
-    if (!Utils.isNullOrEmpty(_userProfile.managedEntities)) {
+    if (!Utils.isNullOrEmpty(fUser.managedEntities)) {
 //if exists then update else add
 
-      for (var element in _userProfile.managedEntities) {
+      for (var element in fUser.managedEntities) {
         if (element.id == str.id) {
           element = str;
-          writeData(_userProfile);
+          writeData(fUser);
           return;
         }
       }
     } else {
-      _userProfile.managedEntities = new List<EntityAppData>();
+      fUser.managedEntities = new List<EntityAppData>();
     }
-    _userProfile.managedEntities.add(str);
-    writeData(_userProfile);
+    fUser.managedEntities.add(str);
+    writeData(fUser);
     return;
 
     //TODO: Update on server
@@ -75,33 +71,18 @@ void saveEntityDetails(EntityAppData str) async {
 }
 
 void deleteServiceFromDb(ChildEntityAppData str) async {
-  final file = await localFile;
-  UserAppData _userProfile;
-
 //Read current data in file
   await readData().then((fUser) {
-    _userProfile = fUser;
-    if (!Utils.isNullOrEmpty(_userProfile.managedEntities)) {
+    if (!Utils.isNullOrEmpty(fUser.managedEntities)) {
 //if exists then delete
 
-      for (var managedEntity in _userProfile.managedEntities) {
-        if (managedEntity.id == str.entityId) {
-//           if (!Utils.isNullOrEmpty(managedEntity.childCollection)) {
-// //if exists then update else add
-
-//             managedEntity.childCollection.forEach((element) {
-//               if (element.id == str.id) {
-//                 managedEntity.childCollection.remove(element);
-//               }
-//             });
-//           }
+      for (var managedEntity in fUser.managedEntities) {
+        if (managedEntity.id == str.parentEntityId) {
           managedEntity.childCollection.remove(str);
         }
       }
 //Update info in local DB
-      String fileData = generateJson(_userProfile);
-      //print('Writing in file $file , data: $fileData');
-      file.writeAsString("$fileData");
+      writeData(fUser);
 
       //TODO: Update on server
       //EntityService().upsertEntity(str);
@@ -110,24 +91,18 @@ void deleteServiceFromDb(ChildEntityAppData str) async {
 }
 
 void deleteEntityFromDb(EntityAppData str) async {
-  final file = await localFile;
-  UserAppData _userProfile;
-
 //Read current data in file
   await readData().then((fUser) {
-    _userProfile = fUser;
-    if (!Utils.isNullOrEmpty(_userProfile.managedEntities)) {
+    if (!Utils.isNullOrEmpty(fUser.managedEntities)) {
 //if exists then delete
 
-      _userProfile.managedEntities.forEach((element) {
+      fUser.managedEntities.forEach((element) {
         if (element.id == str.id) {
-          _userProfile.managedEntities.remove(element);
+          fUser.managedEntities.remove(element);
         }
       });
 //Update info in local DB
-      String fileData = generateJson(_userProfile);
-      //print('Writing in file $file , data: $fileData');
-      file.writeAsString("$fileData");
+      writeData(fUser);
 
       //TODO: Update on server
       //EntityService().upsertEntity(str);
@@ -136,9 +111,7 @@ void deleteEntityFromDb(EntityAppData str) async {
 }
 
 saveChildEntity(ChildEntityAppData serviceEntity) async {
-  final file = await localFile;
-  bool serviceExists;
-  String entityId = serviceEntity.entityId;
+  String entityId = serviceEntity.parentEntityId;
 //Read current data in file
   await readData().then((fUser) {
     if (!Utils.isNullOrEmpty(fUser.managedEntities)) {
@@ -147,18 +120,21 @@ saveChildEntity(ChildEntityAppData serviceEntity) async {
           if (!Utils.isNullOrEmpty(entity.childCollection)) {
 //if exists then update else add
 
-            entity.childCollection.forEach((element) {
+            for (var element in entity.childCollection) {
               if (element.id == serviceEntity.id) {
                 element = serviceEntity;
+                writeData(fUser);
+                return;
               }
-            });
+            }
           } else {
             entity.childCollection = new List<ChildEntityAppData>();
-            entity.childCollection.add(serviceEntity);
           }
-          String fileData = generateJson(fUser);
+          entity.childCollection.add(serviceEntity);
+          writeData(fUser);
+          return;
+
           //print('Writing in file $file , data: $fileData');
-          file.writeAsString("$fileData");
 
           //TODO: Update on server
           //EntityService().upsertEntity(str);

@@ -112,7 +112,7 @@ class EntityAppData {
 @JsonSerializable()
 class ChildEntityAppData {
   String id;
-  String entityId;
+  String parentEntityId;
   String cType;
   String name;
   String regNum;
@@ -130,11 +130,11 @@ class ChildEntityAppData {
   bool publicAccess;
   ChildEntityAppData();
 
-  ChildEntityAppData.cType(this.cType, this.entityId, this.adrs);
+  ChildEntityAppData.cType(this.id, this.cType, this.parentEntityId, this.adrs);
 
   ChildEntityAppData.allValues(
     this.id,
-    this.entityId,
+    this.parentEntityId,
     this.cType,
     this.name,
     this.regNum,

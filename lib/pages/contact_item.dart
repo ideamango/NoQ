@@ -56,7 +56,7 @@ class ContactRowState extends State<ContactRow> {
     //       MaterialPageRoute(
     //           builder: (context) => ManageApartmentPage(entity: this.entity)));
     // }
-    //Contact person
+
     final ctNameField = TextFormField(
       obscureText: false,
       maxLines: 1,
@@ -67,6 +67,9 @@ class ContactRowState extends State<ContactRow> {
       decoration:
           CommonStyle.textFieldStyle(labelTextStr: "Name", hintTextStr: ""),
       validator: validateText,
+      onChanged: (String value) {
+        contact.perName = value;
+      },
       onSaved: (String value) {
         contact.perName = value;
       },
@@ -81,6 +84,9 @@ class ContactRowState extends State<ContactRow> {
       decoration: CommonStyle.textFieldStyle(
           labelTextStr: "Person Id", hintTextStr: ""),
       validator: validateText,
+      onChanged: (String value) {
+        contact.empId = value;
+      },
       onSaved: (String value) {
         contact.empId = value;
       },
@@ -95,6 +101,9 @@ class ContactRowState extends State<ContactRow> {
       decoration: CommonStyle.textFieldStyle(
           prefixText: '+91', labelTextStr: "Primary Phone", hintTextStr: ""),
       validator: Utils.validateMobile,
+      onChanged: (String value) {
+        contact.perPhone1 = value;
+      },
       onSaved: (value) {
         value = "+91" + value;
         contact.perPhone1 = value;
@@ -110,6 +119,9 @@ class ContactRowState extends State<ContactRow> {
       decoration: CommonStyle.textFieldStyle(
           prefixText: '+91', labelTextStr: "Alternate Phone", hintTextStr: ""),
       validator: Utils.validateMobile,
+      onChanged: (String value) {
+        contact.perPhone2 = value;
+      },
       onSaved: (value) {
         value = "+91" + value;
         contact.perPhone2 = value;
@@ -164,6 +176,9 @@ class ContactRowState extends State<ContactRow> {
           focusedBorder: UnderlineInputBorder(
               borderSide: BorderSide(color: Colors.orange))),
       validator: validateTime,
+      onChanged: (String value) {
+        contact.avlFromTime = value;
+      },
       onSaved: (String value) {
         contact.avlFromTime = value;
       },
@@ -199,6 +214,9 @@ class ContactRowState extends State<ContactRow> {
           focusedBorder: UnderlineInputBorder(
               borderSide: BorderSide(color: Colors.orange))),
       validator: validateTime,
+      onChanged: (String value) {
+        contact.avlTillTime = value;
+      },
       onSaved: (String value) {
         contact.avlTillTime = value;
       },

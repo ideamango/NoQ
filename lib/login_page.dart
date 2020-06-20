@@ -20,7 +20,7 @@ class _LoginPageState extends State<LoginPage> {
   String _errorMsg;
   String _mobile, smsCode;
   String verificationId;
-  final _formKey = new GlobalKey<FormState>();
+  final _loginPageFormKey = new GlobalKey<FormState>();
   bool codeSent = false;
   bool _autoValidate = false;
   bool isButtonPressed = false;
@@ -48,7 +48,7 @@ class _LoginPageState extends State<LoginPage> {
           color: Colors.white,
           margin: new EdgeInsets.all(5.0),
           child: new Form(
-            key: _formKey,
+            key: _loginPageFormKey,
             autovalidate: _autoValidate,
             child: formUI(context),
           ),
@@ -141,8 +141,8 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   void submitForm() {
-    if (_formKey.currentState.validate()) {
-      _formKey.currentState.save();
+    if (_loginPageFormKey.currentState.validate()) {
+      _loginPageFormKey.currentState.save();
       codeSent
           ? AuthService().signInWithOTP(smsCode, verificationId, context)
           : verifyPhone(_mobile);
