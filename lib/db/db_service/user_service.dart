@@ -1,33 +1,77 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:noq/db/db_model/my_geo_fire_point.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:noq/db/db_model/user.dart';
 
 class UserService {
-  Future<String> registerUser(String phone, String firstName, String lastName,
-      String firebaseId, double lat, double lon) async {
-    //TODO:
-    //1. If the user with the same phone or firebaseId already exits, do not allow the creation - throw exception
+  //This method is to be called when the user logs in the system for the first time
+  Future<User> createUser() async {
+    final FirebaseUser fireUser = await FirebaseAuth.instance.currentUser();
+    Firestore fStore = Firestore.instance;
 
-    Firestore _firestore = Firestore.instance;
-    MyGeoFirePoint fp;
-    if (lat != null && lon != null) {
-      fp = new MyGeoFirePoint(lat, lon);
-    }
+    final DocumentReference userRef =
+        fStore.document('users/' + fireUser.phoneNumber);
 
-    User u = new User(
-      firebaseId: firebaseId,
-      fn: firstName,
-      ln: lastName,
-      loc: fp,
-      ph: phone,
-    );
+    User u;
 
-    DocumentReference docRef =
-        await _firestore.collection('users').add(u.toJson());
+    await fStore.runTransaction((Transaction tx) async {
+      try {
+        DocumentSnapshot usrDoc = await tx.get(userRef);
+        if (usrDoc.exists) {
+          u = User.fromJson(usrDoc.data);
+        } else {
+          u = new User(
+              id: fireUser.uid,
+              ph: fireUser.phoneNumber,
+              name: fireUser.displayName);
 
-    return docRef.documentID;
+          tx.set(userRef, u.toJson());
+        }
+      } catch (e) {
+        print("Transactio Error: " + e.toString());
+        u = null;
+      }
+    });
+
+    return u;
   }
 
-  bool updateUser(String phone, String firstName, String lastName,
-      String firebaseId, double lat, double lon) {}
+  Future<User> getCurrentUser() async {
+    final FirebaseUser fireUser = await FirebaseAuth.instance.currentUser();
+    Firestore fStore = Firestore.instance;
+
+    final DocumentReference userRef =
+        fStore.document('users/' + fireUser.phoneNumber);
+
+    User u;
+
+    DocumentSnapshot doc = await userRef.get();
+
+    if (doc.exists) {
+      Map<String, dynamic> map = doc.data;
+
+      u = User.fromJson(map);
+    } else {
+      u = new User(
+          id: fireUser.uid,
+          ph: fireUser.phoneNumber,
+          name: fireUser.displayName);
+
+      userRef.setData(u.toJson());
+    }
+
+    return u;
+  }
+
+  Future<bool> deleteCurrentUser() async {
+    final FirebaseUser fireUser = await FirebaseAuth.instance.currentUser();
+    Firestore fStore = Firestore.instance;
+    try {
+      final DocumentReference userRef =
+          fStore.document('users/' + fireUser.phoneNumber);
+      await userRef.delete();
+    } catch (e) {
+      return false;
+    }
+    return true;
+  }
 }

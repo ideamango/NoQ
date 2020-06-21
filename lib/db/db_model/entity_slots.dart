@@ -34,6 +34,7 @@ class EntitySlots {
   int endTimeMinute;
 
   static EntitySlots fromJson(Map<String, dynamic> json) {
+    if (json == null) return null;
     return new EntitySlots(
         entityId: json['entityId'].toString(),
         maxAllowed: json['maxAllowed'],

@@ -18,6 +18,7 @@ class MyGeoFirePoint {
       };
 
   static MyGeoFirePoint fromJson(Map<String, dynamic> json) {
+    if (json == null) return null;
     GeoPoint point = json['geopoint'] as GeoPoint;
     double lat = point.latitude;
     double lon = point.longitude;

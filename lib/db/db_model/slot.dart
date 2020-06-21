@@ -26,6 +26,7 @@ class Slot {
       };
 
   static Slot fromJson(Map<String, dynamic> json) {
+    if (json == null) return null;
     return new Slot(
         slotId: json['slotId'].toString(),
         currentNumber: json['currentNumber'],

@@ -14,8 +14,8 @@ class DBLayer {
     MyGeoFirePoint fp = new MyGeoFirePoint(12.992975, 77.660653);
 
     User u = new User();
-    u.fn = "Far1";
-    u.ln = "Far2";
+    // u.fn = "Far1";
+    // u.ln = "Far2";
     u.loc = fp;
     u.ph = "+91870997688";
 

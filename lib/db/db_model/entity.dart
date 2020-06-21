@@ -1,6 +1,7 @@
 import 'package:noq/db/db_model/address.dart';
 import 'package:noq/db/db_model/employee.dart';
 import 'package:noq/db/db_model/meta_entity.dart';
+import 'package:noq/db/db_model/meta_user.dart';
 import 'package:noq/db/db_model/my_geo_fire_point.dart';
 import 'package:noq/db/db_model/user.dart';
 
@@ -8,6 +9,7 @@ class Entity {
   Entity(
       {this.entityId,
       this.name,
+      this.description,
       this.address,
       this.advanceDays,
       this.isPublic,
@@ -29,15 +31,17 @@ class Entity {
       this.parentId,
       this.type,
       this.isBookable,
-      this.isActive});
+      this.isActive,
+      this.coordinates});
 
   //SlotDocumentId is entityID#20~06~01 it is not auto-generated, will help in not duplicating the record
   String entityId;
   String name;
+  String description;
   Address address;
   int advanceDays;
   bool isPublic;
-  List<User> admins;
+  List<MetaUser> admins;
   List<Employee> managers;
   List<MetaEntity> childEntities;
   MyGeoFirePoint geo;
@@ -56,10 +60,12 @@ class Entity {
   String type;
   bool isBookable;
   bool isActive;
+  MyGeoFirePoint coordinates;
 
   Map<String, dynamic> toJson() => {
         'entityId': entityId,
         'name': name,
+        'description': description,
         'address': address.toJson(),
         'advanceDays': advanceDays,
         'isPublic': isPublic,
@@ -80,13 +86,14 @@ class Entity {
         'parentId': parentId,
         'type': type,
         'isBookable': isBookable,
-        'isActive': isActive
+        'isActive': isActive,
+        'coordinates': coordinates.toJson()
       };
 
-  List<dynamic> usersToJson(List<User> users) {
+  List<dynamic> usersToJson(List<MetaUser> users) {
     List<dynamic> usersJson = new List<dynamic>();
     if (users == null) return usersJson;
-    for (User usr in users) {
+    for (MetaUser usr in users) {
       usersJson.add(usr.toJson());
     }
     return usersJson;
@@ -111,9 +118,11 @@ class Entity {
   }
 
   static Entity fromJson(Map<String, dynamic> json) {
+    if (json == null) return null;
     return new Entity(
         entityId: json['entityId'].toString(),
         name: json['name'].toString(),
+        description: json['description'],
         address: Address.fromJson(json['address']),
         advanceDays: json['advanceDays'],
         isPublic: json['isPublic'],
@@ -134,18 +143,19 @@ class Entity {
         parentId: json['parentId'],
         type: json['type'],
         isBookable: json['isBookable'],
-        isActive: json['isActive']);
+        isActive: json['isActive'],
+        coordinates: MyGeoFirePoint.fromJson(json['coordinates']));
   }
 
   static Address convertToAddressFromJson(Map<String, dynamic> json) {
     return Address.fromJson(json);
   }
 
-  static List<User> convertToUsersFromJson(List<dynamic> usersJson) {
-    List<User> users = new List<User>();
+  static List<MetaUser> convertToUsersFromJson(List<dynamic> usersJson) {
+    List<MetaUser> users = new List<MetaUser>();
 
     for (Map<String, dynamic> json in usersJson) {
-      User sl = User.fromJson(json);
+      MetaUser sl = MetaUser.fromJson(json);
       users.add(sl);
     }
     return users;
@@ -179,5 +189,36 @@ class Entity {
       days.add(day);
     }
     return days;
+  }
+
+  MetaEntity getMetaEntity() {
+    MetaEntity meta = new MetaEntity(
+        entityId: entityId,
+        name: name,
+        type: type,
+        advanceDays: advanceDays,
+        isPublic: isPublic,
+        closedOn: closedOn,
+        startTimeHour: startTimeHour,
+        startTimeMinute: startTimeMinute,
+        endTimeHour: endTimeHour,
+        endTimeMinute: endTimeMinute,
+        isActive: isActive);
+
+    return meta;
+  }
+
+  int isAdmin(String userId) {
+    int count = -1;
+    if (admins == null) return count;
+
+    for (MetaUser usr in admins) {
+      count++;
+      if (usr.id == userId) {
+        return count;
+      }
+    }
+
+    return -1;
   }
 }
