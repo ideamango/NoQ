@@ -99,7 +99,7 @@ Map<String, dynamic> _$EntityAppDataToJson(EntityAppData instance) =>
 ChildEntityAppData _$ChildEntityAppDataFromJson(Map<String, dynamic> json) {
   return ChildEntityAppData()
     ..id = json['id'] as String
-    ..entityId = json['entityId'] as String
+    ..parentEntityId = json['parentEntityId'] as String
     ..cType = json['cType'] as String
     ..name = json['name'] as String
     ..regNum = json['regNum'] as String
@@ -127,7 +127,7 @@ ChildEntityAppData _$ChildEntityAppDataFromJson(Map<String, dynamic> json) {
 Map<String, dynamic> _$ChildEntityAppDataToJson(ChildEntityAppData instance) =>
     <String, dynamic>{
       'id': instance.id,
-      'entityId': instance.entityId,
+      'parentEntityId': instance.parentEntityId,
       'cType': instance.cType,
       'name': instance.name,
       'regNum': instance.regNum,

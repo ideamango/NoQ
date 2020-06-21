@@ -26,16 +26,49 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
   SharedPreferences _prefs;
   UserAppData _userProfile;
   List<EntityAppData> _stores = new List<EntityAppData>();
+  List<EntityAppData> _searchResultstores = new List<EntityAppData>();
+
   bool fetchFromServer = false;
 
   final compareDateFormat = new DateFormat('YYYYMMDD');
 
   List<DateTime> _dateList = new List<DateTime>();
 
+  Widget appBarTitle = new Text(
+    "Search Sample",
+    style: new TextStyle(color: Colors.white),
+  );
+  Icon actionIcon = new Icon(
+    Icons.search,
+    color: Colors.white,
+  );
+  final key = new GlobalKey<ScaffoldState>();
+  final TextEditingController _searchQuery = new TextEditingController();
+  List<EntityAppData> _list;
+  bool _isSearching;
+  String _searchText = "";
+
+  _SearchStoresPageState() {
+    _searchQuery.addListener(() {
+      if (_searchQuery.text.isEmpty) {
+        setState(() {
+          _isSearching = false;
+          _searchText = "";
+        });
+      } else {
+        setState(() {
+          _isSearching = true;
+          _searchText = _searchQuery.text;
+        });
+      }
+    });
+  }
+
   @override
   void initState() {
     super.initState();
     // _getUserData();
+    _isSearching = false;
     getPrefInstance().then((action) {
       getList();
       setState(() {
@@ -90,6 +123,8 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
       }
     });
     _userProfile.storesAccessed = _stores;
+
+    _list = _stores;
 
     writeData(_userProfile);
   }
@@ -206,20 +241,32 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
       if (_stores == null) {
         return _emptyStorePage();
       } else {
-        return Center(
-          child: Container(
-            margin: EdgeInsets.fromLTRB(10, 10, 10, 10),
-            child: ListView.builder(
-                itemCount: 1,
-                itemBuilder: (BuildContext context, int index) {
-                  return Container(
-                    child:
-                        new Column(children: _stores.map(_buildItem).toList()),
-                    //children: <Widget>[firstRow, secondRow],
-                  );
-                }),
-          ),
-        );
+        return MaterialApp(
+            theme: ThemeData.light().copyWith(),
+            home: Scaffold(
+                appBar: buildBar(context),
+                body: Center(
+                  child: Container(
+                    margin: EdgeInsets.fromLTRB(10, 10, 10, 10),
+                    child: ListView.builder(
+                        itemCount: 1,
+                        itemBuilder: (BuildContext context, int index) {
+                          return Container(
+                            child: new Column(
+                              children: _isSearching
+                                  ? _buildSearchList()
+                                  : _buildList(),
+                              // ? _searchResultstores
+                              //     .map(_buildItem)
+                              //     .toList()
+                              // : _stores.map(_buildItem).toList()
+                              // ),
+                              //children: <Widget>[firstRow, secondRow],
+                            ),
+                          );
+                        }),
+                  ),
+                )));
       }
     }
   }
@@ -513,5 +560,88 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
       ),
     );
     return dtItem;
+  }
+
+  List<Widget> _buildList() {
+    return _stores.map(_buildItem).toList();
+    // return _stores.map((contact) => new ChildItem(contact.name)).toList();
+  }
+
+  List<Widget> _buildSearchList() {
+    if (_searchText.isEmpty) {
+      return _stores.map(_buildItem).toList();
+      //return _stores.map((contact) => new ChildItem(contact.name)).toList();
+    } else {
+      List<EntityAppData> _searchList = List();
+      for (int i = 0; i < _stores.length; i++) {
+        String name = _stores.elementAt(i).name;
+        if (name.toLowerCase().contains(_searchText.toLowerCase())) {
+          _searchList.add(_stores.elementAt(i));
+        }
+      }
+      return _searchList.map(_buildItem).toList();
+      ;
+    }
+  }
+
+  Widget buildBar(BuildContext context) {
+    return new AppBar(centerTitle: true, title: appBarTitle, actions: <Widget>[
+      new IconButton(
+        icon: actionIcon,
+        onPressed: () {
+          setState(() {
+            if (this.actionIcon.icon == Icons.search) {
+              this.actionIcon = new Icon(
+                Icons.close,
+                color: Colors.white,
+              );
+              this.appBarTitle = new TextField(
+                controller: _searchQuery,
+                style: new TextStyle(
+                  color: Colors.white,
+                ),
+                decoration: new InputDecoration(
+                    prefixIcon: new Icon(Icons.search, color: Colors.white),
+                    hintText: "Search...",
+                    hintStyle: new TextStyle(color: Colors.white)),
+              );
+              _handleSearchStart();
+            } else {
+              _handleSearchEnd();
+            }
+          });
+        },
+      ),
+    ]);
+  }
+
+  void _handleSearchStart() {
+    setState(() {
+      _isSearching = true;
+    });
+  }
+
+  void _handleSearchEnd() {
+    setState(() {
+      this.actionIcon = new Icon(
+        Icons.search,
+        color: Colors.white,
+      );
+      this.appBarTitle = new Text(
+        "Search by name",
+        style: new TextStyle(color: Colors.white),
+      );
+      _isSearching = false;
+      _searchQuery.clear();
+    });
+  }
+}
+
+class ChildItem extends StatelessWidget {
+  final String name;
+  ChildItem(this.name);
+  @override
+  Widget build(BuildContext context) {
+    return new ListTile(title: new Text(this.name));
   }
 }

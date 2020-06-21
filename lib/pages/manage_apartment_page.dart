@@ -30,7 +30,7 @@ class ManageApartmentPage extends StatefulWidget {
 }
 
 class _ManageApartmentPageState extends State<ManageApartmentPage> {
-  final GlobalKey<FormState> _formKey = new GlobalKey<FormState>();
+  final GlobalKey<FormState> _entityDetailsFormKey = new GlobalKey<FormState>();
   final String title = "Managers Form";
   final Geolocator geolocator = Geolocator()..forceAndroidLocationManager;
 
@@ -132,7 +132,7 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
     if (value == null) {
       return 'Field is empty';
     }
-    _formKey.currentState.save();
+    _entityDetailsFormKey.currentState.save();
     return null;
   }
 
@@ -702,8 +702,8 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
     void saveFormDetails() async {
       print("saving ");
 
-      if (_formKey.currentState.validate()) {
-        _formKey.currentState.save();
+      if (_entityDetailsFormKey.currentState.validate()) {
+        _entityDetailsFormKey.currentState.save();
       }
       // String address = entity.adrs.addressLine1 ??
       //     entity.adrs.addressLine1 +
@@ -809,7 +809,7 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
             top: true,
             bottom: true,
             child: new Form(
-              key: _formKey,
+              key: _entityDetailsFormKey,
               autovalidate: true,
               child: new ListView(
                 padding: const EdgeInsets.all(5.0),
@@ -1084,17 +1084,25 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
                         ),
                         onPressed: () {
                           final snackBar = SnackBar(
+                            elevation: 20,
+                            // behavior: SnackBarBehavior.floating,
                             // shape: Border.all(
-                            //   color: tealIcon,
+                            //   color: lightIcon,
                             //   width: 2,
                             // ),
-                            backgroundColor:
-                                Colors.blueGrey[500].withOpacity(.95),
+                            //  backgroundColor: Colors.white,
                             content: Container(
+                              padding: EdgeInsets.all(0),
+                              // decoration: BoxDecoration(
+                              //   border: Border.all(color: Colors.indigo),
+                              // color: Colors.white,
+                              // shape: BoxShape.rectangle,
+                              // borderRadius:
+                              //     BorderRadius.all(Radius.circular(5.0))),
                               alignment: Alignment.center,
-                              height: MediaQuery.of(context).size.width * .25,
-                              child: Text("Saving details ... ",
-                                  style: buttonTextStyle),
+                              height: MediaQuery.of(context).size.width * .1,
+                              child: Text("Saving details..",
+                                  style: TextStyle(color: Colors.white)),
                               // Column(
                               //   children: <Widget>[
                               //     RichText(
@@ -1109,7 +1117,7 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
                               //   ],
                               // ),
                             ),
-                            duration: Duration(seconds: 1),
+                            duration: Duration(seconds: 2),
                           );
 
                           Scaffold.of(context).showSnackBar(snackBar);

@@ -5,6 +5,8 @@ import 'package:noq/pages/service_entity.dart';
 import 'package:noq/repository/local_db_repository.dart';
 import 'package:noq/style.dart';
 import 'package:flutter/foundation.dart';
+import 'package:noq/utils.dart';
+import 'package:uuid/uuid.dart';
 
 class EntityServicesListPage extends StatefulWidget {
   final EntityAppData entity;
@@ -15,34 +17,45 @@ class EntityServicesListPage extends StatefulWidget {
 
 class _EntityServicesListPageState extends State<EntityServicesListPage> {
   String _msg;
-  final GlobalKey<FormState> _formKey = new GlobalKey<FormState>();
+  final GlobalKey<FormState> _servicesListFormKey = new GlobalKey<FormState>();
   List<ChildEntityAppData> servicesList = new List<ChildEntityAppData>();
   final String title = "Services Detail Form";
 
-  EntityAppData entity;
+  EntityAppData parentEntity;
   String _subEntityType;
 
 //Add service Row
 
   int _count = 0;
+  @override
+  void dispose() {
+    super.dispose();
+  }
 
   @override
   void initState() {
     super.initState();
-    entity = widget.entity;
-    if (entity.childCollection == null)
-      entity.childCollection = new List<ChildEntityAppData>();
-
-    servicesList = entity.childCollection;
+    parentEntity = widget.entity;
+    if (Utils.isNullOrEmpty(parentEntity.childCollection))
+      parentEntity.childCollection = new List<ChildEntityAppData>();
+// //TODO: Hack to clear list manually , remove later
+    // parentEntity.childCollection.clear();
+    // saveEntityDetails(parentEntity);
+// //TODO:End
+    setState(() {
+      servicesList = parentEntity.childCollection;
+    });
   }
 
   void _addNewServiceRow() {
     setState(() {
-      ChildEntityAppData c =
-          new ChildEntityAppData.cType(_subEntityType, entity.id, entity.adrs);
+      var uuid = new Uuid();
+      String _serviceId = uuid.v1();
+      ChildEntityAppData c = new ChildEntityAppData.cType(
+          _serviceId, _subEntityType, parentEntity.id, parentEntity.adrs);
       servicesList.add(c);
       //  entity.childCollection.add(c);
-      saveEntityDetails(entity);
+      saveChildEntity(c);
       _count = _count + 1;
     });
   }
@@ -100,7 +113,8 @@ class _EntityServicesListPageState extends State<EntityServicesListPage> {
         //   saveEntityDetails(entity);
       },
     );
-    String title = "Manage Services in " + ((entity.name) ?? (entity.eType));
+    String title =
+        "Manage Services in " + ((parentEntity.name) ?? (parentEntity.eType));
     return MaterialApp(
       title: 'Add child entities',
       //theme: ThemeData.light().copyWith(),
@@ -115,7 +129,7 @@ class _EntityServicesListPageState extends State<EntityServicesListPage> {
                 icon: Icon(Icons.arrow_back),
                 color: Colors.white,
                 onPressed: () {
-                  saveEntityDetails(entity);
+                  saveEntityDetails(parentEntity);
                   Navigator.of(context).pop();
                 }),
             title: Text(
@@ -125,7 +139,7 @@ class _EntityServicesListPageState extends State<EntityServicesListPage> {
             )),
         body: Center(
           child: new Form(
-            key: _formKey,
+            key: _servicesListFormKey,
             autovalidate: true,
             child: Padding(
               padding: const EdgeInsets.all(5.0),
@@ -156,14 +170,15 @@ class _EntityServicesListPageState extends State<EntityServicesListPage> {
                                 Column(
                                   children: <Widget>[
                                     Text(
-                                      (entity.name) ?? (entity.eType),
+                                      (parentEntity.name) ??
+                                          (parentEntity.eType),
                                       style: TextStyle(
                                           color: Colors.white, fontSize: 15),
                                     ),
                                     Text(
-                                      (entity.adrs.locality +
+                                      (parentEntity.adrs.locality +
                                               ", " +
-                                              entity.adrs.city +
+                                              parentEntity.adrs.city +
                                               ".") ??
                                           "",
                                       style: buttonXSmlTextStyle,
@@ -197,8 +212,10 @@ class _EntityServicesListPageState extends State<EntityServicesListPage> {
                                         setState(() {
                                           _msg = null;
                                         });
-                                        if (_formKey.currentState.validate()) {
-                                          _formKey.currentState.save();
+                                        if (_servicesListFormKey.currentState
+                                            .validate()) {
+                                          _servicesListFormKey.currentState
+                                              .save();
                                           _addNewServiceRow();
                                         }
                                       } else {

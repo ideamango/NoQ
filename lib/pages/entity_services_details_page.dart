@@ -27,7 +27,8 @@ class ServiceEntityDetailsPage extends StatefulWidget {
 }
 
 class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
-  final GlobalKey<FormState> _form2Key = new GlobalKey<FormState>();
+  final GlobalKey<FormState> _serviceDetailsFormKey =
+      new GlobalKey<FormState>();
   final String title = "Managers Form";
   final Geolocator geolocator = Geolocator()..forceAndroidLocationManager;
 
@@ -59,7 +60,7 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
   TextEditingController _ctAvlTillTimeController = TextEditingController();
 
   List<String> _daysOff = List<String>();
-  ContactAppData cp1 = new ContactAppData();
+
   AddressAppData adrs = new AddressAppData();
   ChildEntityAppData serviceEntity;
 
@@ -90,8 +91,8 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
   void initState() {
     super.initState();
     serviceEntity = widget.serviceEntity;
-    var uuid = new Uuid();
-    serviceEntity.id = uuid.v1();
+    // var uuid = new Uuid();
+    // serviceEntity.id = uuid.v1();
     _getCurrLocation();
     initializeEntity();
 
@@ -266,6 +267,9 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
       decoration: CommonStyle.textFieldStyle(
           labelTextStr: "Name of Establishment", hintTextStr: ""),
       validator: validateText,
+      onChanged: (String value) {
+        serviceEntity.name = value;
+      },
       onSaved: (String value) {
         serviceEntity.name = value;
       },
@@ -280,6 +284,9 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
       decoration: CommonStyle.textFieldStyle(
           labelTextStr: "Registration Number", hintTextStr: ""),
       validator: validateText,
+      onChanged: (String value) {
+        serviceEntity.regNum = value;
+      },
       onSaved: (String value) {
         serviceEntity.regNum = value;
       },
@@ -316,6 +323,9 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
           focusedBorder: UnderlineInputBorder(
               borderSide: BorderSide(color: Colors.orange))),
       validator: validateTime,
+      onChanged: (String value) {
+        serviceEntity.opensAt = value;
+      },
       onSaved: (String value) {
         serviceEntity.opensAt = value;
       },
@@ -351,6 +361,9 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
           focusedBorder: UnderlineInputBorder(
               borderSide: BorderSide(color: Colors.orange))),
       validator: validateTime,
+      onChanged: (String value) {
+        serviceEntity.closesAt = value;
+      },
       onSaved: (String value) {
         serviceEntity.closesAt = value;
       },
@@ -404,6 +417,9 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
           focusedBorder: UnderlineInputBorder(
               borderSide: BorderSide(color: Colors.orange))),
       validator: validateTime,
+      onChanged: (String value) {
+        serviceEntity.breakTimeFrom = value;
+      },
       onSaved: (String value) {
         // entity.opensAt = value;
       },
@@ -439,6 +455,9 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
           focusedBorder: UnderlineInputBorder(
               borderSide: BorderSide(color: Colors.orange))),
       validator: validateTime,
+      onChanged: (String value) {
+        serviceEntity.breakTimeTo = value;
+      },
       onSaved: (String value) {
         serviceEntity.closesAt = value;
       },
@@ -509,6 +528,9 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
             UnderlineInputBorder(borderSide: BorderSide(color: Colors.orange)),
       ),
       validator: validateText,
+      onChanged: (String value) {
+        serviceEntity.maxPeopleAllowed = value;
+      },
       onSaved: (String value) {
         // entity. = value;
       },
@@ -644,193 +666,12 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
       },
     );
     //Contact person
-    final ctNameField = TextFormField(
-      obscureText: false,
-      maxLines: 1,
-      minLines: 1,
-      style: textInputTextStyle,
-      keyboardType: TextInputType.text,
-      controller: _ctNameController,
-      decoration:
-          CommonStyle.textFieldStyle(labelTextStr: "Name", hintTextStr: ""),
-      validator: validateText,
-      onSaved: (String value) {
-        cp1.perName = value;
-      },
-    );
-    final ctEmpIdField = TextFormField(
-      obscureText: false,
-      maxLines: 1,
-      minLines: 1,
-      style: textInputTextStyle,
-      keyboardType: TextInputType.text,
-      controller: _ctEmpIdController,
-      decoration: CommonStyle.textFieldStyle(
-          labelTextStr: "Person Id", hintTextStr: ""),
-      validator: validateText,
-      onSaved: (String value) {
-        cp1.empId = value;
-      },
-    );
-    final ctPhn1Field = TextFormField(
-      obscureText: false,
-      maxLines: 1,
-      minLines: 1,
-      style: textInputTextStyle,
-      keyboardType: TextInputType.phone,
-      controller: _ctPhn1controller,
-      decoration: CommonStyle.textFieldStyle(
-          prefixText: '+91', labelTextStr: "Primary Phone", hintTextStr: ""),
-      validator: Utils.validateMobile,
-      onSaved: (value) {
-        value = "+91" + value;
-        cp1.perPhone1 = value;
-      },
-    );
-    final ctPhn2Field = TextFormField(
-      obscureText: false,
-      maxLines: 1,
-      minLines: 1,
-      style: textInputTextStyle,
-      keyboardType: TextInputType.phone,
-      controller: _ctPhn2controller,
-      decoration: CommonStyle.textFieldStyle(
-          prefixText: '+91', labelTextStr: "Alternate Phone", hintTextStr: ""),
-      validator: Utils.validateMobile,
-      onSaved: (value) {
-        value = "+91" + value;
-        cp1.perPhone2 = value;
-      },
-    );
-    final ctAvlFromTimeField = TextFormField(
-      obscureText: false,
-      maxLines: 1,
-      readOnly: true,
-      minLines: 1,
-      style: textInputTextStyle,
-      controller: _ctAvlFromTimeController,
-      keyboardType: TextInputType.text,
-      onTap: () {
-        DatePicker.showTime12hPicker(context, showTitleActions: true,
-            onChanged: (date) {
-          print('change $date in time zone ' +
-              date.timeZoneOffset.inHours.toString());
-        }, onConfirm: (date) {
-          print('confirm $date');
-          //  String time = "${date.hour}:${date.minute} ${date.";
-
-          String time = DateFormat.jm().format(date);
-          print(time);
-
-          _ctAvlFromTimeController.text = time.toLowerCase();
-        }, currentTime: DateTime.now());
-      },
-      decoration: InputDecoration(
-          labelText: "Available from",
-          hintText: "HH:MM am/pm",
-          enabledBorder:
-              UnderlineInputBorder(borderSide: BorderSide(color: Colors.grey)),
-          focusedBorder: UnderlineInputBorder(
-              borderSide: BorderSide(color: Colors.orange))),
-      validator: validateTime,
-      onSaved: (String value) {
-        cp1.avlFromTime = value;
-      },
-    );
-    final ctAvlTillTimeField = TextFormField(
-      enabled: true,
-      obscureText: false,
-      readOnly: true,
-      maxLines: 1,
-      minLines: 1,
-      controller: _ctAvlTillTimeController,
-      style: textInputTextStyle,
-      onTap: () {
-        DatePicker.showTime12hPicker(context, showTitleActions: true,
-            onChanged: (date) {
-          print('change $date in time zone ' +
-              date.timeZoneOffset.inHours.toString());
-        }, onConfirm: (date) {
-          print('confirm $date');
-          //  String time = "${date.hour}:${date.minute} ${date.";
-
-          String time = DateFormat.jm().format(date);
-          print(time);
-
-          _ctAvlTillTimeController.text = time.toLowerCase();
-        }, currentTime: DateTime.now());
-      },
-      decoration: InputDecoration(
-          labelText: "Available till",
-          hintText: "HH:MM am/pm",
-          enabledBorder:
-              UnderlineInputBorder(borderSide: BorderSide(color: Colors.grey)),
-          focusedBorder: UnderlineInputBorder(
-              borderSide: BorderSide(color: Colors.orange))),
-      validator: validateTime,
-      onSaved: (String value) {
-        cp1.avlTillTime = value;
-      },
-    );
-    final daysOffField = Padding(
-      padding: EdgeInsets.only(top: 12, bottom: 8),
-      child: Row(
-        children: <Widget>[
-          Text(
-            'Days off: ',
-            style: TextStyle(
-              color: Colors.grey[600],
-              // fontWeight: FontWeight.w800,
-              fontFamily: 'Monsterrat',
-              letterSpacing: 0.5,
-              fontSize: 15.0,
-              //height: 2,
-            ),
-            textAlign: TextAlign.left,
-          ),
-          SizedBox(width: 5),
-          new WeekDaySelectorFormField(
-            displayDays: [
-              days.monday,
-              days.tuesday,
-              days.wednesday,
-              days.thursday,
-              days.friday,
-              days.saturday,
-              days.sunday
-            ],
-            initialValue: [days.sunday],
-            borderRadius: 20,
-            elevation: 10,
-            textStyle: buttonXSmlTextStyle,
-            fillColor: Colors.blueGrey[400],
-            selectedFillColor: highlightColor,
-            boxConstraints: BoxConstraints(
-                minHeight: 25, minWidth: 25, maxHeight: 28, maxWidth: 28),
-            borderSide: BorderSide(color: Colors.white, width: 0),
-            language: lang.en,
-            onChange: (days) {
-              print("Days off: " + days.toString());
-              _daysOff.clear();
-              days.forEach((element) {
-                var day = element.toString().substring(5);
-                _daysOff.add(day);
-              });
-              cp1.daysOff = _daysOff;
-              print(_daysOff.length);
-              print(_daysOff.toString());
-            },
-          ),
-        ],
-      ),
-    );
 
     void saveFormDetails() {
       print("saving ");
-      if (_form2Key.currentState.validate()) {
-        _form2Key.currentState.save();
+      if (_serviceDetailsFormKey.currentState.validate()) {
+        _serviceDetailsFormKey.currentState.save();
       }
-      saveChildEntity(serviceEntity);
     }
 
     void updateModel() {
@@ -841,8 +682,17 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
     TextEditingController _txtController = new TextEditingController();
     bool _delEnabled = false;
     saveRoute() {
-      _form2Key.currentState.save();
-      saveDetails();
+      saveFormDetails();
+      saveChildEntity(serviceEntity);
+      // Navigator.push(
+      //     context,
+      //     MaterialPageRoute(
+      //         builder: (context) =>
+      //             EntityServicesListPage(entity: this.entity)));
+
+//TODO: old code - test and remove
+      // _form2Key.currentState.save();
+      // saveDetails();
       // Navigator.push(
       //     context,
       //     MaterialPageRoute(
@@ -930,7 +780,7 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
         body: Center(
           child: SafeArea(
             child: new Form(
-              key: _form2Key,
+              key: _serviceDetailsFormKey,
               autovalidate: true,
               child: ListView(
                 padding: const EdgeInsets.all(5.0),
@@ -1160,6 +1010,7 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
                                           setState(() {
                                             _msg = null;
                                           });
+
                                           _addNewContactRow();
                                         } else {
                                           setState(() {
@@ -1310,17 +1161,25 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
                         ),
                         onPressed: () {
                           final snackBar = SnackBar(
+                            elevation: 20,
+                            // behavior: SnackBarBehavior.floating,
                             // shape: Border.all(
-                            //   color: tealIcon,
+                            //   color: lightIcon,
                             //   width: 2,
                             // ),
-                            backgroundColor:
-                                Colors.blueGrey[500].withOpacity(.95),
+                            //  backgroundColor: Colors.white,
                             content: Container(
+                              padding: EdgeInsets.all(0),
+                              // decoration: BoxDecoration(
+                              //   border: Border.all(color: Colors.indigo),
+                              // color: Colors.white,
+                              // shape: BoxShape.rectangle,
+                              // borderRadius:
+                              //     BorderRadius.all(Radius.circular(5.0))),
                               alignment: Alignment.center,
-                              height: MediaQuery.of(context).size.width * .25,
-                              child: Text("Saving details ... ",
-                                  style: buttonTextStyle),
+                              height: MediaQuery.of(context).size.width * .1,
+                              child: Text("Saving details..",
+                                  style: TextStyle(color: Colors.white)),
                               // Column(
                               //   children: <Widget>[
                               //     RichText(
@@ -1335,7 +1194,7 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
                               //   ],
                               // ),
                             ),
-                            duration: Duration(seconds: 1),
+                            duration: Duration(seconds: 2),
                           );
 
                           Scaffold.of(context).showSnackBar(snackBar);
