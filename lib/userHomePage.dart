@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:noq/constants.dart';
 import 'package:noq/db/db_model/address.dart';
@@ -5,6 +6,7 @@ import 'package:noq/db/db_model/my_geo_fire_point.dart';
 import 'package:noq/db/db_service/db_main.dart';
 import 'package:noq/db/db_service/entity_service.dart';
 import 'package:noq/db/db_service/token_service.dart';
+import 'package:noq/db/db_service/user_service.dart';
 import 'package:noq/models/localDB.dart';
 import 'package:noq/repository/local_db_repository.dart';
 import 'package:noq/services/circular_progress.dart';
@@ -19,6 +21,7 @@ import 'package:flutter/services.dart';
 
 import 'db/db_model/entity.dart';
 import 'db/db_model/entity_slots.dart';
+import 'db/db_model/user.dart';
 import 'db/db_model/user_token.dart';
 //import 'path';
 
@@ -72,7 +75,177 @@ class _UserHomePageState extends State<UserHomePage> {
     }
   }
 
+  void createEntity() async {
+    Address adrs = new Address(
+        city: "Hyderbad",
+        state: "Telangana",
+        country: "India",
+        address: "Shop 10, Gachibowli");
+
+    MyGeoFirePoint geoPoint = new MyGeoFirePoint(68, 78);
+    Entity entity = new Entity(
+        entityId: "Entity101",
+        name: "VijethaModified",
+        address: adrs,
+        advanceDays: 3,
+        isPublic: true,
+        geo: geoPoint,
+        maxAllowed: 60,
+        slotDuration: 60,
+        closedOn: ["Saturday", "Sunday"],
+        breakStartHour: 13,
+        breakStartMinute: 30,
+        breakEndHour: 14,
+        breakEndMinute: 30,
+        startTimeHour: 10,
+        startTimeMinute: 30,
+        endTimeHour: 21,
+        endTimeMinute: 0,
+        parentId: null,
+        type: "Mall",
+        isBookable: false,
+        isActive: true,
+        coordinates: geoPoint);
+
+    try {
+      await EntityService().upsertEntity(entity);
+    } catch (e) {
+      print("Exception occured " + e);
+    }
+  }
+
+  void updateEntity() async {
+    Address adrs = new Address(
+        city: "Hyderbad",
+        state: "Telangana",
+        country: "India",
+        address: "Shop 10, Gachibowli");
+
+    MyGeoFirePoint geoPoint = new MyGeoFirePoint(68, 78);
+    Entity entity = new Entity(
+        entityId: "Entity101",
+        name: "VijethaModified" +
+            adrs.hashCode.toString(), //just some random number
+        address: adrs,
+        advanceDays: 3,
+        isPublic: true,
+        geo: geoPoint,
+        maxAllowed: 60,
+        slotDuration: 60,
+        closedOn: ["Saturday", "Sunday"],
+        breakStartHour: 13,
+        breakStartMinute: 30,
+        breakEndHour: 14,
+        breakEndMinute: 30,
+        startTimeHour: 10,
+        startTimeMinute: 30,
+        endTimeHour: 21,
+        endTimeMinute: 0,
+        parentId: null,
+        type: "Mall",
+        isBookable: false,
+        isActive: true,
+        coordinates: geoPoint);
+
+    try {
+      await EntityService().upsertEntity(entity);
+    } catch (e) {
+      print("Exception occured " + e);
+    }
+  }
+
+  void createChildEntityAndAddToParent(String id, String name) async {
+    Address adrs = new Address(
+        city: "Hyderbad",
+        state: "Telangana",
+        country: "India",
+        address: "Shop 10, Gachibowli");
+
+    MyGeoFirePoint geoPoint = new MyGeoFirePoint(68, 78);
+
+    Entity child1 = new Entity(
+        entityId: id,
+        name: name + adrs.hashCode.toString(), //just some random number,
+        address: adrs,
+        advanceDays: 5,
+        isPublic: true,
+        geo: geoPoint,
+        maxAllowed: 50,
+        slotDuration: 30,
+        closedOn: ["Saturday", "Sunday"],
+        breakStartHour: 13,
+        breakStartMinute: 15,
+        breakEndHour: 14,
+        breakEndMinute: 30,
+        startTimeHour: 10,
+        startTimeMinute: 30,
+        endTimeHour: 21,
+        endTimeMinute: 0,
+        parentId: null,
+        type: "Shop",
+        isBookable: true,
+        isActive: true,
+        coordinates: geoPoint);
+
+    bool added =
+        await EntityService().upsertChildEntityToParent(child1, 'Entity101');
+  }
+
+  void updateChildEntity(String id, String name) {
+    Address adrs = new Address(
+        city: "Hyderbad",
+        state: "Telangana",
+        country: "India",
+        address: "Shop 10, Gachibowli");
+
+    MyGeoFirePoint geoPoint = new MyGeoFirePoint(68, 78);
+
+    Entity child1 = new Entity(
+        entityId: id,
+        name: name + adrs.hashCode.toString(),
+        address: adrs,
+        advanceDays: 5,
+        isPublic: true,
+        geo: geoPoint,
+        maxAllowed: 50,
+        slotDuration: 30,
+        closedOn: ["Saturday", "Sunday"],
+        breakStartHour: 13,
+        breakStartMinute: 15,
+        breakEndHour: 14,
+        breakEndMinute: 30,
+        startTimeHour: 10,
+        startTimeMinute: 30,
+        endTimeHour: 21,
+        endTimeMinute: 0,
+        parentId: null,
+        type: "Shop",
+        isBookable: true,
+        isActive: true,
+        coordinates: geoPoint);
+  }
+
+  void clearAll() async {
+    //delete childEntity
+    await EntityService().deleteEntity("Child101-1");
+
+    //delete parentEntity, which should also delete child entities
+    await EntityService().deleteEntity("Entity101");
+
+    try {
+      await EntityService().deleteEntity("Child101-3");
+
+      await EntityService().deleteEntity("Child101-2");
+    } catch (e) {}
+
+    //delete user
+    await UserService().deleteCurrentUser();
+  }
+
   void dbCall() async {
+    //final FirebaseUser user = await FirebaseAuth.instance.currentUser();
+    //  User u = await UserService().getCurrentUser();
+
     // DBLayer.addRecord();
     // UserToken tok = await TokenService()
     //     .generateToken("entityId001", new DateTime(2020, 6, 6, 10, 30, 0, 0));
@@ -85,42 +258,36 @@ class _UserHomePageState extends State<UserHomePage> {
     // await TokenService()
     //     .cancelToken("entityId001#2020~6~6#10~30#93hKw20HwFaVdHRsujOlpjaouoL2");
 
-    MyGeoFirePoint geoPoint = new MyGeoFirePoint(68, 78);
-    Address adrs = new Address(
-        city: "Hyderbad",
-        state: "Telangana",
-        country: "India",
-        address: "Shop 10, Gachibowli");
-    Entity entity = new Entity(
-        entityId: "Entity101",
-        name: "Vijetha",
-        address: adrs,
-        advanceDays: 3,
-        isPublic: true,
-        geo: geoPoint,
-        maxAllowed: 60,
-        slotDuration: 60,
-        closedOn: ["Saturday", "Sunday"],
-        breakStartHour: 13,
-        breakStartMinute: 15,
-        breakEndHour: 14,
-        breakEndMinute: 30,
-        startTimeHour: 10,
-        startTimeMinute: 30,
-        endTimeHour: 21,
-        endTimeMinute: 0,
-        parentId: null,
-        type: "Grocery");
+    //await createChildEntityAndAddToParent(
+    //    'Child101-1', "Bata"); //should fail as entity does not exists
 
-    try {
-      await EntityService().upsertEntity(entity);
-    } catch (e) {
-      print("Exception occured " + e);
-    }
+    User usr = await UserService().getCurrentUser();
+
+    await createEntity();
+
+    await createChildEntityAndAddToParent('Child101-1', "Bata");
+
+    await createChildEntityAndAddToParent('Child101-2', "Habinaro");
+
+    await updateEntity();
+
+    await createChildEntityAndAddToParent('Child101-3', "Raymonds");
+
+    await updateEntity();
+
+    await createChildEntityAndAddToParent('Child101-1', "Bata");
 
     Entity ent = await EntityService().getEntity('Entity101');
 
-    bool isDeleted = await EntityService().deleteEntity('Entity101');
+    Entity Child1 = await EntityService().getEntity('Child101-1');
+
+    Entity Child2 = await EntityService().getEntity('Child101-2');
+
+    Entity Child3 = await EntityService().getEntity('Child101-3');
+
+    // bool isDeleted = await EntityService().deleteEntity('Entity101');
+
+    await clearAll();
 
     int i = 0;
   }

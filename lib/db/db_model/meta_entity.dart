@@ -26,6 +26,7 @@ class MetaEntity {
   bool isActive;
 
   static MetaEntity fromJson(Map<String, dynamic> json) {
+    if (json == null) return null;
     return new MetaEntity(
         entityId: json['entityId'].toString(),
         name: json['name'],
@@ -42,6 +43,7 @@ class MetaEntity {
 
   static List<String> convertToClosedOnArrayFromJson(List<dynamic> daysJson) {
     List<String> days = new List<String>();
+    if (daysJson == null) return days;
 
     for (String day in daysJson) {
       days.add(day);
@@ -61,4 +63,34 @@ class MetaEntity {
         'endTimeMinute': endTimeMinute,
         'isActive': isActive
       };
+
+  bool isEqual(MetaEntity metaEnt) {
+    if (metaEnt.advanceDays == this.advanceDays &&
+        metaEnt.endTimeHour == this.endTimeHour &&
+        metaEnt.endTimeMinute == this.endTimeMinute &&
+        metaEnt.entityId == this.entityId &&
+        metaEnt.isActive == this.isActive &&
+        metaEnt.isPublic == this.isPublic &&
+        metaEnt.name == this.name) {
+      if (this.closedOn != null && metaEnt.closedOn != null) {
+        int matchCount = 0;
+
+        for (String day in this.closedOn) {
+          for (String val in metaEnt.closedOn) {
+            if (day == val) {
+              matchCount++;
+            }
+          }
+        }
+        if (matchCount == this.closedOn.length) {
+          return true;
+        }
+      }
+
+      if (this.closedOn == null && metaEnt.closedOn == null) {
+        return true;
+      }
+    }
+    return false;
+  }
 }
