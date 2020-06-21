@@ -6,9 +6,26 @@ String homeScreenMsgTxt =
 
 String homeScreenMsgTxt2 = "Avoid rush hours";
 String homeScreenMsgTxt3 = "Be Safe | Save time.";
+
+String drawerHeaderTxt11 = 'Stay ';
+String drawerHeaderTxt12 = 'Safe!!  ';
+String drawerHeaderTxt21 = 'Maintain ';
+String drawerHeaderTxt22 = 'Social distance!!  ';
+String drawerHeaderTxt31 = 'Avoid ';
+String drawerHeaderTxt32 = 'rush hours !!  ';
+String drawerHeaderTxt41 = 'Save time !!';
+String addressInfoStr =
+    'The address is using the current location, and same will be used by customers when searching your location.';
+
+String basicInfoStr =
+    'These are important details of the establishment, Same will be shown to customer while search.';
+String contactInfoStr =
+    'The perosn who can be contacted for any queries regarding your services.';
+
 enum Role { Manager, Admin, ContactPerson, Employee }
 List<String> roleTypes = [
   'Manager',
+  'Admin',
   'Public Contact Person',
 ];
 List<String> entityTypes = [
@@ -22,6 +39,7 @@ List<String> entityTypes = [
 List<String> subEntityTypes = [
   'Swimming Pool',
   'Gym',
+  'Salon',
   'Medical Store',
   'Grocery Store',
   'Library',

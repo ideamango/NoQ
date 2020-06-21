@@ -1,17 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:noq/login_page.dart';
 import 'package:noq/models/localDB.dart';
+import 'package:noq/pages/manage_apartment_list_page.dart';
 import 'package:noq/pages/manage_apartment_page.dart';
 import 'package:noq/pages/showSlotsPage.dart';
+import 'package:noq/pages/userAccountPage.dart';
 import 'package:noq/pages/userBookingPage.dart';
 
-import 'package:noq/pages/userNotificationsPage.dart';
 import 'package:noq/services/authService.dart';
 import 'package:noq/style.dart';
 import 'package:noq/userHomePage.dart';
 
 Widget userAccountPage(BuildContext context) {
-  return ManageApartmentPage();
+  return UserAccountPage();
+}
+
+Widget manageApartmentPages(BuildContext context) {
+  return ManageApartmentsListPage();
 }
 
 Widget userHomePage(BuildContext context) {
@@ -20,10 +25,6 @@ Widget userHomePage(BuildContext context) {
 
 Widget userBookingPage(BuildContext context, UserAppData userProfile) {
   return UserBookingPage();
-}
-
-Widget userNotifications(BuildContext context) {
-  return UserNotificationsPage();
 }
 
 Widget rateAppPage(BuildContext context) {

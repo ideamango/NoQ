@@ -15,6 +15,7 @@ import 'package:noq/services/qr_code_generate.dart';
 import 'package:noq/services/qrcode_scan.dart';
 import 'package:noq/style.dart';
 import 'package:intl/intl.dart';
+import 'package:noq/widget/widgets.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:barcode_scan/barcode_scan.dart';
 import 'package:flutter/services.dart';
@@ -408,91 +409,104 @@ class _UserHomePageState extends State<UserHomePage> {
             ),
             Card(
               elevation: 20,
-              child: ExpansionTile(
-                //key: PageStorageKey(this.widget.headerTitle),
-                initiallyExpanded: true,
-                title: Text(
-                  "Upcoming Bookings",
-                  style: TextStyle(color: Colors.blueGrey[700], fontSize: 17),
+              child: Theme(
+                data: ThemeData(
+                  unselectedWidgetColor: Colors.grey[600],
+                  accentColor: Colors.teal,
                 ),
-                backgroundColor: Colors.white,
-                leading: Icon(
-                  Icons.date_range,
-                  color: tealIcon,
-                ),
-                children: <Widget>[
-                  if (_upcomingBkgStatus == 'Success')
-                    ConstrainedBox(
-                      constraints: new BoxConstraints(
-                        maxHeight: MediaQuery.of(context).size.height * .6,
-                      ),
+                child: ExpansionTile(
+                  //key: PageStorageKey(this.widget.headerTitle),
+                  initiallyExpanded: true,
+                  title: Text(
+                    "Upcoming Bookings",
+                    style: TextStyle(color: Colors.blueGrey[700], fontSize: 17),
+                  ),
+                  backgroundColor: Colors.white,
+                  leading: Icon(
+                    Icons.date_range,
+                    color: tealIcon,
+                  ),
+                  children: <Widget>[
+                    if (_upcomingBkgStatus == 'Success')
+                      ConstrainedBox(
+                        constraints: new BoxConstraints(
+                          maxHeight: MediaQuery.of(context).size.height * .6,
+                        ),
 
-                      // decoration: BoxDecoration(
-                      //     shape: BoxShape.rectangle,
-                      //     borderRadius: BorderRadius.all(Radius.circular(8.0))),
-                      // height: MediaQuery.of(context).size.height * .6,
-                      // margin: EdgeInsets.fromLTRB(10, 10, 10, 10),
-                      child: ListView.builder(
-                        shrinkWrap: true,
-                        //scrollDirection: Axis.vertical,
-                        itemBuilder: (BuildContext context, int index) {
-                          return Container(
-                            child: new Column(
-                                children:
-                                    _newBookingsList.map(_buildItem).toList()),
-                            //children: <Widget>[firstRow, secondRow],
-                          );
-                        },
-                        itemCount: 1,
+                        // decoration: BoxDecoration(
+                        //     shape: BoxShape.rectangle,
+                        //     borderRadius: BorderRadius.all(Radius.circular(8.0))),
+                        // height: MediaQuery.of(context).size.height * .6,
+                        // margin: EdgeInsets.fromLTRB(10, 10, 10, 10),
+                        child: ListView.builder(
+                          shrinkWrap: true,
+                          //scrollDirection: Axis.vertical,
+                          itemBuilder: (BuildContext context, int index) {
+                            return Container(
+                              child: new Column(
+                                  children: _newBookingsList
+                                      .map(_buildItem)
+                                      .toList()),
+                              //children: <Widget>[firstRow, secondRow],
+                            );
+                          },
+                          itemCount: 1,
+                        ),
                       ),
-                    ),
-                  if (_upcomingBkgStatus == 'NoBookings')
-                    _emptyStorePage(
-                        "No bookings yet.. ", "Book now to save time later!! "),
-                  if (_upcomingBkgStatus == 'Loading') showCircularProgress(),
-                ],
+                    if (_upcomingBkgStatus == 'NoBookings')
+                      _emptyStorePage("No bookings yet.. ",
+                          "Book now to save time later!! "),
+                    if (_upcomingBkgStatus == 'Loading') showCircularProgress(),
+                  ],
+                ),
               ),
             ),
             Card(
               elevation: 20,
-              child: ExpansionTile(
-                title: Text(
-                  "Past Bookings",
-                  style: TextStyle(color: Colors.blueGrey[700], fontSize: 17),
+              child: Theme(
+                data: ThemeData(
+                  unselectedWidgetColor: Colors.grey[600],
+                  accentColor: Colors.teal,
                 ),
-                backgroundColor: Colors.white,
-                leading: Icon(
-                  Icons.access_time,
-                  color: lightIcon,
-                ),
-                children: <Widget>[
-                  Column(
-                    children: <Widget>[
-                      if (_pastBkgStatus == "Success")
-                        Container(
-                          //height: MediaQuery.of(context).size.width * .5,
-                          child: ListView.builder(
-                            shrinkWrap: true,
-                            scrollDirection: Axis.vertical,
-                            itemBuilder: (BuildContext context, int index) {
-                              return Container(
-                                child: new Column(
-                                    children: _pastBookingsList
-                                        .map(_buildItem)
-                                        .toList()),
-                                //children: <Widget>[firstRow, secondRow],
-                              );
-                            },
-                            itemCount: 1,
+                child: ExpansionTile(
+                  title: Text(
+                    "Past Bookings",
+                    style: TextStyle(color: Colors.blueGrey[700], fontSize: 17),
+                  ),
+                  backgroundColor: Colors.white,
+                  leading: Icon(
+                    Icons.access_time,
+                    color: tealIcon,
+                  ),
+                  children: <Widget>[
+                    Column(
+                      children: <Widget>[
+                        if (_pastBkgStatus == "Success")
+                          Container(
+                            //height: MediaQuery.of(context).size.width * .5,
+                            child: ListView.builder(
+                              shrinkWrap: true,
+                              scrollDirection: Axis.vertical,
+                              itemBuilder: (BuildContext context, int index) {
+                                return Container(
+                                  child: new Column(
+                                      children: _pastBookingsList
+                                          .map(_buildItem)
+                                          .toList()),
+                                  //children: <Widget>[firstRow, secondRow],
+                                );
+                              },
+                              itemCount: 1,
+                            ),
                           ),
-                        ),
-                      if (_pastBkgStatus == 'NoBookings')
-                        _emptyStorePage("No bookings in past..",
-                            "Book now to save time later!! "),
-                      if (_pastBkgStatus == 'Loading') showCircularProgress(),
-                    ],
-                  )
-                ],
+                        if (_pastBkgStatus == 'NoBookings')
+                          _emptyStorePage("No bookings in past..",
+                              "Book now to save time later!! "),
+                        if (_pastBkgStatus == 'Loading') showCircularProgress(),
+                      ],
+                    )
+                  ],
+                ),
               ),
             ),
             RaisedButton(
@@ -514,16 +528,18 @@ class _UserHomePageState extends State<UserHomePage> {
 
   Widget _emptyStorePage(String msg1, String msg2) {
     return Center(
-        child: Center(
-            child: Container(
-                margin: EdgeInsets.fromLTRB(10, 10, 10, 10),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    Text(msg1, style: highlightTextStyle),
-                    Text(msg2, style: highlightSubTextStyle),
-                  ],
-                ))));
+        child: Column(children: <Widget>[
+      myDivider,
+      Container(
+          margin: EdgeInsets.fromLTRB(10, 10, 10, 10),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Text(msg1, style: highlightTextStyle),
+              Text(msg2, style: highlightSubTextStyle),
+            ],
+          ))
+    ]));
   }
 
   Widget _buildItem(BookingListItem booking) {

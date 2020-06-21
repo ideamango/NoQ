@@ -66,7 +66,7 @@ Future<String> showTokenAlert(
                     decoration: new BoxDecoration(
                       color: highlightColor,
                     ),
-                    child: Text(tokenNo, style: whiteBoldTextStyle),
+                    child: Text(tokenNo, style: whiteBoldTextStyle1),
                   ),
                   Text("Show up on time to $storeName at $time.",
                       style: highlightSubTextStyle),

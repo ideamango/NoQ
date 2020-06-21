@@ -22,12 +22,29 @@ final buttonTextStyle = TextStyle(
   fontSize: 20,
   //height: 2,
 );
-final whiteBoldTextStyle = TextStyle(
+final whiteBoldTextStyle1 = TextStyle(
   color: Colors.grey[200],
   // fontWeight: FontWeight.w800,
-  fontFamily: 'Montserrat',
+  fontFamily: 'Roboto',
   letterSpacing: 0.5,
   fontSize: 20,
+  //height: 2,
+);
+final drawerdefaultTextStyle = TextStyle(
+  color: Colors.grey[200],
+  fontWeight: FontWeight.w800,
+  fontFamily: 'Roboto',
+  letterSpacing: 0.6,
+  fontSize: 15,
+  //height: 2,
+);
+
+final highlightBoldTextStyle = TextStyle(
+  color: highlightColor,
+  fontWeight: FontWeight.w800,
+  fontFamily: 'Montserrat',
+  letterSpacing: 0.5,
+  fontSize: 25,
   //height: 2,
 );
 final buttonMedTextStyle = TextStyle(
@@ -145,6 +162,8 @@ final tokenDateTextStyle = TextStyle(
     fontWeight: FontWeight.w500,
     fontFamily: 'Montserrat',
     fontSize: 18.0);
+final appBarTextStyle =
+    TextStyle(color: Colors.teal, fontFamily: 'Montserrat', fontSize: 25.0);
 final homeMsgStyle = TextStyle(
     color: Colors.blueGrey[800], fontFamily: 'Montserrat', fontSize: 11.0);
 final homeMsgStyle2 =
@@ -157,6 +176,11 @@ final highlightTextStyle =
 
 final Color highlightColor = Colors.amber[600];
 final Color unselectedColor = Colors.blueGrey[700];
+final BoxDecoration indigoContainer = new BoxDecoration(
+    border: Border.all(color: Colors.blueGrey[500]),
+    shape: BoxShape.rectangle,
+    color: Colors.blueGrey[500],
+    borderRadius: BorderRadius.all(Radius.circular(4.0)));
 
 class CommonStyle {
   static InputDecoration textFieldStyle(

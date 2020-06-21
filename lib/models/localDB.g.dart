@@ -59,6 +59,7 @@ EntityAppData _$EntityAppDataFromJson(Map<String, dynamic> json) {
     ..closesAt = json['closesAt'] as String
     ..daysClosed =
         (json['daysClosed'] as List)?.map((e) => e as String)?.toList()
+    ..maxPeopleAllowed = json['maxPeopleAllowed'] as String
     ..contactPersons = (json['contactPersons'] as List)
         ?.map((e) => e == null
             ? null
@@ -88,6 +89,7 @@ Map<String, dynamic> _$EntityAppDataToJson(EntityAppData instance) =>
       'breakTimeTo': instance.breakTimeTo,
       'closesAt': instance.closesAt,
       'daysClosed': instance.daysClosed,
+      'maxPeopleAllowed': instance.maxPeopleAllowed,
       'contactPersons': instance.contactPersons,
       'childCollection': instance.childCollection,
       'isFavourite': instance.isFavourite,
@@ -95,88 +97,53 @@ Map<String, dynamic> _$EntityAppDataToJson(EntityAppData instance) =>
     };
 
 ChildEntityAppData _$ChildEntityAppDataFromJson(Map<String, dynamic> json) {
-  return ChildEntityAppData(
-    json['id'] as String,
-    _$enumDecodeNullable(_$ChildTypeEnumMap, json['cType']),
-    json['name'] as String,
-    json['regNum'] as String,
-    json['adrs'] == null
+  return ChildEntityAppData()
+    ..id = json['id'] as String
+    ..entityId = json['entityId'] as String
+    ..cType = json['cType'] as String
+    ..name = json['name'] as String
+    ..regNum = json['regNum'] as String
+    ..adrs = json['adrs'] == null
         ? null
-        : AddressAppData.fromJson(json['adrs'] as Map<String, dynamic>),
-    (json['lat'] as num)?.toDouble(),
-    (json['long'] as num)?.toDouble(),
-    json['opensAt'] as String,
-    json['breakTime'] as String,
-    json['closesAt'] as String,
-    (json['daysClosed'] as List)?.map((e) => e as String)?.toList(),
-    (json['contactPersons'] as List)
+        : AddressAppData.fromJson(json['adrs'] as Map<String, dynamic>)
+    ..lat = (json['lat'] as num)?.toDouble()
+    ..long = (json['long'] as num)?.toDouble()
+    ..opensAt = json['opensAt'] as String
+    ..breakTimeFrom = json['breakTimeFrom'] as String
+    ..breakTimeTo = json['breakTimeTo'] as String
+    ..closesAt = json['closesAt'] as String
+    ..daysClosed =
+        (json['daysClosed'] as List)?.map((e) => e as String)?.toList()
+    ..maxPeopleAllowed = json['maxPeopleAllowed'] as String
+    ..contactPersons = (json['contactPersons'] as List)
         ?.map((e) => e == null
             ? null
             : ContactAppData.fromJson(e as Map<String, dynamic>))
-        ?.toList(),
-    json['isFavourite'] as bool,
-    json['publicAccess'] as bool,
-  );
+        ?.toList()
+    ..isFavourite = json['isFavourite'] as bool
+    ..publicAccess = json['publicAccess'] as bool;
 }
 
 Map<String, dynamic> _$ChildEntityAppDataToJson(ChildEntityAppData instance) =>
     <String, dynamic>{
       'id': instance.id,
-      'cType': _$ChildTypeEnumMap[instance.cType],
+      'entityId': instance.entityId,
+      'cType': instance.cType,
       'name': instance.name,
       'regNum': instance.regNum,
       'adrs': instance.adrs,
       'lat': instance.lat,
       'long': instance.long,
       'opensAt': instance.opensAt,
-      'breakTime': instance.breakTime,
+      'breakTimeFrom': instance.breakTimeFrom,
+      'breakTimeTo': instance.breakTimeTo,
       'closesAt': instance.closesAt,
       'daysClosed': instance.daysClosed,
+      'maxPeopleAllowed': instance.maxPeopleAllowed,
       'contactPersons': instance.contactPersons,
       'isFavourite': instance.isFavourite,
       'publicAccess': instance.publicAccess,
     };
-
-T _$enumDecode<T>(
-  Map<T, dynamic> enumValues,
-  dynamic source, {
-  T unknownValue,
-}) {
-  if (source == null) {
-    throw ArgumentError('A value must be provided. Supported values: '
-        '${enumValues.values.join(', ')}');
-  }
-
-  final value = enumValues.entries
-      .singleWhere((e) => e.value == source, orElse: () => null)
-      ?.key;
-
-  if (value == null && unknownValue == null) {
-    throw ArgumentError('`$source` is not one of the supported values: '
-        '${enumValues.values.join(', ')}');
-  }
-  return value ?? unknownValue;
-}
-
-T _$enumDecodeNullable<T>(
-  Map<T, dynamic> enumValues,
-  dynamic source, {
-  T unknownValue,
-}) {
-  if (source == null) {
-    return null;
-  }
-  return _$enumDecode<T>(enumValues, source, unknownValue: unknownValue);
-}
-
-const _$ChildTypeEnumMap = {
-  ChildType.SwimmingPool: 'SwimmingPool',
-  ChildType.Canteen: 'Canteen',
-  ChildType.Gym: 'Gym',
-  ChildType.GroceryStore: 'GroceryStore',
-  ChildType.OutdoorGames: 'OutdoorGames',
-  ChildType.IndoorGames: 'IndoorGames',
-};
 
 ContactAppData _$ContactAppDataFromJson(Map<String, dynamic> json) {
   return ContactAppData()
@@ -184,7 +151,7 @@ ContactAppData _$ContactAppDataFromJson(Map<String, dynamic> json) {
     ..empId = json['empId'] as String
     ..perPhone1 = json['perPhone1'] as String
     ..perPhone2 = json['perPhone2'] as String
-    ..role = _$enumDecodeNullable(_$RoleEnumMap, json['role'])
+    ..role = json['role'] as String
     ..avlFromTime = json['avlFromTime'] as String
     ..avlTillTime = json['avlTillTime'] as String
     ..daysOff = (json['daysOff'] as List)?.map((e) => e as String)?.toList();
@@ -196,18 +163,11 @@ Map<String, dynamic> _$ContactAppDataToJson(ContactAppData instance) =>
       'empId': instance.empId,
       'perPhone1': instance.perPhone1,
       'perPhone2': instance.perPhone2,
-      'role': _$RoleEnumMap[instance.role],
+      'role': instance.role,
       'avlFromTime': instance.avlFromTime,
       'avlTillTime': instance.avlTillTime,
       'daysOff': instance.daysOff,
     };
-
-const _$RoleEnumMap = {
-  Role.Manager: 'Manager',
-  Role.Admin: 'Admin',
-  Role.ContactPerson: 'ContactPerson',
-  Role.Employee: 'Employee',
-};
 
 BookingAppData _$BookingAppDataFromJson(Map<String, dynamic> json) {
   return BookingAppData(

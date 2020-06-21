@@ -49,12 +49,14 @@ class EntityAppData {
   String breakTimeTo;
   String closesAt;
   List<String> daysClosed;
+  String maxPeopleAllowed;
   List<ContactAppData> contactPersons;
   List<ChildEntityAppData> childCollection;
   bool isFavourite;
   bool publicAccess;
 
   EntityAppData();
+  EntityAppData.eType(this.eType, this.id);
 
   EntityAppData.values(
       this.id,
@@ -70,6 +72,7 @@ class EntityAppData {
       this.breakTimeTo,
       this.closesAt,
       this.daysClosed,
+      this.maxPeopleAllowed,
       this.contactPersons,
       this.childCollection,
       this.isFavourite,
@@ -106,47 +109,48 @@ class EntityAppData {
   // }
 }
 
-enum ChildType {
-  SwimmingPool,
-  Canteen,
-  Gym,
-  GroceryStore,
-  OutdoorGames,
-  IndoorGames
-}
-
 @JsonSerializable()
 class ChildEntityAppData {
   String id;
-  ChildType cType;
+  String entityId;
+  String cType;
   String name;
   String regNum;
   AddressAppData adrs;
   double lat;
   double long;
   String opensAt;
-  String breakTime;
+  String breakTimeFrom;
+  String breakTimeTo;
   String closesAt;
   List<String> daysClosed;
+  String maxPeopleAllowed;
   List<ContactAppData> contactPersons;
   bool isFavourite;
   bool publicAccess;
+  ChildEntityAppData();
 
-  ChildEntityAppData(
-      this.id,
-      this.cType,
-      this.name,
-      this.regNum,
-      this.adrs,
-      this.lat,
-      this.long,
-      this.opensAt,
-      this.breakTime,
-      this.closesAt,
-      this.daysClosed,
-      this.contactPersons,
-      this.isFavourite,
-      this.publicAccess);
+  ChildEntityAppData.cType(this.cType, this.entityId, this.adrs);
+
+  ChildEntityAppData.allValues(
+    this.id,
+    this.entityId,
+    this.cType,
+    this.name,
+    this.regNum,
+    this.adrs,
+    this.lat,
+    this.long,
+    this.opensAt,
+    this.breakTimeFrom,
+    this.breakTimeTo,
+    this.closesAt,
+    this.daysClosed,
+    this.maxPeopleAllowed,
+    this.contactPersons,
+    this.isFavourite,
+    this.publicAccess,
+  );
   factory ChildEntityAppData.fromJson(Map<String, dynamic> json) =>
       _$ChildEntityAppDataFromJson(json);
 
@@ -159,11 +163,12 @@ class ContactAppData {
   String empId;
   String perPhone1;
   String perPhone2;
-  Role role;
+  String role;
   String avlFromTime;
   String avlTillTime;
   List<String> daysOff;
   ContactAppData();
+  ContactAppData.type(this.role);
 
   ContactAppData.values(
       this.perName,
