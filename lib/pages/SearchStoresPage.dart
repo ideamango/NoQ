@@ -8,6 +8,8 @@ import 'package:noq/repository/slotRepository.dart';
 import 'package:noq/services/mapService.dart';
 import 'package:noq/style.dart';
 import 'package:noq/utils.dart';
+import 'package:noq/widget/bottom_nav_bar.dart';
+import 'package:noq/widget/header.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -35,7 +37,7 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
   List<DateTime> _dateList = new List<DateTime>();
 
   Widget appBarTitle = new Text(
-    "Search Sample",
+    "Search by Name",
     style: new TextStyle(color: Colors.white),
   );
   Icon actionIcon = new Icon(
@@ -219,22 +221,32 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
   Widget build(BuildContext context) {
 // build widget only after init has completed, till then show progress indicator.
     if (!initCompleted) {
-      return Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Padding(padding: EdgeInsets.only(top: 20.0)),
-            Text(
-              "Loading..",
-              style: TextStyle(fontSize: 20.0, color: Colors.indigo),
+      return MaterialApp(
+        theme: ThemeData.light().copyWith(),
+        home: Scaffold(
+          appBar: buildBar(context),
+          body: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Padding(padding: EdgeInsets.only(top: 20.0)),
+                Text(
+                  "Loading..",
+                  style: TextStyle(fontSize: 20.0, color: Colors.indigo),
+                ),
+                Padding(padding: EdgeInsets.only(top: 20.0)),
+                CircularProgressIndicator(
+                  backgroundColor: Colors.indigo,
+                  valueColor: AlwaysStoppedAnimation<Color>(Colors.amber),
+                  strokeWidth: 3,
+                )
+              ],
             ),
-            Padding(padding: EdgeInsets.only(top: 20.0)),
-            CircularProgressIndicator(
-              backgroundColor: Colors.indigo,
-              valueColor: AlwaysStoppedAnimation<Color>(Colors.amber),
-              strokeWidth: 3,
-            )
-          ],
+          ),
+          drawer: CustomDrawer(),
+          bottomNavigationBar: (widget.forPage == "Search")
+              ? CustomBottomBar(barIndex: 1)
+              : CustomBottomBar(barIndex: 2),
         ),
       );
     } else {
@@ -242,31 +254,36 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
         return _emptyStorePage();
       } else {
         return MaterialApp(
-            theme: ThemeData.light().copyWith(),
-            home: Scaffold(
-                appBar: buildBar(context),
-                body: Center(
-                  child: Container(
-                    margin: EdgeInsets.fromLTRB(10, 10, 10, 10),
-                    child: ListView.builder(
-                        itemCount: 1,
-                        itemBuilder: (BuildContext context, int index) {
-                          return Container(
-                            child: new Column(
-                              children: _isSearching
-                                  ? _buildSearchList()
-                                  : _buildList(),
-                              // ? _searchResultstores
-                              //     .map(_buildItem)
-                              //     .toList()
-                              // : _stores.map(_buildItem).toList()
-                              // ),
-                              //children: <Widget>[firstRow, secondRow],
-                            ),
-                          );
-                        }),
-                  ),
-                )));
+          theme: ThemeData.light().copyWith(),
+          home: Scaffold(
+            appBar: buildBar(context),
+            body: Center(
+              child: Container(
+                margin: EdgeInsets.fromLTRB(10, 10, 10, 10),
+                child: ListView.builder(
+                    itemCount: 1,
+                    itemBuilder: (BuildContext context, int index) {
+                      return Container(
+                        child: new Column(
+                          children:
+                              _isSearching ? _buildSearchList() : _buildList(),
+                          // ? _searchResultstores
+                          //     .map(_buildItem)
+                          //     .toList()
+                          // : _stores.map(_buildItem).toList()
+                          // ),
+                          //children: <Widget>[firstRow, secondRow],
+                        ),
+                      );
+                    }),
+              ),
+            ),
+            drawer: CustomDrawer(),
+            bottomNavigationBar: (widget.forPage == "Search")
+                ? CustomBottomBar(barIndex: 1)
+                : CustomBottomBar(barIndex: 2),
+          ),
+        );
       }
     }
   }
@@ -585,34 +602,38 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
   }
 
   Widget buildBar(BuildContext context) {
-    return new AppBar(centerTitle: true, title: appBarTitle, actions: <Widget>[
-      new IconButton(
-        icon: actionIcon,
-        onPressed: () {
-          setState(() {
-            if (this.actionIcon.icon == Icons.search) {
-              this.actionIcon = new Icon(
-                Icons.close,
-                color: Colors.white,
-              );
-              this.appBarTitle = new TextField(
-                controller: _searchQuery,
-                style: new TextStyle(
-                  color: Colors.white,
-                ),
-                decoration: new InputDecoration(
-                    prefixIcon: new Icon(Icons.search, color: Colors.white),
-                    hintText: "Search...",
-                    hintStyle: new TextStyle(color: Colors.white)),
-              );
-              _handleSearchStart();
-            } else {
-              _handleSearchEnd();
-            }
-          });
-        },
-      ),
-    ]);
+    return new AppBar(
+        centerTitle: true,
+        title: appBarTitle,
+        backgroundColor: Colors.teal,
+        actions: <Widget>[
+          new IconButton(
+            icon: actionIcon,
+            onPressed: () {
+              setState(() {
+                if (this.actionIcon.icon == Icons.search) {
+                  this.actionIcon = new Icon(
+                    Icons.close,
+                    color: Colors.white,
+                  );
+                  this.appBarTitle = new TextField(
+                    controller: _searchQuery,
+                    style: new TextStyle(
+                      color: Colors.white,
+                    ),
+                    decoration: new InputDecoration(
+                        prefixIcon: new Icon(Icons.search, color: Colors.white),
+                        hintText: "Search...",
+                        hintStyle: new TextStyle(color: Colors.white)),
+                  );
+                  _handleSearchStart();
+                } else {
+                  _handleSearchEnd();
+                }
+              });
+            },
+          ),
+        ]);
   }
 
   void _handleSearchStart() {

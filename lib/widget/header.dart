@@ -3,6 +3,12 @@ import 'package:noq/constants.dart';
 
 import 'package:noq/pages/SearchStoresPage.dart';
 import 'package:noq/pages/allPagesWidgets.dart';
+import 'package:noq/pages/help_page.dart';
+import 'package:noq/pages/manage_apartment_list_page.dart';
+import 'package:noq/pages/notifications_page.dart';
+import 'package:noq/pages/rate_app.dart';
+import 'package:noq/pages/share_app_page.dart';
+import 'package:noq/pages/userAccountPage.dart';
 
 import 'package:noq/style.dart';
 import 'package:noq/widget/appbar.dart';
@@ -10,12 +16,12 @@ import 'package:noq/widget/appbar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:intl/intl.dart';
 
-class Header extends StatefulWidget {
+class CustomDrawer extends StatefulWidget {
   @override
-  _HeaderState createState() => _HeaderState();
+  _CustomDrawerState createState() => _CustomDrawerState();
 }
 
-class _HeaderState extends State<Header> {
+class _CustomDrawerState extends State<CustomDrawer> {
   final GlobalKey _scaffoldKey = new GlobalKey();
   SharedPreferences _prefs;
   PageController _pageController;
@@ -25,27 +31,44 @@ class _HeaderState extends State<Header> {
     {
       "icon": Icons.account_circle,
       "name": "My Account",
+      "pageRoute": UserAccountPage(),
     },
 
-    {"icon": Icons.home, "name": "Manage Apartment"},
-    {"icon": Icons.store, "name": "Manage Commercial Space"},
-    {"icon": Icons.business, "name": "Manage Office"},
+    {
+      "icon": Icons.home,
+      "name": "Manage Apartment",
+      "pageRoute": ManageApartmentsListPage(),
+    },
+    {
+      "icon": Icons.store,
+      "name": "Manage Commercial Space",
+      "pageRoute": ManageApartmentsListPage(),
+    },
+    {
+      "icon": Icons.business,
+      "name": "Manage Office",
+      "pageRoute": ManageApartmentsListPage(),
+    },
 
     {
       "icon": Icons.notifications,
       "name": "Notifications",
+      "pageRoute": UserNotificationsPage(),
     },
     {
       "icon": Icons.grade,
       "name": "Rate our app",
+      "pageRoute": RateAppPage(),
     },
     {
       "icon": Icons.help_outline,
       "name": "Need Help?",
+      "pageRoute": HelpPage(),
     },
     {
       "icon": Icons.share,
       "name": "Share our app",
+      "pageRoute": ShareAppPage(),
     },
     // {
     //   "icon": Icons.exit_to_app,
@@ -98,149 +121,128 @@ class _HeaderState extends State<Header> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      key: _scaffoldKey,
-      appBar: CustomAppBar(),
-      body: Center(
-        child: PageView(
-          physics: NeverScrollableScrollPhysics(),
-          controller: _pageController,
-          onPageChanged: onPageChanged,
-          children: <Widget>[
-            // _userAccount(),
-            // _manageApartmentPage(),
-            // _manageCommSpacePage(),
-            // _manageOffSpacePage(),
-            // _userNotifications(),
-            // _rateApp(),
-            // _needHelp(),
-            // _shareApp(),
-            _userHomePage(),
-            SearchStoresPage(forPage: 'Search'),
-            SearchStoresPage(forPage: 'Favourite'),
-            _userAccount(),
-          ],
-        ),
-      ),
-      drawer: Drawer(
-        child: ListView(
-          children: <Widget>[
-            DrawerHeader(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: <Widget>[
-                  RichText(
-                    text: TextSpan(
-                        style: whiteBoldTextStyle1,
-                        children: <TextSpan>[
-                          TextSpan(text: drawerHeaderTxt11),
-                          TextSpan(
-                              text: drawerHeaderTxt12,
-                              style: highlightBoldTextStyle),
-                          TextSpan(text: drawerHeaderTxt21),
-                          TextSpan(
-                              text: drawerHeaderTxt22,
-                              style: highlightBoldTextStyle),
-                          TextSpan(
-                            text: drawerHeaderTxt31,
-                          ),
-                          TextSpan(
-                            text: drawerHeaderTxt32,
-                          ),
-                          TextSpan(
-                              text: drawerHeaderTxt41,
-                              style: highlightBoldTextStyle),
-                        ]),
-                  ),
-                ],
-              ),
-              // child: Text('Hello $_userName !!', style: inputTextStyle),
-              decoration: BoxDecoration(
-                color: Colors.teal,
-              ),
+    return Drawer(
+      child: ListView(
+        children: <Widget>[
+          DrawerHeader(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: <Widget>[
+                RichText(
+                  text:
+                      TextSpan(style: whiteBoldTextStyle1, children: <TextSpan>[
+                    TextSpan(text: drawerHeaderTxt11),
+                    TextSpan(
+                        text: drawerHeaderTxt12, style: highlightBoldTextStyle),
+                    TextSpan(text: drawerHeaderTxt21),
+                    TextSpan(
+                        text: drawerHeaderTxt22, style: highlightBoldTextStyle),
+                    TextSpan(
+                      text: drawerHeaderTxt31,
+                    ),
+                    TextSpan(
+                      text: drawerHeaderTxt32,
+                    ),
+                    TextSpan(
+                        text: drawerHeaderTxt41, style: highlightBoldTextStyle),
+                  ]),
+                ),
+              ],
             ),
-            ListView.builder(
-              physics: NeverScrollableScrollPhysics(),
-              shrinkWrap: true,
-              itemCount: drawerItems.length,
-              itemBuilder: (BuildContext context, int index) {
-                Map item = drawerItems[index];
-                if (item['children'] != null) {
-                  return ExpansionTile(
-                    leading: Icon(
-                      item['icon'],
+            // child: Text('Hello $_userName !!', style: inputTextStyle),
+            decoration: BoxDecoration(
+              color: Colors.teal,
+            ),
+          ),
+          ListView.builder(
+            physics: NeverScrollableScrollPhysics(),
+            shrinkWrap: true,
+            itemCount: drawerItems.length,
+            itemBuilder: (BuildContext context, int index) {
+              Map item = drawerItems[index];
+              if (item['children'] != null) {
+                return ExpansionTile(
+                  leading: Icon(
+                    item['icon'],
+                    color: _page == index
+                        ? highlightColor
+                        : Theme.of(context).textTheme.title.color,
+                  ),
+                  title: Text(
+                    item['name'],
+                    style: TextStyle(
                       color: _page == index
                           ? highlightColor
                           : Theme.of(context).textTheme.title.color,
                     ),
-                    title: Text(
-                      item['name'],
-                      style: TextStyle(
-                        color: _page == index
-                            ? highlightColor
-                            : Theme.of(context).textTheme.title.color,
-                      ),
-                    ),
-                    children: <Widget>[
-                      ListView.builder(
-                        physics: NeverScrollableScrollPhysics(),
-                        shrinkWrap: true,
-                        itemCount: item['children'].length,
-                        itemBuilder: (BuildContext context, int i) {
-                          int pageIndex = drawerItems.length - 1 + i;
-                          Map subItem = item['children'][i];
-                          print('........' + i.toString());
-                          return ListTile(
-                            leading: Icon(
-                              subItem['icon'],
+                  ),
+                  children: <Widget>[
+                    ListView.builder(
+                      physics: NeverScrollableScrollPhysics(),
+                      shrinkWrap: true,
+                      itemCount: item['children'].length,
+                      itemBuilder: (BuildContext context, int i) {
+                        int pageIndex = drawerItems.length - 1 + i;
+                        Map subItem = item['children'][i];
+                        print('........' + i.toString());
+                        return ListTile(
+                          leading: Icon(
+                            subItem['icon'],
+                            color: _page == index
+                                ? highlightColor
+                                : Theme.of(context).textTheme.title.color,
+                          ),
+                          title: Text(
+                            subItem['name'],
+                            style: TextStyle(
                               color: _page == index
                                   ? highlightColor
                                   : Theme.of(context).textTheme.title.color,
                             ),
-                            title: Text(
-                              subItem['name'],
-                              style: TextStyle(
-                                color: _page == index
-                                    ? highlightColor
-                                    : Theme.of(context).textTheme.title.color,
-                              ),
-                            ),
-                            onTap: () {
-                              _pageController.jumpToPage(pageIndex);
-                              Navigator.pop(context);
-                            },
-                          );
-                        },
-                      ),
-                    ],
-                  );
-                } else {
-                  return ListTile(
-                    leading: Icon(
-                      item['icon'],
+                          ),
+                          onTap: () {
+                            //_pageController.jumpToPage(pageIndex);
+                            // Navigator.pop(context);
+                            Navigator.pushReplacementNamed(
+                                context, subItem['pageRoute']);
+                            Navigator.pop(context);
+                          },
+                        );
+                      },
+                    ),
+                  ],
+                );
+              } else {
+                return ListTile(
+                  leading: Icon(
+                    item['icon'],
+                    color: _page == index
+                        ? highlightColor
+                        : Theme.of(context).textTheme.title.color,
+                  ),
+                  title: Text(
+                    item['name'],
+                    style: TextStyle(
                       color: _page == index
                           ? highlightColor
                           : Theme.of(context).textTheme.title.color,
                     ),
-                    title: Text(
-                      item['name'],
-                      style: TextStyle(
-                        color: _page == index
-                            ? highlightColor
-                            : Theme.of(context).textTheme.title.color,
-                      ),
-                    ),
-                    onTap: () {
-                      _pageController.jumpToPage(index);
-                      Navigator.pop(context);
-                    },
-                  );
-                }
-              },
-            ),
-          ],
-        ),
+                  ),
+                  onTap: () {
+                    // _pageController.jumpToPage(index);
+                    //Navigator.pop(context);
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => item['pageRoute']));
+                  },
+                );
+              }
+            },
+          ),
+        ],
       ),
+
       //   bottomNavigationBar: buildBottomItems(),
     );
   }
