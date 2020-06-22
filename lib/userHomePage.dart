@@ -166,7 +166,7 @@ class _UserHomePageState extends State<UserHomePage> {
 
     Entity child1 = new Entity(
         entityId: id,
-        name: name + adrs.hashCode.toString(), //just some random number,
+        name: name, //just some random number,
         address: adrs,
         advanceDays: 5,
         isPublic: true,
@@ -276,7 +276,8 @@ class _UserHomePageState extends State<UserHomePage> {
 
     await updateEntity();
 
-    await createChildEntityAndAddToParent('Child101-1', "Bata");
+    await createChildEntityAndAddToParent(
+        'Child101-1', "Bata" + usr.hashCode.toString());
 
     Entity ent = await EntityService().getEntity('Entity101');
 
@@ -287,6 +288,9 @@ class _UserHomePageState extends State<UserHomePage> {
     Entity Child3 = await EntityService().getEntity('Child101-3');
 
     // bool isDeleted = await EntityService().deleteEntity('Entity101');
+
+    List<Entity> entities =
+        await EntityService().searchByName("Habinaro", 68, 78, 1, 1, 10);
 
     await clearAll();
 

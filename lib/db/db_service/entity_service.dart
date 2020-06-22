@@ -109,36 +109,95 @@ class EntityService {
   Future<bool> deleteEntity(String entityId) async {
     final FirebaseUser fireUser = await FirebaseAuth.instance.currentUser();
     Firestore fStore = Firestore.instance;
+    bool isSuccess = false;
 
-    Entity ent = await getEntity(entityId);
+    //STEPS:
+    //1. delete all the childEntities in the recursive manner (out of the main transaction)
+    //2. update the parent by removing current entityReference
+    //3. update the users with current entityReference
+    //4. delete the current entity
 
-    if (ent == null)
-      return throw new EntityDoesNotExistsException(
-          "Given entity does not exist");
+    DocumentReference entityRef = fStore.document('entities/' + entityId);
+    DocumentReference parentEntityRef;
 
-    if (ent.isAdmin(fireUser.uid) == -1) {
-      throw new AccessDeniedException("This user can't delete the Entity");
-    }
-
-    //first delete all the child entities and then itself
-    for (MetaEntity meta in ent.childEntities) {
+    await fStore.runTransaction((Transaction tx) async {
       try {
-        final DocumentReference childEntityRef =
-            fStore.document('entities/' + meta.entityId);
-        await childEntityRef.delete();
+        DocumentSnapshot entityDoc = await tx.get(entityRef);
+
+        if (!entityDoc.exists) {
+          return throw new EntityDoesNotExistsException(
+              "Given entity does not exist");
+        }
+
+        Entity ent = Entity.fromJson(entityDoc.data);
+
+        if (ent.isAdmin(fireUser.uid) == -1) {
+          throw new AccessDeniedException("This user can't delete the Entity");
+        }
+
+        //Step1: first delete all the child entities
+        for (MetaEntity meta in ent.childEntities) {
+          await deleteEntity(meta.entityId);
+        }
+
+        Entity parentEnt;
+
+        if (ent.parentId != null) {
+          //remove the childEntity from the parentEntity
+          parentEntityRef = fStore.document('entities/' + ent.parentId);
+          DocumentSnapshot parentEntityDoc = await tx.get(parentEntityRef);
+
+          parentEnt = Entity.fromJson(parentEntityDoc.data);
+          int index = -1;
+          for (MetaEntity childMeta in parentEnt.childEntities) {
+            index++;
+            if (childMeta.entityId == entityId) {
+              break;
+            }
+          }
+          if (index != -1) {
+            parentEnt.childEntities.removeAt(index);
+          }
+        }
+
+        List<User> adminUsers = new List<User>();
+
+        for (MetaUser usr in ent.admins) {
+          DocumentReference userRef = fStore.document('users/' + usr.ph);
+          DocumentSnapshot userDoc = await tx.get(userRef);
+
+          if (userDoc.exists) {
+            User u = User.fromJson(userDoc.data);
+
+            int index = u.isEntityAdmin(entityId);
+            if (index != -1) {
+              u.entities.removeAt(index);
+              adminUsers.add(u);
+            }
+          }
+        }
+
+        //step2: Update the parent if exists
+        if (parentEntityRef != null) {
+          await tx.set(parentEntityRef, parentEnt.toJson());
+        }
+
+        //step3: update admin users
+        for (User u in adminUsers) {
+          DocumentReference userRef = fStore.document('users/' + u.ph);
+          await tx.set(userRef, u.toJson());
+        }
+
+        //Step4: now delete the entity
+        await tx.delete(entityRef);
+
+        isSuccess = true;
       } catch (e) {
-        print("Failed to delete child-entity with id: " +
-            meta.entityId +
-            "Error: " +
-            e.toString());
+        isSuccess = false;
       }
-    }
+    });
 
-    final DocumentReference entityRef = fStore.document('entities/' + entityId);
-
-    await entityRef.delete();
-
-    return true;
+    return isSuccess;
   }
 
   Future<bool> assignAdmin(String entityId, String phone) async {
@@ -420,9 +479,7 @@ class EntityService {
     Firestore fStore = Firestore.instance;
     Geoflutterfire geo = Geoflutterfire();
 
-    var queryRef = fStore
-        .collection('entities')
-        .where('name', isGreaterThanOrEqualTo: name);
+    var queryRef = fStore.collection('entities').where('name', isEqualTo: name);
     GeoFirePoint center = geo.point(latitude: lat, longitude: lon);
     double radius = double.parse(distance.toString());
     var stream = geo
