@@ -289,43 +289,4 @@ class _CustomDrawerState extends State<CustomDrawer> {
   //   );
   // }
 
-  Widget _userHomePage() {
-    return userHomePage(context);
-  }
-
-  Widget _manageApartmentPage() {
-    return manageApartmentPages(context);
-  }
-
-  Widget _manageCommSpacePage() {
-    return Container(
-      child: Center(
-        child: Text("Add new Comm"),
-      ),
-    );
-  }
-
-  Widget _manageOffSpacePage() {
-    return Container(
-      child: Center(
-        child: Text("Add new Office"),
-      ),
-    );
-  }
-
-  Widget _rateApp() {
-    return rateAppPage(context);
-  }
-
-  Widget _needHelp() {
-    return needHelpPage(context);
-  }
-
-  Widget _shareApp() {
-    return shareAppPage(context);
-  }
-
-  Widget _userAccount() {
-    return userAccountPage(context);
-  }
 }
