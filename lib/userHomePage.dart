@@ -15,6 +15,9 @@ import 'package:noq/services/qr_code_generate.dart';
 import 'package:noq/services/qrcode_scan.dart';
 import 'package:noq/style.dart';
 import 'package:intl/intl.dart';
+import 'package:noq/widget/appbar.dart';
+import 'package:noq/widget/bottom_nav_bar.dart';
+import 'package:noq/widget/header.dart';
 import 'package:noq/widget/widgets.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:barcode_scan/barcode_scan.dart';
@@ -351,28 +354,13 @@ class _UserHomePageState extends State<UserHomePage> {
   @override
   Widget build(BuildContext context) {
     //if (_upcomingBkgStatus == 'Success') {
-    String title = "Manage Entities";
+    String title = "Home Page";
     return MaterialApp(
       theme: ThemeData.light().copyWith(),
       home: Scaffold(
-        appBar: AppBar(
-            actions: <Widget>[],
-            backgroundColor: Colors.teal,
-            leading: IconButton(
-                padding: EdgeInsets.all(0),
-                alignment: Alignment.center,
-                highlightColor: Colors.orange[300],
-                icon: Icon(Icons.arrow_back),
-                color: Colors.white,
-                onPressed: () {
-                  //saveEntityDetails(entity);
-                  Navigator.of(context).pop();
-                }),
-            title: Text(
-              title,
-              style: TextStyle(color: Colors.white, fontSize: 16),
-              overflow: TextOverflow.ellipsis,
-            )),
+        appBar: CustomAppBar(
+          titleTxt: title,
+        ),
         body: ListView(
           children: <Widget>[
             Column(
@@ -549,6 +537,10 @@ class _UserHomePageState extends State<UserHomePage> {
               ],
             ),
           ],
+        ),
+        drawer: CustomDrawer(),
+        bottomNavigationBar: CustomBottomBar(
+          barIndex: 1,
         ),
         //} else
         // if (_upcomingBkgStatus == 'NoBookings') {

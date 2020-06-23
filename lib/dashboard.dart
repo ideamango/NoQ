@@ -201,7 +201,7 @@ class _LandingPageState extends State<LandingPage> {
       //theme: ThemeData.light().copyWith(),
       home: Scaffold(
         key: _scaffoldKey,
-        appBar: CustomAppBar(),
+        //  appBar: CustomAppBar(),
 
         body: Center(
           child: PageView(
@@ -350,7 +350,7 @@ class _LandingPageState extends State<LandingPage> {
             ],
           ),
         ),
-        bottomNavigationBar: buildBottomItems(),
+        // bottomNavigationBar: buildBottomItems(),
         // floatingActionButton: FloatingActionButton(
         //   onPressed: dbCall,
         //   tooltip: 'Increment',

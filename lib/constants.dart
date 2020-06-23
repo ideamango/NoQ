@@ -12,8 +12,10 @@ String drawerHeaderTxt12 = 'Safe!!  ';
 String drawerHeaderTxt21 = 'Maintain ';
 String drawerHeaderTxt22 = 'Social distance!!  ';
 String drawerHeaderTxt31 = 'Avoid ';
-String drawerHeaderTxt32 = 'rush hours !!  ';
-String drawerHeaderTxt41 = 'Save time !!';
+String drawerHeaderTxt32 = 'Rush ';
+String drawerHeaderTxt33 = 'hours !!  ';
+String drawerHeaderTxt41 = 'Save ';
+String drawerHeaderTxt42 = 'time !!';
 String addressInfoStr =
     'The address is using the current location, and same will be used by customers when searching your location.';
 

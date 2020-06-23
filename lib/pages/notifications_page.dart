@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:noq/models/localDB.dart';
 import 'package:noq/repository/local_db_repository.dart';
 import 'package:noq/style.dart';
+import 'package:noq/widget/appbar.dart';
+import 'package:noq/widget/bottom_nav_bar.dart';
+import 'package:noq/widget/header.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class UserNotificationsPage extends StatefulWidget {
@@ -40,35 +43,70 @@ class _UserNotificationsPageState extends State<UserNotificationsPage> {
   Widget build(BuildContext context) {
     if (_notificationsFlg == true) {
       if (_notificationsList != null) {
-        return _buildBkgListPage();
+        return _buildNotificationPage();
       } else {
-        return _emptyBookingPage();
+        return _emptyPage();
       }
     }
-    return _emptyBookingPage();
+    return _emptyPage();
   }
 
-  Widget _emptyBookingPage() {
-    return Center(
-        child: Center(
-            child: Container(
-      margin: EdgeInsets.fromLTRB(10, 10, 10, 10),
-      child: Text('No Notifications yet!!'),
-    )));
+  Widget _emptyPage() {
+    String title = "Notifications";
+    return MaterialApp(
+      theme: ThemeData.light().copyWith(),
+      home: Scaffold(
+        drawer: CustomDrawer(),
+        appBar: CustomAppBar(
+          titleTxt: title,
+        ),
+        body: Center(
+          child: Container(
+              margin: EdgeInsets.fromLTRB(10, 10, 10, 10),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Text(
+                    'No Notifications yet!!',
+                    style: highlightTextStyle,
+                  ),
+                  Text('Be Safe | Save Time.', style: highlightSubTextStyle),
+                ],
+              )),
+        ),
+        bottomNavigationBar: CustomBottomBar(
+          barIndex: 0,
+        ),
+      ),
+    );
   }
 
-  Widget _buildBkgListPage() {
-    return Center(
-      child: Container(
-        margin: EdgeInsets.fromLTRB(10, 10, 10, 10),
-        child: ListView.builder(
-            itemCount: _bookings.length,
-            itemBuilder: (BuildContext context, int index) {
-              return Container(
-                child: new Column(children: _bookings.map(_buildItem).toList()),
-                //children: <Widget>[firstRow, secondRow],
-              );
-            }),
+  Widget _buildNotificationPage() {
+    String title = "My Notifications";
+    return MaterialApp(
+      theme: ThemeData.light().copyWith(),
+      home: Scaffold(
+        drawer: CustomDrawer(),
+        appBar: CustomAppBar(
+          titleTxt: title,
+        ),
+        body: Center(
+          child: Container(
+            margin: EdgeInsets.fromLTRB(10, 10, 10, 10),
+            child: ListView.builder(
+                itemCount: _bookings.length,
+                itemBuilder: (BuildContext context, int index) {
+                  return Container(
+                    child: new Column(
+                        children: _bookings.map(_buildItem).toList()),
+                    //children: <Widget>[firstRow, secondRow],
+                  );
+                }),
+          ),
+        ),
+        bottomNavigationBar: CustomBottomBar(
+          barIndex: 3,
+        ),
       ),
     );
   }

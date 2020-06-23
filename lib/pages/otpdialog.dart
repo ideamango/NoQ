@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:noq/services/authService.dart';
 import 'package:noq/style.dart';
+import 'package:noq/widget/widgets.dart';
 import 'package:pinput/pin_put/pin_put.dart';
 
 class OTPDialog extends StatefulWidget {
@@ -119,19 +120,29 @@ class _OTPDialogState extends State<OTPDialog> {
     //     barrierDismissible: false,
     //     builder: (BuildContext context) {
     return new AlertDialog(
-      title: Text('Enter OTP',
-          style: TextStyle(
-            fontSize: 20,
-            color: Colors.blueGrey[500],
-          )),
+      // title:
       backgroundColor: Colors.grey[200],
       titleTextStyle: inputTextStyle,
       elevation: 10.0,
       content: Container(
-        height: MediaQuery.of(context).size.height * .12,
+        height: MediaQuery.of(context).size.height * .2,
         child: Column(
           mainAxisSize: MainAxisSize.max,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
+            Text('Enter OTP',
+                style: TextStyle(
+                  fontSize: 20,
+                  color: Colors.blueGrey[600],
+                )),
+            Text('One time password(OTP) is sent on your mobile device',
+                style: TextStyle(
+                  fontSize: 10,
+                  color: Colors.blueGrey[500],
+                )),
+            SizedBox(
+              height: 10,
+            ),
             Container(
               //color: Colors.black,
               //margin: EdgeInsets.all(5),
@@ -153,10 +164,15 @@ class _OTPDialogState extends State<OTPDialog> {
               ),
             ),
             (_errorMessage != null
-                ? Text(
-                    _errorMessage,
-                    textAlign: TextAlign.left,
-                    style: errorTextStyle,
+                ? Column(
+                    children: <Widget>[
+                      myDivider,
+                      Text(
+                        _errorMessage,
+                        textAlign: TextAlign.left,
+                        style: errorTextStyle,
+                      )
+                    ],
                   )
                 : Container()),
             // SizedBox(height: 10),
