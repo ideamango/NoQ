@@ -21,12 +21,14 @@ class SearchStoresPage extends StatefulWidget {
 }
 
 class _SearchStoresPageState extends State<SearchStoresPage> {
+  String filterVar = "2";
   bool initCompleted = false;
   bool isFavourited = false;
   DateTime dateTime = DateTime.now();
   final dtFormat = new DateFormat('dd');
   SharedPreferences _prefs;
   UserAppData _userProfile;
+
   List<EntityAppData> _stores = new List<EntityAppData>();
   List<EntityAppData> _searchResultstores = new List<EntityAppData>();
 
@@ -601,6 +603,8 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
     }
   }
 
+  void addFilterCriteria() {}
+
   Widget buildBar(BuildContext context) {
     return new AppBar(
         centerTitle: true,
@@ -616,15 +620,40 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
                     Icons.close,
                     color: Colors.white,
                   );
-                  this.appBarTitle = new TextField(
-                    controller: _searchQuery,
-                    style: new TextStyle(
-                      color: Colors.white,
-                    ),
-                    decoration: new InputDecoration(
-                        prefixIcon: new Icon(Icons.search, color: Colors.white),
-                        hintText: "Search...",
-                        hintStyle: new TextStyle(color: Colors.white)),
+                  this.appBarTitle = Column(
+                    children: <Widget>[
+                      Container(
+                        height: 30,
+                        decoration: new BoxDecoration(
+                          shape: BoxShape.rectangle,
+                          color: Colors.white,
+                          border: new Border.all(
+                            color: Colors.white,
+                            width: 1.0,
+                          ),
+                        ),
+                        child: new TextField(
+                          controller: _searchQuery,
+                          style: new TextStyle(
+                            backgroundColor: Colors.white,
+                            color: Colors.blueGrey[500],
+                          ),
+                          decoration: new InputDecoration(
+                              focusedBorder: UnderlineInputBorder(
+                                  borderSide:
+                                      BorderSide(color: highlightColor)),
+                              // enabledBorder: OutlineInputBorder(
+                              //   borderSide:
+                              //       BorderSide(color: Colors.grey, width: 1.0),
+                              // ),
+                              prefixIcon: new Icon(Icons.search,
+                                  color: Colors.blueGrey[500]),
+                              hintText: "Search",
+                              hintStyle:
+                                  new TextStyle(color: Colors.blueGrey[500])),
+                        ),
+                      ),
+                    ],
                   );
                   _handleSearchStart();
                 } else {
@@ -649,7 +678,7 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
         color: Colors.white,
       );
       this.appBarTitle = new Text(
-        "Search by name",
+        "",
         style: new TextStyle(color: Colors.white),
       );
       _isSearching = false;

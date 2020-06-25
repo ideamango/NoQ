@@ -540,7 +540,7 @@ class _UserHomePageState extends State<UserHomePage> {
         ),
         drawer: CustomDrawer(),
         bottomNavigationBar: CustomBottomBar(
-          barIndex: 1,
+          barIndex: 0,
         ),
         //} else
         // if (_upcomingBkgStatus == 'NoBookings') {
