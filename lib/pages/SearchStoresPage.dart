@@ -21,14 +21,12 @@ class SearchStoresPage extends StatefulWidget {
 }
 
 class _SearchStoresPageState extends State<SearchStoresPage> {
-  String filterVar = "2";
   bool initCompleted = false;
   bool isFavourited = false;
   DateTime dateTime = DateTime.now();
   final dtFormat = new DateFormat('dd');
   SharedPreferences _prefs;
   UserAppData _userProfile;
-
   List<EntityAppData> _stores = new List<EntityAppData>();
   List<EntityAppData> _searchResultstores = new List<EntityAppData>();
 
@@ -38,16 +36,52 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
 
   List<DateTime> _dateList = new List<DateTime>();
 
-  Widget appBarTitle = new Text(
-    "Search by Name",
-    style: new TextStyle(color: Colors.white),
+  Widget appBarTitle = Container(
+    height: 30,
+    decoration: new BoxDecoration(
+      shape: BoxShape.rectangle,
+      color: Colors.white,
+      borderRadius: BorderRadius.all(Radius.circular(5.0)),
+      // border: new Border.all(
+      //   color: Colors.white,
+      //   width: 1.0,
+      // ),
+    ),
+    child: new TextField(
+      controller: _searchQuery,
+      cursorColor: highlightColor,
+      cursorWidth: 1,
+      style: new TextStyle(
+        backgroundColor: Colors.white,
+        color: Colors.blueGrey[500],
+      ),
+      decoration: new InputDecoration(
+          // isDense: true,
+          prefixIconConstraints: BoxConstraints(
+            maxWidth: 25,
+            maxHeight: 22,
+          ),
+          //contentPadding: EdgeInsets.all(0),
+          focusedBorder:
+              UnderlineInputBorder(borderSide: BorderSide(color: Colors.teal)),
+          enabledBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: Colors.teal, width: 1.0),
+          ),
+          prefixIcon: Container(
+            // transform: Matrix4.translationValues(-10.0, 0, 0),
+            child:
+                new Icon(Icons.search, size: 20, color: Colors.blueGrey[500]),
+          ),
+          hintText: "Search",
+          hintStyle: new TextStyle(color: Colors.blueGrey[500])),
+    ),
   );
   Icon actionIcon = new Icon(
     Icons.search,
     color: Colors.white,
   );
   final key = new GlobalKey<ScaffoldState>();
-  final TextEditingController _searchQuery = new TextEditingController();
+  static final TextEditingController _searchQuery = new TextEditingController();
   List<EntityAppData> _list;
   bool _isSearching;
   String _searchText = "";
@@ -604,65 +638,23 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
   }
 
   void addFilterCriteria() {}
-
+  String filterVar = "0";
   Widget buildBar(BuildContext context) {
     return new AppBar(
-        centerTitle: true,
-        title: appBarTitle,
-        backgroundColor: Colors.teal,
-        actions: <Widget>[
-          new IconButton(
-            icon: actionIcon,
+      centerTitle: true,
+      title: appBarTitle,
+      backgroundColor: Colors.teal,
+      actions: <Widget>[
+        new IconButton(
+            icon: new Icon(
+              Icons.close,
+              color: Colors.white,
+            ),
             onPressed: () {
-              setState(() {
-                if (this.actionIcon.icon == Icons.search) {
-                  this.actionIcon = new Icon(
-                    Icons.close,
-                    color: Colors.white,
-                  );
-                  this.appBarTitle = Column(
-                    children: <Widget>[
-                      Container(
-                        height: 30,
-                        decoration: new BoxDecoration(
-                          shape: BoxShape.rectangle,
-                          color: Colors.white,
-                          border: new Border.all(
-                            color: Colors.white,
-                            width: 1.0,
-                          ),
-                        ),
-                        child: new TextField(
-                          controller: _searchQuery,
-                          style: new TextStyle(
-                            backgroundColor: Colors.white,
-                            color: Colors.blueGrey[500],
-                          ),
-                          decoration: new InputDecoration(
-                              focusedBorder: UnderlineInputBorder(
-                                  borderSide:
-                                      BorderSide(color: highlightColor)),
-                              // enabledBorder: OutlineInputBorder(
-                              //   borderSide:
-                              //       BorderSide(color: Colors.grey, width: 1.0),
-                              // ),
-                              prefixIcon: new Icon(Icons.search,
-                                  color: Colors.blueGrey[500]),
-                              hintText: "Search",
-                              hintStyle:
-                                  new TextStyle(color: Colors.blueGrey[500])),
-                        ),
-                      ),
-                    ],
-                  );
-                  _handleSearchStart();
-                } else {
-                  _handleSearchEnd();
-                }
-              });
-            },
-          ),
-        ]);
+              _handleSearchEnd();
+            }),
+      ],
+    );
   }
 
   void _handleSearchStart() {
@@ -673,14 +665,6 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
 
   void _handleSearchEnd() {
     setState(() {
-      this.actionIcon = new Icon(
-        Icons.search,
-        color: Colors.white,
-      );
-      this.appBarTitle = new Text(
-        "",
-        style: new TextStyle(color: Colors.white),
-      );
       _isSearching = false;
       _searchQuery.clear();
     });
