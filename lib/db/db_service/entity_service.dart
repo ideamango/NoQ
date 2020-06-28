@@ -194,6 +194,7 @@ class EntityService {
         isSuccess = true;
       } catch (e) {
         isSuccess = false;
+        print(e);
       }
     });
 
@@ -305,91 +306,97 @@ class EntityService {
     bool isSuccess = false;
 
     await fStore.runTransaction((Transaction tx) async {
-      DocumentSnapshot parentEntityDoc = await tx.get(entityRef);
+      try {
+        DocumentSnapshot parentEntityDoc = await tx.get(entityRef);
 
-      DocumentSnapshot childEntityDoc = await tx.get(childRef);
+        DocumentSnapshot childEntityDoc = await tx.get(childRef);
 
-      if (parentEntityDoc.exists) {
-        //check if the current user is admin
-        Map<String, dynamic> map = parentEntityDoc.data;
-        parentEntity = Entity.fromJson(map);
+        if (parentEntityDoc.exists) {
+          //check if the current user is admin
+          Map<String, dynamic> map = parentEntityDoc.data;
+          parentEntity = Entity.fromJson(map);
 
-        if (parentEntity.isAdmin(fireUser.uid) == -1) {
-          throw new AccessDeniedException(
-              "User is not admin and can't update the entity");
-        }
-
-        bool childEntityAlreadyExistInParent = false;
-        int count = -1;
-
-        for (MetaEntity meta in parentEntity.childEntities) {
-          count++;
-          if (meta.entityId == childEntity.entityId) {
-            childEntityAlreadyExistInParent = true;
-            break;
-          }
-        }
-
-        if (childEntityAlreadyExistInParent) {
-          parentEntity.childEntities[count] = childEntity.getMetaEntity();
-        } else {
-          parentEntity.childEntities.add(childEntity.getMetaEntity());
-        }
-
-        if (childEntityDoc.exists) {
-          Entity existingChildEntity = Entity.fromJson(childEntityDoc.data);
-
-          int userIndex = existingChildEntity.isAdmin(fireUser.uid);
-          if (userIndex == -1) {
+          if (parentEntity.isAdmin(fireUser.uid) == -1) {
             throw new AccessDeniedException(
-                "User is not admin of existing child entity");
+                "User is not admin and can't update the entity");
+          }
+
+          bool childEntityAlreadyExistInParent = false;
+          int count = -1;
+
+          for (MetaEntity meta in parentEntity.childEntities) {
+            count++;
+            if (meta.entityId == childEntity.entityId) {
+              childEntityAlreadyExistInParent = true;
+              break;
+            }
+          }
+
+          if (childEntityAlreadyExistInParent) {
+            parentEntity.childEntities[count] = childEntity.getMetaEntity();
+          } else {
+            parentEntity.childEntities.add(childEntity.getMetaEntity());
+          }
+
+          if (childEntityDoc.exists) {
+            Entity existingChildEntity = Entity.fromJson(childEntityDoc.data);
+
+            int userIndex = existingChildEntity.isAdmin(fireUser.uid);
+            if (userIndex == -1) {
+              throw new AccessDeniedException(
+                  "User is not admin of existing child entity");
+            } else {
+              MetaUser mu = new MetaUser(
+                  id: fireUser.uid,
+                  name: fireUser.displayName,
+                  ph: fireUser.phoneNumber);
+              childEntity.admins = existingChildEntity.admins;
+              childEntity.admins[userIndex] = mu;
+            }
           } else {
             MetaUser mu = new MetaUser(
                 id: fireUser.uid,
                 name: fireUser.displayName,
                 ph: fireUser.phoneNumber);
-            childEntity.admins = existingChildEntity.admins;
-            childEntity.admins[userIndex] = mu;
+            if (childEntity.admins == null) {
+              childEntity.admins = new List<MetaUser>();
+            }
+            childEntity.admins.add(mu);
           }
-        } else {
-          MetaUser mu = new MetaUser(
-              id: fireUser.uid,
-              name: fireUser.displayName,
-              ph: fireUser.phoneNumber);
-          if (childEntity.admins == null) {
-            childEntity.admins = new List<MetaUser>();
+          childEntity.parentId = parentEntityId;
+
+          DocumentSnapshot userDoc = await tx.get(userRef);
+          User usr;
+          if (userDoc.exists) {
+            usr = User.fromJson(userDoc.data);
+          } else {
+            //user should exist, as this user is the admin of the parent entity
+            throw new UserDoesNotExistsException("User does not exist");
           }
-          childEntity.admins.add(mu);
-        }
-        childEntity.parentId = parentEntityId;
 
-        DocumentSnapshot userDoc = await tx.get(userRef);
-        User usr;
-        if (userDoc.exists) {
-          usr = User.fromJson(userDoc.data);
+          int childEntityIndex = usr.isEntityAdmin(childEntity.entityId);
+
+          if (childEntityIndex == -1) {
+            usr.entities.add(childEntity.getMetaEntity());
+          } else {
+            usr.entities[childEntityIndex] = childEntity.getMetaEntity();
+          }
+
+          await tx.set(userRef, usr.toJson());
+
+          await tx.set(entityRef, parentEntity.toJson());
+
+          await tx.set(childRef, childEntity.toJson());
+
+          isSuccess = true;
         } else {
-          //user should exist, as this user is the admin of the parent entity
-          throw new UserDoesNotExistsException("User does not exist");
+          isSuccess = false;
+          throw new EntityDoesNotExistsException(
+              "Parent entity does not exist");
         }
-
-        int childEntityIndex = usr.isEntityAdmin(childEntity.entityId);
-
-        if (childEntityIndex == -1) {
-          usr.entities.add(childEntity.getMetaEntity());
-        } else {
-          usr.entities[childEntityIndex] = childEntity.getMetaEntity();
-        }
-
-        await tx.set(userRef, usr.toJson());
-
-        await tx.set(entityRef, parentEntity.toJson());
-
-        await tx.set(childRef, childEntity.toJson());
-
-        isSuccess = true;
-      } else {
+      } catch (e) {
+        print(e);
         isSuccess = false;
-        throw new EntityDoesNotExistsException("Parent entity does not exist");
       }
     });
 
@@ -473,30 +480,104 @@ class EntityService {
     return isSuccess;
   }
 
-  Future<List<Entity>> searchByName(String name, double lat, double lon,
-      int distance, int pageNumber, int pageSize) async {
-    List<Entity> entities = new List<Entity>();
+  Future<List<MetaEntity>> searchByName(String name, double lat, double lon,
+      double radius, int pageNumber, int pageSize) async {
+    List<MetaEntity> entities = new List<MetaEntity>();
     Firestore fStore = Firestore.instance;
     Geoflutterfire geo = Geoflutterfire();
 
-    var queryRef = fStore.collection('entities').where('name', isEqualTo: name);
-    GeoFirePoint center = geo.point(latitude: lat, longitude: lon);
-    double radius = double.parse(distance.toString());
-    var stream = geo
-        .collection(collectionRef: queryRef)
-        .within(center: center, radius: radius, field: 'coordinates')
-        .skip((pageNumber - 1) * pageSize)
-        .take(pageSize);
+    // var queryRef = fStore.collection('entities').where('name', isEqualTo: name);
+    // GeoFirePoint center = geo.point(latitude: lat, longitude: lon);
+    // double radius = double.parse(distance.toString());
+    // var stream = geo
+    //     .collection(collectionRef: queryRef)
+    //     .within(center: center, radius: radius, field: 'coordinates')
+    //     .skip((pageNumber - 1) * pageSize)
+    //     .take(pageSize);
 
-    stream.listen((List<DocumentSnapshot> documentList) {
-      documentList.forEach((doc) => {entities.add(Entity.fromJson(doc.data))});
-    });
+    // stream.listen((List<DocumentSnapshot> documentList) {
+    //   documentList.forEach((doc) => {entities.add(Entity.fromJson(doc.data))});
+    // });
+    //-------------------------
+    // var collectionReference = fStore.collection('entities');
+    // GeoFirePoint center = geo.point(latitude: lat, longitude: lon);
+
+    // double radius = 5;
+    // String field = 'coordinates';
+
+    // Stream<List<DocumentSnapshot>> stream = geo
+    //     .collection(collectionRef: collectionReference)
+    //     .within(center: center, radius: radius, field: field);
+
+    // await stream.listen((List<DocumentSnapshot> documentList) {
+    //   documentList.forEach((doc) => {entities.add(Entity.fromJson(doc.data))});
+    // });
+    //---------------------------
+
+    GeoFirePoint center = geo.point(latitude: lat, longitude: lon);
+
+    // QuerySnapshot qs = await fStore
+    //     .collection('entities')
+    //     .where("query", arrayContains: "smi")
+    //     .getDocuments();
+
+    // print("Array Contains result count: " + qs.documents.length.toString());
+
+    var collectionReference =
+        fStore.collection('entities').where("query", arrayContains: name);
+
+    // var collectionReference =
+    //     fStore.collection('entities').where("name", isEqualTo: "Bata");
+
+    // var collectionReference = fStore.collection('entities');
+
+    String field = 'coordinates';
+
+    Stream<List<DocumentSnapshot>> stream = geo
+        .collection(collectionRef: collectionReference)
+        .within(center: center, radius: radius, field: field);
+    //    .take(pageSize);
+    //.skip(pageNumber - 1);
+
+    try {
+      for (DocumentSnapshot ds in await stream.first) {
+        MetaEntity me = Entity.fromJson(ds.data).getMetaEntity();
+        me.distance = center.distance(lat: me.lat, lng: me.lon);
+        entities.add(me);
+      }
+    } catch (e) {
+      print(e);
+    }
+
     return entities;
   }
 
-  Future<List<Entity>> searchByType(
-      String type, double lat, double lon, int distance, pageSize) async {
-    List<Entity> entities = new List<Entity>();
+  Future<List<MetaEntity>> searchByType(String type, double lat, double lon,
+      double radius, int pageNumber, int pageSize) async {
+    List<MetaEntity> entities = new List<MetaEntity>();
+    Firestore fStore = Firestore.instance;
+    Geoflutterfire geo = Geoflutterfire();
+    GeoFirePoint center = geo.point(latitude: lat, longitude: lon);
+
+    var collectionReference =
+        fStore.collection('entities').where("type", isEqualTo: type);
+
+    String field = 'coordinates';
+
+    Stream<List<DocumentSnapshot>> stream = geo
+        .collection(collectionRef: collectionReference)
+        .within(center: center, radius: radius, field: field);
+
+    try {
+      for (DocumentSnapshot ds in await stream.first) {
+        MetaEntity me = Entity.fromJson(ds.data).getMetaEntity();
+        me.distance = center.distance(lat: me.lat, lng: me.lon);
+        entities.add(me);
+      }
+    } catch (e) {
+      print(e);
+    }
+
     return entities;
   }
 }
