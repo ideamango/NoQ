@@ -6,3 +6,6 @@ Divider myDivider = new Divider(
   indent: 30,
   endIndent: 30,
 );
+
+SizedBox verticalSpacer = new SizedBox(height: 10);
+SizedBox horizontalSpacer = new SizedBox(width: 10);

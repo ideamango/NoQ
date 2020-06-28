@@ -5,8 +5,10 @@ import 'package:noq/pages/entity_item.dart';
 import 'package:noq/pages/service_entity.dart';
 import 'package:noq/repository/local_db_repository.dart';
 import 'package:noq/style.dart';
+import 'package:noq/userHomePage.dart';
 import 'package:noq/utils.dart';
 import 'package:noq/widget/appbar.dart';
+import 'package:noq/widget/bottom_nav_bar.dart';
 import 'package:uuid/uuid.dart';
 
 class ManageApartmentsListPage extends StatefulWidget {
@@ -127,6 +129,8 @@ class _ManageApartmentsListPageState extends State<ManageApartmentsListPage> {
                 onPressed: () {
                   //saveEntityDetails(entity);
                   Navigator.of(context).pop();
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => UserHomePage()));
                 }),
             title: Text(
               title,
@@ -273,6 +277,9 @@ class _ManageApartmentsListPageState extends State<ManageApartmentsListPage> {
             ),
             // bottomNavigationBar: buildBottomItems()
           ),
+        ),
+        bottomNavigationBar: CustomBottomBar(
+          barIndex: 0,
         ),
       ),
     );

@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:noq/services/authService.dart';
 import 'package:noq/style.dart';
+import 'package:noq/widget/widgets.dart';
 
 class CustomAppBar extends StatefulWidget implements PreferredSizeWidget {
-  CustomAppBar({Key key})
+  final String titleTxt;
+  CustomAppBar({Key key, @required this.titleTxt})
       : preferredSize = Size.fromHeight(kToolbarHeight),
         super(key: key);
 
@@ -17,14 +19,79 @@ class CustomAppBar extends StatefulWidget implements PreferredSizeWidget {
 class _CustomAppBarState extends State<CustomAppBar> {
   final GlobalKey _appBarKey = new GlobalKey();
   void _logout() {
-    AuthService().signOut(context);
+    showDialog(
+        barrierDismissible: false,
+        context: context,
+        builder: (_) => AlertDialog(
+              titlePadding: EdgeInsets.fromLTRB(5, 10, 0, 0),
+              contentPadding: EdgeInsets.all(0),
+              actionsPadding: EdgeInsets.all(0),
+              //buttonPadding: EdgeInsets.all(0),
+              title: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Text(
+                    'Are you sure you want to logout?',
+                    style: TextStyle(
+                      fontSize: 15,
+                      color: Colors.blueGrey[600],
+                    ),
+                  ),
+                  verticalSpacer,
+                  // myDivider,
+                ],
+              ),
+              content: Divider(
+                color: Colors.blueGrey[400],
+                height: 1,
+                //indent: 40,
+                //endIndent: 30,
+              ),
+
+              //content: Text('This is my content'),
+              actions: <Widget>[
+                SizedBox(
+                  height: 24,
+                  child: FlatButton(
+                    color: Colors.transparent,
+                    textColor: Colors.orange,
+                    shape: RoundedRectangleBorder(
+                        side: BorderSide(color: Colors.orange)),
+                    child: Text('Yes'),
+                    onPressed: () {
+                      Navigator.of(context, rootNavigator: true).pop();
+                      AuthService().signOut(context);
+                    },
+                  ),
+                ),
+                SizedBox(
+                  height: 24,
+                  child: FlatButton(
+                    autofocus: true,
+                    focusColor: highlightColor,
+                    color: Colors.transparent,
+                    textColor: Colors.orange,
+                    shape: RoundedRectangleBorder(
+                        side: BorderSide(color: Colors.orange)),
+                    child: Text('No'),
+                    onPressed: () {
+                      Navigator.of(context, rootNavigator: true).pop();
+                      // Navigator.of(context, rootNavigator: true).pop('dialog');
+                    },
+                  ),
+                ),
+              ],
+            ));
   }
 
   @override
   Widget build(BuildContext context) {
     return AppBar(
       key: _appBarKey,
-      title: Text('Awesome NoQ', style: whiteBoldTextStyle1),
+      title: Text(widget.titleTxt, style: whiteBoldTextStyle1),
+      flexibleSpace: Container(
+        decoration: gradientBackground,
+      ),
       backgroundColor: Colors.teal,
       //Theme.of(context).primaryColor,
       actions: <Widget>[

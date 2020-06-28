@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:noq/constants.dart';
 import 'package:noq/models/localDB.dart';
 import 'package:noq/pages/showSlotsPage.dart';
 import 'package:noq/repository/StoreRepository.dart';
@@ -8,6 +9,9 @@ import 'package:noq/repository/slotRepository.dart';
 import 'package:noq/services/mapService.dart';
 import 'package:noq/style.dart';
 import 'package:noq/utils.dart';
+import 'package:noq/widget/bottom_nav_bar.dart';
+import 'package:noq/widget/header.dart';
+import 'package:noq/widget/widgets.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -27,6 +31,7 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
   UserAppData _userProfile;
   List<EntityAppData> _stores = new List<EntityAppData>();
   List<EntityAppData> _searchResultstores = new List<EntityAppData>();
+  String _entityType;
 
   bool fetchFromServer = false;
 
@@ -34,16 +39,79 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
 
   List<DateTime> _dateList = new List<DateTime>();
 
-  Widget appBarTitle = new Text(
-    "Search Sample",
-    style: new TextStyle(color: Colors.white),
+  Widget appBarTitle = Container(
+    height: 32,
+    decoration: new BoxDecoration(
+      shape: BoxShape.rectangle,
+      color: Colors.white,
+      borderRadius: BorderRadius.all(Radius.circular(5.0)),
+      // border: new Border.all(
+      //   color: Colors.white,
+      //   width: 1.0,
+      // ),
+    ),
+    child: new TextField(
+      autofocus: true,
+      controller: _searchQuery,
+      cursorColor: highlightColor,
+      cursorWidth: 1,
+      style: new TextStyle(
+        backgroundColor: Colors.white,
+        color: Colors.blueGrey[500],
+      ),
+      decoration: new InputDecoration(
+          contentPadding: EdgeInsets.fromLTRB(20, 7, 5, 7),
+          isDense: true,
+          prefixIconConstraints: BoxConstraints(
+            maxWidth: 25,
+            maxHeight: 22,
+          ),
+          //contentPadding: EdgeInsets.all(0),
+          focusedBorder:
+              UnderlineInputBorder(borderSide: BorderSide(color: Colors.white)),
+          enabledBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: Colors.white, width: 1.0),
+          ),
+          prefixIcon: IconButton(
+            // transform: Matrix4.translationValues(-10.0, 0, 0),
+            icon: new Icon(Icons.search, size: 20, color: Colors.blueGrey[500]),
+            alignment: Alignment.centerRight,
+            padding: EdgeInsets.all(0),
+            onPressed: () {},
+          ),
+          suffixIcon: new IconButton(
+              alignment: Alignment.centerRight,
+              padding: EdgeInsets.all(0),
+              icon: new Icon(
+                Icons.close,
+                color: Colors.blueGrey[500],
+              ),
+              onPressed: () {
+                //TODO: correct search end
+                _searchQuery.clear();
+              }),
+
+          // Container(
+          //   // transform: Matrix4.translationValues(3.0, 3, 0),
+          //   padding: EdgeInsets.all(0),
+          //   margin: ,
+          //   child:
+          // ),
+          // suffixIconConstraints: BoxConstraints(
+          //   maxWidth: 25,
+          //   maxHeight: 22,
+          // ),
+          hintText: "Search",
+          hintStyle: new TextStyle(color: Colors.blueGrey[500])),
+    ),
   );
+
   Icon actionIcon = new Icon(
     Icons.search,
     color: Colors.white,
   );
   final key = new GlobalKey<ScaffoldState>();
-  final TextEditingController _searchQuery = new TextEditingController();
+  static final TextEditingController _searchQuery = new TextEditingController();
   List<EntityAppData> _list;
   bool _isSearching;
   String _searchText = "";
@@ -217,24 +285,97 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
 
   @override
   Widget build(BuildContext context) {
+    Widget filterBar = Container(
+      margin: EdgeInsets.fromLTRB(0, 0, 0, 0),
+      decoration: gradientBackground,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: <Widget>[
+          Text(
+            "Search by Category",
+            style: buttonMedTextStyle,
+          ),
+          new DropdownButton(
+            dropdownColor: Colors.cyanAccent[400],
+            hint: new Text("Select Type of Entity"),
+            value: _entityType,
+            isDense: true,
+            onChanged: (newValue) {
+              setState(() {
+                _entityType = newValue;
+                // state.didChange(newValue);
+              });
+            },
+            items: entityTypes.map((type) {
+              return DropdownMenuItem(
+                value: type,
+                child: new Text(
+                  type.toString(),
+                  //style:inputTextStyle,
+                  style: buttonMedTextStyle,
+                ),
+              );
+            }).toList(),
+          ),
+        ],
+      ),
+    );
+
+    // Container(
+    //   child: Row(
+    //     children: <Widget>[
+    //       Text("Search by category", style: buttonMedTextStyle),
+    //       horizontalSpacer,
+    //       new FormField(
+    //         builder: (FormFieldState state) {
+    //           return InputDecorator(
+    //             decoration: InputDecoration(
+    //               labelText: 'Type of Entity',
+    //             ),
+    //             child: new DropdownButtonHideUnderline(
+    //               child:
+    //             ),
+    //           );
+    //         },
+    //         onSaved: (String value) {
+    //           _entityType = value;
+
+    //           // entity.childCollection
+    //           //    .add(new ChildEntityAppData.cType(value, entity.id));
+    //           //   saveEntityDetails(entity);
+    //         },
+    //       ),
+    //     ],
+    //   ),
+    // );
 // build widget only after init has completed, till then show progress indicator.
     if (!initCompleted) {
-      return Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Padding(padding: EdgeInsets.only(top: 20.0)),
-            Text(
-              "Loading..",
-              style: TextStyle(fontSize: 20.0, color: Colors.indigo),
+      return MaterialApp(
+        theme: ThemeData.light().copyWith(),
+        home: Scaffold(
+          appBar: buildBar(context),
+          body: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Padding(padding: EdgeInsets.only(top: 20.0)),
+                Text(
+                  "Loading..",
+                  style: TextStyle(fontSize: 20.0, color: Colors.indigo),
+                ),
+                Padding(padding: EdgeInsets.only(top: 20.0)),
+                CircularProgressIndicator(
+                  backgroundColor: Colors.indigo,
+                  valueColor: AlwaysStoppedAnimation<Color>(Colors.amber),
+                  strokeWidth: 3,
+                )
+              ],
             ),
-            Padding(padding: EdgeInsets.only(top: 20.0)),
-            CircularProgressIndicator(
-              backgroundColor: Colors.indigo,
-              valueColor: AlwaysStoppedAnimation<Color>(Colors.amber),
-              strokeWidth: 3,
-            )
-          ],
+          ),
+          //drawer: CustomDrawer(),
+          bottomNavigationBar: (widget.forPage == "Search")
+              ? CustomBottomBar(barIndex: 1)
+              : CustomBottomBar(barIndex: 2),
         ),
       );
     } else {
@@ -242,31 +383,45 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
         return _emptyStorePage();
       } else {
         return MaterialApp(
-            theme: ThemeData.light().copyWith(),
-            home: Scaffold(
-                appBar: buildBar(context),
-                body: Center(
-                  child: Container(
-                    margin: EdgeInsets.fromLTRB(10, 10, 10, 10),
-                    child: ListView.builder(
-                        itemCount: 1,
-                        itemBuilder: (BuildContext context, int index) {
-                          return Container(
-                            child: new Column(
-                              children: _isSearching
-                                  ? _buildSearchList()
-                                  : _buildList(),
-                              // ? _searchResultstores
-                              //     .map(_buildItem)
-                              //     .toList()
-                              // : _stores.map(_buildItem).toList()
-                              // ),
-                              //children: <Widget>[firstRow, secondRow],
-                            ),
-                          );
-                        }),
-                  ),
-                )));
+          theme: ThemeData.light().copyWith(),
+          home: Scaffold(
+            appBar: buildBar(context),
+            body: Center(
+              child: Container(
+                //
+                child: Column(
+                  children: <Widget>[
+                    filterBar,
+                    Expanded(
+                      child: ListView.builder(
+                          itemCount: 1,
+                          itemBuilder: (BuildContext context, int index) {
+                            return Container(
+                              margin: EdgeInsets.fromLTRB(10, 10, 10, 10),
+                              child: new Column(
+                                children: _isSearching
+                                    ? _buildSearchList()
+                                    : _buildList(),
+                                // ? _searchResultstores
+                                //     .map(_buildItem)
+                                //     .toList()
+                                // : _stores.map(_buildItem).toList()
+                                // ),
+                                //children: <Widget>[firstRow, secondRow],
+                              ),
+                            );
+                          }),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            // drawer: CustomDrawer(),
+            bottomNavigationBar: (widget.forPage == "Search")
+                ? CustomBottomBar(barIndex: 1)
+                : CustomBottomBar(barIndex: 2),
+          ),
+        );
       }
     }
   }
@@ -541,7 +696,10 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
                   return null;
                 } else {
                   print("tapped");
-                  showSlots(store, sid, sname, dt);
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => ShowSlotsPage()));
+                  // showSlots(store, sid, sname, dt);
+
                 }
               }, // button pressed
               child: Column(
@@ -584,35 +742,31 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
     }
   }
 
+  void addFilterCriteria() {}
+  String filterVar = "0";
   Widget buildBar(BuildContext context) {
-    return new AppBar(centerTitle: true, title: appBarTitle, actions: <Widget>[
-      new IconButton(
-        icon: actionIcon,
-        onPressed: () {
-          setState(() {
-            if (this.actionIcon.icon == Icons.search) {
-              this.actionIcon = new Icon(
-                Icons.close,
-                color: Colors.white,
-              );
-              this.appBarTitle = new TextField(
-                controller: _searchQuery,
-                style: new TextStyle(
-                  color: Colors.white,
-                ),
-                decoration: new InputDecoration(
-                    prefixIcon: new Icon(Icons.search, color: Colors.white),
-                    hintText: "Search...",
-                    hintStyle: new TextStyle(color: Colors.white)),
-              );
-              _handleSearchStart();
-            } else {
-              _handleSearchEnd();
-            }
-          });
-        },
+    return new AppBar(
+      titleSpacing: 5,
+      flexibleSpace: Container(
+        decoration: gradientBackground,
       ),
-    ]);
+      centerTitle: true,
+      title: appBarTitle,
+      backgroundColor: Colors.teal,
+      actions: <Widget>[
+        // new IconButton(
+        //     padding: EdgeInsets.all(0),
+        //     // constraints: BoxConstraints(maxHeight: 25, maxWidth: 27),
+        //     icon: new Icon(
+        //       Icons.close,
+        //       size: 20,
+        //       color: Colors.white,
+        //     ),
+        //     onPressed: () {
+        //       _handleSearchEnd();
+        //     }),
+      ],
+    );
   }
 
   void _handleSearchStart() {
@@ -623,14 +777,6 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
 
   void _handleSearchEnd() {
     setState(() {
-      this.actionIcon = new Icon(
-        Icons.search,
-        color: Colors.white,
-      );
-      this.appBarTitle = new Text(
-        "Search by name",
-        style: new TextStyle(color: Colors.white),
-      );
       _isSearching = false;
       _searchQuery.clear();
     });

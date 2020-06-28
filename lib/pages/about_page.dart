@@ -1,26 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:noq/style.dart';
+import 'package:noq/userHomePage.dart';
 import 'package:noq/widget/appbar.dart';
 import 'package:noq/widget/bottom_nav_bar.dart';
 import 'package:noq/widget/header.dart';
 
-class ShareAppPage extends StatefulWidget {
+class AboutUsPage extends StatefulWidget {
   @override
-  _ShareAppPageState createState() => _ShareAppPageState();
+  _AboutUsPageState createState() => _AboutUsPageState();
 }
 
-class _ShareAppPageState extends State<ShareAppPage> {
-  Widget _shareAppPage = Center(
-      child: Container(
-          margin: EdgeInsets.fromLTRB(10, 10, 10, 10),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              Text("Share and spread happiness!!", style: highlightTextStyle),
-              Text('Sharing is Caring.', style: highlightSubTextStyle),
-            ],
-          )));
-
+class _AboutUsPageState extends State<AboutUsPage> {
   @override
   void initState() {
     super.initState();
@@ -33,7 +23,7 @@ class _ShareAppPageState extends State<ShareAppPage> {
 
   @override
   Widget build(BuildContext context) {
-    String title = "Share our App";
+    String title = "About Us";
     return MaterialApp(
       theme: ThemeData.light().copyWith(),
       home: Scaffold(
@@ -41,7 +31,21 @@ class _ShareAppPageState extends State<ShareAppPage> {
         appBar: CustomAppBar(
           titleTxt: title,
         ),
-        body: _shareAppPage,
+        body: Center(
+            child: Column(
+          children: <Widget>[
+            Text(
+              "Our Story..",
+              style: highlightTextStyle,
+            ),
+            Text("Our Mission..!!"),
+            RaisedButton(
+              child: Text("Back"),
+              onPressed: () => Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => UserHomePage())),
+            ),
+          ],
+        )),
         bottomNavigationBar: CustomBottomBar(
           barIndex: 3,
         ),

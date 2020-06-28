@@ -3,6 +3,7 @@ import 'package:noq/constants.dart';
 import 'package:noq/db/db_service/db_main.dart';
 import 'package:noq/db/db_service/token_service.dart';
 import 'package:noq/pages/SearchStoresPage.dart';
+import 'package:noq/pages/about_page.dart';
 import 'package:noq/pages/allPagesWidgets.dart';
 import 'package:noq/pages/help_page.dart';
 import 'package:noq/pages/manage_apartment_list_page.dart';
@@ -12,7 +13,10 @@ import 'package:noq/pages/rate_app.dart';
 import 'package:noq/pages/share_app_page.dart';
 import 'package:noq/pages/userAccountPage.dart';
 import 'package:noq/services/authService.dart';
+import 'package:noq/userHomePage.dart';
 import 'package:noq/widget/appbar.dart';
+import 'package:noq/widget/bottom_nav_bar.dart';
+import 'package:noq/widget/header.dart';
 
 import 'db/db_model/entity_slots.dart';
 import 'db/db_model/user_token.dart';
@@ -29,83 +33,81 @@ class LandingPage extends StatefulWidget {
 }
 
 class _LandingPageState extends State<LandingPage> {
-  final GlobalKey _scaffoldKey = new GlobalKey();
-  SharedPreferences _prefs;
-  PageController _pageController;
-  int _page = 0;
+  // final GlobalKey _scaffoldKey = new GlobalKey();
 
-  List drawerItems = [
-    {
-      "icon": Icons.account_circle,
-      "name": "My Account",
-      "pageRoute": UserAccountPage(),
-    },
+  // PageController _pageController;
+  //int _page = 0;
 
-    {
-      "icon": Icons.home,
-      "name": "Manage Apartment",
-      "pageRoute": ManageApartmentsListPage(),
-    },
-    {
-      "icon": Icons.store,
-      "name": "Manage Commercial Space",
-      "pageRoute": ManageApartmentsListPage(),
-    },
-    {
-      "icon": Icons.business,
-      "name": "Manage Office",
-      "pageRoute": ManageApartmentsListPage(),
-    },
-
-    {
-      "icon": Icons.notifications,
-      "name": "Notifications",
-      "pageRoute": UserNotificationsPage(),
-    },
-    {
-      "icon": Icons.grade,
-      "name": "Rate our app",
-      "pageRoute": RateAppPage(),
-    },
-    {
-      "icon": Icons.help_outline,
-      "name": "Need Help?",
-      "pageRoute": HelpPage(),
-    },
-    {
-      "icon": Icons.share,
-      "name": "Share our app",
-      "pageRoute": ShareAppPage(),
-    },
-    // {
-    //   "icon": Icons.exit_to_app,
-    //   "name": "Logout",
-    // },
-  ];
+  // List drawerItems = [
+  //   {
+  //     "icon": Icons.account_circle,
+  //     "name": "My Account",
+  //     "pageRoute": UserAccountPage(),
+  //   },
+  //   {
+  //     "icon": Icons.home,
+  //     "name": "Manage Apartment",
+  //     "pageRoute": ManageApartmentsListPage(),
+  //   },
+  //   {
+  //     "icon": Icons.store,
+  //     "name": "Manage Commercial Space",
+  //     "pageRoute": ManageApartmentsListPage(),
+  //   },
+  //   {
+  //     "icon": Icons.business,
+  //     "name": "Manage Office",
+  //     "pageRoute": ManageApartmentsListPage(),
+  //   },
+  //   {
+  //     "icon": Icons.notifications,
+  //     "name": "Notifications",
+  //     "pageRoute": UserNotificationsPage(),
+  //   },
+  //   {
+  //     "icon": Icons.grade,
+  //     "name": "Rate our app",
+  //     "pageRoute": RateAppPage(),
+  //   },
+  //   {
+  //     "icon": Icons.help_outline,
+  //     "name": "Need Help?",
+  //     "pageRoute": HelpPage(),
+  //   },
+  //   {
+  //     "icon": Icons.share,
+  //     "name": "Share our app",
+  //     "pageRoute": ShareAppPage(),
+  //   },
+  //   {
+  //     "icon": Icons.info,
+  //     "name": "About",
+  //     "pageRoute": AboutUsPage(),
+  //   },
+  // ];
   //Getting dummy list of stores from store class and storing in local variable
   //List<StoreAppData> _stores = getLocalStoreList();
+  SharedPreferences _prefs;
   int i;
   var _userProfile;
   var fUserProfile;
-  TextStyle optionStyle = TextStyle(fontSize: 30, fontWeight: FontWeight.bold);
-  String _phone;
-  int _index = 0;
-  int _botBarIndex = 0;
-  int _pageIndex = 0;
   String _userName;
   String _userId;
-  String _userAdrs;
-  String _appBarTitle;
+  String _phone;
+  //TextStyle optionStyle = TextStyle(fontSize: 30, fontWeight: FontWeight.bold);
 
-  DateTime dateTime = DateTime.now();
-  final dtFormat = new DateFormat('dd');
-  final compareDateFormat = new DateFormat('YYYYMMDD');
+  // int _index = 0;
+  // int _botBarIndex = 0;
 
-  List<DateTime> _dateList = new List<DateTime>();
+  // DateTime dateTime = DateTime.now();
+  // final dtFormat = new DateFormat('dd');
+  // final compareDateFormat = new DateFormat('YYYYMMDD');
 
-  void navigationTapped(int page) {
-    _pageController.jumpToPage(page);
-  }
+  //List<DateTime> _dateList = new List<DateTime>();
+
+  // void navigationTapped(int page) {
+  //   _pageController.jumpToPage(page);
+  // }
 
   _initializeUserProfile() async {
     var userProfile;
@@ -146,7 +148,7 @@ class _LandingPageState extends State<LandingPage> {
       //REMOVE default values
       _userId = "ForTesting123";
       _userName = 'User';
-      _userAdrs = 'UserAdrs';
+
       userProfile = new UserAppData(
           _userId,
           _phone,
@@ -177,579 +179,285 @@ class _LandingPageState extends State<LandingPage> {
   void initState() {
     super.initState();
 
-    _pageController = PageController(initialPage: 0);
+    // _pageController = PageController(initialPage: 0);
     _initializeUserProfile();
   }
 
   @override
   void dispose() {
     super.dispose();
-    _pageController.dispose();
+    // _pageController.dispose();
   }
 
-  void onPageChanged(int page) {
-    setState(() {
-      _page = page;
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'My Dashboard',
-      //theme: ThemeData.light().copyWith(),
-      home: Scaffold(
-        key: _scaffoldKey,
-        appBar: CustomAppBar(),
-        // AppBar(
-        //   title: Text(''),
-        //   backgroundColor: Colors.white,
-        //   //Theme.of(context).primaryColor,
-        //   actions: <Widget>[],
-        //   leading: Builder(
-        //     builder: (BuildContext context) {
-        //       return IconButton(
-        //         color: Colors.teal,
-        //         icon: Icon(Icons.more_vert),
-        //         onPressed: () => Scaffold.of(context).openDrawer(),
-        //       );
-        //     },
-        //   ),
-        // ),
-        body: Center(
-          child: PageView(
-            physics: NeverScrollableScrollPhysics(),
-            controller: _pageController,
-            onPageChanged: onPageChanged,
-            children: <Widget>[
-              // _userAccount(),
-              // _manageApartmentPage(),
-              // _manageCommSpacePage(),
-              // _manageOffSpacePage(),
-              // _userNotifications(),
-              // _rateApp(),
-              // _needHelp(),
-              // _shareApp(),
-              _userHomePage(),
-              //_storesListPage(),
-              SearchStoresPage(forPage: 'Search'),
-              SearchStoresPage(forPage: 'Favourite'),
-              _userAccount(),
-            ],
-          ),
-        ),
-        drawer: Drawer(
-          child: ListView(
-            children: <Widget>[
-              DrawerHeader(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: <Widget>[
-                    RichText(
-                      text: TextSpan(
-                          style: whiteBoldTextStyle1,
-                          children: <TextSpan>[
-                            TextSpan(text: drawerHeaderTxt11),
-                            TextSpan(
-                                text: drawerHeaderTxt12,
-                                style: highlightBoldTextStyle),
-                            TextSpan(text: drawerHeaderTxt21),
-                            TextSpan(
-                                text: drawerHeaderTxt22,
-                                style: highlightBoldTextStyle),
-                            TextSpan(
-                              text: drawerHeaderTxt31,
-                            ),
-                            TextSpan(
-                              text: drawerHeaderTxt32,
-                            ),
-                            TextSpan(
-                                text: drawerHeaderTxt41,
-                                style: highlightBoldTextStyle),
-                          ]),
-                    ),
-                  ],
-                ),
-                // child: Text('Hello $_userName !!', style: inputTextStyle),
-                decoration: BoxDecoration(
-                  color: Colors.teal,
-                ),
-              ),
-              ListView.builder(
-                physics: NeverScrollableScrollPhysics(),
-                shrinkWrap: true,
-                itemCount: drawerItems.length,
-                itemBuilder: (BuildContext context, int index) {
-                  Map item = drawerItems[index];
-                  if (item['children'] != null) {
-                    return ExpansionTile(
-                      leading: Icon(
-                        item['icon'],
-                        color: _page == index
-                            ? highlightColor
-                            : Theme.of(context).textTheme.title.color,
-                      ),
-                      title: Text(
-                        item['name'],
-                        style: TextStyle(
-                          color: _page == index
-                              ? highlightColor
-                              : Theme.of(context).textTheme.title.color,
-                        ),
-                      ),
-                      children: <Widget>[
-                        ListView.builder(
-                          physics: NeverScrollableScrollPhysics(),
-                          shrinkWrap: true,
-                          itemCount: item['children'].length,
-                          itemBuilder: (BuildContext context, int i) {
-                            int pageIndex = drawerItems.length - 1 + i;
-                            Map subItem = item['children'][i];
-                            print('........' + i.toString());
-                            return ListTile(
-                              leading: Icon(
-                                subItem['icon'],
-                                color: _page == index
-                                    ? highlightColor
-                                    : Theme.of(context).textTheme.title.color,
-                              ),
-                              title: Text(
-                                subItem['name'],
-                                style: TextStyle(
-                                  color: _page == index
-                                      ? highlightColor
-                                      : Theme.of(context).textTheme.title.color,
-                                ),
-                              ),
-                              onTap: () {
-                                //_pageController.jumpToPage(pageIndex);
-                                Navigator.pushReplacementNamed(
-                                    context, subItem['pageRoute']);
-                                Navigator.pop(context);
-                              },
-                            );
-                          },
-                        ),
-                      ],
-                    );
-                  } else {
-                    return ListTile(
-                      leading: Icon(
-                        item['icon'],
-                        color: _page == index
-                            ? highlightColor
-                            : Theme.of(context).textTheme.title.color,
-                      ),
-                      title: Text(
-                        item['name'],
-                        style: TextStyle(
-                          color: _page == index
-                              ? highlightColor
-                              : Theme.of(context).textTheme.title.color,
-                        ),
-                      ),
-                      onTap: () {
-                        //   _pageController.jumpToPage(index);
-                        Navigator.pop(context);
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => item['pageRoute']));
-                      },
-                    );
-                  }
-                },
-              ),
-            ],
-          ),
-        ),
-        bottomNavigationBar: buildBottomItems(),
-        // floatingActionButton: FloatingActionButton(
-        //   onPressed: dbCall,
-        //   tooltip: 'Increment',
-        //   child: Icon(Icons.add),
-        // ),
-      ),
-    );
-  }
-
-  BottomNavigationBar buildBottomItems() {
-    return BottomNavigationBar(
-      onTap: _onBottomBarItemTapped,
-      currentIndex: _botBarIndex,
-      type: BottomNavigationBarType.fixed,
-      items: const <BottomNavigationBarItem>[
-        BottomNavigationBarItem(
-          icon: Icon(Icons.home),
-          title: Text('Home'),
-        ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.search),
-          title: Text('Search'),
-        ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.favorite),
-          title: Text('My Favourites'),
-        ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.account_circle),
-          title: Text('My Account'),
-        ),
-      ],
-      unselectedItemColor: unselectedColor,
-      selectedItemColor: highlightColor,
-    );
-  }
-
-  void _onBottomBarItemTapped(int index) {
-    setState(() {
-      _pageIndex = index;
-      _botBarIndex = index;
-    });
-    _pageController.animateToPage(
-      _pageIndex,
-      duration: Duration(
-        milliseconds: 200,
-      ),
-      curve: Curves.easeIn,
-    );
-  }
-
-  Widget _userHomePage() {
-    return userHomePage(context);
-  }
-
-  Widget _userBookingPage() {
-    return userBookingPage(context, _userProfile);
-  }
-
-  // Widget _userFavStores() {
-  //   return userFavStoresPage(context, _userProfile);
-  // }
-
-  Widget _manageApartmentPage() {
-    return manageApartmentPages(context);
-  }
-
-  Widget _manageCommSpacePage() {
-    return Container(
-      child: Center(
-        child: Text("Add new Comm"),
-      ),
-    );
-  }
-
-  Widget _manageOffSpacePage() {
-    return Container(
-      child: Center(
-        child: Text("Add new Office"),
-      ),
-    );
-  }
-
-  Widget _rateApp() {
-    return rateAppPage(context);
-  }
-
-  Widget _needHelp() {
-    return needHelpPage(context);
-  }
-
-  Widget _shareApp() {
-    return shareAppPage(context);
-  }
-
-  Widget _userAccount() {
-    return userAccountPage(context);
-  }
-
-  // void _initializeStoresList() {
-  //   _prepareDateList();
-  // }
-
-  // Widget _storesListPage() {
-  //   // List<StoreAppData> _stores = getDummyList();
-  //   return Center(
-  //     child: Container(
-  //       margin: EdgeInsets.fromLTRB(10, 10, 10, 10),
-  //       child: ListView.builder(
-  //           itemCount: 1,
-  //           itemBuilder: (BuildContext context, int index) {
-  //             return Container(
-  //               child: new Column(children: _stores.map(_buildItem).toList()),
-  //               //children: <Widget>[firstRow, secondRow],
-  //             );
-  //           }),
-  //     ),
-  //   );
-  // }
-
-  // Widget _buildItem(StoreAppData str) {
-  //   _initializeStoresList();
-  //   //_buildDateGridItems(str.id);
-  //   print('after buildDateGrid called');
-  //   return Card(
-  //       elevation: 10,
-  //       child: new Row(
-  //         crossAxisAlignment: CrossAxisAlignment.start,
-  //         // mainAxisAlignment: MainAxisAlignment.spaceBetween,
-  //         children: <Widget>[
-  //           Container(
-  //             width: MediaQuery.of(context).size.width * .1,
-  //             child: Column(
-  //               children: <Widget>[
-  //                 new Container(
-  //                   margin: EdgeInsets.fromLTRB(10, 10, 5, 5),
-  //                   padding: EdgeInsets.all(5),
-  //                   alignment: Alignment.topCenter,
-  //                   decoration: ShapeDecoration(
-  //                     shape: CircleBorder(),
-  //                     color: darkIcon,
-  //                   ),
-  //                   child: Icon(
-  //                     Icons.shopping_cart,
-  //                     color: Colors.white,
-  //                     size: 20,
-  //                   ),
-  //                 )
-  //               ],
-  //             ),
-  //           ),
-  //           Container(
-  //             width: MediaQuery.of(context).size.width * .7,
-  //             child: Column(children: <Widget>[
-  //               Row(
-  //                   crossAxisAlignment: CrossAxisAlignment.start,
-  //                   mainAxisAlignment: MainAxisAlignment.start,
-  //                   children: [
-  //                     new Container(
-  //                       padding: EdgeInsets.fromLTRB(10.0, 5.0, 0, 0),
-  //                       child: Column(
-  //                         crossAxisAlignment: CrossAxisAlignment.start,
-  //                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-  //                         children: [
-  //                           Container(
-  //                             padding: EdgeInsets.fromLTRB(0, 5, 5, 5),
-  //                             child: Column(
-  //                                 crossAxisAlignment: CrossAxisAlignment.start,
-  //                                 mainAxisAlignment: MainAxisAlignment.start,
-  //                                 children: [
-  //                                   Row(
-  //                                     mainAxisAlignment:
-  //                                         MainAxisAlignment.spaceBetween,
-  //                                     // crossAxisAlignment: CrossAxisAlignment.center,
-  //                                     children: <Widget>[
-  //                                       Text(
-  //                                         str.name.toString(),
-  //                                       ),
-  //                                     ],
-  //                                   ),
-  //                                   Row(
-  //                                     mainAxisAlignment: MainAxisAlignment.end,
-  //                                     crossAxisAlignment:
-  //                                         CrossAxisAlignment.start,
-  //                                     children: <Widget>[
-  //                                       Text(
-  //                                         str.adrs,
-  //                                         style: lightSubTextStyle,
-  //                                       ),
-  //                                     ],
-  //                                   )
-  //                                 ]),
-  //                           ),
-  //                           Container(
-  //                             width: MediaQuery.of(context).size.width * .5,
-  //                             //padding: EdgeInsets.fromLTRB(0, 5, 5, 5),
-  //                             child: Row(
-  //                               children: _buildDateGridItems(
-  //                                   str.id, str.name, str.daysClosed),
-  //                             ),
-  //                           ),
-  //                           Row(
-  //                               mainAxisAlignment: MainAxisAlignment.center,
-  //                               crossAxisAlignment: CrossAxisAlignment.start,
-  //                               children: [
-  //                                 Row(
-  //                                   //mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-  //                                   children: [
-  //                                     //Icon(Icons.play_circle_filled, color: Colors.blueGrey[300]),
-  //                                     Text('Opens at:', style: labelTextStyle),
-  //                                     Text(str.opensAt,
-  //                                         style: lightSubTextStyle),
-  //                                   ],
-  //                                 ),
-  //                                 Container(child: Text('   ')),
-  //                                 Row(
-  //                                   children: [
-  //                                     //Icon(Icons.pause_circle_filled, color: Colors.blueGrey[300]),
-  //                                     Text('Closes at:', style: labelTextStyle),
-  //                                     Text(str.closesAt,
-  //                                         style: lightSubTextStyle),
-  //                                   ],
-  //                                 ),
-  //                               ]),
-  //                         ],
-  //                       ),
-  //                     ),
-  //                   ]),
-  //             ]),
-  //           ),
-  //           Container(
-  //             width: MediaQuery.of(context).size.width * .1,
-  //             child: Column(
-  //                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
-  //                 crossAxisAlignment: CrossAxisAlignment.end,
-  //                 // crossAxisAlignment: CrossAxisAlignment.start,
-  //                 children: <Widget>[
-  //                   Container(
-  //                     margin: EdgeInsets.fromLTRB(0, 0, 10, 0),
-  //                     height: 22,
-  //                     width: 20,
-  //                     child: IconButton(
-  //                       alignment: Alignment.topRight,
-  //                       onPressed: () => toggleFavorite(str),
-  //                       highlightColor: Colors.orange[300],
-  //                       iconSize: 16,
-  //                       icon: str.isFavourite
-  //                           ? Icon(
-  //                               Icons.favorite,
-  //                               color: Colors.red[800],
-  //                             )
-  //                           : Icon(
-  //                               Icons.favorite_border,
-  //                               color: Colors.red[800],
-  //                             ),
-  //                     ),
-  //                   ),
-  //                   Container(
-  //                     width: 20,
-  //                     height: 40,
-  //                   ),
-  //                   Container(
-  //                     margin: EdgeInsets.fromLTRB(0, 0, 15, 0),
-  //                     height: 22.0,
-  //                     width: 20.0,
-  //                     child: IconButton(
-  //                       alignment: Alignment.bottomRight,
-  //                       highlightColor: Colors.orange[300],
-  //                       icon: Icon(
-  //                         Icons.location_on,
-  //                         color: darkIcon,
-  //                         size: 25,
-  //                       ),
-  //                       onPressed: () =>
-  //                           launchURL(str.name, str.adrs, str.lat, str.long),
-  //                     ),
-  //                   ),
-  //                 ]),
-  //           )
-  //         ],
-  //       ));
-  // }
-
-  // void showSlots(
-  //     StoreAppData store, String storeId, String storeName, DateTime dateTime) {
-  //   //_prefs = await SharedPreferences.getInstance();
-  //   String dateForSlot = dateTime.toString();
-
-  //   _prefs.setString("storeName", storeName);
-  //   _prefs.setString("storeIdForSlots", storeId);
-  //   _prefs.setString("dateForSlot", dateForSlot);
-  //   getSlotsForStore(storeId, dateTime).then((slotsList) async {
-  //     // Navigator.push(
-  //     //   context,
-  //     //   MaterialPageRoute(builder: (context) => showSlotsDialog(context, slotsList, dateTime)),
-  //     // );
-
-  //     // showSlotsDialog(context, slotsList, dateTime);
-  //     //return
-  //     String val = await showDialog(
-  //         context: context,
-  //         barrierDismissible: true,
-  //         builder: (BuildContext context) {
-  //           return StatefulBuilder(builder: (context, setState) {
-  //             return ShowSlotsPage();
-  //           });
-  //         });
-  //     if (val != null) {
-  //       //Add Slot booking in user data, Save locally
-  //       print('Upcoming bookings');
-  //       List<String> s = val.split("-");
-  //       BookingAppData upcomingBooking =
-  //           new BookingAppData(store, dateTime, s[1], s[0], "New");
-  //       setState(() {
-  //         (_userProfile as UserAppData).upcomingBookings.add(upcomingBooking);
-  //       });
-  //       writeData(_userProfile);
-  //     }
-  //     print('After showDialog: $val');
+  // void onPageChanged(int page) {
+  //   setState(() {
+  //     _page = page;
   //   });
   // }
 
-  // List<Widget> _buildDateGridItems(
-  //     StoreAppData store, String sid, String sname, List<String> daysClosed) {
-  //   bool isClosed = false;
-  //   String dayOfWeek;
+  @override
+  Widget build(BuildContext context) {
+    return UserHomePage();
+    // MaterialApp(
+    //   title: 'My Dashboard',
+    //   //theme: ThemeData.light().copyWith(),
+    //   home: Scaffold(
+    //     key: _scaffoldKey,
+    //     //  appBar: CustomAppBar(),
 
-  //   var dateWidgets = List<Widget>();
-  //   for (var date in _dateList) {
-  //     isClosed = (daysClosed.contains(date.weekday.toString())) ? true : false;
-  //     dayOfWeek = Utils.getDayOfWeek(date);
-  //     dateWidgets.add(buildDateItem(sid, sname, isClosed, date, dayOfWeek));
-  //     print('Widget build from datelist  called');
-  //   }
-  //   return dateWidgets;
+    //     body:
+    //      Center(
+    //       child:
+    // PageView(
+    //   physics: NeverScrollableScrollPhysics(),
+    //   controller: _pageController,
+    //   onPageChanged: onPageChanged,
+    //   children: <Widget>[
+    //     // _userAccount(),
+    //     // _manageApartmentPage(),
+    //     // _manageCommSpacePage(),
+    //     // _manageOffSpacePage(),
+    //     // _userNotifications(),
+    //     // _rateApp(),
+    //     // _needHelp(),
+    //     // _shareApp(),
+    //     _userHomePage(),
+    //     //_storesListPage(),
+    //     SearchStoresPage(forPage: 'Search'),
+    //     SearchStoresPage(forPage: 'Favourite'),
+    //     _userAccount(),
+    //   ],
+    // ),
+
+    // ),
+    // drawer: CustomDrawer(),
+    // Drawer(
+    //   child: ListView(
+    //     children: <Widget>[
+    //       DrawerHeader(
+    //         child: Column(
+    //           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+    //           children: <Widget>[
+    //             RichText(
+    //               text: TextSpan(
+    //                   style: whiteBoldTextStyle1,
+    //                   children: <TextSpan>[
+    //                     TextSpan(text: drawerHeaderTxt11),
+    //                     TextSpan(
+    //                         text: drawerHeaderTxt12,
+    //                         style: highlightBoldTextStyle),
+    //                     TextSpan(text: drawerHeaderTxt21),
+    //                     TextSpan(
+    //                         text: drawerHeaderTxt22,
+    //                         style: highlightBoldTextStyle),
+    //                     TextSpan(
+    //                       text: drawerHeaderTxt31,
+    //                     ),
+    //                     TextSpan(
+    //                       text: drawerHeaderTxt32,
+    //                     ),
+    //                     TextSpan(
+    //                         text: drawerHeaderTxt41,
+    //                         style: highlightBoldTextStyle),
+    //                   ]),
+    //             ),
+    //           ],
+    //         ),
+    //         // child: Text('Hello $_userName !!', style: inputTextStyle),
+    //         decoration: BoxDecoration(
+    //           color: Colors.teal,
+    //         ),
+    //       ),
+    //       ListView.builder(
+    //         physics: NeverScrollableScrollPhysics(),
+    //         shrinkWrap: true,
+    //         itemCount: drawerItems.length,
+    //         itemBuilder: (BuildContext context, int index) {
+    //           Map item = drawerItems[index];
+    //           if (item['children'] != null) {
+    //             return ExpansionTile(
+    //               leading: Icon(
+    //                 item['icon'],
+    //                 color: _page == index
+    //                     ? highlightColor
+    //                     : Theme.of(context).textTheme.title.color,
+    //               ),
+    //               title: Text(
+    //                 item['name'],
+    //                 style: TextStyle(
+    //                   color: _page == index
+    //                       ? highlightColor
+    //                       : Theme.of(context).textTheme.title.color,
+    //                 ),
+    //               ),
+    //               children: <Widget>[
+    //                 ListView.builder(
+    //                   physics: NeverScrollableScrollPhysics(),
+    //                   shrinkWrap: true,
+    //                   itemCount: item['children'].length,
+    //                   itemBuilder: (BuildContext context, int i) {
+    //                     int pageIndex = drawerItems.length - 1 + i;
+    //                     Map subItem = item['children'][i];
+    //                     print('........' + i.toString());
+    //                     return ListTile(
+    //                       leading: Icon(
+    //                         subItem['icon'],
+    //                         color: _page == index
+    //                             ? highlightColor
+    //                             : Theme.of(context).textTheme.title.color,
+    //                       ),
+    //                       title: Text(
+    //                         subItem['name'],
+    //                         style: TextStyle(
+    //                           color: _page == index
+    //                               ? highlightColor
+    //                               : Theme.of(context).textTheme.title.color,
+    //                         ),
+    //                       ),
+    //                       onTap: () {
+    //                         //_pageController.jumpToPage(pageIndex);
+    //                         Navigator.pushReplacementNamed(
+    //                             context, subItem['pageRoute']);
+    //                         Navigator.pop(context);
+    //                       },
+    //                     );
+    //                   },
+    //                 ),
+    //               ],
+    //             );
+    //           } else {
+    //             return ListTile(
+    //               leading: Icon(
+    //                 item['icon'],
+    //                 color: _page == index
+    //                     ? highlightColor
+    //                     : Theme.of(context).textTheme.title.color,
+    //               ),
+    //               title: Text(
+    //                 item['name'],
+    //                 style: TextStyle(
+    //                   color: _page == index
+    //                       ? highlightColor
+    //                       : Theme.of(context).textTheme.title.color,
+    //                 ),
+    //               ),
+    //               onTap: () {
+    //                 //   _pageController.jumpToPage(index);
+    //                 Navigator.pop(context);
+    //                 Navigator.push(
+    //                     context,
+    //                     MaterialPageRoute(
+    //                         builder: (context) => item['pageRoute']));
+    //               },
+    //             );
+    //           }
+    //         },
+    //       ),
+    //     ],
+    //   ),
+    // ),
+    // bottomNavigationBar: CustomBottomBar(
+    //   barIndex: 0,
+    // ),
+    // floatingActionButton: FloatingActionButton(
+    //   onPressed: dbCall,
+    //   tooltip: 'Increment',
+    //   child: Icon(Icons.add),
+    // ),
+    //   ),
+    // );
+  }
+
+  // BottomNavigationBar buildBottomItems() {
+  //   return BottomNavigationBar(
+  //     onTap: _onBottomBarItemTapped,
+  //     currentIndex: _botBarIndex,
+  //     type: BottomNavigationBarType.fixed,
+  //     items: const <BottomNavigationBarItem>[
+  //       BottomNavigationBarItem(
+  //         icon: Icon(Icons.home),
+  //         title: Text('Home'),
+  //       ),
+  //       BottomNavigationBarItem(
+  //         icon: Icon(Icons.search),
+  //         title: Text('Search'),
+  //       ),
+  //       BottomNavigationBarItem(
+  //         icon: Icon(Icons.favorite),
+  //         title: Text('My Favourites'),
+  //       ),
+  //       BottomNavigationBarItem(
+  //         icon: Icon(Icons.account_circle),
+  //         title: Text('My Account'),
+  //       ),
+  //     ],
+  //     unselectedItemColor: unselectedColor,
+  //     selectedItemColor: highlightColor,
+  //   );
   // }
 
-  // Widget buildDateItem(
-  //     String sid, String sname, bool isClosed, DateTime dt, String dayOfWeek) {
-  //   bool dateBooked = false;
-  //   UserAppData user = _userProfile as UserAppData;
-  //   for (BookingAppData obj in (user.upcomingBookings)) {
-  //     if ((compareDateFormat
-  //                 .format(dt)
-  //                 .compareTo(compareDateFormat.format(obj.bookingDate)) ==
-  //             0) &&
-  //         (obj.storeId == sid)) {
-  //       dateBooked = true;
-  //     }
+  // void _onBottomBarItemTapped(int index) {
+  //   setState(() {
+  //     //_pageIndex = index;
+  //     _botBarIndex = index;
+  //   });
+
+  //   switch (index) {
+  //     case 0:
+  //       {
+  //         Navigator.push(
+  //             context, MaterialPageRoute(builder: (context) => UserHomePage()));
+  //       }
+  //       break;
+
+  //     case 1:
+  //       {
+  //         Navigator.push(
+  //             context,
+  //             MaterialPageRoute(
+  //                 builder: (context) => SearchStoresPage(forPage: 'Search')));
+  //       }
+  //       break;
+  //     case 2:
+  //       {
+  //         Navigator.push(
+  //             context,
+  //             MaterialPageRoute(
+  //                 builder: (context) =>
+  //                     SearchStoresPage(forPage: 'Favourite')));
+  //       }
+  //       break;
+  //     case 3:
+  //       {
+  //         Navigator.push(context,
+  //             MaterialPageRoute(builder: (context) => UserAccountPage()));
+  //       }
+  //       break;
+
+  //     default:
+  //       {
+  //         Navigator.push(
+  //             context, MaterialPageRoute(builder: (context) => UserHomePage()));
+  //       }
+  //       break;
   //   }
-  //   Widget dtItem = Container(
-  //     margin: EdgeInsets.all(2),
-  //     child: SizedBox.fromSize(
-  //       size: Size(34, 34), // button width and height
-  //       child: ClipOval(
-  //         child: Material(
-  //           color: isClosed
-  //               ? Colors.grey
-  //               : (dateBooked
-  //                   ? highlightColor
-  //                   : Colors.lightGreen), // button color
-  //           child: InkWell(
-  //             splashColor: isClosed ? null : highlightColor, // splash color
-  //             onTap: () {
-  //               if (isClosed) {
-  //                 return null;
-  //               } else {
-  //                 print("tapped");
-  //                 showSlots(store, sid, sname, dt);
-  //               }
-  //             }, // button pressed
-  //             child: Column(
-  //               mainAxisAlignment: MainAxisAlignment.center,
-  //               children: <Widget>[
-  //                 Text(dtFormat.format(dt),
-  //                     style: TextStyle(fontSize: 15, color: Colors.white)),
-  //                 Text(dayOfWeek,
-  //                     style:
-  //                         TextStyle(fontSize: 8, color: Colors.white)), // text
-  //               ],
-  //             ),
-  //           ),
-  //         ),
-  //       ),
-  //     ),
-  //   );
-  //   return dtItem;
+  //   //Navigator.pop(context);
+  //   // Navigator.push(
+  //   //     context, MaterialPageRoute(builder: (context) => UserHomePage()));
+  //   // _pageController.animateToPage(
+  //   //   _pageIndex,
+  //   //   duration: Duration(
+  //   //     milliseconds: 200,
+  //   //   ),
+  //   //   curve: Curves.easeIn,
+  //   // );
+  // }
+
+  // Widget _userHomePage() {
+  //   return userHomePage(context);
+  // }
+
+  // Widget _userAccount() {
+  //   return userAccountPage(context);
   // }
 }

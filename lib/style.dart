@@ -40,7 +40,7 @@ final drawerdefaultTextStyle = TextStyle(
 );
 
 final highlightBoldTextStyle = TextStyle(
-  color: highlightColor,
+  color: Colors.blue[700],
   fontWeight: FontWeight.w800,
   fontFamily: 'Montserrat',
   letterSpacing: 0.5,
@@ -181,6 +181,23 @@ final BoxDecoration indigoContainer = new BoxDecoration(
     shape: BoxShape.rectangle,
     color: Colors.blueGrey[500],
     borderRadius: BorderRadius.all(Radius.circular(4.0)));
+final BoxDecoration soildLightContainer = new BoxDecoration(
+    border: Border.all(color: Colors.teal[200]),
+    shape: BoxShape.rectangle,
+    color: Colors.teal[200],
+    borderRadius: BorderRadius.only(
+        topLeft: Radius.circular(4.0), topRight: Radius.circular(4.0)));
+final gradientBackground = new BoxDecoration(
+  gradient: new LinearGradient(
+      colors: [
+        Colors.tealAccent[400],
+        Colors.cyanAccent[400],
+      ],
+      begin: const FractionalOffset(0.0, 0.0),
+      end: const FractionalOffset(1.0, 0.0),
+      stops: [0.0, 1.0],
+      tileMode: TileMode.clamp),
+);
 
 class CommonStyle {
   static InputDecoration textFieldStyle(
