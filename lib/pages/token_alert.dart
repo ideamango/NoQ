@@ -46,7 +46,8 @@ Future<String> showTokenAlert(
         return new AlertDialog(
           title: Text(
             'Yay!! Your booking confirmed.',
-            style: highlightTextStyle,
+            style: TextStyle(
+                color: Colors.teal, fontFamily: 'Roboto', fontSize: 17.0),
           ),
           backgroundColor: Colors.grey[200],
           titleTextStyle: inputTextStyle,
@@ -56,7 +57,7 @@ Future<String> showTokenAlert(
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: <Widget>[
-                  Text("Booked peace of mind.No more long waiting in queues!",
+                  Text("Booked peace of mind. No more long waiting in queues!",
                       style: highlightSubTextStyle),
                   Container(
                     alignment: Alignment.center,

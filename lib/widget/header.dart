@@ -91,47 +91,44 @@ class _CustomDrawerState extends State<CustomDrawer> {
           Container(
             height: 130,
             child: DrawerHeader(
-              margin: EdgeInsets.all(0.0),
-              padding: EdgeInsets.fromLTRB(8, 0, 8, 0),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: <Widget>[
-                  RichText(
-                    text: TextSpan(
-                        style: whiteBoldTextStyle1,
-                        children: <TextSpan>[
-                          TextSpan(text: drawerHeaderTxt11),
-                          TextSpan(
-                              text: drawerHeaderTxt12,
-                              style: highlightBoldTextStyle),
-                          TextSpan(text: drawerHeaderTxt21),
-                          TextSpan(
-                              text: drawerHeaderTxt22,
-                              style: highlightBoldTextStyle),
-                          TextSpan(
-                            text: drawerHeaderTxt31,
-                          ),
-                          TextSpan(
-                              text: drawerHeaderTxt32,
-                              style: highlightBoldTextStyle),
-                          TextSpan(
-                            text: drawerHeaderTxt33,
-                          ),
-                          TextSpan(
-                            text: drawerHeaderTxt41,
-                          ),
-                          TextSpan(
-                              text: drawerHeaderTxt42,
-                              style: highlightBoldTextStyle),
-                        ]),
-                  ),
-                ],
-              ),
-              // child: Text('Hello $_userName !!', style: inputTextStyle),
-              decoration: BoxDecoration(
-                color: Colors.teal,
-              ),
-            ),
+                margin: EdgeInsets.all(0.0),
+                padding: EdgeInsets.fromLTRB(8, 0, 8, 0),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: <Widget>[
+                    RichText(
+                      text: TextSpan(
+                          style: whiteBoldTextStyle1,
+                          children: <TextSpan>[
+                            TextSpan(text: drawerHeaderTxt11),
+                            TextSpan(
+                                text: drawerHeaderTxt12,
+                                style: highlightBoldTextStyle),
+                            TextSpan(text: drawerHeaderTxt21),
+                            TextSpan(
+                                text: drawerHeaderTxt22,
+                                style: highlightBoldTextStyle),
+                            TextSpan(
+                              text: drawerHeaderTxt31,
+                            ),
+                            TextSpan(
+                                text: drawerHeaderTxt32,
+                                style: highlightBoldTextStyle),
+                            TextSpan(
+                              text: drawerHeaderTxt33,
+                            ),
+                            TextSpan(
+                              text: drawerHeaderTxt41,
+                            ),
+                            TextSpan(
+                                text: drawerHeaderTxt42,
+                                style: highlightBoldTextStyle),
+                          ]),
+                    ),
+                  ],
+                ),
+                // child: Text('Hello $_userName !!', style: inputTextStyle),
+                decoration: gradientBackground),
           ),
           ListView.builder(
             physics: NeverScrollableScrollPhysics(),

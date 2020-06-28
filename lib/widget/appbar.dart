@@ -89,6 +89,9 @@ class _CustomAppBarState extends State<CustomAppBar> {
     return AppBar(
       key: _appBarKey,
       title: Text(widget.titleTxt, style: whiteBoldTextStyle1),
+      flexibleSpace: Container(
+        decoration: gradientBackground,
+      ),
       backgroundColor: Colors.teal,
       //Theme.of(context).primaryColor,
       actions: <Widget>[
