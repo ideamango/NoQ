@@ -274,61 +274,59 @@ class ContactRowState extends State<ContactRow> {
       ),
     );
 
-    return new Card(
-      elevation: 20,
-      child: Container(
-        decoration: BoxDecoration(
-            border: Border.all(color: Colors.indigo),
-            color: Colors.white,
-            shape: BoxShape.rectangle,
-            borderRadius: BorderRadius.all(Radius.circular(5.0))),
-        // padding: EdgeInsets.all(5.0),
+    return Container(
+      padding: EdgeInsets.only(left: 5.0, right: 5),
+      decoration: BoxDecoration(
+          border: Border.all(color: containerColor),
+          color: Colors.white,
+          shape: BoxShape.rectangle,
+          borderRadius: BorderRadius.all(Radius.circular(5.0))),
+      // padding: EdgeInsets.all(5.0),
 
-        child: new Form(
-          child: ListTile(
-            title: Column(
-              children: <Widget>[
-                ctNameField,
-                ctEmpIdField,
-                ctPhn1Field,
-                ctPhn2Field,
-                daysOffField,
-                Divider(
-                  thickness: .7,
-                  color: Colors.grey[600],
-                ),
-                ctAvlFromTimeField,
-                ctAvlTillTimeField,
-              ],
-            ),
+      child: new Form(
+        child: ListTile(
+          title: Column(
+            children: <Widget>[
+              ctNameField,
+              ctEmpIdField,
+              ctPhn1Field,
+              ctPhn2Field,
+              daysOffField,
+              Divider(
+                thickness: .7,
+                color: Colors.grey[600],
+              ),
+              ctAvlFromTimeField,
+              ctAvlTillTimeField,
+            ],
           ),
         ),
-
-        // ListTile(
-        //   title: Column(
-        //     children: <Widget>[
-        //       Text(
-        //         contact.role.toString(),
-        //         //  "Swimming Pool",
-        //         style: TextStyle(color: Colors.blueGrey[700], fontSize: 17),
-        //       ),
-        //       if (contact.perName != null)
-        //         Text(
-        //           contact.perName,
-        //           style: labelTextStyle,
-        //         ),
-        //     ],
-        //   ),
-        //   // backgroundColor: Colors.white,
-        //   leading: Icon(
-        //     Icons.slow_motion_video,
-        //     color: lightIcon,
-        //   ),
-        //   trailing: IconButton(icon: Icon(Icons.arrow_forward), onPressed: () {}
-        //       //showServiceForm
-        //       ),
-        // ),
       ),
+
+      // ListTile(
+      //   title: Column(
+      //     children: <Widget>[
+      //       Text(
+      //         contact.role.toString(),
+      //         //  "Swimming Pool",
+      //         style: TextStyle(color: Colors.blueGrey[700], fontSize: 17),
+      //       ),
+      //       if (contact.perName != null)
+      //         Text(
+      //           contact.perName,
+      //           style: labelTextStyle,
+      //         ),
+      //     ],
+      //   ),
+      //   // backgroundColor: Colors.white,
+      //   leading: Icon(
+      //     Icons.slow_motion_video,
+      //     color: lightIcon,
+      //   ),
+      //   trailing: IconButton(icon: Icon(Icons.arrow_forward), onPressed: () {}
+      //       //showServiceForm
+      //       ),
+      // ),
     );
   }
 }

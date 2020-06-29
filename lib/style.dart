@@ -40,7 +40,7 @@ final drawerdefaultTextStyle = TextStyle(
 );
 
 final highlightBoldTextStyle = TextStyle(
-  color: Colors.blue[700],
+  color: highlightColor,
   fontWeight: FontWeight.w800,
   fontFamily: 'Montserrat',
   letterSpacing: 0.5,
@@ -174,13 +174,19 @@ final homeMsgStyle3 =
 final highlightTextStyle =
     TextStyle(color: Colors.teal, fontFamily: 'Montserrat', fontSize: 20.0);
 
-final Color highlightColor = Colors.amber[600];
+final Color primaryAccentColor = Colors.cyanAccent[400];
+final Color primaryMedColor = Colors.teal[200];
+final Color primaryDarkColor = Colors.indigo[900];
+
+final Color highlightColor = Colors.amber[300];
 final Color unselectedColor = Colors.blueGrey[700];
+final Color disabledColor = Colors.grey[400];
 final BoxDecoration indigoContainer = new BoxDecoration(
     border: Border.all(color: Colors.blueGrey[500]),
     shape: BoxShape.rectangle,
     color: Colors.blueGrey[500],
     borderRadius: BorderRadius.all(Radius.circular(4.0)));
+final Color containerColor = Colors.blueGrey[500];
 final BoxDecoration soildLightContainer = new BoxDecoration(
     border: Border.all(color: Colors.teal[200]),
     shape: BoxShape.rectangle,
@@ -190,8 +196,8 @@ final BoxDecoration soildLightContainer = new BoxDecoration(
 final gradientBackground = new BoxDecoration(
   gradient: new LinearGradient(
       colors: [
-        Colors.tealAccent[400],
         Colors.cyanAccent[400],
+        Colors.tealAccent[400],
       ],
       begin: const FractionalOffset(0.0, 0.0),
       end: const FractionalOffset(1.0, 0.0),

@@ -9,6 +9,7 @@ import 'package:noq/repository/slotRepository.dart';
 import 'package:noq/services/mapService.dart';
 import 'package:noq/style.dart';
 import 'package:noq/utils.dart';
+import 'package:noq/widget/appbar.dart';
 import 'package:noq/widget/bottom_nav_bar.dart';
 import 'package:noq/widget/header.dart';
 import 'package:noq/widget/widgets.dart';
@@ -32,79 +33,13 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
   List<EntityAppData> _stores = new List<EntityAppData>();
   List<EntityAppData> _searchResultstores = new List<EntityAppData>();
   String _entityType;
+  bool searchBoxClicked = false;
 
   bool fetchFromServer = false;
 
   final compareDateFormat = new DateFormat('YYYYMMDD');
 
   List<DateTime> _dateList = new List<DateTime>();
-
-  Widget appBarTitle = Container(
-    height: 32,
-    decoration: new BoxDecoration(
-      shape: BoxShape.rectangle,
-      color: Colors.white,
-      borderRadius: BorderRadius.all(Radius.circular(5.0)),
-      // border: new Border.all(
-      //   color: Colors.white,
-      //   width: 1.0,
-      // ),
-    ),
-    child: new TextField(
-      autofocus: true,
-      controller: _searchQuery,
-      cursorColor: highlightColor,
-      cursorWidth: 1,
-      style: new TextStyle(
-        backgroundColor: Colors.white,
-        color: Colors.blueGrey[500],
-      ),
-      decoration: new InputDecoration(
-          contentPadding: EdgeInsets.fromLTRB(20, 7, 5, 7),
-          isDense: true,
-          prefixIconConstraints: BoxConstraints(
-            maxWidth: 25,
-            maxHeight: 22,
-          ),
-          //contentPadding: EdgeInsets.all(0),
-          focusedBorder:
-              UnderlineInputBorder(borderSide: BorderSide(color: Colors.white)),
-          enabledBorder: OutlineInputBorder(
-            borderSide: BorderSide(color: Colors.white, width: 1.0),
-          ),
-          prefixIcon: IconButton(
-            // transform: Matrix4.translationValues(-10.0, 0, 0),
-            icon: new Icon(Icons.search, size: 20, color: Colors.blueGrey[500]),
-            alignment: Alignment.centerRight,
-            padding: EdgeInsets.all(0),
-            onPressed: () {},
-          ),
-          suffixIcon: new IconButton(
-              alignment: Alignment.centerRight,
-              padding: EdgeInsets.all(0),
-              icon: new Icon(
-                Icons.close,
-                color: Colors.blueGrey[500],
-              ),
-              onPressed: () {
-                //TODO: correct search end
-                _searchQuery.clear();
-              }),
-
-          // Container(
-          //   // transform: Matrix4.translationValues(3.0, 3, 0),
-          //   padding: EdgeInsets.all(0),
-          //   margin: ,
-          //   child:
-          // ),
-          // suffixIconConstraints: BoxConstraints(
-          //   maxWidth: 25,
-          //   maxHeight: 22,
-          // ),
-          hintText: "Search",
-          hintStyle: new TextStyle(color: Colors.blueGrey[500])),
-    ),
-  );
 
   Icon actionIcon = new Icon(
     Icons.search,
@@ -285,21 +220,30 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
 
   @override
   Widget build(BuildContext context) {
-    Widget filterBar = Container(
-      margin: EdgeInsets.fromLTRB(0, 0, 0, 0),
-      decoration: gradientBackground,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: <Widget>[
-          Text(
-            "Search by Category",
-            style: buttonMedTextStyle,
+    Widget categoryDropDown = Container(
+        //   width: MediaQuery.of(context).size.width * .5,
+        height: MediaQuery.of(context).size.width * .1,
+        decoration: new BoxDecoration(
+          shape: BoxShape.rectangle,
+          color: Colors.white,
+          // color: Colors.white,
+          borderRadius: BorderRadius.all(Radius.circular(5.0)),
+          border: new Border.all(
+            color: Colors.blueGrey[500],
+            width: 1.0,
           ),
-          new DropdownButton(
-            dropdownColor: Colors.cyanAccent[400],
-            hint: new Text("Select Type of Entity"),
+        ),
+        child: DropdownButtonHideUnderline(
+            child: ButtonTheme(
+          alignedDropdown: true,
+          child: new DropdownButton(
+            iconEnabledColor: Colors.blueGrey[500],
+            dropdownColor: Colors.white,
+            itemHeight: kMinInteractiveDimension,
+            hint: new Text("Search by category"),
             value: _entityType,
             isDense: true,
+            // icon: Icon(Icons.search),
             onChanged: (newValue) {
               setState(() {
                 _entityType = newValue;
@@ -311,13 +255,98 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
                 value: type,
                 child: new Text(
                   type.toString(),
-                  //style:inputTextStyle,
-                  style: buttonMedTextStyle,
+                  style: TextStyle(
+                    fontSize: 15,
+                  ),
                 ),
               );
             }).toList(),
           ),
-        ],
+        )));
+    Widget appBarTitle = Container(
+      width: MediaQuery.of(context).size.width * .48,
+      height: MediaQuery.of(context).size.width * .1,
+      decoration: new BoxDecoration(
+        shape: BoxShape.rectangle,
+        color: Colors.white,
+        // color: Colors.white,
+        borderRadius: BorderRadius.all(Radius.circular(5.0)),
+        border: new Border.all(
+          color: Colors.blueGrey[500],
+          width: 1.0,
+        ),
+      ),
+      child: new TextField(
+        // autofocus: true,
+        controller: _searchQuery,
+        cursorColor: Colors.blueGrey[500],
+        cursorWidth: 1,
+
+        style: new TextStyle(
+          // backgroundColor: Colors.white,
+          color: Colors.blueGrey[500],
+        ),
+        decoration: new InputDecoration(
+            contentPadding: EdgeInsets.fromLTRB(20, 7, 5, 7),
+            isDense: true,
+            prefixIconConstraints: BoxConstraints(
+              maxWidth: 25,
+              maxHeight: 22,
+            ),
+            suffixIconConstraints: BoxConstraints(
+              maxWidth: 25,
+              maxHeight: 22,
+            ),
+            //contentPadding: EdgeInsets.all(0),
+            focusedBorder: UnderlineInputBorder(
+                borderSide: BorderSide(color: Colors.white)),
+            enabledBorder: OutlineInputBorder(
+              borderSide: BorderSide(color: Colors.blueGrey[500], width: 1.0),
+            ),
+            prefixIcon: IconButton(
+              // transform: Matrix4.translationValues(-10.0, 0, 0),
+              icon:
+                  new Icon(Icons.search, size: 20, color: Colors.blueGrey[500]),
+              alignment: Alignment.centerRight,
+              padding: EdgeInsets.all(0),
+              onPressed: () {},
+            ),
+            suffixIcon: new IconButton(
+                constraints: BoxConstraints.tight(Size(15, 15)),
+                alignment: Alignment.centerRight,
+                padding: EdgeInsets.all(0),
+                icon: new Icon(
+                  Icons.close,
+                  size: 17,
+                  color: Colors.blueGrey[500],
+                ),
+                onPressed: () {
+                  //TODO: correct search end
+                  searchBoxClicked = false;
+                  _searchQuery.clear();
+                }),
+
+            // Container(
+            //   // transform: Matrix4.translationValues(3.0, 3, 0),
+            //   padding: EdgeInsets.all(0),
+            //   margin: ,
+            //   child:
+            // ),
+            // suffixIconConstraints: BoxConstraints(
+            //   maxWidth: 25,
+            //   maxHeight: 22,
+            // ),
+            hintText: "Search by Name",
+            hintStyle:
+                new TextStyle(fontSize: 12, color: Colors.blueGrey[500])),
+      ),
+    );
+
+    Widget filterBar = Container(
+      margin: EdgeInsets.fromLTRB(0, 5, 0, 0),
+      //decoration: gradientBackground,
+      child: Row(
+        children: <Widget>[categoryDropDown, appBarTitle],
       ),
     );
 
@@ -353,7 +382,9 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
       return MaterialApp(
         theme: ThemeData.light().copyWith(),
         home: Scaffold(
-          appBar: buildBar(context),
+          appBar: CustomAppBar(
+            titleTxt: "Search",
+          ),
           body: Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -385,7 +416,9 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
         return MaterialApp(
           theme: ThemeData.light().copyWith(),
           home: Scaffold(
-            appBar: buildBar(context),
+            appBar: CustomAppBar(
+              titleTxt: "Search",
+            ),
             body: Center(
               child: Container(
                 //
@@ -420,6 +453,7 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
             bottomNavigationBar: (widget.forPage == "Search")
                 ? CustomBottomBar(barIndex: 1)
                 : CustomBottomBar(barIndex: 2),
+            drawer: CustomDrawer(),
           ),
         );
       }
@@ -698,8 +732,7 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
                   print("tapped");
                   Navigator.push(context,
                       MaterialPageRoute(builder: (context) => ShowSlotsPage()));
-                  // showSlots(store, sid, sname, dt);
-
+                  // showSlots(store, sid, sname, dt);7
                 }
               }, // button pressed
               child: Column(
@@ -744,7 +777,7 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
 
   void addFilterCriteria() {}
   String filterVar = "0";
-  Widget buildBar(BuildContext context) {
+  Widget buildBar(BuildContext context, Widget appBarTitle) {
     return new AppBar(
       titleSpacing: 5,
       flexibleSpace: Container(

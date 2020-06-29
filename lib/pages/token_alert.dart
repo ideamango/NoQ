@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:noq/constants.dart';
+import 'package:noq/widget/widgets.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../style.dart';
@@ -44,11 +46,7 @@ Future<String> showTokenAlert(
       barrierDismissible: false,
       builder: (BuildContext context) {
         return new AlertDialog(
-          title: Text(
-            'Yay!! Your booking confirmed.',
-            style: TextStyle(
-                color: Colors.teal, fontFamily: 'Roboto', fontSize: 17.0),
-          ),
+          //  title:
           backgroundColor: Colors.grey[200],
           titleTextStyle: inputTextStyle,
           elevation: 10.0,
@@ -57,20 +55,30 @@ Future<String> showTokenAlert(
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: <Widget>[
-                  Text("Booked peace of mind. No more long waiting in queues!",
-                      style: highlightSubTextStyle),
+                  Text(
+                    tokenHeading,
+                    style: TextStyle(
+                        color: primaryDarkColor,
+                        fontFamily: 'Monsterrat',
+                        fontSize: 17.0),
+                  ),
+                  Divider(color: Colors.blueGrey[400], height: 1),
+                  verticalSpacer,
+                  Text(tokenTextH1, style: highlightSubTextStyle),
                   Container(
                     alignment: Alignment.center,
-                    margin: EdgeInsets.fromLTRB(10, 20, 10, 10),
-                    width: MediaQuery.of(context).size.width * .7,
+                    margin: EdgeInsets.all(5),
+                    width: MediaQuery.of(context).size.width * .72,
                     height: MediaQuery.of(context).size.width * .12,
                     decoration: new BoxDecoration(
-                      color: highlightColor,
+                      color: primaryAccentColor,
                     ),
                     child: Text(tokenNo, style: whiteBoldTextStyle1),
                   ),
-                  Text("Show up on time to $storeName at $time.",
+                  Text(tokenTextH2 + " $storeName at $time.",
                       style: highlightSubTextStyle),
+                  verticalSpacer,
+                  Divider(color: Colors.blueGrey[400], height: 1),
                 ],
               )),
           contentPadding: EdgeInsets.all(10),
@@ -79,7 +87,7 @@ Future<String> showTokenAlert(
               margin: EdgeInsets.fromLTRB(0, 0, 10, 0),
               child: RaisedButton(
                 elevation: 15.0,
-                color: Colors.indigo,
+                color: highlightColor,
                 textColor: Colors.white,
                 child: Text('Ok'),
                 onPressed: () {

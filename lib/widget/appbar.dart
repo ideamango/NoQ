@@ -52,8 +52,10 @@ class _CustomAppBarState extends State<CustomAppBar> {
               actions: <Widget>[
                 SizedBox(
                   height: 24,
-                  child: FlatButton(
+                  child: RaisedButton(
+                    elevation: 0,
                     color: Colors.transparent,
+                    splashColor: highlightColor.withOpacity(.8),
                     textColor: Colors.orange,
                     shape: RoundedRectangleBorder(
                         side: BorderSide(color: Colors.orange)),
@@ -66,10 +68,12 @@ class _CustomAppBarState extends State<CustomAppBar> {
                 ),
                 SizedBox(
                   height: 24,
-                  child: FlatButton(
+                  child: RaisedButton(
+                    elevation: 20,
                     autofocus: true,
                     focusColor: highlightColor,
-                    color: Colors.transparent,
+                    splashColor: highlightColor,
+                    color: Colors.white,
                     textColor: Colors.orange,
                     shape: RoundedRectangleBorder(
                         side: BorderSide(color: Colors.orange)),

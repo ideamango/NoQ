@@ -816,7 +816,7 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
                 children: <Widget>[
                   Container(
                     decoration: BoxDecoration(
-                        border: Border.all(color: Colors.indigo),
+                        border: Border.all(color: containerColor),
                         color: Colors.grey[50],
                         shape: BoxShape.rectangle,
                         borderRadius: BorderRadius.all(Radius.circular(5.0))),
@@ -889,7 +889,7 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
                   ),
                   Container(
                     decoration: BoxDecoration(
-                        border: Border.all(color: Colors.indigo),
+                        border: Border.all(color: containerColor),
                         color: Colors.grey[50],
                         shape: BoxShape.rectangle,
                         borderRadius: BorderRadius.all(Radius.circular(5.0))),
@@ -972,7 +972,7 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
                   //THIS CONTAINER
                   Container(
                     decoration: BoxDecoration(
-                        border: Border.all(color: Colors.indigo),
+                        border: Border.all(color: containerColor),
                         color: Colors.grey[50],
                         shape: BoxShape.rectangle,
                         borderRadius: BorderRadius.all(Radius.circular(5.0))),
