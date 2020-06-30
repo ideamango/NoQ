@@ -116,9 +116,11 @@ class EntityService {
     //2. update the parent by removing current entityReference
     //3. update the users with current entityReference
     //4. delete the current entity
+    // Known limitation - Admins of the child entities wil not be cleaned up and will see ref to the deleted objects
 
     DocumentReference entityRef = fStore.document('entities/' + entityId);
     DocumentReference parentEntityRef;
+    List<DocumentReference> childEntityRefs = new List<DocumentReference>();
 
     await fStore.runTransaction((Transaction tx) async {
       try {
@@ -137,7 +139,9 @@ class EntityService {
 
         //Step1: first delete all the child entities
         for (MetaEntity meta in ent.childEntities) {
-          await deleteEntity(meta.entityId);
+          DocumentReference childRef =
+              fStore.document('entities/' + meta.entityId);
+          childEntityRefs.add(childRef);
         }
 
         Entity parentEnt;
@@ -188,7 +192,10 @@ class EntityService {
           await tx.set(userRef, u.toJson());
         }
 
-        //Step4: now delete the entity
+        //Step4: now delete the child entities and the entity
+        for (DocumentReference childRef in childEntityRefs) {
+          await tx.delete(childRef);
+        }
         await tx.delete(entityRef);
 
         isSuccess = true;
@@ -247,15 +254,14 @@ class EntityService {
             tx.set(userRef, u.toJson());
           }
         } else {
-          u = new User(
-              id: fireUser.uid,
-              ph: fireUser.phoneNumber,
-              name: fireUser.displayName);
+          // a new user will be added in the user table for that phone number
+          u = new User(id: null, ph: phone, name: null);
           u.entities = new List<MetaEntity>();
           u.entities.add(ent.getMetaEntity());
           tx.set(userRef, u.toJson());
         }
 
+        //now update the entity
         bool isAlreadyAdmin = false;
 
         for (MetaUser usr in ent.admins) {
@@ -524,7 +530,7 @@ class EntityService {
     // print("Array Contains result count: " + qs.documents.length.toString());
 
     var collectionReference =
-        fStore.collection('entities').where("query", arrayContains: name);
+        fStore.collection('entities').where("nameQuery", arrayContains: name);
 
     // var collectionReference =
     //     fStore.collection('entities').where("name", isEqualTo: "Bata");
@@ -538,6 +544,9 @@ class EntityService {
         .within(center: center, radius: radius, field: field);
     //    .take(pageSize);
     //.skip(pageNumber - 1);
+    if (stream.first == null) {
+      return entities;
+    }
 
     try {
       for (DocumentSnapshot ds in await stream.first) {
@@ -561,6 +570,49 @@ class EntityService {
 
     var collectionReference =
         fStore.collection('entities').where("type", isEqualTo: type);
+
+    String field = 'coordinates';
+
+    Stream<List<DocumentSnapshot>> stream = geo
+        .collection(collectionRef: collectionReference)
+        .within(center: center, radius: radius, field: field);
+
+    try {
+      for (DocumentSnapshot ds in await stream.first) {
+        MetaEntity me = Entity.fromJson(ds.data).getMetaEntity();
+        me.distance = center.distance(lat: me.lat, lng: me.lon);
+        entities.add(me);
+      }
+    } catch (e) {
+      print(e);
+    }
+
+    return entities;
+  }
+
+  Future<List<MetaEntity>> search(String name, String type, double lat,
+      double lon, double radius, int pageNumber, int pageSize) async {
+    List<MetaEntity> entities = new List<MetaEntity>();
+    Firestore fStore = Firestore.instance;
+    Geoflutterfire geo = Geoflutterfire();
+    GeoFirePoint center = geo.point(latitude: lat, longitude: lon);
+
+    var collectionReference;
+
+    if (type != null && type != "" && name != null && name != "") {
+      collectionReference = fStore
+          .collection('entities')
+          .where("nameQuery", arrayContains: name)
+          .where("type", isEqualTo: type);
+    } else if (name != null && name != "") {
+      collectionReference =
+          fStore.collection('entities').where("nameQuery", arrayContains: name);
+    } else if (type != null && type != "") {
+      collectionReference =
+          fStore.collection('entities').where("type", isEqualTo: type);
+    } else {
+      return entities;
+    }
 
     String field = 'coordinates';
 

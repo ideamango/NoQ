@@ -240,7 +240,7 @@ class _UserHomePageState extends State<UserHomePage> {
     MyGeoFirePoint geoPoint = new MyGeoFirePoint(12.960632, 77.641603);
     Entity entity = new Entity(
         entityId: "Entity102",
-        name: "Liberty",
+        name: "Habinaro",
         address: adrs,
         advanceDays: 3,
         isPublic: true,
@@ -257,7 +257,7 @@ class _UserHomePageState extends State<UserHomePage> {
         endTimeHour: 21,
         endTimeMinute: 0,
         parentId: null,
-        type: "Shop",
+        type: "Store",
         isBookable: false,
         isActive: true,
         coordinates: geoPoint);
@@ -287,6 +287,10 @@ class _UserHomePageState extends State<UserHomePage> {
   }
 
   void dbCall() async {
+    bool isDeleted = await EntityService().deleteEntity('Entity101');
+
+    isDeleted = await EntityService().deleteEntity('Entity102');
+
     //final FirebaseUser user = await FirebaseAuth.instance.currentUser();
     //  User u = await UserService().getCurrentUser();
 
@@ -313,6 +317,8 @@ class _UserHomePageState extends State<UserHomePage> {
 
     await createChildEntityAndAddToParent('Child101-1', "Bata");
 
+    await EntityService().assignAdmin('Child101-1', "+919611009823");
+
     await createChildEntityAndAddToParent('Child101-2', "Habinaro");
 
     await updateEntity();
@@ -332,14 +338,16 @@ class _UserHomePageState extends State<UserHomePage> {
 
     Entity Child3 = await EntityService().getEntity('Child101-3');
 
-    List<MetaEntity> entities = await EntityService()
-        .searchByName("smi", 12.970632, 77.641603, 2, 1, 2);
+    print("------------Search by Name-----------");
 
-    for (MetaEntity me in entities) {
+    List<MetaEntity> entitiesByName = await EntityService()
+        .searchByName("Bata", 12.970632, 77.641603, 2, 1, 2);
+
+    for (MetaEntity me in entitiesByName) {
       print(me.name + ":" + me.distance.toString());
     }
 
-    print("-----------------------");
+    print("------------Search by Type-----------");
 
     List<MetaEntity> entitiesByType = await EntityService()
         .searchByType("Shop", 12.970632, 77.641603, 2, 1, 2);
@@ -348,9 +356,42 @@ class _UserHomePageState extends State<UserHomePage> {
       print(me.name + ":" + me.distance.toString());
     }
 
-    bool isDeleted = await EntityService().deleteEntity('Entity101');
+    print("----------Only Type--with Name null ----------");
 
-    isDeleted = await EntityService().deleteEntity('Entity102');
+    List<MetaEntity> entitiesByTypeAndNameNull = await EntityService()
+        .search(null, "Shop", 12.970632, 77.641603, 2, 1, 2);
+
+    for (MetaEntity me in entitiesByTypeAndNameNull) {
+      print(me.name + ":" + me.distance.toString());
+    }
+
+    print("----------Only Name-- Type null-----------");
+
+    List<MetaEntity> entitiesByTypeNullAndName =
+        await EntityService().search("Habi", "", 12.970632, 77.641603, 2, 1, 2);
+
+    for (MetaEntity me in entitiesByTypeNullAndName) {
+      print(me.name + ":" + me.distance.toString());
+    }
+
+    print("---------Search By Name and Type --------------");
+
+    List<MetaEntity> entitiesByTypeAndName = await EntityService()
+        .search("Bat", "Shop", 12.970632, 77.641603, 2, 1, 2);
+
+    for (MetaEntity me in entitiesByTypeAndName) {
+      print(me.name + ":" + me.distance.toString());
+    }
+
+    print(
+        "---------Search By Name and Type again for 2 Habi but of different type--------------");
+
+    List<MetaEntity> entitiesByTypeAndNameAgain = await EntityService()
+        .search("Habina", "Shop", 12.970632, 77.641603, 2, 1, 2);
+
+    for (MetaEntity me in entitiesByTypeAndNameAgain) {
+      print(me.name + ":" + me.distance.toString());
+    }
 
     int i = 0;
   }
