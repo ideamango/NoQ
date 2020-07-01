@@ -338,23 +338,23 @@ class _UserHomePageState extends State<UserHomePage> {
 
     Entity Child3 = await EntityService().getEntity('Child101-3');
 
-    print("------------Search by Name-----------");
+    // print("------------Search by Name-----------");
 
-    List<MetaEntity> entitiesByName = await EntityService()
-        .searchByName("Bata", 12.970632, 77.641603, 2, 1, 2);
+    // List<MetaEntity> entitiesByName = await EntityService()
+    //     .searchByName("Bata", 12.970632, 77.641603, 2, 1, 2);
 
-    for (MetaEntity me in entitiesByName) {
-      print(me.name + ":" + me.distance.toString());
-    }
+    // for (MetaEntity me in entitiesByName) {
+    //   print(me.name + ":" + me.distance.toString());
+    // }
 
-    print("------------Search by Type-----------");
+    // print("------------Search by Type-----------");
 
-    List<MetaEntity> entitiesByType = await EntityService()
-        .searchByType("Shop", 12.970632, 77.641603, 2, 1, 2);
+    // List<MetaEntity> entitiesByType = await EntityService()
+    //     .searchByType("Shop", 12.970632, 77.641603, 2, 1, 2);
 
-    for (MetaEntity me in entitiesByType) {
-      print(me.name + ":" + me.distance.toString());
-    }
+    // for (MetaEntity me in entitiesByType) {
+    //   print(me.name + ":" + me.distance.toString());
+    // }
 
     print("----------Only Type--with Name null ----------");
 
