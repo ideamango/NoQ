@@ -124,27 +124,19 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
             titleTxt: title,
           ),
           body: Padding(
-            padding: const EdgeInsets.fromLTRB(0, 6, 0, 6),
+            padding: const EdgeInsets.fromLTRB(6, 6, 6, 6),
             child: Container(
               decoration: BoxDecoration(
-                //border: Border.all(color: Colors.indigo),
-                color: Colors.white,
-                shape: BoxShape.rectangle,
-                //borderRadius: BorderRadius.all(Radius.circular(5.0))
-              ),
+                  border: Border.all(color: borderColor),
+                  color: Colors.white,
+                  shape: BoxShape.rectangle,
+                  borderRadius: BorderRadius.all(Radius.circular(5.0))),
               child: Column(
                 children: <Widget>[
                   Container(
                     height: MediaQuery.of(context).size.width * .1,
                     padding: EdgeInsets.fromLTRB(6, 0, 0, 0),
-                    decoration: new BoxDecoration(
-                      border: Border.all(color: Colors.teal[200]),
-                      shape: BoxShape.rectangle,
-                      color: Colors.cyan[300],
-                      // borderRadius: BorderRadius.only(
-                      //     topLeft: Radius.circular(4.0),
-                      //     topRight: Radius.circular(4.0))
-                    ),
+                    decoration: indigoContainer,
                     child: Row(
                       children: <Widget>[
                         Icon(
@@ -165,7 +157,7 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
                               _dateFormatted,
                               style: TextStyle(
                                 fontSize: 10,
-                                color: Colors.indigo,
+                                color: Colors.white,
                               ),
                             )
                           ],
@@ -285,8 +277,8 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
       color: (sl.slotBooked == true)
           ? Colors.green[200]
           : ((sl.slotAvlFlg == "true" && sl.slotSelected == "true")
-              ? Colors.amber[300]
-              : (sl.slotAvlFlg == "false") ? Colors.grey[400] : Colors.indigo),
+              ? highlightColor
+              : (sl.slotAvlFlg == "false") ? btnDisabledolor : btnColor),
       textColor: Colors.indigo[800],
       disabledColor: Colors.grey[400],
       //textTheme: ButtonTextTheme.normal,

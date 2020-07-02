@@ -542,7 +542,6 @@ class _UserHomePageState extends State<UserHomePage> {
         bottomNavigationBar: CustomBottomBar(
           barIndex: 0,
         ),
-        //} else
         // if (_upcomingBkgStatus == 'NoBookings') {
         //   return _emptyStorePage();
         // } else {

@@ -137,8 +137,30 @@ List<EntityAppData> getStoreListServer() {
     new EntityAppData.values(
         "1231",
         'Owner8',
-        'Apartment',
-        "Aparna CyberZon Apartment",
+        'Mall',
+        "Inorbit Mall",
+        "Reg123",
+        null,
+        17.441903,
+        78.375869,
+        "8:00 am",
+        "12:00 pm",
+        "01:00 pm",
+        "10:00 pm",
+        [
+          "1",
+          "6",
+        ],
+        "20",
+        [],
+        [],
+        true,
+        false),
+    new EntityAppData.values(
+        "1231",
+        'Owner8',
+        'Salon',
+        "Mirrors Salon",
         "Reg123",
         null,
         17.441903,
@@ -202,6 +224,18 @@ List<EntityAppData> getStoreListServer() {
         false),
   ];
   return searchStores;
+}
+
+List<EntityAppData> getTypedEntities(String entityType) {
+  List<EntityAppData> filteredList = new List<EntityAppData>();
+  List<EntityAppData> searchStores = getStoreListServer();
+
+  for (var en in searchStores) {
+    if (en.eType.toLowerCase() == entityType.toLowerCase())
+      filteredList.add(en);
+  }
+
+  return filteredList;
 }
 
 // List<Store> getUserFavStores() {

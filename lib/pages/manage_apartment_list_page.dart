@@ -68,11 +68,6 @@ class _ManageApartmentsListPageState extends State<ManageApartmentsListPage> {
 
   @override
   Widget build(BuildContext context) {
-    final BoxDecoration indigoContainer = new BoxDecoration(
-        border: Border.all(color: Colors.blueGrey[400]),
-        shape: BoxShape.rectangle,
-        color: Colors.blueGrey[500],
-        borderRadius: BorderRadius.all(Radius.circular(4.0)));
     final subEntityType = new FormField(
       builder: (FormFieldState state) {
         return InputDecorator(
@@ -119,7 +114,9 @@ class _ManageApartmentsListPageState extends State<ManageApartmentsListPage> {
       home: Scaffold(
         appBar: AppBar(
             actions: <Widget>[],
-            backgroundColor: Colors.teal,
+            flexibleSpace: Container(
+              decoration: gradientBackground,
+            ),
             leading: IconButton(
                 padding: EdgeInsets.all(0),
                 alignment: Alignment.center,
@@ -127,7 +124,6 @@ class _ManageApartmentsListPageState extends State<ManageApartmentsListPage> {
                 icon: Icon(Icons.arrow_back),
                 color: Colors.white,
                 onPressed: () {
-                  //saveEntityDetails(entity);
                   Navigator.of(context).pop();
                   Navigator.push(context,
                       MaterialPageRoute(builder: (context) => UserHomePage()));
@@ -147,7 +143,7 @@ class _ManageApartmentsListPageState extends State<ManageApartmentsListPage> {
                   elevation: 20,
                   child: Container(
                     decoration: BoxDecoration(
-                        border: Border.all(color: Colors.indigo),
+                        border: Border.all(color: borderColor),
                         color: Colors.white,
                         shape: BoxShape.rectangle,
                         borderRadius: BorderRadius.all(Radius.circular(5.0))),

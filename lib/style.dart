@@ -4,7 +4,7 @@ import 'package:flutter/services.dart';
 final buttonStyle = Material(
   elevation: 5.0,
   //borderRadius: BorderRadius.circular(30.0),
-  color: Colors.teal,
+  color: Colors.blueGrey[800],
   child: MaterialButton(
     padding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
     onPressed: () {},
@@ -137,10 +137,21 @@ final headingTextStyle = TextStyle(
     letterSpacing: 0.5,
     fontFamily: 'Montserrat',
     fontSize: 15.0);
-final Color tealIcon = Colors.teal;
+final Color tealIcon = Colors.blueGrey[800];
+final Color borderColor = Colors.blueGrey[800];
+final Color primaryAccentColor = Colors.cyanAccent[400];
 
-final Color lightIcon = Colors.indigo;
-final Color highlightText = Colors.teal;
+final Color primaryDarkColor = Colors.cyan[800];
+
+final Color highlightColor = Colors.orangeAccent;
+final Color unselectedColor = Colors.blueGrey[700];
+final Color disabledColor = Colors.grey[400];
+
+final Color btnColor = Colors.cyan[600];
+final Color btnDisabledolor = Colors.blueGrey[200];
+
+final Color lightIcon = Colors.cyan[600];
+final Color highlightText = Colors.blueGrey[800];
 final highlightSubTextStyle = TextStyle(
     color: Colors.blueGrey[800], fontFamily: 'Montserrat', fontSize: 12.0);
 
@@ -162,30 +173,24 @@ final tokenDateTextStyle = TextStyle(
     fontWeight: FontWeight.w500,
     fontFamily: 'Montserrat',
     fontSize: 18.0);
-final appBarTextStyle =
-    TextStyle(color: Colors.teal, fontFamily: 'Montserrat', fontSize: 25.0);
+final appBarTextStyle = TextStyle(
+    color: Colors.blueGrey[800], fontFamily: 'Montserrat', fontSize: 25.0);
 final homeMsgStyle = TextStyle(
     color: Colors.blueGrey[800], fontFamily: 'Montserrat', fontSize: 11.0);
-final homeMsgStyle2 =
-    TextStyle(color: Colors.teal, fontFamily: 'Roboto', fontSize: 18.0);
+final homeMsgStyle2 = TextStyle(
+    color: Colors.blueGrey[800], fontFamily: 'Roboto', fontSize: 18.0);
 final homeMsgStyle3 =
     TextStyle(color: highlightColor, fontFamily: 'Montserrat', fontSize: 20.0);
 
-final highlightTextStyle =
-    TextStyle(color: Colors.teal, fontFamily: 'Montserrat', fontSize: 20.0);
+final highlightTextStyle = TextStyle(
+    color: Colors.blueGrey[800], fontFamily: 'Montserrat', fontSize: 20.0);
 
-final Color primaryAccentColor = Colors.cyanAccent[400];
-final Color primaryMedColor = Colors.teal[200];
-final Color primaryDarkColor = Colors.indigo[900];
-
-final Color highlightColor = Colors.amber[300];
-final Color unselectedColor = Colors.blueGrey[700];
-final Color disabledColor = Colors.grey[400];
 final BoxDecoration indigoContainer = new BoxDecoration(
-    border: Border.all(color: Colors.blueGrey[500]),
+    // border: Border.all(color: Colors.blueGrey[500]),
     shape: BoxShape.rectangle,
     color: Colors.blueGrey[500],
-    borderRadius: BorderRadius.all(Radius.circular(4.0)));
+    borderRadius: BorderRadius.only(
+        topLeft: Radius.circular(4.0), topRight: Radius.circular(4.0)));
 final Color containerColor = Colors.blueGrey[500];
 final BoxDecoration soildLightContainer = new BoxDecoration(
     border: Border.all(color: Colors.teal[200]),
@@ -196,8 +201,8 @@ final BoxDecoration soildLightContainer = new BoxDecoration(
 final gradientBackground = new BoxDecoration(
   gradient: new LinearGradient(
       colors: [
-        Colors.cyanAccent[400],
-        Colors.tealAccent[400],
+        Colors.cyanAccent,
+        Colors.blueGrey[800],
       ],
       begin: const FractionalOffset(0.0, 0.0),
       end: const FractionalOffset(1.0, 0.0),

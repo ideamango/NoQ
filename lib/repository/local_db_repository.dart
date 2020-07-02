@@ -27,7 +27,7 @@ void writeData(UserAppData user) async {
   final file = await localFile;
   String fileData = generateJson(user);
   //print('Writing in file $file , data: $fileData');
-  file.writeAsString("$fileData");
+  await file.writeAsString("$fileData");
 }
 
 Future<UserAppData> readData() async {
@@ -50,9 +50,11 @@ void saveEntityDetails(EntityAppData str) async {
     if (!Utils.isNullOrEmpty(fUser.managedEntities)) {
 //if exists then update else add
 
-      for (var element in fUser.managedEntities) {
-        if (element.id == str.id) {
-          element = str;
+      for (int i = 0; i < fUser.managedEntities.length; i++) {
+        if (fUser.managedEntities[i].id == str.id) {
+          //TODO: Update list outside loop, writeData(fuser doiesnt have updated values ISSUE ISSUE)
+          fUser.managedEntities[i] = str;
+          fUser.storesAccessed.add(str);
           writeData(fUser);
           return;
         }
@@ -61,6 +63,11 @@ void saveEntityDetails(EntityAppData str) async {
       fUser.managedEntities = new List<EntityAppData>();
     }
     fUser.managedEntities.add(str);
+    //TODO: ForTesting only - Remove later
+    fUser.storesAccessed.add(str);
+
+    //TODO: ForTesting
+
     writeData(fUser);
     return;
 
@@ -70,15 +77,15 @@ void saveEntityDetails(EntityAppData str) async {
   });
 }
 
-void deleteServiceFromDb(ChildEntityAppData str) async {
+Future<String> deleteServiceFromDb(ChildEntityAppData str) async {
 //Read current data in file
   await readData().then((fUser) {
     if (!Utils.isNullOrEmpty(fUser.managedEntities)) {
 //if exists then delete
 
-      for (var managedEntity in fUser.managedEntities) {
-        if (managedEntity.id == str.parentEntityId) {
-          managedEntity.childCollection.remove(str);
+      for (int i = 0; i < fUser.managedEntities.length; i++) {
+        if (fUser.managedEntities[i].id == str.parentEntityId) {
+          fUser.managedEntities[i].childCollection.remove(str);
         }
       }
 //Update info in local DB
@@ -87,27 +94,35 @@ void deleteServiceFromDb(ChildEntityAppData str) async {
       //TODO: Update on server
       //EntityService().upsertEntity(str);
     }
+    return "Success";
   });
+  return "";
 }
 
-void deleteEntityFromDb(EntityAppData str) async {
+Future<String> deleteEntityFromDb(EntityAppData str) async {
 //Read current data in file
   await readData().then((fUser) {
     if (!Utils.isNullOrEmpty(fUser.managedEntities)) {
 //if exists then delete
-
+      EntityAppData delEntity;
       fUser.managedEntities.forEach((element) {
         if (element.id == str.id) {
-          fUser.managedEntities.remove(element);
+          delEntity = element;
         }
       });
+      fUser.managedEntities.remove(delEntity);
+      //todo: remove this line , added for testing
+      // fUser.storesAccessed.clear();
+      //todo: remove this line , added for testing
 //Update info in local DB
       writeData(fUser);
 
       //TODO: Update on server
       //EntityService().upsertEntity(str);
     }
+    return "Success";
   });
+  return "";
 }
 
 saveChildEntity(ChildEntityAppData serviceEntity) async {
@@ -115,22 +130,26 @@ saveChildEntity(ChildEntityAppData serviceEntity) async {
 //Read current data in file
   await readData().then((fUser) {
     if (!Utils.isNullOrEmpty(fUser.managedEntities)) {
-      for (var entity in fUser.managedEntities) {
-        if (entity.id == entityId) {
-          if (!Utils.isNullOrEmpty(entity.childCollection)) {
+      for (int i = 0; i < fUser.managedEntities.length; i++) {
+        if (fUser.managedEntities[i].id == entityId) {
+          if (!Utils.isNullOrEmpty(fUser.managedEntities[i].childCollection)) {
 //if exists then update else add
 
-            for (var element in entity.childCollection) {
-              if (element.id == serviceEntity.id) {
-                element = serviceEntity;
+            for (int j = 0;
+                j < fUser.managedEntities[i].childCollection.length;
+                j++) {
+              if (fUser.managedEntities[i].childCollection[j].id ==
+                  serviceEntity.id) {
+                fUser.managedEntities[i].childCollection[j] = serviceEntity;
                 writeData(fUser);
                 return;
               }
             }
           } else {
-            entity.childCollection = new List<ChildEntityAppData>();
+            fUser.managedEntities[i].childCollection =
+                new List<ChildEntityAppData>();
           }
-          entity.childCollection.add(serviceEntity);
+          fUser.managedEntities[i].childCollection.add(serviceEntity);
           writeData(fUser);
           return;
 
@@ -161,8 +180,9 @@ Future<EntityAppData> getEntity(String entityId) async {
 //Read current data in file
   await readData().then((fUser) {
     if (!Utils.isNullOrEmpty(fUser.managedEntities)) {
-      for (var entity in fUser.managedEntities) {
-        if (entity.id == entityId) return entity;
+      for (int i = 0; i < fUser.managedEntities.length; i++) {
+        if (fUser.managedEntities[i].id == entityId)
+          return fUser.managedEntities[i];
       }
       //TODO:Fetch entity from Server
       // return EntityService().getEntity(entityId);
