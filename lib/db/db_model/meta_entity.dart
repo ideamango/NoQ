@@ -10,7 +10,10 @@ class MetaEntity {
       this.startTimeMinute,
       this.endTimeHour,
       this.endTimeMinute,
-      this.isActive});
+      this.isActive,
+      this.distance,
+      this.lat,
+      this.lon});
 
   //SlotDocumentId is entityID#20~06~01 it is not auto-generated, will help in not duplicating the record
   String entityId;
@@ -24,6 +27,9 @@ class MetaEntity {
   int endTimeHour;
   int endTimeMinute;
   bool isActive;
+  double distance;
+  double lat;
+  double lon;
 
   static MetaEntity fromJson(Map<String, dynamic> json) {
     if (json == null) return null;

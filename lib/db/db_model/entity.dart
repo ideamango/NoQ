@@ -87,7 +87,8 @@ class Entity {
         'type': type,
         'isBookable': isBookable,
         'isActive': isActive,
-        'coordinates': coordinates.toJson()
+        'coordinates': coordinates.toJson(),
+        'nameQuery': constructQueriableList(name)
       };
 
   List<dynamic> usersToJson(List<MetaUser> users) {
@@ -152,6 +153,7 @@ class Entity {
   }
 
   static List<MetaUser> convertToUsersFromJson(List<dynamic> usersJson) {
+    if (usersJson == null) return null;
     List<MetaUser> users = new List<MetaUser>();
 
     for (Map<String, dynamic> json in usersJson) {
@@ -162,6 +164,7 @@ class Entity {
   }
 
   static List<Employee> convertToEmployeesFromJson(List<dynamic> usersJson) {
+    if (usersJson == null) return null;
     List<Employee> users = new List<Employee>();
 
     for (Map<String, dynamic> json in usersJson) {
@@ -203,7 +206,9 @@ class Entity {
         startTimeMinute: startTimeMinute,
         endTimeHour: endTimeHour,
         endTimeMinute: endTimeMinute,
-        isActive: isActive);
+        isActive: isActive,
+        lat: coordinates.geopoint.latitude,
+        lon: coordinates.geopoint.longitude);
 
     return meta;
   }
@@ -220,5 +225,13 @@ class Entity {
     }
 
     return -1;
+  }
+
+  List<String> constructQueriableList(String string) {
+    List<String> queriables = new List<String>();
+    for (int i = 1; i <= string.length; i++) {
+      queriables.add(string.substring(0, i));
+    }
+    return queriables;
   }
 }

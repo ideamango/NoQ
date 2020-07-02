@@ -24,6 +24,7 @@ class Address {
       };
 
   static Address fromJson(Map<String, dynamic> json) {
+    if (json == null) return null;
     return new Address(
         address: json['address'],
         city: json['city'],

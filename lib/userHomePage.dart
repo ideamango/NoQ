@@ -25,6 +25,7 @@ import 'package:flutter/services.dart';
 
 import 'db/db_model/entity.dart';
 import 'db/db_model/entity_slots.dart';
+import 'db/db_model/meta_entity.dart';
 import 'db/db_model/user.dart';
 import 'db/db_model/user_token.dart';
 //import 'path';
@@ -165,7 +166,7 @@ class _UserHomePageState extends State<UserHomePage> {
         country: "India",
         address: "Shop 10, Gachibowli");
 
-    MyGeoFirePoint geoPoint = new MyGeoFirePoint(68, 78);
+    MyGeoFirePoint geoPoint = new MyGeoFirePoint(12.960632, 77.641603);
 
     Entity child1 = new Entity(
         entityId: id,
@@ -202,11 +203,11 @@ class _UserHomePageState extends State<UserHomePage> {
         country: "India",
         address: "Shop 10, Gachibowli");
 
-    MyGeoFirePoint geoPoint = new MyGeoFirePoint(68, 78);
+    MyGeoFirePoint geoPoint = new MyGeoFirePoint(12.960632, 77.641603);
 
     Entity child1 = new Entity(
         entityId: id,
-        name: name + adrs.hashCode.toString(),
+        name: "Bata",
         address: adrs,
         advanceDays: 5,
         isPublic: true,
@@ -229,6 +230,45 @@ class _UserHomePageState extends State<UserHomePage> {
         coordinates: geoPoint);
   }
 
+  Future<void> createEntity2() async {
+    Address adrs = new Address(
+        city: "Hyderbad",
+        state: "Telangana",
+        country: "India",
+        address: "Shop 10, Gachibowli");
+
+    MyGeoFirePoint geoPoint = new MyGeoFirePoint(12.960632, 77.641603);
+    Entity entity = new Entity(
+        entityId: "Entity102",
+        name: "Habinaro",
+        address: adrs,
+        advanceDays: 3,
+        isPublic: true,
+        geo: geoPoint,
+        maxAllowed: 60,
+        slotDuration: 60,
+        closedOn: ["Saturday", "Sunday"],
+        breakStartHour: 13,
+        breakStartMinute: 30,
+        breakEndHour: 14,
+        breakEndMinute: 30,
+        startTimeHour: 10,
+        startTimeMinute: 30,
+        endTimeHour: 21,
+        endTimeMinute: 0,
+        parentId: null,
+        type: "Store",
+        isBookable: false,
+        isActive: true,
+        coordinates: geoPoint);
+
+    try {
+      await EntityService().upsertEntity(entity);
+    } catch (e) {
+      print("Exception occured " + e);
+    }
+  }
+
   void clearAll() async {
     //delete childEntity
     await EntityService().deleteEntity("Child101-1");
@@ -247,6 +287,10 @@ class _UserHomePageState extends State<UserHomePage> {
   }
 
   void dbCall() async {
+    bool isDeleted = await EntityService().deleteEntity('Entity101');
+
+    isDeleted = await EntityService().deleteEntity('Entity102');
+
     //final FirebaseUser user = await FirebaseAuth.instance.currentUser();
     //  User u = await UserService().getCurrentUser();
 
@@ -265,11 +309,15 @@ class _UserHomePageState extends State<UserHomePage> {
     //await createChildEntityAndAddToParent(
     //    'Child101-1', "Bata"); //should fail as entity does not exists
 
-    User usr = await UserService().getCurrentUser();
+    // User usr = await UserService().getCurrentUser();
 
     await createEntity();
 
+    await createEntity2();
+
     await createChildEntityAndAddToParent('Child101-1', "Bata");
+
+    await EntityService().assignAdmin('Child101-1', "+919611009823");
 
     await createChildEntityAndAddToParent('Child101-2', "Habinaro");
 
@@ -279,8 +327,8 @@ class _UserHomePageState extends State<UserHomePage> {
 
     await updateEntity();
 
-    await createChildEntityAndAddToParent(
-        'Child101-1', "Bata" + usr.hashCode.toString());
+    // await createChildEntityAndAddToParent(
+    //     'Child101-1', "Bata" + usr.hashCode.toString());
 
     Entity ent = await EntityService().getEntity('Entity101');
 
@@ -290,12 +338,60 @@ class _UserHomePageState extends State<UserHomePage> {
 
     Entity Child3 = await EntityService().getEntity('Child101-3');
 
-    // bool isDeleted = await EntityService().deleteEntity('Entity101');
+    // print("------------Search by Name-----------");
 
-    List<Entity> entities =
-        await EntityService().searchByName("Habinaro", 68, 78, 1, 1, 10);
+    // List<MetaEntity> entitiesByName = await EntityService()
+    //     .searchByName("Bata", 12.970632, 77.641603, 2, 1, 2);
 
-    await clearAll();
+    // for (MetaEntity me in entitiesByName) {
+    //   print(me.name + ":" + me.distance.toString());
+    // }
+
+    // print("------------Search by Type-----------");
+
+    // List<MetaEntity> entitiesByType = await EntityService()
+    //     .searchByType("Shop", 12.970632, 77.641603, 2, 1, 2);
+
+    // for (MetaEntity me in entitiesByType) {
+    //   print(me.name + ":" + me.distance.toString());
+    // }
+
+    print("----------Only Type--with Name null ----------");
+
+    List<MetaEntity> entitiesByTypeAndNameNull = await EntityService()
+        .search(null, "Shop", 12.970632, 77.641603, 2, 1, 2);
+
+    for (MetaEntity me in entitiesByTypeAndNameNull) {
+      print(me.name + ":" + me.distance.toString());
+    }
+
+    print("----------Only Name-- Type null-----------");
+
+    List<MetaEntity> entitiesByTypeNullAndName =
+        await EntityService().search("Habi", "", 12.970632, 77.641603, 2, 1, 2);
+
+    for (MetaEntity me in entitiesByTypeNullAndName) {
+      print(me.name + ":" + me.distance.toString());
+    }
+
+    print("---------Search By Name and Type --------------");
+
+    List<MetaEntity> entitiesByTypeAndName = await EntityService()
+        .search("Bat", "Shop", 12.970632, 77.641603, 2, 1, 2);
+
+    for (MetaEntity me in entitiesByTypeAndName) {
+      print(me.name + ":" + me.distance.toString());
+    }
+
+    print(
+        "---------Search By Name and Type again for 2 Habi but of different type--------------");
+
+    List<MetaEntity> entitiesByTypeAndNameAgain = await EntityService()
+        .search("Habina", "Shop", 12.970632, 77.641603, 2, 1, 2);
+
+    for (MetaEntity me in entitiesByTypeAndNameAgain) {
+      print(me.name + ":" + me.distance.toString());
+    }
 
     int i = 0;
   }

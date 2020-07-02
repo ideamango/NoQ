@@ -257,7 +257,12 @@ class TokenService {
     return isCancelled;
   }
 
-  Future<List<UserToken>> getTokens(DateTime from, DateTime to) async {
+  Future<List<UserToken>> getAllTokens(DateTime from, DateTime to) async {
+    return null;
+  }
+
+  Future<List<UserToken>> getTokensForEntity(
+      String entityId, DateTime date) async {
     return null;
   }
 }

@@ -18,6 +18,11 @@ class UserService {
         DocumentSnapshot usrDoc = await tx.get(userRef);
         if (usrDoc.exists) {
           u = User.fromJson(usrDoc.data);
+          if (u.id == null || u.name == null) {
+            u.id = fireUser.uid;
+            u.name = fireUser.displayName;
+            tx.set(userRef, u.toJson());
+          }
         } else {
           u = new User(
               id: fireUser.uid,
