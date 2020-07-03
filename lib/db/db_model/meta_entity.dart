@@ -6,6 +6,10 @@ class MetaEntity {
       this.advanceDays,
       this.isPublic,
       this.closedOn,
+      this.breakStartHour,
+      this.breakStartMinute,
+      this.breakEndHour,
+      this.breakEndMinute,
       this.startTimeHour,
       this.startTimeMinute,
       this.endTimeHour,
@@ -13,7 +17,9 @@ class MetaEntity {
       this.isActive,
       this.distance,
       this.lat,
-      this.lon});
+      this.lon,
+      this.slotDuration,
+      this.maxAllowed});
 
   //SlotDocumentId is entityID#20~06~01 it is not auto-generated, will help in not duplicating the record
   String entityId;
@@ -22,6 +28,10 @@ class MetaEntity {
   int advanceDays;
   bool isPublic;
   List<String> closedOn;
+  int breakStartHour;
+  int breakStartMinute;
+  int breakEndHour;
+  int breakEndMinute;
   int startTimeHour;
   int startTimeMinute;
   int endTimeHour;
@@ -30,6 +40,8 @@ class MetaEntity {
   double distance;
   double lat;
   double lon;
+  int slotDuration;
+  int maxAllowed;
 
   static MetaEntity fromJson(Map<String, dynamic> json) {
     if (json == null) return null;
@@ -44,7 +56,12 @@ class MetaEntity {
         startTimeMinute: json['startTimeMinute'],
         endTimeHour: json['endTimeHour'],
         endTimeMinute: json['endTimeMinute'],
-        isActive: json['isActive']);
+        isActive: json['isActive'],
+        distance: json['distance'],
+        lat: json['lat'],
+        lon: json['lon'],
+        slotDuration: json['slotDuration'],
+        maxAllowed: json['maxAllowed']);
   }
 
   static List<String> convertToClosedOnArrayFromJson(List<dynamic> daysJson) {
@@ -67,17 +84,32 @@ class MetaEntity {
         'startTimeMinute': startTimeMinute,
         'endTimeHour': endTimeHour,
         'endTimeMinute': endTimeMinute,
-        'isActive': isActive
+        'isActive': isActive,
+        'distance': distance,
+        'lat': lat,
+        'lon': lon,
+        'slotDuration': slotDuration,
+        'maxAllowed': maxAllowed
       };
 
   bool isEqual(MetaEntity metaEnt) {
     if (metaEnt.advanceDays == this.advanceDays &&
+        metaEnt.breakStartHour == this.breakStartHour &&
+        metaEnt.breakStartMinute == this.breakStartMinute &&
+        metaEnt.breakEndHour == this.breakEndHour &&
+        metaEnt.breakEndMinute == this.breakEndMinute &&
+        metaEnt.startTimeHour == this.startTimeHour &&
+        metaEnt.startTimeMinute == this.startTimeMinute &&
         metaEnt.endTimeHour == this.endTimeHour &&
         metaEnt.endTimeMinute == this.endTimeMinute &&
         metaEnt.entityId == this.entityId &&
         metaEnt.isActive == this.isActive &&
         metaEnt.isPublic == this.isPublic &&
-        metaEnt.name == this.name) {
+        metaEnt.name == this.name &&
+        metaEnt.slotDuration == this.slotDuration &&
+        metaEnt.lat == this.lat &&
+        metaEnt.lon == this.lon &&
+        metaEnt.maxAllowed == this.maxAllowed) {
       if (this.closedOn != null && metaEnt.closedOn != null) {
         int matchCount = 0;
 

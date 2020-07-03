@@ -5,7 +5,11 @@ class UserToken {
       this.userId,
       this.number,
       this.dateTime,
-      this.maxAllowed});
+      this.maxAllowed,
+      this.slotDuration,
+      this.entityName,
+      this.lat,
+      this.lon});
 
   String slotId; //entityID#20~06~01#9~30
   String entityId;
@@ -13,6 +17,10 @@ class UserToken {
   int number;
   DateTime dateTime;
   int maxAllowed;
+  int slotDuration;
+  String entityName;
+  double lat;
+  double lon;
 
   //TokenDocumentId is SlotId#UserId it is not auto-generated, will help in not duplicating the record
 
@@ -22,7 +30,11 @@ class UserToken {
         'userId': userId,
         'number': number,
         'dateTime': dateTime,
-        'maxAllowed': maxAllowed
+        'maxAllowed': maxAllowed,
+        'slotDuration': slotDuration,
+        'entityName': entityName,
+        'lat': lat,
+        'lon': lon
       };
 
   static UserToken fromJson(Map<String, dynamic> json) {
@@ -34,6 +46,10 @@ class UserToken {
         number: json['currentNumber'],
         dateTime: new DateTime.fromMillisecondsSinceEpoch(
             json['dateTime'].millisecondsSinceEpoch),
-        maxAllowed: json['maxAllowed']);
+        maxAllowed: json['maxAllowed'],
+        slotDuration: json['slotDuration'],
+        entityName: json['entityName'],
+        lat: json['lat'],
+        lon: json['lon']);
   }
 }

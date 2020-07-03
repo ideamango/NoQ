@@ -202,13 +202,19 @@ class Entity {
         advanceDays: advanceDays,
         isPublic: isPublic,
         closedOn: closedOn,
+        breakStartHour: breakStartHour,
+        breakStartMinute: breakStartMinute,
+        breakEndHour: breakEndHour,
+        breakEndMinute: breakEndMinute,
         startTimeHour: startTimeHour,
         startTimeMinute: startTimeMinute,
         endTimeHour: endTimeHour,
         endTimeMinute: endTimeMinute,
         isActive: isActive,
         lat: coordinates.geopoint.latitude,
-        lon: coordinates.geopoint.longitude);
+        lon: coordinates.geopoint.longitude,
+        slotDuration: slotDuration,
+        maxAllowed: maxAllowed);
 
     return meta;
   }

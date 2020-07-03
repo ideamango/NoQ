@@ -287,56 +287,73 @@ class _UserHomePageState extends State<UserHomePage> {
   }
 
   void dbCall() async {
-    bool isDeleted = await EntityService().deleteEntity('Entity101');
+    // bool isDeleted = await EntityService().deleteEntity('Entity101');
 
-    isDeleted = await EntityService().deleteEntity('Entity102');
+    // isDeleted = await EntityService().deleteEntity('Entity102');
 
     //final FirebaseUser user = await FirebaseAuth.instance.currentUser();
     //  User u = await UserService().getCurrentUser();
 
     // DBLayer.addRecord();
-    // UserToken tok = await TokenService()
-    //     .generateToken("entityId001", new DateTime(2020, 6, 6, 10, 30, 0, 0));
-
-    // EntitySlots es = await TokenService()
-    //     .getEntitySlots('entityId001', new DateTime(2020, 6, 6));
-
-    // int i = 0;
-
-    // await TokenService()
-    //     .cancelToken("entityId001#2020~6~6#10~30#93hKw20HwFaVdHRsujOlpjaouoL2");
 
     //await createChildEntityAndAddToParent(
     //    'Child101-1', "Bata"); //should fail as entity does not exists
 
     // User usr = await UserService().getCurrentUser();
 
-    await createEntity();
+    // await createEntity();
 
-    await createEntity2();
+    // await createEntity2();
 
-    await createChildEntityAndAddToParent('Child101-1', "Bata");
+    // await createChildEntityAndAddToParent('Child101-1', "Bata");
 
-    await EntityService().assignAdmin('Child101-1', "+919611009823");
+    // await EntityService().assignAdmin('Child101-1', "+919611009823");
 
-    await createChildEntityAndAddToParent('Child101-2', "Habinaro");
+    // await createChildEntityAndAddToParent('Child101-2', "Habinaro");
 
-    await updateEntity();
+    // await updateEntity();
 
-    await createChildEntityAndAddToParent('Child101-3', "Raymonds");
+    // await createChildEntityAndAddToParent('Child101-3', "Raymonds");
 
-    await updateEntity();
+    // await updateEntity();
 
-    // await createChildEntityAndAddToParent(
-    //     'Child101-1', "Bata" + usr.hashCode.toString());
+    // Entity ent = await EntityService().getEntity('Entity101');
 
-    Entity ent = await EntityService().getEntity('Entity101');
+    // Entity child1 = await EntityService().getEntity('Child101-1');
 
-    Entity Child1 = await EntityService().getEntity('Child101-1');
+    // Entity child2 = await EntityService().getEntity('Child101-2');
 
-    Entity Child2 = await EntityService().getEntity('Child101-2');
+    // Entity child3 = await EntityService().getEntity('Child101-3');
 
-    Entity Child3 = await EntityService().getEntity('Child101-3');
+    // UserToken tok1 = await TokenService().generateToken(
+    //     child1.getMetaEntity(), new DateTime(2020, 6, 6, 10, 30, 0, 0));
+
+    // UserToken tok21 = await TokenService().generateToken(
+    //     child1.getMetaEntity(), new DateTime(2020, 6, 7, 12, 30, 0, 0));
+
+    // UserToken tok22 = await TokenService().generateToken(
+    //     child1.getMetaEntity(), new DateTime(2020, 6, 7, 10, 30, 0, 0));
+
+    // UserToken tok3 = await TokenService().generateToken(
+    //     child1.getMetaEntity(), new DateTime(2020, 6, 8, 10, 30, 0, 0));
+
+    // List<UserToken> toks = await TokenService().getAllTokensForCurrentUser(
+    //     new DateTime(2020, 6, 6), new DateTime(2020, 6, 9));
+
+    // List<UserToken> allToksFromToday = await TokenService()
+    //     .getAllTokensForCurrentUser(new DateTime(2020, 6, 7), null);
+
+    // EntitySlots es = await TokenService()
+    //     .getEntitySlots('Child101-1', new DateTime(2020, 6, 6));
+
+    // List<UserToken> toksForDayForEntity = await TokenService()
+    //     .getTokensForEntityBookedByCurrentUser(
+    //         'Child101-1', new DateTime(2020, 6, 7));
+
+    // int i = 0;
+
+    // await TokenService()
+    //     .cancelToken("entityId001#2020~6~6#10~30#93hKw20HwFaVdHRsujOlpjaouoL2");
 
     // print("------------Search by Name-----------");
 
