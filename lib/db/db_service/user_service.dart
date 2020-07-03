@@ -3,43 +3,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:noq/db/db_model/user.dart';
 
 class UserService {
-  //This method is to be called when the user logs in the system for the first time
-  Future<User> createUser() async {
-    final FirebaseUser fireUser = await FirebaseAuth.instance.currentUser();
-    Firestore fStore = Firestore.instance;
-
-    final DocumentReference userRef =
-        fStore.document('users/' + fireUser.phoneNumber);
-
-    User u;
-
-    await fStore.runTransaction((Transaction tx) async {
-      try {
-        DocumentSnapshot usrDoc = await tx.get(userRef);
-        if (usrDoc.exists) {
-          u = User.fromJson(usrDoc.data);
-          if (u.id == null || u.name == null) {
-            u.id = fireUser.uid;
-            u.name = fireUser.displayName;
-            tx.set(userRef, u.toJson());
-          }
-        } else {
-          u = new User(
-              id: fireUser.uid,
-              ph: fireUser.phoneNumber,
-              name: fireUser.displayName);
-
-          tx.set(userRef, u.toJson());
-        }
-      } catch (e) {
-        print("Transactio Error: " + e.toString());
-        u = null;
-      }
-    });
-
-    return u;
-  }
-
   Future<User> getCurrentUser() async {
     final FirebaseUser fireUser = await FirebaseAuth.instance.currentUser();
     Firestore fStore = Firestore.instance;
