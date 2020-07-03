@@ -9,6 +9,7 @@ import 'package:noq/pages/entity_services_list_page.dart';
 import 'package:noq/repository/local_db_repository.dart';
 import 'package:noq/style.dart';
 import 'package:noq/utils.dart';
+import 'package:noq/widget/bottom_nav_bar.dart';
 import 'package:noq/widget/custome_expansion_tile.dart';
 import 'package:noq/widget/weekday_selector.dart';
 import 'package:flutter/foundation.dart';
@@ -236,9 +237,7 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
     //saveEntityDetails(childEntity);
   }
 
-  deleteEntity() {
-    deleteServiceFromDb(serviceEntity);
-  }
+  deleteEntity() {}
 
   void _addNewContactRow() {
     setState(() {
@@ -1307,22 +1306,31 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
                                       RaisedButton(
                                         color: (_delEnabled)
                                             ? lightIcon
-                                            : Colors.blueGrey[400],
+                                            : Colors.blueGrey[200],
                                         elevation: (_delEnabled) ? 20 : 0,
                                         onPressed: () {
-                                          deleteEntity();
-                                          Navigator.pop(context);
-                                          print("COMINGJHGVEGYHFUYERFGTUERYG");
-                                          //TODO: Return to list page
-                                          // Navigator.push(
-                                          //     context,
-                                          //     MaterialPageRoute(
-                                          //         builder: (context) =>
-                                          //             EntityServicesListPage(
-                                          //                 entity:
-                                          //                     this.entity)));
+                                          if (_delEnabled) {
+                                            deleteServiceFromDb(serviceEntity)
+                                                .whenComplete(() {
+                                              Navigator.pop(context);
+                                              EntityAppData parentEntity;
+                                              getEntity(serviceEntity
+                                                      .parentEntityId)
+                                                  .then((value) =>
+                                                      parentEntity = value)
+                                                  .whenComplete(() => Navigator.push(
+                                                      context,
+                                                      MaterialPageRoute(
+                                                          builder: (context) =>
+                                                              EntityServicesListPage(
+                                                                  entity:
+                                                                      parentEntity))));
+                                            });
+                                          }
                                         },
-                                        splashColor: highlightColor,
+                                        splashColor: (_delEnabled)
+                                            ? highlightColor
+                                            : Colors.blueGrey[200],
                                         child: Container(
                                           width: MediaQuery.of(context)
                                                   .size
@@ -1411,6 +1419,9 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
               ),
             ),
           ),
+        ),
+        bottomNavigationBar: CustomBottomBar(
+          barIndex: 0,
         ),
       ),
     );

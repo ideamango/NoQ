@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:noq/constants.dart';
 import 'package:noq/style.dart';
 import 'package:noq/widget/appbar.dart';
 import 'package:noq/widget/bottom_nav_bar.dart';
@@ -16,8 +17,7 @@ class _HelpPageState extends State<HelpPage> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              Text("We are working on getting best help to you..",
-                  style: highlightTextStyle),
+              Text(helpPageMainMsg, style: highlightTextStyle),
               Text('Be Safe | Save Time.', style: highlightSubTextStyle),
             ],
           )));

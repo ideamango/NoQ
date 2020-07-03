@@ -124,10 +124,10 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
             titleTxt: title,
           ),
           body: Padding(
-            padding: const EdgeInsets.all(8.0),
+            padding: const EdgeInsets.fromLTRB(6, 6, 6, 6),
             child: Container(
               decoration: BoxDecoration(
-                  border: Border.all(color: Colors.indigo),
+                  border: Border.all(color: borderColor),
                   color: Colors.white,
                   shape: BoxShape.rectangle,
                   borderRadius: BorderRadius.all(Radius.circular(5.0))),
@@ -136,13 +136,7 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
                   Container(
                     height: MediaQuery.of(context).size.width * .1,
                     padding: EdgeInsets.fromLTRB(6, 0, 0, 0),
-                    decoration: new BoxDecoration(
-                        border: Border.all(color: Colors.teal[200]),
-                        shape: BoxShape.rectangle,
-                        color: Colors.teal[200],
-                        borderRadius: BorderRadius.only(
-                            topLeft: Radius.circular(4.0),
-                            topRight: Radius.circular(4.0))),
+                    decoration: indigoContainer,
                     child: Row(
                       children: <Widget>[
                         Icon(
@@ -163,7 +157,7 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
                               _dateFormatted,
                               style: TextStyle(
                                 fontSize: 10,
-                                color: Colors.indigo,
+                                color: Colors.white,
                               ),
                             )
                           ],
@@ -174,18 +168,18 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
                   Expanded(
                     child: Container(
                       child: new GridView.builder(
-                        padding: EdgeInsets.symmetric(horizontal: 8),
+                        padding: EdgeInsets.symmetric(horizontal: 5),
                         scrollDirection: Axis.vertical,
                         shrinkWrap: true,
                         itemCount: _slotList.length,
                         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                             crossAxisCount: 5,
-                            crossAxisSpacing: 4.0,
-                            mainAxisSpacing: 1.0),
+                            crossAxisSpacing: 2.0,
+                            mainAxisSpacing: 0.5),
                         itemBuilder: (BuildContext context, int index) {
                           return new GridTile(
                             child: Container(
-                              padding: EdgeInsets.all(4),
+                              padding: EdgeInsets.all(2),
                               // decoration:
                               //     BoxDecoration(border: Border.all(color: Colors.black, width: 0.5)),
                               child: Center(
@@ -195,6 +189,42 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
                           );
                         },
                       ),
+                    ),
+                  ),
+                  Container(
+                    height: MediaQuery.of(context).size.width * .1,
+                    padding: EdgeInsets.all(4),
+                    // decoration: new BoxDecoration(
+                    //   border: Border.all(color: Colors.teal[200]),
+                    //   shape: BoxShape.rectangle,
+                    // color: Colors.cyan[100],
+                    // borderRadius: BorderRadius.only(
+                    //     topLeft: Radius.circular(4.0),
+                    //     topRight: Radius.circular(4.0))
+                    //),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        SizedBox(
+                          width: MediaQuery.of(context).size.width * .5,
+                          height: MediaQuery.of(context).size.width * .15,
+                          child: RaisedButton(
+                            elevation: (selectedSlot != null) ? 12.0 : 0.0,
+                            color: (selectedSlot != null)
+                                ? highlightColor
+                                : disabledColor,
+                            textColor: Colors.white,
+                            child: Text('Book Slot'),
+                            onPressed: bookSlot,
+                          ),
+                        ),
+                        (_errorMessage != null
+                            ? Text(
+                                _errorMessage,
+                                style: TextStyle(color: Colors.red),
+                              )
+                            : Container()),
+                      ],
                     ),
                   ),
                 ],
@@ -234,7 +264,7 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
     Slot sl = _slotList[index];
 
     return RaisedButton(
-      elevation: (sl.slotSelected == "true") ? 5.0 : 10.0,
+      elevation: (sl.slotSelected == "true") ? 0.0 : 10.0,
       padding: EdgeInsets.all(2),
       child: Text(
         sl.slotStrTime,
@@ -245,12 +275,12 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
 
       autofocus: false,
       color: (sl.slotBooked == true)
-          ? Colors.green
+          ? Colors.green[200]
           : ((sl.slotAvlFlg == "true" && sl.slotSelected == "true")
               ? highlightColor
-              : (sl.slotAvlFlg == "false") ? Colors.grey : Colors.indigo),
+              : (sl.slotAvlFlg == "false") ? btnDisabledolor : btnColor),
       textColor: Colors.indigo[800],
-      disabledColor: Colors.grey,
+      disabledColor: Colors.grey[400],
       //textTheme: ButtonTextTheme.normal,
       //highlightColor: Colors.green,
       // highlightElevation: 10.0,
@@ -258,11 +288,11 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
       shape: (sl.slotSelected == "true")
           ? RoundedRectangleBorder(
               borderRadius: new BorderRadius.circular(5.0),
-              side: BorderSide(color: highlightColor),
+              // side: BorderSide(color: highlightColor),
             )
           : RoundedRectangleBorder(
               borderRadius: new BorderRadius.circular(5.0),
-              side: BorderSide(color: Colors.white),
+              // side: BorderSide(color: Colors.white),
             ),
       onPressed: () {
         if (sl.slotAvlFlg == "true") {

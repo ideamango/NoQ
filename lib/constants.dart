@@ -7,6 +7,13 @@ String homeScreenMsgTxt =
 String homeScreenMsgTxt2 = "Avoid rush hours";
 String homeScreenMsgTxt3 = "Be Safe | Save time.";
 
+String helpPageMainMsg = "We are working on getting best help..";
+
+String tokenHeading = 'Yay!! Your booking is confirmed';
+String tokenTextH1 = "Booked peace of mind. No more long waiting in queues!";
+String tokenTextH2 = "Show up on time to";
+String tokenTextH3 = "Be Safe !! Save Time !!";
+
 String drawerHeaderTxt11 = 'Stay ';
 String drawerHeaderTxt12 = 'Safe!!  ';
 String drawerHeaderTxt21 = 'Maintain ';
@@ -31,12 +38,12 @@ List<String> roleTypes = [
   'Public Contact Person',
 ];
 List<String> entityTypes = [
-  'SuperMart',
-  'HyperMart',
-  'MedicalStore',
+  'Grocery/ Super Market ',
   'Apartment',
   'Office',
-  'Mall'
+  'Mall',
+  'Salon',
+  'MedicalStore'
 ];
 List<String> subEntityTypes = [
   'Swimming Pool',
@@ -50,4 +57,13 @@ List<String> subEntityTypes = [
   'Cafe',
   'Restaurant',
   'Others'
+];
+List<String> searchTypes = [
+  'Search in all categories',
+  'Grocery/ Super Market ',
+  'Apartment',
+  'Office',
+  'Mall',
+  'Salon',
+  'MedicalStore'
 ];

@@ -8,6 +8,7 @@ import 'package:noq/constants.dart';
 import 'package:noq/models/localDB.dart';
 import 'package:noq/pages/contact_item.dart';
 import 'package:noq/pages/entity_services_list_page.dart';
+import 'package:noq/pages/manage_apartment_list_page.dart';
 
 import 'package:noq/repository/local_db_repository.dart';
 import 'package:noq/services/authService.dart';
@@ -132,7 +133,7 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
     if (value == null) {
       return 'Field is empty';
     }
-    _entityDetailsFormKey.currentState.save();
+    // _entityDetailsFormKey.currentState.save();
     return null;
   }
 
@@ -230,9 +231,7 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
       getEntity(entity.id).then((en) => entity = en);
   }
 
-  deleteEntity() {
-    deleteEntityFromDb(entity);
-  }
+  deleteEntity() {}
 
   void _addNewContactRow() {
     setState(() {
@@ -564,6 +563,7 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
       validator: validateText,
       onSaved: (String value) {
         entity.maxPeopleAllowed = value;
+        print("saved max people");
       },
     );
 
@@ -580,6 +580,7 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
       validator: validateText,
       onSaved: (String value) {
         entity.adrs.addressLine1 = value;
+        print("saved address");
       },
     );
     final landmarkField2 = TextFormField(
@@ -599,6 +600,7 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
       validator: validateText,
       onSaved: (String value) {
         entity.adrs.landmark = value;
+        print("saved address");
       },
     );
     final localityField = TextFormField(
@@ -618,6 +620,7 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
       validator: validateText,
       onSaved: (String value) {
         entity.adrs.locality = value;
+        print("saved address");
       },
     );
     final cityField = TextFormField(
@@ -637,6 +640,7 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
       validator: validateText,
       onSaved: (String value) {
         entity.adrs.city = value;
+        print("saved address");
       },
     );
     final stateField = TextFormField(
@@ -656,6 +660,7 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
       validator: validateText,
       onSaved: (String value) {
         entity.adrs.state = value;
+        print("saved address");
       },
     );
     final countryField = TextFormField(
@@ -675,6 +680,7 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
       validator: validateText,
       onSaved: (String value) {
         entity.adrs.country = value;
+        print("saved address");
       },
     );
     final pinField = TextFormField(
@@ -694,6 +700,7 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
       validator: validateText,
       onSaved: (String value) {
         entity.adrs.postalCode = value;
+        print("saved address");
       },
     );
     TextEditingController _txtController = new TextEditingController();
@@ -704,6 +711,7 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
 
       if (_entityDetailsFormKey.currentState.validate()) {
         _entityDetailsFormKey.currentState.save();
+        print("Saved formmmmmmm");
       }
       // String address = entity.adrs.addressLine1 ??
       //     entity.adrs.addressLine1 +
@@ -746,6 +754,8 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
         return InputDecorator(
           decoration: InputDecoration(
             labelText: 'Role Type',
+            focusedBorder: InputBorder.none,
+            enabledBorder: InputBorder.none,
           ),
           child: new DropdownButtonHideUnderline(
             child: new DropdownButton(
@@ -787,7 +797,9 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
       home: Scaffold(
         appBar: AppBar(
             actions: <Widget>[],
-            backgroundColor: Colors.teal,
+            flexibleSpace: Container(
+              decoration: gradientBackground,
+            ),
             leading: IconButton(
               padding: EdgeInsets.all(0),
               alignment: Alignment.center,
@@ -816,7 +828,7 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
                 children: <Widget>[
                   Container(
                     decoration: BoxDecoration(
-                        border: Border.all(color: Colors.indigo),
+                        border: Border.all(color: containerColor),
                         color: Colors.grey[50],
                         shape: BoxShape.rectangle,
                         borderRadius: BorderRadius.all(Radius.circular(5.0))),
@@ -889,7 +901,7 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
                   ),
                   Container(
                     decoration: BoxDecoration(
-                        border: Border.all(color: Colors.indigo),
+                        border: Border.all(color: containerColor),
                         color: Colors.grey[50],
                         shape: BoxShape.rectangle,
                         borderRadius: BorderRadius.all(Radius.circular(5.0))),
@@ -972,7 +984,7 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
                   //THIS CONTAINER
                   Container(
                     decoration: BoxDecoration(
-                        border: Border.all(color: Colors.indigo),
+                        border: Border.all(color: containerColor),
                         color: Colors.grey[50],
                         shape: BoxShape.rectangle,
                         borderRadius: BorderRadius.all(Radius.circular(5.0))),
@@ -1229,13 +1241,29 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
                                         RaisedButton(
                                           color: (_delEnabled)
                                               ? lightIcon
-                                              : Colors.blueGrey[400],
+                                              : Colors.blueGrey[200],
                                           elevation: (_delEnabled) ? 20 : 0,
                                           onPressed: () {
-                                            deleteEntity();
-                                            Navigator.pop(context);
+                                            if (_delEnabled) {
+                                              deleteEntityFromDb(entity)
+                                                  .whenComplete(() {
+                                                Navigator.pop(context);
+                                                Navigator.push(
+                                                    context,
+                                                    MaterialPageRoute(
+                                                        builder: (context) =>
+                                                            ManageApartmentsListPage()));
+                                              });
+                                            } else {
+                                              setState(() {
+                                                _errorMessage =
+                                                    "You have to enter DELETE to proceed.";
+                                              });
+                                            }
                                           },
-                                          splashColor: highlightColor,
+                                          splashColor: (_delEnabled)
+                                              ? highlightColor
+                                              : Colors.blueGrey[200],
                                           child: Container(
                                             width: MediaQuery.of(context)
                                                     .size

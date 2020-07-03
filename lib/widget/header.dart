@@ -102,18 +102,18 @@ class _CustomDrawerState extends State<CustomDrawer> {
                           children: <TextSpan>[
                             TextSpan(text: drawerHeaderTxt11),
                             TextSpan(
-                                text: drawerHeaderTxt12,
-                                style: highlightBoldTextStyle),
+                              text: drawerHeaderTxt12,
+                            ),
                             TextSpan(text: drawerHeaderTxt21),
                             TextSpan(
-                                text: drawerHeaderTxt22,
-                                style: highlightBoldTextStyle),
+                              text: drawerHeaderTxt22,
+                            ),
                             TextSpan(
                               text: drawerHeaderTxt31,
                             ),
                             TextSpan(
-                                text: drawerHeaderTxt32,
-                                style: highlightBoldTextStyle),
+                              text: drawerHeaderTxt32,
+                            ),
                             TextSpan(
                               text: drawerHeaderTxt33,
                             ),
@@ -121,8 +121,8 @@ class _CustomDrawerState extends State<CustomDrawer> {
                               text: drawerHeaderTxt41,
                             ),
                             TextSpan(
-                                text: drawerHeaderTxt42,
-                                style: highlightBoldTextStyle),
+                              text: drawerHeaderTxt42,
+                            ),
                           ]),
                     ),
                   ],

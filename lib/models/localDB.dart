@@ -52,7 +52,7 @@ class EntityAppData {
   String maxPeopleAllowed;
   List<ContactAppData> contactPersons;
   List<ChildEntityAppData> childCollection;
-  bool isFavourite;
+  bool isFavourite = false;
   bool publicAccess;
 
   EntityAppData();
