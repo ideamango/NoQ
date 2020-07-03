@@ -602,18 +602,18 @@ class EntityService {
     if (type != null && type != "" && name != null && name != "") {
       collectionReference = fStore
           .collection('entities')
-          .where("isActive", isEqualTo: "true")
+          .where("isActive", isEqualTo: true)
           .where("nameQuery", arrayContains: name)
           .where("type", isEqualTo: type);
     } else if (name != null && name != "") {
       collectionReference = fStore
           .collection('entities')
-          .where("isActive", isEqualTo: "true")
+          .where("isActive", isEqualTo: true)
           .where("nameQuery", arrayContains: name);
     } else if (type != null && type != "") {
       collectionReference = fStore
           .collection('entities')
-          .where("isActive", isEqualTo: "true")
+          .where("isActive", isEqualTo: true)
           .where("type", isEqualTo: type);
     } else {
       return entities;
