@@ -97,7 +97,7 @@ class _LoginPageState extends State<LoginPage> {
     );
     final loginButon = Material(
       elevation: 10.0,
-      color: Colors.teal,
+      color: btnColor,
       //  isButtonPressed
       //     ? Theme.of(context).primaryColor
       //     : Theme.of(context).accentColor,

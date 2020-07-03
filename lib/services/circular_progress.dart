@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:noq/style.dart';
 import 'package:noq/widget/widgets.dart';
 
 Widget showCircularProgress() {
@@ -16,7 +17,7 @@ Widget showCircularProgress() {
           verticalSpacer,
           //Padding(padding: EdgeInsets.only(top: 20.0)),
           CircularProgressIndicator(
-            backgroundColor: Colors.indigo,
+            backgroundColor: primaryAccentColor,
             valueColor: AlwaysStoppedAnimation<Color>(Colors.amber),
             strokeWidth: 3,
           )

@@ -72,6 +72,8 @@ class _ManageApartmentsListPageState extends State<ManageApartmentsListPage> {
       builder: (FormFieldState state) {
         return InputDecorator(
           decoration: InputDecoration(
+            enabledBorder: InputBorder.none,
+            focusedBorder: InputBorder.none,
             labelText: 'Type of Entity',
           ),
           child: new DropdownButtonHideUnderline(
@@ -112,27 +114,32 @@ class _ManageApartmentsListPageState extends State<ManageApartmentsListPage> {
     return MaterialApp(
       theme: ThemeData.light().copyWith(),
       home: Scaffold(
-        appBar: AppBar(
-            actions: <Widget>[],
-            flexibleSpace: Container(
-              decoration: gradientBackground,
-            ),
-            leading: IconButton(
-                padding: EdgeInsets.all(0),
-                alignment: Alignment.center,
-                highlightColor: Colors.orange[300],
-                icon: Icon(Icons.arrow_back),
-                color: Colors.white,
-                onPressed: () {
-                  Navigator.of(context).pop();
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => UserHomePage()));
-                }),
-            title: Text(
-              title,
-              style: TextStyle(color: Colors.white, fontSize: 16),
-              overflow: TextOverflow.ellipsis,
-            )),
+        appBar: CustomAppBarWithBackButton(
+          backRoute: UserHomePage(),
+          titleTxt: title,
+        ),
+        // appBar: AppBar(
+        //     actions: <Widget>[],
+        //     flexibleSpace: Container(
+        //       decoration: gradientBackground,
+        //     ),
+        //     leading: IconButton(
+        //         padding: EdgeInsets.all(0),
+        //         alignment: Alignment.center,
+        //         highlightColor: Colors.orange[300],
+        //         icon: Icon(Icons.arrow_back),
+        //         color: Colors.white,
+        //         onPressed: () {
+        //           Navigator.of(context).pop();
+        //           Navigator.push(context,
+        //               MaterialPageRoute(builder: (context) => UserHomePage()));
+        //         }),
+        //     title: Text(
+        //       title,
+        //       style: TextStyle(color: Colors.white, fontSize: 16),
+        //       overflow: TextOverflow.ellipsis,
+        //     )),
+        //
         body: Center(
           child: new Form(
             key: _entityListFormKey,
@@ -190,7 +197,7 @@ class _ManageApartmentsListPageState extends State<ManageApartmentsListPage> {
                         Container(
                           height: MediaQuery.of(context).size.width * .1,
                           padding: EdgeInsets.fromLTRB(6, 0, 0, 0),
-                          decoration: indigoContainer,
+                          decoration: darkContainer,
                           child: Row(
                             children: <Widget>[
                               Icon(

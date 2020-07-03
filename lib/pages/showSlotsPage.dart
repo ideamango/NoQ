@@ -136,7 +136,7 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
                   Container(
                     height: MediaQuery.of(context).size.width * .1,
                     padding: EdgeInsets.fromLTRB(6, 0, 0, 0),
-                    decoration: indigoContainer,
+                    decoration: darkContainer,
                     child: Row(
                       children: <Widget>[
                         Icon(
@@ -279,7 +279,7 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
           : ((sl.slotAvlFlg == "true" && sl.slotSelected == "true")
               ? highlightColor
               : (sl.slotAvlFlg == "false") ? btnDisabledolor : btnColor),
-      textColor: Colors.indigo[800],
+
       disabledColor: Colors.grey[400],
       //textTheme: ButtonTextTheme.normal,
       //highlightColor: Colors.green,

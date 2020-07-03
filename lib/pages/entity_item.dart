@@ -34,7 +34,7 @@ class EntityRowState extends State<EntityRow> {
       elevation: 20,
       child: Container(
         decoration: BoxDecoration(
-            border: Border.all(color: Colors.indigo),
+            border: Border.all(color: borderColor),
             color: Colors.white,
             shape: BoxShape.rectangle,
             borderRadius: BorderRadius.all(Radius.circular(5.0))),
@@ -57,8 +57,8 @@ class EntityRowState extends State<EntityRow> {
           ),
           // backgroundColor: Colors.white,
           leading: Icon(
-            Icons.slow_motion_video,
-            color: lightIcon,
+            Icons.business,
+            color: primaryIcon,
           ),
           trailing: IconButton(
               icon: Icon(Icons.arrow_forward), onPressed: showServiceForm),

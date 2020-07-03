@@ -435,11 +435,11 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
                 Padding(padding: EdgeInsets.only(top: 20.0)),
                 Text(
                   "Loading..",
-                  style: TextStyle(fontSize: 20.0, color: Colors.indigo),
+                  style: TextStyle(fontSize: 20.0, color: borderColor),
                 ),
                 Padding(padding: EdgeInsets.only(top: 20.0)),
                 CircularProgressIndicator(
-                  backgroundColor: Colors.indigo,
+                  backgroundColor: primaryAccentColor,
                   valueColor: AlwaysStoppedAnimation<Color>(Colors.amber),
                   strokeWidth: 3,
                 )
@@ -543,7 +543,7 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
                     alignment: Alignment.topCenter,
                     decoration: ShapeDecoration(
                       shape: CircleBorder(),
-                      color: tealIcon,
+                      color: primaryIcon,
                     ),
                     child: Icon(
                       Icons.shopping_cart,
@@ -587,7 +587,7 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
                                     highlightColor: Colors.orange[300],
                                     icon: Icon(
                                       Icons.phone,
-                                      color: tealIcon,
+                                      color: primaryIcon,
                                       size: 20,
                                     ),
                                     onPressed: () => callPhone('+919611009823'),
@@ -603,7 +603,7 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
                                     highlightColor: Colors.orange[300],
                                     icon: Icon(
                                       Icons.location_on,
-                                      color: tealIcon,
+                                      color: primaryIcon,
                                       size: 20,
                                     ),
                                     onPressed: () => launchURL(str.name,
@@ -627,7 +627,7 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
                                           )
                                         : Icon(
                                             Icons.favorite_border,
-                                            color: tealIcon,
+                                            color: primaryIcon,
                                           ),
                                   ),
                                 ),

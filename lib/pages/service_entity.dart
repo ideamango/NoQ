@@ -47,7 +47,7 @@ class ServiceRowState extends State<ServiceRow> {
       elevation: 20,
       child: Container(
         decoration: BoxDecoration(
-            border: Border.all(color: Colors.indigo),
+            border: Border.all(color: borderColor),
             color: Colors.white,
             shape: BoxShape.rectangle,
             borderRadius: BorderRadius.all(Radius.circular(5.0))),
@@ -72,7 +72,7 @@ class ServiceRowState extends State<ServiceRow> {
           // backgroundColor: Colors.white,
           leading: Icon(
             Icons.slow_motion_video,
-            color: lightIcon,
+            color: primaryIcon,
           ),
           trailing: IconButton(
               icon: Icon(Icons.arrow_forward), onPressed: showServiceForm),

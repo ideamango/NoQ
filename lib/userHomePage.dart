@@ -535,7 +535,7 @@ class _UserHomePageState extends State<UserHomePage> {
                       backgroundColor: Colors.white,
                       leading: Icon(
                         Icons.date_range,
-                        color: tealIcon,
+                        color: primaryIcon,
                       ),
                       children: <Widget>[
                         if (_upcomingBkgStatus == 'Success')
@@ -590,7 +590,7 @@ class _UserHomePageState extends State<UserHomePage> {
                       backgroundColor: Colors.white,
                       leading: Icon(
                         Icons.access_time,
-                        color: tealIcon,
+                        color: primaryIcon,
                       ),
                       children: <Widget>[
                         Column(
@@ -737,7 +737,7 @@ class _UserHomePageState extends State<UserHomePage> {
                                     highlightColor: Colors.orange[300],
                                     icon: Icon(
                                       Icons.phone,
-                                      color: tealIcon,
+                                      color: primaryIcon,
                                       size: 20,
                                     ),
                                     onPressed: () => {}
@@ -758,7 +758,7 @@ class _UserHomePageState extends State<UserHomePage> {
                                   highlightColor: Colors.orange[300],
                                   icon: Icon(
                                     Icons.location_on,
-                                    color: tealIcon,
+                                    color: primaryIcon,
                                     size: 22,
                                   ),
                                   onPressed: () => launchURL(
