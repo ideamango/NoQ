@@ -486,110 +486,6 @@ class EntityService {
     return isSuccess;
   }
 
-  Future<List<MetaEntity>> searchByName(String name, double lat, double lon,
-      double radius, int pageNumber, int pageSize) async {
-    List<MetaEntity> entities = new List<MetaEntity>();
-    Firestore fStore = Firestore.instance;
-    Geoflutterfire geo = Geoflutterfire();
-
-    // var queryRef = fStore.collection('entities').where('name', isEqualTo: name);
-    // GeoFirePoint center = geo.point(latitude: lat, longitude: lon);
-    // double radius = double.parse(distance.toString());
-    // var stream = geo
-    //     .collection(collectionRef: queryRef)
-    //     .within(center: center, radius: radius, field: 'coordinates')
-    //     .skip((pageNumber - 1) * pageSize)
-    //     .take(pageSize);
-
-    // stream.listen((List<DocumentSnapshot> documentList) {
-    //   documentList.forEach((doc) => {entities.add(Entity.fromJson(doc.data))});
-    // });
-    //-------------------------
-    // var collectionReference = fStore.collection('entities');
-    // GeoFirePoint center = geo.point(latitude: lat, longitude: lon);
-
-    // double radius = 5;
-    // String field = 'coordinates';
-
-    // Stream<List<DocumentSnapshot>> stream = geo
-    //     .collection(collectionRef: collectionReference)
-    //     .within(center: center, radius: radius, field: field);
-
-    // await stream.listen((List<DocumentSnapshot> documentList) {
-    //   documentList.forEach((doc) => {entities.add(Entity.fromJson(doc.data))});
-    // });
-    //---------------------------
-
-    GeoFirePoint center = geo.point(latitude: lat, longitude: lon);
-
-    // QuerySnapshot qs = await fStore
-    //     .collection('entities')
-    //     .where("query", arrayContains: "smi")
-    //     .getDocuments();
-
-    // print("Array Contains result count: " + qs.documents.length.toString());
-
-    var collectionReference =
-        fStore.collection('entities').where("nameQuery", arrayContains: name);
-
-    // var collectionReference =
-    //     fStore.collection('entities').where("name", isEqualTo: "Bata");
-
-    // var collectionReference = fStore.collection('entities');
-
-    String field = 'coordinates';
-
-    Stream<List<DocumentSnapshot>> stream = geo
-        .collection(collectionRef: collectionReference)
-        .within(center: center, radius: radius, field: field);
-    //    .take(pageSize);
-    //.skip(pageNumber - 1);
-    if (stream.first == null) {
-      return entities;
-    }
-
-    try {
-      for (DocumentSnapshot ds in await stream.first) {
-        MetaEntity me = Entity.fromJson(ds.data).getMetaEntity();
-        me.distance = center.distance(lat: me.lat, lng: me.lon);
-        entities.add(me);
-      }
-    } catch (e) {
-      print(e);
-    }
-
-    return entities;
-  }
-
-  Future<List<MetaEntity>> searchByType(String type, double lat, double lon,
-      double radius, int pageNumber, int pageSize) async {
-    List<MetaEntity> entities = new List<MetaEntity>();
-    Firestore fStore = Firestore.instance;
-    Geoflutterfire geo = Geoflutterfire();
-    GeoFirePoint center = geo.point(latitude: lat, longitude: lon);
-
-    var collectionReference =
-        fStore.collection('entities').where("type", isEqualTo: type);
-
-    String field = 'coordinates';
-
-    Stream<List<DocumentSnapshot>> stream = geo
-        .collection(collectionRef: collectionReference)
-        .within(center: center, radius: radius, field: field);
-
-    try {
-      for (DocumentSnapshot ds in await stream.first) {
-        MetaEntity me = Entity.fromJson(ds.data).getMetaEntity();
-        me.distance = center.distance(lat: me.lat, lng: me.lon);
-        entities.add(me);
-      }
-    } catch (e) {
-      print(e);
-    }
-
-    return entities;
-  }
-
   Future<List<MetaEntity>> search(String name, String type, double lat,
       double lon, double radius, int pageNumber, int pageSize) async {
     List<MetaEntity> entities = new List<MetaEntity>();
@@ -602,18 +498,18 @@ class EntityService {
     if (type != null && type != "" && name != null && name != "") {
       collectionReference = fStore
           .collection('entities')
-          .where("isActive", isEqualTo: "true")
+          .where("isActive", isEqualTo: true)
           .where("nameQuery", arrayContains: name)
           .where("type", isEqualTo: type);
     } else if (name != null && name != "") {
       collectionReference = fStore
           .collection('entities')
-          .where("isActive", isEqualTo: "true")
+          .where("isActive", isEqualTo: true)
           .where("nameQuery", arrayContains: name);
     } else if (type != null && type != "") {
       collectionReference = fStore
           .collection('entities')
-          .where("isActive", isEqualTo: "true")
+          .where("isActive", isEqualTo: true)
           .where("type", isEqualTo: type);
     } else {
       return entities;

@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:noq/db/db_model/entity_slots.dart';
+import 'package:noq/db/db_model/meta_entity.dart';
 
 import 'package:noq/db/db_service/slot_full_exception.dart';
 import 'package:noq/db/db_model/user_token.dart';
@@ -36,13 +37,14 @@ class TokenService {
     return es;
   }
 
-  Future<UserToken> generateToken(String entityId, DateTime dateTime) async {
+  Future<UserToken> generateToken(
+      MetaEntity metaEntity, DateTime dateTime) async {
     final FirebaseUser user = await FirebaseAuth.instance.currentUser();
     Firestore fStore = Firestore.instance;
-    String userId = user.uid;
+    String userPhone = user.phoneNumber;
     //TODO: To run the validation on DateTime for holidays, break, advnanceDays and during closing hours
 
-    String entitySlotsDocId = entityId +
+    String entitySlotsDocId = metaEntity.entityId +
         "#" +
         dateTime.year.toString() +
         "~" +
@@ -60,7 +62,7 @@ class TokenService {
         fStore.document('slots/' + entitySlotsDocId);
 
     final DocumentReference tokRef =
-        fStore.document('tokens/' + slotId + "#" + userId);
+        fStore.document('tokens/' + slotId + "#" + userPhone);
 
     UserToken token;
 
@@ -122,8 +124,8 @@ class TokenService {
 
           Map<String, dynamic> tokenJson = <String, dynamic>{
             'slotId': slotId,
-            'entityId': entityId,
-            'userId': userId,
+            'entityId': metaEntity.entityId,
+            'userId': userPhone,
             'number': newNumber,
             'dateTime': dateTime,
             'maxAllowed': maxAllowed
@@ -134,21 +136,21 @@ class TokenService {
           token = UserToken.fromJson(tokenJson);
         } else {
           //This is the first token for the entity for the given day
-          int maxAllowed = 5; // TODO: to be fetched from Entity
-          int slotDuration = 30; //TODO: To be fetched from Entity
-          List<String> closedOn = ["Saturday", "Sunday"];
-          int breakStartHour = 13;
-          int breakStartMinute = 30;
-          int breakEndHour = 14;
-          int breakEndMinute = 15;
-          int startTimeHour = 10;
-          int startTimeMinute = 0;
-          int endTimeHour = 8;
-          int endTimeMinute = 30;
+          int maxAllowed = metaEntity.maxAllowed;
+          int slotDuration = metaEntity.slotDuration;
+          List<String> closedOn = metaEntity.closedOn;
+          int breakStartHour = metaEntity.breakStartHour;
+          int breakStartMinute = metaEntity.breakStartMinute;
+          int breakEndHour = metaEntity.breakEndHour;
+          int breakEndMinute = metaEntity.breakEndMinute;
+          int startTimeHour = metaEntity.startTimeHour;
+          int startTimeMinute = metaEntity.startTimeHour;
+          int endTimeHour = metaEntity.endTimeHour;
+          int endTimeMinute = metaEntity.endTimeMinute;
 
           EntitySlots es = new EntitySlots(
               slots: new List<Slot>(),
-              entityId: entityId,
+              entityId: metaEntity.entityId,
               date: new DateTime(dateTime.year, dateTime.month, dateTime.day),
               maxAllowed: maxAllowed,
               slotDuration: slotDuration,
@@ -173,11 +175,15 @@ class TokenService {
 
           Map<String, dynamic> tokenJson = <String, dynamic>{
             'slotId': slotId,
-            'entityId': entityId,
-            'userId': userId,
+            'entityId': metaEntity.entityId,
+            'userId': userPhone,
             'number': 1,
             'dateTime': dateTime,
-            'maxAllowed': maxAllowed
+            'maxAllowed': maxAllowed,
+            'slotDuration': slotDuration,
+            'entityName': metaEntity.name,
+            'lat': metaEntity.lat,
+            'lon': metaEntity.lon
           };
 
           //create EntitySlots with one slot in it
@@ -203,7 +209,7 @@ class TokenService {
 
     final FirebaseUser user = await FirebaseAuth.instance.currentUser();
     Firestore fStore = Firestore.instance;
-    String userId = user.uid;
+    String userPhone = user.phoneNumber;
 
     bool isCancelled = false;
 
@@ -213,7 +219,7 @@ class TokenService {
       try {
         DocumentSnapshot tokenSnapshot = await tx.get(tokRef);
         if (tokenSnapshot.exists) {
-          if (tokenSnapshot.data['userId'] != userId) {
+          if (tokenSnapshot.data['userId'] != userPhone) {
             throw new TokenNotExistsException(
                 "Token does not belong to the requested user");
           }
@@ -257,12 +263,57 @@ class TokenService {
     return isCancelled;
   }
 
-  Future<List<UserToken>> getAllTokens(DateTime from, DateTime to) async {
-    return null;
+  Future<List<UserToken>> getAllTokensForCurrentUser(
+      DateTime from, DateTime to) async {
+    List<UserToken> tokens = new List<UserToken>();
+    FirebaseUser user = await FirebaseAuth.instance.currentUser();
+    Firestore fStore = Firestore.instance;
+
+    QuerySnapshot qs;
+
+    if (from != null && to != null) {
+      qs = await fStore
+          .collection('tokens')
+          .where("dateTime", isGreaterThanOrEqualTo: from)
+          .where("dateTime", isLessThanOrEqualTo: to)
+          .where("userId", isEqualTo: user.phoneNumber)
+          .getDocuments();
+    } else if (from != null && to == null) {
+      qs = await fStore
+          .collection('tokens')
+          .where("dateTime", isGreaterThanOrEqualTo: from)
+          .where("userId", isEqualTo: user.phoneNumber)
+          .getDocuments();
+    }
+
+    for (DocumentSnapshot ds in qs.documents) {
+      UserToken tok = UserToken.fromJson(ds.data);
+      tokens.add(tok);
+    }
+
+    return tokens;
   }
 
-  Future<List<UserToken>> getTokensForEntity(
+  Future<List<UserToken>> getTokensForEntityBookedByCurrentUser(
       String entityId, DateTime date) async {
-    return null;
+    List<UserToken> tokens = new List<UserToken>();
+    FirebaseUser user = await FirebaseAuth.instance.currentUser();
+    Firestore fStore = Firestore.instance;
+    DateTime inputDate = new DateTime(date.year, date.month, date.day);
+    DateTime nextDay = inputDate.add(new Duration(days: 1));
+
+    QuerySnapshot qs = await fStore
+        .collection('tokens')
+        .where("dateTime", isGreaterThanOrEqualTo: date)
+        .where("dateTime", isLessThan: nextDay)
+        .where("userId", isEqualTo: user.phoneNumber)
+        .getDocuments();
+
+    for (DocumentSnapshot ds in qs.documents) {
+      UserToken tok = UserToken.fromJson(ds.data);
+      tokens.add(tok);
+    }
+
+    return tokens;
   }
 }
