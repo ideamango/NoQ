@@ -97,23 +97,12 @@ class _CustomAppBarState extends State<CustomAppBar> {
       flexibleSpace: Container(
         decoration: gradientBackground,
       ),
-      backgroundColor: Colors.teal,
-      //Theme.of(context).primaryColor,
       actions: <Widget>[
         IconButton(
             icon: Icon(Icons.exit_to_app),
             color: Colors.white,
             onPressed: _logout)
       ],
-      // leading: Builder(
-      //   builder: (BuildContext context) {
-      //     return IconButton(
-      //       color: Colors.white,
-      //       icon: Icon(Icons.more_vert),
-      //       onPressed: () => Scaffold.of(context).openDrawer(),
-      //     );
-      //   },
-      // ),
     );
   }
 }
@@ -121,7 +110,9 @@ class _CustomAppBarState extends State<CustomAppBar> {
 class CustomAppBarWithBackButton extends StatefulWidget
     implements PreferredSizeWidget {
   final String titleTxt;
-  CustomAppBarWithBackButton({Key key, @required this.titleTxt})
+  final dynamic backRoute;
+  CustomAppBarWithBackButton(
+      {Key key, @required this.titleTxt, @required this.backRoute})
       : preferredSize = Size.fromHeight(kToolbarHeight),
         super(key: key);
 
@@ -224,6 +215,7 @@ class _CustomAppBarWithBackButtonState
             Navigator.of(context).pop();
             Navigator.push(context,
                 MaterialPageRoute(builder: (context) => UserHomePage()));
+            //Navigator.pushReplacementNamed(context, widget.backRoute);
           }),
 
       actions: <Widget>[

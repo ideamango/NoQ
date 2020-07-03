@@ -66,16 +66,12 @@ class _EntityServicesListPageState extends State<EntityServicesListPage> {
 
   @override
   Widget build(BuildContext context) {
-    final BoxDecoration indigoContainer = new BoxDecoration(
-        border: Border.all(color: Colors.blueGrey[400]),
-        shape: BoxShape.rectangle,
-        color: Colors.blueGrey[500],
-        borderRadius: BorderRadius.all(Radius.circular(4.0)));
-
     final subEntityType = new FormField(
       builder: (FormFieldState state) {
         return InputDecorator(
           decoration: InputDecoration(
+            enabledBorder: InputBorder.none,
+            focusedBorder: InputBorder.none,
             //  icon: const Icon(Icons.person),
             labelText: 'Type of Service',
           ),
@@ -113,19 +109,23 @@ class _EntityServicesListPageState extends State<EntityServicesListPage> {
         //   saveEntityDetails(entity);
       },
     );
-    String title =
-        "Manage Services in " + ((parentEntity.name) ?? (parentEntity.eType));
+    String title = "Manage Services in " +
+        ((parentEntity.name).isEmpty
+            ? (parentEntity.eType)
+            : (parentEntity.name));
     return MaterialApp(
       title: 'Add child entities',
       //theme: ThemeData.light().copyWith(),
       home: Scaffold(
         appBar: AppBar(
             actions: <Widget>[],
-            backgroundColor: Colors.teal,
+            flexibleSpace: Container(
+              decoration: gradientBackground,
+            ),
             leading: IconButton(
                 padding: EdgeInsets.all(0),
                 alignment: Alignment.center,
-                highlightColor: Colors.orange[300],
+                highlightColor: highlightColor,
                 icon: Icon(Icons.arrow_back),
                 color: Colors.white,
                 onPressed: () {
@@ -134,7 +134,7 @@ class _EntityServicesListPageState extends State<EntityServicesListPage> {
                 }),
             title: Text(
               title,
-              style: TextStyle(color: Colors.white, fontSize: 16),
+              style: drawerdefaultTextStyle,
               overflow: TextOverflow.ellipsis,
             )),
         body: Center(
@@ -149,7 +149,7 @@ class _EntityServicesListPageState extends State<EntityServicesListPage> {
                     elevation: 20,
                     child: Container(
                       decoration: BoxDecoration(
-                          border: Border.all(color: Colors.indigo),
+                          border: Border.all(color: borderColor),
                           color: Colors.white,
                           shape: BoxShape.rectangle,
                           borderRadius: BorderRadius.all(Radius.circular(5.0))),
@@ -158,7 +158,7 @@ class _EntityServicesListPageState extends State<EntityServicesListPage> {
                           Container(
                             height: MediaQuery.of(context).size.width * .1,
                             padding: EdgeInsets.fromLTRB(6, 0, 0, 0),
-                            decoration: indigoContainer,
+                            decoration: darkContainer,
                             child: Row(
                               children: <Widget>[
                                 Icon(

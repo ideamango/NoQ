@@ -22,7 +22,7 @@ class QrCodeScanner {
           SizedBox(width: 5),
           Icon(
             Icons.camera,
-            color: tealIcon,
+            color: primaryIcon,
             size: 26,
           ),
         ],

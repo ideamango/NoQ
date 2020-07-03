@@ -1,4 +1,8 @@
+import 'dart:ui';
+
+import 'package:flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
+import 'package:noq/db/db_service/entity_service.dart';
 import 'package:noq/models/localDB.dart';
 import 'dart:async';
 import 'package:flutter/services.dart';
@@ -15,6 +19,7 @@ import 'package:noq/widget/weekday_selector.dart';
 import 'package:flutter/foundation.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
+import 'package:noq/widget/widgets.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uuid/uuid.dart';
 
@@ -537,9 +542,17 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
 //Address fields
     final adrsField1 = RichText(
       text: TextSpan(
-        style: textInputTextStyle,
+        style: TextStyle(
+            color: Colors.blueGrey[700],
+            // fontWeight: FontWeight.w800,
+            fontFamily: 'Monsterrat',
+            letterSpacing: 0.5,
+            fontSize: 15.0,
+            decoration: TextDecoration.underline),
         children: <TextSpan>[
-          TextSpan(text: serviceEntity.adrs.addressLine1),
+          TextSpan(
+            text: serviceEntity.adrs.addressLine1,
+          ),
           TextSpan(text: serviceEntity.adrs.landmark),
           TextSpan(text: serviceEntity.adrs.locality),
           TextSpan(text: serviceEntity.adrs.city),
@@ -755,7 +768,9 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
       home: Scaffold(
         appBar: AppBar(
             actions: <Widget>[],
-            backgroundColor: Colors.teal,
+            flexibleSpace: Container(
+              decoration: gradientBackground,
+            ),
             leading: IconButton(
               padding: EdgeInsets.all(0),
               alignment: Alignment.center,
@@ -773,7 +788,7 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
             ),
             title: Text(
               title,
-              style: TextStyle(color: Colors.white, fontSize: 16),
+              style: whiteBoldTextStyle1,
               overflow: TextOverflow.ellipsis,
             )),
         body: Center(
@@ -787,7 +802,7 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
                 children: <Widget>[
                   Container(
                     decoration: BoxDecoration(
-                        border: Border.all(color: Colors.indigo),
+                        border: Border.all(color: borderColor),
                         color: Colors.grey[50],
                         shape: BoxShape.rectangle,
                         borderRadius: BorderRadius.all(Radius.circular(5.0))),
@@ -798,7 +813,7 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
                         Column(
                           children: <Widget>[
                             Container(
-                              decoration: indigoContainer,
+                              decoration: darkContainer,
                               child: Theme(
                                 data: ThemeData(
                                   unselectedWidgetColor: Colors.white,
@@ -823,7 +838,7 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
                                     new Container(
                                       width: MediaQuery.of(context).size.width *
                                           .94,
-                                      decoration: indigoContainer,
+                                      decoration: darkContainer,
                                       padding: EdgeInsets.all(2.0),
                                       child: Expanded(
                                         child: Text(basicInfoStr,
@@ -860,7 +875,7 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
                   ),
                   Container(
                     decoration: BoxDecoration(
-                        border: Border.all(color: Colors.indigo),
+                        border: Border.all(color: borderColor),
                         color: Colors.grey[50],
                         shape: BoxShape.rectangle,
                         borderRadius: BorderRadius.all(Radius.circular(5.0))),
@@ -871,7 +886,7 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
                         Column(
                           children: <Widget>[
                             Container(
-                              decoration: indigoContainer,
+                              decoration: darkContainer,
                               child: Theme(
                                 data: ThemeData(
                                   unselectedWidgetColor: Colors.white,
@@ -896,7 +911,7 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
                                     new Container(
                                       width: MediaQuery.of(context).size.width *
                                           .94,
-                                      decoration: indigoContainer,
+                                      decoration: darkContainer,
                                       padding: EdgeInsets.all(2.0),
                                       child: Expanded(
                                         child: Text(addressInfoStr,
@@ -912,21 +927,45 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
                         Container(
                           padding: EdgeInsets.only(left: 5.0, right: 5),
                           child: Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
                             children: <Widget>[
-                              RaisedButton(
-                                elevation: 20,
-                                color: lightIcon,
-                                splashColor: highlightColor,
-                                textColor: Colors.white,
-                                shape: RoundedRectangleBorder(
-                                    side: BorderSide(color: lightIcon)),
-                                child: Text('Use current location'),
-                                onPressed: _getCurrLocation,
-                              ),
-                              Text("sdgfsfgdf"),
+                              // RaisedButton(
+                              //   elevation: 20,
+                              //   color: btnColor,
+                              //   splashColor: highlightColor,
+                              //   textColor: Colors.white,
+                              //   shape: RoundedRectangleBorder(
+                              //       side: BorderSide(color: btnColor)),
+                              //   child: Text('Use current location'),
+                              //   onPressed: _getCurrLocation,
+                              // ),
+                              Text("Address:"),
+
                               adrsField1,
 
-                              Text("aaaaaaaa"),
+                              Padding(
+                                padding:
+                                    const EdgeInsets.fromLTRB(0, 0, 0, 8.0),
+                                child: TextFormField(
+                                  obscureText: false,
+                                  maxLines: 1,
+                                  minLines: 1,
+                                  style: textInputTextStyle,
+                                  // controller: _nameController,
+                                  //initialValue: serviceEntity.name,
+                                  keyboardType: TextInputType.text,
+                                  decoration: CommonStyle.textFieldStyle(
+                                      labelTextStr: "Add Landmark",
+                                      hintTextStr: "e.g. Near Block1 etc"),
+                                  validator: validateText,
+                                  onChanged: (String value) {
+                                    serviceEntity.name = value;
+                                  },
+                                  onSaved: (String value) {
+                                    serviceEntity.name = value;
+                                  },
+                                ),
+                              ),
                               //landmarkField2,
                               // localityField,
                               //cityField,
@@ -944,7 +983,7 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
                   ),
                   Container(
                     decoration: BoxDecoration(
-                        border: Border.all(color: Colors.indigo),
+                        border: Border.all(color: borderColor),
                         color: Colors.grey[50],
                         shape: BoxShape.rectangle,
                         borderRadius: BorderRadius.all(Radius.circular(5.0))),
@@ -956,7 +995,7 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
                           children: <Widget>[
                             Container(
                               //padding: EdgeInsets.only(left: 5),
-                              decoration: indigoContainer,
+                              decoration: darkContainer,
                               child: Theme(
                                 data: ThemeData(
                                   unselectedWidgetColor: Colors.white,
@@ -981,7 +1020,7 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
                                     new Container(
                                       width: MediaQuery.of(context).size.width *
                                           .94,
-                                      decoration: indigoContainer,
+                                      decoration: darkContainer,
                                       padding: EdgeInsets.all(2.0),
                                       child: Expanded(
                                         child: Text(contactInfoStr,
@@ -1141,7 +1180,7 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
                   // ),
                   Builder(
                     builder: (context) => RaisedButton(
-                        color: lightIcon,
+                        color: btnColor,
                         splashColor: highlightColor,
                         child: Container(
                           // width: MediaQuery.of(context).size.width * .35,
@@ -1159,44 +1198,55 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
                           ),
                         ),
                         onPressed: () {
-                          final snackBar = SnackBar(
-                            elevation: 20,
-                            // behavior: SnackBarBehavior.floating,
-                            // shape: Border.all(
-                            //   color: lightIcon,
-                            //   width: 2,
-                            // ),
-                            //  backgroundColor: Colors.white,
-                            content: Container(
-                              padding: EdgeInsets.all(0),
-                              // decoration: BoxDecoration(
-                              //   border: Border.all(color: Colors.indigo),
-                              // color: Colors.white,
-                              // shape: BoxShape.rectangle,
-                              // borderRadius:
-                              //     BorderRadius.all(Radius.circular(5.0))),
-                              alignment: Alignment.center,
-                              height: MediaQuery.of(context).size.width * .1,
-                              child: Text("Saving details..",
-                                  style: TextStyle(color: Colors.white)),
-                              // Column(
-                              //   children: <Widget>[
-                              //     RichText(
-                              //       text: TextSpan(
-                              //           style: highlightBoldTextStyle,
-                              //           children: <TextSpan>[
-                              //             TextSpan(
-                              //               text: "Saving details ... ",
-                              //             ),
-                              //           ]),
-                              //     ),
-                              //   ],
-                              // ),
+                          Flushbar(
+                            //padding: EdgeInsets.zero,
+                            margin: EdgeInsets.zero,
+                            flushbarPosition: FlushbarPosition.BOTTOM,
+                            flushbarStyle: FlushbarStyle.GROUNDED,
+                            reverseAnimationCurve: Curves.decelerate,
+                            forwardAnimationCurve: Curves.easeInToLinear,
+                            backgroundColor: headerBarColor,
+                            boxShadows: [
+                              BoxShadow(
+                                  color: primaryAccentColor,
+                                  offset: Offset(0.0, 2.0),
+                                  blurRadius: 3.0)
+                            ],
+                            // backgroundGradient: new LinearGradient(
+                            //     colors: [
+                            //       Colors.blueGrey,
+                            //       Colors.black,
+                            //     ],
+                            //     begin: const FractionalOffset(0.0, 0.0),
+                            //     end: const FractionalOffset(1.0, 0.0),
+                            //     stops: [0.0, 1.0],
+                            //     tileMode: TileMode.repeated),
+                            isDismissible: false,
+                            duration: Duration(seconds: 4),
+                            icon: Icon(
+                              Icons.save,
+                              color: Colors.blueGrey[50],
                             ),
-                            duration: Duration(seconds: 2),
-                          );
-
-                          Scaffold.of(context).showSnackBar(snackBar);
+                            showProgressIndicator: true,
+                            progressIndicatorBackgroundColor:
+                                Colors.blueGrey[800],
+                            routeBlur: 10.0,
+                            titleText: Text(
+                              "Saving Details",
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 16.0,
+                                  color: primaryAccentColor,
+                                  fontFamily: "ShadowsIntoLightTwo"),
+                            ),
+                            messageText: Text(
+                              " Loading the services offered!!",
+                              style: TextStyle(
+                                  fontSize: 12.0,
+                                  color: Colors.blueGrey[50],
+                                  fontFamily: "ShadowsIntoLightTwo"),
+                            ),
+                          )..show(context);
                           processSaveWithTimer();
                         }),
                   ),
@@ -1305,17 +1355,37 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
                                     actions: <Widget>[
                                       RaisedButton(
                                         color: (_delEnabled)
-                                            ? lightIcon
+                                            ? btnColor
                                             : Colors.blueGrey[200],
                                         elevation: (_delEnabled) ? 20 : 0,
                                         onPressed: () {
                                           if (_delEnabled) {
+                                            String parentEntityId =
+                                                serviceEntity.parentEntityId;
+
+                                            EntityAppData parentEntity;
+                                            // EntityService()
+                                            //     .deleteEntity(serviceEntity.id)
+                                            //     .whenComplete(() {
+                                            //   Navigator.pop(context);
+
+                                            //   getEntity(parentEntityId)
+                                            //       .then((value) =>
+                                            //           parentEntity = value)
+                                            //       .whenComplete(() => Navigator.push(
+                                            //           context,
+                                            //           MaterialPageRoute(
+                                            //               builder: (context) =>
+                                            //                   EntityServicesListPage(
+                                            //                       entity:
+                                            //                           parentEntity))));
+                                            // });
+//TODO: Problem in this method, not deleting entity from list
                                             deleteServiceFromDb(serviceEntity)
                                                 .whenComplete(() {
                                               Navigator.pop(context);
-                                              EntityAppData parentEntity;
-                                              getEntity(serviceEntity
-                                                      .parentEntityId)
+
+                                              getEntity(parentEntityId)
                                                   .then((value) =>
                                                       parentEntity = value)
                                                   .whenComplete(() => Navigator.push(

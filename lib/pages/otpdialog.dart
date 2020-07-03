@@ -22,7 +22,7 @@ class _OTPDialogState extends State<OTPDialog> {
 
   BoxDecoration get _pinPutDecoration {
     return BoxDecoration(
-      border: Border.all(color: Colors.orange),
+      border: Border.all(color: highlightColor),
       //borderRadius: BorderRadius.circular(15),
     );
   }
@@ -124,6 +124,7 @@ class _OTPDialogState extends State<OTPDialog> {
       backgroundColor: Colors.grey[200],
       titleTextStyle: inputTextStyle,
       elevation: 10.0,
+      contentTextStyle: TextStyle(color: primaryDarkColor),
       content: Container(
         height: MediaQuery.of(context).size.height * .2,
         child: Column(
@@ -158,41 +159,49 @@ class _OTPDialogState extends State<OTPDialog> {
                 followingFieldDecoration: _pinPutDecoration.copyWith(
                   borderRadius: BorderRadius.circular(5),
                   border: Border.all(
-                    color: Colors.indigo,
+                    color: btnColor,
                   ),
                 ),
               ),
             ),
+            Divider(
+              color: Colors.blueGrey[400],
+              height: 1,
+              //indent: 40,
+              //endIndent: 30,
+            ),
             (_errorMessage != null
-                ? Column(
-                    children: <Widget>[
-                      myDivider,
-                      Text(
-                        _errorMessage,
-                        textAlign: TextAlign.left,
-                        style: errorTextStyle,
-                      )
-                    ],
+                ? Text(
+                    _errorMessage,
+                    textAlign: TextAlign.left,
+                    style: errorTextStyle,
                   )
-                : Container()),
+                : SizedBox(height: 1)),
             // SizedBox(height: 10),
             //Divider(),
           ],
         ),
       ),
-      contentPadding: EdgeInsets.all(10),
+      // titlePadding: EdgeInsets.fromLTRB(5, 10, 0, 0),
+      contentPadding: EdgeInsets.all(8),
+      actionsPadding: EdgeInsets.all(0),
       actions: <Widget>[
-        FlatButton(
-          color: Colors.transparent,
-          textColor: Colors.orange,
-          shape: RoundedRectangleBorder(side: BorderSide(color: Colors.orange)),
-          child: Text('Clear All'),
-          onPressed: () {
-            setState(() {
-              _errorMessage = null;
-            });
-            _pinPutController.text = '';
-          },
+        SizedBox(
+          height: 28,
+          width: 80,
+          child: RaisedButton(
+            color: btnColor,
+            textColor: Colors.white,
+            // shape:
+            //     RoundedRectangleBorder(side: BorderSide(color: highlightColor)),
+            child: Text('Clear All'),
+            onPressed: () {
+              setState(() {
+                _errorMessage = null;
+              });
+              _pinPutController.text = '';
+            },
+          ),
         ),
         // FlatButton(
         //   color: Colors.orange,

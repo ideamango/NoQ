@@ -69,7 +69,7 @@ Future<String> showTokenAlert(
                     width: MediaQuery.of(context).size.width * .72,
                     height: MediaQuery.of(context).size.width * .12,
                     decoration: new BoxDecoration(
-                      color: primaryAccentColor,
+                      color: primaryIcon,
                     ),
                     child: Text(tokenNo, style: whiteBoldTextStyle1),
                   ),

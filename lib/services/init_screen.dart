@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:noq/services/authService.dart';
+import 'package:noq/style.dart';
 
 class SplashScreen extends StatefulWidget {
   @override
@@ -51,7 +52,7 @@ class SplashState extends State<SplashScreen> {
             ),
             Padding(padding: EdgeInsets.only(top: 20.0)),
             CircularProgressIndicator(
-              backgroundColor: Colors.indigo,
+              backgroundColor: primaryAccentColor,
               valueColor: AlwaysStoppedAnimation<Color>(Colors.amber),
               strokeWidth: 3,
             )

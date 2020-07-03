@@ -1,6 +1,9 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/foundation.dart';
+import 'package:noq/db/db_model/address.dart';
+import 'package:noq/db/db_model/entity.dart';
+import 'package:noq/db/db_model/my_geo_fire_point.dart';
 import 'package:noq/db/db_service/entity_service.dart';
 import 'package:noq/utils.dart';
 import 'dart:async';
@@ -44,6 +47,45 @@ Future<UserAppData> readData() async {
   }
 }
 
+void saveEntityDetailsServer() async {
+  Address adrs = new Address(
+      city: "Hyderbad",
+      state: "Telangana",
+      country: "India",
+      address: "Shop 10, Gachibowli");
+
+  MyGeoFirePoint geoPoint = new MyGeoFirePoint(68, 78);
+  Entity entity = new Entity(
+      entityId: "Entity101",
+      name: "VijethaModified",
+      address: adrs,
+      advanceDays: 3,
+      isPublic: true,
+      geo: geoPoint,
+      maxAllowed: 60,
+      slotDuration: 60,
+      closedOn: ["Saturday", "Sunday"],
+      breakStartHour: 13,
+      breakStartMinute: 30,
+      breakEndHour: 14,
+      breakEndMinute: 30,
+      startTimeHour: 10,
+      startTimeMinute: 30,
+      endTimeHour: 21,
+      endTimeMinute: 0,
+      parentId: null,
+      type: "Mall",
+      isBookable: false,
+      isActive: true,
+      coordinates: geoPoint);
+
+  try {
+    await EntityService().upsertEntity(entity);
+  } catch (e) {
+    print("Exception occured " + e);
+  }
+}
+
 void saveEntityDetails(EntityAppData str) async {
 //Read current data in file
   await readData().then((fUser) {
@@ -54,7 +96,7 @@ void saveEntityDetails(EntityAppData str) async {
         if (fUser.managedEntities[i].id == str.id) {
           //TODO: Update list outside loop, writeData(fuser doiesnt have updated values ISSUE ISSUE)
           fUser.managedEntities[i] = str;
-          fUser.storesAccessed.add(str);
+          //fUser.storesAccessed.add(str);
           writeData(fUser);
           return;
         }
@@ -64,7 +106,8 @@ void saveEntityDetails(EntityAppData str) async {
     }
     fUser.managedEntities.add(str);
     //TODO: ForTesting only - Remove later
-    fUser.storesAccessed.add(str);
+    // fUser.storesAccessed.add(str);
+    fUser.storesAccessed.clear();
 
     //TODO: ForTesting
 
@@ -177,17 +220,17 @@ Future<List<EntityAppData>> getEntityList() async {
 }
 
 Future<EntityAppData> getEntity(String entityId) async {
+  EntityAppData entity;
 //Read current data in file
   await readData().then((fUser) {
     if (!Utils.isNullOrEmpty(fUser.managedEntities)) {
       for (int i = 0; i < fUser.managedEntities.length; i++) {
         if (fUser.managedEntities[i].id == entityId)
-          return fUser.managedEntities[i];
+          entity = fUser.managedEntities[i];
       }
       //TODO:Fetch entity from Server
       // return EntityService().getEntity(entityId);
     }
-    return null;
   });
-  return null;
+  return entity;
 }

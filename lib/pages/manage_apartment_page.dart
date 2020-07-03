@@ -22,6 +22,7 @@ import 'package:flutter/foundation.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:uuid/uuid.dart';
+import 'package:flushbar/flushbar.dart';
 
 class ManageApartmentPage extends StatefulWidget {
   final EntityAppData entity;
@@ -738,7 +739,7 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
     }
 
     processSaveWithTimer() async {
-      var duration = new Duration(seconds: 1);
+      var duration = new Duration(seconds: 4);
       return new Timer(duration, saveRoute);
     }
 
@@ -796,26 +797,27 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
       theme: ThemeData.light().copyWith(),
       home: Scaffold(
         appBar: AppBar(
-            actions: <Widget>[],
-            flexibleSpace: Container(
-              decoration: gradientBackground,
-            ),
-            leading: IconButton(
-              padding: EdgeInsets.all(0),
-              alignment: Alignment.center,
-              highlightColor: highlightColor,
-              icon: Icon(Icons.arrow_back),
-              color: Colors.white,
-              onPressed: () {
-                print("going back");
-                //Save form details, then go back.
-                saveFormDetails();
-                updateModel();
-                //go back
-                Navigator.of(context).pop();
-              },
-            ),
-            title: Text(entity.eType)),
+          actions: <Widget>[],
+          flexibleSpace: Container(
+            decoration: gradientBackground,
+          ),
+          leading: IconButton(
+            padding: EdgeInsets.all(0),
+            alignment: Alignment.center,
+            highlightColor: highlightColor,
+            icon: Icon(Icons.arrow_back),
+            color: Colors.white,
+            onPressed: () {
+              print("going back");
+              //Save form details, then go back.
+              saveFormDetails();
+              updateModel();
+              //go back
+              Navigator.of(context).pop();
+            },
+          ),
+          title: Text(entity.eType, style: whiteBoldTextStyle1),
+        ),
         body: Center(
           child: new SafeArea(
             top: true,
@@ -839,7 +841,7 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
                           children: <Widget>[
                             Container(
                               //padding: EdgeInsets.only(left: 5),
-                              decoration: indigoContainer,
+                              decoration: darkContainer,
                               child: Theme(
                                 data: ThemeData(
                                   unselectedWidgetColor: Colors.white,
@@ -864,7 +866,7 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
                                     new Container(
                                       width: MediaQuery.of(context).size.width *
                                           .94,
-                                      decoration: indigoContainer,
+                                      decoration: darkContainer,
                                       padding: EdgeInsets.all(2.0),
                                       child: Expanded(
                                         child: Text(basicInfoStr,
@@ -913,7 +915,7 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
                           children: <Widget>[
                             Container(
                               //padding: EdgeInsets.only(left: 5),
-                              decoration: indigoContainer,
+                              decoration: darkContainer,
                               child: Theme(
                                 data: ThemeData(
                                   unselectedWidgetColor: Colors.white,
@@ -938,7 +940,7 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
                                     new Container(
                                       width: MediaQuery.of(context).size.width *
                                           .94,
-                                      decoration: indigoContainer,
+                                      decoration: darkContainer,
                                       padding: EdgeInsets.all(2.0),
                                       child: Expanded(
                                         child: Text(addressInfoStr,
@@ -957,11 +959,11 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
                             children: <Widget>[
                               RaisedButton(
                                 elevation: 20,
-                                color: lightIcon,
+                                color: btnColor,
                                 splashColor: highlightColor,
                                 textColor: Colors.white,
                                 shape: RoundedRectangleBorder(
-                                    side: BorderSide(color: lightIcon)),
+                                    side: BorderSide(color: btnColor)),
                                 child: Text('Use current location'),
                                 onPressed: _getCurrLocation,
                               ),
@@ -996,7 +998,7 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
                           children: <Widget>[
                             Container(
                               //padding: EdgeInsets.only(left: 5),
-                              decoration: indigoContainer,
+                              decoration: darkContainer,
                               child: Theme(
                                 data: ThemeData(
                                   unselectedWidgetColor: Colors.white,
@@ -1021,7 +1023,7 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
                                     new Container(
                                       width: MediaQuery.of(context).size.width *
                                           .94,
-                                      decoration: indigoContainer,
+                                      decoration: darkContainer,
                                       padding: EdgeInsets.all(2.0),
                                       child: Expanded(
                                         child: Text(contactInfoStr,
@@ -1077,7 +1079,7 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
 
                   Builder(
                     builder: (context) => RaisedButton(
-                        color: lightIcon,
+                        color: btnColor,
                         splashColor: highlightColor,
                         child: Container(
                           // width: MediaQuery.of(context).size.width * .35,
@@ -1095,44 +1097,95 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
                           ),
                         ),
                         onPressed: () {
-                          final snackBar = SnackBar(
-                            elevation: 20,
-                            // behavior: SnackBarBehavior.floating,
-                            // shape: Border.all(
-                            //   color: lightIcon,
-                            //   width: 2,
-                            // ),
-                            //  backgroundColor: Colors.white,
-                            content: Container(
-                              padding: EdgeInsets.all(0),
-                              // decoration: BoxDecoration(
-                              //   border: Border.all(color: Colors.indigo),
-                              // color: Colors.white,
-                              // shape: BoxShape.rectangle,
-                              // borderRadius:
-                              //     BorderRadius.all(Radius.circular(5.0))),
-                              alignment: Alignment.center,
-                              height: MediaQuery.of(context).size.width * .1,
-                              child: Text("Saving details..",
-                                  style: TextStyle(color: Colors.white)),
-                              // Column(
-                              //   children: <Widget>[
-                              //     RichText(
-                              //       text: TextSpan(
-                              //           style: highlightBoldTextStyle,
-                              //           children: <TextSpan>[
-                              //             TextSpan(
-                              //               text: "Saving details ... ",
-                              //             ),
-                              //           ]),
-                              //     ),
-                              //   ],
-                              // ),
-                            ),
-                            duration: Duration(seconds: 2),
-                          );
+                          // final snackBar = SnackBar(
+                          //   elevation: 20,
+                          //   // behavior: SnackBarBehavior.floating,
+                          //   // shape: Border.all(
+                          //   //   color: lightIcon,
+                          //   //   width: 2,
+                          //   // ),
+                          //   //  backgroundColor: Colors.white,
+                          //   content: Container(
+                          //     padding: EdgeInsets.all(0),
+                          //     // decoration: BoxDecoration(
+                          //     //   border: Border.all(color: Colors.indigo),
+                          //     // color: Colors.white,
+                          //     // shape: BoxShape.rectangle,
+                          //     // borderRadius:
+                          //     //     BorderRadius.all(Radius.circular(5.0))),
+                          //     alignment: Alignment.center,
+                          //     height: MediaQuery.of(context).size.width * .1,
+                          //     child: Text("Saving details..",
+                          //         style: TextStyle(color: Colors.white)),
+                          //     // Column(
+                          //     //   children: <Widget>[
+                          //     //     RichText(
+                          //     //       text: TextSpan(
+                          //     //           style: highlightBoldTextStyle,
+                          //     //           children: <TextSpan>[
+                          //     //             TextSpan(
+                          //     //               text: "Saving details ... ",
+                          //     //             ),
+                          //     //           ]),
+                          //     //     ),
+                          //     //   ],
+                          //     // ),
+                          //   ),
+                          //   duration: Duration(seconds: 2),
+                          // );
 
-                          Scaffold.of(context).showSnackBar(snackBar);
+                          // Scaffold.of(context).showSnackBar(snackBar);
+                          // processSaveWithTimer();
+
+                          Flushbar(
+                            //padding: EdgeInsets.zero,
+                            margin: EdgeInsets.zero,
+                            flushbarPosition: FlushbarPosition.BOTTOM,
+                            flushbarStyle: FlushbarStyle.GROUNDED,
+                            reverseAnimationCurve: Curves.decelerate,
+                            forwardAnimationCurve: Curves.easeInToLinear,
+                            backgroundColor: headerBarColor,
+                            boxShadows: [
+                              BoxShadow(
+                                  color: primaryAccentColor,
+                                  offset: Offset(0.0, 2.0),
+                                  blurRadius: 3.0)
+                            ],
+                            // backgroundGradient: new LinearGradient(
+                            //     colors: [
+                            //       Colors.blueGrey,
+                            //       Colors.black,
+                            //     ],
+                            //     begin: const FractionalOffset(0.0, 0.0),
+                            //     end: const FractionalOffset(1.0, 0.0),
+                            //     stops: [0.0, 1.0],
+                            //     tileMode: TileMode.repeated),
+                            isDismissible: false,
+                            duration: Duration(seconds: 4),
+                            icon: Icon(
+                              Icons.save,
+                              color: Colors.blueGrey[50],
+                            ),
+                            showProgressIndicator: true,
+                            progressIndicatorBackgroundColor:
+                                Colors.blueGrey[800],
+                            routeBlur: 10.0,
+                            titleText: Text(
+                              "Saving Details",
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 16.0,
+                                  color: primaryAccentColor,
+                                  fontFamily: "ShadowsIntoLightTwo"),
+                            ),
+                            messageText: Text(
+                              " Loading the services offered!!",
+                              style: TextStyle(
+                                  fontSize: 12.0,
+                                  color: Colors.blueGrey[50],
+                                  fontFamily: "ShadowsIntoLightTwo"),
+                            ),
+                          )..show(context);
                           processSaveWithTimer();
                         }),
                   ),
@@ -1240,7 +1293,7 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
                                       actions: <Widget>[
                                         RaisedButton(
                                           color: (_delEnabled)
-                                              ? lightIcon
+                                              ? btnColor
                                               : Colors.blueGrey[200],
                                           elevation: (_delEnabled) ? 20 : 0,
                                           onPressed: () {

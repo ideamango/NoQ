@@ -137,11 +137,12 @@ final headingTextStyle = TextStyle(
     letterSpacing: 0.5,
     fontFamily: 'Montserrat',
     fontSize: 15.0);
-final Color tealIcon = Colors.blueGrey[800];
+final Color primaryIcon = Colors.blueGrey[800];
 final Color borderColor = Colors.blueGrey[800];
 final Color primaryAccentColor = Colors.cyanAccent[400];
 
 final Color primaryDarkColor = Colors.cyan[800];
+final Color headerBarColor = Colors.blueGrey[500];
 
 final Color highlightColor = Colors.orangeAccent;
 final Color unselectedColor = Colors.blueGrey[700];
@@ -150,7 +151,7 @@ final Color disabledColor = Colors.grey[400];
 final Color btnColor = Colors.cyan[600];
 final Color btnDisabledolor = Colors.blueGrey[200];
 
-final Color lightIcon = Colors.cyan[600];
+//final Color lightIcon = Colors.cyan[600];
 final Color highlightText = Colors.blueGrey[800];
 final highlightSubTextStyle = TextStyle(
     color: Colors.blueGrey[800], fontFamily: 'Montserrat', fontSize: 12.0);
@@ -185,8 +186,8 @@ final homeMsgStyle3 =
 final highlightTextStyle = TextStyle(
     color: Colors.blueGrey[800], fontFamily: 'Montserrat', fontSize: 20.0);
 
-final BoxDecoration indigoContainer = new BoxDecoration(
-    // border: Border.all(color: Colors.blueGrey[500]),
+final BoxDecoration darkContainer = new BoxDecoration(
+    border: Border.all(color: Colors.blueGrey[500]),
     shape: BoxShape.rectangle,
     color: Colors.blueGrey[500],
     borderRadius: BorderRadius.only(
@@ -202,7 +203,7 @@ final gradientBackground = new BoxDecoration(
   gradient: new LinearGradient(
       colors: [
         Colors.cyanAccent,
-        Colors.blueGrey[800],
+        Colors.blueGrey[600],
       ],
       begin: const FractionalOffset(0.0, 0.0),
       end: const FractionalOffset(1.0, 0.0),
