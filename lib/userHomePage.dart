@@ -23,11 +23,13 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:barcode_scan/barcode_scan.dart';
 import 'package:flutter/services.dart';
 
+import 'db/db_model/configurations.dart';
 import 'db/db_model/entity.dart';
 import 'db/db_model/entity_slots.dart';
 import 'db/db_model/meta_entity.dart';
 import 'db/db_model/user.dart';
 import 'db/db_model/user_token.dart';
+import 'db/db_service/configurations_service.dart';
 //import 'path';
 
 class UserHomePage extends StatefulWidget {
@@ -159,7 +161,8 @@ class _UserHomePageState extends State<UserHomePage> {
     }
   }
 
-  void createChildEntityAndAddToParent(String id, String name) async {
+  void createChildEntityAndAddToParent(
+      String id, String name, bool isActive) async {
     Address adrs = new Address(
         city: "Hyderbad",
         state: "Telangana",
@@ -189,7 +192,7 @@ class _UserHomePageState extends State<UserHomePage> {
         parentId: null,
         type: "Shop",
         isBookable: true,
-        isActive: true,
+        isActive: isActive,
         coordinates: geoPoint);
 
     bool added =
@@ -291,29 +294,31 @@ class _UserHomePageState extends State<UserHomePage> {
 
     // isDeleted = await EntityService().deleteEntity('Entity102');
 
+    Configurations conf = await ConfigurationService().getConfigurations();
+
     //final FirebaseUser user = await FirebaseAuth.instance.currentUser();
     //  User u = await UserService().getCurrentUser();
 
     // DBLayer.addRecord();
 
     //await createChildEntityAndAddToParent(
-    //    'Child101-1', "Bata"); //should fail as entity does not exists
+    //    'Child101-1', "Bata", true); //should fail as entity does not exists
 
     // User usr = await UserService().getCurrentUser();
 
-    await createEntity();
+    // await createEntity();
 
     // await createEntity2();
 
-    // await createChildEntityAndAddToParent('Child101-1', "Bata");
+    // await createChildEntityAndAddToParent('Child101-1', "Bata", true);
 
     // await EntityService().assignAdmin('Child101-1', "+919611009823");
 
-    // await createChildEntityAndAddToParent('Child101-2', "Habinaro");
+    // await createChildEntityAndAddToParent('Child101-2', "Habinaro", true);
 
     // await updateEntity();
 
-    // await createChildEntityAndAddToParent('Child101-3', "Raymonds");
+    // await createChildEntityAndAddToParent('Child101-3', "Raymonds", false);
 
     // await updateEntity();
 
@@ -354,24 +359,6 @@ class _UserHomePageState extends State<UserHomePage> {
 
     // await TokenService()
     //     .cancelToken("entityId001#2020~6~6#10~30#93hKw20HwFaVdHRsujOlpjaouoL2");
-
-    // print("------------Search by Name-----------");
-
-    // List<MetaEntity> entitiesByName = await EntityService()
-    //     .searchByName("Bata", 12.970632, 77.641603, 2, 1, 2);
-
-    // for (MetaEntity me in entitiesByName) {
-    //   print(me.name + ":" + me.distance.toString());
-    // }
-
-    // print("------------Search by Type-----------");
-
-    // List<MetaEntity> entitiesByType = await EntityService()
-    //     .searchByType("Shop", 12.970632, 77.641603, 2, 1, 2);
-
-    // for (MetaEntity me in entitiesByType) {
-    //   print(me.name + ":" + me.distance.toString());
-    // }
 
     print("----------Only Type--with Name null ----------");
 
