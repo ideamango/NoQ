@@ -128,7 +128,11 @@ class TokenService {
             'userId': userPhone,
             'number': newNumber,
             'dateTime': dateTime,
-            'maxAllowed': maxAllowed
+            'maxAllowed': maxAllowed,
+            'slotDuration': metaEntity.slotDuration,
+            'entityName': metaEntity.name,
+            'lat': metaEntity.lat,
+            'lon': metaEntity.lon
           };
           //create token
           await tx.set(tokRef, tokenJson);
@@ -195,7 +199,7 @@ class TokenService {
           token = UserToken.fromJson(tokenJson);
         }
       } catch (e) {
-        print("Transactio Error: " + e.toString());
+        print("Transaction Error: " + e.toString());
       }
     });
 
@@ -315,5 +319,37 @@ class TokenService {
     }
 
     return tokens;
+  }
+
+  Future<bool> deleteSlot(String slotId) async {
+    //this should be restricted on Server, only to be used for testcases
+    Firestore fStore = Firestore.instance;
+
+    DocumentReference slotRef = fStore.document('slots/' + slotId);
+
+    try {
+      await slotRef.delete();
+    } catch (e) {
+      print(e);
+      return false;
+    }
+
+    return true;
+  }
+
+  Future<bool> deleteToken(String tokenId) async {
+    //this should be restricted on Server, only to be used for testcases
+    Firestore fStore = Firestore.instance;
+
+    DocumentReference tokRef = fStore.document('tokens/' + tokenId);
+
+    try {
+      await tokRef.delete();
+    } catch (e) {
+      print(e);
+      return false;
+    }
+
+    return true;
   }
 }

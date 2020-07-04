@@ -461,7 +461,7 @@ class EntityService {
             tx.set(userRef, u.toJson());
           }
         } else {
-          //nothing to be done as user does not exists
+          //nothing to be done as user does not exists - removal does not make sense
         }
 
         int index = -1;
