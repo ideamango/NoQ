@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:noq/constants.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:flutter/services.dart';
 import 'dart:async';
@@ -55,8 +56,14 @@ class GenerateScreenState extends State<GenerateScreen> {
   }
 
   _shareContent() {
-    Share.share(
-        'Change this text later: Check out my website https://google.com');
+    String message = 'Hey,' +
+        appName +
+        ' app is simple and fast way that\n'
+            'I use to book appointment for the\n'
+            'places I wish to go. It helps to \n'
+            'avoid waiting. Check it out yourself.';
+    String link = "www.playstore.com";
+    Share.share(message + link);
   }
 
   _contentWidget() {
@@ -92,7 +99,7 @@ class GenerateScreenState extends State<GenerateScreen> {
                     shape: RoundedRectangleBorder(
                         side: BorderSide(color: Colors.orange)),
                     color: Colors.transparent,
-                    child: Text("Submit"),
+                    child: Text("Generate QR"),
                     onPressed: () {
                       print('In submit');
                       setState(() {

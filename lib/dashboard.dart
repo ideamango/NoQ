@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:noq/constants.dart';
+import 'package:noq/db/db_model/user.dart';
 import 'package:noq/db/db_service/db_main.dart';
 import 'package:noq/db/db_service/token_service.dart';
+import 'package:noq/db/db_service/user_service.dart';
+import 'package:noq/global_state.dart';
 import 'package:noq/pages/SearchStoresPage.dart';
 import 'package:noq/pages/about_page.dart';
 import 'package:noq/pages/allPagesWidgets.dart';
@@ -110,6 +113,16 @@ class _LandingPageState extends State<LandingPage> {
   // }
 
   _initializeUserProfile() async {
+ConfigurationService
+
+    User currentUser = await UserService().getCurrentUser();
+    GlobalState.currentUser = currentUser;
+
+    //get all bookings from server
+
+    DateTime fromDate = DateTime.now().add(days:);
+    TokenService().getAllTokensForCurrentUser();
+
     var userProfile;
 //Read data from global variables
     _prefs = await SharedPreferences.getInstance();

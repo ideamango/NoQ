@@ -1,3 +1,4 @@
+String appName = 'NoQ';
 var loginSubTxt = "Login quickly to book slot at your store";
 var loginMainTxt = "LOGIN";
 String dateDisplayFormat = 'EEE, MMM d';
