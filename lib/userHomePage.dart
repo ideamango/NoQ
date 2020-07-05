@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:noq/constants.dart';
@@ -23,11 +24,15 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:barcode_scan/barcode_scan.dart';
 import 'package:flutter/services.dart';
 
+import 'db/db_model/configurations.dart';
 import 'db/db_model/entity.dart';
 import 'db/db_model/entity_slots.dart';
 import 'db/db_model/meta_entity.dart';
+import 'db/db_model/meta_user.dart';
+import 'db/db_model/slot.dart';
 import 'db/db_model/user.dart';
 import 'db/db_model/user_token.dart';
+import 'db/db_service/configurations_service.dart';
 //import 'path';
 
 class UserHomePage extends StatefulWidget {
@@ -90,7 +95,7 @@ class _UserHomePageState extends State<UserHomePage> {
     MyGeoFirePoint geoPoint = new MyGeoFirePoint(68, 78);
     Entity entity = new Entity(
         entityId: "Entity101",
-        name: "VijethaModified",
+        name: "Inorbit",
         address: adrs,
         advanceDays: 3,
         isPublic: true,
@@ -129,8 +134,7 @@ class _UserHomePageState extends State<UserHomePage> {
     MyGeoFirePoint geoPoint = new MyGeoFirePoint(68, 78);
     Entity entity = new Entity(
         entityId: "Entity101",
-        name: "VijethaModified" +
-            adrs.hashCode.toString(), //just some random number
+        name: "Inorbit_Modified",
         address: adrs,
         advanceDays: 3,
         isPublic: true,
@@ -159,7 +163,8 @@ class _UserHomePageState extends State<UserHomePage> {
     }
   }
 
-  void createChildEntityAndAddToParent(String id, String name) async {
+  void createChildEntityAndAddToParent(
+      String id, String name, bool isActive) async {
     Address adrs = new Address(
         city: "Hyderbad",
         state: "Telangana",
@@ -189,7 +194,7 @@ class _UserHomePageState extends State<UserHomePage> {
         parentId: null,
         type: "Shop",
         isBookable: true,
-        isActive: true,
+        isActive: isActive,
         coordinates: geoPoint);
 
     bool added =
@@ -270,110 +275,189 @@ class _UserHomePageState extends State<UserHomePage> {
   }
 
   void clearAll() async {
-    //delete childEntity
-    await EntityService().deleteEntity("Child101-1");
+    await EntityService().deleteEntity('Entity101');
 
-    //delete parentEntity, which should also delete child entities
-    await EntityService().deleteEntity("Entity101");
+    await EntityService().deleteEntity('Entity102');
 
-    try {
-      await EntityService().deleteEntity("Child101-3");
+    await TokenService().deleteSlot("Child101-1#2020~6~6");
+    await TokenService().deleteSlot("Child101-1#2020~6~7");
+    await TokenService().deleteSlot("Child101-1#2020~6~8");
 
-      await EntityService().deleteEntity("Child101-2");
-    } catch (e) {}
-
+    await TokenService().deleteToken("Child101-1#2020~6~6#10~30#+916052069984");
+    await TokenService().deleteToken("Child101-1#2020~6~7#10~30#+916052069984");
+    await TokenService().deleteToken("Child101-1#2020~6~7#12~30#+916052069984");
+    await TokenService().deleteToken("Child101-1#2020~6~8#10~30#+916052069984");
     //delete user
     await UserService().deleteCurrentUser();
   }
 
   void dbCall() async {
-    // bool isDeleted = await EntityService().deleteEntity('Entity101');
+    await clearAll();
 
-    // isDeleted = await EntityService().deleteEntity('Entity102');
+    Configurations conf = await ConfigurationService().getConfigurations();
 
-    //final FirebaseUser user = await FirebaseAuth.instance.currentUser();
-    //  User u = await UserService().getCurrentUser();
+    User u = await UserService().getCurrentUser();
 
-    // DBLayer.addRecord();
-
-    //await createChildEntityAndAddToParent(
-    //    'Child101-1', "Bata"); //should fail as entity does not exists
-
-    // User usr = await UserService().getCurrentUser();
+    await createChildEntityAndAddToParent(
+        'Child101-1', "Bata", true); //should fail as entity does not exists
 
     await createEntity();
 
-    // await createEntity2();
+    await createEntity2();
 
-    // await createChildEntityAndAddToParent('Child101-1', "Bata");
+    await createChildEntityAndAddToParent('Child101-1', "Bata", true);
 
-    // await EntityService().assignAdmin('Child101-1', "+919611009823");
+    await EntityService().assignAdmin('Child101-1', "+913611009823");
 
-    // await createChildEntityAndAddToParent('Child101-2', "Habinaro");
+    await createChildEntityAndAddToParent('Child101-2', "Habinaro", true);
 
-    // await updateEntity();
+    await updateEntity();
 
-    // await createChildEntityAndAddToParent('Child101-3', "Raymonds");
+    await createChildEntityAndAddToParent('Child101-3', "Raymonds", false);
 
-    // await updateEntity();
+    await updateEntity();
 
-    // Entity ent = await EntityService().getEntity('Entity101');
+    print(
+        "<==================================TESTING STARTED==========================================>");
 
-    // Entity child1 = await EntityService().getEntity('Child101-1');
+    Entity ent = await EntityService().getEntity('Entity101');
 
-    // Entity child2 = await EntityService().getEntity('Child101-2');
+    Entity child1 = await EntityService().getEntity('Child101-1');
 
-    // Entity child3 = await EntityService().getEntity('Child101-3');
+    Entity child2 = await EntityService().getEntity('Child101-2');
 
-    // UserToken tok1 = await TokenService().generateToken(
-    //     child1.getMetaEntity(), new DateTime(2020, 6, 6, 10, 30, 0, 0));
+    Entity child3 = await EntityService().getEntity('Child101-3');
 
-    // UserToken tok21 = await TokenService().generateToken(
-    //     child1.getMetaEntity(), new DateTime(2020, 6, 7, 12, 30, 0, 0));
+    UserToken tok1 = await TokenService().generateToken(
+        child1.getMetaEntity(), new DateTime(2020, 6, 6, 10, 30, 0, 0));
 
-    // UserToken tok22 = await TokenService().generateToken(
-    //     child1.getMetaEntity(), new DateTime(2020, 6, 7, 10, 30, 0, 0));
+    UserToken tok21 = await TokenService().generateToken(
+        child1.getMetaEntity(), new DateTime(2020, 6, 7, 12, 30, 0, 0));
 
-    // UserToken tok3 = await TokenService().generateToken(
-    //     child1.getMetaEntity(), new DateTime(2020, 6, 8, 10, 30, 0, 0));
+    UserToken tok22 = await TokenService().generateToken(
+        child1.getMetaEntity(), new DateTime(2020, 6, 7, 10, 30, 0, 0));
 
-    // List<UserToken> toks = await TokenService().getAllTokensForCurrentUser(
-    //     new DateTime(2020, 6, 6), new DateTime(2020, 6, 9));
+    UserToken tok3 = await TokenService().generateToken(
+        child1.getMetaEntity(), new DateTime(2020, 6, 8, 10, 30, 0, 0));
 
-    // List<UserToken> allToksFromToday = await TokenService()
-    //     .getAllTokensForCurrentUser(new DateTime(2020, 6, 7), null);
+    List<UserToken> toks = await TokenService().getAllTokensForCurrentUser(
+        new DateTime(2020, 6, 8), new DateTime(2020, 6, 9));
 
-    // EntitySlots es = await TokenService()
-    //     .getEntitySlots('Child101-1', new DateTime(2020, 6, 6));
+    bool isAdminAssignedOnEntity = false;
+    for (MetaUser me in child1.admins) {
+      if (me.ph == '+913611009823') {
+        isAdminAssignedOnEntity = true;
+        break;
+      }
+    }
 
-    // List<UserToken> toksForDayForEntity = await TokenService()
-    //     .getTokensForEntityBookedByCurrentUser(
-    //         'Child101-1', new DateTime(2020, 6, 7));
+    if (isAdminAssignedOnEntity) {
+      print("EntityService.assignAdmin --> SUCCESS");
+    } else {
+      print("EntityService.assignAdmin -----------------------> FAILURE");
+    }
 
-    // int i = 0;
+    Firestore fStore = Firestore.instance;
 
-    // await TokenService()
-    //     .cancelToken("entityId001#2020~6~6#10~30#93hKw20HwFaVdHRsujOlpjaouoL2");
+    final DocumentReference userRef = fStore.document('users/+913611009823');
+    DocumentSnapshot doc = await userRef.get();
+    User newAdmin;
+    if (doc.exists) {
+      Map<String, dynamic> map = doc.data;
+      newAdmin = User.fromJson(map);
+    }
 
-    // print("------------Search by Name-----------");
+    bool isEntityAddedToAdmin = false;
 
-    // List<MetaEntity> entitiesByName = await EntityService()
-    //     .searchByName("Bata", 12.970632, 77.641603, 2, 1, 2);
+    if (newAdmin != null) {
+      for (MetaEntity me in newAdmin.entities) {
+        if (me.entityId == "Child101-1") {
+          isEntityAddedToAdmin = true;
+          break;
+        }
+      }
+    } else {
+      print("TokenService.getCurrentUser -----------------------> FAILURE");
+    }
 
-    // for (MetaEntity me in entitiesByName) {
-    //   print(me.name + ":" + me.distance.toString());
-    // }
+    if (isEntityAddedToAdmin) {
+      print("EntityService.assignAdmin --> SUCCESS");
+    } else {
+      print("EntityService.assignAdmin -----------------------> FAILURE");
+    }
 
-    // print("------------Search by Type-----------");
+    if (toks != null && toks.length == 1) {
+      print("TokenService.getAllTokensForCurrentUser --> SUCCESS");
+    } else {
+      print(
+          "TokenService.getAllTokensForCurrentUser -----------------------> FAILURE");
+    }
 
-    // List<MetaEntity> entitiesByType = await EntityService()
-    //     .searchByType("Shop", 12.970632, 77.641603, 2, 1, 2);
+    List<UserToken> toksBetween6thAnd9th = await TokenService()
+        .getAllTokensForCurrentUser(
+            new DateTime(2020, 6, 6), new DateTime(2020, 6, 9));
 
-    // for (MetaEntity me in entitiesByType) {
-    //   print(me.name + ":" + me.distance.toString());
-    // }
+    if (toksBetween6thAnd9th != null && toksBetween6thAnd9th.length == 4) {
+      print("TokenService.getAllTokensForCurrentUser --> SUCCESS");
+    } else {
+      print(
+          "TokenService.getAllTokensForCurrentUser -----------------------> FAILURE");
+    }
 
-    print("----------Only Type--with Name null ----------");
+    List<UserToken> allToksFromToday = await TokenService()
+        .getAllTokensForCurrentUser(new DateTime(2020, 6, 7), null);
+
+    if (allToksFromToday != null && allToksFromToday.length == 3) {
+      //should get all the tokens from 7th June onwards
+      print("TokenService.getAllTokensForCurrentUser --> SUCCESS");
+    } else {
+      print(
+          "TokenService.getAllTokensForCurrentUser -----------------------> FAILURE");
+    }
+
+    EntitySlots es = await TokenService()
+        .getEntitySlots('Child101-1', new DateTime(2020, 6, 7));
+
+    if (es != null && es.slots.length == 2) {
+      print("TokenService.getEntitySlots --> SUCCESS");
+    } else {
+      print("TokenService.getEntitySlots -----------------------> FAILURE");
+    }
+
+    List<UserToken> toksForDayForEntity = await TokenService()
+        .getTokensForEntityBookedByCurrentUser(
+            'Child101-1', new DateTime(2020, 6, 7));
+
+    if (toksForDayForEntity.length == 2) {
+      print("TokenService.getTokensForEntityBookedByCurrentUser --> SUCCESS");
+    } else {
+      print(
+          "TokenService.getTokensForEntityBookedByCurrentUser ------------------------> FAILURE");
+    }
+
+    await TokenService().cancelToken("Child101-1#2020~6~7#10~30#+916052069984");
+
+    EntitySlots esWithCancelledSlot = await TokenService()
+        .getEntitySlots('Child101-1', new DateTime(2020, 6, 7));
+
+    if (esWithCancelledSlot != null && esWithCancelledSlot.slots.length == 2) {
+      bool isSuccess = false;
+      for (Slot s in esWithCancelledSlot.slots) {
+        if (s.maxAllowed == 51) {
+          isSuccess = true;
+        }
+      }
+      if (isSuccess) {
+        print("TokenService.getEntitySlots --> SUCCESS");
+      } else {
+        print(
+            "TokenService.getEntitySlots -----------------------> FAILURE --> Cancellation of token should have increased maxAllowed");
+      }
+    } else {
+      print("TokenService.getEntitySlots -----------------------> FAILURE");
+    }
+
+    print("----------Search Only Type--with Name null ----------");
 
     List<MetaEntity> entitiesByTypeAndNameNull = await EntityService()
         .search(null, "Shop", 12.970632, 77.641603, 2, 1, 2);
@@ -382,7 +466,14 @@ class _UserHomePageState extends State<UserHomePage> {
       print(me.name + ":" + me.distance.toString());
     }
 
-    print("----------Only Name-- Type null-----------");
+    if (entitiesByTypeAndNameNull != null &&
+        entitiesByTypeAndNameNull.length == 2) {
+      print("EntityService.search --> SUCCESS");
+    } else {
+      print("EntityService.search -----------------------> FAILURE");
+    }
+
+    print("----------Search Only Partial Name-- Type null-----------");
 
     List<MetaEntity> entitiesByTypeNullAndName =
         await EntityService().search("Habi", "", 12.970632, 77.641603, 2, 1, 2);
@@ -391,13 +482,26 @@ class _UserHomePageState extends State<UserHomePage> {
       print(me.name + ":" + me.distance.toString());
     }
 
-    print("---------Search By Name and Type --------------");
+    if (entitiesByTypeNullAndName != null &&
+        entitiesByTypeNullAndName.length == 2) {
+      print("EntityService.search --> SUCCESS");
+    } else {
+      print("EntityService.search -----------------------> FAILURE");
+    }
+
+    print("---------Search By Partial Name and Type --------------");
 
     List<MetaEntity> entitiesByTypeAndName = await EntityService()
         .search("Bat", "Shop", 12.970632, 77.641603, 2, 1, 2);
 
     for (MetaEntity me in entitiesByTypeAndName) {
       print(me.name + ":" + me.distance.toString());
+    }
+
+    if (entitiesByTypeAndName != null && entitiesByTypeAndName.length == 1) {
+      print("EntityService.search --> SUCCESS");
+    } else {
+      print("EntityService.search -----------------------> FAILURE");
     }
 
     print(
@@ -409,6 +513,76 @@ class _UserHomePageState extends State<UserHomePage> {
     for (MetaEntity me in entitiesByTypeAndNameAgain) {
       print(me.name + ":" + me.distance.toString());
     }
+
+    if (entitiesByTypeAndNameAgain != null &&
+        entitiesByTypeAndNameAgain.length == 1) {
+      print("EntityService.search --> SUCCESS");
+    } else {
+      print("EntityService.search -----------------------> FAILURE");
+    }
+
+    print(
+        "---------Search By Name and Type Store (no intersection) --------------");
+
+    List<MetaEntity> noIntersection = await EntityService()
+        .search("Bata", "Store", 12.970632, 77.641603, 2, 1, 2);
+
+    for (MetaEntity me in noIntersection) {
+      print(me.name + ":" + me.distance.toString());
+    }
+
+    if (noIntersection != null && noIntersection.length == 0) {
+      print("EntityService.search --> SUCCESS");
+    } else {
+      print("EntityService.search -----------------------> FAILURE");
+    }
+
+    await EntityService().removeAdmin('Child101-1', "+913611009823");
+
+    Entity child101 = await EntityService().getEntity('Child101-1');
+
+    bool isAdminRemovedFromEntity = true;
+    for (MetaUser me in child101.admins) {
+      if (me.ph == '+913611009823') {
+        isAdminRemovedFromEntity = false;
+        break;
+      }
+    }
+
+    if (isAdminRemovedFromEntity) {
+      print("EntityService.removeAdmin --> SUCCESS");
+    } else {
+      print("EntityService.removeAdmin -----------------------> FAILURE");
+    }
+
+    DocumentSnapshot removedAdminDoc = await userRef.get();
+    User removedAdmin;
+    if (doc.exists) {
+      Map<String, dynamic> map = removedAdminDoc.data;
+      removedAdmin = User.fromJson(map);
+    }
+
+    bool isEntityRemovedFromAdmin = true;
+
+    if (removedAdmin != null) {
+      for (MetaEntity me in removedAdmin.entities) {
+        if (me.entityId == "Child101-1") {
+          isEntityRemovedFromAdmin = false;
+          break;
+        }
+      }
+    } else {
+      print("TokenService.getCurrentUser -----------------------> FAILURE");
+    }
+
+    if (isEntityRemovedFromAdmin) {
+      print("EntityService.removeAdmin --> SUCCESS");
+    } else {
+      print("EntityService.removeAdmin -----------------------> FAILURE");
+    }
+
+    print(
+        "<==========================================TESTING DONE=========================================>");
 
     int i = 0;
   }
