@@ -4,7 +4,7 @@ import 'package:noq/db/db_model/meta_user.dart';
 import 'my_geo_fire_point.dart';
 
 class User {
-  User({this.id, this.name, this.loc, this.ph, this.entities});
+  User({this.id, this.name, this.loc, this.ph, this.entities, this.favourites});
 
   //just need an id which is unique even if later phone or firebase id changes
   String id;
@@ -12,13 +12,15 @@ class User {
   MyGeoFirePoint loc;
   String ph;
   List<MetaEntity> entities;
+  List<MetaEntity> favourites;
 
   Map<String, dynamic> toJson() => {
         'id': id,
         'name': name,
         'loc': loc != null ? loc.toJson() : null,
         'ph': ph,
-        'entities': metaEntitiesToJson(entities)
+        'entities': metaEntitiesToJson(entities),
+        'favourites': metaEntitiesToJson(favourites)
       };
 
   static User fromJson(Map<String, dynamic> json) {
@@ -28,7 +30,8 @@ class User {
         name: json['name'],
         loc: MyGeoFirePoint.fromJson(json['loc']),
         ph: json['ph'],
-        entities: convertToMetaEntitiesFromJson(json['entities']));
+        entities: convertToMetaEntitiesFromJson(json['entities']),
+        favourites: convertToMetaEntitiesFromJson(json['favourites']));
   }
 
   List<dynamic> metaEntitiesToJson(List<MetaEntity> metaEntities) {

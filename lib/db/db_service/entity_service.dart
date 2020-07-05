@@ -486,6 +486,96 @@ class EntityService {
     return isSuccess;
   }
 
+  Future<bool> addEntityToUserFavourite(MetaEntity me) async {
+    final FirebaseUser fireUser = await FirebaseAuth.instance.currentUser();
+    Firestore fStore = Firestore.instance;
+
+    User u;
+    bool isSuccess = true;
+
+    final DocumentReference userRef =
+        fStore.document('users/' + fireUser.phoneNumber);
+
+    await fStore.runTransaction((Transaction tx) async {
+      try {
+        DocumentSnapshot usrDoc = await tx.get(userRef);
+
+        if (usrDoc.exists) {
+          //either the user is registered or added by another admin to an entity as an entity
+          u = User.fromJson(usrDoc.data);
+          if (u.favourites == null) {
+            u.favourites = new List<MetaEntity>();
+          }
+
+          bool entityAlreadyExistsInUser = false;
+          for (MetaEntity meta in u.favourites) {
+            if (meta.entityId == me.entityId) {
+              entityAlreadyExistsInUser = true;
+              break;
+            }
+          }
+          if (!entityAlreadyExistsInUser) {
+            u.favourites.add(me);
+            tx.set(userRef, u.toJson());
+          }
+        } else {
+          isSuccess = false;
+        }
+      } catch (e) {
+        print(
+            "Transactio Error: While adding favourite admin - " + e.toString());
+        isSuccess = false;
+      }
+    });
+
+    return isSuccess;
+  }
+
+  Future<bool> removeEntityFromUserFavourite(String entityId) async {
+    final FirebaseUser fireUser = await FirebaseAuth.instance.currentUser();
+    Firestore fStore = Firestore.instance;
+
+    User u;
+    bool isSuccess = true;
+
+    final DocumentReference userRef =
+        fStore.document('users/' + fireUser.phoneNumber);
+
+    await fStore.runTransaction((Transaction tx) async {
+      try {
+        DocumentSnapshot usrDoc = await tx.get(userRef);
+
+        if (usrDoc.exists) {
+          //either the user is registered or added by another admin to an entity as an entity
+          u = User.fromJson(usrDoc.data);
+          if (u.favourites == null) {
+            u.favourites = new List<MetaEntity>();
+          }
+
+          int index = -1;
+          for (MetaEntity meta in u.favourites) {
+            index++;
+            if (meta.entityId == entityId) {
+              break;
+            }
+          }
+          if (index != -1) {
+            u.favourites.removeAt(index);
+            tx.set(userRef, u.toJson());
+          }
+        } else {
+          isSuccess = false;
+        }
+      } catch (e) {
+        print(
+            "Transactio Error: While adding favourite admin - " + e.toString());
+        isSuccess = false;
+      }
+    });
+
+    return isSuccess;
+  }
+
   Future<List<MetaEntity>> search(String name, String type, double lat,
       double lon, double radius, int pageNumber, int pageSize) async {
     List<MetaEntity> entities = new List<MetaEntity>();

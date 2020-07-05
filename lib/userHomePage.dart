@@ -581,6 +581,58 @@ class _UserHomePageState extends State<UserHomePage> {
       print("EntityService.removeAdmin -----------------------> FAILURE");
     }
 
+    //----------
+
+    await EntityService().addEntityToUserFavourite(child101.getMetaEntity());
+
+    User curUser = await UserService().getCurrentUser();
+
+    bool isEntityAddedToCurrentUser = false;
+
+    if (curUser != null) {
+      for (MetaEntity me in curUser.favourites) {
+        if (me.entityId == "Child101-1") {
+          isEntityAddedToCurrentUser = true;
+          break;
+        }
+      }
+    } else {
+      print("TokenService.getCurrentUser -----------------------> FAILURE");
+    }
+
+    if (isEntityAddedToCurrentUser) {
+      print("EntityService.addEntityToUserFavourite --> SUCCESS");
+    } else {
+      print(
+          "EntityService.addEntityToUserFavourite -----------------------> FAILURE");
+    }
+
+    //--------------0
+
+    await EntityService().removeEntityFromUserFavourite("Child101-1");
+
+    curUser = await UserService().getCurrentUser();
+
+    bool isEntityRemovedFromCurrentUser = true;
+
+    if (curUser != null) {
+      for (MetaEntity me in curUser.favourites) {
+        if (me.entityId == "Child101-1") {
+          isEntityRemovedFromCurrentUser = false;
+          break;
+        }
+      }
+    } else {
+      print("TokenService.getCurrentUser -----------------------> FAILURE");
+    }
+
+    if (isEntityRemovedFromCurrentUser) {
+      print("EntityService.removeEntityFromUserFavourite --> SUCCESS");
+    } else {
+      print(
+          "EntityService.removeEntityFromUserFavourite -----------------------> FAILURE");
+    }
+
     print(
         "<==========================================TESTING DONE=========================================>");
 
