@@ -32,7 +32,8 @@ class Entity {
       this.type,
       this.isBookable,
       this.isActive,
-      this.coordinates});
+      this.coordinates,
+      this.distance});
 
   //SlotDocumentId is entityID#20~06~01 it is not auto-generated, will help in not duplicating the record
   String entityId;
@@ -89,7 +90,8 @@ class Entity {
         'isBookable': isBookable,
         'isActive': isActive,
         'coordinates': coordinates.toJson(),
-        'nameQuery': constructQueriableList(name)
+        'nameQuery': constructQueriableList(name),
+        'distance': distance
       };
 
   List<dynamic> usersToJson(List<MetaUser> users) {
@@ -146,7 +148,8 @@ class Entity {
         type: json['type'],
         isBookable: json['isBookable'],
         isActive: json['isActive'],
-        coordinates: MyGeoFirePoint.fromJson(json['coordinates']));
+        coordinates: MyGeoFirePoint.fromJson(json['coordinates']),
+        distance: json['distance']);
   }
 
   static Address convertToAddressFromJson(Map<String, dynamic> json) {
@@ -215,7 +218,8 @@ class Entity {
         lat: coordinates.geopoint.latitude,
         lon: coordinates.geopoint.longitude,
         slotDuration: slotDuration,
-        maxAllowed: maxAllowed);
+        maxAllowed: maxAllowed,
+        distance: distance);
 
     return meta;
   }
