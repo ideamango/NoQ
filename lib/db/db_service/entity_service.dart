@@ -576,9 +576,9 @@ class EntityService {
     return isSuccess;
   }
 
-  Future<List<MetaEntity>> search(String name, String type, double lat,
-      double lon, double radius, int pageNumber, int pageSize) async {
-    List<MetaEntity> entities = new List<MetaEntity>();
+  Future<List<Entity>> search(String name, String type, double lat, double lon,
+      double radius, int pageNumber, int pageSize) async {
+    List<Entity> entities = new List<Entity>();
     Firestore fStore = Firestore.instance;
     Geoflutterfire geo = Geoflutterfire();
     GeoFirePoint center = geo.point(latitude: lat, longitude: lon);
@@ -613,8 +613,9 @@ class EntityService {
 
     try {
       for (DocumentSnapshot ds in await stream.first) {
-        MetaEntity me = Entity.fromJson(ds.data).getMetaEntity();
-        me.distance = center.distance(lat: me.lat, lng: me.lon);
+        Entity me = Entity.fromJson(ds.data);
+        me.distance = center.distance(
+            lat: me.geo.geopoint.latitude, lng: me.geo.geopoint.longitude);
         entities.add(me);
       }
     } catch (e) {

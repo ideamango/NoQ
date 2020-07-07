@@ -61,6 +61,7 @@ class Entity {
   bool isBookable;
   bool isActive;
   MyGeoFirePoint coordinates;
+  double distance;
 
   Map<String, dynamic> toJson() => {
         'entityId': entityId,
