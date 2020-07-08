@@ -279,14 +279,14 @@ class _UserHomePageState extends State<UserHomePage> {
 
     await EntityService().deleteEntity('Entity102');
 
-    await TokenService().deleteSlot("Child101-1#2020~6~6");
-    await TokenService().deleteSlot("Child101-1#2020~6~7");
-    await TokenService().deleteSlot("Child101-1#2020~6~8");
+    await TokenService().deleteSlot("Child101-1#2020~7~6");
+    await TokenService().deleteSlot("Child101-1#2020~7~7");
+    await TokenService().deleteSlot("Child101-1#2020~7~8");
 
-    await TokenService().deleteToken("Child101-1#2020~6~6#10~30#+916052069984");
-    await TokenService().deleteToken("Child101-1#2020~6~7#10~30#+916052069984");
-    await TokenService().deleteToken("Child101-1#2020~6~7#12~30#+916052069984");
-    await TokenService().deleteToken("Child101-1#2020~6~8#10~30#+916052069984");
+    await TokenService().deleteToken("Child101-1#2020~7~6#10~30#+916052069984");
+    await TokenService().deleteToken("Child101-1#2020~7~7#10~30#+916052069984");
+    await TokenService().deleteToken("Child101-1#2020~7~7#12~30#+916052069984");
+    await TokenService().deleteToken("Child101-1#2020~7~8#10~30#+916052069984");
     //delete user
     await UserService().deleteCurrentUser();
   }
@@ -329,19 +329,19 @@ class _UserHomePageState extends State<UserHomePage> {
     Entity child3 = await EntityService().getEntity('Child101-3');
 
     UserToken tok1 = await TokenService().generateToken(
-        child1.getMetaEntity(), new DateTime(2020, 6, 6, 10, 30, 0, 0));
+        child1.getMetaEntity(), new DateTime(2020, 7, 6, 10, 30, 0, 0));
 
     UserToken tok21 = await TokenService().generateToken(
-        child1.getMetaEntity(), new DateTime(2020, 6, 7, 12, 30, 0, 0));
+        child1.getMetaEntity(), new DateTime(2020, 7, 7, 12, 30, 0, 0));
 
     UserToken tok22 = await TokenService().generateToken(
-        child1.getMetaEntity(), new DateTime(2020, 6, 7, 10, 30, 0, 0));
+        child1.getMetaEntity(), new DateTime(2020, 7, 7, 10, 30, 0, 0));
 
     UserToken tok3 = await TokenService().generateToken(
-        child1.getMetaEntity(), new DateTime(2020, 6, 8, 10, 30, 0, 0));
+        child1.getMetaEntity(), new DateTime(2020, 7, 8, 10, 30, 0, 0));
 
     List<UserToken> toks = await TokenService().getAllTokensForCurrentUser(
-        new DateTime(2020, 6, 8), new DateTime(2020, 6, 9));
+        new DateTime(2020, 7, 8), new DateTime(2020, 7, 9));
 
     bool isAdminAssignedOnEntity = false;
     for (MetaUser me in child1.admins) {
@@ -395,7 +395,7 @@ class _UserHomePageState extends State<UserHomePage> {
 
     List<UserToken> toksBetween6thAnd9th = await TokenService()
         .getAllTokensForCurrentUser(
-            new DateTime(2020, 6, 6), new DateTime(2020, 6, 9));
+            new DateTime(2020, 7, 6), new DateTime(2020, 7, 9));
 
     if (toksBetween6thAnd9th != null && toksBetween6thAnd9th.length == 4) {
       print("TokenService.getAllTokensForCurrentUser --> SUCCESS");
@@ -405,7 +405,7 @@ class _UserHomePageState extends State<UserHomePage> {
     }
 
     List<UserToken> allToksFromToday = await TokenService()
-        .getAllTokensForCurrentUser(new DateTime(2020, 6, 7), null);
+        .getAllTokensForCurrentUser(new DateTime(2020, 7, 7), null);
 
     if (allToksFromToday != null && allToksFromToday.length == 3) {
       //should get all the tokens from 7th June onwards
@@ -416,7 +416,7 @@ class _UserHomePageState extends State<UserHomePage> {
     }
 
     EntitySlots es = await TokenService()
-        .getEntitySlots('Child101-1', new DateTime(2020, 6, 7));
+        .getEntitySlots('Child101-1', new DateTime(2020, 7, 7));
 
     if (es != null && es.slots.length == 2) {
       print("TokenService.getEntitySlots --> SUCCESS");
@@ -426,7 +426,7 @@ class _UserHomePageState extends State<UserHomePage> {
 
     List<UserToken> toksForDayForEntity = await TokenService()
         .getTokensForEntityBookedByCurrentUser(
-            'Child101-1', new DateTime(2020, 6, 7));
+            'Child101-1', new DateTime(2020, 7, 7));
 
     if (toksForDayForEntity.length == 2) {
       print("TokenService.getTokensForEntityBookedByCurrentUser --> SUCCESS");
@@ -435,10 +435,10 @@ class _UserHomePageState extends State<UserHomePage> {
           "TokenService.getTokensForEntityBookedByCurrentUser ------------------------> FAILURE");
     }
 
-    await TokenService().cancelToken("Child101-1#2020~6~7#10~30#+916052069984");
+    await TokenService().cancelToken("Child101-1#2020~7~7#10~30#+916052069984");
 
     EntitySlots esWithCancelledSlot = await TokenService()
-        .getEntitySlots('Child101-1', new DateTime(2020, 6, 7));
+        .getEntitySlots('Child101-1', new DateTime(2020, 7, 7));
 
     if (esWithCancelledSlot != null && esWithCancelledSlot.slots.length == 2) {
       bool isSuccess = false;
