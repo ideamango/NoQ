@@ -8,6 +8,7 @@ import 'package:noq/db/db_service/db_main.dart';
 import 'package:noq/db/db_service/entity_service.dart';
 import 'package:noq/db/db_service/token_service.dart';
 import 'package:noq/db/db_service/user_service.dart';
+import 'package:noq/global_state.dart';
 import 'package:noq/models/localDB.dart';
 import 'package:noq/repository/local_db_repository.dart';
 import 'package:noq/services/circular_progress.dart';
@@ -16,6 +17,7 @@ import 'package:noq/services/qr_code_generate.dart';
 import 'package:noq/services/qrcode_scan.dart';
 import 'package:noq/style.dart';
 import 'package:intl/intl.dart';
+import 'package:noq/utils.dart';
 import 'package:noq/widget/appbar.dart';
 import 'package:noq/widget/bottom_nav_bar.dart';
 import 'package:noq/widget/header.dart';
@@ -42,11 +44,11 @@ class UserHomePage extends StatefulWidget {
 
 class _UserHomePageState extends State<UserHomePage> {
   int i;
-  List<BookingListItem> _pastBookingsList;
-  List<BookingListItem> _newBookingsList;
+  List<UserToken> _pastBookingsList;
+  List<UserToken> _newBookingsList;
   String _upcomingBkgStatus;
   String _pastBkgStatus;
-  UserAppData _userProfile;
+  // UserAppData _userProfile;
   DateTime now = DateTime.now();
   final dtFormat = new DateFormat(dateDisplayFormat);
   bool isUpcomingSet = false;
@@ -639,55 +641,90 @@ class _UserHomePageState extends State<UserHomePage> {
     int i = 0;
   }
 
+  void loadDataFromPrefs() async {
+    // await readData().then((fUser) {
+    //   _userProfile = fUser;
+    //   if (_userProfile != null) {
+    //     if (_userProfile.upcomingBookings.length != 0) {
+    //       var bookings = _userProfile.upcomingBookings;
+    //       List<BookingListItem> newBookings = new List<BookingListItem>();
+    //       List<BookingListItem> pastBookings = new List<BookingListItem>();
+
+    //       setState(() {
+    //         for (BookingAppData bk in bookings) {
+    //           for (EntityAppData str in _userProfile.storesAccessed) {
+    //             if (str.id == bk.storeId) {
+    //               if (bk.bookingDate.isBefore(now))
+    //                 pastBookings.add(new BookingListItem(str, bk));
+    //               else
+    //                 newBookings.add(new BookingListItem(str, bk));
+    //             }
+    //           }
+    //         }
+    //         _pastBookingsList = pastBookings;
+    //         _newBookingsList = newBookings;
+    //         if (_pastBookingsList.length != 0) {
+    //           _pastBkgStatus = 'Success';
+    //         } else
+    //           _pastBkgStatus = 'NoBookings';
+    //         if (_newBookingsList.length != 0) {
+    //           _upcomingBkgStatus = 'Success';
+    //         }
+    //       });
+    //     } else {
+    //       setState(() {
+    //         _upcomingBkgStatus = 'NoBookings';
+    //         _pastBkgStatus = 'NoBookings';
+    //       });
+    //     }
+    //   } else {
+    //     setState(() {
+    //       _pastBkgStatus = 'NoBookings';
+    //       _upcomingBkgStatus = 'NoBookings';
+    //     });
+    //   }
+    // });
+  }
+
+  void fetchDataFromGlobalState() {
+    if (!Utils.isNullOrEmpty(GlobalState().bookings)) {
+      if (GlobalState().bookings.length != 0) {
+        List<UserToken> bookings = GlobalState().bookings;
+        List<UserToken> newBookings = new List<UserToken>();
+        List<UserToken> pastBookings = new List<UserToken>();
+
+        setState(() {
+          for (UserToken bk in bookings) {
+            if (bk.dateTime.isBefore(now))
+              pastBookings.add(bk);
+            else
+              newBookings.add(bk);
+          }
+          _pastBookingsList = pastBookings;
+          _newBookingsList = newBookings;
+          if (_pastBookingsList.length != 0) {
+            _pastBkgStatus = 'Success';
+          } else
+            _pastBkgStatus = 'NoBookings';
+          if (_newBookingsList.length != 0) {
+            _upcomingBkgStatus = 'Success';
+          }
+        });
+      }
+    } else {
+      setState(() {
+        _upcomingBkgStatus = 'NoBookings';
+        _pastBkgStatus = 'NoBookings';
+      });
+    }
+  }
+
   void _loadBookings() async {
-    //Load details from local files
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    //int userId = prefs.getInt('userId');
     //Fetch details from server
     _upcomingBkgStatus = 'Loading';
     _pastBkgStatus = 'Loading';
-    await readData().then((fUser) {
-      _userProfile = fUser;
-      if (_userProfile != null) {
-        if (_userProfile.upcomingBookings.length != 0) {
-          var bookings = _userProfile.upcomingBookings;
-          List<BookingListItem> newBookings = new List<BookingListItem>();
-          List<BookingListItem> pastBookings = new List<BookingListItem>();
-
-          setState(() {
-            for (BookingAppData bk in bookings) {
-              for (EntityAppData str in _userProfile.storesAccessed) {
-                if (str.id == bk.storeId) {
-                  if (bk.bookingDate.isBefore(now))
-                    pastBookings.add(new BookingListItem(str, bk));
-                  else
-                    newBookings.add(new BookingListItem(str, bk));
-                }
-              }
-            }
-            _pastBookingsList = pastBookings;
-            _newBookingsList = newBookings;
-            if (_pastBookingsList.length != 0) {
-              _pastBkgStatus = 'Success';
-            } else
-              _pastBkgStatus = 'NoBookings';
-            if (_newBookingsList.length != 0) {
-              _upcomingBkgStatus = 'Success';
-            }
-          });
-        } else {
-          setState(() {
-            _upcomingBkgStatus = 'NoBookings';
-            _pastBkgStatus = 'NoBookings';
-          });
-        }
-      } else {
-        setState(() {
-          _pastBkgStatus = 'NoBookings';
-          _upcomingBkgStatus = 'NoBookings';
-        });
-      }
-    });
+    //loadDataFromPrefs();
+    fetchDataFromGlobalState();
   }
 
   @override
@@ -906,7 +943,7 @@ class _UserHomePageState extends State<UserHomePage> {
     ]));
   }
 
-  Widget _buildItem(BookingListItem booking) {
+  Widget _buildItem(UserToken booking) {
     return Card(
       //  margin: EdgeInsets.all(10.0),
 
@@ -939,8 +976,8 @@ class _UserHomePageState extends State<UserHomePage> {
                         crossAxisAlignment: CrossAxisAlignment.end,
                         children: <Widget>[
                           Text(
-                            'T-1030-14',
-                            // booking.bookingInfo.tokenNum,
+                            //'T-1030-14',
+                            booking.number.toString(),
                             style: tokenTextStyle, textAlign: TextAlign.left,
                           ),
                         ],
@@ -955,7 +992,7 @@ class _UserHomePageState extends State<UserHomePage> {
                           width: MediaQuery.of(context).size.width * .2,
                           //Text('Where: ', style: tokenHeadingTextStyle),
                           child: Text(
-                            booking.storeInfo.name,
+                            booking.entityName,
                             overflow: TextOverflow.ellipsis,
                             style: tokenDataTextStyle,
                           ),
@@ -1005,10 +1042,13 @@ class _UserHomePageState extends State<UserHomePage> {
                                     size: 22,
                                   ),
                                   onPressed: () => launchURL(
-                                      booking.storeInfo.name,
-                                      booking.storeInfo.adrs.toString(),
-                                      booking.storeInfo.lat,
-                                      booking.storeInfo.long),
+                                      booking.entityName,
+                                      //TODO: Store address
+
+                                      // booking.storeInfo.adrs.toString(),
+                                      'Update this field, add address',
+                                      booking.lat,
+                                      booking.lon),
                                 ),
                               ),
                               // Container(
@@ -1055,7 +1095,7 @@ class _UserHomePageState extends State<UserHomePage> {
                       children: <Widget>[
                         // Text('Date: ', style: tokenHeadingTextStyle),
                         Text(
-                          dtFormat.format(booking.bookingInfo.bookingDate),
+                          dtFormat.format(booking.dateTime),
                           style: tokenDataTextStyle,
                         ),
                       ],
@@ -1069,7 +1109,9 @@ class _UserHomePageState extends State<UserHomePage> {
                       children: <Widget>[
                         // Text('Time: ', style: tokenHeadingTextStyle),
                         Text(
-                          booking.bookingInfo.timing,
+                          booking.dateTime.hour.toString() +
+                              ':' +
+                              booking.dateTime.minute.toString(),
                           style: tokenDateTextStyle,
                         ),
                       ],

@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:noq/constants.dart';
+import 'package:noq/db/db_model/entity.dart';
+import 'package:noq/db/db_model/meta_entity.dart';
+import 'package:noq/db/db_service/entity_service.dart';
+import 'package:noq/global_state.dart';
 import 'package:noq/models/localDB.dart';
 import 'package:noq/pages/entity_item.dart';
 import 'package:noq/pages/service_entity.dart';
@@ -20,10 +24,12 @@ class ManageApartmentsListPage extends StatefulWidget {
 class _ManageApartmentsListPageState extends State<ManageApartmentsListPage> {
   String _msg;
   final GlobalKey<FormState> _entityListFormKey = new GlobalKey<FormState>();
-  List<EntityAppData> entitiesList;
-  EntityAppData entity;
+  List<MetaEntity> metaEntitiesList;
+  Entity entity;
   String _entityType;
   int _count = 0;
+  GlobalState _state;
+  bool stateInitFinished = false;
 
   @override
   void dispose() {
@@ -33,21 +39,22 @@ class _ManageApartmentsListPageState extends State<ManageApartmentsListPage> {
   @override
   void initState() {
     super.initState();
+
     getEntityList();
   }
 
-  void getEntityList() async {
-    await readData().then((fUser) {
-      if (Utils.isNullOrEmpty(fUser.managedEntities))
-        entitiesList = new List<EntityAppData>();
+  Future<void> getGlobalState() async {
+    _state = await GlobalState.getGlobalState();
+  }
 
-      setState(() {
-// //TODO: Hack to clear list manually , remove later
-//           fUser.managedEntities.clear();
-//           writeData(fUser);
-// //TODO:End
-        entitiesList = fUser.managedEntities;
-      });
+  void getEntityList() async {
+    await getGlobalState();
+    if (!Utils.isNullOrEmpty(_state.currentUser.entities)) {
+      metaEntitiesList = _state.currentUser.entities;
+    }
+
+    setState(() {
+      stateInitFinished = true;
     });
   }
 
@@ -55,14 +62,17 @@ class _ManageApartmentsListPageState extends State<ManageApartmentsListPage> {
     setState(() {
       var uuid = new Uuid();
       String _entityId = uuid.v1();
-      EntityAppData en = new EntityAppData.eType(_entityType, _entityId);
-      entitiesList.add(en);
-      saveEntityDetails(en);
+
+      MetaEntity metaEn = MetaEntity.withValues(_entityId, _entityType);
+      // TODO: Create Entity with given id and type.
+
+      metaEntitiesList.add(metaEn);
+      // saveEntityDetails(en);
       _count = _count + 1;
     });
   }
 
-  Widget _buildServiceItem(EntityAppData childEntity) {
+  Widget _buildServiceItem(MetaEntity childEntity) {
     return new EntityRow(entity: childEntity);
   }
 
@@ -262,15 +272,16 @@ class _ManageApartmentsListPageState extends State<ManageApartmentsListPage> {
                     ),
                   ),
                 ),
-                if (!Utils.isNullOrEmpty(entitiesList))
+                if (!Utils.isNullOrEmpty(metaEntitiesList))
                   new Expanded(
                     child: ListView.builder(
                       shrinkWrap: true,
                       itemBuilder: (BuildContext context, int index) {
                         return Container(
                           child: new Column(
-                              children:
-                                  entitiesList.map(_buildServiceItem).toList()),
+                              children: metaEntitiesList
+                                  .map(_buildServiceItem)
+                                  .toList()),
                         );
                       },
                       itemCount: 1,

@@ -11,7 +11,6 @@ class UserAppData {
   final List<BookingAppData> upcomingBookings;
   List<EntityAppData> storesAccessed;
   List<EntityAppData> managedEntities;
-
   final SettingsAppData settings;
 
   UserAppData(this.id, this.phone, this.upcomingBookings, this.storesAccessed,

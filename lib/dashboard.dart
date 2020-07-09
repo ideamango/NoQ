@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:noq/constants.dart';
+import 'package:noq/db/db_model/configurations.dart';
 import 'package:noq/db/db_model/user.dart';
+import 'package:noq/db/db_service/configurations_service.dart';
 import 'package:noq/db/db_service/db_main.dart';
 import 'package:noq/db/db_service/token_service.dart';
 import 'package:noq/db/db_service/user_service.dart';
@@ -111,18 +113,7 @@ class _LandingPageState extends State<LandingPage> {
   // void navigationTapped(int page) {
   //   _pageController.jumpToPage(page);
   // }
-
-  _initializeUserProfile() async {
-ConfigurationService
-
-    User currentUser = await UserService().getCurrentUser();
-    GlobalState.currentUser = currentUser;
-
-    //get all bookings from server
-
-    DateTime fromDate = DateTime.now().add(days:);
-    TokenService().getAllTokensForCurrentUser();
-
+  void getFromPrefs() async {
     var userProfile;
 //Read data from global variables
     _prefs = await SharedPreferences.getInstance();
@@ -138,17 +129,7 @@ ConfigurationService
 
     if (fUserProfile != null) {
       userProfile = fUserProfile;
-    }
-    //  else {
-    //   //TODO:fetch from server
-
-    //Save in local DB objects and file for perusal.
-    // writeData(_userProfile);
-    //   _prefs.setString("userName", _userName);
-    // _prefs.setString("userId", _userId);
-    //}
-
-    else {
+    } else {
       //If not on server then create new user object.
 //Start - Save User profile in file
 
@@ -188,289 +169,32 @@ ConfigurationService
 //End - Save User profile in file
   }
 
+  _initializeUserProfile() async {
+    //Fetch bookings for current user
+    DateTime fromDate = DateTime.now().subtract(new Duration(days: 10));
+    DateTime toDate = DateTime.now().add(new Duration(days: 10));
+    List<UserToken> bookings =
+        await TokenService().getAllTokensForCurrentUser(fromDate, toDate);
+    //Set bookings, conf for current user
+
+    GlobalState().bookings = bookings;
+
+    //getFromPrefs();
+  }
+
   @override
   void initState() {
     super.initState();
-
-    // _pageController = PageController(initialPage: 0);
     _initializeUserProfile();
   }
 
   @override
   void dispose() {
     super.dispose();
-    // _pageController.dispose();
   }
-
-  // void onPageChanged(int page) {
-  //   setState(() {
-  //     _page = page;
-  //   });
-  // }
 
   @override
   Widget build(BuildContext context) {
     return UserHomePage();
-    // MaterialApp(
-    //   title: 'My Dashboard',
-    //   //theme: ThemeData.light().copyWith(),
-    //   home: Scaffold(
-    //     key: _scaffoldKey,
-    //     //  appBar: CustomAppBar(),
-
-    //     body:
-    //      Center(
-    //       child:
-    // PageView(
-    //   physics: NeverScrollableScrollPhysics(),
-    //   controller: _pageController,
-    //   onPageChanged: onPageChanged,
-    //   children: <Widget>[
-    //     // _userAccount(),
-    //     // _manageApartmentPage(),
-    //     // _manageCommSpacePage(),
-    //     // _manageOffSpacePage(),
-    //     // _userNotifications(),
-    //     // _rateApp(),
-    //     // _needHelp(),
-    //     // _shareApp(),
-    //     _userHomePage(),
-    //     //_storesListPage(),
-    //     SearchStoresPage(forPage: 'Search'),
-    //     SearchStoresPage(forPage: 'Favourite'),
-    //     _userAccount(),
-    //   ],
-    // ),
-
-    // ),
-    // drawer: CustomDrawer(),
-    // Drawer(
-    //   child: ListView(
-    //     children: <Widget>[
-    //       DrawerHeader(
-    //         child: Column(
-    //           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-    //           children: <Widget>[
-    //             RichText(
-    //               text: TextSpan(
-    //                   style: whiteBoldTextStyle1,
-    //                   children: <TextSpan>[
-    //                     TextSpan(text: drawerHeaderTxt11),
-    //                     TextSpan(
-    //                         text: drawerHeaderTxt12,
-    //                         style: highlightBoldTextStyle),
-    //                     TextSpan(text: drawerHeaderTxt21),
-    //                     TextSpan(
-    //                         text: drawerHeaderTxt22,
-    //                         style: highlightBoldTextStyle),
-    //                     TextSpan(
-    //                       text: drawerHeaderTxt31,
-    //                     ),
-    //                     TextSpan(
-    //                       text: drawerHeaderTxt32,
-    //                     ),
-    //                     TextSpan(
-    //                         text: drawerHeaderTxt41,
-    //                         style: highlightBoldTextStyle),
-    //                   ]),
-    //             ),
-    //           ],
-    //         ),
-    //         // child: Text('Hello $_userName !!', style: inputTextStyle),
-    //         decoration: BoxDecoration(
-    //           color: Colors.teal,
-    //         ),
-    //       ),
-    //       ListView.builder(
-    //         physics: NeverScrollableScrollPhysics(),
-    //         shrinkWrap: true,
-    //         itemCount: drawerItems.length,
-    //         itemBuilder: (BuildContext context, int index) {
-    //           Map item = drawerItems[index];
-    //           if (item['children'] != null) {
-    //             return ExpansionTile(
-    //               leading: Icon(
-    //                 item['icon'],
-    //                 color: _page == index
-    //                     ? highlightColor
-    //                     : Theme.of(context).textTheme.title.color,
-    //               ),
-    //               title: Text(
-    //                 item['name'],
-    //                 style: TextStyle(
-    //                   color: _page == index
-    //                       ? highlightColor
-    //                       : Theme.of(context).textTheme.title.color,
-    //                 ),
-    //               ),
-    //               children: <Widget>[
-    //                 ListView.builder(
-    //                   physics: NeverScrollableScrollPhysics(),
-    //                   shrinkWrap: true,
-    //                   itemCount: item['children'].length,
-    //                   itemBuilder: (BuildContext context, int i) {
-    //                     int pageIndex = drawerItems.length - 1 + i;
-    //                     Map subItem = item['children'][i];
-    //                     print('........' + i.toString());
-    //                     return ListTile(
-    //                       leading: Icon(
-    //                         subItem['icon'],
-    //                         color: _page == index
-    //                             ? highlightColor
-    //                             : Theme.of(context).textTheme.title.color,
-    //                       ),
-    //                       title: Text(
-    //                         subItem['name'],
-    //                         style: TextStyle(
-    //                           color: _page == index
-    //                               ? highlightColor
-    //                               : Theme.of(context).textTheme.title.color,
-    //                         ),
-    //                       ),
-    //                       onTap: () {
-    //                         //_pageController.jumpToPage(pageIndex);
-    //                         Navigator.pushReplacementNamed(
-    //                             context, subItem['pageRoute']);
-    //                         Navigator.pop(context);
-    //                       },
-    //                     );
-    //                   },
-    //                 ),
-    //               ],
-    //             );
-    //           } else {
-    //             return ListTile(
-    //               leading: Icon(
-    //                 item['icon'],
-    //                 color: _page == index
-    //                     ? highlightColor
-    //                     : Theme.of(context).textTheme.title.color,
-    //               ),
-    //               title: Text(
-    //                 item['name'],
-    //                 style: TextStyle(
-    //                   color: _page == index
-    //                       ? highlightColor
-    //                       : Theme.of(context).textTheme.title.color,
-    //                 ),
-    //               ),
-    //               onTap: () {
-    //                 //   _pageController.jumpToPage(index);
-    //                 Navigator.pop(context);
-    //                 Navigator.push(
-    //                     context,
-    //                     MaterialPageRoute(
-    //                         builder: (context) => item['pageRoute']));
-    //               },
-    //             );
-    //           }
-    //         },
-    //       ),
-    //     ],
-    //   ),
-    // ),
-    // bottomNavigationBar: CustomBottomBar(
-    //   barIndex: 0,
-    // ),
-    // floatingActionButton: FloatingActionButton(
-    //   onPressed: dbCall,
-    //   tooltip: 'Increment',
-    //   child: Icon(Icons.add),
-    // ),
-    //   ),
-    // );
   }
-
-  // BottomNavigationBar buildBottomItems() {
-  //   return BottomNavigationBar(
-  //     onTap: _onBottomBarItemTapped,
-  //     currentIndex: _botBarIndex,
-  //     type: BottomNavigationBarType.fixed,
-  //     items: const <BottomNavigationBarItem>[
-  //       BottomNavigationBarItem(
-  //         icon: Icon(Icons.home),
-  //         title: Text('Home'),
-  //       ),
-  //       BottomNavigationBarItem(
-  //         icon: Icon(Icons.search),
-  //         title: Text('Search'),
-  //       ),
-  //       BottomNavigationBarItem(
-  //         icon: Icon(Icons.favorite),
-  //         title: Text('My Favourites'),
-  //       ),
-  //       BottomNavigationBarItem(
-  //         icon: Icon(Icons.account_circle),
-  //         title: Text('My Account'),
-  //       ),
-  //     ],
-  //     unselectedItemColor: unselectedColor,
-  //     selectedItemColor: highlightColor,
-  //   );
-  // }
-
-  // void _onBottomBarItemTapped(int index) {
-  //   setState(() {
-  //     //_pageIndex = index;
-  //     _botBarIndex = index;
-  //   });
-
-  //   switch (index) {
-  //     case 0:
-  //       {
-  //         Navigator.push(
-  //             context, MaterialPageRoute(builder: (context) => UserHomePage()));
-  //       }
-  //       break;
-
-  //     case 1:
-  //       {
-  //         Navigator.push(
-  //             context,
-  //             MaterialPageRoute(
-  //                 builder: (context) => SearchStoresPage(forPage: 'Search')));
-  //       }
-  //       break;
-  //     case 2:
-  //       {
-  //         Navigator.push(
-  //             context,
-  //             MaterialPageRoute(
-  //                 builder: (context) =>
-  //                     SearchStoresPage(forPage: 'Favourite')));
-  //       }
-  //       break;
-  //     case 3:
-  //       {
-  //         Navigator.push(context,
-  //             MaterialPageRoute(builder: (context) => UserAccountPage()));
-  //       }
-  //       break;
-
-  //     default:
-  //       {
-  //         Navigator.push(
-  //             context, MaterialPageRoute(builder: (context) => UserHomePage()));
-  //       }
-  //       break;
-  //   }
-  //   //Navigator.pop(context);
-  //   // Navigator.push(
-  //   //     context, MaterialPageRoute(builder: (context) => UserHomePage()));
-  //   // _pageController.animateToPage(
-  //   //   _pageIndex,
-  //   //   duration: Duration(
-  //   //     milliseconds: 200,
-  //   //   ),
-  //   //   curve: Curves.easeIn,
-  //   // );
-  // }
-
-  // Widget _userHomePage() {
-  //   return userHomePage(context);
-  // }
-
-  // Widget _userAccount() {
-  //   return userAccountPage(context);
-  // }
 }

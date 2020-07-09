@@ -24,7 +24,8 @@ Widget userHomePage(BuildContext context) {
 }
 
 Widget userBookingPage(BuildContext context, UserAppData userProfile) {
-  return UserBookingPage();
+  return null;
+  //return UserBookingPage();
 }
 
 Widget rateAppPage(BuildContext context) {
@@ -89,5 +90,5 @@ Widget shareAppPage(BuildContext context) {
 }
 
 Widget slotsPage(BuildContext context) {
-  return ShowSlotsPage();
+  return Container();
 }

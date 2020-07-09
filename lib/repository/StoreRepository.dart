@@ -1,9 +1,27 @@
 import "dart:convert";
 import "package:http/http.dart";
+import 'package:noq/db/db_model/entity.dart';
+import 'package:noq/db/db_model/meta_entity.dart';
+import 'package:noq/db/db_service/entity_service.dart';
 import 'package:noq/models/localDB.dart';
 import "package:noq/models/store.dart";
 
 // Get list of Stores from Server
+
+Future<bool> upsertEntity(Entity entity) async {
+  bool status = await EntityService().upsertEntity(entity);
+  return status;
+}
+
+Future<bool> deleteEntity(String entityId) async {
+  bool status = await EntityService().deleteEntity(entityId);
+  return status;
+}
+
+Future<Entity> getEntity(String metaEntityId) async {
+  Entity entity = await EntityService().getEntity(metaEntityId);
+  return entity;
+}
 
 Future<List<Store>> getStores() async {
   List<Store> stores;

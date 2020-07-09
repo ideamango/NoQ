@@ -16,10 +16,12 @@ class MetaEntity {
       this.endTimeMinute,
       this.isActive,
       this.distance,
+      this.address,
       this.lat,
       this.lon,
       this.slotDuration,
       this.maxAllowed});
+  MetaEntity.withValues(entityId, type);
 
   //SlotDocumentId is entityID#20~06~01 it is not auto-generated, will help in not duplicating the record
   String entityId;
@@ -38,6 +40,7 @@ class MetaEntity {
   int endTimeMinute;
   bool isActive;
   double distance;
+  String address;
   double lat;
   double lon;
   int slotDuration;
@@ -58,6 +61,7 @@ class MetaEntity {
         endTimeMinute: json['endTimeMinute'],
         isActive: json['isActive'],
         distance: json['distance'],
+        address: json['address'],
         lat: json['lat'],
         lon: json['lon'],
         slotDuration: json['slotDuration'],
