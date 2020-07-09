@@ -1,36 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:noq/constants.dart';
-import 'package:noq/db/db_model/configurations.dart';
-import 'package:noq/db/db_model/user.dart';
-import 'package:noq/db/db_service/configurations_service.dart';
-import 'package:noq/db/db_service/db_main.dart';
 import 'package:noq/db/db_service/token_service.dart';
-import 'package:noq/db/db_service/user_service.dart';
 import 'package:noq/global_state.dart';
-import 'package:noq/pages/SearchStoresPage.dart';
-import 'package:noq/pages/about_page.dart';
-import 'package:noq/pages/allPagesWidgets.dart';
-import 'package:noq/pages/help_page.dart';
-import 'package:noq/pages/manage_apartment_list_page.dart';
-import 'package:noq/pages/manage_apartment_page.dart';
-import 'package:noq/pages/notifications_page.dart';
-import 'package:noq/pages/rate_app.dart';
-import 'package:noq/pages/share_app_page.dart';
-import 'package:noq/pages/userAccountPage.dart';
-import 'package:noq/services/authService.dart';
 import 'package:noq/userHomePage.dart';
-import 'package:noq/widget/appbar.dart';
-import 'package:noq/widget/bottom_nav_bar.dart';
-import 'package:noq/widget/header.dart';
-
-import 'db/db_model/entity_slots.dart';
 import 'db/db_model/user_token.dart';
-import 'style.dart';
-
 import 'package:noq/models/localDB.dart';
 import 'package:noq/repository/local_db_repository.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:intl/intl.dart';
 
 class LandingPage extends StatefulWidget {
   @override
@@ -96,7 +71,7 @@ class _LandingPageState extends State<LandingPage> {
   int i;
   var _userProfile;
   var fUserProfile;
-  String _userName;
+
   String _userId;
   String _phone;
   //TextStyle optionStyle = TextStyle(fontSize: 30, fontWeight: FontWeight.bold);
@@ -141,7 +116,6 @@ class _LandingPageState extends State<LandingPage> {
 
       //REMOVE default values
       _userId = "ForTesting123";
-      _userName = 'User';
 
       userProfile = new UserAppData(
           _userId,

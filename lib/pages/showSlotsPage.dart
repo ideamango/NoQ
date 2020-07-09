@@ -3,17 +3,11 @@ import 'package:noq/db/db_model/entity.dart';
 import 'package:noq/db/db_model/meta_entity.dart';
 import 'package:noq/db/db_model/slot.dart';
 import 'package:noq/db/db_model/user_token.dart';
+import 'package:noq/db/db_service/entity_service.dart';
 import 'package:noq/global_state.dart';
-import 'package:noq/models/localDB.dart';
-import 'package:noq/models/slot.dart';
-import 'package:noq/pages/progress_indicator.dart';
 import 'package:noq/pages/token_alert.dart';
 import 'package:noq/repository/slotRepository.dart';
-
-import 'package:noq/services/mapService.dart';
 import 'package:noq/style.dart';
-import 'package:noq/models/store.dart';
-import 'package:noq/services/color.dart';
 import 'package:noq/widget/appbar.dart';
 import 'package:noq/widget/bottom_nav_bar.dart';
 import 'package:noq/widget/header.dart';
@@ -51,6 +45,7 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
   GlobalState _state;
   bool stateInitFinished = false;
   MetaEntity metaEn;
+  Entity entity;
 
   @override
   void initState() {
@@ -77,8 +72,9 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
     //Get booked slots
 
     //Fetch details from server
+    entity = await EntityService().getEntity(metaEn.entityId);
 
-    await getSlotsListForStore(_storeId, _date).then((slotList) {
+    await getSlotsListForStore(entity, _date).then((slotList) {
       setState(() {
         _slotList = slotList;
       });

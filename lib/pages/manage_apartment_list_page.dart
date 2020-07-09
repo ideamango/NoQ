@@ -2,12 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:noq/constants.dart';
 import 'package:noq/db/db_model/entity.dart';
 import 'package:noq/db/db_model/meta_entity.dart';
-import 'package:noq/db/db_service/entity_service.dart';
 import 'package:noq/global_state.dart';
-import 'package:noq/models/localDB.dart';
 import 'package:noq/pages/entity_item.dart';
-import 'package:noq/pages/service_entity.dart';
-import 'package:noq/repository/local_db_repository.dart';
 import 'package:noq/style.dart';
 import 'package:noq/userHomePage.dart';
 import 'package:noq/utils.dart';
@@ -51,7 +47,8 @@ class _ManageApartmentsListPageState extends State<ManageApartmentsListPage> {
     await getGlobalState();
     if (!Utils.isNullOrEmpty(_state.currentUser.entities)) {
       metaEntitiesList = _state.currentUser.entities;
-    }
+    } else
+      metaEntitiesList = List<MetaEntity>();
 
     setState(() {
       stateInitFinished = true;
@@ -63,7 +60,7 @@ class _ManageApartmentsListPageState extends State<ManageApartmentsListPage> {
       var uuid = new Uuid();
       String _entityId = uuid.v1();
 
-      MetaEntity metaEn = MetaEntity.withValues(_entityId, _entityType);
+      MetaEntity metaEn = MetaEntity.withValues(entityId: _entityId, type: _entityType);
       // TODO: Create Entity with given id and type.
 
       metaEntitiesList.add(metaEn);

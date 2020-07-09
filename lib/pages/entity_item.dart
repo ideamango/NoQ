@@ -70,12 +70,7 @@ class EntityRowState extends State<EntityRow> {
           trailing: IconButton(
               icon: Icon(Icons.arrow_forward),
               onPressed: () {
-                if (getEntityDone) {
-                  showServiceForm();
-                } else {
-                  //TODO: check how this works
-                  showCircularProgress();
-                }
+                showServiceForm();
               }),
         ),
       ),

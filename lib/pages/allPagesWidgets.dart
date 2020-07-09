@@ -1,12 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:noq/login_page.dart';
 import 'package:noq/models/localDB.dart';
 import 'package:noq/pages/manage_apartment_list_page.dart';
-import 'package:noq/pages/manage_apartment_page.dart';
-import 'package:noq/pages/showSlotsPage.dart';
 import 'package:noq/pages/userAccountPage.dart';
-import 'package:noq/pages/userBookingPage.dart';
-
 import 'package:noq/services/authService.dart';
 import 'package:noq/style.dart';
 import 'package:noq/userHomePage.dart';

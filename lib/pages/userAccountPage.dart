@@ -3,7 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:noq/constants.dart';
 import 'package:noq/pages/notifications_page.dart';
 import 'package:noq/services/qr_code_generate.dart';
-import 'package:noq/style.dart';
+
 import 'package:noq/userHomePage.dart';
 import 'package:noq/widget/appbar.dart';
 import 'package:noq/widget/bottom_nav_bar.dart';

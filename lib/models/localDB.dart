@@ -1,5 +1,4 @@
 import 'package:json_annotation/json_annotation.dart';
-import 'package:noq/constants.dart';
 part 'localDB.g.dart';
 
 @JsonSerializable()

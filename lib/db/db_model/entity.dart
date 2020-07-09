@@ -3,7 +3,7 @@ import 'package:noq/db/db_model/employee.dart';
 import 'package:noq/db/db_model/meta_entity.dart';
 import 'package:noq/db/db_model/meta_user.dart';
 import 'package:noq/db/db_model/my_geo_fire_point.dart';
-import 'package:noq/db/db_model/user.dart';
+
 
 class Entity {
   Entity(

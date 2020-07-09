@@ -1,6 +1,5 @@
-import 'dart:io';
 import 'dart:async';
-import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
@@ -9,25 +8,20 @@ import 'package:noq/db/db_model/address.dart';
 import 'package:noq/db/db_model/employee.dart';
 import 'package:noq/db/db_model/entity.dart';
 import 'package:noq/db/db_model/meta_entity.dart';
-import 'package:noq/db/db_service/entity_service.dart';
-import 'package:noq/models/localDB.dart';
+
 import 'package:noq/pages/contact_item.dart';
 import 'package:noq/pages/entity_services_list_page.dart';
 import 'package:noq/pages/manage_apartment_list_page.dart';
 import 'package:noq/repository/StoreRepository.dart';
 
-import 'package:noq/repository/local_db_repository.dart';
-import 'package:noq/services/authService.dart';
-import 'package:noq/services/qr_code_generate.dart';
 import 'package:noq/style.dart';
 import 'package:noq/utils.dart';
 import 'package:noq/widget/custome_expansion_tile.dart';
 import 'package:noq/widget/weekday_selector.dart';
-import 'package:path_provider/path_provider.dart';
+
 import 'package:flutter/foundation.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
-import 'package:uuid/uuid.dart';
 import 'package:flushbar/flushbar.dart';
 
 class ManageApartmentPage extends StatefulWidget {
@@ -75,9 +69,6 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
   List<Widget> contactRowWidgets = new List<Widget>();
   int _contactCount = 0;
 
-  bool _addPerson = false;
-
-  bool _isPositionSet = false;
   //bool _autoPopulate = false;
 
   String _currentCity;
@@ -87,7 +78,6 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
   String _state;
   String _mainArea;
 
-  String _role;
 //  String _entityType;
   String state;
 
@@ -101,13 +91,7 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
     super.initState();
     _getCurrLocation();
     _metaEntity = this.widget.metaEntity;
-
-    //  getEntityDetails();
     initializeEntity();
-    //entity.contactPersons = new List<ContactAppData>();
-    entity.address = new Address();
-    //entity.contactPersons.add(cp1);
-    // addPerson();
   }
 
   initializeEntity() async {

@@ -21,7 +21,7 @@ class MetaEntity {
       this.lon,
       this.slotDuration,
       this.maxAllowed});
-  MetaEntity.withValues(entityId, type);
+  MetaEntity.withValues({this.entityId, this.type});
 
   //SlotDocumentId is entityID#20~06~01 it is not auto-generated, will help in not duplicating the record
   String entityId;
