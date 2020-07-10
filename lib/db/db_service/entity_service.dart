@@ -84,6 +84,7 @@ class EntityService {
       } catch (e) {
         print("Transactio Error: While making admin - " + e.toString());
         isSuccess = false;
+        throw e;
       }
     });
 
@@ -202,6 +203,7 @@ class EntityService {
       } catch (e) {
         isSuccess = false;
         print(e);
+        throw e;
       }
     });
 
@@ -278,6 +280,7 @@ class EntityService {
       } catch (e) {
         print("Transactio Error: While making admin - " + e.toString());
         isSuccess = false;
+        throw e;
       }
     });
 
@@ -481,6 +484,7 @@ class EntityService {
       } catch (e) {
         print("Transactio Error: While removing admin - " + e.toString());
         isSuccess = false;
+        throw e;
       }
     });
 
@@ -526,6 +530,7 @@ class EntityService {
         print(
             "Transactio Error: While adding favourite admin - " + e.toString());
         isSuccess = false;
+        throw e;
       }
     });
 
@@ -571,6 +576,7 @@ class EntityService {
         print(
             "Transactio Error: While adding favourite admin - " + e.toString());
         isSuccess = false;
+        throw e;
       }
     });
 
@@ -621,7 +627,7 @@ class EntityService {
         entities.add(me);
       }
     } catch (e) {
-      print(e);
+      print("Search failed: " + e);
     }
 
     return entities;

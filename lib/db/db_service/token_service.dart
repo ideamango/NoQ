@@ -262,6 +262,7 @@ class TokenService {
         }
       } catch (e) {
         print("Transactio Error: " + e.toString());
+        throw e;
       }
     });
 

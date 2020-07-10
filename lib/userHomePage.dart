@@ -307,7 +307,8 @@ class _UserHomePageState extends State<UserHomePage> {
       await createChildEntityAndAddToParent(
           'Child101-1', "Bata", true); //should fail as entity does not exists
     } catch (EntityDoesNotExistsException) {
-      print("EntityService.upsertChildEntityToParent --> SUCCESS");
+      print(
+          "EntityService.upsertChildEntityToParent (expected exception thrown) --> SUCCESS");
     }
     await createEntity();
 
