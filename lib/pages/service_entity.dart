@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:noq/constants.dart';
+import 'package:noq/db/db_model/meta_entity.dart';
 import 'package:noq/models/localDB.dart';
 import 'package:noq/pages/entity_services_details_page.dart';
 import 'package:noq/repository/local_db_repository.dart';
@@ -18,14 +19,14 @@ import 'package:geolocator/geolocator.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 
 class ServiceRow extends StatefulWidget {
-  final ChildEntityAppData childEntity;
+  final MetaEntity childEntity;
   ServiceRow({Key key, @required this.childEntity}) : super(key: key);
   @override
   State<StatefulWidget> createState() => new ServiceRowState();
 }
 
 class ServiceRowState extends State<ServiceRow> {
-  ChildEntityAppData serviceEntity;
+  MetaEntity serviceEntity;
 
   @override
   void initState() {
@@ -58,7 +59,7 @@ class ServiceRowState extends State<ServiceRow> {
           title: Column(
             children: <Widget>[
               Text(
-                serviceEntity.cType,
+                serviceEntity.type,
                 //  "Swimming Pool",
                 style: TextStyle(color: Colors.blueGrey[700], fontSize: 17),
               ),

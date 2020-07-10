@@ -2,6 +2,10 @@ import 'dart:ui';
 
 import 'package:flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
+import 'package:noq/db/db_model/address.dart';
+import 'package:noq/db/db_model/employee.dart';
+import 'package:noq/db/db_model/entity.dart';
+import 'package:noq/db/db_model/meta_entity.dart';
 import 'package:noq/db/db_service/entity_service.dart';
 import 'package:noq/models/localDB.dart';
 import 'dart:async';
@@ -10,6 +14,7 @@ import 'package:intl/intl.dart';
 import 'package:noq/constants.dart';
 import 'package:noq/pages/contact_item.dart';
 import 'package:noq/pages/entity_services_list_page.dart';
+import 'package:noq/repository/StoreRepository.dart';
 import 'package:noq/repository/local_db_repository.dart';
 import 'package:noq/style.dart';
 import 'package:noq/utils.dart';
@@ -24,7 +29,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uuid/uuid.dart';
 
 class ServiceEntityDetailsPage extends StatefulWidget {
-  final ChildEntityAppData serviceEntity;
+  final MetaEntity serviceEntity;
   ServiceEntityDetailsPage({Key key, @required this.serviceEntity})
       : super(key: key);
   @override
@@ -68,7 +73,9 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
   List<String> _daysOff = List<String>();
 
   AddressAppData adrs = new AddressAppData();
-  ChildEntityAppData serviceEntity;
+  MetaEntity _metaEntity;
+
+  Entity serviceEntity;
 
   List<ContactAppData> newList = new List<ContactAppData>();
 
@@ -86,9 +93,7 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
   String state;
 // ChildEntityAppData serviceEntity;
 
-  SharedPreferences _prefs;
-  UserAppData _userProfile;
-  List<ContactAppData> contactList = new List<ContactAppData>();
+  List<Employee> contactList = new List<Employee>();
   List<Widget> contactRowWidgets = new List<Widget>();
   int _contactCount = 0;
   String _roleType;
@@ -96,7 +101,7 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
   @override
   void initState() {
     super.initState();
-    serviceEntity = widget.serviceEntity;
+    _metaEntity = widget.serviceEntity;
     // var uuid = new Uuid();
     // serviceEntity.id = uuid.v1();
     _getCurrLocation();
@@ -106,43 +111,56 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
     //loadServiceEntity(serviceEntity.id);
 
     //  serviceEntity.contactPersons = new List<ContactAppData>();
-    serviceEntity.adrs = new AddressAppData();
+    serviceEntity.address = new Address();
     // serviceEntity.contactPersons.add(cp1);
     // addPerson();
   }
 
-  initializeEntity() {
-    _nameController.text = serviceEntity.name;
-    _regNumController.text = serviceEntity.regNum;
-    _openTimeController.text = serviceEntity.opensAt;
-    _closeTimeController.text = serviceEntity.closesAt;
-    _breakStartController.text = serviceEntity.breakTimeFrom;
-    _breakEndController.text = serviceEntity.breakTimeTo;
-    if (serviceEntity.daysClosed != null) _daysOff = serviceEntity.daysClosed;
-    _maxPeopleController.text = serviceEntity.maxPeopleAllowed;
-    //address
+  initializeEntity() async {
+    serviceEntity = await getEntity(_metaEntity.entityId);
+    if (serviceEntity != null) {
+      _nameController.text = serviceEntity.name;
+      _regNumController.text = serviceEntity.regNum;
+      _openTimeController.text = serviceEntity.startTimeHour.toString() +
+          ':' +
+          serviceEntity.startTimeMinute.toString();
+      _closeTimeController.text = serviceEntity.endTimeHour.toString() +
+          ':' +
+          serviceEntity.endTimeMinute.toString();
+      _breakStartController.text = serviceEntity.breakStartHour.toString() +
+          ':' +
+          serviceEntity.breakStartMinute.toString();
+      _breakEndController.text = serviceEntity.breakEndHour.toString() +
+          ':' +
+          serviceEntity.breakEndMinute.toString();
+      if (serviceEntity.closedOn != null) _daysOff = serviceEntity.closedOn;
+      _maxPeopleController.text = serviceEntity.maxAllowed.toString();
+      //address
 
-    _adrs1Controller.text = serviceEntity.adrs.addressLine1;
-    _localityController.text = serviceEntity.adrs.locality;
-    _landController.text = serviceEntity.adrs.landmark;
-    _cityController.text = serviceEntity.adrs.city;
-    _stateController.text = serviceEntity.adrs.state;
-    _countryController.text = serviceEntity.adrs.country;
-    _pinController.text = serviceEntity.adrs.postalCode;
+      _adrs1Controller.text = serviceEntity.address.address;
+      _localityController.text = serviceEntity.address.locality;
+      _landController.text = serviceEntity.address.landmark;
+      _cityController.text = serviceEntity.address.city;
+      _stateController.text = serviceEntity.address.state;
+      _countryController.text = serviceEntity.address.country;
+      _pinController.text = serviceEntity.address.zipcode;
 //contact person
-    if (!(Utils.isNullOrEmpty(serviceEntity.contactPersons))) {
-      contactList = serviceEntity.contactPersons;
-    } else
-      contactList = new List<ContactAppData>();
+      if (!(Utils.isNullOrEmpty(serviceEntity.managers))) {
+        contactList = serviceEntity.managers;
+      } else
+        contactList = new List<Employee>();
+    } else {
+      //TODO:do nothing as this metaEntity is just created and will saved in DB only on save
+    }
   }
 
   loadServiceEntity(String serviceEntityId) {
     // serviceEntity = getEntity(serviceEntityId);
   }
 
-  Future<void> getPrefInstance() async {
-    _prefs = await SharedPreferences.getInstance();
-  }
+  // Future<void> getPrefInstance() async {
+  //   _prefs = await SharedPreferences.getInstance();
+  // }
 
   String validateText(String value) {
     if (value == null) {
@@ -242,16 +260,14 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
     //saveEntityDetails(childEntity);
   }
 
-  deleteEntity() {}
-
   void _addNewContactRow() {
     setState(() {
-      ContactAppData contact = new ContactAppData.type(_roleType);
+      Employee contact = new Employee();
 
       contactRowWidgets.insert(0, new ContactRow(contact: contact));
 
       contactList.add(contact);
-      serviceEntity.contactPersons = contactList;
+      serviceEntity.managers = contactList;
       // saveEntityDetails(en);
       //saveEntityDetails();
       _contactCount = _contactCount + 1;
@@ -328,10 +344,16 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
               borderSide: BorderSide(color: Colors.orange))),
       validator: validateTime,
       onChanged: (String value) {
-        serviceEntity.opensAt = value;
+        //TODO: test the values
+        List<String> time = value.split(':');
+        serviceEntity.startTimeHour = int.parse(time[0]);
+        serviceEntity.startTimeMinute = int.parse(time[1]);
       },
       onSaved: (String value) {
-        serviceEntity.opensAt = value;
+        //TODO: test the values
+        List<String> time = value.split(':');
+        serviceEntity.startTimeHour = int.parse(time[0]);
+        serviceEntity.startTimeMinute = int.parse(time[1]);
       },
     );
     final closeTimeField = TextFormField(
@@ -366,10 +388,16 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
               borderSide: BorderSide(color: Colors.orange))),
       validator: validateTime,
       onChanged: (String value) {
-        serviceEntity.closesAt = value;
+        //TODO: test the values
+        List<String> time = value.split(':');
+        serviceEntity.endTimeHour = int.parse(time[0]);
+        serviceEntity.endTimeMinute = int.parse(time[1]);
       },
       onSaved: (String value) {
-        serviceEntity.closesAt = value;
+        //TODO: test the values
+        List<String> time = value.split(':');
+        serviceEntity.endTimeHour = int.parse(time[0]);
+        serviceEntity.endTimeMinute = int.parse(time[1]);
       },
     );
     final breakSartTimeField = TextFormField(
@@ -422,10 +450,16 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
               borderSide: BorderSide(color: Colors.orange))),
       validator: validateTime,
       onChanged: (String value) {
-        serviceEntity.breakTimeFrom = value;
+        //TODO: test the values
+        List<String> time = value.split(':');
+        serviceEntity.breakStartHour = int.parse(time[0]);
+        serviceEntity.breakStartMinute = int.parse(time[1]);
       },
       onSaved: (String value) {
-        // entity.opensAt = value;
+        //TODO: test the values
+        List<String> time = value.split(':');
+        serviceEntity.breakStartHour = int.parse(time[0]);
+        serviceEntity.breakStartMinute = int.parse(time[1]);
       },
     );
     final breakEndTimeField = TextFormField(
@@ -460,10 +494,16 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
               borderSide: BorderSide(color: Colors.orange))),
       validator: validateTime,
       onChanged: (String value) {
-        serviceEntity.breakTimeTo = value;
+        //TODO: test the values
+        List<String> time = value.split(':');
+        serviceEntity.breakEndHour = int.parse(time[0]);
+        serviceEntity.breakEndMinute = int.parse(time[1]);
       },
       onSaved: (String value) {
-        serviceEntity.closesAt = value;
+        //TODO: test the values
+        List<String> time = value.split(':');
+        serviceEntity.breakEndHour = int.parse(time[0]);
+        serviceEntity.breakEndMinute = int.parse(time[1]);
       },
     );
     final daysClosedField = Padding(
@@ -509,7 +549,7 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
                 var day = element.toString().substring(5);
                 _closedOnDays.add(day);
               });
-              serviceEntity.daysClosed = _closedOnDays;
+              serviceEntity.closedOn = _closedOnDays;
               print(_closedOnDays.length);
               print(_closedOnDays.toString());
             },
@@ -533,7 +573,7 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
       ),
       validator: validateText,
       onChanged: (String value) {
-        serviceEntity.maxPeopleAllowed = value;
+        serviceEntity.maxAllowed = int.parse(value);
       },
       onSaved: (String value) {
         // entity. = value;
@@ -551,14 +591,14 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
             decoration: TextDecoration.underline),
         children: <TextSpan>[
           TextSpan(
-            text: serviceEntity.adrs.addressLine1,
+            text: serviceEntity.address.address,
           ),
-          TextSpan(text: serviceEntity.adrs.landmark),
-          TextSpan(text: serviceEntity.adrs.locality),
-          TextSpan(text: serviceEntity.adrs.city),
-          TextSpan(text: serviceEntity.adrs.postalCode),
-          TextSpan(text: serviceEntity.adrs.state),
-          TextSpan(text: serviceEntity.adrs.country),
+          TextSpan(text: serviceEntity.address.landmark),
+          TextSpan(text: serviceEntity.address.locality),
+          TextSpan(text: serviceEntity.address.city),
+          TextSpan(text: serviceEntity.address.zipcode),
+          TextSpan(text: serviceEntity.address.state),
+          TextSpan(text: serviceEntity.address.country),
         ],
       ),
     );
@@ -579,7 +619,7 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
       ),
       validator: validateText,
       onSaved: (String value) {
-        serviceEntity.adrs.landmark = value;
+        serviceEntity.address.landmark = value;
       },
     );
     final localityField = TextFormField(
@@ -598,7 +638,7 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
       ),
       validator: validateText,
       onSaved: (String value) {
-        serviceEntity.adrs.locality = value;
+        serviceEntity.address.locality = value;
       },
     );
     final cityField = TextFormField(
@@ -617,7 +657,7 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
       ),
       validator: validateText,
       onSaved: (String value) {
-        serviceEntity.adrs.city = value;
+        serviceEntity.address.city = value;
       },
     );
     final stateField = TextFormField(
@@ -636,7 +676,7 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
       ),
       validator: validateText,
       onSaved: (String value) {
-        serviceEntity.adrs.state = value;
+        serviceEntity.address.state = value;
       },
     );
     final countryField = TextFormField(
@@ -655,7 +695,7 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
       ),
       validator: validateText,
       onSaved: (String value) {
-        serviceEntity.adrs.country = value;
+        serviceEntity.address.country = value;
       },
     );
     final pinField = TextFormField(
@@ -674,7 +714,7 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
       ),
       validator: validateText,
       onSaved: (String value) {
-        serviceEntity.adrs.postalCode = value;
+        serviceEntity.address.zipcode = value;
       },
     );
     //Contact person
@@ -695,7 +735,7 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
     bool _delEnabled = false;
     saveRoute() {
       saveFormDetails();
-      saveChildEntity(serviceEntity);
+      //saveChildEntity(serviceEntity);
       // Navigator.push(
       //     context,
       //     MaterialPageRoute(
@@ -717,7 +757,7 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
       return new Timer(duration, saveRoute);
     }
 
-    String title = serviceEntity.cType;
+    String title = serviceEntity.type;
 
     String _msg;
 
@@ -1361,10 +1401,10 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
                                         onPressed: () {
                                           if (_delEnabled) {
                                             String parentEntityId =
-                                                serviceEntity.parentEntityId;
+                                                serviceEntity.parentId;
 
-                                            EntityAppData parentEntity;
-                                            // EntityService()
+                                            Entity parentEntity;
+                                            
                                             //     .deleteEntity(serviceEntity.id)
                                             //     .whenComplete(() {
                                             //   Navigator.pop(context);
@@ -1381,13 +1421,15 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
                                             //                           parentEntity))));
                                             // });
 //TODO: Problem in this method, not deleting entity from list
-                                            deleteServiceFromDb(serviceEntity)
+                                            deleteEntity(serviceEntity.entityId)
                                                 .whenComplete(() {
                                               Navigator.pop(context);
+                                              //TDOD: Uncomment getEntity method below.
 
-                                              getEntity(parentEntityId)
-                                                  .then((value) =>
-                                                      parentEntity = value)
+                                              EntityService()
+                                                .getEntity(parentEntityId)
+                                                .then((value) => {
+                                                      parentEntity = value})
                                                   .whenComplete(() => Navigator.push(
                                                       context,
                                                       MaterialPageRoute(

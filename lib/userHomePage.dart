@@ -8,6 +8,7 @@ import 'package:noq/db/db_service/db_main.dart';
 import 'package:noq/db/db_service/entity_service.dart';
 import 'package:noq/db/db_service/token_service.dart';
 import 'package:noq/db/db_service/user_service.dart';
+import 'package:noq/global_state.dart';
 import 'package:noq/models/localDB.dart';
 import 'package:noq/repository/local_db_repository.dart';
 import 'package:noq/services/circular_progress.dart';
@@ -16,6 +17,7 @@ import 'package:noq/services/qr_code_generate.dart';
 import 'package:noq/services/qrcode_scan.dart';
 import 'package:noq/style.dart';
 import 'package:intl/intl.dart';
+import 'package:noq/utils.dart';
 import 'package:noq/widget/appbar.dart';
 import 'package:noq/widget/bottom_nav_bar.dart';
 import 'package:noq/widget/header.dart';
@@ -42,11 +44,11 @@ class UserHomePage extends StatefulWidget {
 
 class _UserHomePageState extends State<UserHomePage> {
   int i;
-  List<BookingListItem> _pastBookingsList;
-  List<BookingListItem> _newBookingsList;
+  List<UserToken> _pastBookingsList;
+  List<UserToken> _newBookingsList;
   String _upcomingBkgStatus;
   String _pastBkgStatus;
-  UserAppData _userProfile;
+  // UserAppData _userProfile;
   DateTime now = DateTime.now();
   final dtFormat = new DateFormat(dateDisplayFormat);
   bool isUpcomingSet = false;
@@ -291,403 +293,438 @@ class _UserHomePageState extends State<UserHomePage> {
     await UserService().deleteCurrentUser();
   }
 
-  void dbCall() async {
-    await clearAll();
+  // void dbCall() async {
+  //   await clearAll();
 
-    Configurations conf = await ConfigurationService().getConfigurations();
+  //   Configurations conf = await ConfigurationService().getConfigurations();
 
-    User u = await UserService().getCurrentUser();
+  //   User u = await UserService().getCurrentUser();
 
-    await createChildEntityAndAddToParent(
-        'Child101-1', "Bata", true); //should fail as entity does not exists
+  //   await createChildEntityAndAddToParent(
+  //       'Child101-1', "Bata", true); //should fail as entity does not exists
 
-    await createEntity();
+  //   await createEntity();
 
-    await createEntity2();
+  //   await createEntity2();
 
-    await createChildEntityAndAddToParent('Child101-1', "Bata", true);
+  //   await createChildEntityAndAddToParent('Child101-1', "Bata", true);
 
-    await EntityService().assignAdmin('Child101-1', "+913611009823");
+  //   await EntityService().assignAdmin('Child101-1', "+913611009823");
 
-    await createChildEntityAndAddToParent('Child101-2', "Habinaro", true);
+  //   await createChildEntityAndAddToParent('Child101-2', "Habinaro", true);
 
-    await updateEntity();
+  //   await updateEntity();
 
-    await createChildEntityAndAddToParent('Child101-3', "Raymonds", false);
+  //   await createChildEntityAndAddToParent('Child101-3', "Raymonds", false);
 
-    await updateEntity();
+  //   await updateEntity();
 
-    print(
-        "<==================================TESTING STARTED==========================================>");
+  //   print(
+  //       "<==================================TESTING STARTED==========================================>");
 
-    Entity ent = await EntityService().getEntity('Entity101');
+  //   Entity ent = await EntityService().getEntity('Entity101');
 
-    Entity child1 = await EntityService().getEntity('Child101-1');
+  //   Entity child1 = await EntityService().getEntity('Child101-1');
 
-    Entity child2 = await EntityService().getEntity('Child101-2');
+  //   Entity child2 = await EntityService().getEntity('Child101-2');
 
-    Entity child3 = await EntityService().getEntity('Child101-3');
+  //   Entity child3 = await EntityService().getEntity('Child101-3');
 
-    UserToken tok1 = await TokenService().generateToken(
-        child1.getMetaEntity(), new DateTime(2020, 7, 6, 10, 30, 0, 0));
+  //   UserToken tok1 = await TokenService().generateToken(
+  //       child1.getMetaEntity(), new DateTime(2020, 7, 6, 10, 30, 0, 0));
 
-    UserToken tok21 = await TokenService().generateToken(
-        child1.getMetaEntity(), new DateTime(2020, 7, 7, 12, 30, 0, 0));
+  //   UserToken tok21 = await TokenService().generateToken(
+  //       child1.getMetaEntity(), new DateTime(2020, 7, 7, 12, 30, 0, 0));
 
-    UserToken tok22 = await TokenService().generateToken(
-        child1.getMetaEntity(), new DateTime(2020, 7, 7, 10, 30, 0, 0));
+  //   UserToken tok22 = await TokenService().generateToken(
+  //       child1.getMetaEntity(), new DateTime(2020, 7, 7, 10, 30, 0, 0));
 
-    UserToken tok3 = await TokenService().generateToken(
-        child1.getMetaEntity(), new DateTime(2020, 7, 8, 10, 30, 0, 0));
+  //   UserToken tok3 = await TokenService().generateToken(
+  //       child1.getMetaEntity(), new DateTime(2020, 7, 8, 10, 30, 0, 0));
 
-    List<UserToken> toks = await TokenService().getAllTokensForCurrentUser(
-        new DateTime(2020, 7, 8), new DateTime(2020, 7, 9));
+  //   List<UserToken> toks = await TokenService().getAllTokensForCurrentUser(
+  //       new DateTime(2020, 7, 8), new DateTime(2020, 7, 9));
 
-    bool isAdminAssignedOnEntity = false;
-    for (MetaUser me in child1.admins) {
-      if (me.ph == '+913611009823') {
-        isAdminAssignedOnEntity = true;
-        break;
+  //   bool isAdminAssignedOnEntity = false;
+  //   for (MetaUser me in child1.admins) {
+  //     if (me.ph == '+913611009823') {
+  //       isAdminAssignedOnEntity = true;
+  //       break;
+  //     }
+  //   }
+
+  //   if (isAdminAssignedOnEntity) {
+  //     print("EntityService.assignAdmin --> SUCCESS");
+  //   } else {
+  //     print("EntityService.assignAdmin -----------------------> FAILURE");
+  //   }
+
+  //   Firestore fStore = Firestore.instance;
+
+  //   final DocumentReference userRef = fStore.document('users/+913611009823');
+  //   DocumentSnapshot doc = await userRef.get();
+  //   User newAdmin;
+  //   if (doc.exists) {
+  //     Map<String, dynamic> map = doc.data;
+  //     newAdmin = User.fromJson(map);
+  //   }
+
+  //   bool isEntityAddedToAdmin = false;
+
+  //   if (newAdmin != null) {
+  //     for (MetaEntity me in newAdmin.entities) {
+  //       if (me.entityId == "Child101-1") {
+  //         isEntityAddedToAdmin = true;
+  //         break;
+  //       }
+  //     }
+  //   } else {
+  //     print("TokenService.getCurrentUser -----------------------> FAILURE");
+  //   }
+
+  //   if (isEntityAddedToAdmin) {
+  //     print("EntityService.assignAdmin --> SUCCESS");
+  //   } else {
+  //     print("EntityService.assignAdmin -----------------------> FAILURE");
+  //   }
+
+  //   if (toks != null && toks.length == 1) {
+  //     print("TokenService.getAllTokensForCurrentUser --> SUCCESS");
+  //   } else {
+  //     print(
+  //         "TokenService.getAllTokensForCurrentUser -----------------------> FAILURE");
+  //   }
+
+  //   List<UserToken> toksBetween6thAnd9th = await TokenService()
+  //       .getAllTokensForCurrentUser(
+  //           new DateTime(2020, 7, 6), new DateTime(2020, 7, 9));
+
+  //   if (toksBetween6thAnd9th != null && toksBetween6thAnd9th.length == 4) {
+  //     print("TokenService.getAllTokensForCurrentUser --> SUCCESS");
+  //   } else {
+  //     print(
+  //         "TokenService.getAllTokensForCurrentUser -----------------------> FAILURE");
+  //   }
+
+  //   List<UserToken> allToksFromToday = await TokenService()
+  //       .getAllTokensForCurrentUser(new DateTime(2020, 7, 7), null);
+
+  //   if (allToksFromToday != null && allToksFromToday.length == 3) {
+  //     //should get all the tokens from 7th June onwards
+  //     print("TokenService.getAllTokensForCurrentUser --> SUCCESS");
+  //   } else {
+  //     print(
+  //         "TokenService.getAllTokensForCurrentUser -----------------------> FAILURE");
+  //   }
+
+  //   EntitySlots es = await TokenService()
+  //       .getEntitySlots('Child101-1', new DateTime(2020, 7, 7));
+
+  //   if (es != null && es.slots.length == 2) {
+  //     print("TokenService.getEntitySlots --> SUCCESS");
+  //   } else {
+  //     print("TokenService.getEntitySlots -----------------------> FAILURE");
+  //   }
+
+  //   List<UserToken> toksForDayForEntity = await TokenService()
+  //       .getTokensForEntityBookedByCurrentUser(
+  //           'Child101-1', new DateTime(2020, 7, 7));
+
+  //   if (toksForDayForEntity.length == 2) {
+  //     print("TokenService.getTokensForEntityBookedByCurrentUser --> SUCCESS");
+  //   } else {
+  //     print(
+  //         "TokenService.getTokensForEntityBookedByCurrentUser ------------------------> FAILURE");
+  //   }
+
+  //   await TokenService().cancelToken("Child101-1#2020~7~7#10~30#+916052069984");
+
+  //   EntitySlots esWithCancelledSlot = await TokenService()
+  //       .getEntitySlots('Child101-1', new DateTime(2020, 7, 7));
+
+  //   if (esWithCancelledSlot != null && esWithCancelledSlot.slots.length == 2) {
+  //     bool isSuccess = false;
+  //     for (Slot s in esWithCancelledSlot.slots) {
+  //       if (s.maxAllowed == 51) {
+  //         isSuccess = true;
+  //       }
+  //     }
+  //     if (isSuccess) {
+  //       print("TokenService.getEntitySlots --> SUCCESS");
+  //     } else {
+  //       print(
+  //           "TokenService.getEntitySlots -----------------------> FAILURE --> Cancellation of token should have increased maxAllowed");
+  //     }
+  //   } else {
+  //     print("TokenService.getEntitySlots -----------------------> FAILURE");
+  //   }
+
+  //   print("----------Search Only Type--with Name null ----------");
+
+  //   List<MetaEntity> entitiesByTypeAndNameNull = await EntityService()
+  //       .search(null, "Shop", 12.970632, 77.641603, 2, 1, 2);
+
+  //   for (MetaEntity me in entitiesByTypeAndNameNull) {
+  //     print(me.name + ":" + me.distance.toString());
+  //   }
+
+  //   if (entitiesByTypeAndNameNull != null &&
+  //       entitiesByTypeAndNameNull.length == 2) {
+  //     print("EntityService.search --> SUCCESS");
+  //   } else {
+  //     print("EntityService.search -----------------------> FAILURE");
+  //   }
+
+  //   print("----------Search Only Partial Name-- Type null-----------");
+
+  //   List<MetaEntity> entitiesByTypeNullAndName =
+  //       await EntityService().search("Habi", "", 12.970632, 77.641603, 2, 1, 2);
+
+  //   for (MetaEntity me in entitiesByTypeNullAndName) {
+  //     print(me.name + ":" + me.distance.toString());
+  //   }
+
+  //   if (entitiesByTypeNullAndName != null &&
+  //       entitiesByTypeNullAndName.length == 2) {
+  //     print("EntityService.search --> SUCCESS");
+  //   } else {
+  //     print("EntityService.search -----------------------> FAILURE");
+  //   }
+
+  //   print("---------Search By Partial Name and Type --------------");
+
+  //   List<MetaEntity> entitiesByTypeAndName = await EntityService()
+  //       .search("Bat", "Shop", 12.970632, 77.641603, 2, 1, 2);
+
+  //   for (MetaEntity me in entitiesByTypeAndName) {
+  //     print(me.name + ":" + me.distance.toString());
+  //   }
+
+  //   if (entitiesByTypeAndName != null && entitiesByTypeAndName.length == 1) {
+  //     print("EntityService.search --> SUCCESS");
+  //   } else {
+  //     print("EntityService.search -----------------------> FAILURE");
+  //   }
+
+  //   print(
+  //       "---------Search By Name and Type again for 2 Habi but of different type--------------");
+
+  //   List<MetaEntity> entitiesByTypeAndNameAgain = await EntityService()
+  //       .search("Habina", "Shop", 12.970632, 77.641603, 2, 1, 2);
+
+  //   for (MetaEntity me in entitiesByTypeAndNameAgain) {
+  //     print(me.name + ":" + me.distance.toString());
+  //   }
+
+  //   if (entitiesByTypeAndNameAgain != null &&
+  //       entitiesByTypeAndNameAgain.length == 1) {
+  //     print("EntityService.search --> SUCCESS");
+  //   } else {
+  //     print("EntityService.search -----------------------> FAILURE");
+  //   }
+
+  //   print(
+  //       "---------Search By Name and Type Store (no intersection) --------------");
+
+  //   List<MetaEntity> noIntersection = await EntityService()
+  //       .search("Bata", "Store", 12.970632, 77.641603, 2, 1, 2);
+
+  //   for (MetaEntity me in noIntersection) {
+  //     print(me.name + ":" + me.distance.toString());
+  //   }
+
+  //   if (noIntersection != null && noIntersection.length == 0) {
+  //     print("EntityService.search --> SUCCESS");
+  //   } else {
+  //     print("EntityService.search -----------------------> FAILURE");
+  //   }
+
+  //   await EntityService().removeAdmin('Child101-1', "+913611009823");
+
+  //   Entity child101 = await EntityService().getEntity('Child101-1');
+
+  //   bool isAdminRemovedFromEntity = true;
+  //   for (MetaUser me in child101.admins) {
+  //     if (me.ph == '+913611009823') {
+  //       isAdminRemovedFromEntity = false;
+  //       break;
+  //     }
+  //   }
+
+  //   if (isAdminRemovedFromEntity) {
+  //     print("EntityService.removeAdmin --> SUCCESS");
+  //   } else {
+  //     print("EntityService.removeAdmin -----------------------> FAILURE");
+  //   }
+
+  //   DocumentSnapshot removedAdminDoc = await userRef.get();
+  //   User removedAdmin;
+  //   if (doc.exists) {
+  //     Map<String, dynamic> map = removedAdminDoc.data;
+  //     removedAdmin = User.fromJson(map);
+  //   }
+
+  //   bool isEntityRemovedFromAdmin = true;
+
+  //   if (removedAdmin != null) {
+  //     for (MetaEntity me in removedAdmin.entities) {
+  //       if (me.entityId == "Child101-1") {
+  //         isEntityRemovedFromAdmin = false;
+  //         break;
+  //       }
+  //     }
+  //   } else {
+  //     print("TokenService.getCurrentUser -----------------------> FAILURE");
+  //   }
+
+  //   if (isEntityRemovedFromAdmin) {
+  //     print("EntityService.removeAdmin --> SUCCESS");
+  //   } else {
+  //     print("EntityService.removeAdmin -----------------------> FAILURE");
+  //   }
+
+  //   //----------
+
+  //   await EntityService().addEntityToUserFavourite(child101.getMetaEntity());
+
+  //   User curUser = await UserService().getCurrentUser();
+
+  //   bool isEntityAddedToCurrentUser = false;
+
+  //   if (curUser != null) {
+  //     for (MetaEntity me in curUser.favourites) {
+  //       if (me.entityId == "Child101-1") {
+  //         isEntityAddedToCurrentUser = true;
+  //         break;
+  //       }
+  //     }
+  //   } else {
+  //     print("TokenService.getCurrentUser -----------------------> FAILURE");
+  //   }
+
+  //   if (isEntityAddedToCurrentUser) {
+  //     print("EntityService.addEntityToUserFavourite --> SUCCESS");
+  //   } else {
+  //     print(
+  //         "EntityService.addEntityToUserFavourite -----------------------> FAILURE");
+  //   }
+
+  //   //--------------0
+
+  //   await EntityService().removeEntityFromUserFavourite("Child101-1");
+
+  //   curUser = await UserService().getCurrentUser();
+
+  //   bool isEntityRemovedFromCurrentUser = true;
+
+  //   if (curUser != null) {
+  //     for (MetaEntity me in curUser.favourites) {
+  //       if (me.entityId == "Child101-1") {
+  //         isEntityRemovedFromCurrentUser = false;
+  //         break;
+  //       }
+  //     }
+  //   } else {
+  //     print("TokenService.getCurrentUser -----------------------> FAILURE");
+  //   }
+
+  //   if (isEntityRemovedFromCurrentUser) {
+  //     print("EntityService.removeEntityFromUserFavourite --> SUCCESS");
+  //   } else {
+  //     print(
+  //         "EntityService.removeEntityFromUserFavourite -----------------------> FAILURE");
+  //   }
+
+  //   print(
+  //       "<==========================================TESTING DONE=========================================>");
+
+  //   int i = 0;
+  // }
+
+  void loadDataFromPrefs() async {
+    // await readData().then((fUser) {
+    //   _userProfile = fUser;
+    //   if (_userProfile != null) {
+    //     if (_userProfile.upcomingBookings.length != 0) {
+    //       var bookings = _userProfile.upcomingBookings;
+    //       List<BookingListItem> newBookings = new List<BookingListItem>();
+    //       List<BookingListItem> pastBookings = new List<BookingListItem>();
+
+    //       setState(() {
+    //         for (BookingAppData bk in bookings) {
+    //           for (EntityAppData str in _userProfile.storesAccessed) {
+    //             if (str.id == bk.storeId) {
+    //               if (bk.bookingDate.isBefore(now))
+    //                 pastBookings.add(new BookingListItem(str, bk));
+    //               else
+    //                 newBookings.add(new BookingListItem(str, bk));
+    //             }
+    //           }
+    //         }
+    //         _pastBookingsList = pastBookings;
+    //         _newBookingsList = newBookings;
+    //         if (_pastBookingsList.length != 0) {
+    //           _pastBkgStatus = 'Success';
+    //         } else
+    //           _pastBkgStatus = 'NoBookings';
+    //         if (_newBookingsList.length != 0) {
+    //           _upcomingBkgStatus = 'Success';
+    //         }
+    //       });
+    //     } else {
+    //       setState(() {
+    //         _upcomingBkgStatus = 'NoBookings';
+    //         _pastBkgStatus = 'NoBookings';
+    //       });
+    //     }
+    //   } else {
+    //     setState(() {
+    //       _pastBkgStatus = 'NoBookings';
+    //       _upcomingBkgStatus = 'NoBookings';
+    //     });
+    //   }
+    // });
+  }
+
+  void fetchDataFromGlobalState() {
+    if (!Utils.isNullOrEmpty(GlobalState().bookings)) {
+      if (GlobalState().bookings.length != 0) {
+        List<UserToken> bookings = GlobalState().bookings;
+        List<UserToken> newBookings = new List<UserToken>();
+        List<UserToken> pastBookings = new List<UserToken>();
+
+        setState(() {
+          for (UserToken bk in bookings) {
+            if (bk.dateTime.isBefore(now))
+              pastBookings.add(bk);
+            else
+              newBookings.add(bk);
+          }
+          _pastBookingsList = pastBookings;
+          _newBookingsList = newBookings;
+          if (_pastBookingsList.length != 0) {
+            _pastBkgStatus = 'Success';
+          } else
+            _pastBkgStatus = 'NoBookings';
+          if (_newBookingsList.length != 0) {
+            _upcomingBkgStatus = 'Success';
+          }
+        });
       }
-    }
-
-    if (isAdminAssignedOnEntity) {
-      print("EntityService.assignAdmin --> SUCCESS");
     } else {
-      print("EntityService.assignAdmin -----------------------> FAILURE");
+      setState(() {
+        _upcomingBkgStatus = 'NoBookings';
+        _pastBkgStatus = 'NoBookings';
+      });
     }
-
-    Firestore fStore = Firestore.instance;
-
-    final DocumentReference userRef = fStore.document('users/+913611009823');
-    DocumentSnapshot doc = await userRef.get();
-    User newAdmin;
-    if (doc.exists) {
-      Map<String, dynamic> map = doc.data;
-      newAdmin = User.fromJson(map);
-    }
-
-    bool isEntityAddedToAdmin = false;
-
-    if (newAdmin != null) {
-      for (MetaEntity me in newAdmin.entities) {
-        if (me.entityId == "Child101-1") {
-          isEntityAddedToAdmin = true;
-          break;
-        }
-      }
-    } else {
-      print("TokenService.getCurrentUser -----------------------> FAILURE");
-    }
-
-    if (isEntityAddedToAdmin) {
-      print("EntityService.assignAdmin --> SUCCESS");
-    } else {
-      print("EntityService.assignAdmin -----------------------> FAILURE");
-    }
-
-    if (toks != null && toks.length == 1) {
-      print("TokenService.getAllTokensForCurrentUser --> SUCCESS");
-    } else {
-      print(
-          "TokenService.getAllTokensForCurrentUser -----------------------> FAILURE");
-    }
-
-    List<UserToken> toksBetween6thAnd9th = await TokenService()
-        .getAllTokensForCurrentUser(
-            new DateTime(2020, 7, 6), new DateTime(2020, 7, 9));
-
-    if (toksBetween6thAnd9th != null && toksBetween6thAnd9th.length == 4) {
-      print("TokenService.getAllTokensForCurrentUser --> SUCCESS");
-    } else {
-      print(
-          "TokenService.getAllTokensForCurrentUser -----------------------> FAILURE");
-    }
-
-    List<UserToken> allToksFromToday = await TokenService()
-        .getAllTokensForCurrentUser(new DateTime(2020, 7, 7), null);
-
-    if (allToksFromToday != null && allToksFromToday.length == 3) {
-      //should get all the tokens from 7th June onwards
-      print("TokenService.getAllTokensForCurrentUser --> SUCCESS");
-    } else {
-      print(
-          "TokenService.getAllTokensForCurrentUser -----------------------> FAILURE");
-    }
-
-    EntitySlots es = await TokenService()
-        .getEntitySlots('Child101-1', new DateTime(2020, 7, 7));
-
-    if (es != null && es.slots.length == 2) {
-      print("TokenService.getEntitySlots --> SUCCESS");
-    } else {
-      print("TokenService.getEntitySlots -----------------------> FAILURE");
-    }
-
-    List<UserToken> toksForDayForEntity = await TokenService()
-        .getTokensForEntityBookedByCurrentUser(
-            'Child101-1', new DateTime(2020, 7, 7));
-
-    if (toksForDayForEntity.length == 2) {
-      print("TokenService.getTokensForEntityBookedByCurrentUser --> SUCCESS");
-    } else {
-      print(
-          "TokenService.getTokensForEntityBookedByCurrentUser ------------------------> FAILURE");
-    }
-
-    await TokenService().cancelToken("Child101-1#2020~7~7#10~30#+916052069984");
-
-    EntitySlots esWithCancelledSlot = await TokenService()
-        .getEntitySlots('Child101-1', new DateTime(2020, 7, 7));
-
-    if (esWithCancelledSlot != null && esWithCancelledSlot.slots.length == 2) {
-      bool isSuccess = false;
-      for (Slot s in esWithCancelledSlot.slots) {
-        if (s.maxAllowed == 51) {
-          isSuccess = true;
-        }
-      }
-      if (isSuccess) {
-        print("TokenService.getEntitySlots --> SUCCESS");
-      } else {
-        print(
-            "TokenService.getEntitySlots -----------------------> FAILURE --> Cancellation of token should have increased maxAllowed");
-      }
-    } else {
-      print("TokenService.getEntitySlots -----------------------> FAILURE");
-    }
-
-    print("----------Search Only Type--with Name null ----------");
-
-    List<MetaEntity> entitiesByTypeAndNameNull = await EntityService()
-        .search(null, "Shop", 12.970632, 77.641603, 2, 1, 2);
-
-    for (MetaEntity me in entitiesByTypeAndNameNull) {
-      print(me.name + ":" + me.distance.toString());
-    }
-
-    if (entitiesByTypeAndNameNull != null &&
-        entitiesByTypeAndNameNull.length == 2) {
-      print("EntityService.search --> SUCCESS");
-    } else {
-      print("EntityService.search -----------------------> FAILURE");
-    }
-
-    print("----------Search Only Partial Name-- Type null-----------");
-
-    List<MetaEntity> entitiesByTypeNullAndName =
-        await EntityService().search("Habi", "", 12.970632, 77.641603, 2, 1, 2);
-
-    for (MetaEntity me in entitiesByTypeNullAndName) {
-      print(me.name + ":" + me.distance.toString());
-    }
-
-    if (entitiesByTypeNullAndName != null &&
-        entitiesByTypeNullAndName.length == 2) {
-      print("EntityService.search --> SUCCESS");
-    } else {
-      print("EntityService.search -----------------------> FAILURE");
-    }
-
-    print("---------Search By Partial Name and Type --------------");
-
-    List<MetaEntity> entitiesByTypeAndName = await EntityService()
-        .search("Bat", "Shop", 12.970632, 77.641603, 2, 1, 2);
-
-    for (MetaEntity me in entitiesByTypeAndName) {
-      print(me.name + ":" + me.distance.toString());
-    }
-
-    if (entitiesByTypeAndName != null && entitiesByTypeAndName.length == 1) {
-      print("EntityService.search --> SUCCESS");
-    } else {
-      print("EntityService.search -----------------------> FAILURE");
-    }
-
-    print(
-        "---------Search By Name and Type again for 2 Habi but of different type--------------");
-
-    List<MetaEntity> entitiesByTypeAndNameAgain = await EntityService()
-        .search("Habina", "Shop", 12.970632, 77.641603, 2, 1, 2);
-
-    for (MetaEntity me in entitiesByTypeAndNameAgain) {
-      print(me.name + ":" + me.distance.toString());
-    }
-
-    if (entitiesByTypeAndNameAgain != null &&
-        entitiesByTypeAndNameAgain.length == 1) {
-      print("EntityService.search --> SUCCESS");
-    } else {
-      print("EntityService.search -----------------------> FAILURE");
-    }
-
-    print(
-        "---------Search By Name and Type Store (no intersection) --------------");
-
-    List<MetaEntity> noIntersection = await EntityService()
-        .search("Bata", "Store", 12.970632, 77.641603, 2, 1, 2);
-
-    for (MetaEntity me in noIntersection) {
-      print(me.name + ":" + me.distance.toString());
-    }
-
-    if (noIntersection != null && noIntersection.length == 0) {
-      print("EntityService.search --> SUCCESS");
-    } else {
-      print("EntityService.search -----------------------> FAILURE");
-    }
-
-    await EntityService().removeAdmin('Child101-1', "+913611009823");
-
-    Entity child101 = await EntityService().getEntity('Child101-1');
-
-    bool isAdminRemovedFromEntity = true;
-    for (MetaUser me in child101.admins) {
-      if (me.ph == '+913611009823') {
-        isAdminRemovedFromEntity = false;
-        break;
-      }
-    }
-
-    if (isAdminRemovedFromEntity) {
-      print("EntityService.removeAdmin --> SUCCESS");
-    } else {
-      print("EntityService.removeAdmin -----------------------> FAILURE");
-    }
-
-    DocumentSnapshot removedAdminDoc = await userRef.get();
-    User removedAdmin;
-    if (doc.exists) {
-      Map<String, dynamic> map = removedAdminDoc.data;
-      removedAdmin = User.fromJson(map);
-    }
-
-    bool isEntityRemovedFromAdmin = true;
-
-    if (removedAdmin != null) {
-      for (MetaEntity me in removedAdmin.entities) {
-        if (me.entityId == "Child101-1") {
-          isEntityRemovedFromAdmin = false;
-          break;
-        }
-      }
-    } else {
-      print("TokenService.getCurrentUser -----------------------> FAILURE");
-    }
-
-    if (isEntityRemovedFromAdmin) {
-      print("EntityService.removeAdmin --> SUCCESS");
-    } else {
-      print("EntityService.removeAdmin -----------------------> FAILURE");
-    }
-
-    //----------
-
-    await EntityService().addEntityToUserFavourite(child101.getMetaEntity());
-
-    User curUser = await UserService().getCurrentUser();
-
-    bool isEntityAddedToCurrentUser = false;
-
-    if (curUser != null) {
-      for (MetaEntity me in curUser.favourites) {
-        if (me.entityId == "Child101-1") {
-          isEntityAddedToCurrentUser = true;
-          break;
-        }
-      }
-    } else {
-      print("TokenService.getCurrentUser -----------------------> FAILURE");
-    }
-
-    if (isEntityAddedToCurrentUser) {
-      print("EntityService.addEntityToUserFavourite --> SUCCESS");
-    } else {
-      print(
-          "EntityService.addEntityToUserFavourite -----------------------> FAILURE");
-    }
-
-    //--------------0
-
-    await EntityService().removeEntityFromUserFavourite("Child101-1");
-
-    curUser = await UserService().getCurrentUser();
-
-    bool isEntityRemovedFromCurrentUser = true;
-
-    if (curUser != null) {
-      for (MetaEntity me in curUser.favourites) {
-        if (me.entityId == "Child101-1") {
-          isEntityRemovedFromCurrentUser = false;
-          break;
-        }
-      }
-    } else {
-      print("TokenService.getCurrentUser -----------------------> FAILURE");
-    }
-
-    if (isEntityRemovedFromCurrentUser) {
-      print("EntityService.removeEntityFromUserFavourite --> SUCCESS");
-    } else {
-      print(
-          "EntityService.removeEntityFromUserFavourite -----------------------> FAILURE");
-    }
-
-    print(
-        "<==========================================TESTING DONE=========================================>");
-
-    int i = 0;
   }
 
   void _loadBookings() async {
-    //Load details from local files
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    //int userId = prefs.getInt('userId');
     //Fetch details from server
     _upcomingBkgStatus = 'Loading';
     _pastBkgStatus = 'Loading';
-    await readData().then((fUser) {
-      _userProfile = fUser;
-      if (_userProfile != null) {
-        if (_userProfile.upcomingBookings.length != 0) {
-          var bookings = _userProfile.upcomingBookings;
-          List<BookingListItem> newBookings = new List<BookingListItem>();
-          List<BookingListItem> pastBookings = new List<BookingListItem>();
-
-          setState(() {
-            for (BookingAppData bk in bookings) {
-              for (EntityAppData str in _userProfile.storesAccessed) {
-                if (str.id == bk.storeId) {
-                  if (bk.bookingDate.isBefore(now))
-                    pastBookings.add(new BookingListItem(str, bk));
-                  else
-                    newBookings.add(new BookingListItem(str, bk));
-                }
-              }
-            }
-            _pastBookingsList = pastBookings;
-            _newBookingsList = newBookings;
-            if (_pastBookingsList.length != 0) {
-              _pastBkgStatus = 'Success';
-            } else
-              _pastBkgStatus = 'NoBookings';
-            if (_newBookingsList.length != 0) {
-              _upcomingBkgStatus = 'Success';
-            }
-          });
-        } else {
-          setState(() {
-            _upcomingBkgStatus = 'NoBookings';
-            _pastBkgStatus = 'NoBookings';
-          });
-        }
-      } else {
-        setState(() {
-          _pastBkgStatus = 'NoBookings';
-          _upcomingBkgStatus = 'NoBookings';
-        });
-      }
-    });
+    //loadDataFromPrefs();
+    fetchDataFromGlobalState();
   }
 
   @override
@@ -870,7 +907,8 @@ class _UserHomePageState extends State<UserHomePage> {
                 ),
                 RaisedButton(
                   color: Colors.blue,
-                  onPressed: dbCall,
+                  onPressed: (){},
+                  //dbCall,
                   child: Icon(Icons.add),
                 ),
               ],
@@ -906,7 +944,7 @@ class _UserHomePageState extends State<UserHomePage> {
     ]));
   }
 
-  Widget _buildItem(BookingListItem booking) {
+  Widget _buildItem(UserToken booking) {
     return Card(
       //  margin: EdgeInsets.all(10.0),
 
@@ -939,8 +977,8 @@ class _UserHomePageState extends State<UserHomePage> {
                         crossAxisAlignment: CrossAxisAlignment.end,
                         children: <Widget>[
                           Text(
-                            'T-1030-14',
-                            // booking.bookingInfo.tokenNum,
+                            //'T-1030-14',
+                            booking.number.toString(),
                             style: tokenTextStyle, textAlign: TextAlign.left,
                           ),
                         ],
@@ -955,7 +993,7 @@ class _UserHomePageState extends State<UserHomePage> {
                           width: MediaQuery.of(context).size.width * .2,
                           //Text('Where: ', style: tokenHeadingTextStyle),
                           child: Text(
-                            booking.storeInfo.name,
+                            booking.entityName,
                             overflow: TextOverflow.ellipsis,
                             style: tokenDataTextStyle,
                           ),
@@ -1005,10 +1043,13 @@ class _UserHomePageState extends State<UserHomePage> {
                                     size: 22,
                                   ),
                                   onPressed: () => launchURL(
-                                      booking.storeInfo.name,
-                                      booking.storeInfo.adrs.toString(),
-                                      booking.storeInfo.lat,
-                                      booking.storeInfo.long),
+                                      booking.entityName,
+                                      //TODO: Store address
+
+                                      // booking.storeInfo.adrs.toString(),
+                                      'Update this field, add address',
+                                      booking.lat,
+                                      booking.lon),
                                 ),
                               ),
                               // Container(
@@ -1055,7 +1096,7 @@ class _UserHomePageState extends State<UserHomePage> {
                       children: <Widget>[
                         // Text('Date: ', style: tokenHeadingTextStyle),
                         Text(
-                          dtFormat.format(booking.bookingInfo.bookingDate),
+                          dtFormat.format(booking.dateTime),
                           style: tokenDataTextStyle,
                         ),
                       ],
@@ -1069,7 +1110,9 @@ class _UserHomePageState extends State<UserHomePage> {
                       children: <Widget>[
                         // Text('Time: ', style: tokenHeadingTextStyle),
                         Text(
-                          booking.bookingInfo.timing,
+                          booking.dateTime.hour.toString() +
+                              ':' +
+                              booking.dateTime.minute.toString(),
                           style: tokenDateTextStyle,
                         ),
                       ],

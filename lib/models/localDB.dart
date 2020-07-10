@@ -1,5 +1,4 @@
 import 'package:json_annotation/json_annotation.dart';
-import 'package:noq/constants.dart';
 part 'localDB.g.dart';
 
 @JsonSerializable()
@@ -11,7 +10,6 @@ class UserAppData {
   final List<BookingAppData> upcomingBookings;
   List<EntityAppData> storesAccessed;
   List<EntityAppData> managedEntities;
-
   final SettingsAppData settings;
 
   UserAppData(this.id, this.phone, this.upcomingBookings, this.storesAccessed,

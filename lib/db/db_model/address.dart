@@ -1,6 +1,7 @@
 class Address {
   Address(
       {this.address,
+      this.locality,
       this.city,
       this.state,
       this.country,
@@ -8,6 +9,7 @@ class Address {
       this.zipcode});
 
   String address;
+  String locality;
   String city;
   String state;
   String country;
@@ -16,6 +18,7 @@ class Address {
 
   Map<String, dynamic> toJson() => {
         'address': address,
+        'locality': locality,
         'city': city,
         'state': state,
         'country': country,
@@ -27,6 +30,7 @@ class Address {
     if (json == null) return null;
     return new Address(
         address: json['address'],
+        locality: json['locality'],
         city: json['city'],
         state: json['state'],
         country: json['country'],

@@ -1,24 +1,30 @@
 import 'package:flutter/material.dart';
+import 'package:noq/db/db_model/entity.dart';
+import 'package:noq/db/db_model/meta_entity.dart';
+import 'package:noq/db/db_service/entity_service.dart';
 import 'package:noq/models/localDB.dart';
 import 'package:noq/pages/entity_services_details_page.dart';
 import 'package:noq/pages/manage_apartment_page.dart';
+import 'package:noq/services/circular_progress.dart';
 import 'package:noq/style.dart';
 import 'package:flutter/foundation.dart';
 
 class EntityRow extends StatefulWidget {
-  final EntityAppData entity;
+  final MetaEntity entity;
   EntityRow({Key key, @required this.entity}) : super(key: key);
   @override
   State<StatefulWidget> createState() => new EntityRowState();
 }
 
 class EntityRowState extends State<EntityRow> {
-  EntityAppData entity;
+  MetaEntity _metaEntity;
+  Entity entity;
+  bool getEntityDone = false;
 
   @override
   void initState() {
     super.initState();
-    entity = widget.entity;
+    _metaEntity = widget.entity;
   }
 
   @override
@@ -27,7 +33,8 @@ class EntityRowState extends State<EntityRow> {
       Navigator.push(
           context,
           MaterialPageRoute(
-              builder: (context) => ManageApartmentPage(entity: this.entity)));
+              builder: (context) =>
+                  ManageApartmentPage(metaEntity: _metaEntity)));
     }
 
     return new Card(
@@ -44,13 +51,13 @@ class EntityRowState extends State<EntityRow> {
           title: Column(
             children: <Widget>[
               Text(
-                entity.eType,
+                _metaEntity.type,
                 //  "Swimming Pool",
                 style: TextStyle(color: Colors.blueGrey[700], fontSize: 17),
               ),
-              if (entity.name != null)
+              if (_metaEntity.name != null)
                 Text(
-                  entity.name,
+                  _metaEntity.name,
                   style: labelTextStyle,
                 ),
             ],
@@ -61,7 +68,10 @@ class EntityRowState extends State<EntityRow> {
             color: primaryIcon,
           ),
           trailing: IconButton(
-              icon: Icon(Icons.arrow_forward), onPressed: showServiceForm),
+              icon: Icon(Icons.arrow_forward),
+              onPressed: () {
+                showServiceForm();
+              }),
         ),
       ),
     );

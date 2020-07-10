@@ -1,7 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:noq/pages/otp_dialog.dart';
 import 'package:noq/pages/otpdialog.dart';
 import 'package:noq/utils.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -231,7 +230,7 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   showDialogForOtp(String verId) async {
-    String val = await showDialog(
+    await showDialog(
         context: context,
         barrierDismissible: true,
         builder: (BuildContext context) {

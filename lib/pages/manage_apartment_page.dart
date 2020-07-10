@@ -1,32 +1,32 @@
-import 'dart:io';
 import 'dart:async';
-import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:noq/constants.dart';
-import 'package:noq/models/localDB.dart';
+import 'package:noq/db/db_model/address.dart';
+import 'package:noq/db/db_model/employee.dart';
+import 'package:noq/db/db_model/entity.dart';
+import 'package:noq/db/db_model/meta_entity.dart';
+
 import 'package:noq/pages/contact_item.dart';
 import 'package:noq/pages/entity_services_list_page.dart';
 import 'package:noq/pages/manage_apartment_list_page.dart';
+import 'package:noq/repository/StoreRepository.dart';
 
-import 'package:noq/repository/local_db_repository.dart';
-import 'package:noq/services/authService.dart';
-import 'package:noq/services/qr_code_generate.dart';
 import 'package:noq/style.dart';
 import 'package:noq/utils.dart';
 import 'package:noq/widget/custome_expansion_tile.dart';
 import 'package:noq/widget/weekday_selector.dart';
-import 'package:path_provider/path_provider.dart';
+
 import 'package:flutter/foundation.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
-import 'package:uuid/uuid.dart';
 import 'package:flushbar/flushbar.dart';
 
 class ManageApartmentPage extends StatefulWidget {
-  final EntityAppData entity;
-  ManageApartmentPage({Key key, @required this.entity}) : super(key: key);
+  final MetaEntity metaEntity;
+  ManageApartmentPage({Key key, @required this.metaEntity}) : super(key: key);
   @override
   _ManageApartmentPageState createState() => _ManageApartmentPageState();
 }
@@ -60,17 +60,15 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
 
   //ContactPerson Fields
 
-  ContactAppData cp1 = new ContactAppData();
-  AddressAppData adrs = new AddressAppData();
-  EntityAppData entity;
+  Employee cp1 = new Employee();
+  Address adrs = new Address();
+  MetaEntity _metaEntity;
+  Entity entity;
 
-  List<ContactAppData> contactList = new List<ContactAppData>();
+  List<Employee> contactList = new List<Employee>();
   List<Widget> contactRowWidgets = new List<Widget>();
   int _contactCount = 0;
 
-  bool _addPerson = false;
-
-  bool _isPositionSet = false;
   //bool _autoPopulate = false;
 
   String _currentCity;
@@ -80,52 +78,59 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
   String _state;
   String _mainArea;
 
-  String _role;
 //  String _entityType;
   String state;
 
   bool addNewClicked = false;
   String _roleType;
 
+  bool getEntityDone = false;
+
   @override
   void initState() {
     super.initState();
     _getCurrLocation();
-    entity = this.widget.entity;
-
-    //  getEntityDetails();
+    _metaEntity = this.widget.metaEntity;
     initializeEntity();
-    //entity.contactPersons = new List<ContactAppData>();
-    entity.adrs = new AddressAppData();
-    //entity.contactPersons.add(cp1);
-    // addPerson();
   }
 
-  initializeEntity() {
-    _nameController.text = entity.name;
-    // _entityType = entity.eType;
-    _regNumController.text = entity.regNum;
-    _openTimeController.text = entity.opensAt;
-    _closeTimeController.text = entity.closesAt;
-    _breakStartController.text = entity.breakTimeFrom;
-    _breakEndController.text = entity.breakTimeTo;
-    if (entity.daysClosed != null) _daysOff = entity.daysClosed;
-    _maxPeopleController.text = entity.maxPeopleAllowed;
-    //address
-    if (entity.adrs != null) {
-      _adrs1Controller.text = entity.adrs.addressLine1;
-      _localityController.text = entity.adrs.locality;
-      _landController.text = entity.adrs.landmark;
-      _cityController.text = entity.adrs.city;
-      _stateController.text = entity.adrs.state;
-      _countryController.text = entity.adrs.country;
-      _pinController.text = entity.adrs.postalCode;
-    }
+  initializeEntity() async {
+    entity = await getEntity(_metaEntity.entityId);
+    if (entity != null) {
+      _nameController.text = entity.name;
+      // _entityType = entity.eType;
+      _regNumController.text = entity.regNum;
+      _openTimeController.text = entity.startTimeHour.toString() +
+          ':' +
+          entity.startTimeMinute.toString();
+      _closeTimeController.text =
+          entity.endTimeHour.toString() + ':' + entity.endTimeMinute.toString();
+      _breakStartController.text = entity.breakStartHour.toString() +
+          ':' +
+          entity.breakStartMinute.toString();
+      _breakEndController.text = entity.breakEndHour.toString() +
+          ':' +
+          entity.breakEndMinute.toString();
+      if (entity.closedOn != null) _daysOff = entity.closedOn;
+      _maxPeopleController.text = entity.maxAllowed.toString();
+      //address
+      if (entity.address != null) {
+        _adrs1Controller.text = entity.address.address;
+        _localityController.text = entity.address.locality;
+        _landController.text = entity.address.landmark;
+        _cityController.text = entity.address.city;
+        _stateController.text = entity.address.state;
+        _countryController.text = entity.address.country;
+        _pinController.text = entity.address.zipcode;
+      }
 //contact person
-    if (!(Utils.isNullOrEmpty(entity.contactPersons))) {
-      contactList = entity.contactPersons;
-    } else
-      contactList = new List<ContactAppData>();
+      if (!(Utils.isNullOrEmpty(entity.managers))) {
+        contactList = entity.managers;
+      } else
+        contactList = new List<Employee>();
+    } else {
+      //TODO:do nothing as this metaEntity is just created and will saved in DB only on save
+    }
 
     //  _ctNameController.text = entity.contactPersons[0].perName;
   }
@@ -206,49 +211,32 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
     }
   }
 
-  // Future<List> getList() async {
-  //   List<ContactAppData> contactList = new List<ContactAppData>();
-  //   ContactAppData cp = new ContactAppData.values(
-  //       'a', 'b', 'c', 'd', Role.Employee, 'f', 'g', []);
-  //   // ContactPerson cp4 =
-  //   //     new ContactPerson.values('a', 'b', 'c', 'd', 'e', 'f', 'g');
-  //   // contactList.add(cp1);
-  //   // contactList.add(cp2);
-  //   print('list contakajsgdsdfklsjhdk');
-
-  //   newList.add(cp);
-  //   contactList = newList;
-  //   return contactList;
-  // }
-
   getEntityDetails() {
-    if (entity == null) {
-      //if new entity then generate guid and assign.
-      entity = new EntityAppData();
-      var uuid = new Uuid();
-      entity.id = uuid.v1();
-    } else
-      //if already existing entity load details from server
-      getEntity(entity.id).then((en) => entity = en);
+    // if (entity == null) {
+    //   //if new entity then generate guid and assign.
+    //   entity = new Entity();
+    //   var uuid = new Uuid();
+    //   entity.entityId = uuid.v1();
+    // } else
+    //   //if already existing entity load details from server
+    //   getEntity(entity.entityId).then((en) => entity = en);
   }
-
-  deleteEntity() {}
 
   void _addNewContactRow() {
     setState(() {
-      ContactAppData contact = new ContactAppData.type(_roleType);
+      Employee contact = new Employee();
 
       contactRowWidgets.insert(0, new ContactRow(contact: contact));
 
       contactList.add(contact);
-      entity.contactPersons = contactList;
+      entity.managers = contactList;
       // saveEntityDetails(en);
       //saveEntityDetails();
       _contactCount = _contactCount + 1;
     });
   }
 
-  Widget _buildContactItem(ContactAppData contact) {
+  Widget _buildContactItem(Employee contact) {
     return new ContactRow(contact: contact);
   }
 
@@ -369,7 +357,10 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
               borderSide: BorderSide(color: Colors.orange))),
       validator: validateTime,
       onSaved: (String value) {
-        entity.opensAt = value;
+        //TODO: test the values
+        List<String> time = value.split(':');
+        entity.startTimeHour = int.parse(time[0]);
+        entity.startTimeMinute = int.parse(time[1]);
       },
     );
     final closeTimeField = TextFormField(
@@ -404,7 +395,10 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
               borderSide: BorderSide(color: Colors.orange))),
       validator: validateTime,
       onSaved: (String value) {
-        entity.closesAt = value;
+        //TODO: test the values
+        List<String> time = value.split(':');
+        entity.endTimeHour = int.parse(time[0]);
+        entity.endTimeMinute = int.parse(time[1]);
       },
     );
     final breakSartTimeField = TextFormField(
@@ -457,7 +451,10 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
               borderSide: BorderSide(color: Colors.orange))),
       validator: validateTime,
       onSaved: (String value) {
-        entity.breakTimeFrom = value;
+        //TODO: test the values
+        List<String> time = value.split(':');
+        entity.breakStartHour = int.parse(time[0]);
+        entity.breakStartMinute = int.parse(time[1]);
       },
     );
     final breakEndTimeField = TextFormField(
@@ -492,7 +489,10 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
               borderSide: BorderSide(color: Colors.orange))),
       validator: validateTime,
       onSaved: (String value) {
-        entity.breakTimeTo = value;
+        //TODO: test the values
+        List<String> time = value.split(':');
+        entity.breakEndHour = int.parse(time[0]);
+        entity.breakEndMinute = int.parse(time[1]);
       },
     );
 
@@ -539,7 +539,7 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
                 var day = element.toString().substring(5);
                 _closedOnDays.add(day);
               });
-              entity.daysClosed = _closedOnDays;
+              entity.closedOn = _closedOnDays;
               print(_closedOnDays.length);
               print(_closedOnDays.toString());
             },
@@ -563,7 +563,7 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
       ),
       validator: validateText,
       onSaved: (String value) {
-        entity.maxPeopleAllowed = value;
+        entity.maxAllowed = int.parse(value);
         print("saved max people");
       },
     );
@@ -580,7 +580,7 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
           labelTextStr: "Apartment/ House No./ Lane", hintTextStr: ""),
       validator: validateText,
       onSaved: (String value) {
-        entity.adrs.addressLine1 = value;
+        entity.address.address = value;
         print("saved address");
       },
     );
@@ -600,7 +600,7 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
       ),
       validator: validateText,
       onSaved: (String value) {
-        entity.adrs.landmark = value;
+        entity.address.landmark = value;
         print("saved address");
       },
     );
@@ -620,7 +620,7 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
       ),
       validator: validateText,
       onSaved: (String value) {
-        entity.adrs.locality = value;
+        entity.address.locality = value;
         print("saved address");
       },
     );
@@ -640,7 +640,7 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
       ),
       validator: validateText,
       onSaved: (String value) {
-        entity.adrs.city = value;
+        entity.address.city = value;
         print("saved address");
       },
     );
@@ -660,7 +660,7 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
       ),
       validator: validateText,
       onSaved: (String value) {
-        entity.adrs.state = value;
+        entity.address.state = value;
         print("saved address");
       },
     );
@@ -680,7 +680,7 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
       ),
       validator: validateText,
       onSaved: (String value) {
-        entity.adrs.country = value;
+        entity.address.country = value;
         print("saved address");
       },
     );
@@ -700,7 +700,7 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
       ),
       validator: validateText,
       onSaved: (String value) {
-        entity.adrs.postalCode = value;
+        entity.address.zipcode = value;
         print("saved address");
       },
     );
@@ -730,7 +730,8 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
 
     saveRoute() {
       saveFormDetails();
-      saveEntityDetails(entity);
+      upsertEntity(entity);
+
       Navigator.push(
           context,
           MaterialPageRoute(
@@ -741,11 +742,6 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
     processSaveWithTimer() async {
       var duration = new Duration(seconds: 4);
       return new Timer(duration, saveRoute);
-    }
-
-    void updateModel() {
-//Read local file and update the entities.
-      print("saving locally");
     }
 
     String _msg;
@@ -809,14 +805,52 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
             color: Colors.white,
             onPressed: () {
               print("going back");
-              //Save form details, then go back.
-              saveFormDetails();
-              updateModel();
+              //Show flush bar to notify user
+              Flushbar(
+                //padding: EdgeInsets.zero,
+                margin: EdgeInsets.zero,
+                flushbarPosition: FlushbarPosition.TOP,
+                flushbarStyle: FlushbarStyle.FLOATING,
+                reverseAnimationCurve: Curves.decelerate,
+                forwardAnimationCurve: Curves.easeInToLinear,
+                backgroundColor: headerBarColor,
+                boxShadows: [
+                  BoxShadow(
+                      color: primaryAccentColor,
+                      offset: Offset(0.0, 2.0),
+                      blurRadius: 3.0)
+                ],
+                isDismissible: false,
+                duration: Duration(seconds: 4),
+                icon: Icon(
+                  Icons.save,
+                  color: Colors.blueGrey[50],
+                ),
+                showProgressIndicator: true,
+                progressIndicatorBackgroundColor: Colors.blueGrey[800],
+                routeBlur: 10.0,
+                titleText: Text(
+                  "Go Back to Home",
+                  style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16.0,
+                      color: primaryAccentColor,
+                      fontFamily: "ShadowsIntoLightTwo"),
+                ),
+                messageText: Text(
+                  "The changes you made will not be saved. To Save now, click Cancel.",
+                  style: TextStyle(
+                      fontSize: 12.0,
+                      color: Colors.blueGrey[50],
+                      fontFamily: "ShadowsIntoLightTwo"),
+                ),
+              )..show(context);
+
               //go back
               Navigator.of(context).pop();
             },
           ),
-          title: Text(entity.eType, style: whiteBoldTextStyle1),
+          title: Text(entity.type, style: whiteBoldTextStyle1),
         ),
         body: Center(
           child: new SafeArea(
@@ -1298,7 +1332,7 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
                                           elevation: (_delEnabled) ? 20 : 0,
                                           onPressed: () {
                                             if (_delEnabled) {
-                                              deleteEntityFromDb(entity)
+                                              deleteEntity(entity.entityId)
                                                   .whenComplete(() {
                                                 Navigator.pop(context);
                                                 Navigator.push(

@@ -1,5 +1,8 @@
+import 'package:flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
 import 'package:noq/constants.dart';
+import 'package:noq/db/db_model/entity.dart';
+import 'package:noq/db/db_model/meta_entity.dart';
 import 'package:noq/models/localDB.dart';
 import 'package:noq/pages/service_entity.dart';
 import 'package:noq/repository/local_db_repository.dart';
@@ -9,7 +12,7 @@ import 'package:noq/utils.dart';
 import 'package:uuid/uuid.dart';
 
 class EntityServicesListPage extends StatefulWidget {
-  final EntityAppData entity;
+  final Entity entity;
   EntityServicesListPage({Key key, @required this.entity}) : super(key: key);
   @override
   _EntityServicesListPageState createState() => _EntityServicesListPageState();
@@ -18,10 +21,10 @@ class EntityServicesListPage extends StatefulWidget {
 class _EntityServicesListPageState extends State<EntityServicesListPage> {
   String _msg;
   final GlobalKey<FormState> _servicesListFormKey = new GlobalKey<FormState>();
-  List<ChildEntityAppData> servicesList = new List<ChildEntityAppData>();
+  List<MetaEntity> servicesList = new List<MetaEntity>();
   final String title = "Services Detail Form";
 
-  EntityAppData parentEntity;
+  Entity parentEntity;
   String _subEntityType;
 
 //Add service Row
@@ -36,31 +39,35 @@ class _EntityServicesListPageState extends State<EntityServicesListPage> {
   void initState() {
     super.initState();
     parentEntity = widget.entity;
-    if (Utils.isNullOrEmpty(parentEntity.childCollection))
-      parentEntity.childCollection = new List<ChildEntityAppData>();
-// //TODO: Hack to clear list manually , remove later
-    // parentEntity.childCollection.clear();
-    // saveEntityDetails(parentEntity);
-// //TODO:End
-    setState(() {
-      servicesList = parentEntity.childCollection;
-    });
+    if (parentEntity == null)
+      servicesList = List<MetaEntity>();
+    else {
+      if (!Utils.isNullOrEmpty(parentEntity.childEntities))
+        setState(() {
+          servicesList = parentEntity.childEntities;
+        });
+    }
   }
 
   void _addNewServiceRow() {
     setState(() {
       var uuid = new Uuid();
       String _serviceId = uuid.v1();
-      ChildEntityAppData c = new ChildEntityAppData.cType(
-          _serviceId, _subEntityType, parentEntity.id, parentEntity.adrs);
-      servicesList.add(c);
+      MetaEntity metaEn = new MetaEntity();
+      metaEn.type = _subEntityType;
+      metaEn.entityId = _serviceId;
+
+      // .cType(
+      //     _serviceId, _subEntityType, parentEntity.id, parentEntity.adrs);
+
+      servicesList.add(metaEn);
       //  entity.childCollection.add(c);
-      saveChildEntity(c);
+      //   saveChildEntity(c);
       _count = _count + 1;
     });
   }
 
-  Widget _buildServiceItem(ChildEntityAppData childEntity) {
+  Widget _buildServiceItem(MetaEntity childEntity) {
     return new ServiceRow(childEntity: childEntity);
   }
 
@@ -111,7 +118,7 @@ class _EntityServicesListPageState extends State<EntityServicesListPage> {
     );
     String title = "Manage Services in " +
         ((parentEntity.name).isEmpty
-            ? (parentEntity.eType)
+            ? (parentEntity.type)
             : (parentEntity.name));
     return MaterialApp(
       title: 'Add child entities',
@@ -129,7 +136,48 @@ class _EntityServicesListPageState extends State<EntityServicesListPage> {
                 icon: Icon(Icons.arrow_back),
                 color: Colors.white,
                 onPressed: () {
-                  saveEntityDetails(parentEntity);
+                  // saveEntityDetails(parentEntity);
+                  print("going back");
+                  //Show flush bar to notify user
+                  Flushbar(
+                    //padding: EdgeInsets.zero,
+                    margin: EdgeInsets.zero,
+                    flushbarPosition: FlushbarPosition.TOP,
+                    flushbarStyle: FlushbarStyle.FLOATING,
+                    reverseAnimationCurve: Curves.decelerate,
+                    forwardAnimationCurve: Curves.easeInToLinear,
+                    backgroundColor: headerBarColor,
+                    boxShadows: [
+                      BoxShadow(
+                          color: primaryAccentColor,
+                          offset: Offset(0.0, 2.0),
+                          blurRadius: 3.0)
+                    ],
+                    isDismissible: false,
+                    duration: Duration(seconds: 4),
+                    icon: Icon(
+                      Icons.save,
+                      color: Colors.blueGrey[50],
+                    ),
+                    showProgressIndicator: true,
+                    progressIndicatorBackgroundColor: Colors.blueGrey[800],
+                    routeBlur: 10.0,
+                    titleText: Text(
+                      "Go Back to Home",
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16.0,
+                          color: primaryAccentColor,
+                          fontFamily: "ShadowsIntoLightTwo"),
+                    ),
+                    messageText: Text(
+                      "The changes you made will not be saved. To Save now, click Cancel.",
+                      style: TextStyle(
+                          fontSize: 12.0,
+                          color: Colors.blueGrey[50],
+                          fontFamily: "ShadowsIntoLightTwo"),
+                    ),
+                  )..show(context);
                   Navigator.of(context).pop();
                 }),
             title: Text(
@@ -171,14 +219,14 @@ class _EntityServicesListPageState extends State<EntityServicesListPage> {
                                   children: <Widget>[
                                     Text(
                                       (parentEntity.name) ??
-                                          (parentEntity.eType),
+                                          (parentEntity.type),
                                       style: TextStyle(
                                           color: Colors.white, fontSize: 15),
                                     ),
                                     Text(
-                                      (parentEntity.adrs.locality +
+                                      (parentEntity.address.locality +
                                               ", " +
-                                              parentEntity.adrs.city +
+                                              parentEntity.address.city +
                                               ".") ??
                                           "",
                                       style: buttonXSmlTextStyle,

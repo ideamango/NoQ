@@ -1,23 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:intl/intl.dart';
-import 'package:noq/models/localDB.dart';
-import 'package:noq/pages/entity_services_details_page.dart';
-import 'package:noq/pages/manage_apartment_page.dart';
+import 'package:noq/db/db_model/employee.dart';
 import 'package:noq/style.dart';
 import 'package:flutter/foundation.dart';
 import 'package:noq/utils.dart';
 import 'package:noq/widget/weekday_selector.dart';
 
 class ContactRow extends StatefulWidget {
-  final ContactAppData contact;
+  final Employee contact;
   ContactRow({Key key, @required this.contact}) : super(key: key);
   @override
   State<StatefulWidget> createState() => new ContactRowState();
 }
 
 class ContactRowState extends State<ContactRow> {
-  ContactAppData contact;
+  Employee contact;
   TextEditingController _ctNameController = TextEditingController();
   TextEditingController _ctEmpIdController = TextEditingController();
   TextEditingController _ctPhn1controller = TextEditingController();
@@ -68,10 +66,10 @@ class ContactRowState extends State<ContactRow> {
           CommonStyle.textFieldStyle(labelTextStr: "Name", hintTextStr: ""),
       validator: validateText,
       onChanged: (String value) {
-        contact.perName = value;
+        contact.name = value;
       },
       onSaved: (String value) {
-        contact.perName = value;
+        contact.name = value;
       },
     );
     final ctEmpIdField = TextFormField(
@@ -85,10 +83,10 @@ class ContactRowState extends State<ContactRow> {
           labelTextStr: "Person Id", hintTextStr: ""),
       validator: validateText,
       onChanged: (String value) {
-        contact.empId = value;
+        contact.id = value;
       },
       onSaved: (String value) {
-        contact.empId = value;
+        contact.id = value;
       },
     );
     final ctPhn1Field = TextFormField(
@@ -102,11 +100,11 @@ class ContactRowState extends State<ContactRow> {
           prefixText: '+91', labelTextStr: "Primary Phone", hintTextStr: ""),
       validator: Utils.validateMobile,
       onChanged: (String value) {
-        contact.perPhone1 = value;
+        contact.ph = value;
       },
       onSaved: (value) {
         value = "+91" + value;
-        contact.perPhone1 = value;
+        contact.ph = value;
       },
     );
     final ctPhn2Field = TextFormField(
@@ -120,11 +118,11 @@ class ContactRowState extends State<ContactRow> {
           prefixText: '+91', labelTextStr: "Alternate Phone", hintTextStr: ""),
       validator: Utils.validateMobile,
       onChanged: (String value) {
-        contact.perPhone2 = value;
+        contact.altPhone = value;
       },
       onSaved: (value) {
         value = "+91" + value;
-        contact.perPhone2 = value;
+        contact.altPhone = value;
       },
     );
     final ctAvlFromTimeField = TextFormField(
@@ -177,10 +175,16 @@ class ContactRowState extends State<ContactRow> {
               borderSide: BorderSide(color: Colors.orange))),
       validator: validateTime,
       onChanged: (String value) {
-        contact.avlFromTime = value;
+        //TODO: test the values
+        List<String> time = value.split(':');
+        contact.shiftStartHour = int.parse(time[0]);
+        contact.shiftStartMinute = int.parse(time[1]);
       },
       onSaved: (String value) {
-        contact.avlFromTime = value;
+        //TODO: test the values
+        List<String> time = value.split(':');
+        contact.shiftStartHour = int.parse(time[0]);
+        contact.shiftStartMinute = int.parse(time[1]);
       },
     );
     final ctAvlTillTimeField = TextFormField(
@@ -215,10 +219,16 @@ class ContactRowState extends State<ContactRow> {
               borderSide: BorderSide(color: Colors.orange))),
       validator: validateTime,
       onChanged: (String value) {
-        contact.avlTillTime = value;
+        //TODO: test the values
+        List<String> time = value.split(':');
+        contact.shiftEndHour = int.parse(time[0]);
+        contact.shiftEndMinute = int.parse(time[1]);
       },
       onSaved: (String value) {
-        contact.avlTillTime = value;
+        //TODO: test the values
+        List<String> time = value.split(':');
+        contact.shiftEndHour = int.parse(time[0]);
+        contact.shiftEndMinute = int.parse(time[1]);
       },
     );
     final daysOffField = Padding(

@@ -12,9 +12,9 @@ import 'package:noq/services/authService.dart';
 //String _pin;
 String status;
 bool _isPressed = false;
-Slot selectedSlot;
+SlotAppData selectedSlot;
 String _errorMessage;
-List<Slot> _slotList;
+List<SlotAppData> _slotList;
 //   '9:00am',
 //   '9:30am',
 //   '10:00am',
@@ -27,19 +27,19 @@ List<Slot> _slotList;
 //   '11:30am'
 // ];
 
-Future<bool> showSlotsDialog(
-    BuildContext context, List<Slot> slots, DateTime dateTime) {
-  _slotList = slots;
+// Future<bool> showSlotsDialog(
+//     BuildContext context, List<SlotAppData> slots, DateTime dateTime) {
+//   _slotList = slots;
 
-  return showDialog(
-      context: context,
-      barrierDismissible: true,
-      builder: (BuildContext context) {
-        return StatefulBuilder(builder: (context, setState) {
-          return ShowSlotsPage();
-        });
-      });
-}
+//   return showDialog(
+//       context: context,
+//       barrierDismissible: true,
+//       builder: (BuildContext context) {
+//         return StatefulBuilder(builder: (context, setState) {
+//           return ShowSlotsPage(entity: ,);
+//         });
+//       });
+// }
 
 // Widget _buildGridItems(BuildContext context, int index) {
 //   int x, y = 0;

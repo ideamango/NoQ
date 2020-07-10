@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:noq/models/localDB.dart';
-import 'package:noq/models/slot.dart';
-import 'package:noq/pages/progress_indicator.dart';
+import 'package:noq/db/db_model/entity.dart';
+import 'package:noq/db/db_model/meta_entity.dart';
+import 'package:noq/db/db_model/slot.dart';
+import 'package:noq/db/db_model/user_token.dart';
+import 'package:noq/db/db_service/entity_service.dart';
+import 'package:noq/global_state.dart';
 import 'package:noq/pages/token_alert.dart';
 import 'package:noq/repository/slotRepository.dart';
-
-import 'package:noq/services/mapService.dart';
 import 'package:noq/style.dart';
-import 'package:noq/models/store.dart';
-import 'package:noq/services/color.dart';
 import 'package:noq/widget/appbar.dart';
 import 'package:noq/widget/bottom_nav_bar.dart';
 import 'package:noq/widget/header.dart';
@@ -19,6 +18,9 @@ import 'package:progress_dialog/progress_dialog.dart';
 import '../constants.dart';
 
 class ShowSlotsPage extends StatefulWidget {
+  final MetaEntity entity;
+  ShowSlotsPage({Key key, @required this.entity}) : super(key: key);
+
   @override
   _ShowSlotsPageState createState() => _ShowSlotsPageState();
 }
@@ -40,6 +42,11 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
   bool _showProgressInd = false;
   ProgressDialog pr;
   String title = "Book Slot";
+  GlobalState _state;
+  bool stateInitFinished = false;
+  MetaEntity metaEn;
+  Entity entity;
+
   @override
   void initState() {
     //dt = dateFormat.format(DateTime.now());
@@ -50,7 +57,9 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
   void _loadSlots() async {
     //Load details from local files
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    _storeId = prefs.getString('storeIdForSlots');
+    _storeId = widget.entity.entityId;
+    metaEn = widget.entity;
+    // _storeId = prefs.getString('storeIdForSlots');
     //_userId = prefs.getString('userId');
     _storeName = prefs.getString("storeName");
     //Get date to fetch available slots for this date.
@@ -63,12 +72,18 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
     //Get booked slots
 
     //Fetch details from server
+    entity = await EntityService().getEntity(metaEn.entityId);
 
-    await getSlotsForStore(_storeId, _date).then((slotList) {
+    await getSlotsListForStore(entity, _date).then((slotList) {
       setState(() {
         _slotList = slotList;
       });
     });
+  }
+
+  Future<void> getGlobalState() async {
+    _state = await GlobalState.getGlobalState();
+    stateInitFinished = true;
   }
 
   Widget _noSlotsPage() {
@@ -121,7 +136,7 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
         home: Scaffold(
           drawer: CustomDrawer(),
           appBar: CustomAppBar(
-            titleTxt: title,
+            titleTxt: _storeName,
           ),
           body: Padding(
             padding: const EdgeInsets.fromLTRB(6, 6, 6, 6),
@@ -260,32 +275,48 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
     }
   }
 
+  bool isSelected(String slotId) {
+    if (selectedSlot != null) {
+      if (slotId.compareTo(selectedSlot.slotId) == 0) return true;
+    }
+    return false;
+  }
+
+  bool isBooked(String slotId) {
+    List<UserToken> s =
+        _state.bookings.where((element) => element.slotId == slotId);
+    if (s.length != 0)
+      return true;
+    else
+      return false;
+  }
+
   Widget _buildGridItem(BuildContext context, int index) {
     Slot sl = _slotList[index];
 
     return RaisedButton(
-      elevation: (sl.slotSelected == "true") ? 0.0 : 10.0,
+      elevation: (isSelected(sl.slotId) == true) ? 0.0 : 10.0,
       padding: EdgeInsets.all(2),
       child: Text(
-        sl.slotStrTime,
+        sl.dateTime.hour.toString() + ':' + sl.dateTime.minute.toString(),
         style: TextStyle(fontSize: 10, color: Colors.white),
         // textDirection: TextDirection.ltr,
         // textAlign: TextAlign.center,
       ),
 
       autofocus: false,
-      color: (sl.slotBooked == true)
+      color: (isBooked(sl.slotId) == true)
           ? Colors.green[200]
-          : ((sl.slotAvlFlg == "true" && sl.slotSelected == "true")
+          : ((sl.isFull == true && isSelected(sl.slotId) == true)
               ? highlightColor
-              : (sl.slotAvlFlg == "false") ? btnDisabledolor : btnColor),
+              : (sl.isFull == false) ? btnDisabledolor : btnColor),
 
       disabledColor: Colors.grey[400],
       //textTheme: ButtonTextTheme.normal,
       //highlightColor: Colors.green,
       // highlightElevation: 10.0,
-      splashColor: (sl.slotAvlFlg == "true") ? highlightColor : null,
-      shape: (sl.slotSelected == "true")
+      splashColor: (sl.isFull == true) ? highlightColor : null,
+      shape: (isSelected(sl.slotId) == true)
           ? RoundedRectangleBorder(
               borderRadius: new BorderRadius.circular(5.0),
               // side: BorderSide(color: highlightColor),
@@ -295,17 +326,11 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
               // side: BorderSide(color: Colors.white),
             ),
       onPressed: () {
-        if (sl.slotAvlFlg == "true") {
+        if (sl.isFull == true) {
           setState(() {
             //unselect previously selected slot
-            _slotList.forEach((element) => element.slotSelected = "false");
-
-            sl.slotSelected = "true";
             selectedSlot = sl;
           });
-
-          print(sl.slotStrTime);
-          print(sl.slotSelected);
         } else
           return null;
       },
@@ -321,20 +346,24 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
 
     // Future.delayed(Duration(seconds: 1)).then((value) {
     //   pr.hide().whenComplete(() {
-    bookSlotForStore(_storeId, _userId, selectedSlot.slotStrTime, _date)
-        .then((value) {
-      _token = value;
 
-      showTokenAlert(context, _token, _storeName, selectedSlot.slotStrTime)
-          .then((value) {
+    bookSlotForStore(metaEn, selectedSlot, _date).then((value) {
+      _token = value.number.toString();
+      String slotTiming = selectedSlot.dateTime.hour.toString() +
+          ':' +
+          selectedSlot.dateTime.minute.toString();
+      _state.bookings.add(value);
+
+      showTokenAlert(context, _token, _storeName, slotTiming).then((value) {
         _returnValues(value);
-        bookedSlot = selectedSlot;
+
         setState(() {
-          selectedSlot.slotBooked = true;
+          bookedSlot = selectedSlot;
         });
+
 //Update local file with new booking.
 
-        String returnVal = value + '-' + selectedSlot.slotStrTime;
+        String returnVal = value + '-' + slotTiming;
         Navigator.of(context).pop(returnVal);
         // print(value);
       });

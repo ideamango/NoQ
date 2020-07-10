@@ -6,11 +6,8 @@ import 'package:noq/db/db_model/meta_entity.dart';
 import 'package:noq/db/db_model/user_token.dart';
 import 'package:noq/db/db_service/entity_service.dart';
 import 'package:noq/global_state.dart';
-import 'package:noq/models/localDB.dart';
-import 'package:noq/pages/entity_services_list_page.dart';
-import 'package:noq/pages/search_child_page.dart';
+import 'package:noq/pages/SearchStoresPage.dart';
 import 'package:noq/pages/showSlotsPage.dart';
-import 'package:noq/repository/StoreRepository.dart';
 import 'package:noq/repository/local_db_repository.dart';
 import 'package:noq/repository/slotRepository.dart';
 import 'package:noq/services/mapService.dart';
@@ -18,28 +15,22 @@ import 'package:noq/style.dart';
 import 'package:noq/utils.dart';
 import 'package:noq/widget/appbar.dart';
 import 'package:noq/widget/bottom_nav_bar.dart';
-import 'package:noq/widget/header.dart';
-import 'package:noq/widget/widgets.dart';
-
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../userHomePage.dart';
-
-class SearchStoresPage extends StatefulWidget {
+class SearchChildPage extends StatefulWidget {
   final String forPage;
-  final List<Entity> childList;
-  SearchStoresPage({Key key, @required this.forPage, this.childList})
+  final List<MetaEntity> childList;
+  SearchChildPage({Key key, @required this.forPage, @required this.childList})
       : super(key: key);
   @override
-  _SearchStoresPageState createState() => _SearchStoresPageState();
+  _SearchChildPageState createState() => _SearchChildPageState();
 }
 
-class _SearchStoresPageState extends State<SearchStoresPage> {
+class _SearchChildPageState extends State<SearchChildPage> {
   bool initCompleted = false;
   bool isFavourited = false;
   DateTime dateTime = DateTime.now();
   final dtFormat = new DateFormat('dd');
-  SharedPreferences _prefs;
   GlobalState _globalState;
   List<Entity> _stores = new List<Entity>();
   List<Entity> _searchResultstores = new List<Entity>();
@@ -47,6 +38,7 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
   String _searchAll = searchTypes[0];
   bool searchBoxClicked = false;
   bool fetchFromServer = false;
+  SharedPreferences _prefs;
 
   final compareDateFormat = new DateFormat('YYYYMMDD');
   List<DateTime> _dateList = new List<DateTime>();
@@ -57,13 +49,11 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
   );
   final key = new GlobalKey<ScaffoldState>();
   static final TextEditingController _searchQuery = new TextEditingController();
-  List<Entity> _list;
+  String _forPage;
+  List<MetaEntity> _metaList;
   bool _isSearching;
   String _searchText = "";
   String searchType = "";
-  String pageName;
-  GlobalState _state;
-  bool stateInitFinished = false;
 
   _SearchStoresPageState() {
     _searchQuery.addListener(() {
@@ -87,7 +77,7 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
 //       fetchFromServer = true;
 //     });
 // //_stores = Request();
-//     List<MetaEntity> newList;
+//     List<EntityAppData> newList;
 //     if (_entityType.toLowerCase() == _searchAll.toLowerCase()) {
 //       newList = getStoreListServer();
 //     } else {
@@ -129,13 +119,13 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
     super.initState();
     // _getUserData();
     _isSearching = false;
-    // getPrefInstance().then((action) {
-    getGlobalState();
-    if (stateInitFinished) {
-      setState(() {
-        initCompleted = true;
-      });
-    }
+    getPrefInstance();
+    _forPage = widget.forPage;
+    _metaList = widget.childList;
+    fetchEntitiesList();
+    setState(() {
+      initCompleted = true;
+    });
     //  });
   }
 
@@ -143,130 +133,19 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
     _prefs = await SharedPreferences.getInstance();
   }
 
-  Future<void> getGlobalState() async {
-    _state = await GlobalState.getGlobalState();
-    stateInitFinished = true;
-  }
-
-  void getList() {
-    pageName = widget.forPage;
-    if (pageName == "Search") {
-      fetchEntitiesList();
-      //getStoresList();
-    } else if (pageName == "Favourite") {
-      fetchFavStoresList();
-      //getFavStoresList();
-    } else if (pageName == "Child") {
-      //TODO: Uncomment this and resolve errors.
-      // getChildStoresList();
-    }
-  }
-
-  void getChildStoresList() async {
-    setState(() {
-      if (!Utils.isNullOrEmpty(widget.childList)) {
-        _stores.addAll(widget.childList);
-      }
-    });
-    //TODO: Userprofile coming as null.(In search page)
-
-    _list = _stores;
-
-    //writeData(_userProfile);
-  }
-
   void fetchEntitiesList() async {
     //Load details from local files
-    if (stateInitFinished) {
-      if (!Utils.isNullOrEmpty(_state.pastSearches)) {
-        // List<MetaEntity> newList = new List<MetaEntity>();
-        // for (MetaEntity ps in GlobalState().pastSearches) {
-        //   MetaEntity e = await EntityService().getEntity(ps.entityId);
-        //   newList.add(e);
-        // }
-        setState(() {
-          _stores = _state.pastSearches;
-        });
+
+    if (!Utils.isNullOrEmpty(_metaList)) {
+      List<Entity> newList = new List<Entity>();
+      for (MetaEntity ps in _metaList) {
+        Entity e = await EntityService().getEntity(ps.entityId);
+        newList.add(e);
       }
+      setState(() {
+        _stores = newList;
+      });
     }
-    //  _list = _stores;
-  }
-
-  void fetchFavStoresList() async {
-    List<Entity> newList;
-    Entity e;
-    if (stateInitFinished) {
-      if (!Utils.isNullOrEmpty(_state.currentUser.favourites)) {
-        for (MetaEntity fs in _state.currentUser.favourites) {
-          e = await EntityService().getEntity(fs.entityId);
-          newList.add(e);
-        }
-      }
-    }
-    setState(() {
-      _stores = newList;
-    });
-  }
-
-  void getStoresListFromPrefs() async {
-    // await readData().then((fUser) {
-    //   _userProfile = fUser;
-    // });
-
-    // //Load details from local files
-    // if (_userProfile != null) {
-    //   if (_userProfile.storesAccessed != null) {
-    //     _stores = _userProfile.storesAccessed;
-    //   }
-    // }
-    // List<EntityAppData> newList;
-    // if (fetchFromServer || Utils.isNullOrEmpty(_userProfile.storesAccessed)) {
-    //   //API call to fecth stores from server
-    //   newList = getStoreListServer();
-    //   // Compare and add new stores fetched to _stores list
-    //   if (_stores.length != 0) {
-    //     for (EntityAppData newStore in newList) {
-    //       for (EntityAppData localStore in _stores) {
-    //         if (newStore.id == localStore.id)
-    //           return;
-    //         else
-    //           newList.add(newStore);
-    //       }
-    //     }
-    //   }
-    // }
-    // setState(() {
-    //   if (!Utils.isNullOrEmpty(newList)) {
-    //     _stores.addAll(newList);
-    //   }
-    // });
-    // _userProfile.storesAccessed = _stores;
-
-    // _list = _stores;
-
-    // writeData(_userProfile);
-  }
-
-  void getFavStoresList() async {
-//     List<EntityAppData> list = new List<EntityAppData>();
-//     await readData().then((fUser) {
-//       _userProfile = fUser;
-//     });
-// //Load details from local files
-//     if (_userProfile != null) {
-//       if ((_userProfile.storesAccessed != null) &&
-//           (_userProfile.storesAccessed.length != 0)) {
-//         list = _userProfile.storesAccessed
-//             .where((item) => item.isFavourite == true)
-//             .toList();
-//       }
-//       setState(() {
-//         if (list.length == 0)
-//           _stores = null;
-//         else
-//           _stores = list;
-//       });
-//     }
   }
 
   void _prepareDateList() {
@@ -281,7 +160,7 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
   }
 
   bool isFavourite(MetaEntity en) {
-    List<MetaEntity> favs = _state.currentUser.favourites;
+    List<MetaEntity> favs = _globalState.currentUser.favourites;
     for (int i = 0; i < favs.length; i++) {
       if (favs[i].entityId == en.entityId) {
         return true;
@@ -291,17 +170,18 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
   }
 
   bool updateFavourite(MetaEntity en) {
+    // List<MetaEntity> favs = GlobalState().currentUser.favourites;
     bool isFav = false;
     isFav = isFavourite(en);
     if (isFav) {
       setState(() {
-        _state.currentUser.favourites.remove(en);
+        GlobalState().currentUser.favourites.remove(en);
       });
 
       return true;
     } else {
       setState(() {
-        _state.currentUser.favourites.add(en);
+        GlobalState().currentUser.favourites.add(en);
       });
 
       return false;
@@ -403,9 +283,9 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
             onChanged: (newValue) {
               setState(() {
                 _entityType = newValue;
-                //TODO: Uncomment line
+                //TODO:Uncomment
                 //updateSearchList();
-                //TODO: Uncomment line
+                //TODO:Uncomment
               });
             },
             items: searchTypes.map((type) {
@@ -533,9 +413,7 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
             ),
           ),
           //drawer: CustomDrawer(),
-          bottomNavigationBar: (widget.forPage == "Search")
-              ? CustomBottomBar(barIndex: 1)
-              : CustomBottomBar(barIndex: 2),
+          bottomNavigationBar: CustomBottomBar(barIndex: 1),
         ),
       );
     } else {
@@ -558,7 +436,8 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
                     Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => UserHomePage()));
+                            builder: (context) =>
+                                SearchStoresPage(forPage: _forPage)));
                   }),
               title: Text(
                 title,
@@ -596,24 +475,14 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
       onTap: () {
         print("Container clicked");
         //TODO: If entity has child then fecth them from server show in next screen
-        if (str.childEntities.length != 0) {
-          Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => SearchChildPage(
-                      forPage: pageName, childList: str.childEntities)));
-        }
-
-        // if (child.length != 0) {
+        // if (str.childEntities.length != 0) {
         //   Navigator.push(
         //       context,
         //       MaterialPageRoute(
-        //           builder: (context) => SearchStoresPage(forPage: "Child")));
-
-        //   // Navigator.push(
-        //   //     context,
-        //   //     MaterialPageRoute(
-        //   //         builder: (context) => EntityServicesListPage(entity: str)));
+        //           builder: (context) => SearchChildPage(
+        //                 forPage: _forPage,
+        //                 childList: str.childEntities,
+        //               )));
         // }
       },
       child: Card(
@@ -784,7 +653,11 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
                           children: [
                             //Icon(Icons.play_circle_filled, color: Colors.blueGrey[300]),
                             Text('Opens at:', style: labelTextStyle),
-                            //Text(str.opensAt, style: textInputTextStyle),
+                            Text(
+                                str.startTimeHour.toString() +
+                                    ':' +
+                                    str.startTimeMinute.toString(),
+                                style: textInputTextStyle),
                           ],
                         ),
                         Container(
@@ -794,7 +667,11 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
                           children: [
                             //Icon(Icons.pause_circle_filled, color: Colors.blueGrey[300]),
                             Text('Closes at:', style: labelTextStyle),
-                            // Text(str.closesAt, style: textInputTextStyle),
+                            Text(
+                                str.endTimeHour.toString() +
+                                    ':' +
+                                    str.endTimeMinute.toString(),
+                                style: textInputTextStyle),
                           ],
                         ),
                       ]),
@@ -809,7 +686,6 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
 
   void showSlots(
       Entity store, String storeId, String storeName, DateTime dateTime) {
-    //_prefs = await SharedPreferences.getInstance();
     String dateForSlot = dateTime.toString();
 
     _prefs.setString("storeName", storeName);
@@ -824,19 +700,16 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
                   ShowSlotsPage(entity: store.getMetaEntity())));
 
       print(result);
+//Commented below code which shows slots in a dialog
 
-      // if (result != null) {
-      //   //Add Slot booking in user data, Save locally
-      //   print('Upcoming bookings');
-      //   List<String> s = result.split("-");
-      //   BookingAppData upcomingBooking =
-      //       new BookingAppData(store.entityId, dateTime, s[1], s[0], "New");
-      //   setState(() {
-      //     GlobalState().bookings.add(upcomingBooking);
-      //   });
-      //   writeData(_userProfile);
-      // }
-      // print('After showDialog:');
+      // String val = await showDialog(
+      //     context: context,
+      //     barrierDismissible: true,
+      //     builder: (BuildContext context) {
+      //       return StatefulBuilder(builder: (context, setState) {
+      //         return ShowSlotsPage();
+      //       });
+      //     });
       GlobalState _state = await GlobalState.getGlobalState();
 
       if (result != null) {
@@ -870,9 +743,8 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
   Widget buildDateItem(Entity store, String sid, String sname, bool isClosed,
       DateTime dt, String dayOfWeek) {
     bool dateBooked = false;
-    // UserAppData user = _userProfile;
 
-    for (UserToken obj in (GlobalState().bookings)) {
+    for (UserToken obj in GlobalState().bookings) {
       if ((compareDateFormat
                   .format(dt)
                   .compareTo(compareDateFormat.format(obj.dateTime)) ==
@@ -982,14 +854,5 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
       _isSearching = false;
       _searchQuery.clear();
     });
-  }
-}
-
-class ChildItem extends StatelessWidget {
-  final String name;
-  ChildItem(this.name);
-  @override
-  Widget build(BuildContext context) {
-    return new ListTile(title: new Text(this.name));
   }
 }

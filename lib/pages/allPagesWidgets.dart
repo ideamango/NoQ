@@ -1,12 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:noq/login_page.dart';
 import 'package:noq/models/localDB.dart';
 import 'package:noq/pages/manage_apartment_list_page.dart';
-import 'package:noq/pages/manage_apartment_page.dart';
-import 'package:noq/pages/showSlotsPage.dart';
 import 'package:noq/pages/userAccountPage.dart';
-import 'package:noq/pages/userBookingPage.dart';
-
 import 'package:noq/services/authService.dart';
 import 'package:noq/style.dart';
 import 'package:noq/userHomePage.dart';
@@ -24,7 +19,8 @@ Widget userHomePage(BuildContext context) {
 }
 
 Widget userBookingPage(BuildContext context, UserAppData userProfile) {
-  return UserBookingPage();
+  return null;
+  //return UserBookingPage();
 }
 
 Widget rateAppPage(BuildContext context) {
@@ -89,5 +85,5 @@ Widget shareAppPage(BuildContext context) {
 }
 
 Widget slotsPage(BuildContext context) {
-  return ShowSlotsPage();
+  return Container();
 }

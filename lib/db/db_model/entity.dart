@@ -9,6 +9,7 @@ class Entity {
       {this.entityId,
       this.name,
       this.description,
+      this.regNum,
       this.address,
       this.advanceDays,
       this.isPublic,
@@ -34,10 +35,12 @@ class Entity {
       this.coordinates,
       this.distance});
 
+  Entity.withValues(entityId, type);
   //SlotDocumentId is entityID#20~06~01 it is not auto-generated, will help in not duplicating the record
   String entityId;
   String name;
   String description;
+  String regNum;
   Address address;
   int advanceDays;
   bool isPublic;
@@ -67,6 +70,7 @@ class Entity {
         'entityId': entityId,
         'name': name,
         'description': description,
+        'regNum': regNum,
         'address': address.toJson(),
         'advanceDays': advanceDays,
         'isPublic': isPublic,
@@ -126,6 +130,7 @@ class Entity {
         entityId: json['entityId'].toString(),
         name: json['name'].toString(),
         description: json['description'],
+        regNum: json['regNum'],
         address: Address.fromJson(json['address']),
         advanceDays: json['advanceDays'],
         isPublic: json['isPublic'],

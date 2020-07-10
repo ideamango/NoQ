@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:noq/db/db_model/user_token.dart';
+import 'package:noq/global_state.dart';
 import 'package:noq/models/localDB.dart';
 import 'package:noq/repository/local_db_repository.dart';
 import 'package:noq/style.dart';
@@ -14,28 +16,27 @@ class UserNotificationsPage extends StatefulWidget {
 
 class _UserNotificationsPageState extends State<UserNotificationsPage> {
   int i;
-  List<BookingAppData> _bookings;
+  List<dynamic> _bookings;
   bool _notificationsFlg;
-  UserAppData fUserProfile;
   List<String> _notificationsList;
+  GlobalState _state;
+  bool stateInitFinished = false;
 
   @override
   void initState() {
     super.initState();
+    getGlobalState();
     _loadNotifications();
   }
 
-  void _loadNotifications() async {
-    //Load details from local files
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    //int userId = prefs.getInt('userId');
-    //Fetch details from server
+  Future<void> getGlobalState() async {
+    _state = await GlobalState.getGlobalState();
+    stateInitFinished = true;
+  }
 
-    await readData().then((fUser) {
-      fUserProfile = fUser;
-      setState(() {
-        _notificationsFlg = fUserProfile.settings.notificationOn;
-      });
+  void _loadNotifications() async {
+    setState(() {
+      _notificationsFlg = (_state.conf != null) ? true : false;
     });
   }
 
@@ -111,7 +112,7 @@ class _UserNotificationsPageState extends State<UserNotificationsPage> {
     );
   }
 
-  Widget _buildItem(BookingAppData str) {
+  Widget _buildItem(dynamic str) {
     return Card(
         elevation: 10,
         child: new Column(children: <Widget>[

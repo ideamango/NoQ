@@ -1,13 +1,13 @@
 import 'package:noq/db/db_model/user.dart';
 
 class Employee extends User {
-  final int shiftStartHour;
-  final int shiftStartMinute;
-  final int shiftEndHour;
-  final int shiftEndMinute;
-  final List<String> daysOff;
-  final bool isManager;
-  final String altPhone;
+  int shiftStartHour;
+  int shiftStartMinute;
+  int shiftEndHour;
+  int shiftEndMinute;
+  List<String> daysOff;
+  bool isManager;
+  String altPhone;
 
   Employee(
       {id,
