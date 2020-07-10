@@ -243,9 +243,10 @@ class Entity {
   }
 
   List<String> constructQueriableList(String string) {
+    String lowercased = string.toLowerCase();
     List<String> queriables = new List<String>();
-    for (int i = 1; i <= string.length; i++) {
-      queriables.add(string.substring(0, i));
+    for (int i = 1; i <= lowercased.length; i++) {
+      queriables.add(lowercased.substring(0, i));
     }
     return queriables;
   }
