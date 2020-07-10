@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:noq/db/db_model/my_geo_fire_point.dart';
 

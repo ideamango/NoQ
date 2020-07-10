@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:intl/intl.dart';
 import 'package:noq/constants.dart';
 import 'package:noq/db/db_model/entity.dart';
@@ -64,6 +65,7 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
   String pageName;
   GlobalState _state;
   bool stateInitFinished = false;
+  String emptyPageMsg;
 
   _SearchStoresPageState() {
     _searchQuery.addListener(() {
@@ -81,48 +83,48 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
     });
   }
 
-//   updateSearchList() {
-// //Send request to server for fetching entities with given type.
-//     setState(() {
-//       fetchFromServer = true;
-//     });
-// //_stores = Request();
-//     List<MetaEntity> newList;
-//     if (_entityType.toLowerCase() == _searchAll.toLowerCase()) {
-//       newList = getStoreListServer();
-//     } else {
-//       newList = getTypedEntities(_entityType);
-//     }
-//     // Compare and add new stores fetched to _stores list
+  updateSearchList() {
+//Send request to server for fetching entities with given type.
+    setState(() {
+      fetchFromServer = true;
+    });
+//_stores = Request();
+    List<MetaEntity> newList;
+    if (_entityType.toLowerCase() == _searchAll.toLowerCase()) {
+      newList = getStoreListServer();
+    } else {
+      newList = getTypedEntities(_entityType);
+    }
+    // Compare and add new stores fetched to _stores list
 
-//     setState(() {
-//       _stores = newList;
-//     });
+    setState(() {
+      _stores = newList;
+    });
 
-//     _userProfile.storesAccessed = _stores;
+    _userProfile.storesAccessed = _stores;
 
-//     _list = _stores;
+    _list = _stores;
 
-//     writeData(_userProfile);
+    writeData(_userProfile);
 
-//     // _userProfile.storesAccessed = _stores;
+    // _userProfile.storesAccessed = _stores;
 
-//     // _list = _stores;
+    // _list = _stores;
 
-//     // writeData(_userProfile);
+    // writeData(_userProfile);
 
-// //TODO: Remove this block after testing
-//     // List<EntityAppData> _searchList = List();
-//     // for (int i = 0; i < _stores.length; i++) {
-//     //   String eType = _stores.elementAt(i).eType;
-//     //   if (eType.toLowerCase() == _entityType.toLowerCase()) {
-//     //     _searchList.add(_stores.elementAt(i));
-//     //   }
-//     // }
-//     // setState(() {
-//     //   _stores = _searchList;
-//     // });
-//   }
+//TODO: Remove this block after testing
+    // List<EntityAppData> _searchList = List();
+    // for (int i = 0; i < _stores.length; i++) {
+    //   String eType = _stores.elementAt(i).eType;
+    //   if (eType.toLowerCase() == _entityType.toLowerCase()) {
+    //     _searchList.add(_stores.elementAt(i));
+    //   }
+    // }
+    // setState(() {
+    //   _stores = _searchList;
+    // });
+  }
 
   @override
   void initState() {
@@ -130,12 +132,8 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
     // _getUserData();
     _isSearching = false;
     // getPrefInstance().then((action) {
-    getGlobalState();
-    if (stateInitFinished) {
-      setState(() {
-        initCompleted = true;
-      });
-    }
+    getGlobalState().whenComplete(() => getList());
+
     //  });
   }
 
@@ -145,13 +143,17 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
 
   Future<void> getGlobalState() async {
     _state = await GlobalState.getGlobalState();
-    stateInitFinished = true;
+    setState(() {
+      stateInitFinished = true;
+      initCompleted = true;
+    });
   }
 
   void getList() {
     pageName = widget.forPage;
     if (pageName == "Search") {
-      fetchEntitiesList();
+      fetchPastSearchesList();
+
       //getStoresList();
     } else if (pageName == "Favourite") {
       fetchFavStoresList();
@@ -168,25 +170,18 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
         _stores.addAll(widget.childList);
       }
     });
-    //TODO: Userprofile coming as null.(In search page)
-
     _list = _stores;
-
-    //writeData(_userProfile);
   }
 
-  void fetchEntitiesList() async {
+  void fetchPastSearchesList() async {
     //Load details from local files
-    if (stateInitFinished) {
+    if (initCompleted) {
       if (!Utils.isNullOrEmpty(_state.pastSearches)) {
-        // List<MetaEntity> newList = new List<MetaEntity>();
-        // for (MetaEntity ps in GlobalState().pastSearches) {
-        //   MetaEntity e = await EntityService().getEntity(ps.entityId);
-        //   newList.add(e);
-        // }
         setState(() {
           _stores = _state.pastSearches;
         });
+        if (_stores.length == 0)
+          emptyPageMsg = "No History of past searches. Explore nearby now. ";
       }
     }
     //  _list = _stores;
@@ -195,7 +190,7 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
   void fetchFavStoresList() async {
     List<Entity> newList;
     Entity e;
-    if (stateInitFinished) {
+    if (initCompleted) {
       if (!Utils.isNullOrEmpty(_state.currentUser.favourites)) {
         for (MetaEntity fs in _state.currentUser.favourites) {
           e = await EntityService().getEntity(fs.entityId);
@@ -334,6 +329,8 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
   }
 
   Widget _emptySearchPage() {
+    String defaultMsg = 'No match found. Try again!!';
+    String txtMsg = (emptyPageMsg != null) ? emptyPageMsg : defaultMsg;
     return Center(
         child: Container(
             margin: EdgeInsets.fromLTRB(
@@ -344,7 +341,7 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                Text('No match found. Try again!! ', style: highlightTextStyle),
+                Text(txtMsg, style: highlightTextStyle),
                 Text(
                     'Add your favourite places to quickly browse through later!! ',
                     style: highlightSubTextStyle),
@@ -404,7 +401,7 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
               setState(() {
                 _entityType = newValue;
                 //TODO: Uncomment line
-                //updateSearchList();
+                updateSearchList();
                 //TODO: Uncomment line
               });
             },
@@ -928,16 +925,42 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
     // return _stores.map((contact) => new ChildItem(contact.name)).toList();
   }
 
+  Future<List<Entity>> getSearchEntitiesList() async {
+    double lat = 0;
+    double lon = 0;
+    double radiusOfSearch = 2;
+    int pageNumber = 1;
+    int pageSize = 10;
+
+    Position pos = await Utils().getCurrLocation();
+    lat = pos.latitude;
+    lon = pos.longitude;
+    List<Entity> searchEntityList = await EntityService().search(
+        _searchText.toLowerCase(),
+        _entityType,
+        lat,
+        lon,
+        radiusOfSearch,
+        pageNumber,
+        pageSize);
+    return searchEntityList;
+  }
+
   List<Widget> _buildSearchList() {
     if (_searchText.isEmpty) {
       return _stores.map(_buildItem).toList();
       //return _stores.map((contact) => new ChildItem(contact.name)).toList();
     } else {
       List<Entity> _searchList = List();
-      for (int i = 0; i < _stores.length; i++) {
-        String name = _stores.elementAt(i).name;
-        if (name.toLowerCase().contains(_searchText.toLowerCase())) {
-          _searchList.add(_stores.elementAt(i));
+//If _stores is empty currently then fecth from server
+      if (_stores.length == 0) {
+        getSearchEntitiesList().then((value) => _searchList = value);
+      } else {
+        for (int i = 0; i < _stores.length; i++) {
+          String name = _stores.elementAt(i).name;
+          if (name.toLowerCase().contains(_searchText.toLowerCase())) {
+            _searchList.add(_stores.elementAt(i));
+          }
         }
       }
       return _searchList.map(_buildItem).toList();

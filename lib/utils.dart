@@ -1,5 +1,7 @@
 import 'dart:async';
 
+import 'package:geolocator/geolocator.dart';
+
 class Utils {
   static String getDayOfWeek(DateTime date) {
     //String day;
@@ -48,5 +50,13 @@ class Utils {
       return 'Enter a valid phone number';
     } else
       return null;
+  }
+
+  Future<Position> getCurrLocation() async {
+    final Geolocator geolocator = Geolocator()..forceAndroidLocationManager;
+
+    Position position = await geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.best);
+    return position;
   }
 }
