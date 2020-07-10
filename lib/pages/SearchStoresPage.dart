@@ -66,6 +66,7 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
   GlobalState _state;
   bool stateInitFinished = false;
   String emptyPageMsg;
+  List<String> searchTypes;
 
   _SearchStoresPageState() {
     _searchQuery.addListener(() {
@@ -75,64 +76,68 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
           _searchText = "";
         });
       } else {
-        setState(() {
-          _isSearching = true;
-          _searchText = _searchQuery.text;
-        });
+        if (_searchQuery.text.length >= 3) {
+          setState(() {
+            _isSearching = true;
+            _searchText = _searchQuery.text;
+          });
+        }
       }
     });
   }
 
-  updateSearchList() {
-//Send request to server for fetching entities with given type.
-    setState(() {
-      fetchFromServer = true;
-    });
-//_stores = Request();
-    List<MetaEntity> newList;
-    if (_entityType.toLowerCase() == _searchAll.toLowerCase()) {
-      newList = getStoreListServer();
-    } else {
-      newList = getTypedEntities(_entityType);
-    }
-    // Compare and add new stores fetched to _stores list
+//   updateSearchList() {
+// //Send request to server for fetching entities with given type.
+//     setState(() {
+//       fetchFromServer = true;
+//     });
+// //_stores = Request();
+//     List<MetaEntity> newList;
+//     if (_entityType.toLowerCase() == _searchAll.toLowerCase()) {
+//       newList = getStoreListServer();
+//     } else {
+//       newList = getTypedEntities(_entityType);
+//     }
+//     // Compare and add new stores fetched to _stores list
 
-    setState(() {
-      _stores = newList;
-    });
+//     setState(() {
+//       _stores = newList;
+//     });
 
-    _userProfile.storesAccessed = _stores;
+//     _userProfile.storesAccessed = _stores;
 
-    _list = _stores;
+//     _list = _stores;
 
-    writeData(_userProfile);
+//     writeData(_userProfile);
 
-    // _userProfile.storesAccessed = _stores;
+//     // _userProfile.storesAccessed = _stores;
 
-    // _list = _stores;
+//     // _list = _stores;
 
-    // writeData(_userProfile);
+//     // writeData(_userProfile);
 
-//TODO: Remove this block after testing
-    // List<EntityAppData> _searchList = List();
-    // for (int i = 0; i < _stores.length; i++) {
-    //   String eType = _stores.elementAt(i).eType;
-    //   if (eType.toLowerCase() == _entityType.toLowerCase()) {
-    //     _searchList.add(_stores.elementAt(i));
-    //   }
-    // }
-    // setState(() {
-    //   _stores = _searchList;
-    // });
-  }
+// //TODO: Remove this block after testing
+//     // List<EntityAppData> _searchList = List();
+//     // for (int i = 0; i < _stores.length; i++) {
+//     //   String eType = _stores.elementAt(i).eType;
+//     //   if (eType.toLowerCase() == _entityType.toLowerCase()) {
+//     //     _searchList.add(_stores.elementAt(i));
+//     //   }
+//     // }
+//     // setState(() {
+//     //   _stores = _searchList;
+//     // });
+//   }
 
   @override
   void initState() {
     super.initState();
     // _getUserData();
+
     _isSearching = false;
     // getPrefInstance().then((action) {
     getGlobalState().whenComplete(() => getList());
+    searchTypes = _state.conf.entityTypes;
 
     //  });
   }
@@ -400,8 +405,9 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
             onChanged: (newValue) {
               setState(() {
                 _entityType = newValue;
+                _isSearching = true;
                 //TODO: Uncomment line
-                updateSearchList();
+                //updateSearchList();
                 //TODO: Uncomment line
               });
             },
@@ -928,9 +934,9 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
   Future<List<Entity>> getSearchEntitiesList() async {
     double lat = 0;
     double lon = 0;
-    double radiusOfSearch = 2;
-    int pageNumber = 1;
-    int pageSize = 10;
+    double radiusOfSearch = 10;
+    int pageNumber = 0;
+    int pageSize = 0;
 
     Position pos = await Utils().getCurrLocation();
     lat = pos.latitude;
@@ -947,22 +953,21 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
   }
 
   List<Widget> _buildSearchList() {
-    if (_searchText.isEmpty) {
+    if (_searchText.isEmpty && _entityType.isEmpty) {
       return _stores.map(_buildItem).toList();
       //return _stores.map((contact) => new ChildItem(contact.name)).toList();
     } else {
       List<Entity> _searchList = List();
-//If _stores is empty currently then fecth from server
-      if (_stores.length == 0) {
-        getSearchEntitiesList().then((value) => _searchList = value);
-      } else {
-        for (int i = 0; i < _stores.length; i++) {
-          String name = _stores.elementAt(i).name;
-          if (name.toLowerCase().contains(_searchText.toLowerCase())) {
-            _searchList.add(_stores.elementAt(i));
-          }
-        }
-      }
+
+      getSearchEntitiesList().then((value) => _searchList = value);
+
+      // for (int i = 0; i < _stores.length; i++) {
+      //   String name = _stores.elementAt(i).name;
+      //   if (name.toLowerCase().contains(_searchText.toLowerCase())) {
+      //     _searchList.add(_stores.elementAt(i));
+      //   }
+      // }
+
       return _searchList.map(_buildItem).toList();
     }
   }
