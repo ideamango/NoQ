@@ -4,7 +4,6 @@ import 'package:noq/db/db_model/meta_entity.dart';
 import 'package:noq/db/db_model/meta_user.dart';
 import 'package:noq/db/db_model/my_geo_fire_point.dart';
 
-
 class Entity {
   Entity(
       {this.entityId,
