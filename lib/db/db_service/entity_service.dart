@@ -403,6 +403,7 @@ class EntityService {
       } catch (e) {
         print(e);
         isSuccess = false;
+        throw e;
       }
     });
 
@@ -615,7 +616,8 @@ class EntityService {
       for (DocumentSnapshot ds in await stream.first) {
         Entity me = Entity.fromJson(ds.data);
         me.distance = center.distance(
-            lat: me.geo.geopoint.latitude, lng: me.geo.geopoint.longitude);
+            lat: me.coordinates.geopoint.latitude,
+            lng: me.coordinates.geopoint.longitude);
         entities.add(me);
       }
     } catch (e) {
@@ -625,4 +627,3 @@ class EntityService {
     return entities;
   }
 }
- 

@@ -200,6 +200,7 @@ class TokenService {
         }
       } catch (e) {
         print("Transaction Error: " + e.toString());
+        throw e;
       }
     });
 
