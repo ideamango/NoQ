@@ -33,13 +33,10 @@ class _FavsListPageState extends State<FavsListPage> {
   SharedPreferences _prefs;
 
   List<Entity> _stores = new List<Entity>();
-  List<Entity> _pastSearches = new List<Entity>();
 
   String _entityType;
 
-  bool searchBoxClicked = false;
   bool fetchFromServer = false;
-  // bool searchDone = false;
 
   final compareDateFormat = new DateFormat('YYYYMMDD');
   List<DateTime> _dateList = new List<DateTime>();
@@ -49,17 +46,13 @@ class _FavsListPageState extends State<FavsListPage> {
     color: Colors.white,
   );
   final key = new GlobalKey<ScaffoldState>();
-  static final TextEditingController _searchQuery = new TextEditingController();
+
   List<Entity> _list;
-  //"initial, searching,done"
-  String _isSearching = "initial";
-  String _searchText = "";
-  String searchType = "";
+
   String pageName;
   GlobalState _state;
   bool stateInitFinished = false;
   String emptyPageMsg;
-  List<String> searchTypes;
 
   @override
   void initState() {
@@ -160,7 +153,7 @@ class _FavsListPageState extends State<FavsListPage> {
     }
   }
 
-  Widget _emptySearchPage() {
+  Widget _emptyFavsPage() {
     String defaultMsg = 'No favourites yet!!';
     String txtMsg = (emptyPageMsg != null) ? emptyPageMsg : defaultMsg;
     return Center(
@@ -252,7 +245,7 @@ class _FavsListPageState extends State<FavsListPage> {
                                 );
                               }),
                         )
-                      : _emptySearchPage(),
+                      : _emptyFavsPage(),
                 ],
               ),
             ),
@@ -605,61 +598,6 @@ class _FavsListPageState extends State<FavsListPage> {
     // return _stores.map((contact) => new ChildItem(contact.name)).toList();
   }
 
-  List<Widget> showSearchResults() {
-    return _stores.map(_buildItem).toList();
-    // return _stores.map((contact) => new ChildItem(contact.name)).toList();
-  }
-
-  Future<List<Entity>> getSearchEntitiesList() async {
-    double lat = 0;
-    double lon = 0;
-    double radiusOfSearch = 10;
-    int pageNumber = 0;
-    int pageSize = 0;
-
-    Position pos = await Utils().getCurrLocation();
-    lat = pos.latitude;
-    lon = pos.longitude;
-    //TODO: comment - only for testing
-    lat = 12.960632;
-    lon = 77.641603;
-
-    //TODO: comment - only for testing
-    List<Entity> searchEntityList = await EntityService().search(
-        _searchText.toLowerCase(),
-        _entityType,
-        lat,
-        lon,
-        radiusOfSearch,
-        pageNumber,
-        pageSize);
-    return searchEntityList;
-  }
-
-  Future<void> _buildSearchList() async {
-    // if (_searchText.isEmpty && _entityType.isEmpty) {
-    //   return _stores.map(_buildItem).toList();
-    //   //return _stores.map((contact) => new ChildItem(contact.name)).toList();
-    // } else {
-    await getSearchEntitiesList().then((value) {
-      _stores = value;
-
-      //Write Gstate to file
-      _state.updateSearchResults(_stores);
-      setState(() {
-        //searchDone = true;
-        _isSearching = "done";
-      });
-    });
-
-    // for (int i = 0; i < _stores.length; i++) {
-    //   String name = _stores.elementAt(i).name;
-    //   if (name.toLowerCase().contains(_searchText.toLowerCase())) {
-    //     _searchList.add(_stores.elementAt(i));
-    //   }
-    // }
-  }
-
   void addFilterCriteria() {}
   String filterVar = "0";
   Widget buildBar(BuildContext context, Widget appBarTitle) {
@@ -686,19 +624,6 @@ class _FavsListPageState extends State<FavsListPage> {
       ],
     );
   }
-
-  // void _handleSearchStart() {
-  //   setState(() {
-  //     _isSearching = true;
-  //   });
-  // }
-
-  // void _handleSearchEnd() {
-  //   setState(() {
-  //     _isSearching = false;
-  //     _searchQuery.clear();
-  //   });
-  // }
 }
 
 class ChildItem extends StatelessWidget {

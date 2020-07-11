@@ -116,8 +116,7 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
     pageName = widget.forPage;
     if (pageName == "Search") {
       fetchPastSearchesList();
-    } else if (pageName == "Favourite") {
-      fetchFavStoresList();
+
       //getFavStoresList();
     } else if (pageName == "Child") {
       //TODO: Uncomment this and resolve errors.
@@ -146,25 +145,6 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
       // }
     }
     //  _list = _stores;
-  }
-
-  void fetchFavStoresList() async {
-    List<Entity> newList;
-    Entity e;
-    //if (initCompleted) {
-    print(_state.currentUser.favourites);
-    GlobalState gs = await GlobalState.getGlobalState();
-    print(gs.currentUser.favourites);
-    if (!Utils.isNullOrEmpty(_state.currentUser.favourites)) {
-      for (MetaEntity fs in _state.currentUser.favourites) {
-        e = await EntityService().getEntity(fs.entityId);
-        newList.add(e);
-      }
-      setState(() {
-        _stores = newList;
-      });
-    }
-    // }
   }
 
   void _prepareDateList() {
@@ -243,12 +223,6 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
                 margin: EdgeInsets.fromLTRB(10, 10, 10, 10),
                 child: new Column(
                   children: showSearchResults(),
-                  // ? _searchResultstores
-                  //     .map(_buildItem)
-                  //     .toList()
-                  // : _stores.map(_buildItem).toList()
-                  // ),
-                  //children: <Widget>[firstRow, secondRow],
                 ),
               );
             }),
@@ -323,9 +297,6 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
                   _entityType = newValue;
                   _isSearching = "searching";
                   _buildSearchList();
-                  //TODO: Uncomment line
-                  //updateSearchList();
-                  //TODO: Uncomment line
                 });
               },
               items: searchTypes.map((type) {

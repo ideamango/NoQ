@@ -37,9 +37,10 @@ class GlobalState {
   }
 
   Future<bool> addFavourite(MetaEntity me) async {
-    if (_gs.currentUser.favourites
-            .firstWhere((element) => element.entityId == me.entityId) !=
-        null) _gs.currentUser.favourites.add(me);
+    // if (_gs.currentUser.favourites
+    //         .firstWhere((element) => element.entityId == me.entityId) !=
+    //     null)
+    _gs.currentUser.favourites.add(me);
     saveGlobalState();
     return true;
   }
