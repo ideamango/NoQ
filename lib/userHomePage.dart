@@ -55,6 +55,7 @@ class _UserHomePageState extends State<UserHomePage> {
   bool isPastSet = false;
 //Qr code scan result
   ScanResult scanResult;
+  GlobalState _state;
 
   @override
   void initState() {
@@ -691,9 +692,9 @@ class _UserHomePageState extends State<UserHomePage> {
   }
 
   void fetchDataFromGlobalState() {
-    if (!Utils.isNullOrEmpty(GlobalState().bookings)) {
-      if (GlobalState().bookings.length != 0) {
-        List<UserToken> bookings = GlobalState().bookings;
+    if (!Utils.isNullOrEmpty(_state.bookings)) {
+      if (_state.bookings.length != 0) {
+        List<UserToken> bookings = _state.bookings;
         List<UserToken> newBookings = new List<UserToken>();
         List<UserToken> pastBookings = new List<UserToken>();
 

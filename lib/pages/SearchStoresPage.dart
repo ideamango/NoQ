@@ -72,6 +72,19 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
   String emptyPageMsg;
   List<String> searchTypes;
 
+  @override
+  void initState() {
+    super.initState();
+    _isSearching = "initial";
+    getGlobalState().whenComplete(() {
+      getList();
+      searchTypes = _state.conf.entityTypes;
+      setState(() {
+        initCompleted = true;
+      });
+    });
+  }
+
   _SearchStoresPageState() {
     _searchQuery.addListener(() {
       if (_searchQuery.text.isEmpty && _entityType == null) {
@@ -91,67 +104,6 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
     });
   }
 
-//   updateSearchList() {
-// //Send request to server for fetching entities with given type.
-//     setState(() {
-//       fetchFromServer = true;
-//     });
-// //_stores = Request();
-//     List<MetaEntity> newList;
-//     if (_entityType.toLowerCase() == _searchAll.toLowerCase()) {
-//       newList = getStoreListServer();
-//     } else {
-//       newList = getTypedEntities(_entityType);
-//     }
-//     // Compare and add new stores fetched to _stores list
-
-//     setState(() {
-//       _stores = newList;
-//     });
-
-//     _userProfile.storesAccessed = _stores;
-
-//     _list = _stores;
-
-//     writeData(_userProfile);
-
-//     // _userProfile.storesAccessed = _stores;
-
-//     // _list = _stores;
-
-//     // writeData(_userProfile);
-
-// //TODO: Remove this block after testing
-//     // List<EntityAppData> _searchList = List();
-//     // for (int i = 0; i < _stores.length; i++) {
-//     //   String eType = _stores.elementAt(i).eType;
-//     //   if (eType.toLowerCase() == _entityType.toLowerCase()) {
-//     //     _searchList.add(_stores.elementAt(i));
-//     //   }
-//     // }
-//     // setState(() {
-//     //   _stores = _searchList;
-//     // });
-//   }
-
-  @override
-  void initState() {
-    super.initState();
-    // _getUserData();
-
-    _isSearching = "initial";
-    // getPrefInstance().then((action) {
-    getGlobalState().whenComplete(() {
-      getList();
-      searchTypes = _state.conf.entityTypes;
-      setState(() {
-        initCompleted = true;
-      });
-    });
-
-    //  });
-  }
-
   Future<void> getPrefInstance() async {
     _prefs = await SharedPreferences.getInstance();
   }
@@ -164,8 +116,6 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
     pageName = widget.forPage;
     if (pageName == "Search") {
       fetchPastSearchesList();
-
-      //getStoresList();
     } else if (pageName == "Favourite") {
       fetchFavStoresList();
       //getFavStoresList();
@@ -186,14 +136,14 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
 
   void fetchPastSearchesList() async {
     //Load details from local files
-    if (initCompleted) {
-      if (!Utils.isNullOrEmpty(_state.pastSearches)) {
-        setState(() {
-          _pastSearches = _state.pastSearches;
-        });
-        if (_pastSearches.length == 0)
-          emptyPageMsg = "No History of past searches. Explore nearby now. ";
-      }
+    // if (initCompleted) {
+    if (!Utils.isNullOrEmpty(_state.pastSearches)) {
+      setState(() {
+        _pastSearches = _state.pastSearches;
+      });
+      if (_pastSearches.length == 0)
+        emptyPageMsg = "No History of past searches. Explore nearby now. ";
+      // }
     }
     //  _list = _stores;
   }
@@ -201,78 +151,20 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
   void fetchFavStoresList() async {
     List<Entity> newList;
     Entity e;
-    if (initCompleted) {
-      if (!Utils.isNullOrEmpty(_state.currentUser.favourites)) {
-        for (MetaEntity fs in _state.currentUser.favourites) {
-          e = await EntityService().getEntity(fs.entityId);
-          newList.add(e);
-        }
+    //if (initCompleted) {
+    print(_state.currentUser.favourites);
+    GlobalState gs = await GlobalState.getGlobalState();
+    print(gs.currentUser.favourites);
+    if (!Utils.isNullOrEmpty(_state.currentUser.favourites)) {
+      for (MetaEntity fs in _state.currentUser.favourites) {
+        e = await EntityService().getEntity(fs.entityId);
+        newList.add(e);
       }
+      setState(() {
+        _stores = newList;
+      });
     }
-    setState(() {
-      _stores = newList;
-    });
-  }
-
-  void getStoresListFromPrefs() async {
-    // await readData().then((fUser) {
-    //   _userProfile = fUser;
-    // });
-
-    // //Load details from local files
-    // if (_userProfile != null) {
-    //   if (_userProfile.storesAccessed != null) {
-    //     _stores = _userProfile.storesAccessed;
-    //   }
     // }
-    // List<EntityAppData> newList;
-    // if (fetchFromServer || Utils.isNullOrEmpty(_userProfile.storesAccessed)) {
-    //   //API call to fecth stores from server
-    //   newList = getStoreListServer();
-    //   // Compare and add new stores fetched to _stores list
-    //   if (_stores.length != 0) {
-    //     for (EntityAppData newStore in newList) {
-    //       for (EntityAppData localStore in _stores) {
-    //         if (newStore.id == localStore.id)
-    //           return;
-    //         else
-    //           newList.add(newStore);
-    //       }
-    //     }
-    //   }
-    // }
-    // setState(() {
-    //   if (!Utils.isNullOrEmpty(newList)) {
-    //     _stores.addAll(newList);
-    //   }
-    // });
-    // _userProfile.storesAccessed = _stores;
-
-    // _list = _stores;
-
-    // writeData(_userProfile);
-  }
-
-  void getFavStoresList() async {
-//     List<EntityAppData> list = new List<EntityAppData>();
-//     await readData().then((fUser) {
-//       _userProfile = fUser;
-//     });
-// //Load details from local files
-//     if (_userProfile != null) {
-//       if ((_userProfile.storesAccessed != null) &&
-//           (_userProfile.storesAccessed.length != 0)) {
-//         list = _userProfile.storesAccessed
-//             .where((item) => item.isFavourite == true)
-//             .toList();
-//       }
-//       setState(() {
-//         if (list.length == 0)
-//           _stores = null;
-//         else
-//           _stores = list;
-//       });
-//     }
   }
 
   void _prepareDateList() {
@@ -288,6 +180,8 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
 
   bool isFavourite(MetaEntity en) {
     List<MetaEntity> favs = _state.currentUser.favourites;
+    if (Utils.isNullOrEmpty(favs)) return false;
+
     for (int i = 0; i < favs.length; i++) {
       if (favs[i].entityId == en.entityId) {
         return true;
@@ -296,45 +190,20 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
     return false;
   }
 
-  bool updateFavourite(MetaEntity en) {
-    bool isFav = false;
-    isFav = isFavourite(en);
-    if (isFav) {
-      setState(() {
-        _state.currentUser.favourites.remove(en);
-      });
-
-      return true;
-    } else {
-      setState(() {
-        _state.currentUser.favourites.add(en);
-      });
-
-      return false;
-    }
-  }
-
   void toggleFavorite(Entity strData) {
 //Check if its already User fav
     bool isFav = false;
-    MetaEntity metaEn = strData.getMetaEntity();
-    if (updateFavourite(metaEn)) {
-      isFav = true;
-      EntityService().removeEntityFromUserFavourite(strData.entityId);
-    } else {
-      EntityService().addEntityToUserFavourite(metaEn);
-    }
-
-    setState(() {
-      // strData.isFavourite = !strData.isFavourite;
-      if (isFav && widget.forPage == 'Favourite') {
-        _stores.remove(strData);
-      }
-    });
-
-    if ((_stores.length == 0) && (widget.forPage == 'Favourite')) {
+    MetaEntity en = strData.getMetaEntity();
+    isFav = isFavourite(en);
+    if (isFav) {
+      EntityService().removeEntityFromUserFavourite(en.entityId);
       setState(() {
-        _stores = null;
+        _state.removeFavourite(en);
+      });
+    } else {
+      EntityService().addEntityToUserFavourite(en);
+      setState(() {
+        _state.addFavourite(en);
       });
     }
   }
@@ -1051,7 +920,9 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
     // } else {
     await getSearchEntitiesList().then((value) {
       _stores = value;
-      _state.pastSearches = _stores;
+
+      //Write Gstate to file
+      _state.updateSearchResults(_stores);
       setState(() {
         //searchDone = true;
         _isSearching = "done";
