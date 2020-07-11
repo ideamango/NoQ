@@ -50,7 +50,7 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
   String _searchAll;
   bool searchBoxClicked = false;
   bool fetchFromServer = false;
-  bool searchDone = false;
+  // bool searchDone = false;
 
   final compareDateFormat = new DateFormat('YYYYMMDD');
   List<DateTime> _dateList = new List<DateTime>();
@@ -62,7 +62,8 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
   final key = new GlobalKey<ScaffoldState>();
   static final TextEditingController _searchQuery = new TextEditingController();
   List<Entity> _list;
-  bool _isSearching;
+  //"initial, searching,done"
+  String _isSearching = "initial";
   String _searchText = "";
   String searchType = "";
   String pageName;
@@ -73,17 +74,18 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
 
   _SearchStoresPageState() {
     _searchQuery.addListener(() {
-      if (_searchQuery.text.isEmpty) {
+      if (_searchQuery.text.isEmpty && _entityType == null) {
         setState(() {
-          _isSearching = false;
+          _isSearching = "initial";
           _searchText = "";
         });
       } else {
         if (_searchQuery.text.length >= 3) {
           setState(() {
-            _isSearching = true;
+            _isSearching = "searching";
             _searchText = _searchQuery.text;
           });
+          _buildSearchList();
         }
       }
     });
@@ -137,7 +139,7 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
     super.initState();
     // _getUserData();
 
-    _isSearching = false;
+    _isSearching = "initial";
     // getPrefInstance().then((action) {
     getGlobalState().whenComplete(() {
       getList();
@@ -361,35 +363,30 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
   }
 
   Widget _listSearchResults() {
-    if (!_isSearching && Utils.isNullOrEmpty(_stores))
+    if (_stores.length == 0)
       return _emptySearchPage();
     else {
-      _buildSearchList();
-      if (searchDone) {
-        if (!Utils.isNullOrEmpty(_stores)) {
-          return Expanded(
-            child: ListView.builder(
-                itemCount: 1,
-                itemBuilder: (BuildContext context, int index) {
-                  return Container(
-                    margin: EdgeInsets.fromLTRB(10, 10, 10, 10),
-                    child: new Column(
-                      children: showSearchResults(),
-                      // ? _searchResultstores
-                      //     .map(_buildItem)
-                      //     .toList()
-                      // : _stores.map(_buildItem).toList()
-                      // ),
-                      //children: <Widget>[firstRow, secondRow],
-                    ),
-                  );
-                }),
-          );
-        } else
-          return Container();
-      } else
-        showCircularProgress();
+      return Expanded(
+        child: ListView.builder(
+            itemCount: 1,
+            itemBuilder: (BuildContext context, int index) {
+              return Container(
+                margin: EdgeInsets.fromLTRB(10, 10, 10, 10),
+                child: new Column(
+                  children: showSearchResults(),
+                  // ? _searchResultstores
+                  //     .map(_buildItem)
+                  //     .toList()
+                  // : _stores.map(_buildItem).toList()
+                  // ),
+                  //children: <Widget>[firstRow, secondRow],
+                ),
+              );
+            }),
+      );
     }
+
+    //}
   }
 
   @override
@@ -455,7 +452,8 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
               onChanged: (newValue) {
                 setState(() {
                   _entityType = newValue;
-                  _isSearching = true;
+                  _isSearching = "searching";
+                  _buildSearchList();
                   //TODO: Uncomment line
                   //updateSearchList();
                   //TODO: Uncomment line
@@ -561,7 +559,9 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
       String title = "Search";
       print(_searchText);
       print(_entityType);
-      if (_isSearching == false && _searchText.isEmpty && _entityType == null)
+      if (_isSearching == "initial" &&
+          _searchText.isEmpty &&
+          _entityType == null)
         return MaterialApp(
           theme: ThemeData.light().copyWith(),
           home: Scaffold(
@@ -589,13 +589,13 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
                   overflow: TextOverflow.ellipsis,
                 )),
             body: Center(
-              child: (Utils.isNullOrEmpty(_pastSearches))
-                  ? Container(
-                      //
-                      child: Column(
-                        children: <Widget>[
-                          filterBar,
-                          Expanded(
+              child: Container(
+                //
+                child: Column(
+                  children: <Widget>[
+                    filterBar,
+                    (!Utils.isNullOrEmpty(_pastSearches))
+                        ? Expanded(
                             child: ListView.builder(
                                 itemCount: 1,
                                 itemBuilder: (BuildContext context, int index) {
@@ -607,10 +607,10 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
                                   );
                                 }),
                           )
-                        ],
-                      ),
-                    )
-                  : Container(),
+                        : _emptySearchPage(),
+                  ],
+                ),
+              ),
             ),
             // drawer: CustomDrawer(),
             bottomNavigationBar: (widget.forPage == "Search")
@@ -619,52 +619,57 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
             // drawer: CustomDrawer(),
           ),
         );
-      else
+      else {
         print("Came in isSearching");
-      return MaterialApp(
-        theme: ThemeData.light().copyWith(),
-        home: Scaffold(
-          appBar: AppBar(
-              actions: <Widget>[],
-              flexibleSpace: Container(
-                decoration: gradientBackground,
-              ),
-              leading: IconButton(
-                  padding: EdgeInsets.all(0),
-                  alignment: Alignment.center,
-                  highlightColor: Colors.orange[300],
-                  icon: Icon(Icons.arrow_back),
-                  color: Colors.white,
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => UserHomePage()));
-                  }),
-              title: Text(
-                title,
-                style: TextStyle(color: Colors.white, fontSize: 16),
-                overflow: TextOverflow.ellipsis,
-              )),
-          body: Center(
-            child: Container(
-              //
-              child: Column(
-                children: <Widget>[
-                  filterBar,
-                  _listSearchResults(),
-                ],
+        return MaterialApp(
+          theme: ThemeData.light().copyWith(),
+          home: Scaffold(
+            appBar: AppBar(
+                actions: <Widget>[],
+                flexibleSpace: Container(
+                  decoration: gradientBackground,
+                ),
+                leading: IconButton(
+                    padding: EdgeInsets.all(0),
+                    alignment: Alignment.center,
+                    highlightColor: Colors.orange[300],
+                    icon: Icon(Icons.arrow_back),
+                    color: Colors.white,
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => UserHomePage()));
+                    }),
+                title: Text(
+                  title,
+                  style: TextStyle(color: Colors.white, fontSize: 16),
+                  overflow: TextOverflow.ellipsis,
+                )),
+            body: Center(
+              child: Container(
+                //
+                child: Expanded(
+                  child: Column(
+                    children: <Widget>[
+                      filterBar,
+                      (_isSearching == "done")
+                          ? _listSearchResults()
+                          : showCircularProgress(),
+                    ],
+                  ),
+                ),
               ),
             ),
+            // drawer: CustomDrawer(),
+            bottomNavigationBar: (widget.forPage == "Search")
+                ? CustomBottomBar(barIndex: 1)
+                : CustomBottomBar(barIndex: 2),
+            // drawer: CustomDrawer(),
           ),
-          // drawer: CustomDrawer(),
-          bottomNavigationBar: (widget.forPage == "Search")
-              ? CustomBottomBar(barIndex: 1)
-              : CustomBottomBar(barIndex: 2),
-          // drawer: CustomDrawer(),
-        ),
-      );
+        );
+      }
     }
   }
 
@@ -1044,10 +1049,13 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
     //   return _stores.map(_buildItem).toList();
     //   //return _stores.map((contact) => new ChildItem(contact.name)).toList();
     // } else {
-    _stores = await getSearchEntitiesList();
-    setState(() {
-      searchDone = true;
-      _isSearching = false;
+    await getSearchEntitiesList().then((value) {
+      _stores = value;
+      _state.pastSearches = _stores;
+      setState(() {
+        //searchDone = true;
+        _isSearching = "done";
+      });
     });
 
     // for (int i = 0; i < _stores.length; i++) {
@@ -1056,8 +1064,6 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
     //     _searchList.add(_stores.elementAt(i));
     //   }
     // }
-
-    //}
   }
 
   void addFilterCriteria() {}
@@ -1087,18 +1093,18 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
     );
   }
 
-  void _handleSearchStart() {
-    setState(() {
-      _isSearching = true;
-    });
-  }
+  // void _handleSearchStart() {
+  //   setState(() {
+  //     _isSearching = true;
+  //   });
+  // }
 
-  void _handleSearchEnd() {
-    setState(() {
-      _isSearching = false;
-      _searchQuery.clear();
-    });
-  }
+  // void _handleSearchEnd() {
+  //   setState(() {
+  //     _isSearching = false;
+  //     _searchQuery.clear();
+  //   });
+  // }
 }
 
 class ChildItem extends StatelessWidget {
