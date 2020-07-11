@@ -71,19 +71,22 @@ class GlobalState {
       List<dynamic> metaEntityJson) {
     List<Entity> metaEntities = new List<Entity>();
 
-    for (Map<String, dynamic> json in metaEntityJson) {
-      Entity metaEnt = Entity.fromJson(json);
-      metaEntities.add(metaEnt);
+    if (metaEntityJson != null) {
+      for (Map<String, dynamic> json in metaEntityJson) {
+        Entity metaEnt = Entity.fromJson(json);
+        metaEntities.add(metaEnt);
+      }
     }
     return metaEntities;
   }
 
   static List<UserToken> convertToBookingsFromJson(List<dynamic> bookingsJson) {
     List<UserToken> bookings = new List<UserToken>();
-
-    for (Map<String, dynamic> json in bookingsJson) {
-      UserToken token = UserToken.fromJson(json);
-      bookings.add(token);
+    if (bookingsJson != null) {
+      for (Map<String, dynamic> json in bookingsJson) {
+        UserToken token = UserToken.fromJson(json);
+        bookings.add(token);
+      }
     }
     return bookings;
   }

@@ -95,6 +95,7 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
   }
 
   initializeEntity() async {
+    //TODO: Since metaEntity is not created in DB yet, getEntity resturs null.Fix this
     entity = await getEntity(_metaEntity.entityId);
     if (entity != null) {
       _nameController.text = entity.name;
