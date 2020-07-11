@@ -590,6 +590,10 @@ class EntityService {
     Geoflutterfire geo = Geoflutterfire();
     GeoFirePoint center = geo.point(latitude: lat, longitude: lon);
 
+    if (name != null && name != "") {
+      name = name.toLowerCase();
+    }
+
     var collectionReference;
 
     if (type != null && type != "" && name != null && name != "") {

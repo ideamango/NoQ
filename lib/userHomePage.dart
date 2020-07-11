@@ -614,8 +614,6 @@ class _UserHomePageState extends State<UserHomePage> {
           "EntityService.addEntityToUserFavourite -----------------------> FAILURE");
     }
 
-    //--------------0
-
     await EntityService().removeEntityFromUserFavourite("Child101-1");
 
     curUser = await UserService().getCurrentUser();
@@ -638,6 +636,45 @@ class _UserHomePageState extends State<UserHomePage> {
     } else {
       print(
           "EntityService.removeEntityFromUserFavourite -----------------------> FAILURE");
+    }
+
+    //---- Update child entity with upsertChild method which should update the metaEntity in the parentEntity and Admin user
+    await updateChild101();
+
+    Entity parentEnt = await EntityService().getEntity('Entity101');
+    bool metaNameChangedInParent = false;
+    for (MetaEntity me in parentEnt.childEntities) {
+      if (me.name == "Bata updated") {
+        metaNameChangedInParent = true;
+        break;
+      }
+    }
+
+    if (metaNameChangedInParent) {
+      print(
+          "EntityService.upsertChildEntityToParent (metaEntity updated in the Parent) --> SUCCESS");
+    } else {
+      print(
+          "EntityService.upsertChildEntityToParent (metaEntity updated in the Parent) --> Failure");
+    }
+
+    User user = await UserService().getCurrentUser();
+
+    bool metaNameChangedInAdminUser = false;
+
+    for (MetaEntity me in user.entities) {
+      if (me.name == "Bata updated") {
+        metaNameChangedInAdminUser = true;
+        break;
+      }
+    }
+
+    if (metaNameChangedInAdminUser) {
+      print(
+          "EntityService.upsertChildEntityToParent (metaEntity updated in the Admin) --> SUCCESS");
+    } else {
+      print(
+          "EntityService.upsertChildEntityToParent (metaEntity updated in the Admin) ---------------------> Failure");
     }
 
     print(
@@ -1127,5 +1164,44 @@ class _UserHomePageState extends State<UserHomePage> {
             ]),
       ),
     );
+  }
+
+  Future<void> updateChild101() async {
+    Address adrs = new Address(
+        city: "Hyderbad",
+        state: "Telangana",
+        country: "India",
+        address: "Shop 10, Gachibowli");
+
+    MyGeoFirePoint geoPoint = new MyGeoFirePoint(12.960632, 77.641603);
+    Entity entity = new Entity(
+        entityId: "Child101-1",
+        name: "Bata updated",
+        address: adrs,
+        advanceDays: 3,
+        isPublic: true,
+        geo: geoPoint,
+        maxAllowed: 60,
+        slotDuration: 60,
+        closedOn: ["Saturday", "Sunday"],
+        breakStartHour: 13,
+        breakStartMinute: 30,
+        breakEndHour: 14,
+        breakEndMinute: 30,
+        startTimeHour: 10,
+        startTimeMinute: 30,
+        endTimeHour: 21,
+        endTimeMinute: 0,
+        parentId: 'Entity101',
+        type: "Shop",
+        isBookable: false,
+        isActive: true,
+        coordinates: geoPoint);
+
+    try {
+      await EntityService().upsertChildEntityToParent(entity, "Entity101");
+    } catch (e) {
+      print("Exception occured " + e);
+    }
   }
 }
