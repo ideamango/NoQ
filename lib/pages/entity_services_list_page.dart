@@ -26,6 +26,7 @@ class _EntityServicesListPageState extends State<EntityServicesListPage> {
 
   Entity parentEntity;
   String _subEntityType;
+  bool _initCompleted = false;
 
 //Add service Row
 

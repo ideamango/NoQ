@@ -578,8 +578,8 @@ class _SearchChildPageState extends State<SearchChildPage> {
                                     onPressed: () => launchURL(
                                         str.name,
                                         str.address.toString(),
-                                        str.geo.geopoint.latitude,
-                                        str.geo.geopoint.longitude),
+                                        str.coordinates.geopoint.latitude,
+                                        str.coordinates.geopoint.longitude),
                                   ),
                                 ),
                                 Container(
@@ -687,44 +687,12 @@ class _SearchChildPageState extends State<SearchChildPage> {
     );
   }
 
-  void showSlots(
-      Entity store, String storeId, String storeName, DateTime dateTime) {
-    String dateForSlot = dateTime.toString();
-
-    _prefs.setString("storeName", storeName);
-    _prefs.setString("storeIdForSlots", storeId);
-    _prefs.setString("dateForSlot", dateForSlot);
-    getSlotsListForStore(store, dateTime).then((slotsList) async {
-      //Added below code which shows slots in a page
-      final result = await Navigator.push(
-          context,
-          MaterialPageRoute(
-              builder: (context) =>
-                  ShowSlotsPage(entity: store.getMetaEntity())));
-
-      print(result);
-//Commented below code which shows slots in a dialog
-
-      // String val = await showDialog(
-      //     context: context,
-      //     barrierDismissible: true,
-      //     builder: (BuildContext context) {
-      //       return StatefulBuilder(builder: (context, setState) {
-      //         return ShowSlotsPage();
-      //       });
-      //     });
-      GlobalState _state = await GlobalState.getGlobalState();
-
-      if (result != null) {
-        //Add Slot booking in user data, Save locally
-
-        setState(() {
-          _state.bookings.add(result);
-        });
-        writeData(_state);
-      }
-      print('After showDialog:');
-    });
+  void showSlots(Entity store, DateTime dateTime) {
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) =>
+                ShowSlotsPage(entity: store, dateTime: dateTime)));
   }
 
   List<Widget> _buildDateGridItems(
@@ -777,7 +745,7 @@ class _SearchChildPageState extends State<SearchChildPage> {
 
                   // Navigator.push(context,
                   //     MaterialPageRoute(builder: (context) => ShowSlotsPage()));
-                  showSlots(store, sid, sname, dt);
+                  showSlots(store, dt);
                 }
               }, // button pressed
               child: Column(

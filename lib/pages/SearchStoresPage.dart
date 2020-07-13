@@ -631,8 +631,8 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
                                     onPressed: () => launchURL(
                                         str.name,
                                         str.address.toString(),
-                                        str.geo.geopoint.latitude,
-                                        str.geo.geopoint.longitude),
+                                        str.coordinates.geopoint.latitude,
+                                        str.coordinates.geopoint.longitude),
                                   ),
                                 ),
                                 Container(
@@ -732,48 +732,17 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
     );
   }
 
-  void showSlots(
-      Entity store, String storeId, String storeName, DateTime dateTime) {
+  void showSlots(Entity store, DateTime dateTime) {
     //_prefs = await SharedPreferences.getInstance();
-    String dateForSlot = dateTime.toString();
 
-    _prefs.setString("storeName", storeName);
-    _prefs.setString("storeIdForSlots", storeId);
-    _prefs.setString("dateForSlot", dateForSlot);
-    getSlotsListForStore(store, dateTime).then((slotsList) async {
-      //Added below code which shows slots in a page
-      final result = await Navigator.push(
-          context,
-          MaterialPageRoute(
-              builder: (context) =>
-                  ShowSlotsPage(entity: store.getMetaEntity())));
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) =>
+                ShowSlotsPage(entity: store, dateTime: dateTime)));
 
-      print(result);
-
-      // if (result != null) {
-      //   //Add Slot booking in user data, Save locally
-      //   print('Upcoming bookings');
-      //   List<String> s = result.split("-");
-      //   BookingAppData upcomingBooking =
-      //       new BookingAppData(store.entityId, dateTime, s[1], s[0], "New");
-      //   setState(() {
-      //     GlobalState().bookings.add(upcomingBooking);
-      //   });
-      //   writeData(_userProfile);
-      // }
-      // print('After showDialog:');
-      GlobalState _state = await GlobalState.getGlobalState();
-
-      if (result != null) {
-        //Add Slot booking in user data, Save locally
-
-        setState(() {
-          _state.bookings.add(result);
-        });
-        writeData(_state);
-      }
-      print('After showDialog:');
-    });
+    print('After showDialog:');
+    // });
   }
 
   List<Widget> _buildDateGridItems(
@@ -827,7 +796,7 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
 
                   // Navigator.push(context,
                   //     MaterialPageRoute(builder: (context) => ShowSlotsPage()));
-                  showSlots(store, sid, sname, dt);
+                  showSlots(store, dt);
                 }
               }, // button pressed
               child: Column(

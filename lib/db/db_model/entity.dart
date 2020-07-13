@@ -35,7 +35,6 @@ class Entity {
       this.coordinates,
       this.distance});
 
-  Entity.withValues(entityId, type);
   //SlotDocumentId is entityID#20~06~01 it is not auto-generated, will help in not duplicating the record
   String entityId;
   String name;
@@ -161,8 +160,8 @@ class Entity {
   }
 
   static List<MetaUser> convertToUsersFromJson(List<dynamic> usersJson) {
-    if (usersJson == null) return null;
     List<MetaUser> users = new List<MetaUser>();
+    if (usersJson == null) return users;
 
     for (Map<String, dynamic> json in usersJson) {
       MetaUser sl = MetaUser.fromJson(json);
@@ -172,8 +171,8 @@ class Entity {
   }
 
   static List<Employee> convertToEmployeesFromJson(List<dynamic> usersJson) {
-    if (usersJson == null) return null;
     List<Employee> users = new List<Employee>();
+    if (usersJson == null) return users;
 
     for (Map<String, dynamic> json in usersJson) {
       Employee emp = Employee.fromJson(json);
@@ -185,6 +184,7 @@ class Entity {
   static List<MetaEntity> convertToMetaEntitiesFromJson(
       List<dynamic> metaEntityJson) {
     List<MetaEntity> metaEntities = new List<MetaEntity>();
+    if (metaEntityJson == null) return metaEntities;
 
     for (Map<String, dynamic> json in metaEntityJson) {
       MetaEntity metaEnt = MetaEntity.fromJson(json);
@@ -195,6 +195,7 @@ class Entity {
 
   static List<String> convertToClosedOnArrayFromJson(List<dynamic> daysJson) {
     List<String> days = new List<String>();
+    if (daysJson == null) return days;
 
     for (String day in daysJson) {
       days.add(day);
@@ -243,6 +244,7 @@ class Entity {
   }
 
   List<String> constructQueriableList(String string) {
+    if (string == null) return new List<String>();
     String lowercased = string.toLowerCase();
     List<String> queriables = new List<String>();
     for (int i = 1; i <= lowercased.length; i++) {

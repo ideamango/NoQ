@@ -8,6 +8,7 @@ import 'package:noq/global_state.dart';
 import 'package:noq/pages/token_alert.dart';
 import 'package:noq/repository/slotRepository.dart';
 import 'package:noq/style.dart';
+import 'package:noq/utils.dart';
 import 'package:noq/widget/appbar.dart';
 import 'package:noq/widget/bottom_nav_bar.dart';
 import 'package:noq/widget/header.dart';
@@ -18,14 +19,17 @@ import 'package:progress_dialog/progress_dialog.dart';
 import '../constants.dart';
 
 class ShowSlotsPage extends StatefulWidget {
-  final MetaEntity entity;
-  ShowSlotsPage({Key key, @required this.entity}) : super(key: key);
+  final Entity entity;
+  final DateTime dateTime;
+  ShowSlotsPage({Key key, @required this.entity, @required this.dateTime})
+      : super(key: key);
 
   @override
   _ShowSlotsPageState createState() => _ShowSlotsPageState();
 }
 
 class _ShowSlotsPageState extends State<ShowSlotsPage> {
+  bool _initCompleted = false;
   String _storeId;
   String _token;
   String _errorMessage;
@@ -43,7 +47,7 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
   ProgressDialog pr;
   String title = "Book Slot";
   GlobalState _state;
-  bool stateInitFinished = false;
+  bool _gStateInitFinished = false;
   MetaEntity metaEn;
   Entity entity;
 
@@ -51,30 +55,24 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
   void initState() {
     //dt = dateFormat.format(DateTime.now());
     super.initState();
-    _loadSlots();
+    getGlobalState().whenComplete(() => _loadSlots().whenComplete(() {
+          setState(() {
+            _initCompleted = true;
+          });
+        }));
   }
 
-  void _loadSlots() async {
-    //Load details from local files
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    _storeId = widget.entity.entityId;
-    metaEn = widget.entity;
-    // _storeId = prefs.getString('storeIdForSlots');
-    //_userId = prefs.getString('userId');
-    _storeName = prefs.getString("storeName");
-    //Get date to fetch available slots for this date.
-    _strDateForSlot = prefs.getString("dateForSlot");
-    _date = DateTime.parse(_strDateForSlot);
+  Future<void> _loadSlots() async {
+    entity = widget.entity;
+    _date = widget.dateTime;
+    _storeId = entity.entityId;
+    _storeName = entity.name;
     //Format date to display in UI
     final dtFormat = new DateFormat(dateDisplayFormat);
     _dateFormatted = dtFormat.format(_date);
 
-    //Get booked slots
-
     //Fetch details from server
-    entity = await EntityService().getEntity(metaEn.entityId);
-
-    await getSlotsListForStore(entity, _date).then((slotList) {
+    getSlotsListForStore(entity, _date).then((slotList) {
       setState(() {
         _slotList = slotList;
       });
@@ -83,7 +81,7 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
 
   Future<void> getGlobalState() async {
     _state = await GlobalState.getGlobalState();
-    stateInitFinished = true;
+    _gStateInitFinished = true;
   }
 
   Widget _noSlotsPage() {
@@ -109,205 +107,233 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
 
   @override
   Widget build(BuildContext context) {
-    pr = new ProgressDialog(context);
-    pr.style(
-      message: 'Please wait...',
-      backgroundColor: Colors.amber[50],
-      elevation: 10.0,
-    );
-    if (_slotList != null) {
-      Widget pageHeader = Text(
-        _storeName,
-        style: TextStyle(
-          fontSize: 23,
-          color: Colors.black,
-        ),
-      );
-      // Text(
-      //   _dateFormatted,
-      //   style: TextStyle(
-      //     fontSize: 15,
-      //     color: Colors.indigo,
-      //   ),
-      // )
+    // pr = new ProgressDialog(context);
+    // pr.style(
+    //   message: 'Please wait...',
+    //   backgroundColor: Colors.amber[50],
+    //   elevation: 10.0,
+    // );
+    if (_initCompleted) {
+      if (Utils.isNullOrEmpty(_slotList))
+        return _noSlotsPage();
+      else {
+        Widget pageHeader = Text(
+          _storeName,
+          style: TextStyle(
+            fontSize: 23,
+            color: Colors.black,
+          ),
+        );
 
+        return MaterialApp(
+          theme: ThemeData.light().copyWith(),
+          home: Scaffold(
+            drawer: CustomDrawer(),
+            appBar: CustomAppBar(
+              titleTxt: _storeName,
+            ),
+            body: Padding(
+              padding: const EdgeInsets.fromLTRB(6, 6, 6, 6),
+              child: Container(
+                decoration: BoxDecoration(
+                    border: Border.all(color: borderColor),
+                    color: Colors.white,
+                    shape: BoxShape.rectangle,
+                    borderRadius: BorderRadius.all(Radius.circular(5.0))),
+                child: Column(
+                  children: <Widget>[
+                    Container(
+                      height: MediaQuery.of(context).size.width * .1,
+                      padding: EdgeInsets.fromLTRB(6, 0, 0, 0),
+                      decoration: darkContainer,
+                      child: Row(
+                        children: <Widget>[
+                          Icon(
+                            Icons.business,
+                            size: 35,
+                            color: Colors.white,
+                          ),
+                          SizedBox(width: 12),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: <Widget>[
+                              Text(
+                                _storeName,
+                                style: TextStyle(
+                                    color: Colors.white, fontSize: 15),
+                              ),
+                              Text(
+                                _dateFormatted,
+                                style: TextStyle(
+                                  fontSize: 10,
+                                  color: Colors.white,
+                                ),
+                              )
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                    Expanded(
+                      child: Container(
+                        child: new GridView.builder(
+                          padding: EdgeInsets.symmetric(horizontal: 5),
+                          scrollDirection: Axis.vertical,
+                          shrinkWrap: true,
+                          itemCount: _slotList.length,
+                          gridDelegate:
+                              SliverGridDelegateWithFixedCrossAxisCount(
+                                  crossAxisCount: 5,
+                                  crossAxisSpacing: 2.0,
+                                  mainAxisSpacing: 0.5),
+                          itemBuilder: (BuildContext context, int index) {
+                            return new GridTile(
+                              child: Container(
+                                padding: EdgeInsets.all(2),
+                                // decoration:
+                                //     BoxDecoration(border: Border.all(color: Colors.black, width: 0.5)),
+                                child: Center(
+                                  child: _buildGridItem(context, index),
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                    ),
+                    Container(
+                      height: MediaQuery.of(context).size.width * .1,
+                      padding: EdgeInsets.all(4),
+                      // decoration: new BoxDecoration(
+                      //   border: Border.all(color: Colors.teal[200]),
+                      //   shape: BoxShape.rectangle,
+                      // color: Colors.cyan[100],
+                      // borderRadius: BorderRadius.only(
+                      //     topLeft: Radius.circular(4.0),
+                      //     topRight: Radius.circular(4.0))
+                      //),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          SizedBox(
+                            width: MediaQuery.of(context).size.width * .5,
+                            height: MediaQuery.of(context).size.width * .15,
+                            child: RaisedButton(
+                              elevation: (selectedSlot != null) ? 12.0 : 0.0,
+                              color: (selectedSlot != null)
+                                  ? highlightColor
+                                  : disabledColor,
+                              textColor: Colors.white,
+                              child: Text('Book Slot'),
+                              onPressed: bookSlot,
+                            ),
+                          ),
+                          (_errorMessage != null
+                              ? Text(
+                                  _errorMessage,
+                                  style: TextStyle(color: Colors.red),
+                                )
+                              : Container()),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+
+            // Row(
+            //   children: <Widget>[
+            //     RaisedButton(
+            //       elevation: 12.0,
+            //       color: (selectedSlot != null) ? Colors.orange : Colors.grey,
+            //       textColor: Colors.white,
+            //       child: Text('Book Slot'),
+            //       onPressed: bookSlot,
+            //     ),
+            //     (_errorMessage != null
+            //         ? Text(
+            //             _errorMessage,
+            //             style: TextStyle(color: Colors.red),
+            //           )
+            //         : Container()),
+            //   ],
+            // )
+
+            bottomNavigationBar: CustomBottomBar(
+              barIndex: 3,
+            ),
+          ),
+        );
+      }
+    } else {
       return MaterialApp(
         theme: ThemeData.light().copyWith(),
         home: Scaffold(
-          drawer: CustomDrawer(),
-          appBar: CustomAppBar(
-            titleTxt: _storeName,
-          ),
-          body: Padding(
-            padding: const EdgeInsets.fromLTRB(6, 6, 6, 6),
-            child: Container(
-              decoration: BoxDecoration(
-                  border: Border.all(color: borderColor),
-                  color: Colors.white,
-                  shape: BoxShape.rectangle,
-                  borderRadius: BorderRadius.all(Radius.circular(5.0))),
+            appBar: CustomAppBar(
+              titleTxt: "Search",
+            ),
+            body: Center(
               child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
-                  Container(
-                    height: MediaQuery.of(context).size.width * .1,
-                    padding: EdgeInsets.fromLTRB(6, 0, 0, 0),
-                    decoration: darkContainer,
-                    child: Row(
-                      children: <Widget>[
-                        Icon(
-                          Icons.business,
-                          size: 35,
-                          color: Colors.white,
-                        ),
-                        SizedBox(width: 12),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            Text(
-                              _storeName,
-                              style:
-                                  TextStyle(color: Colors.white, fontSize: 15),
-                            ),
-                            Text(
-                              _dateFormatted,
-                              style: TextStyle(
-                                fontSize: 10,
-                                color: Colors.white,
-                              ),
-                            )
-                          ],
-                        ),
-                      ],
-                    ),
+                  // Padding(padding: EdgeInsets.only(top: 20.0)),
+                  Text(
+                    "Loading..",
+                    style: TextStyle(fontSize: 20.0, color: borderColor),
                   ),
-                  Expanded(
-                    child: Container(
-                      child: new GridView.builder(
-                        padding: EdgeInsets.symmetric(horizontal: 5),
-                        scrollDirection: Axis.vertical,
-                        shrinkWrap: true,
-                        itemCount: _slotList.length,
-                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 5,
-                            crossAxisSpacing: 2.0,
-                            mainAxisSpacing: 0.5),
-                        itemBuilder: (BuildContext context, int index) {
-                          return new GridTile(
-                            child: Container(
-                              padding: EdgeInsets.all(2),
-                              // decoration:
-                              //     BoxDecoration(border: Border.all(color: Colors.black, width: 0.5)),
-                              child: Center(
-                                child: _buildGridItem(context, index),
-                              ),
-                            ),
-                          );
-                        },
-                      ),
-                    ),
-                  ),
-                  Container(
-                    height: MediaQuery.of(context).size.width * .1,
-                    padding: EdgeInsets.all(4),
-                    // decoration: new BoxDecoration(
-                    //   border: Border.all(color: Colors.teal[200]),
-                    //   shape: BoxShape.rectangle,
-                    // color: Colors.cyan[100],
-                    // borderRadius: BorderRadius.only(
-                    //     topLeft: Radius.circular(4.0),
-                    //     topRight: Radius.circular(4.0))
-                    //),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        SizedBox(
-                          width: MediaQuery.of(context).size.width * .5,
-                          height: MediaQuery.of(context).size.width * .15,
-                          child: RaisedButton(
-                            elevation: (selectedSlot != null) ? 12.0 : 0.0,
-                            color: (selectedSlot != null)
-                                ? highlightColor
-                                : disabledColor,
-                            textColor: Colors.white,
-                            child: Text('Book Slot'),
-                            onPressed: bookSlot,
-                          ),
-                        ),
-                        (_errorMessage != null
-                            ? Text(
-                                _errorMessage,
-                                style: TextStyle(color: Colors.red),
-                              )
-                            : Container()),
-                      ],
-                    ),
-                  ),
+                  Padding(padding: EdgeInsets.only(top: 20.0)),
+                  CircularProgressIndicator(
+                    backgroundColor: primaryAccentColor,
+                    valueColor: AlwaysStoppedAnimation<Color>(Colors.amber),
+                    strokeWidth: 3,
+                  )
                 ],
               ),
             ),
-          ),
-
-          // Row(
-          //   children: <Widget>[
-          //     RaisedButton(
-          //       elevation: 12.0,
-          //       color: (selectedSlot != null) ? Colors.orange : Colors.grey,
-          //       textColor: Colors.white,
-          //       child: Text('Book Slot'),
-          //       onPressed: bookSlot,
-          //     ),
-          //     (_errorMessage != null
-          //         ? Text(
-          //             _errorMessage,
-          //             style: TextStyle(color: Colors.red),
-          //           )
-          //         : Container()),
-          //   ],
-          // )
-
-          bottomNavigationBar: CustomBottomBar(
-            barIndex: 3,
-          ),
-        ),
+            //drawer: CustomDrawer(),
+            bottomNavigationBar: CustomBottomBar(barIndex: 1)),
       );
-    } else {
-      return _noSlotsPage();
     }
   }
 
-  bool isSelected(String slotId) {
+  bool isSelected(DateTime dateTime) {
     if (selectedSlot != null) {
-      if (slotId.compareTo(selectedSlot.slotId) == 0) return true;
+      if (dateTime.compareTo(selectedSlot.dateTime) == 0) return true;
     }
     return false;
   }
 
-  bool isBooked(String slotId) {
-    List<UserToken> s =
-        _state.bookings.where((element) => element.slotId == slotId);
-    if (s.length != 0)
-      return true;
-    else
-      return false;
+  bool isBooked(DateTime dateTime, String entityId) {
+    for (int i = 0; i < _state.bookings.length; i++) {
+      if (_state.bookings[i].entityId == entityId &&
+          _state.bookings[i].dateTime == dateTime) {
+        return true;
+      }
+    }
+    return false;
   }
 
   Widget _buildGridItem(BuildContext context, int index) {
+    //TODO: Check what information coming from server, then process and use it.
     Slot sl = _slotList[index];
+    String hrs = sl.dateTime.hour.toString();
+    String mnts = sl.dateTime.minute.toString();
 
     return RaisedButton(
-      elevation: (isSelected(sl.slotId) == true) ? 0.0 : 10.0,
+      elevation: (isSelected(sl.dateTime) == true) ? 0.0 : 10.0,
       padding: EdgeInsets.all(2),
       child: Text(
-        sl.dateTime.hour.toString() + ':' + sl.dateTime.minute.toString(),
+        hrs + ':' + mnts,
         style: TextStyle(fontSize: 10, color: Colors.white),
         // textDirection: TextDirection.ltr,
         // textAlign: TextAlign.center,
       ),
 
       autofocus: false,
-      color: (isBooked(sl.slotId) == true)
+      color: (isBooked(sl.dateTime, entity.entityId) == true)
           ? Colors.green[200]
-          : ((sl.isFull == true && isSelected(sl.slotId) == true)
+          : ((sl.isFull == true && isSelected(sl.dateTime) == true)
               ? highlightColor
               : (sl.isFull == false) ? btnDisabledolor : btnColor),
 
@@ -316,7 +342,7 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
       //highlightColor: Colors.green,
       // highlightElevation: 10.0,
       splashColor: (sl.isFull == true) ? highlightColor : null,
-      shape: (isSelected(sl.slotId) == true)
+      shape: (isSelected(sl.dateTime) == true)
           ? RoundedRectangleBorder(
               borderRadius: new BorderRadius.circular(5.0),
               // side: BorderSide(color: highlightColor),
@@ -326,7 +352,7 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
               // side: BorderSide(color: Colors.white),
             ),
       onPressed: () {
-        if (sl.isFull == true) {
+        if (sl.isFull == false) {
           setState(() {
             //unselect previously selected slot
             selectedSlot = sl;

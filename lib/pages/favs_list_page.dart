@@ -59,10 +59,9 @@ class _FavsListPageState extends State<FavsListPage> {
     super.initState();
 
     getGlobalState().whenComplete(() {
-      fetchFavStoresList();
-      setState(() {
-        initCompleted = true;
-      });
+      fetchFavStoresList().then((value) => setState(() {
+            initCompleted = true;
+          }));
     });
   }
 
@@ -70,8 +69,8 @@ class _FavsListPageState extends State<FavsListPage> {
     _state = await GlobalState.getGlobalState();
   }
 
-  void fetchFavStoresList() async {
-    List<Entity> newList;
+  Future<void> fetchFavStoresList() async {
+    List<Entity> newList = new List<Entity>();
     Entity e;
     //if (initCompleted) {
     print(_state.currentUser.favourites);
@@ -356,7 +355,12 @@ class _FavsListPageState extends State<FavsListPage> {
                                     ),
                                     onPressed: () {
                                       // callPhone('+919611009823');
-                                      //callPhone(str.);
+                                      //TODO: Change this phone number later
+                                      if (!Utils.isNullOrEmpty(
+                                          str.managers)) if (str
+                                              .managers.first.ph !=
+                                          null)
+                                        callPhone(str.managers.first.ph);
                                     },
                                   ),
                                 ),
@@ -376,8 +380,8 @@ class _FavsListPageState extends State<FavsListPage> {
                                     onPressed: () => launchURL(
                                         str.name,
                                         str.address.toString(),
-                                        str.geo.geopoint.latitude,
-                                        str.geo.geopoint.longitude),
+                                        str.coordinates.geopoint.latitude,
+                                        str.coordinates.geopoint.longitude),
                                   ),
                                 ),
                                 Container(
@@ -477,48 +481,15 @@ class _FavsListPageState extends State<FavsListPage> {
     );
   }
 
-  void showSlots(
-      Entity store, String storeId, String storeName, DateTime dateTime) {
-    //_prefs = await SharedPreferences.getInstance();
-    String dateForSlot = dateTime.toString();
-
-    _prefs.setString("storeName", storeName);
-    _prefs.setString("storeIdForSlots", storeId);
-    _prefs.setString("dateForSlot", dateForSlot);
-    getSlotsListForStore(store, dateTime).then((slotsList) async {
-      //Added below code which shows slots in a page
-      final result = await Navigator.push(
+  void showSlots(Entity store, DateTime dateTime) {
+    
+    Navigator.push(
           context,
           MaterialPageRoute(
               builder: (context) =>
-                  ShowSlotsPage(entity: store.getMetaEntity())));
+                  ShowSlotsPage(entity: store, dateTime: dateTime)));
 
-      print(result);
-
-      // if (result != null) {
-      //   //Add Slot booking in user data, Save locally
-      //   print('Upcoming bookings');
-      //   List<String> s = result.split("-");
-      //   BookingAppData upcomingBooking =
-      //       new BookingAppData(store.entityId, dateTime, s[1], s[0], "New");
-      //   setState(() {
-      //     GlobalState().bookings.add(upcomingBooking);
-      //   });
-      //   writeData(_userProfile);
-      // }
-      // print('After showDialog:');
-      GlobalState _state = await GlobalState.getGlobalState();
-
-      if (result != null) {
-        //Add Slot booking in user data, Save locally
-
-        setState(() {
-          _state.bookings.add(result);
-        });
-        writeData(_state);
-      }
-      print('After showDialog:');
-    });
+     
   }
 
   List<Widget> _buildDateGridItems(
@@ -572,7 +543,7 @@ class _FavsListPageState extends State<FavsListPage> {
 
                   // Navigator.push(context,
                   //     MaterialPageRoute(builder: (context) => ShowSlotsPage()));
-                  showSlots(store, sid, sname, dt);
+                  showSlots(store, dt);
                 }
               }, // button pressed
               child: Column(
