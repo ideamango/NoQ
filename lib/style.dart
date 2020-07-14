@@ -110,6 +110,14 @@ final textInputTextStyle = TextStyle(
   fontSize: 15.0,
   //height: 2,
 );
+final textLabelTextStyle = TextStyle(
+  color: Colors.blueGrey[900],
+  // fontWeight: FontWeight.w800,
+  fontFamily: 'Monsterrat',
+  letterSpacing: 0.5,
+  fontSize: 15.0,
+  //height: 2,
+);
 final labelMedTextStyle = TextStyle(
   color: Colors.grey[700],
   // fontWeight: FontWeight.w800,
@@ -199,6 +207,11 @@ final BoxDecoration soildLightContainer = new BoxDecoration(
     color: Colors.teal[200],
     borderRadius: BorderRadius.only(
         topLeft: Radius.circular(4.0), topRight: Radius.circular(4.0)));
+final BoxDecoration rectLightContainer = new BoxDecoration(
+  border: Border.all(color: Colors.teal[200]),
+  shape: BoxShape.rectangle,
+  color: Colors.teal[200],
+);
 final gradientBackground = new BoxDecoration(
   gradient: new LinearGradient(
       colors: [

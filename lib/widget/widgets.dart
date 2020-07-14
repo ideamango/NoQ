@@ -6,6 +6,12 @@ Divider myDivider = new Divider(
   indent: 30,
   endIndent: 30,
 );
+Divider myLightDivider = new Divider(
+  color: Colors.white,
+  height: 1,
+  indent: 30,
+  endIndent: 30,
+);
 
 SizedBox verticalSpacer = new SizedBox(height: 10);
 SizedBox horizontalSpacer = new SizedBox(width: 10);

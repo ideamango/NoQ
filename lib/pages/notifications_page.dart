@@ -20,29 +20,31 @@ class _UserNotificationsPageState extends State<UserNotificationsPage> {
   bool _notificationsFlg;
   List<String> _notificationsList;
   GlobalState _state;
-  bool stateInitFinished = false;
+  bool _initCompleted = false;
 
   @override
   void initState() {
     super.initState();
-    getGlobalState();
-    _loadNotifications();
+    getGlobalState().then((value) {
+      _loadNotifications();
+      _initCompleted = true;
+    });
   }
 
   Future<void> getGlobalState() async {
     _state = await GlobalState.getGlobalState();
-    stateInitFinished = true;
   }
 
   void _loadNotifications() async {
     setState(() {
+      //TODO: SMita - no logic for notifications
       _notificationsFlg = (_state.conf != null) ? true : false;
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    if (_notificationsFlg == true) {
+    if (_initCompleted) {
       if (_notificationsList != null) {
         return _buildNotificationPage();
       } else {
