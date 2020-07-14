@@ -21,7 +21,7 @@ class EntityServicesListPage extends StatefulWidget {
 class _EntityServicesListPageState extends State<EntityServicesListPage> {
   String _msg;
   final GlobalKey<FormState> _servicesListFormKey = new GlobalKey<FormState>();
-  List<MetaEntity> servicesList = new List<MetaEntity>();
+  List<Entity> servicesList = new List<Entity>();
   final String title = "Services Detail Form";
 
   Entity parentEntity;
@@ -41,11 +41,12 @@ class _EntityServicesListPageState extends State<EntityServicesListPage> {
     super.initState();
     parentEntity = widget.entity;
     if (parentEntity == null)
-      servicesList = List<MetaEntity>();
+      servicesList = List<Entity>();
     else {
       if (!Utils.isNullOrEmpty(parentEntity.childEntities))
         setState(() {
-          servicesList = parentEntity.childEntities;
+          //TODO:Change to metaEn SMita
+          //  servicesList = parentEntity.childEntities;
         });
     }
   }
@@ -54,21 +55,22 @@ class _EntityServicesListPageState extends State<EntityServicesListPage> {
     setState(() {
       var uuid = new Uuid();
       String _serviceId = uuid.v1();
-      MetaEntity metaEn = new MetaEntity();
-      metaEn.type = _subEntityType;
-      metaEn.entityId = _serviceId;
+      Entity en = new Entity();
+      en.type = _subEntityType;
+      en.entityId = _serviceId;
+      en.parentId = parentEntity.entityId;
 
       // .cType(
       //     _serviceId, _subEntityType, parentEntity.id, parentEntity.adrs);
 
-      servicesList.add(metaEn);
+      servicesList.add(en);
       //  entity.childCollection.add(c);
       //   saveChildEntity(c);
       _count = _count + 1;
     });
   }
 
-  Widget _buildServiceItem(MetaEntity childEntity) {
+  Widget _buildServiceItem(Entity childEntity) {
     return new ServiceRow(childEntity: childEntity);
   }
 
@@ -224,14 +226,16 @@ class _EntityServicesListPageState extends State<EntityServicesListPage> {
                                       style: TextStyle(
                                           color: Colors.white, fontSize: 15),
                                     ),
-                                    Text(
-                                      (parentEntity.address.locality +
-                                              ", " +
-                                              parentEntity.address.city +
-                                              ".") ??
-                                          "",
-                                      style: buttonXSmlTextStyle,
-                                    ),
+                                    //TODO: Smita- uncomment after adding null check
+                                    // Text(
+
+                                    //   (parentEntity.address.locality +
+                                    //           ", " +
+                                    //           parentEntity.address.city +
+                                    //           ".") ??
+                                    //       "",
+                                    //   style: buttonXSmlTextStyle,
+                                    // ),
                                   ],
                                 ),
                               ],

@@ -70,7 +70,8 @@ class Entity {
         'name': name,
         'description': description,
         'regNum': regNum,
-        'address': address.toJson(),
+        //TODO: address is null, exception thrown, add null check for address.- Smita
+        'address': address != null ? address.toJson() : null,
         'advanceDays': advanceDays,
         'isPublic': isPublic,
         'admins': usersToJson(admins),
@@ -91,7 +92,7 @@ class Entity {
         'type': type,
         'isBookable': isBookable,
         'isActive': isActive,
-        'coordinates': coordinates.toJson(),
+        'coordinates': coordinates != null ? coordinates.toJson() : null,
         'nameQuery': constructQueriableList(name),
         'distance': distance
       };
@@ -220,8 +221,8 @@ class Entity {
         endTimeHour: endTimeHour,
         endTimeMinute: endTimeMinute,
         isActive: isActive,
-        lat: coordinates.geopoint.latitude,
-        lon: coordinates.geopoint.longitude,
+        lat: (coordinates != null) ? coordinates.geopoint.latitude : null,
+        lon: (coordinates != null) ? coordinates.geopoint.longitude : null,
         slotDuration: slotDuration,
         maxAllowed: maxAllowed,
         distance: distance);

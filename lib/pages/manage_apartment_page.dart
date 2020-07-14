@@ -133,19 +133,20 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
 //contact person
       if (!(Utils.isNullOrEmpty(entity.managers))) {
         contactList = entity.managers;
-      } else
-        contactList = new List<Employee>();
+      }
     } else {
-      //TODO:do nothing as this metaEntity is just created and will saved in DB only on save
-
       Map<String, dynamic> entityJSON = <String, dynamic>{
         'type': _metaEntity.type,
         'entityId': _metaEntity.entityId
       };
 
       entity = Entity.fromJson(entityJSON);
-      EntityService().upsertEntity(entity);
+      //TODO: Smita - check if we insert object at SAVE.
+      //  EntityService().upsertEntity(entity);
     }
+
+    entity.address = (entity.address) ?? new Address();
+    contactList = contactList ?? new List<Employee>();
 
     //  _ctNameController.text = entity.contactPersons[0].perName;
   }
@@ -155,7 +156,7 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
       return 'Field is empty';
     }
     // _entityDetailsFormKey.currentState.save();
-    //return null;
+    return null;
   }
 
   String validateTime(String value) {
@@ -163,7 +164,7 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
       return 'Field is empty';
     }
 
-    //return null;
+    return null;
   }
 
   void _getCurrLocation() async {
@@ -290,41 +291,6 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
           entity.regNum = value;
         },
       );
-      // final entityType = new FormField(
-      //   builder: (FormFieldState state) {
-      //     return InputDecorator(
-      //       decoration: InputDecoration(
-      //         //  icon: const Icon(Icons.person),
-      //         labelText: 'Type of Establishment',
-      //       ),
-      //       child: new DropdownButtonHideUnderline(
-      //         child: new DropdownButton(
-      //           value: _entityType,
-      //           isDense: true,
-      //           onChanged: (newValue) {
-      //             setState(() {
-      //               // newContact.favoriteColor = newValue;
-      //               _entityType = newValue;
-      //               state.didChange(newValue);
-      //             });
-      //           },
-      //           items: entityTypes.map((type) {
-      //             return DropdownMenuItem(
-      //               value: type,
-      //               child: new Text(
-      //                 type.toString(),
-      //                 style: textInputTextStyle,
-      //               ),
-      //             );
-      //           }).toList(),
-      //         ),
-      //       ),
-      //     );
-      //   },
-      //   onSaved: (String value) {
-      //     entity.eType = value;
-      //   },
-      // );
 
       final opensTimeField = TextFormField(
         obscureText: false,
@@ -333,15 +299,16 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
         minLines: 1,
         style: textInputTextStyle,
         onTap: () {
-          DatePicker.showTime12hPicker(context, showTitleActions: true,
-              onChanged: (date) {
+          DatePicker.showTimePicker(context,
+              showTitleActions: true,
+              showSecondsColumn: false, onChanged: (date) {
             print('change $date in time zone ' +
                 date.timeZoneOffset.inHours.toString());
           }, onConfirm: (date) {
             print('confirm $date');
             //  String time = "${date.hour}:${date.minute} ${date.";
 
-            String time = DateFormat.jm().format(date);
+            String time = DateFormat.Hm().format(date);
             print(time);
 
             _openTimeController.text = time.toLowerCase();
@@ -361,7 +328,7 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
             //       print('confirm $date');
             //       //  String time = "${date.hour}:${date.minute} ${date.";
 
-            //       String time = DateFormat.jm().format(date);
+            //       String time = DateFormat.Hm().format(date);
             //       print(time);
 
             //       _openTimeController.text = time.toLowerCase();
@@ -369,7 +336,7 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
             //   },
             // ),
             labelText: "Opening time",
-            hintText: "HH:MM am/pm",
+            hintText: "HH:MM 24Hr time format",
             enabledBorder: UnderlineInputBorder(
                 borderSide: BorderSide(color: Colors.grey)),
             focusedBorder: UnderlineInputBorder(
@@ -379,6 +346,7 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
           //TODO: test the values
           List<String> time = value.split(':');
           entity.startTimeHour = int.parse(time[0]);
+
           entity.startTimeMinute = int.parse(time[1]);
         },
       );
@@ -391,15 +359,16 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
         controller: _closeTimeController,
         style: textInputTextStyle,
         onTap: () {
-          DatePicker.showTime12hPicker(context, showTitleActions: true,
-              onChanged: (date) {
+          DatePicker.showTimePicker(context,
+              showTitleActions: true,
+              showSecondsColumn: false, onChanged: (date) {
             print('change $date in time zone ' +
                 date.timeZoneOffset.inHours.toString());
           }, onConfirm: (date) {
             print('confirm $date');
             //  String time = "${date.hour}:${date.minute} ${date.";
 
-            String time = DateFormat.jm().format(date);
+            String time = DateFormat.Hm().format(date);
             print(time);
 
             _closeTimeController.text = time.toLowerCase();
@@ -407,7 +376,7 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
         },
         decoration: InputDecoration(
             labelText: "Closing time",
-            hintText: "HH:MM am/pm",
+            hintText: "HH:MM 24Hr time format",
             enabledBorder: UnderlineInputBorder(
                 borderSide: BorderSide(color: Colors.grey)),
             focusedBorder: UnderlineInputBorder(
@@ -417,6 +386,7 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
           //TODO: test the values
           List<String> time = value.split(':');
           entity.endTimeHour = int.parse(time[0]);
+
           entity.endTimeMinute = int.parse(time[1]);
         },
       );
@@ -427,15 +397,16 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
         minLines: 1,
         style: textInputTextStyle,
         onTap: () {
-          DatePicker.showTime12hPicker(context, showTitleActions: true,
-              onChanged: (date) {
+          DatePicker.showTimePicker(context,
+              showTitleActions: true,
+              showSecondsColumn: false, onChanged: (date) {
             print('change $date in time zone ' +
                 date.timeZoneOffset.inHours.toString());
           }, onConfirm: (date) {
             print('confirm $date');
             //  String time = "${date.hour}:${date.minute} ${date.";
 
-            String time = DateFormat.jm().format(date);
+            String time = DateFormat.Hm().format(date);
             print(time);
 
             _breakStartController.text = time.toLowerCase();
@@ -455,7 +426,7 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
             //       print('confirm $date');
             //       //  String time = "${date.hour}:${date.minute} ${date.";
 
-            //       String time = DateFormat.jm().format(date);
+            //       String time = DateFormat.Hm().format(date);
             //       print(time);
 
             //       _openTimeController.text = time.toLowerCase();
@@ -463,7 +434,7 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
             //   },
             // ),
             labelText: "Break start at",
-            hintText: "HH:MM am/pm",
+            hintText: "HH:MM 24Hr time format",
             enabledBorder: UnderlineInputBorder(
                 borderSide: BorderSide(color: Colors.grey)),
             focusedBorder: UnderlineInputBorder(
@@ -473,6 +444,7 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
           //TODO: test the values
           List<String> time = value.split(':');
           entity.breakStartHour = int.parse(time[0]);
+
           entity.breakStartMinute = int.parse(time[1]);
         },
       );
@@ -485,15 +457,16 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
         controller: _breakEndController,
         style: textInputTextStyle,
         onTap: () {
-          DatePicker.showTime12hPicker(context, showTitleActions: true,
-              onChanged: (date) {
+          DatePicker.showTimePicker(context,
+              showTitleActions: true,
+              showSecondsColumn: false, onChanged: (date) {
             print('change $date in time zone ' +
                 date.timeZoneOffset.inHours.toString());
           }, onConfirm: (date) {
             print('confirm $date');
             //  String time = "${date.hour}:${date.minute} ${date.";
 
-            String time = DateFormat.jm().format(date);
+            String time = DateFormat.Hm().format(date);
             print(time);
 
             _breakEndController.text = time.toLowerCase();
@@ -501,7 +474,7 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
         },
         decoration: InputDecoration(
             labelText: "Break ends at",
-            hintText: "HH:MM am/pm",
+            hintText: "HH:MM 24Hr time format",
             enabledBorder: UnderlineInputBorder(
                 borderSide: BorderSide(color: Colors.grey)),
             focusedBorder: UnderlineInputBorder(
@@ -749,13 +722,15 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
 
       saveRoute() {
         saveFormDetails();
-        upsertEntity(entity);
-
-        Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) =>
-                    EntityServicesListPage(entity: this.entity)));
+        upsertEntity(entity).then((value) {
+          if (value) {
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) =>
+                        EntityServicesListPage(entity: this.entity)));
+          }
+        });
       }
 
       processSaveWithTimer() async {

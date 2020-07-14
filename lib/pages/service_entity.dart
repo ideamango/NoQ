@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:noq/constants.dart';
+import 'package:noq/db/db_model/entity.dart';
 import 'package:noq/db/db_model/meta_entity.dart';
 import 'package:noq/models/localDB.dart';
 import 'package:noq/pages/entity_services_details_page.dart';
@@ -19,14 +20,14 @@ import 'package:geolocator/geolocator.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 
 class ServiceRow extends StatefulWidget {
-  final MetaEntity childEntity;
+  final Entity childEntity;
   ServiceRow({Key key, @required this.childEntity}) : super(key: key);
   @override
   State<StatefulWidget> createState() => new ServiceRowState();
 }
 
 class ServiceRowState extends State<ServiceRow> {
-  MetaEntity serviceEntity;
+  Entity serviceEntity;
 
   @override
   void initState() {
@@ -41,7 +42,7 @@ class ServiceRowState extends State<ServiceRow> {
           context,
           MaterialPageRoute(
               builder: (context) =>
-                  ServiceEntityDetailsPage(serviceEntity: this.serviceEntity)));
+                  ServiceEntityDetailsPage(serviceMetaEntity: this.serviceEntity)));
     }
 
     return new Card(

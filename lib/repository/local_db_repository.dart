@@ -37,6 +37,7 @@ void writeData(GlobalState state) async {
 Future<GlobalState> readData() async {
   try {
     final file = await localFile;
+    //TODO: Exception here
     String body = await file.readAsString();
     print('Reading data: $body');
     Map<String, dynamic> json = jsonDecode(body);

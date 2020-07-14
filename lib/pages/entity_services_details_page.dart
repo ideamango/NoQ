@@ -29,8 +29,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uuid/uuid.dart';
 
 class ServiceEntityDetailsPage extends StatefulWidget {
-  final MetaEntity serviceEntity;
-  ServiceEntityDetailsPage({Key key, @required this.serviceEntity})
+  final Entity serviceMetaEntity;
+  ServiceEntityDetailsPage({Key key, @required this.serviceMetaEntity})
       : super(key: key);
   @override
   _ServiceEntityDetailsPageState createState() =>
@@ -73,7 +73,7 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
   List<String> _daysOff = List<String>();
 
   AddressAppData adrs = new AddressAppData();
-  MetaEntity _metaEntity;
+  // MetaEntity _metaEntity;
 
   Entity serviceEntity;
 
@@ -101,7 +101,7 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
   @override
   void initState() {
     super.initState();
-    _metaEntity = widget.serviceEntity;
+    serviceEntity = widget.serviceMetaEntity;
     // var uuid = new Uuid();
     // serviceEntity.id = uuid.v1();
     _getCurrLocation();
@@ -117,7 +117,7 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
   }
 
   initializeEntity() async {
-    serviceEntity = await getEntity(_metaEntity.entityId);
+    // serviceEntity = await getEntity(_metaEntity.entityId);
     if (serviceEntity != null) {
       _nameController.text = serviceEntity.name;
       _regNumController.text = serviceEntity.regNum;
@@ -151,16 +151,15 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
         contactList = new List<Employee>();
     } else {
       //TODO:do nothing as this metaEntity is just created and will saved in DB only on save
+      Map<String, dynamic> entityJSON = <String, dynamic>{
+        'type': serviceEntity.type,
+        'entityId': serviceEntity.entityId
+      };
+
+      serviceEntity = Entity.fromJson(entityJSON);
+      EntityService().upsertEntity(serviceEntity);
     }
   }
-
-  loadServiceEntity(String serviceEntityId) {
-    // serviceEntity = getEntity(serviceEntityId);
-  }
-
-  // Future<void> getPrefInstance() async {
-  //   _prefs = await SharedPreferences.getInstance();
-  // }
 
   String validateText(String value) {
     if (value == null) {
@@ -252,12 +251,32 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
     return contactList;
   }
 
-  saveDetails() async {
-    List<Placemark> placemark = await Geolocator().placemarkFromAddress(
-        "My Home Vihanga, Financial District, Gachibowli, Hyderabad, Telangana, India");
+  void saveFormDetails() async {
+    print("saving ");
 
-    print(placemark);
-    //saveEntityDetails(childEntity);
+    if (_serviceDetailsFormKey.currentState.validate()) {
+      _serviceDetailsFormKey.currentState.save();
+      print("Saved formmmmmmm");
+    }
+  }
+
+  saveDetails() async {
+    // List<Placemark> placemark = await Geolocator().placemarkFromAddress(
+    //     "My Home Vihanga, Financial District, Gachibowli, Hyderabad, Telangana, India");
+
+    // print(placemark);
+    saveFormDetails();
+    EntityService()
+        .upsertChildEntityToParent(serviceEntity, serviceEntity.parentId)
+        .then((value) {
+      if (value) {
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) =>
+                    EntityServicesListPage(entity: this.serviceEntity)));
+      }
+    });
   }
 
   void _addNewContactRow() {
@@ -319,8 +338,9 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
       minLines: 1,
       style: textInputTextStyle,
       onTap: () {
-        DatePicker.showTime12hPicker(context, showTitleActions: true,
-            onChanged: (date) {
+        DatePicker.showTimePicker(context,
+            showTitleActions: true,
+            showSecondsColumn: false, onChanged: (date) {
           print('change $date in time zone ' +
               date.timeZoneOffset.inHours.toString());
         }, onConfirm: (date) {
@@ -337,7 +357,7 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
       keyboardType: TextInputType.text,
       decoration: InputDecoration(
           labelText: "Opening time",
-          hintText: "HH:MM am/pm",
+          hintText: "HH:MM 24Hr time format",
           enabledBorder:
               UnderlineInputBorder(borderSide: BorderSide(color: Colors.grey)),
           focusedBorder: UnderlineInputBorder(
@@ -365,8 +385,9 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
       controller: _closeTimeController,
       style: textInputTextStyle,
       onTap: () {
-        DatePicker.showTime12hPicker(context, showTitleActions: true,
-            onChanged: (date) {
+        DatePicker.showTimePicker(context,
+            showTitleActions: true,
+            showSecondsColumn: false, onChanged: (date) {
           print('change $date in time zone ' +
               date.timeZoneOffset.inHours.toString());
         }, onConfirm: (date) {
@@ -381,7 +402,7 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
       },
       decoration: InputDecoration(
           labelText: "Closing time",
-          hintText: "HH:MM am/pm",
+          hintText: "HH:MM 24Hr time format",
           enabledBorder:
               UnderlineInputBorder(borderSide: BorderSide(color: Colors.grey)),
           focusedBorder: UnderlineInputBorder(
@@ -407,8 +428,9 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
       minLines: 1,
       style: textInputTextStyle,
       onTap: () {
-        DatePicker.showTime12hPicker(context, showTitleActions: true,
-            onChanged: (date) {
+        DatePicker.showTimePicker(context,
+            showTitleActions: true,
+            showSecondsColumn: false, onChanged: (date) {
           print('change $date in time zone ' +
               date.timeZoneOffset.inHours.toString());
         }, onConfirm: (date) {
@@ -424,26 +446,8 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
       controller: _breakStartController,
       keyboardType: TextInputType.text,
       decoration: InputDecoration(
-          // suffixIcon: IconButton(
-          //   icon: Icon(Icons.schedule),
-          //   onPressed: () {
-          //     DatePicker.showTime12hPicker(context, showTitleActions: true,
-          //         onChanged: (date) {
-          //       print('change $date in time zone ' +
-          //           date.timeZoneOffset.inHours.toString());
-          //     }, onConfirm: (date) {
-          //       print('confirm $date');
-          //       //  String time = "${date.hour}:${date.minute} ${date.";
-
-          //       String time = DateFormat.jm().format(date);
-          //       print(time);
-
-          //       _openTimeController.text = time.toLowerCase();
-          //     }, currentTime: DateTime.now());
-          //   },
-          // ),
           labelText: "Break start at",
-          hintText: "HH:MM am/pm",
+          hintText: "HH:MM 24Hr time format",
           enabledBorder:
               UnderlineInputBorder(borderSide: BorderSide(color: Colors.grey)),
           focusedBorder: UnderlineInputBorder(
@@ -471,8 +475,9 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
       controller: _breakEndController,
       style: textInputTextStyle,
       onTap: () {
-        DatePicker.showTime12hPicker(context, showTitleActions: true,
-            onChanged: (date) {
+        DatePicker.showTimePicker(context,
+            showTitleActions: true,
+            showSecondsColumn: false, onChanged: (date) {
           print('change $date in time zone ' +
               date.timeZoneOffset.inHours.toString());
         }, onConfirm: (date) {
@@ -487,7 +492,7 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
       },
       decoration: InputDecoration(
           labelText: "Break ends at",
-          hintText: "HH:MM am/pm",
+          hintText: "HH:MM 24Hr time format",
           enabledBorder:
               UnderlineInputBorder(borderSide: BorderSide(color: Colors.grey)),
           focusedBorder: UnderlineInputBorder(
@@ -1404,7 +1409,7 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
                                                 serviceEntity.parentId;
 
                                             Entity parentEntity;
-                                            
+
                                             //     .deleteEntity(serviceEntity.id)
                                             //     .whenComplete(() {
                                             //   Navigator.pop(context);
@@ -1427,9 +1432,9 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
                                               //TDOD: Uncomment getEntity method below.
 
                                               EntityService()
-                                                .getEntity(parentEntityId)
-                                                .then((value) => {
-                                                      parentEntity = value})
+                                                  .getEntity(parentEntityId)
+                                                  .then((value) =>
+                                                      {parentEntity = value})
                                                   .whenComplete(() => Navigator.push(
                                                       context,
                                                       MaterialPageRoute(
