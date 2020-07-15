@@ -1,8 +1,11 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:noq/pages/otpdialog.dart';
+import 'package:noq/pages/terms_of_use.dart';
 import 'package:noq/utils.dart';
+import 'package:noq/widget/widgets.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'style.dart';
@@ -105,37 +108,70 @@ class _LoginPageState extends State<LoginPage> {
         // padding: EdgeInsets.fromLTRB(10.0, 7.5, 10.0, 7.5),
         onPressed: submitForm,
         child: Text(
-          "Login with OTP",
+          "Continue",
           textAlign: TextAlign.center,
           style: buttonTextStyle,
         ),
       ),
     );
 
-    return new Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: <Widget>[
-        SizedBox(
-          // height: 155.0,
-          child: Image.asset(
-            "assets/logo.png",
-            fit: BoxFit.contain,
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: new Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          SizedBox(
+            // height: 155.0,
+            child: Image.asset(
+              "assets/logo.png",
+              fit: BoxFit.contain,
+            ),
           ),
-        ),
-        Column(
-            //mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[headingText, subHeadingText]),
-        SizedBox(height: 30.0),
-        phNumField,
-        //codeSent ? otpNumField : Container(child: Text("")),
-        SizedBox(height: 10.0),
-        loginButon,
-        SizedBox(height: 10.0),
-        (_errorMsg != null
-            ? Text('$_errorMsg', style: errorTextStyle)
-            : Container()),
-      ],
+          Column(
+              //mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[headingText, subHeadingText]),
+          SizedBox(height: 30.0),
+          phNumField,
+          //codeSent ? otpNumField : Container(child: Text("")),
+          SizedBox(height: 10.0),
+          Container(
+            child: Row(
+              children: <Widget>[
+                RichText(
+                  text: TextSpan(
+                    style: subHeadingTextStyle,
+                    children: <TextSpan>[
+                      TextSpan(text: "By clicking Continue, I agree to the "),
+                      TextSpan(
+                        text: 'Terms of Use',
+                        style: new TextStyle(
+                            color: primaryAccentColor,
+                            //decoration: TextDecoration.underline,
+                            decorationColor: primaryDarkColor),
+                        recognizer: new TapGestureRecognizer()
+                          ..onTap = () {
+                            Navigator.pop(context);
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => TermsOfUsePage()));
+                          },
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+          verticalSpacer,
+          loginButon,
+          SizedBox(height: 10.0),
+          (_errorMsg != null
+              ? Text('$_errorMsg', style: errorTextStyle)
+              : Container()),
+        ],
+      ),
     );
   }
 

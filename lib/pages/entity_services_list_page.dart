@@ -145,7 +145,7 @@ class _EntityServicesListPageState extends State<EntityServicesListPage> {
                   Flushbar(
                     //padding: EdgeInsets.zero,
                     margin: EdgeInsets.zero,
-                    flushbarPosition: FlushbarPosition.TOP,
+                    flushbarPosition: FlushbarPosition.BOTTOM,
                     flushbarStyle: FlushbarStyle.FLOATING,
                     reverseAnimationCurve: Curves.decelerate,
                     forwardAnimationCurve: Curves.easeInToLinear,

@@ -4,7 +4,7 @@ import 'package:noq/pages/about_page.dart';
 import 'package:noq/pages/help_page.dart';
 import 'package:noq/pages/manage_apartment_list_page.dart';
 import 'package:noq/pages/notifications_page.dart';
-import 'package:noq/pages/rate_app.dart';
+import 'package:noq/pages/contact_us.dart';
 import 'package:noq/pages/share_app_page.dart';
 import 'package:noq/pages/userAccountPage.dart';
 import 'package:noq/style.dart';
@@ -30,25 +30,25 @@ class _CustomDrawerState extends State<CustomDrawer> {
       "name": "Manage Premises",
       "pageRoute": ManageApartmentsListPage(),
     },
-    {
-      "icon": Icons.notifications,
-      "name": "Notifications",
-      "pageRoute": UserNotificationsPage(),
-    },
-    {
-      "icon": Icons.grade,
-      "name": "Rate our app",
-      "pageRoute": RateAppPage(),
-    },
+    // {
+    //   "icon": Icons.notifications,
+    //   "name": "Notifications",
+    //   "pageRoute": UserNotificationsPage(),
+    // },
     {
       "icon": Icons.help_outline,
-      "name": "Need Help?",
+      "name": "FAQs",
       "pageRoute": HelpPage(),
     },
     {
       "icon": Icons.share,
-      "name": "Share our app",
+      "name": "Rate & Share",
       "pageRoute": ShareAppPage(),
+    },
+    {
+      "icon": Icons.people,
+      "name": "Contact Us",
+      "pageRoute": ContactUsPage(),
     },
     {
       "icon": Icons.info,

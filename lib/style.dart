@@ -47,6 +47,14 @@ final highlightBoldTextStyle = TextStyle(
   fontSize: 25,
   //height: 2,
 );
+final highlightMedBoldTextStyle = TextStyle(
+  color: highlightColor,
+  fontWeight: FontWeight.w800,
+  fontFamily: 'Montserrat',
+  letterSpacing: 0.5,
+  fontSize: 18,
+  //height: 2,
+);
 final buttonMedTextStyle = TextStyle(
   color: Colors.white,
   fontWeight: FontWeight.w700,
@@ -163,6 +171,8 @@ final Color btnDisabledolor = Colors.blueGrey[200];
 final Color highlightText = Colors.blueGrey[800];
 final highlightSubTextStyle = TextStyle(
     color: Colors.blueGrey[800], fontFamily: 'Montserrat', fontSize: 12.0);
+final lightTextStyle =
+    TextStyle(color: Colors.white, fontFamily: 'Montserrat', fontSize: 12.0);
 
 final tokenTextStyle = TextStyle(
     color: Colors.black,
@@ -207,10 +217,17 @@ final BoxDecoration soildLightContainer = new BoxDecoration(
     color: Colors.teal[200],
     borderRadius: BorderRadius.only(
         topLeft: Radius.circular(4.0), topRight: Radius.circular(4.0)));
+final BoxDecoration btnColorContainer = new BoxDecoration(
+    border: Border.all(color: btnColor),
+    shape: BoxShape.rectangle,
+    color: btnColor,
+    borderRadius: BorderRadius.only(
+        topLeft: Radius.circular(4.0), topRight: Radius.circular(4.0)));
+
 final BoxDecoration rectLightContainer = new BoxDecoration(
-  border: Border.all(color: Colors.teal[200]),
+  border: Border.all(color: btnColor),
   shape: BoxShape.rectangle,
-  color: Colors.teal[200],
+  color: btnColor,
 );
 final gradientBackground = new BoxDecoration(
   gradient: new LinearGradient(

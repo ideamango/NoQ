@@ -740,16 +740,19 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
     bool _delEnabled = false;
     saveRoute() {
       saveFormDetails();
+      EntityService()
+          .upsertChildEntityToParent(serviceEntity, serviceEntity.parentId)
+          .then((value) {
+        if (value) {
+          EntityService().getEntity(this.serviceEntity.parentId).then((value) =>
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) =>
+                          EntityServicesListPage(entity: value))));
+        }
+      });
       //saveChildEntity(serviceEntity);
-      // Navigator.push(
-      //     context,
-      //     MaterialPageRoute(
-      //         builder: (context) =>
-      //             EntityServicesListPage(entity: this.entity)));
-
-//TODO: old code - test and remove
-      // _form2Key.currentState.save();
-      // saveDetails();
       // Navigator.push(
       //     context,
       //     MaterialPageRoute(

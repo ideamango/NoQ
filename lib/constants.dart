@@ -4,6 +4,9 @@ var loginMainTxt = "LOGIN";
 String dateDisplayFormat = 'EEE, MMM d';
 String homeScreenMsgTxt =
     "Add the amenities in Apartment or Workplace to your 'favourites' and book a slot anytime.";
+String contactUsMailId = "smita.agarwal@outlook.com";
+String contactUsPageHeadline =
+    'We would be happy to help you. Just drop a message to us and we will try our best to address that at earliest.';
 
 String homeScreenMsgTxt2 = "Avoid rush hours";
 String homeScreenMsgTxt3 = "Be Safe | Save time.";
@@ -67,4 +70,12 @@ List<String> searchTypes = [
   'Mall',
   'Salon',
   'MedicalStore'
+];
+List<String> mailReasons = [
+  'General Enquiry',
+  'Special Request',
+  'Feedback',
+  'Appreciation',
+  'Report an Issue',
+  'Press'
 ];

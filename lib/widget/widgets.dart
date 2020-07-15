@@ -8,7 +8,7 @@ Divider myDivider = new Divider(
 );
 Divider myLightDivider = new Divider(
   color: Colors.white,
-  height: 1,
+  height: 2,
   indent: 30,
   endIndent: 30,
 );
