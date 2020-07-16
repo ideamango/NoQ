@@ -372,9 +372,11 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
 
     // Future.delayed(Duration(seconds: 1)).then((value) {
     //   pr.hide().whenComplete(() {
-
-    bookSlotForStore(metaEn, selectedSlot, _date).then((value) {
+//Test - Smita
+    MetaEntity meta = entity.getMetaEntity();
+    bookSlotForStore(meta, selectedSlot).then((value) {
       _token = value.number.toString();
+
       String slotTiming = selectedSlot.dateTime.hour.toString() +
           ':' +
           selectedSlot.dateTime.minute.toString();

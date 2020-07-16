@@ -7,6 +7,7 @@ import 'package:noq/db/db_model/entity_slots.dart';
 import 'package:noq/db/db_model/meta_entity.dart';
 import 'package:noq/db/db_model/slot.dart';
 import 'package:noq/db/db_model/user_token.dart';
+import 'package:noq/db/db_service/entity_service.dart';
 import 'package:noq/db/db_service/token_service.dart';
 
 Future<List<Slot>> getSlotsListForStore(
@@ -82,10 +83,10 @@ Slot checkIfSlotExists(EntitySlots entitySlots, DateTime dt) {
   return null;
 }
 
-Future<UserToken> bookSlotForStore(
-    MetaEntity metaEntity, Slot slot, DateTime dateTime) async {
+Future<UserToken> bookSlotForStore(MetaEntity meta, Slot slot) async {
 //TODO: Have Entity object here, either pass entity object to generateToken() or create metaEntity and pass to this method.
-  UserToken token = await TokenService().generateToken(metaEntity, dateTime);
+
+  UserToken token = await TokenService().generateToken(meta, slot.dateTime);
 
   return token;
 }

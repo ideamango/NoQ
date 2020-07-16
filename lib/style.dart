@@ -158,7 +158,7 @@ final Color borderColor = Colors.blueGrey[800];
 final Color primaryAccentColor = Colors.cyanAccent[400];
 
 final Color primaryDarkColor = Colors.cyan[800];
-final Color headerBarColor = Colors.blueGrey[500];
+final Color headerBarColor = Colors.blueGrey[400];
 
 final Color highlightColor = Colors.orangeAccent;
 final Color unselectedColor = Colors.blueGrey[700];

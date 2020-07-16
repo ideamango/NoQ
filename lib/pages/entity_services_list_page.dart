@@ -142,45 +142,46 @@ class _EntityServicesListPageState extends State<EntityServicesListPage> {
                   // saveEntityDetails(parentEntity);
                   print("going back");
                   //Show flush bar to notify user
-                  Flushbar(
-                    //padding: EdgeInsets.zero,
-                    margin: EdgeInsets.zero,
-                    flushbarPosition: FlushbarPosition.BOTTOM,
-                    flushbarStyle: FlushbarStyle.FLOATING,
-                    reverseAnimationCurve: Curves.decelerate,
-                    forwardAnimationCurve: Curves.easeInToLinear,
-                    backgroundColor: headerBarColor,
-                    boxShadows: [
-                      BoxShadow(
-                          color: primaryAccentColor,
-                          offset: Offset(0.0, 2.0),
-                          blurRadius: 3.0)
-                    ],
-                    isDismissible: false,
-                    duration: Duration(seconds: 4),
-                    icon: Icon(
-                      Icons.save,
-                      color: Colors.blueGrey[50],
-                    ),
-                    showProgressIndicator: true,
-                    progressIndicatorBackgroundColor: Colors.blueGrey[800],
-                    routeBlur: 10.0,
-                    titleText: Text(
-                      "Go Back to Home",
-                      style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16.0,
-                          color: primaryAccentColor,
-                          fontFamily: "ShadowsIntoLightTwo"),
-                    ),
-                    messageText: Text(
-                      "The changes you made will not be saved. To Save now, click Cancel.",
-                      style: TextStyle(
-                          fontSize: 12.0,
-                          color: Colors.blueGrey[50],
-                          fontFamily: "ShadowsIntoLightTwo"),
-                    ),
-                  )..show(context);
+                  // Flushbar(
+                  //   //padding: EdgeInsets.zero,
+                  //   margin: EdgeInsets.zero,
+                  //   flushbarPosition: FlushbarPosition.BOTTOM,
+                  //   flushbarStyle: FlushbarStyle.FLOATING,
+                  //   reverseAnimationCurve: Curves.decelerate,
+                  //   forwardAnimationCurve: Curves.easeInToLinear,
+                  //   backgroundColor: headerBarColor,
+                  //   boxShadows: [
+                  //     BoxShadow(
+                  //         color: primaryAccentColor,
+                  //         offset: Offset(0.0, 2.0),
+                  //         blurRadius: 3.0)
+                  //   ],
+                  //   isDismissible: false,
+                  //   duration: Duration(seconds: 4),
+                  //   icon: Icon(
+                  //     Icons.save,
+                  //     color: Colors.blueGrey[50],
+                  //   ),
+                  //   showProgressIndicator: true,
+                  //   progressIndicatorBackgroundColor: Colors.blueGrey[800],
+                  //   routeBlur: 10.0,
+                  //   titleText: Text(
+                  //     "Go Back to Home",
+                  //     style: TextStyle(
+                  //         fontWeight: FontWeight.bold,
+                  //         fontSize: 16.0,
+                  //         color: primaryAccentColor,
+                  //         fontFamily: "ShadowsIntoLightTwo"),
+                  //   ),
+                  //   messageText: Text(
+                  //     "The changes you made will not be saved. To Save now, click Cancel.",
+                  //     style: TextStyle(
+                  //         fontSize: 12.0,
+                  //         color: Colors.blueGrey[50],
+                  //         fontFamily: "ShadowsIntoLightTwo"),
+                  //   ),
+                  // )..show(context);
+
                   Navigator.of(context).pop();
                 }),
             title: Text(

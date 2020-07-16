@@ -121,34 +121,43 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
     if (serviceEntity != null) {
       _nameController.text = serviceEntity.name;
       _regNumController.text = serviceEntity.regNum;
-      _openTimeController.text = serviceEntity.startTimeHour.toString() +
-          ':' +
-          serviceEntity.startTimeMinute.toString();
-      _closeTimeController.text = serviceEntity.endTimeHour.toString() +
-          ':' +
-          serviceEntity.endTimeMinute.toString();
-      _breakStartController.text = serviceEntity.breakStartHour.toString() +
-          ':' +
-          serviceEntity.breakStartMinute.toString();
-      _breakEndController.text = serviceEntity.breakEndHour.toString() +
-          ':' +
-          serviceEntity.breakEndMinute.toString();
+      if (serviceEntity.startTimeHour != null &&
+          serviceEntity.startTimeMinute != null)
+        _openTimeController.text = serviceEntity.startTimeHour.toString() +
+            ':' +
+            serviceEntity.startTimeMinute.toString();
+      if (serviceEntity.endTimeHour != null &&
+          serviceEntity.endTimeMinute != null)
+        _closeTimeController.text = serviceEntity.endTimeHour.toString() +
+            ':' +
+            serviceEntity.endTimeMinute.toString();
+      if (serviceEntity.breakStartHour != null &&
+          serviceEntity.breakStartMinute != null)
+        _breakStartController.text = serviceEntity.breakStartHour.toString() +
+            ':' +
+            serviceEntity.breakStartMinute.toString();
+      if (serviceEntity.breakEndHour != null &&
+          serviceEntity.breakEndMinute != null)
+        _breakEndController.text = serviceEntity.breakEndHour.toString() +
+            ':' +
+            serviceEntity.breakEndMinute.toString();
       if (serviceEntity.closedOn != null) _daysOff = serviceEntity.closedOn;
-      _maxPeopleController.text = serviceEntity.maxAllowed.toString();
+      if (serviceEntity.maxAllowed != null)
+        _maxPeopleController.text = serviceEntity.maxAllowed.toString();
       //address
-
-      _adrs1Controller.text = serviceEntity.address.address;
-      _localityController.text = serviceEntity.address.locality;
-      _landController.text = serviceEntity.address.landmark;
-      _cityController.text = serviceEntity.address.city;
-      _stateController.text = serviceEntity.address.state;
-      _countryController.text = serviceEntity.address.country;
-      _pinController.text = serviceEntity.address.zipcode;
+      if (serviceEntity.address != null) {
+        _adrs1Controller.text = serviceEntity.address.address;
+        _localityController.text = serviceEntity.address.locality;
+        _landController.text = serviceEntity.address.landmark;
+        _cityController.text = serviceEntity.address.city;
+        _stateController.text = serviceEntity.address.state;
+        _countryController.text = serviceEntity.address.country;
+        _pinController.text = serviceEntity.address.zipcode;
 //contact person
-      if (!(Utils.isNullOrEmpty(serviceEntity.managers))) {
-        contactList = serviceEntity.managers;
-      } else
-        contactList = new List<Employee>();
+        if (!(Utils.isNullOrEmpty(serviceEntity.managers))) {
+          contactList = serviceEntity.managers;
+        }
+      }
     } else {
       //TODO:do nothing as this metaEntity is just created and will saved in DB only on save
       Map<String, dynamic> entityJSON = <String, dynamic>{
@@ -157,8 +166,10 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
       };
 
       serviceEntity = Entity.fromJson(entityJSON);
-      EntityService().upsertEntity(serviceEntity);
+      // EntityService().upsertEntity(serviceEntity);
     }
+    serviceEntity.address = (serviceEntity.address) ?? new Address();
+    contactList = contactList ?? new List<Employee>();
   }
 
   String validateText(String value) {
@@ -371,9 +382,11 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
       },
       onSaved: (String value) {
         //TODO: test the values
-        List<String> time = value.split(':');
-        serviceEntity.startTimeHour = int.parse(time[0]);
-        serviceEntity.startTimeMinute = int.parse(time[1]);
+        if (value != "") {
+          List<String> time = value.split(':');
+          serviceEntity.startTimeHour = int.parse(time[0]);
+          serviceEntity.startTimeMinute = int.parse(time[1]);
+        }
       },
     );
     final closeTimeField = TextFormField(
@@ -416,9 +429,11 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
       },
       onSaved: (String value) {
         //TODO: test the values
-        List<String> time = value.split(':');
-        serviceEntity.endTimeHour = int.parse(time[0]);
-        serviceEntity.endTimeMinute = int.parse(time[1]);
+        if (value != "") {
+          List<String> time = value.split(':');
+          serviceEntity.endTimeHour = int.parse(time[0]);
+          serviceEntity.endTimeMinute = int.parse(time[1]);
+        }
       },
     );
     final breakSartTimeField = TextFormField(
@@ -461,9 +476,11 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
       },
       onSaved: (String value) {
         //TODO: test the values
-        List<String> time = value.split(':');
-        serviceEntity.breakStartHour = int.parse(time[0]);
-        serviceEntity.breakStartMinute = int.parse(time[1]);
+        if (value != "") {
+          List<String> time = value.split(':');
+          serviceEntity.breakStartHour = int.parse(time[0]);
+          serviceEntity.breakStartMinute = int.parse(time[1]);
+        }
       },
     );
     final breakEndTimeField = TextFormField(
@@ -506,9 +523,11 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
       },
       onSaved: (String value) {
         //TODO: test the values
-        List<String> time = value.split(':');
-        serviceEntity.breakEndHour = int.parse(time[0]);
-        serviceEntity.breakEndMinute = int.parse(time[1]);
+        if (value != "") {
+          List<String> time = value.split(':');
+          serviceEntity.breakEndHour = int.parse(time[0]);
+          serviceEntity.breakEndMinute = int.parse(time[1]);
+        }
       },
     );
     final daysClosedField = Padding(
@@ -581,6 +600,8 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
         serviceEntity.maxAllowed = int.parse(value);
       },
       onSaved: (String value) {
+        if (value != "") serviceEntity.maxAllowed = int.parse(value);
+        print("saved max people");
         // entity. = value;
       },
     );
@@ -768,6 +789,21 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
     String title = serviceEntity.type;
 
     String _msg;
+    Flushbar flush;
+    bool _wasButtonClicked;
+    backRoute() {
+      // saveFormDetails();
+      // upsertEntity(entity).then((value) {
+      //   if (value) {
+      Navigator.pop(context);
+      //                }
+      // });
+    }
+
+    processGoBackWithTimer() async {
+      var duration = new Duration(seconds: 1);
+      return new Timer(duration, backRoute);
+    }
 
     final roleType = new FormField(
       builder: (FormFieldState state) {
@@ -828,8 +864,8 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
               onPressed: () {
                 print("going back");
                 //Save form details, then go back.
-                saveFormDetails();
-                updateModel();
+                // saveFormDetails();
+                // updateModel();
                 //go back
                 Navigator.of(context).pop();
               },
@@ -1246,7 +1282,7 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
                           ),
                         ),
                         onPressed: () {
-                          Flushbar(
+                          flush = Flushbar<bool>(
                             //padding: EdgeInsets.zero,
                             margin: EdgeInsets.zero,
                             flushbarPosition: FlushbarPosition.BOTTOM,
@@ -1260,19 +1296,10 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
                                   offset: Offset(0.0, 2.0),
                                   blurRadius: 3.0)
                             ],
-                            // backgroundGradient: new LinearGradient(
-                            //     colors: [
-                            //       Colors.blueGrey,
-                            //       Colors.black,
-                            //     ],
-                            //     begin: const FractionalOffset(0.0, 0.0),
-                            //     end: const FractionalOffset(1.0, 0.0),
-                            //     stops: [0.0, 1.0],
-                            //     tileMode: TileMode.repeated),
                             isDismissible: false,
-                            duration: Duration(seconds: 4),
+                            //duration: Duration(seconds: 4),
                             icon: Icon(
-                              Icons.save,
+                              Icons.cancel,
                               color: Colors.blueGrey[50],
                             ),
                             showProgressIndicator: true,
@@ -1280,7 +1307,7 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
                                 Colors.blueGrey[800],
                             routeBlur: 10.0,
                             titleText: Text(
-                              "Saving Details",
+                              "Are you sure you want to leave this page?",
                               style: TextStyle(
                                   fontWeight: FontWeight.bold,
                                   fontSize: 16.0,
@@ -1288,14 +1315,42 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
                                   fontFamily: "ShadowsIntoLightTwo"),
                             ),
                             messageText: Text(
-                              " Loading the services offered!!",
+                              "The changes you made might be lost.",
                               style: TextStyle(
-                                  fontSize: 12.0,
+                                  fontSize: 10.0,
                                   color: Colors.blueGrey[50],
                                   fontFamily: "ShadowsIntoLightTwo"),
                             ),
-                          )..show(context);
-                          processSaveWithTimer();
+
+                            mainButton: Column(
+                              children: <Widget>[
+                                FlatButton(
+                                  padding: EdgeInsets.all(0),
+                                  onPressed: () {
+                                    flush.dismiss(true); // result = true
+                                  },
+                                  child: Text(
+                                    "Yes",
+                                    style: TextStyle(color: highlightColor),
+                                  ),
+                                ),
+                                FlatButton(
+                                  padding: EdgeInsets.all(0),
+                                  onPressed: () {
+                                    flush.dismiss(false); // result = true
+                                  },
+                                  child: Text(
+                                    "No",
+                                    style: TextStyle(color: highlightColor),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          )..show(context).then((result) {
+                              _wasButtonClicked = result;
+                              if (_wasButtonClicked) processGoBackWithTimer();
+                            });
+                          //processSaveWithTimer();
                         }),
                   ),
                   Builder(

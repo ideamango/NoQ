@@ -102,51 +102,61 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
 
   initializeEntity() async {
     //TODO: Since metaEntity is not created in DB yet, getEntity resturs null.Fix this
-    entity = await getEntity(_metaEntity.entityId);
-    if (entity != null) {
-      _nameController.text = entity.name;
-      // _entityType = entity.eType;
-      _regNumController.text = entity.regNum;
-      _openTimeController.text = entity.startTimeHour.toString() +
-          ':' +
-          entity.startTimeMinute.toString();
-      _closeTimeController.text =
-          entity.endTimeHour.toString() + ':' + entity.endTimeMinute.toString();
-      _breakStartController.text = entity.breakStartHour.toString() +
-          ':' +
-          entity.breakStartMinute.toString();
-      _breakEndController.text = entity.breakEndHour.toString() +
-          ':' +
-          entity.breakEndMinute.toString();
-      if (entity.closedOn != null) _daysOff = entity.closedOn;
-      _maxPeopleController.text = entity.maxAllowed.toString();
-      //address
-      if (entity.address != null) {
-        _adrs1Controller.text = entity.address.address;
-        _localityController.text = entity.address.locality;
-        _landController.text = entity.address.landmark;
-        _cityController.text = entity.address.city;
-        _stateController.text = entity.address.state;
-        _countryController.text = entity.address.country;
-        _pinController.text = entity.address.zipcode;
-      }
+    getEntity(_metaEntity.entityId).then((value) {
+      //TODO: SMita test this(entity = value)
+      entity = value;
+      if (entity != null) {
+        _nameController.text = entity.name;
+        // _entityType = entity.eType;
+        _regNumController.text = entity.regNum;
+        if (entity.startTimeHour != null && entity.startTimeMinute != null)
+          _openTimeController.text = entity.startTimeHour.toString() +
+              ':' +
+              entity.startTimeMinute.toString();
+        if (entity.endTimeHour != null && entity.endTimeMinute != null)
+          _closeTimeController.text = entity.endTimeHour.toString() +
+              ':' +
+              entity.endTimeMinute.toString();
+        if (entity.breakStartHour != null && entity.breakStartMinute != null)
+          _breakStartController.text = entity.breakStartHour.toString() +
+              ':' +
+              entity.breakStartMinute.toString();
+        if (entity.breakEndHour != null && entity.breakEndMinute != null)
+          _breakEndController.text = entity.breakEndHour.toString() +
+              ':' +
+              entity.breakEndMinute.toString();
+        if (entity.closedOn != null) _daysOff = entity.closedOn;
+        if (entity.maxAllowed != null)
+          _maxPeopleController.text =
+              (entity.maxAllowed != null) ? entity.maxAllowed.toString() : "";
+        //address
+        if (entity.address != null) {
+          _adrs1Controller.text = entity.address.address;
+          _localityController.text = entity.address.locality;
+          _landController.text = entity.address.landmark;
+          _cityController.text = entity.address.city;
+          _stateController.text = entity.address.state;
+          _countryController.text = entity.address.country;
+          _pinController.text = entity.address.zipcode;
+        }
 //contact person
-      if (!(Utils.isNullOrEmpty(entity.managers))) {
-        contactList = entity.managers;
+        if (!(Utils.isNullOrEmpty(entity.managers))) {
+          contactList = entity.managers;
+        }
+      } else {
+        Map<String, dynamic> entityJSON = <String, dynamic>{
+          'type': _metaEntity.type,
+          'entityId': _metaEntity.entityId
+        };
+
+        entity = Entity.fromJson(entityJSON);
+        //TODO: Smita - check if we insert object at SAVE.
+        //  EntityService().upsertEntity(entity);
       }
-    } else {
-      Map<String, dynamic> entityJSON = <String, dynamic>{
-        'type': _metaEntity.type,
-        'entityId': _metaEntity.entityId
-      };
 
-      entity = Entity.fromJson(entityJSON);
-      //TODO: Smita - check if we insert object at SAVE.
-      //  EntityService().upsertEntity(entity);
-    }
-
-    entity.address = (entity.address) ?? new Address();
-    contactList = contactList ?? new List<Employee>();
+      entity.address = (entity.address) ?? new Address();
+      contactList = contactList ?? new List<Employee>();
+    });
 
     //  _ctNameController.text = entity.contactPersons[0].perName;
   }
@@ -198,7 +208,7 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
         // _address = new Address(
         //     _subArea, _mainArea, _currentCity, _country, _postalCode);
       });
-      print('ghythyt');
+      print('get Address From LantLong');
       print(_subArea +
           "..." +
           _mainArea +
@@ -344,10 +354,12 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
         validator: validateTime,
         onSaved: (String value) {
           //TODO: test the values
-          List<String> time = value.split(':');
-          entity.startTimeHour = int.parse(time[0]);
+          if (value != "") {
+            List<String> time = value.split(':');
+            entity.startTimeHour = int.parse(time[0]);
 
-          entity.startTimeMinute = int.parse(time[1]);
+            entity.startTimeMinute = int.parse(time[1]);
+          }
         },
       );
       final closeTimeField = TextFormField(
@@ -384,10 +396,12 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
         validator: validateTime,
         onSaved: (String value) {
           //TODO: test the values
-          List<String> time = value.split(':');
-          entity.endTimeHour = int.parse(time[0]);
+          if (value != "") {
+            List<String> time = value.split(':');
+            entity.endTimeHour = int.parse(time[0]);
 
-          entity.endTimeMinute = int.parse(time[1]);
+            entity.endTimeMinute = int.parse(time[1]);
+          }
         },
       );
       final breakSartTimeField = TextFormField(
@@ -442,10 +456,12 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
         validator: validateTime,
         onSaved: (String value) {
           //TODO: test the values
-          List<String> time = value.split(':');
-          entity.breakStartHour = int.parse(time[0]);
+          if (value != "") {
+            List<String> time = value.split(':');
+            entity.breakStartHour = int.parse(time[0]);
 
-          entity.breakStartMinute = int.parse(time[1]);
+            entity.breakStartMinute = int.parse(time[1]);
+          }
         },
       );
       final breakEndTimeField = TextFormField(
@@ -482,9 +498,11 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
         validator: validateTime,
         onSaved: (String value) {
           //TODO: test the values
-          List<String> time = value.split(':');
-          entity.breakEndHour = int.parse(time[0]);
-          entity.breakEndMinute = int.parse(time[1]);
+          if (value != "") {
+            List<String> time = value.split(':');
+            entity.breakEndHour = int.parse(time[0]);
+            entity.breakEndMinute = int.parse(time[1]);
+          }
         },
       );
 
@@ -555,7 +573,7 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
         ),
         validator: validateText,
         onSaved: (String value) {
-          entity.maxAllowed = int.parse(value);
+          if (value != "") entity.maxAllowed = int.parse(value);
           print("saved max people");
         },
       );
@@ -698,8 +716,10 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
       );
       TextEditingController _txtController = new TextEditingController();
       bool _delEnabled = false;
+      Flushbar flush;
+      bool _wasButtonClicked;
 
-      void saveFormDetails() async {
+      void saveFormDetails() {
         print("saving ");
 
         if (_entityDetailsFormKey.currentState.validate()) {
@@ -733,9 +753,23 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
         });
       }
 
+      backRoute() {
+        // saveFormDetails();
+        // upsertEntity(entity).then((value) {
+        //   if (value) {
+        Navigator.pop(context);
+        //                }
+        // });
+      }
+
       processSaveWithTimer() async {
         var duration = new Duration(seconds: 4);
         return new Timer(duration, saveRoute);
+      }
+
+      processGoBackWithTimer() async {
+        var duration = new Duration(seconds: 1);
+        return new Timer(duration, backRoute);
       }
 
       String _msg;
@@ -800,11 +834,11 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
               onPressed: () {
                 print("going back");
                 //Show flush bar to notify user
-                Flushbar(
+                flush = Flushbar<bool>(
                   //padding: EdgeInsets.zero,
                   margin: EdgeInsets.zero,
-                  flushbarPosition: FlushbarPosition.TOP,
-                  flushbarStyle: FlushbarStyle.FLOATING,
+                  flushbarPosition: FlushbarPosition.BOTTOM,
+                  flushbarStyle: FlushbarStyle.GROUNDED,
                   reverseAnimationCurve: Curves.decelerate,
                   forwardAnimationCurve: Curves.easeInToLinear,
                   backgroundColor: headerBarColor,
@@ -815,16 +849,16 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
                         blurRadius: 3.0)
                   ],
                   isDismissible: false,
-                  duration: Duration(seconds: 4),
+                  //duration: Duration(seconds: 4),
                   icon: Icon(
-                    Icons.save,
+                    Icons.cancel,
                     color: Colors.blueGrey[50],
                   ),
                   showProgressIndicator: true,
                   progressIndicatorBackgroundColor: Colors.blueGrey[800],
                   routeBlur: 10.0,
                   titleText: Text(
-                    "Go Back to Home",
+                    "Are you sure you want to leave this page?",
                     style: TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 16.0,
@@ -832,16 +866,46 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
                         fontFamily: "ShadowsIntoLightTwo"),
                   ),
                   messageText: Text(
-                    "The changes you made will not be saved. To Save now, click Cancel.",
+                    "The changes you made might be lost.",
                     style: TextStyle(
-                        fontSize: 12.0,
+                        fontSize: 10.0,
                         color: Colors.blueGrey[50],
                         fontFamily: "ShadowsIntoLightTwo"),
                   ),
-                )..show(context);
+
+                  mainButton: Column(
+                    children: <Widget>[
+                      FlatButton(
+                        padding: EdgeInsets.all(0),
+                        onPressed: () {
+                          flush.dismiss(true); // result = true
+                        },
+                        child: Text(
+                          "Yes",
+                          style: TextStyle(color: highlightColor),
+                        ),
+                      ),
+                      FlatButton(
+                        padding: EdgeInsets.all(0),
+                        onPressed: () {
+                          flush.dismiss(false); // result = true
+                        },
+                        child: Text(
+                          "No",
+                          style: TextStyle(color: highlightColor),
+                        ),
+                      ),
+                    ],
+                  ),
+                )..show(context).then((result) {
+                    _wasButtonClicked = result;
+                    if (_wasButtonClicked) processGoBackWithTimer();
+                  });
+                //processSaveWithTimer();
 
                 //go back
-                Navigator.of(context).pop();
+                //Navigator.of(context).pop();
+                print("gone");
               },
             ),
             title: Text(_metaEntity.type, style: whiteBoldTextStyle1),
@@ -1463,45 +1527,45 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
               onPressed: () {
                 print("going back");
                 //Show flush bar to notify user
-                Flushbar(
-                  //padding: EdgeInsets.zero,
-                  margin: EdgeInsets.zero,
-                  flushbarPosition: FlushbarPosition.TOP,
-                  flushbarStyle: FlushbarStyle.FLOATING,
-                  reverseAnimationCurve: Curves.decelerate,
-                  forwardAnimationCurve: Curves.easeInToLinear,
-                  backgroundColor: headerBarColor,
-                  boxShadows: [
-                    BoxShadow(
-                        color: primaryAccentColor,
-                        offset: Offset(0.0, 2.0),
-                        blurRadius: 3.0)
-                  ],
-                  isDismissible: false,
-                  duration: Duration(seconds: 4),
-                  icon: Icon(
-                    Icons.save,
-                    color: Colors.blueGrey[50],
-                  ),
-                  showProgressIndicator: true,
-                  progressIndicatorBackgroundColor: Colors.blueGrey[800],
-                  routeBlur: 10.0,
-                  titleText: Text(
-                    "Go Back to Home",
-                    style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 16.0,
-                        color: primaryAccentColor,
-                        fontFamily: "ShadowsIntoLightTwo"),
-                  ),
-                  messageText: Text(
-                    "The changes you made will not be saved. To Save now, click Cancel.",
-                    style: TextStyle(
-                        fontSize: 12.0,
-                        color: Colors.blueGrey[50],
-                        fontFamily: "ShadowsIntoLightTwo"),
-                  ),
-                )..show(context);
+                // Flushbar(
+                //   //padding: EdgeInsets.zero,
+                //   margin: EdgeInsets.zero,
+                //   flushbarPosition: FlushbarPosition.TOP,
+                //   flushbarStyle: FlushbarStyle.FLOATING,
+                //   reverseAnimationCurve: Curves.decelerate,
+                //   forwardAnimationCurve: Curves.easeInToLinear,
+                //   backgroundColor: headerBarColor,
+                //   boxShadows: [
+                //     BoxShadow(
+                //         color: primaryAccentColor,
+                //         offset: Offset(0.0, 2.0),
+                //         blurRadius: 3.0)
+                //   ],
+                //   isDismissible: false,
+                //   duration: Duration(seconds: 4),
+                //   icon: Icon(
+                //     Icons.save,
+                //     color: Colors.blueGrey[50],
+                //   ),
+                //   showProgressIndicator: true,
+                //   progressIndicatorBackgroundColor: Colors.blueGrey[800],
+                //   routeBlur: 10.0,
+                //   titleText: Text(
+                //     "Go Back to Home",
+                //     style: TextStyle(
+                //         fontWeight: FontWeight.bold,
+                //         fontSize: 16.0,
+                //         color: primaryAccentColor,
+                //         fontFamily: "ShadowsIntoLightTwo"),
+                //   ),
+                //   messageText: Text(
+                //     "The changes you made will not be saved. To Save now, click Cancel.",
+                //     style: TextStyle(
+                //         fontSize: 12.0,
+                //         color: Colors.blueGrey[50],
+                //         fontFamily: "ShadowsIntoLightTwo"),
+                //   ),
+                // )..show(context);
 
                 //go back
                 Navigator.of(context).pop();

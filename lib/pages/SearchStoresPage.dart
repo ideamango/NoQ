@@ -525,8 +525,8 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
           Navigator.push(
               context,
               MaterialPageRoute(
-                  builder: (context) => SearchChildPage(
-                      forPage: pageName, childList: str.childEntities)));
+                  builder: (context) =>
+                      SearchServicesPage(childList: str.childEntities)));
         }
 
         // if (child.length != 0) {
