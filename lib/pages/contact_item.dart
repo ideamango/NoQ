@@ -134,8 +134,9 @@ class ContactRowState extends State<ContactRow> {
       controller: _ctAvlFromTimeController,
       keyboardType: TextInputType.text,
       onTap: () {
-        DatePicker.showTime12hPicker(context, showTitleActions: true,
-            onChanged: (date) {
+        DatePicker.showTimePicker(context,
+            showTitleActions: true,
+            showSecondsColumn: false, onChanged: (date) {
           print('change $date in time zone ' +
               date.timeZoneOffset.inHours.toString());
         }, onConfirm: (date) {
@@ -168,7 +169,7 @@ class ContactRowState extends State<ContactRow> {
           //   },
           // ),
           labelText: "Available from",
-          hintText: "HH:MM am/pm",
+          hintText: "HH:MM 24Hr time format",
           enabledBorder:
               UnderlineInputBorder(borderSide: BorderSide(color: Colors.grey)),
           focusedBorder: UnderlineInputBorder(
@@ -196,8 +197,9 @@ class ContactRowState extends State<ContactRow> {
       controller: _ctAvlTillTimeController,
       style: textInputTextStyle,
       onTap: () {
-        DatePicker.showTime12hPicker(context, showTitleActions: true,
-            onChanged: (date) {
+        DatePicker.showTimePicker(context,
+            showTitleActions: true,
+            showSecondsColumn: false, onChanged: (date) {
           print('change $date in time zone ' +
               date.timeZoneOffset.inHours.toString());
         }, onConfirm: (date) {
@@ -212,7 +214,7 @@ class ContactRowState extends State<ContactRow> {
       },
       decoration: InputDecoration(
           labelText: "Available till",
-          hintText: "HH:MM am/pm",
+          hintText: "HH:MM 24Hr time format",
           enabledBorder:
               UnderlineInputBorder(borderSide: BorderSide(color: Colors.grey)),
           focusedBorder: UnderlineInputBorder(

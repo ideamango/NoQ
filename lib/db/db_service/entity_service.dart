@@ -99,7 +99,6 @@ class EntityService {
         throw e;
       }
     });
-
     return isSuccess;
   }
 

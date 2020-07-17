@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:noq/dashboard.dart';
 import 'package:noq/pages/SearchStoresPage.dart';
+import 'package:noq/pages/favs_list_page.dart';
 import 'package:noq/pages/userAccountPage.dart';
 import 'package:noq/style.dart';
 import 'package:noq/userHomePage.dart';
@@ -78,11 +79,8 @@ class _CustomBottomBarState extends State<CustomBottomBar> {
           break;
         case 2:
           {
-            Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) =>
-                        SearchStoresPage(forPage: 'Favourite')));
+            Navigator.push(context,
+                MaterialPageRoute(builder: (context) => FavsListPage()));
           }
           break;
         case 3:

@@ -29,8 +29,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uuid/uuid.dart';
 
 class ServiceEntityDetailsPage extends StatefulWidget {
-  final MetaEntity serviceEntity;
-  ServiceEntityDetailsPage({Key key, @required this.serviceEntity})
+  final Entity serviceMetaEntity;
+  ServiceEntityDetailsPage({Key key, @required this.serviceMetaEntity})
       : super(key: key);
   @override
   _ServiceEntityDetailsPageState createState() =>
@@ -73,7 +73,7 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
   List<String> _daysOff = List<String>();
 
   AddressAppData adrs = new AddressAppData();
-  MetaEntity _metaEntity;
+  // MetaEntity _metaEntity;
 
   Entity serviceEntity;
 
@@ -101,7 +101,7 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
   @override
   void initState() {
     super.initState();
-    _metaEntity = widget.serviceEntity;
+    serviceEntity = widget.serviceMetaEntity;
     // var uuid = new Uuid();
     // serviceEntity.id = uuid.v1();
     _getCurrLocation();
@@ -117,50 +117,61 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
   }
 
   initializeEntity() async {
-    serviceEntity = await getEntity(_metaEntity.entityId);
+    // serviceEntity = await getEntity(_metaEntity.entityId);
     if (serviceEntity != null) {
       _nameController.text = serviceEntity.name;
-      //_regNumController.text = serviceEntity.regNum;
-      _openTimeController.text = serviceEntity.startTimeHour.toString() +
-          ':' +
-          serviceEntity.startTimeMinute.toString();
-      _closeTimeController.text = serviceEntity.endTimeHour.toString() +
-          ':' +
-          serviceEntity.endTimeMinute.toString();
-      _breakStartController.text = serviceEntity.breakStartHour.toString() +
-          ':' +
-          serviceEntity.breakStartMinute.toString();
-      _breakEndController.text = serviceEntity.breakEndHour.toString() +
-          ':' +
-          serviceEntity.breakEndMinute.toString();
+      //TODO-Smita  add later code for getting reg thru private
+      // _regNumController.text = serviceEntity.regNum;
+      if (serviceEntity.startTimeHour != null &&
+          serviceEntity.startTimeMinute != null)
+        _openTimeController.text = serviceEntity.startTimeHour.toString() +
+            ':' +
+            serviceEntity.startTimeMinute.toString();
+      if (serviceEntity.endTimeHour != null &&
+          serviceEntity.endTimeMinute != null)
+        _closeTimeController.text = serviceEntity.endTimeHour.toString() +
+            ':' +
+            serviceEntity.endTimeMinute.toString();
+      if (serviceEntity.breakStartHour != null &&
+          serviceEntity.breakStartMinute != null)
+        _breakStartController.text = serviceEntity.breakStartHour.toString() +
+            ':' +
+            serviceEntity.breakStartMinute.toString();
+      if (serviceEntity.breakEndHour != null &&
+          serviceEntity.breakEndMinute != null)
+        _breakEndController.text = serviceEntity.breakEndHour.toString() +
+            ':' +
+            serviceEntity.breakEndMinute.toString();
       if (serviceEntity.closedOn != null) _daysOff = serviceEntity.closedOn;
-      _maxPeopleController.text = serviceEntity.maxAllowed.toString();
+      if (serviceEntity.maxAllowed != null)
+        _maxPeopleController.text = serviceEntity.maxAllowed.toString();
       //address
-
-      _adrs1Controller.text = serviceEntity.address.address;
-      _localityController.text = serviceEntity.address.locality;
-      _landController.text = serviceEntity.address.landmark;
-      _cityController.text = serviceEntity.address.city;
-      _stateController.text = serviceEntity.address.state;
-      _countryController.text = serviceEntity.address.country;
-      _pinController.text = serviceEntity.address.zipcode;
+      if (serviceEntity.address != null) {
+        _adrs1Controller.text = serviceEntity.address.address;
+        _localityController.text = serviceEntity.address.locality;
+        _landController.text = serviceEntity.address.landmark;
+        _cityController.text = serviceEntity.address.city;
+        _stateController.text = serviceEntity.address.state;
+        _countryController.text = serviceEntity.address.country;
+        _pinController.text = serviceEntity.address.zipcode;
 //contact person
-      if (!(Utils.isNullOrEmpty(serviceEntity.managers))) {
-        contactList = serviceEntity.managers;
-      } else
-        contactList = new List<Employee>();
+        if (!(Utils.isNullOrEmpty(serviceEntity.managers))) {
+          contactList = serviceEntity.managers;
+        }
+      }
     } else {
       //TODO:do nothing as this metaEntity is just created and will saved in DB only on save
+      Map<String, dynamic> entityJSON = <String, dynamic>{
+        'type': serviceEntity.type,
+        'entityId': serviceEntity.entityId
+      };
+
+      serviceEntity = Entity.fromJson(entityJSON);
+      // EntityService().upsertEntity(serviceEntity);
     }
+    serviceEntity.address = (serviceEntity.address) ?? new Address();
+    contactList = contactList ?? new List<Employee>();
   }
-
-  loadServiceEntity(String serviceEntityId) {
-    // serviceEntity = getEntity(serviceEntityId);
-  }
-
-  // Future<void> getPrefInstance() async {
-  //   _prefs = await SharedPreferences.getInstance();
-  // }
 
   String validateText(String value) {
     if (value == null) {
@@ -252,12 +263,33 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
     return contactList;
   }
 
-  saveDetails() async {
-    List<Placemark> placemark = await Geolocator().placemarkFromAddress(
-        "My Home Vihanga, Financial District, Gachibowli, Hyderabad, Telangana, India");
+  void saveFormDetails() async {
+    print("saving ");
 
-    print(placemark);
-    //saveEntityDetails(childEntity);
+    if (_serviceDetailsFormKey.currentState.validate()) {
+      _serviceDetailsFormKey.currentState.save();
+      print("Saved formmmmmmm");
+    }
+  }
+
+  saveDetails() async {
+    // List<Placemark> placemark = await Geolocator().placemarkFromAddress(
+    //     "My Home Vihanga, Financial District, Gachibowli, Hyderabad, Telangana, India");
+
+    // print(placemark);
+    saveFormDetails();
+    EntityService()
+        .upsertChildEntityToParent(
+            serviceEntity, serviceEntity.parentId, _regNumController.text)
+        .then((value) {
+      if (value) {
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) =>
+                    EntityServicesListPage(entity: this.serviceEntity)));
+      }
+    });
   }
 
   void _addNewContactRow() {
@@ -319,8 +351,9 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
       minLines: 1,
       style: textInputTextStyle,
       onTap: () {
-        DatePicker.showTime12hPicker(context, showTitleActions: true,
-            onChanged: (date) {
+        DatePicker.showTimePicker(context,
+            showTitleActions: true,
+            showSecondsColumn: false, onChanged: (date) {
           print('change $date in time zone ' +
               date.timeZoneOffset.inHours.toString());
         }, onConfirm: (date) {
@@ -337,7 +370,7 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
       keyboardType: TextInputType.text,
       decoration: InputDecoration(
           labelText: "Opening time",
-          hintText: "HH:MM am/pm",
+          hintText: "HH:MM 24Hr time format",
           enabledBorder:
               UnderlineInputBorder(borderSide: BorderSide(color: Colors.grey)),
           focusedBorder: UnderlineInputBorder(
@@ -351,9 +384,11 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
       },
       onSaved: (String value) {
         //TODO: test the values
-        List<String> time = value.split(':');
-        serviceEntity.startTimeHour = int.parse(time[0]);
-        serviceEntity.startTimeMinute = int.parse(time[1]);
+        if (value != "") {
+          List<String> time = value.split(':');
+          serviceEntity.startTimeHour = int.parse(time[0]);
+          serviceEntity.startTimeMinute = int.parse(time[1]);
+        }
       },
     );
     final closeTimeField = TextFormField(
@@ -365,8 +400,9 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
       controller: _closeTimeController,
       style: textInputTextStyle,
       onTap: () {
-        DatePicker.showTime12hPicker(context, showTitleActions: true,
-            onChanged: (date) {
+        DatePicker.showTimePicker(context,
+            showTitleActions: true,
+            showSecondsColumn: false, onChanged: (date) {
           print('change $date in time zone ' +
               date.timeZoneOffset.inHours.toString());
         }, onConfirm: (date) {
@@ -381,7 +417,7 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
       },
       decoration: InputDecoration(
           labelText: "Closing time",
-          hintText: "HH:MM am/pm",
+          hintText: "HH:MM 24Hr time format",
           enabledBorder:
               UnderlineInputBorder(borderSide: BorderSide(color: Colors.grey)),
           focusedBorder: UnderlineInputBorder(
@@ -395,9 +431,11 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
       },
       onSaved: (String value) {
         //TODO: test the values
-        List<String> time = value.split(':');
-        serviceEntity.endTimeHour = int.parse(time[0]);
-        serviceEntity.endTimeMinute = int.parse(time[1]);
+        if (value != "") {
+          List<String> time = value.split(':');
+          serviceEntity.endTimeHour = int.parse(time[0]);
+          serviceEntity.endTimeMinute = int.parse(time[1]);
+        }
       },
     );
     final breakSartTimeField = TextFormField(
@@ -407,8 +445,9 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
       minLines: 1,
       style: textInputTextStyle,
       onTap: () {
-        DatePicker.showTime12hPicker(context, showTitleActions: true,
-            onChanged: (date) {
+        DatePicker.showTimePicker(context,
+            showTitleActions: true,
+            showSecondsColumn: false, onChanged: (date) {
           print('change $date in time zone ' +
               date.timeZoneOffset.inHours.toString());
         }, onConfirm: (date) {
@@ -424,26 +463,8 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
       controller: _breakStartController,
       keyboardType: TextInputType.text,
       decoration: InputDecoration(
-          // suffixIcon: IconButton(
-          //   icon: Icon(Icons.schedule),
-          //   onPressed: () {
-          //     DatePicker.showTime12hPicker(context, showTitleActions: true,
-          //         onChanged: (date) {
-          //       print('change $date in time zone ' +
-          //           date.timeZoneOffset.inHours.toString());
-          //     }, onConfirm: (date) {
-          //       print('confirm $date');
-          //       //  String time = "${date.hour}:${date.minute} ${date.";
-
-          //       String time = DateFormat.jm().format(date);
-          //       print(time);
-
-          //       _openTimeController.text = time.toLowerCase();
-          //     }, currentTime: DateTime.now());
-          //   },
-          // ),
           labelText: "Break start at",
-          hintText: "HH:MM am/pm",
+          hintText: "HH:MM 24Hr time format",
           enabledBorder:
               UnderlineInputBorder(borderSide: BorderSide(color: Colors.grey)),
           focusedBorder: UnderlineInputBorder(
@@ -457,9 +478,11 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
       },
       onSaved: (String value) {
         //TODO: test the values
-        List<String> time = value.split(':');
-        serviceEntity.breakStartHour = int.parse(time[0]);
-        serviceEntity.breakStartMinute = int.parse(time[1]);
+        if (value != "") {
+          List<String> time = value.split(':');
+          serviceEntity.breakStartHour = int.parse(time[0]);
+          serviceEntity.breakStartMinute = int.parse(time[1]);
+        }
       },
     );
     final breakEndTimeField = TextFormField(
@@ -471,8 +494,9 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
       controller: _breakEndController,
       style: textInputTextStyle,
       onTap: () {
-        DatePicker.showTime12hPicker(context, showTitleActions: true,
-            onChanged: (date) {
+        DatePicker.showTimePicker(context,
+            showTitleActions: true,
+            showSecondsColumn: false, onChanged: (date) {
           print('change $date in time zone ' +
               date.timeZoneOffset.inHours.toString());
         }, onConfirm: (date) {
@@ -487,7 +511,7 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
       },
       decoration: InputDecoration(
           labelText: "Break ends at",
-          hintText: "HH:MM am/pm",
+          hintText: "HH:MM 24Hr time format",
           enabledBorder:
               UnderlineInputBorder(borderSide: BorderSide(color: Colors.grey)),
           focusedBorder: UnderlineInputBorder(
@@ -501,9 +525,11 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
       },
       onSaved: (String value) {
         //TODO: test the values
-        List<String> time = value.split(':');
-        serviceEntity.breakEndHour = int.parse(time[0]);
-        serviceEntity.breakEndMinute = int.parse(time[1]);
+        if (value != "") {
+          List<String> time = value.split(':');
+          serviceEntity.breakEndHour = int.parse(time[0]);
+          serviceEntity.breakEndMinute = int.parse(time[1]);
+        }
       },
     );
     final daysClosedField = Padding(
@@ -576,6 +602,8 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
         serviceEntity.maxAllowed = int.parse(value);
       },
       onSaved: (String value) {
+        if (value != "") serviceEntity.maxAllowed = int.parse(value);
+        print("saved max people");
         // entity. = value;
       },
     );
@@ -735,16 +763,20 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
     bool _delEnabled = false;
     saveRoute() {
       saveFormDetails();
+      EntityService()
+          .upsertChildEntityToParent(
+              serviceEntity, serviceEntity.parentId, _regNumController.text)
+          .then((value) {
+        if (value) {
+          EntityService().getEntity(this.serviceEntity.parentId).then((value) =>
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) =>
+                          EntityServicesListPage(entity: value))));
+        }
+      });
       //saveChildEntity(serviceEntity);
-      // Navigator.push(
-      //     context,
-      //     MaterialPageRoute(
-      //         builder: (context) =>
-      //             EntityServicesListPage(entity: this.entity)));
-
-//TODO: old code - test and remove
-      // _form2Key.currentState.save();
-      // saveDetails();
       // Navigator.push(
       //     context,
       //     MaterialPageRoute(
@@ -760,6 +792,21 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
     String title = serviceEntity.type;
 
     String _msg;
+    Flushbar flush;
+    bool _wasButtonClicked;
+    backRoute() {
+      // saveFormDetails();
+      // upsertEntity(entity).then((value) {
+      //   if (value) {
+      Navigator.pop(context);
+      //                }
+      // });
+    }
+
+    processGoBackWithTimer() async {
+      var duration = new Duration(seconds: 1);
+      return new Timer(duration, backRoute);
+    }
 
     final roleType = new FormField(
       builder: (FormFieldState state) {
@@ -820,8 +867,8 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
               onPressed: () {
                 print("going back");
                 //Save form details, then go back.
-                saveFormDetails();
-                updateModel();
+                // saveFormDetails();
+                // updateModel();
                 //go back
                 Navigator.of(context).pop();
               },
@@ -1238,7 +1285,7 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
                           ),
                         ),
                         onPressed: () {
-                          Flushbar(
+                          flush = Flushbar<bool>(
                             //padding: EdgeInsets.zero,
                             margin: EdgeInsets.zero,
                             flushbarPosition: FlushbarPosition.BOTTOM,
@@ -1252,19 +1299,10 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
                                   offset: Offset(0.0, 2.0),
                                   blurRadius: 3.0)
                             ],
-                            // backgroundGradient: new LinearGradient(
-                            //     colors: [
-                            //       Colors.blueGrey,
-                            //       Colors.black,
-                            //     ],
-                            //     begin: const FractionalOffset(0.0, 0.0),
-                            //     end: const FractionalOffset(1.0, 0.0),
-                            //     stops: [0.0, 1.0],
-                            //     tileMode: TileMode.repeated),
                             isDismissible: false,
-                            duration: Duration(seconds: 4),
+                            //duration: Duration(seconds: 4),
                             icon: Icon(
-                              Icons.save,
+                              Icons.cancel,
                               color: Colors.blueGrey[50],
                             ),
                             showProgressIndicator: true,
@@ -1272,7 +1310,7 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
                                 Colors.blueGrey[800],
                             routeBlur: 10.0,
                             titleText: Text(
-                              "Saving Details",
+                              "Are you sure you want to leave this page?",
                               style: TextStyle(
                                   fontWeight: FontWeight.bold,
                                   fontSize: 16.0,
@@ -1280,14 +1318,42 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
                                   fontFamily: "ShadowsIntoLightTwo"),
                             ),
                             messageText: Text(
-                              " Loading the services offered!!",
+                              "The changes you made might be lost.",
                               style: TextStyle(
-                                  fontSize: 12.0,
+                                  fontSize: 10.0,
                                   color: Colors.blueGrey[50],
                                   fontFamily: "ShadowsIntoLightTwo"),
                             ),
-                          )..show(context);
-                          processSaveWithTimer();
+
+                            mainButton: Column(
+                              children: <Widget>[
+                                FlatButton(
+                                  padding: EdgeInsets.all(0),
+                                  onPressed: () {
+                                    flush.dismiss(true); // result = true
+                                  },
+                                  child: Text(
+                                    "Yes",
+                                    style: TextStyle(color: highlightColor),
+                                  ),
+                                ),
+                                FlatButton(
+                                  padding: EdgeInsets.all(0),
+                                  onPressed: () {
+                                    flush.dismiss(false); // result = true
+                                  },
+                                  child: Text(
+                                    "No",
+                                    style: TextStyle(color: highlightColor),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          )..show(context).then((result) {
+                              _wasButtonClicked = result;
+                              if (_wasButtonClicked) processGoBackWithTimer();
+                            });
+                          //processSaveWithTimer();
                         }),
                   ),
                   Builder(

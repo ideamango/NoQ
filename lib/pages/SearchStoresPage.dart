@@ -50,7 +50,7 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
   String _searchAll;
   bool searchBoxClicked = false;
   bool fetchFromServer = false;
-  bool searchDone = false;
+  // bool searchDone = false;
 
   final compareDateFormat = new DateFormat('YYYYMMDD');
   List<DateTime> _dateList = new List<DateTime>();
@@ -62,7 +62,8 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
   final key = new GlobalKey<ScaffoldState>();
   static final TextEditingController _searchQuery = new TextEditingController();
   List<Entity> _list;
-  bool _isSearching;
+  //"initial, searching,done"
+  String _isSearching = "initial";
   String _searchText = "";
   String searchType = "";
   String pageName;
@@ -71,74 +72,10 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
   String emptyPageMsg;
   List<String> searchTypes;
 
-  _SearchStoresPageState() {
-    _searchQuery.addListener(() {
-      if (_searchQuery.text.isEmpty) {
-        setState(() {
-          _isSearching = false;
-          _searchText = "";
-        });
-      } else {
-        if (_searchQuery.text.length >= 3) {
-          setState(() {
-            _isSearching = true;
-            _searchText = _searchQuery.text;
-          });
-        }
-      }
-    });
-  }
-
-//   updateSearchList() {
-// //Send request to server for fetching entities with given type.
-//     setState(() {
-//       fetchFromServer = true;
-//     });
-// //_stores = Request();
-//     List<MetaEntity> newList;
-//     if (_entityType.toLowerCase() == _searchAll.toLowerCase()) {
-//       newList = getStoreListServer();
-//     } else {
-//       newList = getTypedEntities(_entityType);
-//     }
-//     // Compare and add new stores fetched to _stores list
-
-//     setState(() {
-//       _stores = newList;
-//     });
-
-//     _userProfile.storesAccessed = _stores;
-
-//     _list = _stores;
-
-//     writeData(_userProfile);
-
-//     // _userProfile.storesAccessed = _stores;
-
-//     // _list = _stores;
-
-//     // writeData(_userProfile);
-
-// //TODO: Remove this block after testing
-//     // List<EntityAppData> _searchList = List();
-//     // for (int i = 0; i < _stores.length; i++) {
-//     //   String eType = _stores.elementAt(i).eType;
-//     //   if (eType.toLowerCase() == _entityType.toLowerCase()) {
-//     //     _searchList.add(_stores.elementAt(i));
-//     //   }
-//     // }
-//     // setState(() {
-//     //   _stores = _searchList;
-//     // });
-//   }
-
   @override
   void initState() {
     super.initState();
-    // _getUserData();
-
-    _isSearching = false;
-    // getPrefInstance().then((action) {
+    _isSearching = "initial";
     getGlobalState().whenComplete(() {
       getList();
       searchTypes = _state.conf.entityTypes;
@@ -146,8 +83,25 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
         initCompleted = true;
       });
     });
+  }
 
-    //  });
+  _SearchStoresPageState() {
+    _searchQuery.addListener(() {
+      if (_searchQuery.text.isEmpty && _entityType == null) {
+        setState(() {
+          _isSearching = "initial";
+          _searchText = "";
+        });
+      } else {
+        if (_searchQuery.text.length >= 3) {
+          setState(() {
+            _isSearching = "searching";
+            _searchText = _searchQuery.text;
+          });
+          _buildSearchList();
+        }
+      }
+    });
   }
 
   Future<void> getPrefInstance() async {
@@ -163,9 +117,6 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
     if (pageName == "Search") {
       fetchPastSearchesList();
 
-      //getStoresList();
-    } else if (pageName == "Favourite") {
-      fetchFavStoresList();
       //getFavStoresList();
     } else if (pageName == "Child") {
       //TODO: Uncomment this and resolve errors.
@@ -184,93 +135,16 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
 
   void fetchPastSearchesList() async {
     //Load details from local files
-    if (initCompleted) {
-      if (!Utils.isNullOrEmpty(_state.pastSearches)) {
-        setState(() {
-          _pastSearches = _state.pastSearches;
-        });
-        if (_pastSearches.length == 0)
-          emptyPageMsg = "No History of past searches. Explore nearby now. ";
-      }
+    // if (initCompleted) {
+    if (!Utils.isNullOrEmpty(_state.pastSearches)) {
+      setState(() {
+        _pastSearches = _state.pastSearches;
+      });
+      if (_pastSearches.length == 0)
+        emptyPageMsg = "No History of past searches. Explore nearby now. ";
+      // }
     }
     //  _list = _stores;
-  }
-
-  void fetchFavStoresList() async {
-    List<Entity> newList;
-    Entity e;
-    if (initCompleted) {
-      if (!Utils.isNullOrEmpty(_state.currentUser.favourites)) {
-        for (MetaEntity fs in _state.currentUser.favourites) {
-          e = await EntityService().getEntity(fs.entityId);
-          newList.add(e);
-        }
-      }
-    }
-    setState(() {
-      _stores = newList;
-    });
-  }
-
-  void getStoresListFromPrefs() async {
-    // await readData().then((fUser) {
-    //   _userProfile = fUser;
-    // });
-
-    // //Load details from local files
-    // if (_userProfile != null) {
-    //   if (_userProfile.storesAccessed != null) {
-    //     _stores = _userProfile.storesAccessed;
-    //   }
-    // }
-    // List<EntityAppData> newList;
-    // if (fetchFromServer || Utils.isNullOrEmpty(_userProfile.storesAccessed)) {
-    //   //API call to fecth stores from server
-    //   newList = getStoreListServer();
-    //   // Compare and add new stores fetched to _stores list
-    //   if (_stores.length != 0) {
-    //     for (EntityAppData newStore in newList) {
-    //       for (EntityAppData localStore in _stores) {
-    //         if (newStore.id == localStore.id)
-    //           return;
-    //         else
-    //           newList.add(newStore);
-    //       }
-    //     }
-    //   }
-    // }
-    // setState(() {
-    //   if (!Utils.isNullOrEmpty(newList)) {
-    //     _stores.addAll(newList);
-    //   }
-    // });
-    // _userProfile.storesAccessed = _stores;
-
-    // _list = _stores;
-
-    // writeData(_userProfile);
-  }
-
-  void getFavStoresList() async {
-//     List<EntityAppData> list = new List<EntityAppData>();
-//     await readData().then((fUser) {
-//       _userProfile = fUser;
-//     });
-// //Load details from local files
-//     if (_userProfile != null) {
-//       if ((_userProfile.storesAccessed != null) &&
-//           (_userProfile.storesAccessed.length != 0)) {
-//         list = _userProfile.storesAccessed
-//             .where((item) => item.isFavourite == true)
-//             .toList();
-//       }
-//       setState(() {
-//         if (list.length == 0)
-//           _stores = null;
-//         else
-//           _stores = list;
-//       });
-//     }
   }
 
   void _prepareDateList() {
@@ -286,6 +160,8 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
 
   bool isFavourite(MetaEntity en) {
     List<MetaEntity> favs = _state.currentUser.favourites;
+    if (Utils.isNullOrEmpty(favs)) return false;
+
     for (int i = 0; i < favs.length; i++) {
       if (favs[i].entityId == en.entityId) {
         return true;
@@ -294,45 +170,20 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
     return false;
   }
 
-  bool updateFavourite(MetaEntity en) {
-    bool isFav = false;
-    isFav = isFavourite(en);
-    if (isFav) {
-      setState(() {
-        _state.currentUser.favourites.remove(en);
-      });
-
-      return true;
-    } else {
-      setState(() {
-        _state.currentUser.favourites.add(en);
-      });
-
-      return false;
-    }
-  }
-
   void toggleFavorite(Entity strData) {
 //Check if its already User fav
     bool isFav = false;
-    MetaEntity metaEn = strData.getMetaEntity();
-    if (updateFavourite(metaEn)) {
-      isFav = true;
-      EntityService().removeEntityFromUserFavourite(strData.entityId);
-    } else {
-      EntityService().addEntityToUserFavourite(metaEn);
-    }
-
-    setState(() {
-      // strData.isFavourite = !strData.isFavourite;
-      if (isFav && widget.forPage == 'Favourite') {
-        _stores.remove(strData);
-      }
-    });
-
-    if ((_stores.length == 0) && (widget.forPage == 'Favourite')) {
+    MetaEntity en = strData.getMetaEntity();
+    isFav = isFavourite(en);
+    if (isFav) {
+      EntityService().removeEntityFromUserFavourite(en.entityId);
       setState(() {
-        _stores = null;
+        _state.removeFavourite(en);
+      });
+    } else {
+      EntityService().addEntityToUserFavourite(en);
+      setState(() {
+        _state.addFavourite(en);
       });
     }
   }
@@ -361,35 +212,24 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
   }
 
   Widget _listSearchResults() {
-    if (!_isSearching && Utils.isNullOrEmpty(_stores))
+    if (_stores.length == 0)
       return _emptySearchPage();
     else {
-      _buildSearchList();
-      if (searchDone) {
-        if (!Utils.isNullOrEmpty(_stores)) {
-          return Expanded(
-            child: ListView.builder(
-                itemCount: 1,
-                itemBuilder: (BuildContext context, int index) {
-                  return Container(
-                    margin: EdgeInsets.fromLTRB(10, 10, 10, 10),
-                    child: new Column(
-                      children: showSearchResults(),
-                      // ? _searchResultstores
-                      //     .map(_buildItem)
-                      //     .toList()
-                      // : _stores.map(_buildItem).toList()
-                      // ),
-                      //children: <Widget>[firstRow, secondRow],
-                    ),
-                  );
-                }),
-          );
-        } else
-          return Container();
-      } else
-        showCircularProgress();
+      return Expanded(
+        child: ListView.builder(
+            itemCount: 1,
+            itemBuilder: (BuildContext context, int index) {
+              return Container(
+                margin: EdgeInsets.fromLTRB(10, 10, 10, 10),
+                child: new Column(
+                  children: showSearchResults(),
+                ),
+              );
+            }),
+      );
     }
+
+    //}
   }
 
   @override
@@ -455,10 +295,8 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
               onChanged: (newValue) {
                 setState(() {
                   _entityType = newValue;
-                  _isSearching = true;
-                  //TODO: Uncomment line
-                  //updateSearchList();
-                  //TODO: Uncomment line
+                  _isSearching = "searching";
+                  _buildSearchList();
                 });
               },
               items: searchTypes.map((type) {
@@ -561,7 +399,9 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
       String title = "Search";
       print(_searchText);
       print(_entityType);
-      if (_isSearching == false && _searchText.isEmpty && _entityType == null)
+      if (_isSearching == "initial" &&
+          _searchText.isEmpty &&
+          _entityType == null)
         return MaterialApp(
           theme: ThemeData.light().copyWith(),
           home: Scaffold(
@@ -589,13 +429,13 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
                   overflow: TextOverflow.ellipsis,
                 )),
             body: Center(
-              child: (Utils.isNullOrEmpty(_pastSearches))
-                  ? Container(
-                      //
-                      child: Column(
-                        children: <Widget>[
-                          filterBar,
-                          Expanded(
+              child: Container(
+                //
+                child: Column(
+                  children: <Widget>[
+                    filterBar,
+                    (!Utils.isNullOrEmpty(_pastSearches))
+                        ? Expanded(
                             child: ListView.builder(
                                 itemCount: 1,
                                 itemBuilder: (BuildContext context, int index) {
@@ -607,10 +447,10 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
                                   );
                                 }),
                           )
-                        ],
-                      ),
-                    )
-                  : Container(),
+                        : _emptySearchPage(),
+                  ],
+                ),
+              ),
             ),
             // drawer: CustomDrawer(),
             bottomNavigationBar: (widget.forPage == "Search")
@@ -619,52 +459,57 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
             // drawer: CustomDrawer(),
           ),
         );
-      else
+      else {
         print("Came in isSearching");
-      return MaterialApp(
-        theme: ThemeData.light().copyWith(),
-        home: Scaffold(
-          appBar: AppBar(
-              actions: <Widget>[],
-              flexibleSpace: Container(
-                decoration: gradientBackground,
-              ),
-              leading: IconButton(
-                  padding: EdgeInsets.all(0),
-                  alignment: Alignment.center,
-                  highlightColor: Colors.orange[300],
-                  icon: Icon(Icons.arrow_back),
-                  color: Colors.white,
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => UserHomePage()));
-                  }),
-              title: Text(
-                title,
-                style: TextStyle(color: Colors.white, fontSize: 16),
-                overflow: TextOverflow.ellipsis,
-              )),
-          body: Center(
-            child: Container(
-              //
-              child: Column(
-                children: <Widget>[
-                  filterBar,
-                  _listSearchResults(),
-                ],
+        return MaterialApp(
+          theme: ThemeData.light().copyWith(),
+          home: Scaffold(
+            appBar: AppBar(
+                actions: <Widget>[],
+                flexibleSpace: Container(
+                  decoration: gradientBackground,
+                ),
+                leading: IconButton(
+                    padding: EdgeInsets.all(0),
+                    alignment: Alignment.center,
+                    highlightColor: Colors.orange[300],
+                    icon: Icon(Icons.arrow_back),
+                    color: Colors.white,
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => UserHomePage()));
+                    }),
+                title: Text(
+                  title,
+                  style: TextStyle(color: Colors.white, fontSize: 16),
+                  overflow: TextOverflow.ellipsis,
+                )),
+            body: Center(
+              child: Container(
+                //
+                child: Expanded(
+                  child: Column(
+                    children: <Widget>[
+                      filterBar,
+                      (_isSearching == "done")
+                          ? _listSearchResults()
+                          : showCircularProgress(),
+                    ],
+                  ),
+                ),
               ),
             ),
+            // drawer: CustomDrawer(),
+            bottomNavigationBar: (widget.forPage == "Search")
+                ? CustomBottomBar(barIndex: 1)
+                : CustomBottomBar(barIndex: 2),
+            // drawer: CustomDrawer(),
           ),
-          // drawer: CustomDrawer(),
-          bottomNavigationBar: (widget.forPage == "Search")
-              ? CustomBottomBar(barIndex: 1)
-              : CustomBottomBar(barIndex: 2),
-          // drawer: CustomDrawer(),
-        ),
-      );
+        );
+      }
     }
   }
 
@@ -680,8 +525,8 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
           Navigator.push(
               context,
               MaterialPageRoute(
-                  builder: (context) => SearchChildPage(
-                      forPage: pageName, childList: str.childEntities)));
+                  builder: (context) =>
+                      SearchServicesPage(childList: str.childEntities)));
         }
 
         // if (child.length != 0) {
@@ -887,48 +732,17 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
     );
   }
 
-  void showSlots(
-      Entity store, String storeId, String storeName, DateTime dateTime) {
+  void showSlots(Entity store, DateTime dateTime) {
     //_prefs = await SharedPreferences.getInstance();
-    String dateForSlot = dateTime.toString();
 
-    _prefs.setString("storeName", storeName);
-    _prefs.setString("storeIdForSlots", storeId);
-    _prefs.setString("dateForSlot", dateForSlot);
-    getSlotsListForStore(store, dateTime).then((slotsList) async {
-      //Added below code which shows slots in a page
-      final result = await Navigator.push(
-          context,
-          MaterialPageRoute(
-              builder: (context) =>
-                  ShowSlotsPage(entity: store.getMetaEntity())));
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) =>
+                ShowSlotsPage(entity: store, dateTime: dateTime)));
 
-      print(result);
-
-      // if (result != null) {
-      //   //Add Slot booking in user data, Save locally
-      //   print('Upcoming bookings');
-      //   List<String> s = result.split("-");
-      //   BookingAppData upcomingBooking =
-      //       new BookingAppData(store.entityId, dateTime, s[1], s[0], "New");
-      //   setState(() {
-      //     GlobalState().bookings.add(upcomingBooking);
-      //   });
-      //   writeData(_userProfile);
-      // }
-      // print('After showDialog:');
-      GlobalState _state = await GlobalState.getGlobalState();
-
-      if (result != null) {
-        //Add Slot booking in user data, Save locally
-
-        setState(() {
-          _state.bookings.add(result);
-        });
-        writeData(_state);
-      }
-      print('After showDialog:');
-    });
+    print('After showDialog:');
+    // });
   }
 
   List<Widget> _buildDateGridItems(
@@ -982,7 +796,7 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
 
                   // Navigator.push(context,
                   //     MaterialPageRoute(builder: (context) => ShowSlotsPage()));
-                  showSlots(store, sid, sname, dt);
+                  showSlots(store, dt);
                 }
               }, // button pressed
               child: Column(
@@ -1044,10 +858,15 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
     //   return _stores.map(_buildItem).toList();
     //   //return _stores.map((contact) => new ChildItem(contact.name)).toList();
     // } else {
-    _stores = await getSearchEntitiesList();
-    setState(() {
-      searchDone = true;
-      _isSearching = false;
+    await getSearchEntitiesList().then((value) {
+      _stores = value;
+
+      //Write Gstate to file
+      _state.updateSearchResults(_stores);
+      setState(() {
+        //searchDone = true;
+        _isSearching = "done";
+      });
     });
 
     // for (int i = 0; i < _stores.length; i++) {
@@ -1056,8 +875,6 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
     //     _searchList.add(_stores.elementAt(i));
     //   }
     // }
-
-    //}
   }
 
   void addFilterCriteria() {}
@@ -1087,18 +904,18 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
     );
   }
 
-  void _handleSearchStart() {
-    setState(() {
-      _isSearching = true;
-    });
-  }
+  // void _handleSearchStart() {
+  //   setState(() {
+  //     _isSearching = true;
+  //   });
+  // }
 
-  void _handleSearchEnd() {
-    setState(() {
-      _isSearching = false;
-      _searchQuery.clear();
-    });
-  }
+  // void _handleSearchEnd() {
+  //   setState(() {
+  //     _isSearching = false;
+  //     _searchQuery.clear();
+  //   });
+  // }
 }
 
 class ChildItem extends StatelessWidget {

@@ -36,7 +36,6 @@ class Entity {
       this.distance,
       this.whatsapp});
 
-  Entity.withValues(entityId, type);
   //SlotDocumentId is entityID#20~06~01 it is not auto-generated, will help in not duplicating the record
   String entityId;
   String name;
@@ -73,7 +72,7 @@ class Entity {
         'name': name,
         'description': description,
         //'regNum': regNum,
-        'address': address.toJson(),
+        'address': address != null ? address.toJson() : null,
         'advanceDays': advanceDays,
         'isPublic': isPublic,
         //'admins': usersToJson(admins),
@@ -94,7 +93,7 @@ class Entity {
         'type': type,
         'isBookable': isBookable,
         'isActive': isActive,
-        'coordinates': coordinates.toJson(),
+        'coordinates': coordinates != null ? coordinates.toJson() : null,
         'nameQuery': constructQueriableList(name),
         'distance': distance,
         'whatsapp': whatsapp
@@ -165,8 +164,8 @@ class Entity {
   }
 
   static List<MetaUser> convertToUsersFromJson(List<dynamic> usersJson) {
-    if (usersJson == null) return null;
     List<MetaUser> users = new List<MetaUser>();
+    if (usersJson == null) return users;
 
     for (Map<String, dynamic> json in usersJson) {
       MetaUser sl = MetaUser.fromJson(json);
@@ -190,6 +189,7 @@ class Entity {
       List<dynamic> metaEntityJson) {
     List<MetaEntity> metaEntities = new List<MetaEntity>();
     if (metaEntityJson == null) return metaEntities;
+
     for (Map<String, dynamic> json in metaEntityJson) {
       MetaEntity metaEnt = MetaEntity.fromJson(json);
       metaEntities.add(metaEnt);
@@ -199,6 +199,7 @@ class Entity {
 
   static List<String> convertToClosedOnArrayFromJson(List<dynamic> daysJson) {
     List<String> days = new List<String>();
+    if (daysJson == null) return days;
 
     for (String day in daysJson) {
       days.add(day);
@@ -223,8 +224,8 @@ class Entity {
         endTimeHour: endTimeHour,
         endTimeMinute: endTimeMinute,
         isActive: isActive,
-        lat: coordinates.geopoint.latitude,
-        lon: coordinates.geopoint.longitude,
+        lat: (coordinates != null) ? coordinates.geopoint.latitude : null,
+        lon: (coordinates != null) ? coordinates.geopoint.longitude : null,
         slotDuration: slotDuration,
         maxAllowed: maxAllowed,
         distance: distance,
@@ -249,6 +250,7 @@ class Entity {
   // }
 
   List<String> constructQueriableList(String string) {
+    if (string == null) return new List<String>();
     String lowercased = string.toLowerCase();
     List<String> queriables = new List<String>();
     for (int i = 1; i <= lowercased.length; i++) {

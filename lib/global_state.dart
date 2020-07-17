@@ -1,9 +1,11 @@
 import 'package:noq/db/db_model/configurations.dart';
 import 'package:noq/db/db_model/entity.dart';
+import 'package:noq/db/db_model/meta_entity.dart';
 import 'package:noq/db/db_model/user.dart';
 import 'package:noq/db/db_model/user_token.dart';
 import 'package:noq/db/db_service/configurations_service.dart';
 import 'package:noq/repository/local_db_repository.dart';
+import 'package:noq/utils.dart';
 import 'db/db_service/user_service.dart';
 
 class GlobalState {
@@ -14,7 +16,7 @@ class GlobalState {
 
   static GlobalState _gs;
 
-  GlobalState();
+  GlobalState._();
 
   GlobalState.withValues(
       {this.currentUser, this.conf, this.bookings, this.pastSearches});
@@ -24,12 +26,45 @@ class GlobalState {
       _gs = await readData();
 
       if (_gs == null) {
-        _gs = new GlobalState();
+        _gs = new GlobalState._();
       }
       _gs.currentUser = await UserService().getCurrentUser();
+      if (Utils.isNullOrEmpty(_gs.currentUser.favourites))
+        _gs.currentUser.favourites = new List<MetaEntity>();
       _gs.conf = await ConfigurationService().getConfigurations();
     }
     return _gs;
+  }
+
+  Future<bool> addFavourite(MetaEntity me) async {
+    // if (_gs.currentUser.favourites
+    //         .firstWhere((element) => element.entityId == me.entityId) !=
+    //     null)
+    _gs.currentUser.favourites.add(me);
+    saveGlobalState();
+    return true;
+  }
+
+  Future<bool> removeFavourite(MetaEntity me) async {
+    _gs.currentUser.favourites
+        .removeWhere((element) => element.entityId == me.entityId);
+    saveGlobalState();
+    return true;
+  }
+
+  Future<bool> updateSearchResults(List<Entity> list) async {
+    _gs.pastSearches = list;
+
+    saveGlobalState();
+    return true;
+  }
+
+  addBooking() async {}
+
+  cancelBooking() async {}
+
+  static Future<void> saveGlobalState() async {
+    writeData(_gs);
   }
 
   Map<String, dynamic> toJson() => {

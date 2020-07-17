@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:noq/services/authService.dart';
 import 'package:noq/style.dart';
+import 'package:noq/widget/widgets.dart';
 
 class SplashScreen extends StatefulWidget {
   @override
@@ -39,24 +40,33 @@ class SplashState extends State<SplashScreen> {
   initScreen(BuildContext context) {
     return Scaffold(
       body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Container(
-              child: Image.asset("assets/logo.png"),
-            ),
-            Padding(padding: EdgeInsets.only(top: 20.0)),
-            Text(
-              "Loading..",
-              style: TextStyle(fontSize: 20.0, color: Colors.indigo),
-            ),
-            Padding(padding: EdgeInsets.only(top: 20.0)),
-            CircularProgressIndicator(
-              backgroundColor: primaryAccentColor,
-              valueColor: AlwaysStoppedAnimation<Color>(Colors.amber),
-              strokeWidth: 3,
-            )
-          ],
+        child: Container(
+          decoration: BoxDecoration(
+              image: DecorationImage(
+                  image: AssetImage("assets/background.png"),
+                  fit: BoxFit.cover)),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Container(
+                height: MediaQuery.of(context).size.width,
+                child: Image.asset(
+                  "assets/logo.png",
+                  fit: BoxFit.fitWidth,
+                ),
+              ),
+              Text(
+                "Loading",
+                style: TextStyle(fontSize: 20.0, color: Colors.blueGrey[50]),
+              ),
+              verticalSpacer,
+              CircularProgressIndicator(
+                backgroundColor: primaryAccentColor,
+                valueColor: AlwaysStoppedAnimation<Color>(highlightColor),
+                strokeWidth: 3,
+              )
+            ],
+          ),
         ),
       ),
     );

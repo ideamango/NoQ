@@ -60,7 +60,8 @@ class _ManageApartmentsListPageState extends State<ManageApartmentsListPage> {
       var uuid = new Uuid();
       String _entityId = uuid.v1();
 
-      MetaEntity metaEn = MetaEntity.withValues(entityId: _entityId, type: _entityType);
+      MetaEntity metaEn =
+          MetaEntity.withValues(entityId: _entityId, type: _entityType);
       // TODO: Create Entity with given id and type.
 
       metaEntitiesList.add(metaEn);

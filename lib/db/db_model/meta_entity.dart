@@ -53,7 +53,7 @@ class MetaEntity {
   static MetaEntity fromJson(Map<String, dynamic> json) {
     if (json == null) return null;
     return new MetaEntity(
-        entityId: json['entityId'].toString(),
+        entityId: json['entityId'],
         name: json['name'],
         type: json['type'],
         advanceDays: json['advanceDays'],

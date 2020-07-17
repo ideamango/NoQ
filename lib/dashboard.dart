@@ -74,6 +74,7 @@ class _LandingPageState extends State<LandingPage> {
 
   String _userId;
   String _phone;
+  GlobalState _state;
   //TextStyle optionStyle = TextStyle(fontSize: 30, fontWeight: FontWeight.bold);
 
   // int _index = 0;
@@ -150,8 +151,8 @@ class _LandingPageState extends State<LandingPage> {
     List<UserToken> bookings =
         await TokenService().getAllTokensForCurrentUser(fromDate, toDate);
     //Set bookings, conf for current user
-
-    GlobalState().bookings = bookings;
+    _state = await GlobalState.getGlobalState();
+    _state.bookings = bookings;
 
     //getFromPrefs();
   }

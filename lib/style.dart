@@ -47,6 +47,14 @@ final highlightBoldTextStyle = TextStyle(
   fontSize: 25,
   //height: 2,
 );
+final highlightMedBoldTextStyle = TextStyle(
+  color: highlightColor,
+  fontWeight: FontWeight.w800,
+  fontFamily: 'Montserrat',
+  letterSpacing: 0.5,
+  fontSize: 18,
+  //height: 2,
+);
 final buttonMedTextStyle = TextStyle(
   color: Colors.white,
   fontWeight: FontWeight.w700,
@@ -71,6 +79,14 @@ final buttonXSmlTextStyle = TextStyle(
   fontSize: 10,
   //height: 2,
 );
+final lightInputTextStyle = TextStyle(
+  color: Colors.blueGrey[50],
+  //fontWeight: FontWeight.w800,
+  fontFamily: 'Montserrat',
+  letterSpacing: 0.5,
+  fontSize: 16,
+  height: 2,
+);
 
 final inputTextStyle = TextStyle(
   color: Colors.blueGrey[400],
@@ -80,6 +96,11 @@ final inputTextStyle = TextStyle(
   fontSize: 16,
   height: 2,
 );
+final lightLabelTextStyle = TextStyle(
+    color: Colors.blueGrey[50],
+    letterSpacing: 0.5,
+    fontFamily: 'Roboto-Bold',
+    fontSize: 15.0);
 
 final labelTextStyle = TextStyle(
     color: Colors.blueGrey,
@@ -110,6 +131,14 @@ final textInputTextStyle = TextStyle(
   fontSize: 15.0,
   //height: 2,
 );
+final textLabelTextStyle = TextStyle(
+  color: Colors.blueGrey[900],
+  // fontWeight: FontWeight.w800,
+  fontFamily: 'Monsterrat',
+  letterSpacing: 0.5,
+  fontSize: 15.0,
+  //height: 2,
+);
 final labelMedTextStyle = TextStyle(
   color: Colors.grey[700],
   // fontWeight: FontWeight.w800,
@@ -130,7 +159,9 @@ final hintTextStyle = TextStyle(
     color: Colors.blueGrey[300], fontFamily: 'Montserrat', fontSize: 20.0);
 
 final subHeadingTextStyle = TextStyle(
-    color: Colors.blueGrey[300], fontFamily: 'Montserrat', fontSize: 12.0);
+    color: Colors.blueGrey[50], fontFamily: 'Montserrat', fontSize: 12.0);
+final logoSubTextStyle = TextStyle(
+    color: primaryAccentColor, fontFamily: 'Montserrat', fontSize: 30.0);
 
 final headingTextStyle = TextStyle(
     color: Colors.blueGrey[800],
@@ -142,7 +173,7 @@ final Color borderColor = Colors.blueGrey[800];
 final Color primaryAccentColor = Colors.cyanAccent[400];
 
 final Color primaryDarkColor = Colors.cyan[800];
-final Color headerBarColor = Colors.blueGrey[500];
+final Color headerBarColor = Colors.blueGrey[400];
 
 final Color highlightColor = Colors.orangeAccent;
 final Color unselectedColor = Colors.blueGrey[700];
@@ -155,6 +186,8 @@ final Color btnDisabledolor = Colors.blueGrey[200];
 final Color highlightText = Colors.blueGrey[800];
 final highlightSubTextStyle = TextStyle(
     color: Colors.blueGrey[800], fontFamily: 'Montserrat', fontSize: 12.0);
+final lightTextStyle =
+    TextStyle(color: Colors.white, fontFamily: 'Montserrat', fontSize: 12.0);
 
 final tokenTextStyle = TextStyle(
     color: Colors.black,
@@ -199,6 +232,18 @@ final BoxDecoration soildLightContainer = new BoxDecoration(
     color: Colors.teal[200],
     borderRadius: BorderRadius.only(
         topLeft: Radius.circular(4.0), topRight: Radius.circular(4.0)));
+final BoxDecoration btnColorContainer = new BoxDecoration(
+    border: Border.all(color: btnColor),
+    shape: BoxShape.rectangle,
+    color: btnColor,
+    borderRadius: BorderRadius.only(
+        topLeft: Radius.circular(4.0), topRight: Radius.circular(4.0)));
+
+final BoxDecoration rectLightContainer = new BoxDecoration(
+  border: Border.all(color: btnColor),
+  shape: BoxShape.rectangle,
+  color: btnColor,
+);
 final gradientBackground = new BoxDecoration(
   gradient: new LinearGradient(
       colors: [

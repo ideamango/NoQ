@@ -21,11 +21,12 @@ class EntityServicesListPage extends StatefulWidget {
 class _EntityServicesListPageState extends State<EntityServicesListPage> {
   String _msg;
   final GlobalKey<FormState> _servicesListFormKey = new GlobalKey<FormState>();
-  List<MetaEntity> servicesList = new List<MetaEntity>();
+  List<Entity> servicesList = new List<Entity>();
   final String title = "Services Detail Form";
 
   Entity parentEntity;
   String _subEntityType;
+  bool _initCompleted = false;
 
 //Add service Row
 
@@ -40,11 +41,12 @@ class _EntityServicesListPageState extends State<EntityServicesListPage> {
     super.initState();
     parentEntity = widget.entity;
     if (parentEntity == null)
-      servicesList = List<MetaEntity>();
+      servicesList = List<Entity>();
     else {
       if (!Utils.isNullOrEmpty(parentEntity.childEntities))
         setState(() {
-          servicesList = parentEntity.childEntities;
+          //TODO:Change to metaEn SMita
+          //  servicesList = parentEntity.childEntities;
         });
     }
   }
@@ -53,21 +55,22 @@ class _EntityServicesListPageState extends State<EntityServicesListPage> {
     setState(() {
       var uuid = new Uuid();
       String _serviceId = uuid.v1();
-      MetaEntity metaEn = new MetaEntity();
-      metaEn.type = _subEntityType;
-      metaEn.entityId = _serviceId;
+      Entity en = new Entity();
+      en.type = _subEntityType;
+      en.entityId = _serviceId;
+      en.parentId = parentEntity.entityId;
 
       // .cType(
       //     _serviceId, _subEntityType, parentEntity.id, parentEntity.adrs);
 
-      servicesList.add(metaEn);
+      servicesList.add(en);
       //  entity.childCollection.add(c);
       //   saveChildEntity(c);
       _count = _count + 1;
     });
   }
 
-  Widget _buildServiceItem(MetaEntity childEntity) {
+  Widget _buildServiceItem(Entity childEntity) {
     return new ServiceRow(childEntity: childEntity);
   }
 
@@ -139,45 +142,46 @@ class _EntityServicesListPageState extends State<EntityServicesListPage> {
                   // saveEntityDetails(parentEntity);
                   print("going back");
                   //Show flush bar to notify user
-                  Flushbar(
-                    //padding: EdgeInsets.zero,
-                    margin: EdgeInsets.zero,
-                    flushbarPosition: FlushbarPosition.TOP,
-                    flushbarStyle: FlushbarStyle.FLOATING,
-                    reverseAnimationCurve: Curves.decelerate,
-                    forwardAnimationCurve: Curves.easeInToLinear,
-                    backgroundColor: headerBarColor,
-                    boxShadows: [
-                      BoxShadow(
-                          color: primaryAccentColor,
-                          offset: Offset(0.0, 2.0),
-                          blurRadius: 3.0)
-                    ],
-                    isDismissible: false,
-                    duration: Duration(seconds: 4),
-                    icon: Icon(
-                      Icons.save,
-                      color: Colors.blueGrey[50],
-                    ),
-                    showProgressIndicator: true,
-                    progressIndicatorBackgroundColor: Colors.blueGrey[800],
-                    routeBlur: 10.0,
-                    titleText: Text(
-                      "Go Back to Home",
-                      style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16.0,
-                          color: primaryAccentColor,
-                          fontFamily: "ShadowsIntoLightTwo"),
-                    ),
-                    messageText: Text(
-                      "The changes you made will not be saved. To Save now, click Cancel.",
-                      style: TextStyle(
-                          fontSize: 12.0,
-                          color: Colors.blueGrey[50],
-                          fontFamily: "ShadowsIntoLightTwo"),
-                    ),
-                  )..show(context);
+                  // Flushbar(
+                  //   //padding: EdgeInsets.zero,
+                  //   margin: EdgeInsets.zero,
+                  //   flushbarPosition: FlushbarPosition.BOTTOM,
+                  //   flushbarStyle: FlushbarStyle.FLOATING,
+                  //   reverseAnimationCurve: Curves.decelerate,
+                  //   forwardAnimationCurve: Curves.easeInToLinear,
+                  //   backgroundColor: headerBarColor,
+                  //   boxShadows: [
+                  //     BoxShadow(
+                  //         color: primaryAccentColor,
+                  //         offset: Offset(0.0, 2.0),
+                  //         blurRadius: 3.0)
+                  //   ],
+                  //   isDismissible: false,
+                  //   duration: Duration(seconds: 4),
+                  //   icon: Icon(
+                  //     Icons.save,
+                  //     color: Colors.blueGrey[50],
+                  //   ),
+                  //   showProgressIndicator: true,
+                  //   progressIndicatorBackgroundColor: Colors.blueGrey[800],
+                  //   routeBlur: 10.0,
+                  //   titleText: Text(
+                  //     "Go Back to Home",
+                  //     style: TextStyle(
+                  //         fontWeight: FontWeight.bold,
+                  //         fontSize: 16.0,
+                  //         color: primaryAccentColor,
+                  //         fontFamily: "ShadowsIntoLightTwo"),
+                  //   ),
+                  //   messageText: Text(
+                  //     "The changes you made will not be saved. To Save now, click Cancel.",
+                  //     style: TextStyle(
+                  //         fontSize: 12.0,
+                  //         color: Colors.blueGrey[50],
+                  //         fontFamily: "ShadowsIntoLightTwo"),
+                  //   ),
+                  // )..show(context);
+
                   Navigator.of(context).pop();
                 }),
             title: Text(
@@ -223,14 +227,16 @@ class _EntityServicesListPageState extends State<EntityServicesListPage> {
                                       style: TextStyle(
                                           color: Colors.white, fontSize: 15),
                                     ),
-                                    Text(
-                                      (parentEntity.address.locality +
-                                              ", " +
-                                              parentEntity.address.city +
-                                              ".") ??
-                                          "",
-                                      style: buttonXSmlTextStyle,
-                                    ),
+                                    //TODO: Smita- uncomment after adding null check
+                                    // Text(
+
+                                    //   (parentEntity.address.locality +
+                                    //           ", " +
+                                    //           parentEntity.address.city +
+                                    //           ".") ??
+                                    //       "",
+                                    //   style: buttonXSmlTextStyle,
+                                    // ),
                                   ],
                                 ),
                               ],
