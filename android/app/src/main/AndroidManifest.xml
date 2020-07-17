@@ -9,7 +9,7 @@
     <uses-permission android:name="android.permission.CAMERA" />    
     <application
         android:name="io.flutter.app.FlutterApplication"
-        android:label="noq"
+        android:label="Sukoon"
         android:icon="@mipmap/ic_launcher">
         <activity
             android:name=".MainActivity"
@@ -23,9 +23,6 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
                 <action android:name="FLUTTER_NOTIFICATION_CLICK" />
                 <category android:name="android.intent.category.DEFAULT" />
-
-
-                
             </intent-filter> 
         </activity>
         <!-- Don't delete the meta-data below.
