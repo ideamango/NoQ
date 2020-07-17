@@ -256,10 +256,6 @@ class _UserHomePageState extends State<UserHomePage> {
 
   void clearAll() async {
     try {
-      await EntityService().deleteEntity('Entity101');
-
-      await EntityService().deleteEntity('Entity102');
-
       await TokenService().deleteSlot("Child101-1#2020~7~6");
       await TokenService().deleteSlot("Child101-1#2020~7~7");
       await TokenService().deleteSlot("Child101-1#2020~7~8");
@@ -272,6 +268,9 @@ class _UserHomePageState extends State<UserHomePage> {
           .deleteToken("Child101-1#2020~7~7#12~30#+916052069984");
       await TokenService()
           .deleteToken("Child101-1#2020~7~8#10~30#+916052069984");
+      await EntityService().deleteEntity('Entity101');
+
+      await EntityService().deleteEntity('Entity102');
       //delete user
       await UserService().deleteCurrentUser();
     } catch (e) {}
