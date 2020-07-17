@@ -120,7 +120,7 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
     serviceEntity = await getEntity(_metaEntity.entityId);
     if (serviceEntity != null) {
       _nameController.text = serviceEntity.name;
-      _regNumController.text = serviceEntity.regNum;
+      //_regNumController.text = serviceEntity.regNum;
       _openTimeController.text = serviceEntity.startTimeHour.toString() +
           ':' +
           serviceEntity.startTimeMinute.toString();
@@ -305,10 +305,10 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
           labelTextStr: "Registration Number", hintTextStr: ""),
       validator: validateText,
       onChanged: (String value) {
-        serviceEntity.regNum = value;
+        //serviceEntity.regNum = value;
       },
       onSaved: (String value) {
-        serviceEntity.regNum = value;
+        //serviceEntity.regNum = value;
       },
     );
 
@@ -1404,7 +1404,7 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
                                                 serviceEntity.parentId;
 
                                             Entity parentEntity;
-                                            
+
                                             //     .deleteEntity(serviceEntity.id)
                                             //     .whenComplete(() {
                                             //   Navigator.pop(context);
@@ -1427,9 +1427,9 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
                                               //TDOD: Uncomment getEntity method below.
 
                                               EntityService()
-                                                .getEntity(parentEntityId)
-                                                .then((value) => {
-                                                      parentEntity = value})
+                                                  .getEntity(parentEntityId)
+                                                  .then((value) =>
+                                                      {parentEntity = value})
                                                   .whenComplete(() => Navigator.push(
                                                       context,
                                                       MaterialPageRoute(

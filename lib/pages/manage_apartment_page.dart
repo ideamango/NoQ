@@ -100,7 +100,7 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
     if (entity != null) {
       _nameController.text = entity.name;
       // _entityType = entity.eType;
-      _regNumController.text = entity.regNum;
+      //_regNumController.text = entity.regNum;
       _openTimeController.text = entity.startTimeHour.toString() +
           ':' +
           entity.startTimeMinute.toString();
@@ -269,7 +269,7 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
           labelTextStr: "Registration Number", hintTextStr: ""),
       validator: validateText,
       onSaved: (String value) {
-        entity.regNum = value;
+        //entity.regNum = value;
       },
     );
     // final entityType = new FormField(

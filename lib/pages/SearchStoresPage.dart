@@ -786,8 +786,8 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
                                     onPressed: () => launchURL(
                                         str.name,
                                         str.address.toString(),
-                                        str.geo.geopoint.latitude,
-                                        str.geo.geopoint.longitude),
+                                        str.coordinates.geopoint.latitude,
+                                        str.coordinates.geopoint.longitude),
                                   ),
                                 ),
                                 Container(

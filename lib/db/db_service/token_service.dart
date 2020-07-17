@@ -132,7 +132,8 @@ class TokenService {
             'slotDuration': metaEntity.slotDuration,
             'entityName': metaEntity.name,
             'lat': metaEntity.lat,
-            'lon': metaEntity.lon
+            'lon': metaEntity.lon,
+            'entityWhatsApp': metaEntity.whatsapp
           };
           //create token
           await tx.set(tokRef, tokenJson);
@@ -187,7 +188,8 @@ class TokenService {
             'slotDuration': slotDuration,
             'entityName': metaEntity.name,
             'lat': metaEntity.lat,
-            'lon': metaEntity.lon
+            'lon': metaEntity.lon,
+            'entityWhatsApp': metaEntity.whatsapp
           };
 
           //create EntitySlots with one slot in it

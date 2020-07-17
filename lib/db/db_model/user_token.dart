@@ -9,7 +9,8 @@ class UserToken {
       this.slotDuration,
       this.entityName,
       this.lat,
-      this.lon});
+      this.lon,
+      this.entityWhatsApp});
 
   String slotId; //entityID#20~06~01#9~30
   String entityId;
@@ -21,6 +22,7 @@ class UserToken {
   String entityName;
   double lat;
   double lon;
+  String entityWhatsApp;
 
   //TokenDocumentId is SlotId#UserId it is not auto-generated, will help in not duplicating the record
 
@@ -34,7 +36,8 @@ class UserToken {
         'slotDuration': slotDuration,
         'entityName': entityName,
         'lat': lat,
-        'lon': lon
+        'lon': lon,
+        'entityWhatsApp': entityWhatsApp
       };
 
   static UserToken fromJson(Map<String, dynamic> json) {
@@ -50,6 +53,7 @@ class UserToken {
         slotDuration: json['slotDuration'],
         entityName: json['entityName'],
         lat: json['lat'],
-        lon: json['lon']);
+        lon: json['lon'],
+        entityWhatsApp: json['entityWhatsApp']);
   }
 }

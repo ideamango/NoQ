@@ -575,8 +575,8 @@ class _SearchChildPageState extends State<SearchChildPage> {
                                     onPressed: () => launchURL(
                                         str.name,
                                         str.address.toString(),
-                                        str.geo.geopoint.latitude,
-                                        str.geo.geopoint.longitude),
+                                        str.coordinates.geopoint.latitude,
+                                        str.coordinates.geopoint.longitude),
                                   ),
                                 ),
                                 Container(

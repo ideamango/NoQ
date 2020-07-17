@@ -9,7 +9,7 @@ import "package:noq/models/store.dart";
 // Get list of Stores from Server
 
 Future<bool> upsertEntity(Entity entity) async {
-  bool status = await EntityService().upsertEntity(entity);
+  bool status = await EntityService().upsertEntity(entity, "Test Reg Num");
   return status;
 }
 

@@ -9,14 +9,14 @@ class Entity {
       {this.entityId,
       this.name,
       this.description,
-      this.regNum,
+      //this.regNum,
       this.address,
       this.advanceDays,
       this.isPublic,
-      this.admins,
+      //this.admins,
       this.managers,
       this.childEntities,
-      this.geo,
+      //this.geo,
       this.maxAllowed,
       this.slotDuration,
       this.closedOn,
@@ -33,21 +33,22 @@ class Entity {
       this.isBookable,
       this.isActive,
       this.coordinates,
-      this.distance});
+      this.distance,
+      this.whatsapp});
 
   Entity.withValues(entityId, type);
   //SlotDocumentId is entityID#20~06~01 it is not auto-generated, will help in not duplicating the record
   String entityId;
   String name;
   String description;
-  String regNum;
+  //String regNum;
   Address address;
   int advanceDays;
   bool isPublic;
-  List<MetaUser> admins;
+  //List<MetaUser> admins;
   List<Employee> managers;
   List<MetaEntity> childEntities;
-  MyGeoFirePoint geo;
+  //MyGeoFirePoint geo;
   int maxAllowed;
   int slotDuration;
   List<String> closedOn;
@@ -65,16 +66,17 @@ class Entity {
   bool isActive;
   MyGeoFirePoint coordinates;
   double distance;
+  String whatsapp;
 
   Map<String, dynamic> toJson() => {
         'entityId': entityId,
         'name': name,
         'description': description,
-        'regNum': regNum,
+        //'regNum': regNum,
         'address': address.toJson(),
         'advanceDays': advanceDays,
         'isPublic': isPublic,
-        'admins': usersToJson(admins),
+        //'admins': usersToJson(admins),
         'managers': employeesToJson(managers),
         'childEntities': metaEntitiesToJson(childEntities),
         'maxAllowed': maxAllowed,
@@ -94,7 +96,8 @@ class Entity {
         'isActive': isActive,
         'coordinates': coordinates.toJson(),
         'nameQuery': constructQueriableList(name),
-        'distance': distance
+        'distance': distance,
+        'whatsapp': whatsapp
       };
 
   List<dynamic> usersToJson(List<MetaUser> users) {
@@ -130,11 +133,11 @@ class Entity {
         entityId: json['entityId'].toString(),
         name: json['name'].toString(),
         description: json['description'],
-        regNum: json['regNum'],
+        //regNum: json['regNum'],
         address: Address.fromJson(json['address']),
         advanceDays: json['advanceDays'],
         isPublic: json['isPublic'],
-        admins: convertToUsersFromJson(json['admins']),
+        //admins: convertToUsersFromJson(json['admins']),
         managers: convertToEmployeesFromJson(json['managers']),
         childEntities: convertToMetaEntitiesFromJson(json['childEntities']),
         maxAllowed: json['maxAllowed'],
@@ -153,7 +156,8 @@ class Entity {
         isBookable: json['isBookable'],
         isActive: json['isActive'],
         coordinates: MyGeoFirePoint.fromJson(json['coordinates']),
-        distance: json['distance']);
+        distance: json['distance'],
+        whatsapp: json['whatsapp']);
   }
 
   static Address convertToAddressFromJson(Map<String, dynamic> json) {
@@ -172,8 +176,8 @@ class Entity {
   }
 
   static List<Employee> convertToEmployeesFromJson(List<dynamic> usersJson) {
-    if (usersJson == null) return null;
     List<Employee> users = new List<Employee>();
+    if (usersJson == null) return users;
 
     for (Map<String, dynamic> json in usersJson) {
       Employee emp = Employee.fromJson(json);
@@ -185,7 +189,7 @@ class Entity {
   static List<MetaEntity> convertToMetaEntitiesFromJson(
       List<dynamic> metaEntityJson) {
     List<MetaEntity> metaEntities = new List<MetaEntity>();
-
+    if (metaEntityJson == null) return metaEntities;
     for (Map<String, dynamic> json in metaEntityJson) {
       MetaEntity metaEnt = MetaEntity.fromJson(json);
       metaEntities.add(metaEnt);
@@ -223,24 +227,26 @@ class Entity {
         lon: coordinates.geopoint.longitude,
         slotDuration: slotDuration,
         maxAllowed: maxAllowed,
-        distance: distance);
+        distance: distance,
+        whatsapp: whatsapp,
+        parentId: parentId);
 
     return meta;
   }
 
-  int isAdmin(String userId) {
-    int count = -1;
-    if (admins == null) return count;
+  // int isAdmin(String userId) {
+  //   int count = -1;
+  //   if (admins == null) return count;
 
-    for (MetaUser usr in admins) {
-      count++;
-      if (usr.id == userId) {
-        return count;
-      }
-    }
+  //   for (MetaUser usr in admins) {
+  //     count++;
+  //     if (usr.id == userId) {
+  //       return count;
+  //     }
+  //   }
 
-    return -1;
-  }
+  //   return -1;
+  // }
 
   List<String> constructQueriableList(String string) {
     String lowercased = string.toLowerCase();

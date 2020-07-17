@@ -28,6 +28,7 @@ import 'package:flutter/services.dart';
 
 import 'db/db_model/configurations.dart';
 import 'db/db_model/entity.dart';
+import 'db/db_model/entity_private.dart';
 import 'db/db_model/entity_slots.dart';
 import 'db/db_model/meta_entity.dart';
 import 'db/db_model/meta_user.dart';
@@ -101,7 +102,7 @@ class _UserHomePageState extends State<UserHomePage> {
         address: adrs,
         advanceDays: 3,
         isPublic: true,
-        geo: geoPoint,
+        //geo: geoPoint,
         maxAllowed: 60,
         slotDuration: 60,
         closedOn: ["Saturday", "Sunday"],
@@ -120,48 +121,26 @@ class _UserHomePageState extends State<UserHomePage> {
         coordinates: geoPoint);
 
     try {
-      await EntityService().upsertEntity(entity);
+      await EntityService().upsertEntity(entity, "testReg");
     } catch (e) {
-      print("Exception occured " + e);
+      print("Exception occured " + e.toString());
     }
   }
 
-  void updateEntity() async {
+  void updateEntity(String name) async {
+    Entity ent = await EntityService().getEntity("Entity101");
+    ent.name = name;
+
     Address adrs = new Address(
         city: "Hyderbad",
         state: "Telangana",
         country: "India",
         address: "Shop 10, Gachibowli");
 
-    MyGeoFirePoint geoPoint = new MyGeoFirePoint(68, 78);
-    Entity entity = new Entity(
-        entityId: "Entity101",
-        name: "Inorbit_Modified",
-        address: adrs,
-        advanceDays: 3,
-        isPublic: true,
-        geo: geoPoint,
-        maxAllowed: 60,
-        slotDuration: 60,
-        closedOn: ["Saturday", "Sunday"],
-        breakStartHour: 13,
-        breakStartMinute: 30,
-        breakEndHour: 14,
-        breakEndMinute: 30,
-        startTimeHour: 10,
-        startTimeMinute: 30,
-        endTimeHour: 21,
-        endTimeMinute: 0,
-        parentId: null,
-        type: "Mall",
-        isBookable: false,
-        isActive: true,
-        coordinates: geoPoint);
-
     try {
-      await EntityService().upsertEntity(entity);
+      await EntityService().upsertEntity(ent, null);
     } catch (e) {
-      print("Exception occured " + e);
+      print("Exception occured " + e.toString());
     }
   }
 
@@ -181,7 +160,6 @@ class _UserHomePageState extends State<UserHomePage> {
         address: adrs,
         advanceDays: 5,
         isPublic: true,
-        geo: geoPoint,
         maxAllowed: 50,
         slotDuration: 30,
         closedOn: ["Saturday", "Sunday"],
@@ -199,8 +177,8 @@ class _UserHomePageState extends State<UserHomePage> {
         isActive: isActive,
         coordinates: geoPoint);
 
-    bool added =
-        await EntityService().upsertChildEntityToParent(child1, 'Entity101');
+    bool added = await EntityService()
+        .upsertChildEntityToParent(child1, 'Entity101', "testregnum");
   }
 
   void updateChildEntity(String id, String name) {
@@ -218,7 +196,7 @@ class _UserHomePageState extends State<UserHomePage> {
         address: adrs,
         advanceDays: 5,
         isPublic: true,
-        geo: geoPoint,
+        //geo: geoPoint,
         maxAllowed: 50,
         slotDuration: 30,
         closedOn: ["Saturday", "Sunday"],
@@ -251,7 +229,7 @@ class _UserHomePageState extends State<UserHomePage> {
         address: adrs,
         advanceDays: 3,
         isPublic: true,
-        geo: geoPoint,
+        //geo: geoPoint,
         maxAllowed: 60,
         slotDuration: 60,
         closedOn: ["Saturday", "Sunday"],
@@ -270,31 +248,52 @@ class _UserHomePageState extends State<UserHomePage> {
         coordinates: geoPoint);
 
     try {
-      await EntityService().upsertEntity(entity);
+      await EntityService().upsertEntity(entity, "");
     } catch (e) {
-      print("Exception occured " + e);
+      print("Exception occured " + e.toString());
     }
   }
 
   void clearAll() async {
-    await EntityService().deleteEntity('Entity101');
+    try {
+      await EntityService().deleteEntity('Entity101');
 
-    await EntityService().deleteEntity('Entity102');
+      await EntityService().deleteEntity('Entity102');
 
-    await TokenService().deleteSlot("Child101-1#2020~7~6");
-    await TokenService().deleteSlot("Child101-1#2020~7~7");
-    await TokenService().deleteSlot("Child101-1#2020~7~8");
+      await TokenService().deleteSlot("Child101-1#2020~7~6");
+      await TokenService().deleteSlot("Child101-1#2020~7~7");
+      await TokenService().deleteSlot("Child101-1#2020~7~8");
 
-    await TokenService().deleteToken("Child101-1#2020~7~6#10~30#+916052069984");
-    await TokenService().deleteToken("Child101-1#2020~7~7#10~30#+916052069984");
-    await TokenService().deleteToken("Child101-1#2020~7~7#12~30#+916052069984");
-    await TokenService().deleteToken("Child101-1#2020~7~8#10~30#+916052069984");
-    //delete user
-    await UserService().deleteCurrentUser();
+      await TokenService()
+          .deleteToken("Child101-1#2020~7~6#10~30#+916052069984");
+      await TokenService()
+          .deleteToken("Child101-1#2020~7~7#10~30#+916052069984");
+      await TokenService()
+          .deleteToken("Child101-1#2020~7~7#12~30#+916052069984");
+      await TokenService()
+          .deleteToken("Child101-1#2020~7~8#10~30#+916052069984");
+      //delete user
+      await UserService().deleteCurrentUser();
+    } catch (e) {}
   }
 
-  void dbCall() async {
+  void dbCall1() async {
     await clearAll();
+    //await securityPermissionTests();
+    await tests();
+  }
+
+  Future<void> securityPermissionTests() async {
+    await updateEntity("Inorbit_AdminCheck");
+    await EntityService().assignAdmin('Child101-1', "+913611009823");
+    await EntityService().assignAdmin('Entity102', "+913611009823");
+    await EntityService().removeAdmin('Entity102', "+913611009823");
+    await EntityService().assignAdmin('Entity102', "+913611009823");
+  }
+
+  void tests() async {
+    final FirebaseUser fireUser = await FirebaseAuth.instance.currentUser();
+    Firestore fStore = Firestore.instance;
 
     print(
         "<==================================TESTING STARTED==========================================>");
@@ -320,11 +319,11 @@ class _UserHomePageState extends State<UserHomePage> {
 
     await createChildEntityAndAddToParent('Child101-2', "Habinaro", true);
 
-    await updateEntity();
+    await updateEntity("Inorbit_Modified");
 
     await createChildEntityAndAddToParent('Child101-3', "Raymonds", false);
 
-    await updateEntity();
+    await updateEntity("Inorbit_Modified_Again");
 
     Entity ent = await EntityService().getEntity('Entity101');
 
@@ -350,10 +349,24 @@ class _UserHomePageState extends State<UserHomePage> {
         new DateTime(2020, 7, 8), new DateTime(2020, 7, 9));
 
     bool isAdminAssignedOnEntity = false;
-    for (MetaUser me in child1.admins) {
-      if (me.ph == '+913611009823') {
+
+    // for (MetaUser me in child1.admins) {
+    //   if (me.ph == '+913611009823') {
+    //     isAdminAssignedOnEntity = true;
+    //     break;
+    //   }
+    // }
+
+    final DocumentReference entityPrivateRef = fStore
+        .document('entities/' + child1.entityId + '/private_data/private');
+    DocumentSnapshot doc = await entityPrivateRef.get();
+
+    EntityPrivate ePrivate;
+    if (doc.exists) {
+      Map<String, dynamic> map = doc.data;
+      ePrivate = EntityPrivate.fromJson(map);
+      if (ePrivate.roles['+913611009823'] == "admin") {
         isAdminAssignedOnEntity = true;
-        break;
       }
     }
 
@@ -363,13 +376,11 @@ class _UserHomePageState extends State<UserHomePage> {
       print("EntityService.assignAdmin -----------------------> FAILURE");
     }
 
-    Firestore fStore = Firestore.instance;
-
     final DocumentReference userRef = fStore.document('users/+913611009823');
-    DocumentSnapshot doc = await userRef.get();
+    DocumentSnapshot doc1 = await userRef.get();
     User newAdmin;
-    if (doc.exists) {
-      Map<String, dynamic> map = doc.data;
+    if (doc1.exists) {
+      Map<String, dynamic> map = doc1.data;
       newAdmin = User.fromJson(map);
     }
 
@@ -383,13 +394,14 @@ class _UserHomePageState extends State<UserHomePage> {
         }
       }
     } else {
-      print("TokenService.getCurrentUser -----------------------> FAILURE");
+      print("UserService.getCurrentUser -----------------------> FAILURE");
     }
 
     if (isEntityAddedToAdmin) {
       print("EntityService.assignAdmin --> SUCCESS");
     } else {
-      print("EntityService.assignAdmin -----------------------> FAILURE");
+      print(
+          "EntityService.assignAdmin ------------------------------> FAILURE");
     }
 
     if (toks != null && toks.length == 1) {
@@ -548,10 +560,23 @@ class _UserHomePageState extends State<UserHomePage> {
     Entity child101 = await EntityService().getEntity('Child101-1');
 
     bool isAdminRemovedFromEntity = true;
-    for (MetaUser me in child101.admins) {
-      if (me.ph == '+913611009823') {
-        isAdminRemovedFromEntity = false;
-        break;
+    // for (MetaUser me in child101.admins) {
+    //   if (me.ph == '+913611009823') {
+    //     isAdminRemovedFromEntity = false;
+    //     break;
+    //   }
+    // }
+
+    final DocumentReference child101PrivateRef = fStore
+        .document('entities/' + child1.entityId + '/private_data/private');
+    DocumentSnapshot docChild101 = await child101PrivateRef.get();
+
+    EntityPrivate ePrivateChild101;
+    if (doc.exists) {
+      Map<String, dynamic> map = docChild101.data;
+      ePrivateChild101 = EntityPrivate.fromJson(map);
+      if (ePrivateChild101.roles['+913611009823'] == "admin") {
+        isAdminAssignedOnEntity = false;
       }
     }
 
@@ -948,7 +973,7 @@ class _UserHomePageState extends State<UserHomePage> {
                 ),
                 RaisedButton(
                   color: Colors.blue,
-                  onPressed: dbCall,
+                  onPressed: dbCall1,
                   child: Icon(Icons.add),
                 ),
               ],
@@ -1179,7 +1204,6 @@ class _UserHomePageState extends State<UserHomePage> {
         address: adrs,
         advanceDays: 3,
         isPublic: true,
-        geo: geoPoint,
         maxAllowed: 60,
         slotDuration: 60,
         closedOn: ["Saturday", "Sunday"],
@@ -1198,7 +1222,8 @@ class _UserHomePageState extends State<UserHomePage> {
         coordinates: geoPoint);
 
     try {
-      await EntityService().upsertChildEntityToParent(entity, "Entity101");
+      await EntityService()
+          .upsertChildEntityToParent(entity, "Entity101", "SampleChildRegNum");
     } catch (e) {
       print("Exception occured " + e);
     }
