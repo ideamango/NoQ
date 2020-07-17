@@ -1,6 +1,6 @@
 String appName = 'NoQ';
-var loginSubTxt = "Login quickly to book slot at your store";
-var loginMainTxt = "LOGIN";
+var loginSubTxt = "Peace of mind";
+var loginMainTxt = "";
 String dateDisplayFormat = 'EEE, MMM d';
 String homeScreenMsgTxt =
     "Add the amenities in Apartment or Workplace to your 'favourites' and book a slot anytime.";

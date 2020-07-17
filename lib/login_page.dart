@@ -38,33 +38,17 @@ class _LoginPageState extends State<LoginPage> {
   );
   final subHeadingText = Text(
     loginSubTxt,
-    textAlign: TextAlign.left,
-    style: subHeadingTextStyle,
+    textAlign: TextAlign.center,
+    style: logoSubTextStyle,
   );
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Center(
-        child: Container(
-          color: Colors.white,
-          margin: new EdgeInsets.all(5.0),
-          child: new Form(
-            key: _loginPageFormKey,
-            autovalidate: _autoValidate,
-            child: formUI(context),
-          ),
-        ),
-      ),
-    );
-  } //widget
-
-  Widget formUI(BuildContext context) {
     final phNumField = TextFormField(
       obscureText: false,
       maxLines: 1,
       minLines: 1,
-      style: inputTextStyle,
+      style: lightInputTextStyle,
       inputFormatters: <TextInputFormatter>[
         WhitelistingTextInputFormatter.digitsOnly,
       ],
@@ -72,7 +56,8 @@ class _LoginPageState extends State<LoginPage> {
 
       decoration: InputDecoration(
         // errorStyle: errorTextStyle,
-        // labelStyle: labelTextStyle,
+        labelStyle: lightLabelTextStyle,
+        prefixStyle: lightLabelTextStyle,
         // hintStyle: hintTextStyle,
         prefixText: '+91',
         labelText: 'Phone Number',
@@ -115,62 +100,80 @@ class _LoginPageState extends State<LoginPage> {
       ),
     );
 
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: new Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          SizedBox(
-            // height: 155.0,
-            child: Image.asset(
-              "assets/logo.png",
-              fit: BoxFit.contain,
-            ),
-          ),
-          Column(
-              //mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[headingText, subHeadingText]),
-          SizedBox(height: 30.0),
-          phNumField,
-          //codeSent ? otpNumField : Container(child: Text("")),
-          SizedBox(height: 10.0),
-          Container(
-            child: Row(
-              children: <Widget>[
-                RichText(
-                  text: TextSpan(
-                    style: subHeadingTextStyle,
-                    children: <TextSpan>[
-                      TextSpan(text: "By clicking Continue, I agree to the "),
-                      TextSpan(
-                        text: 'Terms of Use',
-                        style: new TextStyle(
-                            color: primaryAccentColor,
-                            //decoration: TextDecoration.underline,
-                            decorationColor: primaryDarkColor),
-                        recognizer: new TapGestureRecognizer()
-                          ..onTap = () {
-                            Navigator.pop(context);
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => TermsOfUsePage()));
-                          },
-                      ),
-                    ],
+    return Scaffold(
+      backgroundColor: Colors.grey[850],
+      body: Container(
+        decoration: BoxDecoration(
+            image: DecorationImage(
+                image: AssetImage("assets/background.png"), fit: BoxFit.cover)),
+        //color: Colors.white,
+        margin: new EdgeInsets.fromLTRB(10, 5.0, 10, 5),
+        child: SafeArea(
+          child: new Form(
+            key: _loginPageFormKey,
+            autovalidate: _autoValidate,
+            child: SingleChildScrollView(
+              child: new Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  SizedBox(
+                    height: 250.0,
+                    child: Image.asset(
+                      "assets/logo.png",
+                      fit: BoxFit.contain,
+                    ),
                   ),
-                ),
-              ],
+                  // Column(
+                  //     //mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  //     crossAxisAlignment: CrossAxisAlignment.start,
+                  //     children: <Widget>[headingText, subHeadingText]),
+                  verticalSpacer,
+                  verticalSpacer,
+                  phNumField,
+                  verticalSpacer,
+                  Container(
+                    child: Row(
+                      children: <Widget>[
+                        RichText(
+                          text: TextSpan(
+                            style: subHeadingTextStyle,
+                            children: <TextSpan>[
+                              TextSpan(
+                                  text:
+                                      "By clicking Continue, I agree to the "),
+                              TextSpan(
+                                text: 'Terms of Use',
+                                style: new TextStyle(
+                                    color: primaryAccentColor,
+                                    //decoration: TextDecoration.underline,
+                                    decorationColor: primaryDarkColor),
+                                recognizer: new TapGestureRecognizer()
+                                  ..onTap = () {
+                                    Navigator.pop(context);
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                TermsOfUsePage()));
+                                  },
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  verticalSpacer,
+                  loginButon,
+                  verticalSpacer,
+                  (_errorMsg != null
+                      ? Text('$_errorMsg', style: errorTextStyle)
+                      : Container()),
+                ],
+              ),
             ),
           ),
-          verticalSpacer,
-          loginButon,
-          SizedBox(height: 10.0),
-          (_errorMsg != null
-              ? Text('$_errorMsg', style: errorTextStyle)
-              : Container()),
-        ],
+        ),
       ),
     );
   }

@@ -79,6 +79,14 @@ final buttonXSmlTextStyle = TextStyle(
   fontSize: 10,
   //height: 2,
 );
+final lightInputTextStyle = TextStyle(
+  color: Colors.blueGrey[50],
+  //fontWeight: FontWeight.w800,
+  fontFamily: 'Montserrat',
+  letterSpacing: 0.5,
+  fontSize: 16,
+  height: 2,
+);
 
 final inputTextStyle = TextStyle(
   color: Colors.blueGrey[400],
@@ -88,6 +96,11 @@ final inputTextStyle = TextStyle(
   fontSize: 16,
   height: 2,
 );
+final lightLabelTextStyle = TextStyle(
+    color: Colors.blueGrey[50],
+    letterSpacing: 0.5,
+    fontFamily: 'Roboto-Bold',
+    fontSize: 15.0);
 
 final labelTextStyle = TextStyle(
     color: Colors.blueGrey,
@@ -146,7 +159,9 @@ final hintTextStyle = TextStyle(
     color: Colors.blueGrey[300], fontFamily: 'Montserrat', fontSize: 20.0);
 
 final subHeadingTextStyle = TextStyle(
-    color: Colors.blueGrey[300], fontFamily: 'Montserrat', fontSize: 12.0);
+    color: Colors.blueGrey[50], fontFamily: 'Montserrat', fontSize: 12.0);
+final logoSubTextStyle = TextStyle(
+    color: primaryAccentColor, fontFamily: 'Montserrat', fontSize: 30.0);
 
 final headingTextStyle = TextStyle(
     color: Colors.blueGrey[800],
