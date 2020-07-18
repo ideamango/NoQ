@@ -56,11 +56,16 @@ class _UserHomePageState extends State<UserHomePage> {
   bool isPastSet = false;
 //Qr code scan result
   ScanResult scanResult;
+  GlobalState _state;
 
   @override
   void initState() {
     super.initState();
-    _loadBookings();
+    getGlobalState().whenComplete(() => _loadBookings());
+  }
+
+  Future<void> getGlobalState() async {
+    _state = await GlobalState.getGlobalState();
   }
 
   Future scan() async {
@@ -706,82 +711,38 @@ class _UserHomePageState extends State<UserHomePage> {
     int i = 0;
   }
 
-  void loadDataFromPrefs() async {
-    // await readData().then((fUser) {
-    //   _userProfile = fUser;
-    //   if (_userProfile != null) {
-    //     if (_userProfile.upcomingBookings.length != 0) {
-    //       var bookings = _userProfile.upcomingBookings;
-    //       List<BookingListItem> newBookings = new List<BookingListItem>();
-    //       List<BookingListItem> pastBookings = new List<BookingListItem>();
-
-    //       setState(() {
-    //         for (BookingAppData bk in bookings) {
-    //           for (EntityAppData str in _userProfile.storesAccessed) {
-    //             if (str.id == bk.storeId) {
-    //               if (bk.bookingDate.isBefore(now))
-    //                 pastBookings.add(new BookingListItem(str, bk));
-    //               else
-    //                 newBookings.add(new BookingListItem(str, bk));
-    //             }
-    //           }
-    //         }
-    //         _pastBookingsList = pastBookings;
-    //         _newBookingsList = newBookings;
-    //         if (_pastBookingsList.length != 0) {
-    //           _pastBkgStatus = 'Success';
-    //         } else
-    //           _pastBkgStatus = 'NoBookings';
-    //         if (_newBookingsList.length != 0) {
-    //           _upcomingBkgStatus = 'Success';
-    //         }
-    //       });
-    //     } else {
-    //       setState(() {
-    //         _upcomingBkgStatus = 'NoBookings';
-    //         _pastBkgStatus = 'NoBookings';
-    //       });
-    //     }
-    //   } else {
-    //     setState(() {
-    //       _pastBkgStatus = 'NoBookings';
-    //       _upcomingBkgStatus = 'NoBookings';
-    //     });
-    //   }
-    // });
-  }
-
   void fetchDataFromGlobalState() {
-    // if (!Utils.isNullOrEmpty(GlobalState().bookings)) {
-    //   if (GlobalState().bookings.length != 0) {
-    //     List<UserToken> bookings = GlobalState().bookings;
-    //     List<UserToken> newBookings = new List<UserToken>();
-    //     List<UserToken> pastBookings = new List<UserToken>();
+    if (!Utils.isNullOrEmpty(_state.bookings)) {
+      if (_state.bookings.length != 0) {
+        List<UserToken> bookings = _state.bookings;
+        List<UserToken> newBookings = new List<UserToken>();
+        List<UserToken> pastBookings = new List<UserToken>();
 
-    //     setState(() {
-    //       for (UserToken bk in bookings) {
-    //         if (bk.dateTime.isBefore(now))
-    //           pastBookings.add(bk);
-    //         else
-    //           newBookings.add(bk);
-    //       }
-    //       _pastBookingsList = pastBookings;
-    //       _newBookingsList = newBookings;
-    //       if (_pastBookingsList.length != 0) {
-    //         _pastBkgStatus = 'Success';
-    //       } else
-    //         _pastBkgStatus = 'NoBookings';
-    //       if (_newBookingsList.length != 0) {
-    //         _upcomingBkgStatus = 'Success';
-    //       }
-    //     });
-    //   }
-    // } else {
-    //   setState(() {
-    //     _upcomingBkgStatus = 'NoBookings';
-    //     _pastBkgStatus = 'NoBookings';
-    //   });
-    // }
+        setState(() {
+          for (UserToken bk in bookings) {
+            if (bk.dateTime.isBefore(now))
+              pastBookings.add(bk);
+            else
+              newBookings.add(bk);
+          }
+          _pastBookingsList = pastBookings;
+          _newBookingsList = newBookings;
+          if (_pastBookingsList.length != 0) {
+            _pastBkgStatus = 'Success';
+          } else
+            _pastBkgStatus = 'NoBookings';
+          if (_newBookingsList.length != 0) {
+            _upcomingBkgStatus = 'Success';
+          } else
+            _upcomingBkgStatus = 'NoBookings';
+        });
+      }
+    } else {
+      setState(() {
+        _upcomingBkgStatus = 'NoBookings';
+        _pastBkgStatus = 'NoBookings';
+      });
+    }
   }
 
   void _loadBookings() async {

@@ -6,6 +6,7 @@ import 'package:noq/pages/manage_apartment_list_page.dart';
 import 'package:noq/pages/notifications_page.dart';
 import 'package:noq/pages/contact_us.dart';
 import 'package:noq/pages/share_app_page.dart';
+import 'package:noq/pages/terms_of_use.dart';
 import 'package:noq/pages/userAccountPage.dart';
 import 'package:noq/style.dart';
 import 'package:intl/intl.dart';
@@ -46,13 +47,18 @@ class _CustomDrawerState extends State<CustomDrawer> {
       "pageRoute": ShareAppPage(),
     },
     {
-      "icon": Icons.people,
+      "icon": Icons.contact_mail,
       "name": "Contact Us",
       "pageRoute": ContactUsPage(),
     },
     {
+      "icon": Icons.description,
+      "name": "Privacy Policy/Terms of Use",
+      "pageRoute": TermsOfUsePage(),
+    },
+    {
       "icon": Icons.info,
-      "name": "About",
+      "name": "About Us",
       "pageRoute": AboutUsPage(),
     },
   ];
