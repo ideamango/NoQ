@@ -120,7 +120,8 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
     // serviceEntity = await getEntity(_metaEntity.entityId);
     if (serviceEntity != null) {
       _nameController.text = serviceEntity.name;
-      _regNumController.text = serviceEntity.regNum;
+      //TODO-Smita  add later code for getting reg thru private
+      // _regNumController.text = serviceEntity.regNum;
       if (serviceEntity.startTimeHour != null &&
           serviceEntity.startTimeMinute != null)
         _openTimeController.text = serviceEntity.startTimeHour.toString() +
@@ -278,7 +279,8 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
     // print(placemark);
     saveFormDetails();
     EntityService()
-        .upsertChildEntityToParent(serviceEntity, serviceEntity.parentId)
+        .upsertChildEntityToParent(
+            serviceEntity, serviceEntity.parentId, _regNumController.text)
         .then((value) {
       if (value) {
         Navigator.push(
@@ -335,10 +337,10 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
           labelTextStr: "Registration Number", hintTextStr: ""),
       validator: validateText,
       onChanged: (String value) {
-        serviceEntity.regNum = value;
+        //serviceEntity.regNum = value;
       },
       onSaved: (String value) {
-        serviceEntity.regNum = value;
+        //serviceEntity.regNum = value;
       },
     );
 
@@ -762,7 +764,8 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
     saveRoute() {
       saveFormDetails();
       EntityService()
-          .upsertChildEntityToParent(serviceEntity, serviceEntity.parentId)
+          .upsertChildEntityToParent(
+              serviceEntity, serviceEntity.parentId, _regNumController.text)
           .then((value) {
         if (value) {
           EntityService().getEntity(this.serviceEntity.parentId).then((value) =>

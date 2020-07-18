@@ -20,7 +20,9 @@ class MetaEntity {
       this.lat,
       this.lon,
       this.slotDuration,
-      this.maxAllowed});
+      this.maxAllowed,
+      this.whatsapp,
+      this.parentId});
   MetaEntity.withValues({this.entityId, this.type});
 
   //SlotDocumentId is entityID#20~06~01 it is not auto-generated, will help in not duplicating the record
@@ -45,6 +47,8 @@ class MetaEntity {
   double lon;
   int slotDuration;
   int maxAllowed;
+  String whatsapp;
+  String parentId;
 
   static MetaEntity fromJson(Map<String, dynamic> json) {
     if (json == null) return null;
@@ -65,7 +69,9 @@ class MetaEntity {
         lat: json['lat'],
         lon: json['lon'],
         slotDuration: json['slotDuration'],
-        maxAllowed: json['maxAllowed']);
+        maxAllowed: json['maxAllowed'],
+        whatsapp: json['whatsapp'],
+        parentId: json['parentId']);
   }
 
   static List<String> convertToClosedOnArrayFromJson(List<dynamic> daysJson) {
@@ -93,7 +99,9 @@ class MetaEntity {
         'lat': lat,
         'lon': lon,
         'slotDuration': slotDuration,
-        'maxAllowed': maxAllowed
+        'maxAllowed': maxAllowed,
+        'whatsapp': whatsapp,
+        'parentId': parentId
       };
 
   bool isEqual(MetaEntity metaEnt) {
@@ -113,7 +121,8 @@ class MetaEntity {
         metaEnt.slotDuration == this.slotDuration &&
         metaEnt.lat == this.lat &&
         metaEnt.lon == this.lon &&
-        metaEnt.maxAllowed == this.maxAllowed) {
+        metaEnt.maxAllowed == this.maxAllowed &&
+        metaEnt.whatsapp == this.whatsapp) {
       if (this.closedOn != null && metaEnt.closedOn != null) {
         int matchCount = 0;
 

@@ -46,6 +46,7 @@ class User {
   static List<MetaEntity> convertToMetaEntitiesFromJson(
       List<dynamic> metaEntityJson) {
     List<MetaEntity> metaEntities = new List<MetaEntity>();
+    if (metaEntityJson == null) return metaEntities;
 
     for (Map<String, dynamic> json in metaEntityJson) {
       MetaEntity metaEnt = MetaEntity.fromJson(json);

@@ -63,7 +63,7 @@ void saveEntityDetailsServer() async {
       address: adrs,
       advanceDays: 3,
       isPublic: true,
-      geo: geoPoint,
+      //geo: geoPoint,
       maxAllowed: 60,
       slotDuration: 60,
       closedOn: ["Saturday", "Sunday"],
@@ -82,7 +82,7 @@ void saveEntityDetailsServer() async {
       coordinates: geoPoint);
 
   try {
-    await EntityService().upsertEntity(entity);
+    await EntityService().upsertEntity(entity, "TestRegNum");
   } catch (e) {
     print("Exception occured " + e);
   }
