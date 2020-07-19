@@ -1,3 +1,5 @@
+import 'package:intl/intl.dart';
+
 class UserToken {
   UserToken(
       {this.slotId,
@@ -55,5 +57,15 @@ class UserToken {
         lat: json['lat'],
         lon: json['lon'],
         entityWhatsApp: json['entityWhatsApp']);
+  }
+
+  String getDisplayName() {
+    //First 3 chars of the Entity name, followed by the date and then time and Token number
+    //E.g. BAT-200708-0930-10
+    String name = entityName.substring(0, 3).toUpperCase();
+    DateFormat formatter = DateFormat('-yyMMdd-hhmm-');
+    String formattedDate = formatter.format(dateTime);
+
+    return name + formattedDate + number.toString();
   }
 }
