@@ -1,3 +1,4 @@
+import 'package:flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
 import 'package:noq/db/db_model/entity.dart';
 import 'package:noq/db/db_model/meta_entity.dart';
@@ -12,6 +13,7 @@ import 'package:noq/utils.dart';
 import 'package:noq/widget/appbar.dart';
 import 'package:noq/widget/bottom_nav_bar.dart';
 import 'package:noq/widget/header.dart';
+import 'package:noq/widget/widgets.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:intl/intl.dart';
 import 'package:progress_dialog/progress_dialog.dart';
@@ -124,6 +126,14 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
             color: Colors.black,
           ),
         );
+        String bookingDate;
+        String bookingTime;
+        if (selectedSlot != null) {
+          bookingDate =
+              DateFormat.yMMMEd().format(selectedSlot.dateTime).toString();
+          bookingTime =
+              DateFormat.Hm().format(selectedSlot.dateTime).toString();
+        }
 
         return MaterialApp(
           theme: ThemeData.light().copyWith(),
@@ -149,26 +159,28 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
                       child: Row(
                         children: <Widget>[
                           Icon(
-                            Icons.business,
+                            Icons.check_circle,
                             size: 35,
                             color: Colors.white,
                           ),
                           SizedBox(width: 12),
                           Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            mainAxisAlignment: MainAxisAlignment.center,
                             children: <Widget>[
-                              Text(
-                                _storeName,
-                                style: TextStyle(
-                                    color: Colors.white, fontSize: 15),
-                              ),
-                              Text(
-                                _dateFormatted,
-                                style: TextStyle(
-                                  fontSize: 10,
-                                  color: Colors.white,
-                                ),
-                              )
+                              (selectedSlot == null)
+                                  ? Text(
+                                      "Select from available slots on " +
+                                          _dateFormatted +
+                                          ".",
+                                      style: TextStyle(
+                                          color: Colors.white, fontSize: 15),
+                                    )
+                                  : Text(
+                                      'You selected a slot for $bookingTime on $bookingDate',
+                                      style: TextStyle(
+                                          color: highlightColor, fontSize: 15),
+                                    ),
                             ],
                           ),
                         ],
@@ -202,7 +214,7 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
                       ),
                     ),
                     Container(
-                      height: MediaQuery.of(context).size.width * .1,
+                      height: MediaQuery.of(context).size.width * .19,
                       padding: EdgeInsets.all(4),
                       // decoration: new BoxDecoration(
                       //   border: Border.all(color: Colors.teal[200]),
@@ -212,28 +224,63 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
                       //     topLeft: Radius.circular(4.0),
                       //     topRight: Radius.circular(4.0))
                       //),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.end,
                         children: <Widget>[
-                          SizedBox(
-                            width: MediaQuery.of(context).size.width * .5,
-                            height: MediaQuery.of(context).size.width * .15,
-                            child: RaisedButton(
-                              elevation: (selectedSlot != null) ? 12.0 : 0.0,
-                              color: (selectedSlot != null)
-                                  ? highlightColor
-                                  : disabledColor,
-                              textColor: Colors.white,
-                              child: Text('Book Slot'),
-                              onPressed: bookSlot,
-                            ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: <Widget>[
+                              SizedBox(
+                                width: MediaQuery.of(context).size.width * .5,
+                                height: MediaQuery.of(context).size.width * .08,
+                                child: RaisedButton(
+                                  elevation:
+                                      (selectedSlot != null) ? 12.0 : 0.0,
+                                  color: (selectedSlot != null)
+                                      ? highlightColor
+                                      : disabledColor,
+                                  textColor: Colors.white,
+                                  child: Text('Book Slot'),
+                                  onPressed: bookSlot,
+                                ),
+                              ),
+                              (_errorMessage != null
+                                  ? Text(
+                                      _errorMessage,
+                                      style: TextStyle(color: Colors.red),
+                                    )
+                                  : Container()),
+                            ],
                           ),
-                          (_errorMessage != null
-                              ? Text(
-                                  _errorMessage,
-                                  style: TextStyle(color: Colors.red),
-                                )
-                              : Container()),
+                          SizedBox(
+                            height: 10,
+                          ),
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: <Widget>[
+                              Row(
+                                children: <Widget>[
+                                  Icon(Icons.label,
+                                      color: highlightColor, size: 15),
+                                  Text(" Selected", style: lightSubTextStyle),
+                                ],
+                              ),
+                              horizontalSpacer,
+                              Row(children: <Widget>[
+                                Icon(Icons.label,
+                                    color: Colors.cyan[300], size: 15),
+                                Text(" Booked", style: lightSubTextStyle),
+                              ]),
+                              horizontalSpacer,
+                              Row(children: <Widget>[
+                                Icon(Icons.label,
+                                    color: Colors.blueGrey[400], size: 15),
+                                Text(" Not available",
+                                    style: lightSubTextStyle),
+                              ]),
+                            ],
+                          )
                         ],
                       ),
                     ),
@@ -332,8 +379,8 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
 
       autofocus: false,
       color: (isBooked(sl.dateTime, entity.entityId) == true)
-          ? Colors.green[200]
-          : ((sl.isFull == true && isSelected(sl.dateTime) == true)
+          ? Colors.cyan[300]
+          : ((sl.isFull != true && isSelected(sl.dateTime) == true)
               ? highlightColor
               : (sl.isFull == false) ? btnDisabledolor : btnColor),
 
@@ -375,6 +422,9 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
 //Test - Smita
     MetaEntity meta = entity.getMetaEntity();
     bookSlotForStore(meta, selectedSlot).then((value) {
+      if (value == null) {
+        print("null token");
+      }
       _token = value.number.toString();
 
       String slotTiming = selectedSlot.dateTime.hour.toString() +
@@ -395,6 +445,48 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
         Navigator.of(context).pop(returnVal);
         // print(value);
       });
+    }).catchError((error, stackTrace) {
+      print("Error in token booking" + error.toString());
+
+      Flushbar(
+        //padding: EdgeInsets.zero,
+        margin: EdgeInsets.zero,
+        flushbarPosition: FlushbarPosition.BOTTOM,
+        flushbarStyle: FlushbarStyle.FLOATING,
+        reverseAnimationCurve: Curves.decelerate,
+        forwardAnimationCurve: Curves.easeInToLinear,
+        backgroundColor: headerBarColor,
+        boxShadows: [
+          BoxShadow(
+              color: primaryAccentColor,
+              offset: Offset(0.0, 2.0),
+              blurRadius: 3.0)
+        ],
+        isDismissible: false,
+        duration: Duration(seconds: 6),
+        icon: Icon(
+          Icons.error,
+          color: Colors.blueGrey[50],
+        ),
+        showProgressIndicator: false,
+        progressIndicatorBackgroundColor: Colors.blueGrey[800],
+        routeBlur: 10.0,
+        titleText: Text(
+          "Oops! Couldn't book the token.",
+          style: TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 16.0,
+              color: primaryAccentColor,
+              fontFamily: "ShadowsIntoLightTwo"),
+        ),
+        messageText: Text(
+          " This could be because you already have an active booking for same time.",
+          style: TextStyle(
+              fontSize: 12.0,
+              color: Colors.blueGrey[50],
+              fontFamily: "ShadowsIntoLightTwo"),
+        ),
+      )..show(context);
     });
   }
 

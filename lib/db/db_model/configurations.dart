@@ -1,3 +1,5 @@
+import 'package:noq/utils.dart';
+
 class Configurations {
   Configurations(
       {this.entityTypes,
@@ -40,6 +42,7 @@ class Configurations {
 
   static List<String> convertToStringsArrayFromJson(List<dynamic> json) {
     List<String> strs = new List<String>();
+    if (Utils.isNullOrEmpty(json)) return strs;
 
     for (String str in json) {
       strs.add(str);

@@ -1,5 +1,6 @@
 import 'package:noq/db/db_model/meta_entity.dart';
 import 'package:noq/db/db_model/meta_user.dart';
+import 'package:noq/utils.dart';
 
 import 'my_geo_fire_point.dart';
 
@@ -46,7 +47,7 @@ class User {
   static List<MetaEntity> convertToMetaEntitiesFromJson(
       List<dynamic> metaEntityJson) {
     List<MetaEntity> metaEntities = new List<MetaEntity>();
-    if (metaEntityJson == null) return metaEntities;
+    if (Utils.isNullOrEmpty(metaEntityJson)) return metaEntities;
 
     for (Map<String, dynamic> json in metaEntityJson) {
       MetaEntity metaEnt = MetaEntity.fromJson(json);

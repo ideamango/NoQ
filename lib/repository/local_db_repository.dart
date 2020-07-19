@@ -22,8 +22,11 @@ Future<File> get localFile async {
 }
 
 String generateJson(GlobalState state) {
-  String json = jsonEncode(state);
-  return json;
+  //TODO: SMIta - null exception thrown , check
+  //String json = jsonEncode(state);
+  Map<String, dynamic> json = state.toJson();
+  String jsonStr = jsonEncode(json);
+  return jsonStr;
 }
 
 void writeData(GlobalState state) async {

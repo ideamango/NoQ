@@ -15,6 +15,8 @@ class EntityService {
   Future<bool> upsertEntity(Entity entity, String regNum) async {
     final FirebaseUser fireUser = await FirebaseAuth.instance.currentUser();
 
+    Exception ex;
+
     Firestore fStore = Firestore.instance;
     final DocumentReference entityRef =
         fStore.document('entities/' + entity.entityId);

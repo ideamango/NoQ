@@ -1,7 +1,11 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:noq/constants.dart';
+import 'package:noq/db/db_model/user.dart';
+import 'package:noq/global_state.dart';
 import 'package:noq/login_page.dart';
 import 'package:noq/style.dart';
+import 'package:noq/userHomePage.dart';
 import 'package:noq/widget/widgets.dart';
 
 class TermsOfUsePage extends StatefulWidget {
@@ -10,6 +14,14 @@ class TermsOfUsePage extends StatefulWidget {
 }
 
 class _TermsOfUsePageState extends State<TermsOfUsePage> {
+  Future<bool> userAlreadyLoggedIn() async {
+    final FirebaseUser fireUser = await FirebaseAuth.instance.currentUser();
+    if (fireUser == null) {
+      return false;
+    } else
+      return true;
+  }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -28,9 +40,17 @@ class _TermsOfUsePageState extends State<TermsOfUsePage> {
             color: Colors.white,
             onPressed: () {
               print("going back");
-              //Navigator.of(context).pop();
-              Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => LoginPage()));
+              FirebaseAuth.instance.currentUser().then((value) {
+                if (value == null) {
+                  print("No user");
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => LoginPage()));
+                } else {
+                  print("Go to dashboard");
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => UserHomePage()));
+                }
+              });
             },
           ),
           title: Text("Agreement", style: whiteBoldTextStyle1),
