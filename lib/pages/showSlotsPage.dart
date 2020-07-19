@@ -367,46 +367,50 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
     String hrs = sl.dateTime.hour.toString();
     String mnts = sl.dateTime.minute.toString();
 
-    return RaisedButton(
-      elevation: (isSelected(sl.dateTime) == true) ? 0.0 : 10.0,
-      padding: EdgeInsets.all(2),
-      child: Text(
-        hrs + ':' + mnts,
-        style: TextStyle(fontSize: 10, color: Colors.white),
-        // textDirection: TextDirection.ltr,
-        // textAlign: TextAlign.center,
-      ),
+    return Column(
+      children: <Widget>[
+        RaisedButton(
+          elevation: (isSelected(sl.dateTime) == true) ? 0.0 : 10.0,
+          padding: EdgeInsets.all(2),
+          child: Text(
+            hrs + ':' + mnts,
+            style: TextStyle(fontSize: 12, color: Colors.white),
+            // textDirection: TextDirection.ltr,
+            // textAlign: TextAlign.center,
+          ),
 
-      autofocus: false,
-      color: (isBooked(sl.dateTime, entity.entityId) == true)
-          ? Colors.cyan[300]
-          : ((sl.isFull != true && isSelected(sl.dateTime) == true)
-              ? highlightColor
-              : (sl.isFull == false) ? btnDisabledolor : btnColor),
+          autofocus: false,
+          color: (isBooked(sl.dateTime, entity.entityId) == true)
+              ? Colors.cyan[300]
+              : ((sl.isFull != true && isSelected(sl.dateTime) == true)
+                  ? highlightColor
+                  : (sl.isFull == false) ? btnDisabledolor : btnColor),
 
-      disabledColor: Colors.grey[400],
-      //textTheme: ButtonTextTheme.normal,
-      //highlightColor: Colors.green,
-      // highlightElevation: 10.0,
-      splashColor: (sl.isFull == true) ? highlightColor : null,
-      shape: (isSelected(sl.dateTime) == true)
-          ? RoundedRectangleBorder(
-              borderRadius: new BorderRadius.circular(5.0),
-              // side: BorderSide(color: highlightColor),
-            )
-          : RoundedRectangleBorder(
-              borderRadius: new BorderRadius.circular(5.0),
-              // side: BorderSide(color: Colors.white),
-            ),
-      onPressed: () {
-        if (sl.isFull == false) {
-          setState(() {
-            //unselect previously selected slot
-            selectedSlot = sl;
-          });
-        } else
-          return null;
-      },
+          disabledColor: Colors.grey[400],
+          //textTheme: ButtonTextTheme.normal,
+          //highlightColor: Colors.green,
+          // highlightElevation: 10.0,
+          splashColor: (sl.isFull == true) ? highlightColor : null,
+          shape: (isSelected(sl.dateTime) == true)
+              ? RoundedRectangleBorder(
+                  borderRadius: new BorderRadius.circular(5.0),
+                  // side: BorderSide(color: highlightColor),
+                )
+              : RoundedRectangleBorder(
+                  borderRadius: new BorderRadius.circular(5.0),
+                  // side: BorderSide(color: Colors.white),
+                ),
+          onPressed: () {
+            if (sl.isFull == false) {
+              setState(() {
+                //unselect previously selected slot
+                selectedSlot = sl;
+              });
+            } else
+              return null;
+          },
+        ),
+      ],
     );
   }
 
@@ -455,7 +459,7 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
         flushbarStyle: FlushbarStyle.FLOATING,
         reverseAnimationCurve: Curves.decelerate,
         forwardAnimationCurve: Curves.easeInToLinear,
-        backgroundColor: headerBarColor,
+        backgroundColor: Colors.blueGrey[500],
         boxShadows: [
           BoxShadow(
               color: primaryAccentColor,
