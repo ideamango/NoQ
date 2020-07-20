@@ -41,6 +41,8 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
 
 //Basic Details
   TextEditingController _nameController = TextEditingController();
+  TextEditingController _descController = TextEditingController();
+  TextEditingController _desc2Controller = TextEditingController();
   TextEditingController _regNumController = TextEditingController();
   TextEditingController _closeTimeController = TextEditingController();
   TextEditingController _openTimeController = TextEditingController();
@@ -48,6 +50,8 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
   TextEditingController _breakEndController = TextEditingController();
 
   TextEditingController _maxPeopleController = TextEditingController();
+  TextEditingController _slotDurationController = TextEditingController();
+
   List<String> _closedOnDays = List<String>();
   List<String> _daysOff = List<String>();
 
@@ -285,6 +289,22 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
         validator: validateText,
         onSaved: (String value) {
           entity.name = value;
+        },
+      );
+
+      final descField = TextFormField(
+        obscureText: false,
+        //minLines: 1,
+        style: textInputTextStyle,
+        controller: _descController,
+        decoration: CommonStyle.textFieldStyle(
+            labelTextStr: "Description", hintTextStr: ""),
+        validator: validateText,
+        keyboardType: TextInputType.multiline,
+        maxLength: null,
+        maxLines: 3,
+        onSaved: (String value) {
+          entity.description = value;
         },
       );
       final regNumField = TextFormField(
@@ -558,6 +578,26 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
           ],
         ),
       );
+      final slotDuration = TextFormField(
+        obscureText: false,
+        maxLines: 1,
+        minLines: 1,
+        style: textInputTextStyle,
+        keyboardType: TextInputType.number,
+        controller: _slotDurationController,
+        decoration: InputDecoration(
+          labelText: 'Duration of time slot (in minutes)',
+          enabledBorder:
+              UnderlineInputBorder(borderSide: BorderSide(color: Colors.grey)),
+          focusedBorder: UnderlineInputBorder(
+              borderSide: BorderSide(color: Colors.orange)),
+        ),
+        validator: validateText,
+        onSaved: (String value) {
+          if (value != "") entity.slotDuration = int.parse(value);
+          print("slot duration saved");
+        },
+      );
       final maxpeopleInASlot = TextFormField(
         obscureText: false,
         maxLines: 1,
@@ -743,7 +783,7 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
 
       saveRoute() {
         saveFormDetails();
-        upsertEntity(entity).then((value) {
+        upsertEntity(entity, _regNumController.text).then((value) {
           if (value) {
             Navigator.push(
                 context,
@@ -764,7 +804,7 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
       }
 
       processSaveWithTimer() async {
-        var duration = new Duration(seconds: 4);
+        var duration = new Duration(seconds: 2);
         return new Timer(duration, saveRoute);
       }
 
@@ -977,13 +1017,14 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
                                 child: Column(
                                   children: <Widget>[
                                     nameField,
-                                    //entityType,
+                                    descField,
                                     regNumField,
                                     opensTimeField,
                                     closeTimeField,
                                     breakSartTimeField,
                                     breakEndTimeField,
                                     daysClosedField,
+                                    slotDuration,
                                     maxpeopleInASlot,
                                   ],
                                 ),

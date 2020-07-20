@@ -793,7 +793,7 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
 
     String _msg;
     Flushbar flush;
-    bool _wasButtonClicked;
+    //bool _wasButtonClicked;
     backRoute() {
       // saveFormDetails();
       // upsertEntity(entity).then((value) {
@@ -1285,7 +1285,7 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
                           ),
                         ),
                         onPressed: () {
-                          flush = Flushbar<bool>(
+                          flush = Flushbar(
                             //padding: EdgeInsets.zero,
                             margin: EdgeInsets.zero,
                             flushbarPosition: FlushbarPosition.BOTTOM,
@@ -1309,50 +1309,45 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
                             progressIndicatorBackgroundColor:
                                 Colors.blueGrey[800],
                             routeBlur: 10.0,
-                            titleText: Text(
-                              "Are you sure you want to leave this page?",
+                            titleText: Text(""),
+                            messageText: Text(
+                              "Saving details..",
                               style: TextStyle(
                                   fontWeight: FontWeight.bold,
                                   fontSize: 16.0,
-                                  color: primaryAccentColor,
+                                  color: highlightColor,
                                   fontFamily: "ShadowsIntoLightTwo"),
                             ),
-                            messageText: Text(
-                              "The changes you made might be lost.",
-                              style: TextStyle(
-                                  fontSize: 10.0,
-                                  color: Colors.blueGrey[50],
-                                  fontFamily: "ShadowsIntoLightTwo"),
-                            ),
+                            duration: Duration(seconds: 4),
 
-                            mainButton: Column(
-                              children: <Widget>[
-                                FlatButton(
-                                  padding: EdgeInsets.all(0),
-                                  onPressed: () {
-                                    flush.dismiss(true); // result = true
-                                  },
-                                  child: Text(
-                                    "Yes",
-                                    style: TextStyle(color: highlightColor),
-                                  ),
-                                ),
-                                FlatButton(
-                                  padding: EdgeInsets.all(0),
-                                  onPressed: () {
-                                    flush.dismiss(false); // result = true
-                                  },
-                                  child: Text(
-                                    "No",
-                                    style: TextStyle(color: highlightColor),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          )..show(context).then((result) {
-                              _wasButtonClicked = result;
-                              if (_wasButtonClicked) processGoBackWithTimer();
-                            });
+                            // mainButton: Column(
+                            //   children: <Widget>[
+                            //     FlatButton(
+                            //       padding: EdgeInsets.all(0),
+                            //       onPressed: () {
+                            //         flush.dismiss(true); // result = true
+                            //       },
+                            //       child: Text(
+                            //         "Yes",
+                            //         style: TextStyle(color: highlightColor),
+                            //       ),
+                            //     ),
+                            //     FlatButton(
+                            //       padding: EdgeInsets.all(0),
+                            //       onPressed: () {
+                            //         flush.dismiss(false); // result = true
+                            //       },
+                            //       child: Text(
+                            //         "No",
+                            //         style: TextStyle(color: highlightColor),
+                            //       ),
+                            //     ),
+                            //   ],
+                            // ),
+                          )..show(context);
+
+                          processSaveWithTimer();
+
                           //processSaveWithTimer();
                         }),
                   ),
