@@ -140,10 +140,10 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
       setState(() {
         _pastSearches = _state.pastSearches;
       });
-      if (_pastSearches.length == 0)
-        emptyPageMsg = "No History of past searches. Explore nearby now. ";
+
       // }
-    }
+    } else if (_state.pastSearches != null && _state.pastSearches.length == 0)
+      emptyPageMsg = "No search history. Explore nearby now. ";
     //  _list = _stores;
   }
 
@@ -215,6 +215,8 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
     if (_stores.length == 0)
       return _emptySearchPage();
     else {
+      //Add search results to past searches.
+      _state.pastSearches = _stores;
       return Expanded(
         child: ListView.builder(
             itemCount: 1,

@@ -214,7 +214,7 @@ class _CustomAppBarWithBackButtonState
           onPressed: () {
             Navigator.of(context).pop();
             Navigator.push(context,
-                MaterialPageRoute(builder: (context) => UserHomePage()));
+                MaterialPageRoute(builder: (context) => widget.backRoute));
             //Navigator.pushReplacementNamed(context, widget.backRoute);
           }),
 

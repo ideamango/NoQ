@@ -58,7 +58,7 @@ Future<String> showTokenAlert(
                     style: TextStyle(
                         color: primaryDarkColor,
                         fontFamily: 'Monsterrat',
-                        fontSize: 17.0),
+                        fontSize: 18.0),
                   ),
                   Divider(color: Colors.blueGrey[400], height: 1),
                   verticalSpacer,
@@ -71,10 +71,18 @@ Future<String> showTokenAlert(
                     decoration: new BoxDecoration(
                       color: primaryIcon,
                     ),
-                    child: Text(tokenNo, style: whiteBoldTextStyle1),
+                    child: Text(tokenNo, style: homeMsgStyle3),
                   ),
-                  Text(tokenTextH2 + " $storeName at $time.",
-                      style: highlightSubTextStyle),
+                  RichText(
+                      text: TextSpan(
+                          style: highlightSubTextStyle,
+                          children: <TextSpan>[
+                        TextSpan(text: tokenTextH2),
+                        TextSpan(
+                            text: " $storeName at $time.",
+                            style:
+                                TextStyle(color: highlightColor, fontSize: 12)),
+                      ])),
                   verticalSpacer,
                   Divider(color: Colors.blueGrey[400], height: 1),
                 ],

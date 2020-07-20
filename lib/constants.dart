@@ -15,7 +15,7 @@ String helpPageMainMsg = "We are working on getting best help..";
 
 String tokenHeading = 'Yay!! Your booking is confirmed';
 String tokenTextH1 = "Booked peace of mind. No more long waiting in queues!";
-String tokenTextH2 = "Be on time at ";
+String tokenTextH2 = "Maintain social distance while at ";
 String tokenTextH3 = "Be Safe !! Save Time !!";
 
 String drawerHeaderTxt11 = 'Stay ';

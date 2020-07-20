@@ -6,6 +6,7 @@ import 'package:noq/db/db_model/slot.dart';
 import 'package:noq/db/db_model/user_token.dart';
 import 'package:noq/db/db_service/entity_service.dart';
 import 'package:noq/global_state.dart';
+import 'package:noq/pages/SearchStoresPage.dart';
 import 'package:noq/pages/token_alert.dart';
 import 'package:noq/repository/slotRepository.dart';
 import 'package:noq/style.dart';
@@ -57,11 +58,7 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
   void initState() {
     //dt = dateFormat.format(DateTime.now());
     super.initState();
-    getGlobalState().whenComplete(() => _loadSlots().whenComplete(() {
-          setState(() {
-            _initCompleted = true;
-          });
-        }));
+    getGlobalState().whenComplete(() => _loadSlots());
   }
 
   Future<void> _loadSlots() async {
@@ -77,6 +74,8 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
     getSlotsListForStore(entity, _date).then((slotList) {
       setState(() {
         _slotList = slotList;
+
+        _initCompleted = true;
       });
     });
   }
@@ -139,9 +138,9 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
           theme: ThemeData.light().copyWith(),
           home: Scaffold(
             drawer: CustomDrawer(),
-            appBar: CustomAppBar(
-              titleTxt: _storeName,
-            ),
+            appBar: CustomAppBarWithBackButton(
+                titleTxt: _storeName,
+                backRoute: SearchStoresPage(forPage: "Search")),
             body: Padding(
               padding: const EdgeInsets.fromLTRB(6, 6, 6, 6),
               child: Container(
@@ -164,24 +163,35 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
                             color: Colors.white,
                           ),
                           SizedBox(width: 12),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: <Widget>[
-                              (selectedSlot == null)
-                                  ? Text(
-                                      "Select from available slots on " +
-                                          _dateFormatted +
-                                          ".",
-                                      style: TextStyle(
-                                          color: Colors.white, fontSize: 15),
-                                    )
-                                  : Text(
-                                      'You selected a slot for $bookingTime on $bookingDate',
-                                      style: TextStyle(
-                                          color: highlightColor, fontSize: 15),
-                                    ),
-                            ],
+                          Flexible(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: <Widget>[
+                                (selectedSlot == null)
+                                    ? Text(
+                                        "Select from available slots on " +
+                                            _dateFormatted +
+                                            ".",
+                                        style: TextStyle(
+                                            color: Colors.white, fontSize: 15),
+                                      )
+                                    : (isBooked(selectedSlot.dateTime,
+                                            entity.entityId))
+                                        ? Text(
+                                            'You already have a booking at $bookingTime on $bookingDate',
+                                            style: TextStyle(
+                                                color: primaryAccentColor,
+                                                fontSize: 15),
+                                          )
+                                        : Text(
+                                            'You selected a slot at $bookingTime on $bookingDate',
+                                            style: TextStyle(
+                                                color: highlightColor,
+                                                fontSize: 15),
+                                          ),
+                              ],
+                            ),
                           ),
                         ],
                       ),
@@ -401,6 +411,9 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
                   // side: BorderSide(color: Colors.white),
                 ),
           onPressed: () {
+            if (isBooked(sl.dateTime, entity.entityId)) {
+              print("Slot already booked");
+            }
             if (sl.isFull == false) {
               setState(() {
                 //unselect previously selected slot
@@ -429,7 +442,7 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
       if (value == null) {
         print("null token");
       }
-      _token = value.number.toString();
+      _token = value.getDisplayName();
 
       String slotTiming = selectedSlot.dateTime.hour.toString() +
           ':' +

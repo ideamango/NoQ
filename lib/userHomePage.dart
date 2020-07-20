@@ -763,182 +763,178 @@ class _UserHomePageState extends State<UserHomePage> {
         appBar: CustomAppBar(
           titleTxt: title,
         ),
-        body: ListView(
-          children: <Widget>[
-            Column(
-              children: <Widget>[
-                Card(
-                  elevation: 20,
-                  child: Container(
-                    padding: EdgeInsets.all(5),
-                    child: Column(
-                      children: <Widget>[
-                        Container(
-                          color: Colors.teal,
-                          padding: EdgeInsets.all(3),
-                          child: Image.asset(
-                            'assets/noq_home_bookPremises.png',
-                            width: MediaQuery.of(context).size.width * .95,
+        body: SingleChildScrollView(
+          child: Column(
+            children: <Widget>[
+              Card(
+                elevation: 20,
+                child: Container(
+                  padding: EdgeInsets.all(5),
+                  child: Column(
+                    children: <Widget>[
+                      Container(
+                        color: Colors.teal,
+                        padding: EdgeInsets.all(3),
+                        child: Image.asset(
+                          'assets/noq_home_bookPremises.png',
+                          width: MediaQuery.of(context).size.width * .95,
+                        ),
+                      ),
+                      // Text(homeScreenMsgTxt, style: homeMsgStyle),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: <Widget>[
+                          Column(
+                            children: <Widget>[
+                              Text(homeScreenMsgTxt2, style: homeMsgStyle2),
+                              Text(
+                                homeScreenMsgTxt3,
+                                style: homeMsgStyle3,
+                              ),
+                            ],
+                          ),
+                          QrCodeScanner().build(context),
+
+                          //GenerateScreen(),
+                          // RaisedButton(
+                          //   padding: EdgeInsets.all(1),
+                          //   autofocus: false,
+                          //   clipBehavior: Clip.none,
+                          //   elevation: 20,
+                          //   color: highlightColor,
+                          //   child: Row(
+                          //     children: <Widget>[
+                          //       Text('Scan QR', style: buttonSmlTextStyle),
+                          //       SizedBox(width: 5),
+                          //       Icon(
+                          //         Icons.camera,
+                          //         color: tealIcon,
+                          //         size: 26,
+                          //       ),
+                          //     ],
+                          //   ),
+                          //   onPressed: scan,
+                          // )
+                        ],
+                      )
+                    ],
+                  ),
+                ),
+                //child: Image.asset('assets/noq_home.png'),
+              ),
+              Card(
+                elevation: 20,
+                child: Theme(
+                  data: ThemeData(
+                    unselectedWidgetColor: Colors.grey[600],
+                    accentColor: Colors.teal,
+                  ),
+                  child: ExpansionTile(
+                    //key: PageStorageKey(this.widget.headerTitle),
+                    initiallyExpanded: true,
+                    title: Text(
+                      "Upcoming Bookings",
+                      style:
+                          TextStyle(color: Colors.blueGrey[700], fontSize: 17),
+                    ),
+                    backgroundColor: Colors.white,
+                    leading: Icon(
+                      Icons.date_range,
+                      color: primaryIcon,
+                    ),
+                    children: <Widget>[
+                      if (_upcomingBkgStatus == 'Success')
+                        ConstrainedBox(
+                          constraints: new BoxConstraints(
+                            maxHeight: MediaQuery.of(context).size.height * .6,
+                          ),
+
+                          // decoration: BoxDecoration(
+                          //     shape: BoxShape.rectangle,
+                          //     borderRadius: BorderRadius.all(Radius.circular(8.0))),
+                          // height: MediaQuery.of(context).size.height * .6,
+                          // margin: EdgeInsets.fromLTRB(10, 10, 10, 10),
+                          child: ListView.builder(
+                            shrinkWrap: true,
+                            //scrollDirection: Axis.vertical,
+                            itemBuilder: (BuildContext context, int index) {
+                              return Container(
+                                child: new Column(
+                                    children: _newBookingsList
+                                        .map(_buildItem)
+                                        .toList()),
+                                //children: <Widget>[firstRow, secondRow],
+                              );
+                            },
+                            itemCount: 1,
                           ),
                         ),
-                        // Text(homeScreenMsgTxt, style: homeMsgStyle),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: <Widget>[
-                            Column(
-                              children: <Widget>[
-                                Text(homeScreenMsgTxt2, style: homeMsgStyle2),
-                                Text(
-                                  homeScreenMsgTxt3,
-                                  style: homeMsgStyle3,
-                                ),
-                              ],
-                            ),
-                            QrCodeScanner().build(context),
-
-                            //GenerateScreen(),
-                            // RaisedButton(
-                            //   padding: EdgeInsets.all(1),
-                            //   autofocus: false,
-                            //   clipBehavior: Clip.none,
-                            //   elevation: 20,
-                            //   color: highlightColor,
-                            //   child: Row(
-                            //     children: <Widget>[
-                            //       Text('Scan QR', style: buttonSmlTextStyle),
-                            //       SizedBox(width: 5),
-                            //       Icon(
-                            //         Icons.camera,
-                            //         color: tealIcon,
-                            //         size: 26,
-                            //       ),
-                            //     ],
-                            //   ),
-                            //   onPressed: scan,
-                            // )
-                          ],
-                        )
-                      ],
-                    ),
-                  ),
-                  //child: Image.asset('assets/noq_home.png'),
-                ),
-                Card(
-                  elevation: 20,
-                  child: Theme(
-                    data: ThemeData(
-                      unselectedWidgetColor: Colors.grey[600],
-                      accentColor: Colors.teal,
-                    ),
-                    child: ExpansionTile(
-                      //key: PageStorageKey(this.widget.headerTitle),
-                      initiallyExpanded: true,
-                      title: Text(
-                        "Upcoming Bookings",
-                        style: TextStyle(
-                            color: Colors.blueGrey[700], fontSize: 17),
-                      ),
-                      backgroundColor: Colors.white,
-                      leading: Icon(
-                        Icons.date_range,
-                        color: primaryIcon,
-                      ),
-                      children: <Widget>[
-                        if (_upcomingBkgStatus == 'Success')
-                          ConstrainedBox(
-                            constraints: new BoxConstraints(
-                              maxHeight:
-                                  MediaQuery.of(context).size.height * .6,
-                            ),
-
-                            // decoration: BoxDecoration(
-                            //     shape: BoxShape.rectangle,
-                            //     borderRadius: BorderRadius.all(Radius.circular(8.0))),
-                            // height: MediaQuery.of(context).size.height * .6,
-                            // margin: EdgeInsets.fromLTRB(10, 10, 10, 10),
-                            child: ListView.builder(
-                              shrinkWrap: true,
-                              //scrollDirection: Axis.vertical,
-                              itemBuilder: (BuildContext context, int index) {
-                                return Container(
-                                  child: new Column(
-                                      children: _newBookingsList
-                                          .map(_buildItem)
-                                          .toList()),
-                                  //children: <Widget>[firstRow, secondRow],
-                                );
-                              },
-                              itemCount: 1,
-                            ),
-                          ),
-                        if (_upcomingBkgStatus == 'NoBookings')
-                          _emptyStorePage("No bookings yet.. ",
-                              "Book now to save time later!! "),
-                        if (_upcomingBkgStatus == 'Loading')
-                          showCircularProgress(),
-                      ],
-                    ),
+                      if (_upcomingBkgStatus == 'NoBookings')
+                        _emptyStorePage("No bookings yet.. ",
+                            "Book now to save time later!! "),
+                      if (_upcomingBkgStatus == 'Loading')
+                        showCircularProgress(),
+                    ],
                   ),
                 ),
-                Card(
-                  elevation: 20,
-                  child: Theme(
-                    data: ThemeData(
-                      unselectedWidgetColor: Colors.grey[600],
-                      accentColor: Colors.teal,
+              ),
+              Card(
+                elevation: 20,
+                child: Theme(
+                  data: ThemeData(
+                    unselectedWidgetColor: Colors.grey[600],
+                    accentColor: Colors.teal,
+                  ),
+                  child: ExpansionTile(
+                    title: Text(
+                      "Past Bookings",
+                      style:
+                          TextStyle(color: Colors.blueGrey[700], fontSize: 17),
                     ),
-                    child: ExpansionTile(
-                      title: Text(
-                        "Past Bookings",
-                        style: TextStyle(
-                            color: Colors.blueGrey[700], fontSize: 17),
-                      ),
-                      backgroundColor: Colors.white,
-                      leading: Icon(
-                        Icons.access_time,
-                        color: primaryIcon,
-                      ),
-                      children: <Widget>[
-                        Column(
-                          children: <Widget>[
-                            if (_pastBkgStatus == "Success")
-                              Container(
-                                //height: MediaQuery.of(context).size.width * .5,
-                                child: ListView.builder(
-                                  shrinkWrap: true,
-                                  scrollDirection: Axis.vertical,
-                                  itemBuilder:
-                                      (BuildContext context, int index) {
-                                    return Container(
-                                      child: new Column(
-                                          children: _pastBookingsList
-                                              .map(_buildItem)
-                                              .toList()),
-                                      //children: <Widget>[firstRow, secondRow],
-                                    );
-                                  },
-                                  itemCount: 1,
-                                ),
+                    backgroundColor: Colors.white,
+                    leading: Icon(
+                      Icons.access_time,
+                      color: primaryIcon,
+                    ),
+                    children: <Widget>[
+                      Column(
+                        children: <Widget>[
+                          if (_pastBkgStatus == "Success")
+                            Container(
+                              //height: MediaQuery.of(context).size.width * .5,
+                              child: ListView.builder(
+                                shrinkWrap: true,
+                                scrollDirection: Axis.vertical,
+                                itemBuilder: (BuildContext context, int index) {
+                                  return Container(
+                                    child: new Column(
+                                        children: _pastBookingsList
+                                            .map(_buildItem)
+                                            .toList()),
+                                    //children: <Widget>[firstRow, secondRow],
+                                  );
+                                },
+                                itemCount: 1,
                               ),
-                            if (_pastBkgStatus == 'NoBookings')
-                              _emptyStorePage("No bookings in past..",
-                                  "Book now to save time later!! "),
-                            if (_pastBkgStatus == 'Loading')
-                              showCircularProgress(),
-                          ],
-                        )
-                      ],
-                    ),
+                            ),
+                          if (_pastBkgStatus == 'NoBookings')
+                            _emptyStorePage("No bookings in past..",
+                                "Book now to save time later!! "),
+                          if (_pastBkgStatus == 'Loading')
+                            showCircularProgress(),
+                        ],
+                      )
+                    ],
                   ),
                 ),
-                RaisedButton(
-                  color: Colors.blue,
-                  onPressed: dbCall1,
-                  child: Icon(Icons.add),
-                ),
-              ],
-            ),
-          ],
+              ),
+              RaisedButton(
+                color: Colors.blue,
+                onPressed: dbCall1,
+                child: Icon(Icons.add),
+              ),
+            ],
+          ),
         ),
         drawer: CustomDrawer(),
         bottomNavigationBar: CustomBottomBar(
