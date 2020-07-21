@@ -4,6 +4,7 @@ var loginMainTxt = "";
 String dateDisplayFormat = 'EEE, MMM d';
 String homeScreenMsgTxt =
     "Add the amenities in Apartment or Workplace to your 'favourites' and book a slot anytime.";
+String whatsappMessage = "Hello on whatsapp";
 String contactUsMailId = "smita.agarwal@outlook.com";
 String contactUsPageHeadline =
     'We would be happy to help you. Just drop a message to us and we will try our best to address that at earliest.';

@@ -54,6 +54,13 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
+	<key>LSApplicationQueriesSchemes</key>
+	<array>
+  		<string>whatsapp</string>
+		<string>googlechromes</string>
+        <string>comgooglemaps</string>
+		 <string>iosamap</string>
+	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
 </dict>

@@ -607,13 +607,36 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
                                     alignment: Alignment.topCenter,
                                     highlightColor: Colors.orange[300],
                                     icon: Icon(
+                                      Icons.chat,
+                                      color: primaryIcon,
+                                      size: 20,
+                                    ),
+                                    onPressed: () {
+                                      launchWhatsApp(
+                                          message: whatsappMessage,
+                                          phone: '+919611009823');
+                                      // callPhone('+919611009823');
+                                      //callPhone(str.);
+                                    },
+                                  ),
+                                ),
+                                Container(
+                                  padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
+                                  margin: EdgeInsets.fromLTRB(0, 0, 0, 0),
+                                  height: 22.0,
+                                  width: 28.0,
+                                  child: IconButton(
+                                    alignment: Alignment.topCenter,
+                                    highlightColor: Colors.orange[300],
+                                    icon: Icon(
                                       Icons.phone,
                                       color: primaryIcon,
                                       size: 20,
                                     ),
                                     onPressed: () {
                                       // callPhone('+919611009823');
-                                      //callPhone(str.);
+//TODO : Edit this to pick phone number of public contact person.
+                                      callPhone(str.managers[0].ph);
                                     },
                                   ),
                                 ),
