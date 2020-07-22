@@ -20,6 +20,7 @@ import 'package:intl/intl.dart';
 import 'package:noq/utils.dart';
 import 'package:noq/widget/appbar.dart';
 import 'package:noq/widget/bottom_nav_bar.dart';
+import 'package:noq/widget/carousel.dart';
 import 'package:noq/widget/header.dart';
 import 'package:noq/widget/widgets.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -36,6 +37,7 @@ import 'db/db_model/slot.dart';
 import 'db/db_model/user.dart';
 import 'db/db_model/user_token.dart';
 import 'db/db_service/configurations_service.dart';
+import 'package:carousel_slider/carousel_slider.dart';
 //import 'path';
 
 class UserHomePage extends StatefulWidget {
@@ -753,6 +755,16 @@ class _UserHomePageState extends State<UserHomePage> {
     fetchDataFromGlobalState();
   }
 
+  int _currentIndex = 0;
+  List cardList = [Item1(), Item2(), Item3(), Item4()];
+  List<T> map<T>(List list, Function handler) {
+    List<T> result = [];
+    for (var i = 0; i < list.length; i++) {
+      result.add(handler(i, list[i]));
+    }
+    return result;
+  }
+
   @override
   Widget build(BuildContext context) {
     //if (_upcomingBkgStatus == 'Success') {
@@ -773,15 +785,69 @@ class _UserHomePageState extends State<UserHomePage> {
                     padding: EdgeInsets.all(5),
                     child: Column(
                       children: <Widget>[
-                        Container(
-                          color: Colors.teal,
-                          padding: EdgeInsets.all(3),
-                          child: Image.asset(
-                            'assets/noq_home_bookPremises.png',
-                            width: MediaQuery.of(context).size.width * .95,
-                          ),
-                        ),
+                        // Container(
+                        //   color: Colors.teal,
+                        //   padding: EdgeInsets.all(3),
+                        //   child: Image.asset(
+                        //     'assets/noq_home_bookPremises.png',
+                        //     width: MediaQuery.of(context).size.width * .95,
+                        //   ),
+                        // ),
                         // Text(homeScreenMsgTxt, style: homeMsgStyle),
+                        Column(
+                          children: <Widget>[
+                            CarouselSlider(
+                              height: 150.0,
+                              autoPlay: true,
+                              autoPlayInterval: Duration(seconds: 3),
+                              autoPlayAnimationDuration:
+                                  Duration(milliseconds: 800),
+                              autoPlayCurve: Curves.easeInCubic,
+                              pauseAutoPlayOnTouch: Duration(seconds: 10),
+                              aspectRatio: 2.0,
+                              onPageChanged: (index) {
+                                setState(() {
+                                  _currentIndex = index;
+                                });
+                              },
+                              items: cardList.map((card) {
+                                return Builder(builder: (BuildContext context) {
+                                  return Container(
+                                    height: MediaQuery.of(context).size.height *
+                                        0.40,
+                                    width: MediaQuery.of(context).size.width,
+                                    child: Card(
+                                      color: primaryAccentColor,
+                                      child: card,
+                                    ),
+                                  );
+                                });
+                              }).toList(),
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: <Widget>[
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: map<Widget>(cardList, (index, url) {
+                                    return Container(
+                                      width: 7.0,
+                                      height: 7.0,
+                                      margin: EdgeInsets.symmetric(
+                                          vertical: 2.0, horizontal: 2.0),
+                                      decoration: BoxDecoration(
+                                        shape: BoxShape.circle,
+                                        color: _currentIndex == index
+                                            ? highlightColor
+                                            : Colors.grey,
+                                      ),
+                                    );
+                                  }),
+                                ),
+                              ],
+                            )
+                          ],
+                        ),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: <Widget>[
@@ -1147,6 +1213,7 @@ class _UserHomePageState extends State<UserHomePage> {
                   ],
                 ),
               ),
+           
             ]),
       ),
     );
