@@ -756,7 +756,7 @@ class _UserHomePageState extends State<UserHomePage> {
   }
 
   int _currentIndex = 0;
-  List cardList = [Item1(), Item2(), Item3(), Item4()];
+  List cardList = [Item1(), Item2(), Item3(), Item4(), Item5(), Item6()];
   List<T> map<T>(List list, Function handler) {
     List<T> result = [];
     for (var i = 0; i < list.length; i++) {
@@ -1021,6 +1021,11 @@ class _UserHomePageState extends State<UserHomePage> {
     );
   }
 
+  String getEntityAddress(String entityId) {
+    //TODO SMITA Add implementation
+    return 'Gachibowli, Hyderabad';
+  }
+
   Widget _emptyStorePage(String msg1, String msg2) {
     return Center(
         child: Column(children: <Widget>[
@@ -1038,184 +1043,172 @@ class _UserHomePageState extends State<UserHomePage> {
   }
 
   Widget _buildItem(UserToken booking) {
-    return Card(
-      //  margin: EdgeInsets.all(10.0),
-
-      color: Colors.white,
-      elevation: 10,
-      child: Container(
-        decoration: BoxDecoration(
-            shape: BoxShape.rectangle,
-            borderRadius: BorderRadius.all(Radius.circular(5.0)),
-            border: Border.all(color: Colors.teal)),
-        child: new Row(
-            //crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: <Widget>[
-              Container(
-                width: MediaQuery.of(context).size.width * .65,
-                height: MediaQuery.of(context).size.width * .7 / 4,
-                child: Column(
-                  //mainAxisSize: MainAxisSize.max,
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: <Widget>[
-                    Row(
-                      children: <Widget>[],
-                    ),
-                    Container(
-                      alignment: Alignment.centerLeft,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        children: <Widget>[
-                          Text(
-                            //'T-1030-14',
-                            booking.number.toString(),
-                            style: tokenTextStyle, textAlign: TextAlign.left,
-                          ),
-                        ],
-                      ),
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
+    String address = getEntityAddress(booking.entityId);
+    return Container(
+      width: MediaQuery.of(context).size.width,
+      height: MediaQuery.of(context).size.width * .7 / 2.7,
+      decoration: BoxDecoration(
+        image: DecorationImage(
+          image: AssetImage('assets/ticket.jpg'),
+          fit: BoxFit.fill,
+        ),
+      ),
+      child: new Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Container(
+              width: MediaQuery.of(context).size.width * .65,
+              height: MediaQuery.of(context).size.width * .7 / 3.5,
+              child: Column(
+                //mainAxisSize: MainAxisSize.max,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: <Widget>[
+                  Container(
+                    alignment: Alignment.centerLeft,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
-                        Container(
-                          alignment: Alignment.centerLeft,
-                          width: MediaQuery.of(context).size.width * .2,
-                          //Text('Where: ', style: tokenHeadingTextStyle),
-                          child: Text(
-                            booking.entityName,
-                            overflow: TextOverflow.ellipsis,
-                            style: tokenDataTextStyle,
-                          ),
+                        Text(
+                          'TOKEN No. -',
+                          style: tokenTextStyle,
+                          textAlign: TextAlign.left,
                         ),
-                        Container(
-                          alignment: Alignment.centerLeft,
-                          width: MediaQuery.of(context).size.width * .4,
-                          //Text('Where: ', style: tokenHeadingTextStyle),
-                          child: Row(
-                            children: <Widget>[
-                              Container(
-                                // margin: EdgeInsets.fromLTRB(
-                                //     0,
-                                //     0,
-                                //     MediaQuery.of(context).size.width * .02,
-                                //     MediaQuery.of(context).size.width * .05),
-                                height: MediaQuery.of(context).size.width * .07,
-                                // width: 20.0,
-                                child: IconButton(
-                                    padding: EdgeInsets.all(0),
-                                    alignment: Alignment.centerRight,
-                                    highlightColor: Colors.orange[300],
-                                    icon: Icon(
-                                      Icons.phone,
-                                      color: primaryIcon,
-                                      size: 20,
-                                    ),
-                                    onPressed: () => {}
-                                    //callStore(booking.storeInfo.phone),
-                                    ),
-                              ),
-                              Container(
-                                // margin: EdgeInsets.fromLTRB(
-                                //     0,
-                                //     0,
-                                //     MediaQuery.of(context).size.width * .02,
-                                //     MediaQuery.of(context).size.width * .05),
-                                height: MediaQuery.of(context).size.width * .07,
-                                // width: 20.0,
-                                child: IconButton(
-                                  padding: EdgeInsets.all(0),
-                                  alignment: Alignment.center,
-                                  highlightColor: Colors.orange[300],
-                                  icon: Icon(
-                                    Icons.location_on,
-                                    color: primaryIcon,
-                                    size: 22,
-                                  ),
-                                  onPressed: () => launchURL(
-                                      booking.entityName,
-                                      //TODO: Store address
-
-                                      // booking.storeInfo.adrs.toString(),
-                                      'Update this field, add address',
-                                      booking.lat,
-                                      booking.lon),
-                                ),
-                              ),
-                              // Container(
-                              //   // margin: EdgeInsets.fromLTRB(
-                              //   //     0, 0, MediaQuery.of(context).size.width * .01, 0),
-                              //   height: MediaQuery.of(context).size.width * .06,
-                              //   // width: 20,
-                              //   child: IconButton(
-                              //     padding: EdgeInsets.all(0),
-                              //     alignment: Alignment.centerLeft,
-                              //     onPressed: () => {},
-                              //     //toggleFavorite(booking.storeInfo),
-                              //     highlightColor: Colors.orange[300],
-                              //     iconSize: 20,
-                              //     icon: booking.storeInfo.isFavourite
-                              //         ? Icon(
-                              //             Icons.favorite,
-                              //             color: Colors.red[800],
-                              //           )
-                              //         : Icon(
-                              //             Icons.favorite_border,
-                              //             color: Colors.red[800],
-                              //           ),
-                              //   ),
-                              // ),
-                            ],
-                          ),
+                        Text(
+                          booking.number.toString(),
+                          style: tokenTextStyle,
+                          textAlign: TextAlign.left,
                         ),
                       ],
                     ),
-                  ],
-                ),
-              ),
-              Container(
-                //alignment: Alignment.centerRight,
-                width: MediaQuery.of(context).size.width * .25,
-                padding: EdgeInsets.fromLTRB(0, 5, 0, 0),
-                child: Column(
-                  //mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  //crossAxisAlignment: CrossAxisAlignment.center,
-                  children: <Widget>[
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        // Text('Date: ', style: tokenHeadingTextStyle),
-                        Text(
-                          dtFormat.format(booking.dateTime),
+                  ),
+                  Divider(
+                    indent: 5,
+
+                    // thickness: 1,
+                    height: 1,
+                    color: Colors.blueGrey[300],
+                  ),
+                  Column(
+                    // mainAxisAlignment: MainAxisAlignment.end,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Container(
+                        child: Text(
+                          booking.entityName + ', ' + address,
+                          overflow: TextOverflow.ellipsis,
                           style: tokenDataTextStyle,
                         ),
-                      ],
-                    ),
-                    Container(
-                      height: 5,
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: <Widget>[
-                        // Text('Time: ', style: tokenHeadingTextStyle),
-                        Text(
-                          booking.dateTime.hour.toString() +
-                              ':' +
-                              booking.dateTime.minute.toString(),
-                          style: tokenDateTextStyle,
+                      ),
+                      SizedBox(
+                        height: 2,
+                      ),
+                      Container(
+                        // alignment: Alignment.centerLeft,
+                        height: MediaQuery.of(context).size.width * .06,
+                        //Text('Where: ', style: tokenHeadingTextStyle),
+                        child: Row(
+                          children: <Widget>[
+                            Container(
+                              height: MediaQuery.of(context).size.width * .07,
+                              child: IconButton(
+                                  padding: EdgeInsets.all(0),
+                                  alignment: Alignment.centerRight,
+                                  highlightColor: Colors.orange[300],
+                                  icon: Icon(
+                                    Icons.phone,
+                                    color: lightIcon,
+                                    size: 20,
+                                  ),
+                                  onPressed: () {
+// TODO Smita - Get public contact and update booking.entityId
+                                    callPhone('+919611009823');
+                                  }),
+                            ),
+                            Container(
+                              height: MediaQuery.of(context).size.width * .07,
+                              child: IconButton(
+                                padding: EdgeInsets.all(0),
+                                alignment: Alignment.center,
+                                highlightColor: Colors.orange[300],
+                                icon: Icon(
+                                  Icons.chat,
+                                  color: lightIcon,
+                                  size: 22,
+                                ),
+                                onPressed: () {
+                                  String phoneNo = booking.entityWhatsApp;
+                                  //TODO Smita - remove once whatsapp number gets populated.
+                                  phoneNo = '+919611009823';
+                                  if (phoneNo != null)
+                                    launchWhatsApp(
+                                        message: whatsappMessage,
+                                        phone: phoneNo);
+                                },
+                              ),
+                            ),
+                            Container(
+                              height: MediaQuery.of(context).size.width * .07,
+                              // width: 20.0,
+                              child: IconButton(
+                                padding: EdgeInsets.all(0),
+                                alignment: Alignment.centerLeft,
+                                highlightColor: Colors.orange[300],
+                                icon: Icon(
+                                  Icons.location_on,
+                                  color: lightIcon,
+                                  size: 22,
+                                ),
+                                onPressed: () => launchURL(booking.entityName,
+                                    address, booking.lat, booking.lon),
+                              ),
+                            ),
+                          ],
                         ),
-                      ],
-                    ),
-                  ],
-                ),
+                      ),
+                    ],
+                  ),
+                ],
               ),
-           
-            ]),
-      ),
+            ),
+            VerticalDivider(
+              indent: 5,
+              endIndent: 5,
+              // thickness: 1,
+              width: 1,
+              color: Colors.blueGrey[300],
+            ),
+            Container(
+              width: MediaQuery.of(context).size.width * .25,
+              padding: EdgeInsets.fromLTRB(0, 5, 0, 0),
+              child: Column(
+                children: <Widget>[
+                  verticalSpacer,
+                  Text(
+                    dtFormat.format(booking.dateTime),
+                    style: tokenDataTextStyle,
+                  ),
+                  Container(
+                    height: 5,
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: <Widget>[
+                      // Text('Time: ', style: tokenHeadingTextStyle),
+                      Text(
+                        booking.dateTime.hour.toString() +
+                            ':' +
+                            booking.dateTime.minute.toString(),
+                        style: tokenDateTextStyle,
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ]),
     );
   }
 

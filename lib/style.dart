@@ -182,7 +182,7 @@ final Color disabledColor = Colors.grey[400];
 final Color btnColor = Colors.cyan[600];
 final Color btnDisabledolor = Colors.blueGrey[200];
 
-//final Color lightIcon = Colors.cyan[600];
+final Color lightIcon = Colors.white;
 final Color highlightText = Colors.blueGrey[800];
 final highlightSubTextStyle = TextStyle(
     color: Colors.blueGrey[800], fontFamily: 'Montserrat', fontSize: 12.0);
@@ -190,20 +190,20 @@ final lightTextStyle =
     TextStyle(color: Colors.white, fontFamily: 'Montserrat', fontSize: 12.0);
 
 final tokenTextStyle = TextStyle(
-    color: Colors.black,
+    color: highlightColor,
     //fontWeight: FontWeight.w600,
     fontFamily: 'Montserrat',
     letterSpacing: 3,
     // decoration: TextDecoration.underline,
-    fontSize: 25.0);
+    fontSize: 17.0);
 
 final tokenDataTextStyle = TextStyle(
-    color: Colors.blueGrey[300],
+    color: primaryAccentColor,
     //fontWeight: FontWeight.w500,
     fontFamily: 'Montserrat',
     fontSize: 14.0);
 final tokenDateTextStyle = TextStyle(
-    color: Colors.blueGrey[300],
+    color: Colors.white,
     fontWeight: FontWeight.w500,
     fontFamily: 'Montserrat',
     fontSize: 18.0);

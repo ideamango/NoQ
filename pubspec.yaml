@@ -81,9 +81,14 @@ flutter:
     - noq_home.png
     - noq_home_bookPremises.png
     - hg.jpg
-    - background.png
-    - social_distance.jpg
+    - background.png   
     - ticket.jpg
+    - 1.jpg
+    - 2.jpg
+    - 3.jpg
+    - 4.jpg
+    - 5.jpg
+    - 6.jpg
   #  - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see
