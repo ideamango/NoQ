@@ -1,3 +1,4 @@
+import 'package:geoflutterfire/geoflutterfire.dart';
 import 'package:noq/db/db_model/meta_entity.dart';
 import 'package:noq/db/db_model/meta_user.dart';
 import 'package:noq/utils.dart';
@@ -10,10 +11,18 @@ class User {
   //just need an id which is unique even if later phone or firebase id changes
   String id;
   String name;
+
   MyGeoFirePoint loc;
   String ph;
   List<MetaEntity> entities;
   List<MetaEntity> favourites;
+
+  // factory User.fromJson(Map<String, dynamic> json) => _$UserFromJson(json);
+
+  // /// `toJson` is the convention for a class to declare support for serialization
+  // /// to JSON. The implementation simply calls the private, generated
+  // /// helper method `_$UserToJson`.
+  // Map<String, dynamic> toJson() => _$UserToJson(this);
 
   Map<String, dynamic> toJson() => {
         'id': id,

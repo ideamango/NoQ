@@ -479,10 +479,13 @@ class EntityService {
           throw new EntityDoesNotExistsException(
               "Parent entity does not exist");
         }
+
+        return true;
       } catch (e) {
         print(e);
         isSuccess = false;
-        throw e;
+        //throw e;
+        return false;
       }
     });
 

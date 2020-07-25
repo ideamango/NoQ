@@ -33,7 +33,7 @@ class UserToken {
         'entityId': entityId,
         'userId': userId,
         'number': number,
-        'dateTime': dateTime,
+        'dateTime': dateTime.millisecondsSinceEpoch,
         'maxAllowed': maxAllowed,
         'slotDuration': slotDuration,
         'entityName': entityName,
@@ -67,5 +67,12 @@ class UserToken {
     String formattedDate = formatter.format(dateTime);
 
     return name + formattedDate + number.toString();
+  }
+
+  dynamic myEncode(dynamic item) {
+    if (item is DateTime) {
+      return item.toIso8601String();
+    }
+    return item;
   }
 }

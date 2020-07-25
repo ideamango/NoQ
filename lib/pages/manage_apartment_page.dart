@@ -107,9 +107,7 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
   }
 
   initializeEntity() async {
-    //TODO: Since metaEntity is not created in DB yet, getEntity resturs null.Fix this
     getEntity(_metaEntity.entityId).then((value) {
-      //TODO: SMita test this(entity = value)
       entity = value;
       if (entity != null) {
         _nameController.text = entity.name;
@@ -150,12 +148,8 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
           contactList = entity.managers;
         }
       } else {
-        Map<String, dynamic> entityJSON = <String, dynamic>{
-          'type': _metaEntity.type,
-          'entityId': _metaEntity.entityId
-        };
-
-        entity = Entity.fromJson(entityJSON);
+        entity = createEntity(_metaEntity.entityId, _metaEntity.type);
+        print(entity.entityId.toString());
         //TODO: Smita - check if we insert object at SAVE.
         //  EntityService().upsertEntity(entity);
       }

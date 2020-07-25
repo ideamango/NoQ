@@ -1,3 +1,4 @@
+import 'package:json_annotation/json_annotation.dart';
 import 'package:noq/db/db_model/configurations.dart';
 import 'package:noq/db/db_model/entity.dart';
 import 'package:noq/db/db_model/meta_entity.dart';
@@ -23,15 +24,29 @@ class GlobalState {
 
   static Future<GlobalState> getGlobalState() async {
     if (_gs == null) {
-      _gs = await readData();
+      Map<String, dynamic> gsJson = await readData();
+      if (gsJson != null) {
+        _gs = await GlobalState.fromJson(gsJson);
+      }
 
       if (_gs == null) {
         _gs = new GlobalState._();
       }
-      _gs.currentUser = await UserService().getCurrentUser();
+      try {
+        _gs.currentUser = await UserService().getCurrentUser();
+      } catch (e) {
+        print(
+            "Error initializing GlobalState, User could not be fetched from server..");
+      }
+
       if (Utils.isNullOrEmpty(_gs.currentUser.favourites))
         _gs.currentUser.favourites = new List<MetaEntity>();
-      _gs.conf = await ConfigurationService().getConfigurations();
+      try {
+        _gs.conf = await ConfigurationService().getConfigurations();
+      } catch (e) {
+        print(
+            "Error initializing GlobalState, Configuration could not be fetched from server..");
+      }
     }
     return _gs;
   }
@@ -64,7 +79,7 @@ class GlobalState {
   cancelBooking() async {}
 
   static Future<void> saveGlobalState() async {
-    writeData(_gs);
+    writeData(_gs.toJson());
   }
 
   Map<String, dynamic> toJson() => {
@@ -74,8 +89,9 @@ class GlobalState {
         'pastSearches': convertPastSearchesListToJson(this.pastSearches)
       };
 
-  static GlobalState fromJson(Map<String, dynamic> json) {
+  static Future<GlobalState> fromJson(Map<String, dynamic> json) async {
     if (json == null) return null;
+
     return new GlobalState.withValues(
       currentUser: User.fromJson(json['currentUser']),
       conf: Configurations.fromJson(json['conf']),

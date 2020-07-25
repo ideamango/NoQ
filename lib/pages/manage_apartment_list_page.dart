@@ -4,6 +4,7 @@ import 'package:noq/db/db_model/entity.dart';
 import 'package:noq/db/db_model/meta_entity.dart';
 import 'package:noq/global_state.dart';
 import 'package:noq/pages/entity_item.dart';
+import 'package:noq/repository/StoreRepository.dart';
 import 'package:noq/style.dart';
 import 'package:noq/userHomePage.dart';
 import 'package:noq/utils.dart';
@@ -59,9 +60,10 @@ class _ManageApartmentsListPageState extends State<ManageApartmentsListPage> {
     setState(() {
       var uuid = new Uuid();
       String _entityId = uuid.v1();
+      entity = createEntity(_entityId, _entityType);
 
-      MetaEntity metaEn =
-          MetaEntity.withValues(entityId: _entityId, type: _entityType);
+      MetaEntity metaEn = entity.getMetaEntity();
+
       // TODO: Create Entity with given id and type.
 
       metaEntitiesList.add(metaEn);

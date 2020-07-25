@@ -18,3 +18,29 @@ Future<Entity> getEntity(String metaEntityId) async {
   return entity;
 }
 
+Entity createEntity(String entityId, String entityType) {
+  Entity entity = new Entity(
+      entityId: entityId,
+      name: null,
+      address: null,
+      advanceDays: null,
+      isPublic: false,
+      //geo: geoPoint,
+      maxAllowed: null,
+      slotDuration: null,
+      closedOn: [],
+      breakStartHour: null,
+      breakStartMinute: null,
+      breakEndHour: null,
+      breakEndMinute: null,
+      startTimeHour: null,
+      startTimeMinute: null,
+      endTimeHour: null,
+      endTimeMinute: null,
+      parentId: null,
+      type: entityType,
+      isBookable: false,
+      isActive: false,
+      coordinates: null);
+  return entity;
+}
