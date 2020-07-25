@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:noq/constants.dart';
 import 'package:noq/db/db_model/entity.dart';
 import 'package:noq/db/db_model/meta_entity.dart';
-import 'package:noq/models/localDB.dart';
 import 'package:noq/pages/service_entity.dart';
 import 'package:noq/repository/local_db_repository.dart';
 import 'package:noq/style.dart';

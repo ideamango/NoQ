@@ -201,7 +201,7 @@ final tokenDataTextStyle = TextStyle(
     color: primaryAccentColor,
     //fontWeight: FontWeight.w500,
     fontFamily: 'Montserrat',
-    fontSize: 14.0);
+    fontSize: 18.0);
 final tokenDateTextStyle = TextStyle(
     color: Colors.white,
     fontWeight: FontWeight.w500,

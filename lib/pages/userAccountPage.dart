@@ -83,56 +83,56 @@ class _UserAccountPageState extends State<UserAccountPage> {
                 style: inputTextStyle,
               ),
               //TODO: Dont delete the uncommented code, this is for generating QR code.
-              // RaisedButton(
-              //   child: Text("Back"),
-              //   onPressed: () => Navigator.push(context,
-              //       MaterialPageRoute(builder: (context) => UserHomePage())),
-              // ),
+              RaisedButton(
+                child: Text("Back"),
+                onPressed: () => Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => UserHomePage())),
+              ),
 
-              // Padding(
-              //   padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
-              //   child: RaisedButton(
-              //       color: Colors.blue,
-              //       textColor: Colors.white,
-              //       splashColor: Colors.blueGrey,
-              //       onPressed: () {
-              //         Navigator.push(
-              //           context,
-              //           MaterialPageRoute(
-              //               builder: (context) => GenerateScreen()),
-              //         );
-              //       },
-              //       child: const Text('GENERATE QR CODE')),
-              // ),
-              // Padding(
-              //   padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
-              //   child: RaisedButton(
-              //       color: Colors.blue,
-              //       textColor: Colors.white,
-              //       splashColor: Colors.blueGrey,
-              //       onPressed: inviteText.isEmpty
-              //           ? null
-              //           : () {
-              //               // A builder is used to retrieve the context immediately
-              //               // surrounding the RaisedButton.
-              //               //
-              //               // The context's `findRenderObject` returns the first
-              //               // RenderObject in its descendent tree when it's not
-              //               // a RenderObjectWidget. The RaisedButton's RenderObject
-              //               // has its position and size after it's built.
-              //               final RenderBox box = context.findRenderObject();
-              //               try {
-              //                 Share.share(inviteText,
-              //                     subject: inviteSubject,
-              //                     sharePositionOrigin:
-              //                         box.localToGlobal(Offset.zero) &
-              //                             box.size);
-              //               } on PlatformException catch (e) {
-              //                 print('${e.message}');
-              //               }
-              //             },
-              //       child: const Text('Invite friends')),
-              // ),
+              Padding(
+                padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+                child: RaisedButton(
+                    color: Colors.blue,
+                    textColor: Colors.white,
+                    splashColor: Colors.blueGrey,
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => GenerateScreen()),
+                      );
+                    },
+                    child: const Text('GENERATE QR CODE')),
+              ),
+              Padding(
+                padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+                child: RaisedButton(
+                    color: Colors.blue,
+                    textColor: Colors.white,
+                    splashColor: Colors.blueGrey,
+                    onPressed: inviteText.isEmpty
+                        ? null
+                        : () {
+                            // A builder is used to retrieve the context immediately
+                            // surrounding the RaisedButton.
+                            //
+                            // The context's `findRenderObject` returns the first
+                            // RenderObject in its descendent tree when it's not
+                            // a RenderObjectWidget. The RaisedButton's RenderObject
+                            // has its position and size after it's built.
+                            final RenderBox box = context.findRenderObject();
+                            try {
+                              Share.share(inviteText,
+                                  subject: inviteSubject,
+                                  sharePositionOrigin:
+                                      box.localToGlobal(Offset.zero) &
+                                          box.size);
+                            } on PlatformException catch (e) {
+                              print('${e.message}');
+                            }
+                          },
+                    child: const Text('Invite friends')),
+              ),
             ],
           ),
         ),

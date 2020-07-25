@@ -7,24 +7,15 @@ import 'package:noq/db/db_model/meta_entity.dart';
 import 'package:noq/db/db_model/user_token.dart';
 import 'package:noq/db/db_service/entity_service.dart';
 import 'package:noq/global_state.dart';
-import 'package:noq/models/localDB.dart';
-import 'package:noq/pages/entity_services_list_page.dart';
 import 'package:noq/pages/search_child_page.dart';
 import 'package:noq/pages/showSlotsPage.dart';
-import 'package:noq/repository/StoreRepository.dart';
-import 'package:noq/repository/local_db_repository.dart';
-import 'package:noq/repository/slotRepository.dart';
 import 'package:noq/services/circular_progress.dart';
 import 'package:noq/services/mapService.dart';
 import 'package:noq/style.dart';
 import 'package:noq/utils.dart';
 import 'package:noq/widget/appbar.dart';
 import 'package:noq/widget/bottom_nav_bar.dart';
-import 'package:noq/widget/header.dart';
-import 'package:noq/widget/widgets.dart';
-
 import 'package:shared_preferences/shared_preferences.dart';
-
 import '../userHomePage.dart';
 
 class SearchStoresPage extends StatefulWidget {

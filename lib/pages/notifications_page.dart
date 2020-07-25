@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:noq/db/db_model/user_token.dart';
 import 'package:noq/global_state.dart';
-import 'package:noq/models/localDB.dart';
 import 'package:noq/repository/local_db_repository.dart';
 import 'package:noq/style.dart';
 import 'package:noq/widget/appbar.dart';

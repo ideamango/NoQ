@@ -37,12 +37,7 @@ String contactInfoStr =
     'The perosn who can be contacted for any queries regarding your services.';
 
 enum Role { Manager, Admin, ContactPerson, Employee }
-List<String> roleTypes = [
-  'Admin',
-  'Manager',
-  'Public Contact Person',
-  'Whatsapp Contact Person'
-];
+List<String> roleTypes = ['Admin', 'Manager'];
 List<String> entityTypes = [
   'Grocery/ Super Market ',
   'Apartment',

@@ -9,7 +9,7 @@ import 'package:noq/db/db_service/entity_service.dart';
 import 'package:noq/db/db_service/token_service.dart';
 import 'package:noq/db/db_service/user_service.dart';
 import 'package:noq/global_state.dart';
-import 'package:noq/models/localDB.dart';
+import 'package:noq/pages/shopping_list.dart';
 import 'package:noq/repository/local_db_repository.dart';
 import 'package:noq/services/circular_progress.dart';
 import 'package:noq/services/mapService.dart';
@@ -1026,6 +1026,11 @@ class _UserHomePageState extends State<UserHomePage> {
     return 'Gachibowli, Hyderabad';
   }
 
+  void showShoppingList(UserToken booking) {
+    Navigator.push(
+        context, MaterialPageRoute(builder: (context) => ShoppingList()));
+  }
+
   Widget _emptyStorePage(String msg1, String msg2) {
     return Center(
         child: Column(children: <Widget>[
@@ -1164,6 +1169,21 @@ class _UserHomePageState extends State<UserHomePage> {
                                     address, booking.lat, booking.lon),
                               ),
                             ),
+                            Container(
+                              height: MediaQuery.of(context).size.width * .07,
+                              // width: 20.0,
+                              child: IconButton(
+                                padding: EdgeInsets.all(0),
+                                alignment: Alignment.centerLeft,
+                                highlightColor: Colors.orange[300],
+                                icon: Icon(
+                                  Icons.list,
+                                  color: lightIcon,
+                                  size: 22,
+                                ),
+                                onPressed: () => showShoppingList(booking),
+                              ),
+                            ),
                           ],
                         ),
                       ),
@@ -1183,8 +1203,9 @@ class _UserHomePageState extends State<UserHomePage> {
               width: MediaQuery.of(context).size.width * .25,
               padding: EdgeInsets.fromLTRB(0, 5, 0, 0),
               child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
-                  verticalSpacer,
+                  //verticalSpacer,
                   Text(
                     dtFormat.format(booking.dateTime),
                     style: tokenDataTextStyle,

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:noq/db/db_model/entity.dart';
 import 'package:noq/db/db_model/meta_entity.dart';
 import 'package:noq/db/db_service/entity_service.dart';
-import 'package:noq/models/localDB.dart';
 import 'package:noq/pages/entity_services_details_page.dart';
 import 'package:noq/pages/manage_apartment_page.dart';
 import 'package:noq/services/circular_progress.dart';

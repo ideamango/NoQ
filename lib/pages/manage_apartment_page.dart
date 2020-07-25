@@ -19,7 +19,7 @@ import 'package:noq/services/circular_progress.dart';
 import 'package:noq/style.dart';
 import 'package:noq/utils.dart';
 import 'package:noq/widget/bottom_nav_bar.dart';
-import 'package:noq/widget/custome_expansion_tile.dart';
+import 'package:noq/widget/custom_expansion_tile.dart';
 import 'package:noq/widget/weekday_selector.dart';
 
 import 'package:flutter/foundation.dart';
@@ -50,6 +50,8 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
   TextEditingController _breakEndController = TextEditingController();
 
   TextEditingController _maxPeopleController = TextEditingController();
+  TextEditingController _whatsappPhoneController = TextEditingController();
+
   TextEditingController _slotDurationController = TextEditingController();
 
   List<String> _closedOnDays = List<String>();
@@ -168,17 +170,15 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
   String validateText(String value) {
     if (value == null) {
       return 'Field is empty';
-    }
-    // _entityDetailsFormKey.currentState.save();
-    return null;
+    } else
+      return null;
   }
 
   String validateTime(String value) {
     if (value == null) {
       return 'Field is empty';
-    }
-
-    return null;
+    } else
+      return null;
   }
 
   void _getCurrLocation() async {
@@ -618,6 +618,27 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
           print("saved max people");
         },
       );
+      final whatsappPhone = TextFormField(
+        obscureText: false,
+        maxLines: 1,
+        minLines: 1,
+        style: textInputTextStyle,
+        keyboardType: TextInputType.phone,
+        controller: _whatsappPhoneController,
+        decoration: InputDecoration(
+          prefixText: '+91',
+          labelText: 'WhatsApp Number',
+          enabledBorder:
+              UnderlineInputBorder(borderSide: BorderSide(color: Colors.grey)),
+          focusedBorder: UnderlineInputBorder(
+              borderSide: BorderSide(color: Colors.orange)),
+        ),
+        validator: Utils.validateMobile,
+        onSaved: (String value) {
+          if (value != "") entity.whatsapp = "+91" + (value);
+          print("Whatsapp Number");
+        },
+      );
 
 //Address fields
       final adrsField1 = TextFormField(
@@ -1026,6 +1047,7 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
                                     daysClosedField,
                                     slotDuration,
                                     maxpeopleInASlot,
+                                    whatsappPhone,
                                   ],
                                 ),
                               ),
@@ -1148,7 +1170,7 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
                                     title: Row(
                                       children: <Widget>[
                                         Text(
-                                          "Contact Person",
+                                          "Person",
                                           style: TextStyle(
                                               color: Colors.white,
                                               fontSize: 15),

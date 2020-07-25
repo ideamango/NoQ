@@ -7,7 +7,6 @@ import 'package:noq/db/db_model/employee.dart';
 import 'package:noq/db/db_model/entity.dart';
 import 'package:noq/db/db_model/meta_entity.dart';
 import 'package:noq/db/db_service/entity_service.dart';
-import 'package:noq/models/localDB.dart';
 import 'dart:async';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
@@ -19,7 +18,7 @@ import 'package:noq/repository/local_db_repository.dart';
 import 'package:noq/style.dart';
 import 'package:noq/utils.dart';
 import 'package:noq/widget/bottom_nav_bar.dart';
-import 'package:noq/widget/custome_expansion_tile.dart';
+import 'package:noq/widget/custom_expansion_tile.dart';
 import 'package:noq/widget/weekday_selector.dart';
 import 'package:flutter/foundation.dart';
 import 'package:geolocator/geolocator.dart';
@@ -72,12 +71,7 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
 
   List<String> _daysOff = List<String>();
 
-  AddressAppData adrs = new AddressAppData();
-  // MetaEntity _metaEntity;
-
   Entity serviceEntity;
-
-  List<ContactAppData> newList = new List<ContactAppData>();
 
   //bool _autoPopulate = false;
 
@@ -246,21 +240,6 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
     } catch (e) {
       print(e);
     }
-  }
-
-  Future<List> getList() async {
-    List<ContactAppData> contactList = new List<ContactAppData>();
-    ContactAppData cp =
-        new ContactAppData.values('a', 'b', 'c', 'd', "Manager", 'f', 'g', []);
-    // ContactPerson cp4 =
-    //     new ContactPerson.values('a', 'b', 'c', 'd', 'e', 'f', 'g');
-    // contactList.add(cp1);
-    // contactList.add(cp2);
-    print('list contakajsgdsdfklsjhdk');
-
-    newList.add(cp);
-    contactList = newList;
-    return contactList;
   }
 
   void saveFormDetails() async {

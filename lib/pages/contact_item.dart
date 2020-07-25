@@ -100,11 +100,10 @@ class ContactRowState extends State<ContactRow> {
           prefixText: '+91', labelTextStr: "Primary Phone", hintTextStr: ""),
       validator: Utils.validateMobile,
       onChanged: (String value) {
-        contact.ph = value;
+        contact.ph = "+91" + value;
       },
       onSaved: (value) {
-        value = "+91" + value;
-        contact.ph = value;
+        contact.ph = "+91" + value;
       },
     );
     final ctPhn2Field = TextFormField(
@@ -117,12 +116,11 @@ class ContactRowState extends State<ContactRow> {
       decoration: CommonStyle.textFieldStyle(
           prefixText: '+91', labelTextStr: "Alternate Phone", hintTextStr: ""),
       validator: Utils.validateMobile,
-      onChanged: (String value) {
-        contact.altPhone = value;
-      },
+      // onChanged: (String value) {
+      //   contact.altPhone = "+91" + value;
+      // },
       onSaved: (value) {
-        value = "+91" + value;
-        contact.altPhone = value;
+        contact.altPhone = "+91" + value;
       },
     );
     final ctAvlFromTimeField = TextFormField(

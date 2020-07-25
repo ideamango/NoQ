@@ -3,7 +3,6 @@ import 'dart:io';
 import 'package:noq/global_state.dart';
 import 'dart:async';
 import 'package:path_provider/path_provider.dart';
-import 'package:noq/models/localDB.dart';
 
 Future<String> get localPath async {
   final directory = await getApplicationDocumentsDirectory();
@@ -34,7 +33,7 @@ void writeData(GlobalState state) async {
 Future<GlobalState> readData() async {
   try {
     final file = await localFile;
-    //TODO: Exception here
+    //TODO: SAmita Exception here
     String body = await file.readAsString();
     print('Reading data: $body');
     Map<String, dynamic> json = jsonDecode(body);
@@ -44,52 +43,4 @@ Future<GlobalState> readData() async {
     print("Couldn't read the file");
     return null;
   }
-}
-
-Future<String> deleteServiceFromDb(ChildEntityAppData str) async {
-//Read current data in file
-//   await readData().then((fUser) {
-//     if (!Utils.isNullOrEmpty(fUser.managedEntities)) {
-// //if exists then delete
-
-//       for (int i = 0; i < fUser.managedEntities.length; i++) {
-//         if (fUser.managedEntities[i].id == str.parentEntityId) {
-//           fUser.managedEntities[i].childCollection.remove(str);
-//         }
-//       }
-// //Update info in local DB
-//       writeData(fUser);
-
-//       //TODO: Update on server
-//       //EntityService().upsertEntity(str);
-//     }
-//     return "Success";
-//   });
-//   return "";
-}
-
-Future<String> deleteEntityFromDb(EntityAppData str) async {
-//Read current data in file
-//   await readData().then((fUser) {
-//     if (!Utils.isNullOrEmpty(fUser.managedEntities)) {
-// //if exists then delete
-//       EntityAppData delEntity;
-//       fUser.managedEntities.forEach((element) {
-//         if (element.id == str.id) {
-//           delEntity = element;
-//         }
-//       });
-//       fUser.managedEntities.remove(delEntity);
-//       //todo: remove this line , added for testing
-//       // fUser.storesAccessed.clear();
-//       //todo: remove this line , added for testing
-// //Update info in local DB
-//       writeData(fUser);
-
-//       //TODO: Update on server
-//       //EntityService().upsertEntity(str);
-//     }
-//     return "Success";
-//   });
-//   return "";
 }

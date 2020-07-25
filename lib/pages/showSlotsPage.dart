@@ -17,7 +17,6 @@ import 'package:noq/widget/header.dart';
 import 'package:noq/widget/widgets.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:intl/intl.dart';
-import 'package:progress_dialog/progress_dialog.dart';
 
 import '../constants.dart';
 
@@ -47,7 +46,7 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
   String _userId;
   String _strDateForSlot;
   bool _showProgressInd = false;
-  ProgressDialog pr;
+ 
   String title = "Book Slot";
   GlobalState _state;
   bool _gStateInitFinished = false;
