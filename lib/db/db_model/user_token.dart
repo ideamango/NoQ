@@ -44,6 +44,9 @@ class UserToken {
 
   static UserToken fromJson(Map<String, dynamic> json) {
     if (json == null) return null;
+    print(json['dateTime'].millisecondsSinceEpoch);
+    print(new DateTime.fromMillisecondsSinceEpoch(
+        json['dateTime'].millisecondsSinceEpoch));
     return new UserToken(
         slotId: json['slotId'].toString(),
         entityId: json['entityId'].toString(),

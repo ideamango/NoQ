@@ -85,8 +85,12 @@ Slot checkIfSlotExists(EntitySlots entitySlots, DateTime dt) {
 
 Future<UserToken> bookSlotForStore(MetaEntity meta, Slot slot) async {
 //TODO: Have Entity object here, either pass entity object to generateToken() or create metaEntity and pass to this method.
-
-  UserToken token = await TokenService().generateToken(meta, slot.dateTime);
-
+  UserToken token;
+  try {
+    token = await TokenService().generateToken(meta, slot.dateTime);
+    print("Token Booked: $token");
+  } catch (e) {
+    print(e.toString());
+  }
   return token;
 }

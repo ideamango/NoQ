@@ -20,7 +20,7 @@ class Slot {
         'slotId': slotId,
         'currentNumber': currentNumber,
         'maxAllowed': maxAllowed,
-        'dateTime': dateTime,
+        'dateTime': dateTime.millisecondsSinceEpoch,
         'slotDuration': slotDuration,
         'isFull': isFull
       };
@@ -31,8 +31,7 @@ class Slot {
         slotId: json['slotId'],
         currentNumber: json['currentNumber'],
         maxAllowed: json['maxAllowed'],
-        dateTime: new DateTime.fromMillisecondsSinceEpoch(
-            json['dateTime'].seconds * 1000),
+        dateTime: new DateTime.fromMillisecondsSinceEpoch(json['dateTime']),
         slotDuration: json['slotDuration'],
         isFull: json['isFull']);
   }

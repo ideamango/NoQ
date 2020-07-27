@@ -309,13 +309,13 @@ class _UserHomePageState extends State<UserHomePage> {
 
     User u = await UserService().getCurrentUser();
 
-    try {
-      await createChildEntityAndAddToParent(
-          'Child101-1', "Bata", true); //should fail as entity does not exists
-    } catch (EntityDoesNotExistsException) {
-      print(
-          "EntityService.upsertChildEntityToParent (expected exception thrown) --> SUCCESS");
-    }
+    // try {
+    //   await createChildEntityAndAddToParent(
+    //       'Child101-1', "Bata", true); //should fail as entity does not exists
+    // } catch (EntityDoesNotExistsException) {
+    //   print(
+    //       "EntityService.upsertChildEntityToParent (expected exception thrown) --> SUCCESS");
+    // }
     await createEntity();
 
     await createEntity2();
@@ -1138,10 +1138,10 @@ class _UserHomePageState extends State<UserHomePage> {
                                 padding: EdgeInsets.all(0),
                                 alignment: Alignment.center,
                                 highlightColor: Colors.orange[300],
-                                icon: Icon(
-                                  Icons.chat,
-                                  color: lightIcon,
-                                  size: 22,
+                                icon: ImageIcon(
+                                  AssetImage('assets/whatsapp.png'),
+                                  size: 18,
+                                  color: Colors.white,
                                 ),
                                 onPressed: () {
                                   String phoneNo = booking.entityWhatsApp;

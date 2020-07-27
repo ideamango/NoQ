@@ -183,23 +183,21 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
     String defaultMsg = 'No match found. Try again!!';
     String txtMsg = (emptyPageMsg != null) ? emptyPageMsg : defaultMsg;
     return Center(
-        child: Container(
-            margin: EdgeInsets.fromLTRB(
-                10,
-                MediaQuery.of(context).size.width * .5,
-                10,
-                MediaQuery.of(context).size.width * .5),
-            child: Expanded(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  Text(txtMsg, style: highlightTextStyle),
-                  Text(
-                      'Add your favourite places to quickly browse through later!! ',
-                      style: highlightSubTextStyle),
-                ],
-              ),
-            )));
+        child: Column(
+      children: <Widget>[
+        Expanded(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Text(txtMsg, style: highlightTextStyle),
+              Text(
+                  'Add your favourite places to quickly browse through later!! ',
+                  style: highlightSubTextStyle),
+            ],
+          ),
+        ),
+      ],
+    ));
   }
 
   Widget _listSearchResults() {
@@ -208,17 +206,21 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
     else {
       //Add search results to past searches.
       _state.pastSearches = _stores;
-      return Expanded(
-        child: ListView.builder(
-            itemCount: 1,
-            itemBuilder: (BuildContext context, int index) {
-              return Container(
-                margin: EdgeInsets.fromLTRB(10, 10, 10, 10),
-                child: new Column(
-                  children: showSearchResults(),
-                ),
-              );
-            }),
+      return Column(
+        children: <Widget>[
+          Expanded(
+            child: ListView.builder(
+                itemCount: 1,
+                itemBuilder: (BuildContext context, int index) {
+                  return Container(
+                    margin: EdgeInsets.fromLTRB(10, 10, 10, 10),
+                    child: new Column(
+                      children: showSearchResults(),
+                    ),
+                  );
+                }),
+          ),
+        ],
       );
     }
 
@@ -422,27 +424,24 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
                   overflow: TextOverflow.ellipsis,
                 )),
             body: Center(
-              child: Container(
-                //
-                child: Column(
-                  children: <Widget>[
-                    filterBar,
-                    (!Utils.isNullOrEmpty(_pastSearches))
-                        ? Expanded(
-                            child: ListView.builder(
-                                itemCount: 1,
-                                itemBuilder: (BuildContext context, int index) {
-                                  return Container(
-                                    margin: EdgeInsets.fromLTRB(10, 10, 10, 10),
-                                    child: new Column(
-                                      children: showPastSearches(),
-                                    ),
-                                  );
-                                }),
-                          )
-                        : _emptySearchPage(),
-                  ],
-                ),
+              child: Column(
+                children: <Widget>[
+                  filterBar,
+                  (!Utils.isNullOrEmpty(_pastSearches))
+                      ? Expanded(
+                          child: ListView.builder(
+                              itemCount: 1,
+                              itemBuilder: (BuildContext context, int index) {
+                                return Container(
+                                  margin: EdgeInsets.fromLTRB(10, 10, 10, 10),
+                                  child: new Column(
+                                    children: showPastSearches(),
+                                  ),
+                                );
+                              }),
+                        )
+                      : _emptySearchPage(),
+                ],
               ),
             ),
             // drawer: CustomDrawer(),
@@ -481,18 +480,19 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
                   overflow: TextOverflow.ellipsis,
                 )),
             body: Center(
-              child: Container(
-                //
-                child: Expanded(
-                  child: Column(
-                    children: <Widget>[
-                      filterBar,
-                      (_isSearching == "done")
-                          ? _listSearchResults()
-                          : showCircularProgress(),
-                    ],
+              child: Column(
+                children: <Widget>[
+                  Expanded(
+                    child: Column(
+                      children: <Widget>[
+                        filterBar,
+                        (_isSearching == "done")
+                            ? _listSearchResults()
+                            : showCircularProgress(),
+                      ],
+                    ),
                   ),
-                ),
+                ],
               ),
             ),
             // drawer: CustomDrawer(),
@@ -592,15 +592,16 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
                                 Container(
                                   padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
                                   margin: EdgeInsets.fromLTRB(0, 0, 0, 0),
-                                  height: 22.0,
+                                  height: 25.0,
                                   width: 28.0,
                                   child: IconButton(
-                                    alignment: Alignment.topCenter,
+                                    padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
+                                    alignment: Alignment.center,
                                     highlightColor: Colors.orange[300],
-                                    icon: Icon(
-                                      Icons.chat,
-                                      color: primaryIcon,
+                                    icon: ImageIcon(
+                                      AssetImage('assets/whatsapp.png'),
                                       size: 20,
+                                      color: primaryIcon,
                                     ),
                                     onPressed: () {
                                       launchWhatsApp(
@@ -614,10 +615,11 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
                                 Container(
                                   padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
                                   margin: EdgeInsets.fromLTRB(0, 0, 0, 0),
-                                  height: 22.0,
+                                  height: 25.0,
                                   width: 28.0,
                                   child: IconButton(
-                                    alignment: Alignment.topCenter,
+                                    padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
+                                    alignment: Alignment.center,
                                     highlightColor: Colors.orange[300],
                                     icon: Icon(
                                       Icons.phone,
@@ -632,12 +634,13 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
                                   ),
                                 ),
                                 Container(
-                                  padding: EdgeInsets.fromLTRB(0, 0, 5, 5),
+                                  padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
                                   margin: EdgeInsets.fromLTRB(0, 0, 0, 0),
-                                  height: 22.0,
+                                  height: 25.0,
                                   width: 28.0,
                                   child: IconButton(
-                                    alignment: Alignment.topCenter,
+                                    padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
+                                    alignment: Alignment.center,
                                     highlightColor: Colors.orange[300],
                                     icon: Icon(
                                       Icons.location_on,
@@ -654,10 +657,11 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
                                 Container(
                                   padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
                                   margin: EdgeInsets.fromLTRB(0, 0, 0, 0),
-                                  height: 22,
+                                  height: 25,
                                   width: 25,
                                   child: IconButton(
-                                    alignment: Alignment.topRight,
+                                    padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
+                                    alignment: Alignment.center,
                                     onPressed: () => toggleFavorite(str),
                                     highlightColor: Colors.orange[300],
                                     iconSize: 20,
@@ -854,8 +858,10 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
     lat = pos.latitude;
     lon = pos.longitude;
     //TODO: comment - only for testing
-    lat = 12.960632;
-    lon = 77.641603;
+    //lat = 12.960632;
+    //lon = 77.641603;
+    lat = 68;
+    lon = 78;
 
     //TODO: comment - only for testing
     List<Entity> searchEntityList = await EntityService().search(

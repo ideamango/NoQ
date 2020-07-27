@@ -42,6 +42,7 @@ class TokenService {
     final FirebaseUser user = await FirebaseAuth.instance.currentUser();
     Firestore fStore = Firestore.instance;
     String userPhone = user.phoneNumber;
+    Exception ex;
     //TODO: To run the validation on DateTime for holidays, break, advnanceDays and during closing hours
 
     String entitySlotsDocId = metaEntity.entityId +
@@ -65,50 +66,111 @@ class TokenService {
         fStore.document('tokens/' + slotId + "#" + userPhone);
 
     UserToken token;
-
-    await fStore.runTransaction((Transaction tx) async {
-      try {
-        DocumentSnapshot entitySlotsSnapshot = await tx.get(entitySlotsRef);
-        EntitySlots es;
-        if (entitySlotsSnapshot.exists) {
-          DocumentSnapshot tokenSnapshot = await tx.get(tokRef);
-          if (tokenSnapshot.exists) {
-            throw new TokenAlreadyExistsException(
-                "Token for this user is already booked");
-          }
-          //atleast one token is issued for the given entity for that day
-          es = EntitySlots.fromJson(entitySlotsSnapshot.data);
-          int maxAllowed = es.maxAllowed;
-
-          int slotCount = -1;
-          bool slotExist = false;
-          int newNumber = 1;
-          for (var sl in es.slots) {
-            slotCount++;
-            if (sl.dateTime.hour == dateTime.hour &&
-                sl.dateTime.minute == dateTime.minute) {
-              //slot already exists for given time
-              if (sl.isFull) {
-                throw new SlotFullException(
-                    "Token can't be generated as the slot is full");
-              }
-
-              newNumber = sl.currentNumber + 1;
-
-              if (sl.maxAllowed == newNumber) {
-                // set the isFull for that slot to true
-                sl.isFull = true;
-              }
-              // set the current number to be incremented
-              sl.currentNumber = newNumber;
-
-              slotExist = true;
-              break;
+    try {
+//TODO: Smita - Exception (PlatformException Timed out waiting for task. null)
+      await fStore.runTransaction((Transaction tx) async {
+        try {
+          DocumentSnapshot entitySlotsSnapshot = await tx.get(entitySlotsRef);
+          EntitySlots es;
+          if (entitySlotsSnapshot.exists) {
+            DocumentSnapshot tokenSnapshot = await tx.get(tokRef);
+            if (tokenSnapshot.exists) {
+              throw new TokenAlreadyExistsException(
+                  "Token for this user is already booked");
             }
-          }
+            //atleast one token is issued for the given entity for that day
+            es = EntitySlots.fromJson(entitySlotsSnapshot.data);
+            int maxAllowed = es.maxAllowed;
 
-          if (!slotExist) {
-            // Create a new Slot with current number as 1 and add to the Slots list of Entity_Slots object
+            int slotCount = -1;
+            bool slotExist = false;
+            int newNumber = 1;
+            for (var sl in es.slots) {
+              slotCount++;
+              if (sl.dateTime.hour == dateTime.hour &&
+                  sl.dateTime.minute == dateTime.minute) {
+                //slot already exists for given time
+                if (sl.isFull) {
+                  throw new SlotFullException(
+                      "Token can't be generated as the slot is full");
+                }
+
+                newNumber = sl.currentNumber + 1;
+
+                if (sl.maxAllowed == newNumber) {
+                  // set the isFull for that slot to true
+                  sl.isFull = true;
+                }
+                // set the current number to be incremented
+                sl.currentNumber = newNumber;
+
+                slotExist = true;
+                break;
+              }
+            }
+
+            if (!slotExist) {
+              // Create a new Slot with current number as 1 and add to the Slots list of Entity_Slots object
+              Slot sl = new Slot(
+                  currentNumber: 1,
+                  slotId: slotId,
+                  maxAllowed: es.maxAllowed,
+                  dateTime: dateTime,
+                  slotDuration: es.slotDuration,
+                  isFull: false);
+              es.slots.add(sl);
+            }
+
+            // Save the EntitySlots using set method
+            await tx.set(entitySlotsRef, es.toJson());
+
+            Map<String, dynamic> tokenJson = <String, dynamic>{
+              'slotId': slotId,
+              'entityId': metaEntity.entityId,
+              'userId': userPhone,
+              'number': newNumber,
+              'dateTime': dateTime,
+              'maxAllowed': maxAllowed,
+              'slotDuration': metaEntity.slotDuration,
+              'entityName': metaEntity.name,
+              'lat': metaEntity.lat,
+              'lon': metaEntity.lon,
+              'entityWhatsApp': metaEntity.whatsapp
+            };
+            //create token
+            await tx.set(tokRef, tokenJson);
+
+            token = UserToken.fromJson(tokenJson);
+          } else {
+            //This is the first token for the entity for the given day
+            int maxAllowed = metaEntity.maxAllowed;
+            int slotDuration = metaEntity.slotDuration;
+            List<String> closedOn = metaEntity.closedOn;
+            int breakStartHour = metaEntity.breakStartHour;
+            int breakStartMinute = metaEntity.breakStartMinute;
+            int breakEndHour = metaEntity.breakEndHour;
+            int breakEndMinute = metaEntity.breakEndMinute;
+            int startTimeHour = metaEntity.startTimeHour;
+            int startTimeMinute = metaEntity.startTimeHour;
+            int endTimeHour = metaEntity.endTimeHour;
+            int endTimeMinute = metaEntity.endTimeMinute;
+
+            EntitySlots es = new EntitySlots(
+                slots: new List<Slot>(),
+                entityId: metaEntity.entityId,
+                date: new DateTime(dateTime.year, dateTime.month, dateTime.day),
+                maxAllowed: maxAllowed,
+                slotDuration: slotDuration,
+                closedOn: closedOn,
+                breakStartHour: breakStartHour,
+                breakStartMinute: breakStartMinute,
+                breakEndHour: breakEndHour,
+                breakEndMinute: breakEndMinute,
+                startTimeHour: startTimeHour,
+                startTimeMinute: startTimeMinute,
+                endTimeHour: endTimeHour,
+                endTimeMinute: endTimeMinute);
+
             Slot sl = new Slot(
                 currentNumber: 1,
                 slotId: slotId,
@@ -117,94 +179,37 @@ class TokenService {
                 slotDuration: es.slotDuration,
                 isFull: false);
             es.slots.add(sl);
+
+            Map<String, dynamic> tokenJson = <String, dynamic>{
+              'slotId': slotId,
+              'entityId': metaEntity.entityId,
+              'userId': userPhone,
+              'number': 1,
+              'dateTime': dateTime,
+              'maxAllowed': maxAllowed,
+              'slotDuration': slotDuration,
+              'entityName': metaEntity.name,
+              'lat': metaEntity.lat,
+              'lon': metaEntity.lon,
+              'entityWhatsApp': metaEntity.whatsapp
+            };
+
+            //create EntitySlots with one slot in it
+            await tx.set(entitySlotsRef, es.toJson());
+            //create Token
+
+            await tx.set(tokRef, tokenJson);
+
+            token = UserToken.fromJson(tokenJson);
           }
-
-          // Save the EntitySlots using set method
-          await tx.set(entitySlotsRef, es.toJson());
-
-          Map<String, dynamic> tokenJson = <String, dynamic>{
-            'slotId': slotId,
-            'entityId': metaEntity.entityId,
-            'userId': userPhone,
-            'number': newNumber,
-            'dateTime': dateTime,
-            'maxAllowed': maxAllowed,
-            'slotDuration': metaEntity.slotDuration,
-            'entityName': metaEntity.name,
-            'lat': metaEntity.lat,
-            'lon': metaEntity.lon,
-            'entityWhatsApp': metaEntity.whatsapp
-          };
-          //create token
-          await tx.set(tokRef, tokenJson);
-
-          token = UserToken.fromJson(tokenJson);
-        } else {
-          //This is the first token for the entity for the given day
-          int maxAllowed = metaEntity.maxAllowed;
-          int slotDuration = metaEntity.slotDuration;
-          List<String> closedOn = metaEntity.closedOn;
-          int breakStartHour = metaEntity.breakStartHour;
-          int breakStartMinute = metaEntity.breakStartMinute;
-          int breakEndHour = metaEntity.breakEndHour;
-          int breakEndMinute = metaEntity.breakEndMinute;
-          int startTimeHour = metaEntity.startTimeHour;
-          int startTimeMinute = metaEntity.startTimeHour;
-          int endTimeHour = metaEntity.endTimeHour;
-          int endTimeMinute = metaEntity.endTimeMinute;
-
-          EntitySlots es = new EntitySlots(
-              slots: new List<Slot>(),
-              entityId: metaEntity.entityId,
-              date: new DateTime(dateTime.year, dateTime.month, dateTime.day),
-              maxAllowed: maxAllowed,
-              slotDuration: slotDuration,
-              closedOn: closedOn,
-              breakStartHour: breakStartHour,
-              breakStartMinute: breakStartMinute,
-              breakEndHour: breakEndHour,
-              breakEndMinute: breakEndMinute,
-              startTimeHour: startTimeHour,
-              startTimeMinute: startTimeMinute,
-              endTimeHour: endTimeHour,
-              endTimeMinute: endTimeMinute);
-
-          Slot sl = new Slot(
-              currentNumber: 1,
-              slotId: slotId,
-              maxAllowed: es.maxAllowed,
-              dateTime: dateTime,
-              slotDuration: es.slotDuration,
-              isFull: false);
-          es.slots.add(sl);
-
-          Map<String, dynamic> tokenJson = <String, dynamic>{
-            'slotId': slotId,
-            'entityId': metaEntity.entityId,
-            'userId': userPhone,
-            'number': 1,
-            'dateTime': dateTime,
-            'maxAllowed': maxAllowed,
-            'slotDuration': slotDuration,
-            'entityName': metaEntity.name,
-            'lat': metaEntity.lat,
-            'lon': metaEntity.lon,
-            'entityWhatsApp': metaEntity.whatsapp
-          };
-
-          //create EntitySlots with one slot in it
-          await tx.set(entitySlotsRef, es.toJson());
-          //create Token
-
-          await tx.set(tokRef, tokenJson);
-
-          token = UserToken.fromJson(tokenJson);
+        } catch (e) {
+          print("Transaction Error: " + e.toString());
+          ex = e;
         }
-      } catch (e) {
-        print("Transaction Error: " + e.toString());
-        throw e;
-      }
-    });
+      });
+    } catch (transEx) {
+      throw ex;
+    }
 
     return token;
   }

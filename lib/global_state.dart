@@ -24,9 +24,13 @@ class GlobalState {
 
   static Future<GlobalState> getGlobalState() async {
     if (_gs == null) {
-      Map<String, dynamic> gsJson = await readData();
-      if (gsJson != null) {
-        _gs = await GlobalState.fromJson(gsJson);
+      try {
+        Map<String, dynamic> gsJson = await readData();
+        if (gsJson != null) {
+          _gs = await GlobalState.fromJson(gsJson);
+        }
+      } catch (e) {
+        print("Error reading data from file..");
       }
 
       if (_gs == null) {

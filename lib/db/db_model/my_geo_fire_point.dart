@@ -21,11 +21,15 @@ class MyGeoFirePoint {
 
   static MyGeoFirePoint fromJson(Map<String, dynamic> json) {
     if (json == null) return null;
-    GeoPoint p = json['geopoint'];
-    if (p == null) return null;
-    GeoPointExt point = GeoPointExt(p.latitude, p.longitude);
-    double lat = point.latitude;
-    double lon = point.longitude;
-    return new MyGeoFirePoint(lat, lon);
+
+    if (json['geopoint'] is GeoPoint) {
+      GeoPoint p = json['geopoint'];
+      return new MyGeoFirePoint(p.latitude, p.longitude);
+    } else if (json['geopoint'] is Map) {
+      double lat = json['geopoint']['latitude'];
+      double lon = json['geopoint']['longitude'];
+      return new MyGeoFirePoint(lat, lon);
+    }
+    return null;
   }
 }

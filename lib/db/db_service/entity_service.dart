@@ -371,8 +371,6 @@ class EntityService {
       try {
         DocumentSnapshot parentEntityDoc = await tx.get(entityRef);
 
-        DocumentSnapshot childEntityDoc = await tx.get(childRef);
-
         if (parentEntityDoc.exists) {
           //check if the current user is admin
           Map<String, dynamic> map = parentEntityDoc.data;
@@ -406,6 +404,8 @@ class EntityService {
           } else {
             parentEntity.childEntities.add(childEntity.getMetaEntity());
           }
+
+          DocumentSnapshot childEntityDoc = await tx.get(childRef);
 
           if (childEntityDoc.exists) {
             //Entity existingChildEntity = Entity.fromJson(childEntityDoc.data);
@@ -716,7 +716,7 @@ class EntityService {
 
     try {
       for (DocumentSnapshot ds in await stream.first) {
-        Entity me = Entity.fromJson(ds.data);
+        Entity me = Entity.fromJson(ds.data);   
         me.distance = center.distance(
             lat: me.coordinates.geopoint.latitude,
             lng: me.coordinates.geopoint.longitude);

@@ -46,7 +46,7 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
   String _userId;
   String _strDateForSlot;
   bool _showProgressInd = false;
- 
+
   String title = "Book Slot";
   GlobalState _state;
   bool _gStateInitFinished = false;
@@ -439,7 +439,7 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
     MetaEntity meta = entity.getMetaEntity();
     bookSlotForStore(meta, selectedSlot).then((value) {
       if (value == null) {
-        print("null token");
+        print("nuuuuuuuuuuuuull token");
       }
       _token = value.getDisplayName();
 
