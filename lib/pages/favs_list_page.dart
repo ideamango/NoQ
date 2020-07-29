@@ -153,8 +153,7 @@ class _FavsListPageState extends State<FavsListPage> {
   }
 
   Widget _emptyFavsPage() {
-    String defaultMsg = 'No favourites yet!!';
-    String txtMsg = (emptyPageMsg != null) ? emptyPageMsg : defaultMsg;
+    String txtMsg = (emptyPageMsg != null) ? emptyPageMsg : noFavMsg;
     return Center(
         child: Container(
             margin: EdgeInsets.fromLTRB(
@@ -162,16 +161,14 @@ class _FavsListPageState extends State<FavsListPage> {
                 MediaQuery.of(context).size.width * .5,
                 10,
                 MediaQuery.of(context).size.width * .5),
-            child: Expanded(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  Text(txtMsg, style: highlightTextStyle),
-                  Text(
-                      'Add your favourite places to quickly browse through later!! ',
-                      style: highlightSubTextStyle),
-                ],
-              ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Text(txtMsg, style: highlightTextStyle),
+                Text(
+                    'Add your favourite places to quickly browse through later!! ',
+                    style: highlightSubTextStyle),
+              ],
             )));
   }
 

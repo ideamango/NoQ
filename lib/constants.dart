@@ -14,6 +14,8 @@ String homeScreenMsgTxt3 = "Be Safe | Save time.";
 
 String helpPageMainMsg = "We are working on getting best help..";
 
+String noFavMsg = 'No favourites yet!!';
+
 String tokenHeading = 'Yay!! Your booking is confirmed';
 String tokenTextH1 = "Booked peace of mind. No more long waiting in queues!";
 String tokenTextH2 = "Maintain social distance while at ";

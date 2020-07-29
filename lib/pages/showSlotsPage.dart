@@ -272,21 +272,44 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
                                 children: <Widget>[
                                   Icon(Icons.label,
                                       color: highlightColor, size: 15),
-                                  Text(" Selected", style: lightSubTextStyle),
+                                  Text(" Currently Selected",
+                                      style: TextStyle(
+                                        color: Colors.blueGrey[900],
+                                        // fontWeight: FontWeight.w800,
+                                        fontFamily: 'Monsterrat',
+                                        letterSpacing: 0.5,
+                                        fontSize: 9.0,
+                                        //height: 2,
+                                      )),
                                 ],
                               ),
                               horizontalSpacer,
                               Row(children: <Widget>[
                                 Icon(Icons.label,
                                     color: Colors.cyan[300], size: 15),
-                                Text(" Booked", style: lightSubTextStyle),
+                                Text(" Existing Booking",
+                                    style: TextStyle(
+                                      color: Colors.blueGrey[900],
+                                      // fontWeight: FontWeight.w800,
+                                      fontFamily: 'Monsterrat',
+                                      letterSpacing: 0.5,
+                                      fontSize: 9.0,
+                                      //height: 2,
+                                    )),
                               ]),
                               horizontalSpacer,
                               Row(children: <Widget>[
                                 Icon(Icons.label,
                                     color: Colors.blueGrey[400], size: 15),
                                 Text(" Not available",
-                                    style: lightSubTextStyle),
+                                    style: TextStyle(
+                                      color: Colors.blueGrey[900],
+                                      // fontWeight: FontWeight.w800,
+                                      fontFamily: 'Monsterrat',
+                                      letterSpacing: 0.5,
+                                      fontSize: 9.0,
+                                      //height: 2,
+                                    )),
                               ]),
                             ],
                           )
@@ -422,6 +445,15 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
               return null;
           },
         ),
+        Text(sl.currentNumber.toString() + ' booked',
+            style: TextStyle(
+              color: Colors.black,
+              // fontWeight: FontWeight.w800,
+              //fontFamily: 'Roboto',
+              letterSpacing: 0.5,
+              fontSize: 9.0,
+              //height: 2,
+            )),
       ],
     );
   }
@@ -431,6 +463,10 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
       _showProgressInd = true;
     });
 
+    print(selectedSlot.dateTime);
+    if (isBooked(selectedSlot.dateTime, entity.entityId)) {
+      print("alreaddyyyyyyy booked, go back");
+    }
     //pr.show();
 
     // Future.delayed(Duration(seconds: 1)).then((value) {
@@ -463,47 +499,50 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
       });
     }).catchError((error, stackTrace) {
       print("Error in token booking" + error.toString());
-
-      Flushbar(
-        //padding: EdgeInsets.zero,
-        margin: EdgeInsets.zero,
-        flushbarPosition: FlushbarPosition.BOTTOM,
-        flushbarStyle: FlushbarStyle.FLOATING,
-        reverseAnimationCurve: Curves.decelerate,
-        forwardAnimationCurve: Curves.easeInToLinear,
-        backgroundColor: Colors.blueGrey[500],
-        boxShadows: [
-          BoxShadow(
-              color: primaryAccentColor,
-              offset: Offset(0.0, 2.0),
-              blurRadius: 3.0)
-        ],
-        isDismissible: false,
-        duration: Duration(seconds: 6),
-        icon: Icon(
-          Icons.error,
-          color: Colors.blueGrey[50],
-        ),
-        showProgressIndicator: false,
-        progressIndicatorBackgroundColor: Colors.blueGrey[800],
-        routeBlur: 10.0,
-        titleText: Text(
-          "Oops! Couldn't book the token.",
-          style: TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: 16.0,
-              color: primaryAccentColor,
-              fontFamily: "ShadowsIntoLightTwo"),
-        ),
-        messageText: Text(
-          " This could be because you already have an active booking for same time.",
-          style: TextStyle(
-              fontSize: 12.0,
-              color: Colors.blueGrey[50],
-              fontFamily: "ShadowsIntoLightTwo"),
-        ),
-      )..show(context);
+      showFlushBar();
     });
+  }
+
+  void showFlushBar() {
+    Flushbar(
+      //padding: EdgeInsets.zero,
+      margin: EdgeInsets.zero,
+      flushbarPosition: FlushbarPosition.BOTTOM,
+      flushbarStyle: FlushbarStyle.FLOATING,
+      reverseAnimationCurve: Curves.decelerate,
+      forwardAnimationCurve: Curves.easeInToLinear,
+      backgroundColor: Colors.blueGrey[500],
+      boxShadows: [
+        BoxShadow(
+            color: primaryAccentColor,
+            offset: Offset(0.0, 2.0),
+            blurRadius: 3.0)
+      ],
+      isDismissible: false,
+      duration: Duration(seconds: 6),
+      icon: Icon(
+        Icons.error,
+        color: Colors.blueGrey[50],
+      ),
+      showProgressIndicator: false,
+      progressIndicatorBackgroundColor: Colors.blueGrey[800],
+      routeBlur: 10.0,
+      titleText: Text(
+        "Oops! Couldn't book the token.",
+        style: TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 16.0,
+            color: primaryAccentColor,
+            fontFamily: "ShadowsIntoLightTwo"),
+      ),
+      messageText: Text(
+        " This could be because you already have an active booking for same time.",
+        style: TextStyle(
+            fontSize: 12.0,
+            color: Colors.blueGrey[50],
+            fontFamily: "ShadowsIntoLightTwo"),
+      ),
+    )..show(context);
   }
 
   void _returnValues(String value) async {

@@ -132,9 +132,9 @@ class _CustomAppBarWithBackButtonState
         barrierDismissible: false,
         context: context,
         builder: (_) => AlertDialog(
-              titlePadding: EdgeInsets.fromLTRB(5, 10, 0, 0),
+              titlePadding: EdgeInsets.fromLTRB(10, 15, 10, 10),
               contentPadding: EdgeInsets.all(0),
-              actionsPadding: EdgeInsets.all(0),
+              actionsPadding: EdgeInsets.all(5),
               //buttonPadding: EdgeInsets.all(0),
               title: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,

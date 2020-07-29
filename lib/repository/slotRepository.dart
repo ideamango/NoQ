@@ -94,3 +94,8 @@ Future<UserToken> bookSlotForStore(MetaEntity meta, Slot slot) async {
   }
   return token;
 }
+
+Future<bool> cancelToken(String tokenId) async {
+  bool returnVal = await TokenService().cancelToken(tokenId);
+  return returnVal;
+}

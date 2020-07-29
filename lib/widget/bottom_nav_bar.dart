@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:noq/dashboard.dart';
+import 'package:noq/db/db_model/entity.dart';
 import 'package:noq/pages/SearchStoresPage.dart';
 import 'package:noq/pages/favs_list_page.dart';
 import 'package:noq/pages/userAccountPage.dart';

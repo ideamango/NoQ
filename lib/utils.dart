@@ -1,6 +1,10 @@
 import 'dart:async';
 
+import 'package:flushbar/flushbar.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:noq/style.dart';
 
 class Utils {
   static String getDayOfWeek(DateTime date) {
@@ -58,5 +62,45 @@ class Utils {
     Position position = await geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.best);
     return position;
+  }
+
+  static void showMyFlushbar(BuildContext context, String title, String msg) {
+    Flushbar(
+      //padding: EdgeInsets.zero,
+      margin: EdgeInsets.zero,
+      flushbarPosition: FlushbarPosition.BOTTOM,
+      flushbarStyle: FlushbarStyle.FLOATING,
+      reverseAnimationCurve: Curves.decelerate,
+      forwardAnimationCurve: Curves.easeInToLinear,
+      backgroundColor: highlightColor,
+      boxShadows: [
+        BoxShadow(
+            color: primaryAccentColor,
+            offset: Offset(0.0, 2.0),
+            blurRadius: 3.0)
+      ],
+      isDismissible: false,
+      duration: Duration(seconds: 6),
+      icon: Icon(
+        Icons.cancel,
+        color: borderColor,
+      ),
+      showProgressIndicator: false,
+      // progressIndicatorBackgroundColor: Colors.blueGrey[800],
+      routeBlur: 1.0,
+      titleText: Text(
+        title,
+        style: TextStyle(
+            //fontWeight: FontWeight.bold,
+            fontSize: 18.0,
+            color: borderColor,
+            fontFamily: "Roboto"),
+      ),
+      messageText: Text(
+        msg,
+        style: TextStyle(
+            fontSize: 14.0, color: Colors.white, fontFamily: "Roboto"),
+      ),
+    )..show(context);
   }
 }

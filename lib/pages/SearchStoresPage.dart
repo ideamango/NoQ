@@ -183,20 +183,17 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
     String defaultMsg = 'No match found. Try again!!';
     String txtMsg = (emptyPageMsg != null) ? emptyPageMsg : defaultMsg;
     return Center(
-        child: Column(
-      children: <Widget>[
-        Expanded(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              Text(txtMsg, style: highlightTextStyle),
-              Text(
-                  'Add your favourite places to quickly browse through later!! ',
-                  style: highlightSubTextStyle),
-            ],
-          ),
-        ),
-      ],
+        child: Container(
+      margin: EdgeInsets.fromLTRB(10, MediaQuery.of(context).size.width * .5,
+          10, MediaQuery.of(context).size.width * .5),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          Text(txtMsg, style: highlightTextStyle),
+          Text('Add your favourite places to quickly browse through later!! ',
+              style: highlightSubTextStyle),
+        ],
+      ),
     ));
   }
 
@@ -238,21 +235,18 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
             titleTxt: "Search",
           ),
           body: Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                // Padding(padding: EdgeInsets.only(top: 20.0)),
-                Text(
-                  "Loading..",
-                  style: TextStyle(fontSize: 20.0, color: borderColor),
-                ),
-                Padding(padding: EdgeInsets.only(top: 20.0)),
-                CircularProgressIndicator(
-                  backgroundColor: primaryAccentColor,
-                  valueColor: AlwaysStoppedAnimation<Color>(Colors.amber),
-                  strokeWidth: 3,
-                )
-              ],
+            child: Container(
+              margin: EdgeInsets.fromLTRB(
+                  10,
+                  MediaQuery.of(context).size.width * .5,
+                  10,
+                  MediaQuery.of(context).size.width * .5),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  showCircularProgress(),
+                ],
+              ),
             ),
           ),
           //drawer: CustomDrawer(),
@@ -488,7 +482,7 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
                         filterBar,
                         (_isSearching == "done")
                             ? _listSearchResults()
-                            : showCircularProgress(),
+                            : _emptySearchPage(),
                       ],
                     ),
                   ),
@@ -628,7 +622,7 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
                                     ),
                                     onPressed: () {
                                       // callPhone('+919611009823');
-//TODO : Edit this to pick phone number of public contact person.
+//TODO : SMita Edit this to pick phone number of public contact person.
                                       callPhone(str.managers[0].ph);
                                     },
                                   ),
@@ -729,7 +723,11 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
                           children: [
                             //Icon(Icons.play_circle_filled, color: Colors.blueGrey[300]),
                             Text('Opens at:', style: labelTextStyle),
-                            //Text(str.opensAt, style: textInputTextStyle),
+                            Text(
+                                str.startTimeHour.toString() +
+                                    ':' +
+                                    str.startTimeMinute.toString(),
+                                style: textInputTextStyle),
                           ],
                         ),
                         Container(
@@ -739,7 +737,11 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
                           children: [
                             //Icon(Icons.pause_circle_filled, color: Colors.blueGrey[300]),
                             Text('Closes at:', style: labelTextStyle),
-                            // Text(str.closesAt, style: textInputTextStyle),
+                            Text(
+                                str.endTimeHour.toString() +
+                                    ':' +
+                                    str.endTimeMinute.toString(),
+                                style: textInputTextStyle),
                           ],
                         ),
                       ]),
