@@ -1,4 +1,6 @@
 import 'package:intl/intl.dart';
+import 'package:noq/db/db_model/list_item.dart';
+import 'package:noq/utils.dart';
 
 class UserToken {
   UserToken(
@@ -12,7 +14,8 @@ class UserToken {
       this.entityName,
       this.lat,
       this.lon,
-      this.entityWhatsApp});
+      this.entityWhatsApp,
+      this.items});
 
   String slotId; //entityID#20~06~01#9~30
   String entityId;
@@ -25,6 +28,7 @@ class UserToken {
   double lat;
   double lon;
   String entityWhatsApp;
+  List<ListItem> items;
 
   //TokenDocumentId is SlotId#UserId it is not auto-generated, will help in not duplicating the record
 
@@ -39,15 +43,12 @@ class UserToken {
         'entityName': entityName,
         'lat': lat,
         'lon': lon,
-        'entityWhatsApp': entityWhatsApp
+        'entityWhatsApp': entityWhatsApp,
+        'items': metaEntitiesToJson(items)
       };
 
   static UserToken fromJson(Map<String, dynamic> json) {
     if (json == null) return null;
-    //print(json['dateTime'].millisecondsSinceEpoch);
-    
-    print(new DateTime.fromMillisecondsSinceEpoch(
-        json['dateTime'].millisecondsSinceEpoch));
     return new UserToken(
         slotId: json['slotId'].toString(),
         entityId: json['entityId'].toString(),
@@ -60,7 +61,8 @@ class UserToken {
         entityName: json['entityName'],
         lat: json['lat'],
         lon: json['lon'],
-        entityWhatsApp: json['entityWhatsApp']);
+        entityWhatsApp: json['entityWhatsApp'],
+        items: convertToListItemsFromJson(json['items']));
   }
 
   String getDisplayName() {
@@ -71,6 +73,27 @@ class UserToken {
     String formattedDate = formatter.format(dateTime);
 
     return name + formattedDate + number.toString();
+  }
+
+  List<dynamic> metaEntitiesToJson(List<ListItem> items) {
+    List<dynamic> itemsJson = new List<dynamic>();
+    if (items == null) return itemsJson;
+    for (ListItem item in items) {
+      itemsJson.add(item.toJson());
+    }
+    return itemsJson;
+  }
+
+  static List<ListItem> convertToListItemsFromJson(
+      List<dynamic> listItemsJson) {
+    List<ListItem> items = new List<ListItem>();
+    if (Utils.isNullOrEmpty(listItemsJson)) return items;
+
+    for (Map<String, dynamic> json in listItemsJson) {
+      ListItem item = ListItem.fromJson(json);
+      items.add(item);
+    }
+    return items;
   }
 
   dynamic myEncode(dynamic item) {

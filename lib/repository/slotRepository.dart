@@ -99,3 +99,14 @@ Future<bool> cancelToken(String tokenId) async {
   bool returnVal = await TokenService().cancelToken(tokenId);
   return returnVal;
 }
+
+Future<bool> updateToken(UserToken token) async {
+  bool result;
+  try {
+    result = await TokenService().updateToken(token);
+    print('Updated token successfully');
+  } catch (e) {
+    print(e.toString());
+  }
+  return result;
+}

@@ -1031,7 +1031,11 @@ class _UserHomePageState extends State<UserHomePage> {
 
   void showShoppingList(UserToken booking) {
     Navigator.push(
-        context, MaterialPageRoute(builder: (context) => ShoppingList()));
+        context,
+        MaterialPageRoute(
+            builder: (context) => ShoppingList(
+                  token: booking,
+                )));
   }
 
   Widget _emptyStorePage(String msg1, String msg2) {
@@ -1065,7 +1069,7 @@ class _UserHomePageState extends State<UserHomePage> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             Container(
-              width: MediaQuery.of(context).size.width * .65,
+              width: MediaQuery.of(context).size.width * .7,
               height: MediaQuery.of(context).size.width * .7 / 3.5,
               child: Column(
                 //mainAxisSize: MainAxisSize.max,
@@ -1073,18 +1077,19 @@ class _UserHomePageState extends State<UserHomePage> {
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: <Widget>[
                   Container(
+                    padding: EdgeInsets.fromLTRB(5, 0, 0, 0),
                     alignment: Alignment.centerLeft,
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
+                        // Text(
+                        //   'TOKEN No. -',
+                        //   style: tokenTextStyle,
+                        //   textAlign: TextAlign.left,
+                        // ),
                         Text(
-                          'TOKEN No. -',
-                          style: tokenTextStyle,
-                          textAlign: TextAlign.left,
-                        ),
-                        Text(
-                          booking.number.toString(),
+                          booking.getDisplayName(),
                           style: tokenTextStyle,
                           textAlign: TextAlign.left,
                         ),
@@ -1103,6 +1108,7 @@ class _UserHomePageState extends State<UserHomePage> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
                       Container(
+                        padding: EdgeInsets.fromLTRB(5, 0, 0, 0),
                         child: Text(
                           booking.entityName + ', ' + address,
                           overflow: TextOverflow.ellipsis,
@@ -1117,8 +1123,10 @@ class _UserHomePageState extends State<UserHomePage> {
                         height: MediaQuery.of(context).size.width * .06,
                         //Text('Where: ', style: tokenHeadingTextStyle),
                         child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: <Widget>[
                             Container(
+                              width: MediaQuery.of(context).size.width * .08,
                               height: MediaQuery.of(context).size.width * .07,
                               child: IconButton(
                                   padding: EdgeInsets.all(0),
@@ -1135,6 +1143,40 @@ class _UserHomePageState extends State<UserHomePage> {
                                   }),
                             ),
                             Container(
+                              width: MediaQuery.of(context).size.width * .08,
+                              height: MediaQuery.of(context).size.width * .07,
+                              // width: 20.0,
+                              child: IconButton(
+                                padding: EdgeInsets.all(0),
+                                alignment: Alignment.center,
+                                highlightColor: Colors.orange[300],
+                                icon: Icon(
+                                  Icons.cancel,
+                                  color: lightIcon,
+                                  size: 22,
+                                ),
+                                onPressed: () => showCancelBooking(booking),
+                              ),
+                            ),
+                            Container(
+                              width: MediaQuery.of(context).size.width * .08,
+                              height: MediaQuery.of(context).size.width * .07,
+                              // width: 20.0,
+                              child: IconButton(
+                                padding: EdgeInsets.all(0),
+                                alignment: Alignment.center,
+                                highlightColor: Colors.orange[300],
+                                icon: Icon(
+                                  Icons.location_on,
+                                  color: lightIcon,
+                                  size: 21,
+                                ),
+                                onPressed: () => launchURL(booking.entityName,
+                                    address, booking.lat, booking.lon),
+                              ),
+                            ),
+                            Container(
+                              width: MediaQuery.of(context).size.width * .08,
                               height: MediaQuery.of(context).size.width * .07,
                               child: IconButton(
                                 padding: EdgeInsets.all(0),
@@ -1157,22 +1199,7 @@ class _UserHomePageState extends State<UserHomePage> {
                               ),
                             ),
                             Container(
-                              height: MediaQuery.of(context).size.width * .07,
-                              // width: 20.0,
-                              child: IconButton(
-                                padding: EdgeInsets.all(0),
-                                alignment: Alignment.center,
-                                highlightColor: Colors.orange[300],
-                                icon: Icon(
-                                  Icons.location_on,
-                                  color: lightIcon,
-                                  size: 22,
-                                ),
-                                onPressed: () => launchURL(booking.entityName,
-                                    address, booking.lat, booking.lon),
-                              ),
-                            ),
-                            Container(
+                              width: MediaQuery.of(context).size.width * .08,
                               height: MediaQuery.of(context).size.width * .07,
                               // width: 20.0,
                               child: IconButton(
@@ -1185,21 +1212,6 @@ class _UserHomePageState extends State<UserHomePage> {
                                   size: 22,
                                 ),
                                 onPressed: () => showShoppingList(booking),
-                              ),
-                            ),
-                            Container(
-                              height: MediaQuery.of(context).size.width * .07,
-                              // width: 20.0,
-                              child: IconButton(
-                                padding: EdgeInsets.all(0),
-                                alignment: Alignment.center,
-                                highlightColor: Colors.orange[300],
-                                icon: Icon(
-                                  Icons.cancel,
-                                  color: lightIcon,
-                                  size: 22,
-                                ),
-                                onPressed: () => showCancelBooking(booking),
                               ),
                             ),
                           ],
@@ -1219,7 +1231,7 @@ class _UserHomePageState extends State<UserHomePage> {
             ),
             Container(
               width: MediaQuery.of(context).size.width * .25,
-              padding: EdgeInsets.fromLTRB(0, 5, 0, 0),
+              // padding: EdgeInsets.fromLTRB(5, 5, 0, 0),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[

@@ -361,4 +361,26 @@ class TokenService {
 
     return true;
   }
+
+  Future<bool> updateToken(UserToken token) async {
+    //this should be restricted on Server, only to be used for testcases
+    final FirebaseUser user = await FirebaseAuth.instance.currentUser();
+    Firestore fStore = Firestore.instance;
+
+    DocumentReference tokRef =
+        fStore.document('tokens/' + token.slotId + '#' + user.phoneNumber);
+
+    try {
+      DocumentSnapshot doc = await tokRef.get();
+      if (doc.exists) {
+        await tokRef.updateData(token.toJson());
+        return true;
+      }
+    } catch (e) {
+      print(e);
+      return false;
+    }
+
+    return false;
+  }
 }

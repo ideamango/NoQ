@@ -201,12 +201,12 @@ final tokenDataTextStyle = TextStyle(
     color: primaryAccentColor,
     //fontWeight: FontWeight.w500,
     fontFamily: 'Montserrat',
-    fontSize: 18.0);
+    fontSize: 15.0);
 final tokenDateTextStyle = TextStyle(
     color: Colors.white,
-    fontWeight: FontWeight.w500,
+    // fontWeight: FontWeight.w500,
     fontFamily: 'Montserrat',
-    fontSize: 18.0);
+    fontSize: 15.0);
 final appBarTextStyle = TextStyle(
     color: Colors.blueGrey[800], fontFamily: 'Montserrat', fontSize: 25.0);
 final homeMsgStyle = TextStyle(
