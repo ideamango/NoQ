@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:noq/constants.dart';
 import 'package:noq/db/db_model/entity.dart';
 import 'package:noq/db/db_model/list_item.dart';
 import 'package:noq/db/db_model/user_token.dart';
 import 'package:noq/pages/service_entity.dart';
 import 'package:noq/repository/slotRepository.dart';
+import 'package:noq/services/mapService.dart';
 import 'package:noq/style.dart';
 import 'package:flutter/foundation.dart';
 import 'package:noq/utils.dart';
@@ -29,6 +31,7 @@ class _ShoppingListState extends State<ShoppingList> {
   String _item;
   bool _initCompleted = false;
   bool _checked = false;
+  String _errMsg;
 
 //Add service Row
 
@@ -54,9 +57,19 @@ class _ShoppingListState extends State<ShoppingList> {
     setState(() {
       ListItem sItem =
           new ListItem(itemName: _item, quantity: "", isDone: false);
-      listOfShoppingItems.insert(0, sItem);
+      listOfShoppingItems.add(sItem);
       _count = _count + 1;
       token.items.add(sItem);
+      //TODO: Smita - Update GS
+    });
+  }
+
+  void _removeServiceRow(ListItem currItem) {
+    setState(() {
+      listOfShoppingItems.remove(currItem);
+      _count = _count - 1;
+      token.items.remove(currItem);
+      print(currItem.itemName + ' deleted ' + currItem.quantity);
       //TODO: Smita - Update GS
     });
   }
@@ -65,83 +78,107 @@ class _ShoppingListState extends State<ShoppingList> {
     TextEditingController itemNameController = new TextEditingController();
     itemNameController.text = newItem.itemName;
     return Container(
-      height: 40,
-      child: Card(
+        height: 40,
+        child: Card(
           semanticContainer: true,
           elevation: 15,
           margin: EdgeInsets.all(2),
-          child: new ListTile(
-            title: Container(
-              margin: EdgeInsets.fromLTRB(0, 0, 0, 14),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: <Widget>[
-                  Container(
-                      height: 40,
-                      width: MediaQuery.of(context).size.width * .5,
-                      child: TextField(
-                        style: TextStyle(fontSize: 14, color: primaryDarkColor),
-                        controller: itemNameController,
-                        decoration: InputDecoration(
-                          //contentPadding: EdgeInsets.all(12),
-                          // labelText: newItem.itemName,
-                          hintText: 'Item name',
-                          hintStyle:
-                              TextStyle(fontSize: 12, color: Colors.grey),
-                          enabledBorder: InputBorder.none,
-                          focusedBorder: InputBorder.none,
-                        ),
-                        onChanged: (value) {
-                          newItem.itemName = value;
-                        },
-                      )
-
-                      // Text(
-                      //   newItem.itemName,ggg
-
-                      // ),
-                      ),
-                  horizontalSpacer,
-                  Container(
-                      width: MediaQuery.of(context).size.width * .15,
-                      height: 40,
-                      child: TextField(
-                        maxLines: 1,
-                        style: TextStyle(fontSize: 14, color: primaryDarkColor),
-                        decoration: InputDecoration(
-                          //contentPadding: EdgeInsets.all(12),
-                          // labelText: labelTextStr,
-                          hintText: 'Quantity',
-                          hintStyle:
-                              TextStyle(fontSize: 12, color: Colors.grey),
-                          enabledBorder: InputBorder.none,
-                          focusedBorder: InputBorder.none,
-                        ),
-                        onChanged: (value) {
-                          newItem.quantity = value;
-                        },
-                      )),
-                  Container(
+          child: Container(
+            height: 45,
+            //padding: EdgeInsets.fromLTRB(4, 8, 4, 14),
+            margin: EdgeInsets.fromLTRB(4, 8, 4, 6),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: <Widget>[
+                Container(
                     height: 40,
-                    margin: EdgeInsets.fromLTRB(0, 0, 0, 4),
-                    width: MediaQuery.of(context).size.width * .06,
-                    child: Checkbox(
-                      value: newItem.isDone,
+                    width: MediaQuery.of(context).size.width * .55,
+                    child: TextField(
+                      cursorColor: highlightColor,
+                      inputFormatters: [
+                        LengthLimitingTextInputFormatter(28),
+                      ],
+                      style: TextStyle(fontSize: 14, color: primaryDarkColor),
+                      controller: itemNameController,
+                      decoration: InputDecoration(
+                        //contentPadding: EdgeInsets.all(12),
+                        // labelText: newItem.itemName,
+                        hintText: 'Item name',
+                        hintStyle: TextStyle(fontSize: 12, color: Colors.grey),
+                        enabledBorder: InputBorder.none,
+                        focusedBorder: InputBorder.none,
+                      ),
                       onChanged: (value) {
-                        setState(() {
-                          newItem.isDone = value;
-                        });
+                        newItem.itemName = value;
                       },
-                      activeColor: primaryIcon,
-                      checkColor: primaryAccentColor,
+                    )
+
+                    // Text(
+                    //   newItem.itemName,ggg
+
+                    // ),
                     ),
-                  )
-                ],
-              ),
+                // horizontalSpacer,
+                Container(
+                    width: MediaQuery.of(context).size.width * .15,
+                    height: 40,
+                    child: TextField(
+                      cursorColor: highlightColor,
+                      inputFormatters: [
+                        LengthLimitingTextInputFormatter(8),
+                      ],
+                      style: TextStyle(fontSize: 14, color: primaryDarkColor),
+                      decoration: InputDecoration(
+                        //contentPadding: EdgeInsets.all(12),
+                        // labelText: labelTextStr,
+                        hintText: 'Quantity',
+                        hintStyle: TextStyle(fontSize: 12, color: Colors.grey),
+                        enabledBorder: InputBorder.none,
+                        focusedBorder: InputBorder.none,
+                      ),
+                      onChanged: (value) {
+                        if (value.length < 8) newItem.quantity = value;
+                      },
+                    )),
+                Container(
+                  height: 40,
+                  margin: EdgeInsets.fromLTRB(0, 0, 0, 4),
+                  width: MediaQuery.of(context).size.width * .06,
+                  child: Checkbox(
+                    value: newItem.isDone,
+                    onChanged: (value) {
+                      setState(() {
+                        newItem.isDone = value;
+                      });
+                    },
+                    activeColor: primaryIcon,
+                    checkColor: primaryAccentColor,
+                  ),
+                ),
+                Container(
+                  height: 45,
+                  margin: EdgeInsets.fromLTRB(0, 0, 0, 0),
+                  padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
+                  width: MediaQuery.of(context).size.width * .1,
+                  child: IconButton(
+                    alignment: Alignment.topCenter,
+                    padding: EdgeInsets.all(0),
+                    icon: Icon(Icons.remove_circle,
+                        color: highlightColor, size: 28),
+                    onPressed: () {
+                      if (_shoppingListFormKey.currentState.validate()) {
+                        _shoppingListFormKey.currentState.save();
+                        _removeServiceRow(newItem);
+                        _listItem.text = "";
+                      }
+                    },
+                  ),
+                ),
+              ],
             ),
-          )),
-    );
+          ),
+        ));
   }
 
   @override
@@ -154,8 +191,11 @@ class _ShoppingListState extends State<ShoppingList> {
 
     final itemField = new TextFormField(
       // autofocus: true,
+      inputFormatters: [
+        LengthLimitingTextInputFormatter(28),
+      ],
       controller: _listItem,
-      cursorColor: Colors.blueGrey[500],
+      cursorColor: highlightColor,
       cursorWidth: 1,
       style: new TextStyle(
         // backgroundColor: Colors.white,
@@ -176,6 +216,7 @@ class _ShoppingListState extends State<ShoppingList> {
       onChanged: (value) {
         setState(() {
           _item = value;
+          _errMsg = "";
         });
       },
       onSaved: (newValue) {
@@ -188,7 +229,45 @@ class _ShoppingListState extends State<ShoppingList> {
       //theme: ThemeData.light().copyWith(),
       home: Scaffold(
         appBar: AppBar(
-            actions: <Widget>[],
+            actions: <Widget>[
+              Container(
+                padding: EdgeInsets.fromLTRB(0, 0, 10, 0),
+                child: IconButton(
+                  icon: ImageIcon(
+                    AssetImage('assets/whatsapp.png'),
+                    size: 28,
+                    color: Colors.white,
+                  ),
+                  onPressed: () {
+                    if (listOfShoppingItems.length != 0) {
+                      print("This list will be shared");
+
+                      var concatenate = StringBuffer();
+                      concatenate.writeln(Text('Shopping List from Sukoon',
+                          style:
+                              TextStyle(decoration: TextDecoration.underline)));
+                      listOfShoppingItems.forEach((item) {
+                        concatenate
+                            .writeln(item.itemName + '-' + item.quantity);
+                      });
+                      print(concatenate);
+
+                      String phoneNo = token.entityWhatsApp;
+                      //TODO Smita - remove once whatsapp number gets populated.
+                      phoneNo = '+919611009823';
+                      if (phoneNo != null)
+                        launchWhatsApp(
+                            message: concatenate.toString(), phone: phoneNo);
+                    } else {
+                      print("Nothing to share, add items to list first. ");
+                      setState(() {
+                        _errMsg = 'Nothing to share, add items to list first.';
+                      });
+                    }
+                  },
+                ),
+              ),
+            ],
             flexibleSpace: Container(
               decoration: gradientBackground,
             ),
@@ -205,7 +284,7 @@ class _ShoppingListState extends State<ShoppingList> {
                 }),
             title: Text(
               title,
-              style: drawerdefaultTextStyle,
+              style: whiteBoldTextStyle1,
               overflow: TextOverflow.ellipsis,
             )),
         body: Center(
@@ -216,6 +295,25 @@ class _ShoppingListState extends State<ShoppingList> {
               padding: const EdgeInsets.all(5.0),
               child: Column(
                 children: <Widget>[
+                  new Expanded(
+                    child: ListView.builder(
+                      shrinkWrap: true,
+                      //scrollDirection: Axis.vertical,
+                      itemBuilder: (BuildContext context, int index) {
+                        return Container(
+                          child: new Column(
+                              children: listOfShoppingItems
+                                  .map(_buildServiceItem)
+                                  .toList()),
+                        );
+                      },
+                      itemCount: 1,
+                    ),
+                  ),
+                  Text(
+                    (_errMsg != null) ? _errMsg : "",
+                    style: errorTextStyle,
+                  ),
                   Card(
                     elevation: 20,
                     child: Container(
@@ -236,11 +334,58 @@ class _ShoppingListState extends State<ShoppingList> {
                                 Expanded(
                                   child: itemField,
                                 ),
+                                // Container(
+                                //   padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
+                                //   child: IconButton(
+                                //     icon: ImageIcon(
+                                //       AssetImage('assets/whatsapp.png'),
+                                //       size: 28,
+                                //       color: Colors.black,
+                                //     ),
+                                //     onPressed: () {
+                                //       if (listOfShoppingItems.length != 0) {
+                                //         print("This list will be shared");
+
+                                //         var concatenate = StringBuffer();
+                                //         concatenate.writeln(Text(
+                                //             'Shopping List from Sukoon',
+                                //             style: TextStyle(
+                                //                 decoration:
+                                //                     TextDecoration.underline)));
+                                //         listOfShoppingItems.forEach((item) {
+                                //           concatenate.writeln(item.itemName +
+                                //               '-' +
+                                //               item.quantity);
+                                //         });
+                                //         print(concatenate);
+
+                                //         String phoneNo = token.entityWhatsApp;
+                                //         //TODO Smita - remove once whatsapp number gets populated.
+                                //         phoneNo = '+919611009823';
+                                //         if (phoneNo != null)
+                                //           launchWhatsApp(
+                                //               message: concatenate.toString(),
+                                //               phone: phoneNo);
+                                //       } else {
+                                //         print(
+                                //             "Nothing to share, add items to list first. ");
+                                //         setState(() {
+                                //           _errMsg =
+                                //               'Nothing to share, add items to list first.';
+                                //         });
+                                //       }
+                                //     },
+                                //   ),
+                                // ),
                                 Container(
-                                  padding: EdgeInsets.fromLTRB(0, 0, 0, 5),
+                                  padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
+                                  width: MediaQuery.of(context).size.width * .1,
+                                  height:
+                                      MediaQuery.of(context).size.width * .1,
                                   child: IconButton(
+                                    padding: EdgeInsets.all(0),
                                     icon: Icon(Icons.add_circle,
-                                        color: highlightColor, size: 40),
+                                        color: highlightColor, size: 32),
                                     onPressed: () {
                                       if (_shoppingListFormKey.currentState
                                           .validate()) {
@@ -257,21 +402,6 @@ class _ShoppingListState extends State<ShoppingList> {
                           ),
                         ],
                       ),
-                    ),
-                  ),
-                  new Expanded(
-                    child: ListView.builder(
-                      shrinkWrap: true,
-                      //scrollDirection: Axis.vertical,
-                      itemBuilder: (BuildContext context, int index) {
-                        return Container(
-                          child: new Column(
-                              children: listOfShoppingItems
-                                  .map(_buildServiceItem)
-                                  .toList()),
-                        );
-                      },
-                      itemCount: 1,
                     ),
                   ),
                 ],

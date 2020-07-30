@@ -274,6 +274,8 @@ class EntityService {
               "User is not admin, hence can't make other users as admin");
         }
 
+        print("1");
+
         DocumentSnapshot usrDoc = await tx.get(userRef);
 
         if (usrDoc.exists) {
@@ -282,6 +284,7 @@ class EntityService {
           if (u.entities == null) {
             u.entities = new List<MetaEntity>();
           }
+          print("2");
 
           bool entityAlreadyExistsInUser = false;
           for (MetaEntity meta in u.entities) {
@@ -289,17 +292,20 @@ class EntityService {
               entityAlreadyExistsInUser = true;
               break;
             }
+            print("3");
           }
           if (!entityAlreadyExistsInUser) {
             u.entities.add(ent.getMetaEntity());
-            await tx.set(userRef, u.toJson());
+            //await tx.set(userRef, u.toJson());
+            print("4");
           }
         } else {
           // a new user will be added in the user table for that phone number
           u = new User(id: null, ph: phone, name: null);
           u.entities = new List<MetaEntity>();
           u.entities.add(ent.getMetaEntity());
-          await tx.set(userRef, u.toJson());
+
+          print("5");
         }
 
         // //now update the entity
@@ -319,8 +325,15 @@ class EntityService {
 
         if (!ePrivate.roles.containsKey(phone)) {
           ePrivate.roles[phone] = "admin";
-          await tx.set(entityPrivateRef, ePrivate.toJson());
+
+          print("6");
         }
+
+        print("7a");
+        await tx.set(userRef, u.toJson());
+        await tx.set(entityPrivateRef, ePrivate.toJson());
+        await tx.set(entityRef, ent.toJson());
+        print("7");
       } catch (e) {
         print("Transactio Error: While making admin - " + e.toString());
         isSuccess = false;
@@ -469,6 +482,8 @@ class EntityService {
 
           await tx.set(entityRef, parentEntity.toJson());
 
+          await tx.set(parentEntityPrivateRef, parentEntityPrivate.toJson());
+
           await tx.set(childEntityPrivateRef, childEntityPrivate.toJson());
 
           await tx.set(childRef, childEntity.toJson());
@@ -503,21 +518,22 @@ class EntityService {
     bool isSuccess = true;
 
     final DocumentReference userRef = fStore.document('users/' + phone);
-    final DocumentReference entityRef = fStore.document('entities/' + entityId);
+    //final DocumentReference entityRef = fStore.document('entities/' + entityId);
     final DocumentReference entityPrivateRef =
         fStore.document('entities/' + entityId + '/private_data/private');
 
     await fStore.runTransaction((Transaction tx) async {
       try {
-        DocumentSnapshot entityDoc = await tx.get(entityRef);
-        if (!entityDoc.exists) {
+        //DocumentSnapshot entityDoc = await tx.get(entityRef);
+
+        //Entity ent = Entity.fromJson(entityDoc.data);
+
+        DocumentSnapshot ePrivateDoc = await tx.get(entityPrivateRef);
+        if (!ePrivateDoc.exists) {
           throw new EntityDoesNotExistsException(
               "Admin can't be added for the entity which does not exist");
         }
 
-        Entity ent = Entity.fromJson(entityDoc.data);
-
-        DocumentSnapshot ePrivateDoc = await tx.get(entityPrivateRef);
         EntityPrivate ePrivate = EntityPrivate.fromJson(ePrivateDoc.data);
 
         //if (ent.isAdmin(fireUser.uid) == -1) {
@@ -541,7 +557,7 @@ class EntityService {
           int count = -1;
           for (MetaEntity meta in u.entities) {
             count++;
-            if (meta.entityId == ent.entityId) {
+            if (meta.entityId == entityId) {
               entityAlreadyExistsInUser = true;
               break;
             }
@@ -716,7 +732,7 @@ class EntityService {
 
     try {
       for (DocumentSnapshot ds in await stream.first) {
-        Entity me = Entity.fromJson(ds.data);   
+        Entity me = Entity.fromJson(ds.data);
         me.distance = center.distance(
             lat: me.coordinates.geopoint.latitude,
             lng: me.coordinates.geopoint.longitude);

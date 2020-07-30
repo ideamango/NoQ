@@ -173,7 +173,7 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
                                             _dateFormatted +
                                             ".",
                                         style: TextStyle(
-                                            color: Colors.white, fontSize: 15),
+                                            color: Colors.white, fontSize: 13),
                                       )
                                     : (isBooked(selectedSlot.dateTime,
                                             entity.entityId))
@@ -181,13 +181,13 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
                                             'You already have a booking at $bookingTime on $bookingDate',
                                             style: TextStyle(
                                                 color: primaryAccentColor,
-                                                fontSize: 15),
+                                                fontSize: 13),
                                           )
                                         : Text(
                                             'You selected a slot at $bookingTime on $bookingDate',
                                             style: TextStyle(
                                                 color: highlightColor,
-                                                fontSize: 15),
+                                                fontSize: 13),
                                           ),
                               ],
                             ),

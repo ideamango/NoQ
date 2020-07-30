@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flushbar/flushbar_route.dart';
@@ -186,9 +188,13 @@ class _UserHomePageState extends State<UserHomePage> {
         isBookable: true,
         isActive: isActive,
         coordinates: geoPoint);
-
-    bool added = await EntityService()
-        .upsertChildEntityToParent(child1, 'Entity101', "testregnum");
+    try {
+      bool added = await EntityService()
+          .upsertChildEntityToParent(child1, 'Entity101', "testregnum");
+    } catch (e) {
+      print("Exception while creating Child101: " + e.toString());
+    }
+    print("Child1 created....");
   }
 
   void updateChildEntity(String id, String name) {
