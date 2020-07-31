@@ -74,7 +74,7 @@ class GlobalState {
   Future<bool> updateSearchResults(List<Entity> list) async {
     _gs.pastSearches = list;
 
-    saveGlobalState();
+    // saveGlobalState();
     return true;
   }
 

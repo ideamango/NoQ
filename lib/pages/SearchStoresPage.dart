@@ -184,8 +184,8 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
     String txtMsg = (emptyPageMsg != null) ? emptyPageMsg : defaultMsg;
     return Center(
         child: Container(
-      margin: EdgeInsets.fromLTRB(10, MediaQuery.of(context).size.width * .5,
-          10, MediaQuery.of(context).size.width * .5),
+      margin: EdgeInsets.fromLTRB(10, MediaQuery.of(context).size.width * .45,
+          10, MediaQuery.of(context).size.width * .45),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
@@ -476,15 +476,26 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
             body: Center(
               child: Column(
                 children: <Widget>[
+                  filterBar,
                   Expanded(
-                    child: Column(
-                      children: <Widget>[
-                        filterBar,
-                        (_isSearching == "done")
-                            ? _listSearchResults()
-                            : _emptySearchPage(),
-                      ],
-                    ),
+                    child: (_isSearching == "done")
+                        ? _listSearchResults()
+                        //Else could be one when isSearching is 'searching', show circular progress.
+                        : Center(
+                            child: Container(
+                              margin: EdgeInsets.fromLTRB(
+                                  10,
+                                  MediaQuery.of(context).size.width * .45,
+                                  10,
+                                  MediaQuery.of(context).size.width * .45),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: <Widget>[
+                                  showCircularProgress(),
+                                ],
+                              ),
+                            ),
+                          ),
                   ),
                 ],
               ),

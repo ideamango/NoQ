@@ -217,7 +217,7 @@ final homeMsgStyle3 =
     TextStyle(color: highlightColor, fontFamily: 'Montserrat', fontSize: 20.0);
 
 final highlightTextStyle = TextStyle(
-    color: Colors.blueGrey[800], fontFamily: 'Montserrat', fontSize: 20.0);
+    color: Colors.blueGrey[800], fontFamily: 'Montserrat', fontSize: 19.0);
 
 final BoxDecoration darkContainer = new BoxDecoration(
     border: Border.all(color: Colors.blueGrey[500]),
