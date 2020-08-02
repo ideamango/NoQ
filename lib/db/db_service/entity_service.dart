@@ -308,21 +308,6 @@ class EntityService {
           print("5");
         }
 
-        // //now update the entity
-        // bool isAlreadyAdmin = false;
-
-        // for (MetaUser usr in ent.admins) {
-        //   if (usr.id == phone) {
-        //     isAlreadyAdmin = true;
-        //     break;
-        //   }
-        // }
-
-        // if (!isAlreadyAdmin) {
-        //   ent.admins.add(u.getMetaUser());
-        //   tx.set(entityRef, ent.toJson());
-        // }
-
         if (!ePrivate.roles.containsKey(phone)) {
           ePrivate.roles[phone] = "admin";
 

@@ -134,7 +134,7 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
 
       // }
     } else if (_state.pastSearches != null && _state.pastSearches.length == 0)
-      emptyPageMsg = "No search history. Explore nearby now. ";
+      emptyPageMsg = "No match found. Try again!!";
     //  _list = _stores;
   }
 
@@ -180,7 +180,7 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
   }
 
   Widget _emptySearchPage() {
-    String defaultMsg = 'No match found. Try again!!';
+    String defaultMsg = 'No matching results.Try again. ';
     String txtMsg = (emptyPageMsg != null) ? emptyPageMsg : defaultMsg;
     return Center(
         child: Container(

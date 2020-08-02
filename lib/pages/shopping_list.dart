@@ -244,13 +244,24 @@ class _ShoppingListState extends State<ShoppingList> {
                       print("This list will be shared");
 
                       var concatenate = StringBuffer();
-                      // concatenate.writeln(Text('Shopping List from Sukoon',
-                      //     style:
-                      //         TextStyle(decoration: TextDecoration.underline)));
-                      listOfShoppingItems.forEach((item) {
-                        concatenate
-                            .writeln(item.itemName + '-' + item.quantity);
-                      });
+                      // Widget heading = Text(
+                      //   'Shopping List from Sukoon',
+                      //   style: TextStyle(decoration: TextDecoration.underline),
+                      // );
+                      concatenate.writeln('Shopping List from Sukoon');
+                      concatenate.writeln('-----------------------------');
+                      //concatenate.writeln(heading);
+                      for (int i; i < listOfShoppingItems.length; i++) {
+                        print('i----' +
+                            listOfShoppingItems[i].itemName +
+                            ' - ' +
+                            listOfShoppingItems[i].quantity);
+                        if (listOfShoppingItems[i].itemName == null ||
+                            listOfShoppingItems[i].itemName.isEmpty) return;
+                        concatenate.writeln(listOfShoppingItems[i].itemName +
+                            ' - ' +
+                            listOfShoppingItems[i].quantity);
+                      }
                       print(concatenate);
 
                       String phoneNo = token.entityWhatsApp;
