@@ -1,17 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:noq/db/db_model/entity.dart';
+import 'package:noq/db/db_model/meta_entity.dart';
 import 'package:noq/pages/entity_services_details_page.dart';
 import 'package:noq/style.dart';
 import 'package:flutter/foundation.dart';
 
-class ServiceRow extends StatefulWidget {
+class ChildEntityRow extends StatefulWidget {
   final Entity childEntity;
-  ServiceRow({Key key, @required this.childEntity}) : super(key: key);
+  ChildEntityRow({Key key, @required this.childEntity}) : super(key: key);
   @override
-  State<StatefulWidget> createState() => new ServiceRowState();
+  State<StatefulWidget> createState() => new ChildEntityRowState();
 }
 
-class ServiceRowState extends State<ServiceRow> {
+class ChildEntityRowState extends State<ChildEntityRow> {
   Entity serviceEntity;
 
   @override

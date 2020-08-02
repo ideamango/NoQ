@@ -76,7 +76,6 @@ class EntityService {
             currentUser.entities = new List<MetaEntity>();
           }
           currentUser.entities.add(entity.getMetaEntity());
-          await tx.set(userRef, currentUser.toJson());
         } else {
           //will happen when entity exists i.e. update scenario and current user is the admin,
           //then check for the meta-entity if anything is modified
@@ -85,10 +84,9 @@ class EntityService {
               !entity.getMetaEntity().isEqual(existingEntity.getMetaEntity())) {
             int index = currentUser.isEntityAdmin(entity.entityId);
             currentUser.entities[index] = entity.getMetaEntity();
-            await tx.set(userRef, currentUser.toJson());
           }
         }
-
+        await tx.set(userRef, currentUser.toJson());
         //TODO: Update the meta in other Admin objects too
         await tx.set(entityPrivateRef, ePrivate.toJson());
 
@@ -274,8 +272,6 @@ class EntityService {
               "User is not admin, hence can't make other users as admin");
         }
 
-        print("1");
-
         DocumentSnapshot usrDoc = await tx.get(userRef);
 
         if (usrDoc.exists) {
@@ -284,7 +280,6 @@ class EntityService {
           if (u.entities == null) {
             u.entities = new List<MetaEntity>();
           }
-          print("2");
 
           bool entityAlreadyExistsInUser = false;
           for (MetaEntity meta in u.entities) {
@@ -292,37 +287,28 @@ class EntityService {
               entityAlreadyExistsInUser = true;
               break;
             }
-            print("3");
           }
           if (!entityAlreadyExistsInUser) {
             u.entities.add(ent.getMetaEntity());
             //await tx.set(userRef, u.toJson());
-            print("4");
           }
         } else {
           // a new user will be added in the user table for that phone number
           u = new User(id: null, ph: phone, name: null);
           u.entities = new List<MetaEntity>();
           u.entities.add(ent.getMetaEntity());
-
-          print("5");
         }
 
         if (!ePrivate.roles.containsKey(phone)) {
           ePrivate.roles[phone] = "admin";
-
-          print("6");
         }
 
-        print("7a");
         await tx.set(userRef, u.toJson());
         await tx.set(entityPrivateRef, ePrivate.toJson());
         await tx.set(entityRef, ent.toJson());
-        print("7");
       } catch (e) {
         print("Transactio Error: While making admin - " + e.toString());
         isSuccess = false;
-        throw e;
       }
     });
 
@@ -420,26 +406,9 @@ class EntityService {
               throw new AccessDeniedException(
                   "User is not admin of existing child entity");
             } else {
-              // current user is already an admin so nothing to be done
-              // MetaUser mu = new MetaUser(
-              //     id: fireUser.uid,
-              //     name: fireUser.displayName,
-              //     ph: fireUser.phoneNumber);
-              //childEntity.admins = existingChildEntity.admins;
-              //childEntity.admins[userIndex] = mu;
-
+              //do nothing
             }
           } else {
-            //child entity does not exist yet
-            // MetaUser mu = new MetaUser(
-            //     id: fireUser.uid,
-            //     name: fireUser.displayName,
-            //     ph: fireUser.phoneNumber);
-            // if (childEntity.admins == null) {
-            //   childEntity.admins = new List<MetaUser>();
-            // }
-            // childEntity.admins.add(mu);
-
             childEntityPrivate = new EntityPrivate(
                 registrationNumber: childRegNum,
                 roles: {fireUser.phoneNumber: "admin"});
@@ -480,12 +449,10 @@ class EntityService {
               "Parent entity does not exist");
         }
 
-        return true;
+        isSuccess = true;
       } catch (e) {
         print(e);
         isSuccess = false;
-        //throw e;
-        return false;
       }
     });
 
@@ -555,21 +522,6 @@ class EntityService {
           //nothing to be done as user does not exists - removal does not make sense
         }
 
-        // int index = -1;
-        // //for (MetaUser usr in ent.admins) {
-        //   for(String adminPhone in ePrivate.roles.keys)
-        //   index++;
-        //   if (adminPhone == phone) {
-        //     isAlreadyAdmin = true;
-        //     break;
-        //   }
-        // }
-
-        // if (isAlreadyAdmin) {
-        //   ent.admins.removeAt(index);
-        //   tx.set(entityRef, ent.toJson());
-        // }
-
         if (ePrivate.roles.containsKey(phone)) {
           ePrivate.roles.remove(phone);
           tx.set(entityPrivateRef, ePrivate.toJson());
@@ -577,7 +529,6 @@ class EntityService {
       } catch (e) {
         print("Transactio Error: While removing admin - " + e.toString());
         isSuccess = false;
-        throw e;
       }
     });
 
@@ -623,7 +574,6 @@ class EntityService {
         print(
             "Transactio Error: While adding favourite admin - " + e.toString());
         isSuccess = false;
-        throw e;
       }
     });
 
@@ -669,7 +619,6 @@ class EntityService {
         print(
             "Transactio Error: While adding favourite admin - " + e.toString());
         isSuccess = false;
-        throw e;
       }
     });
 
@@ -724,7 +673,7 @@ class EntityService {
         entities.add(me);
       }
     } catch (e) {
-      print("Search failed: " + e);
+      print("Search failed: " + e.toString());
     }
 
     return entities;

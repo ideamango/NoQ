@@ -926,8 +926,9 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
                                   closeTimeField,
                                   breakSartTimeField,
                                   breakEndTimeField,
-                                  daysClosedField,
+
                                   maxpeopleInASlot,
+                                  daysClosedField,
                                 ],
                               ),
                             ),
@@ -941,17 +942,18 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
                   ),
                   Container(
                     decoration: BoxDecoration(
-                        border: Border.all(color: borderColor),
+                        border: Border.all(color: containerColor),
                         color: Colors.grey[50],
                         shape: BoxShape.rectangle,
                         borderRadius: BorderRadius.all(Radius.circular(5.0))),
-                    // padding: EdgeInsets.all(5.0),
+                    //padding: EdgeInsets.all(5.0),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
                         Column(
                           children: <Widget>[
                             Container(
+                              //padding: EdgeInsets.only(left: 5),
                               decoration: darkContainer,
                               child: Theme(
                                 data: ThemeData(
@@ -993,51 +995,24 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
                         Container(
                           padding: EdgeInsets.only(left: 5.0, right: 5),
                           child: Column(
-                            mainAxisAlignment: MainAxisAlignment.start,
                             children: <Widget>[
-                              // RaisedButton(
-                              //   elevation: 20,
-                              //   color: btnColor,
-                              //   splashColor: highlightColor,
-                              //   textColor: Colors.white,
-                              //   shape: RoundedRectangleBorder(
-                              //       side: BorderSide(color: btnColor)),
-                              //   child: Text('Use current location'),
-                              //   onPressed: _getCurrLocation,
-                              // ),
-                              Text("Address:"),
-
-                              adrsField1,
-
-                              Padding(
-                                padding:
-                                    const EdgeInsets.fromLTRB(0, 0, 0, 8.0),
-                                child: TextFormField(
-                                  obscureText: false,
-                                  maxLines: 1,
-                                  minLines: 1,
-                                  style: textInputTextStyle,
-                                  // controller: _nameController,
-                                  //initialValue: serviceEntity.name,
-                                  keyboardType: TextInputType.text,
-                                  decoration: CommonStyle.textFieldStyle(
-                                      labelTextStr: "Add Landmark",
-                                      hintTextStr: "e.g. Near Block1 etc"),
-                                  validator: validateText,
-                                  onChanged: (String value) {
-                                    serviceEntity.name = value;
-                                  },
-                                  onSaved: (String value) {
-                                    serviceEntity.name = value;
-                                  },
-                                ),
+                              RaisedButton(
+                                elevation: 20,
+                                color: btnColor,
+                                splashColor: highlightColor,
+                                textColor: Colors.white,
+                                shape: RoundedRectangleBorder(
+                                    side: BorderSide(color: btnColor)),
+                                child: Text('Use current location'),
+                                onPressed: _getCurrLocation,
                               ),
-                              //landmarkField2,
-                              // localityField,
-                              //cityField,
-                              //stateField,
-                              //pinField,
-                              //countryField,
+                              adrsField1,
+                              landmarkField2,
+                              localityField,
+                              cityField,
+                              stateField,
+                              pinField,
+                              countryField,
                             ],
                           ),
                         ),

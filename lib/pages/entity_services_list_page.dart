@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:noq/constants.dart';
 import 'package:noq/db/db_model/entity.dart';
 import 'package:noq/db/db_model/meta_entity.dart';
+import 'package:noq/db/db_service/entity_service.dart';
 import 'package:noq/pages/service_entity.dart';
 import 'package:noq/repository/local_db_repository.dart';
 import 'package:noq/style.dart';
@@ -20,8 +21,9 @@ class EntityServicesListPage extends StatefulWidget {
 class _EntityServicesListPageState extends State<EntityServicesListPage> {
   String _msg;
   final GlobalKey<FormState> _servicesListFormKey = new GlobalKey<FormState>();
-  List<Entity> servicesList = new List<Entity>();
+  List<MetaEntity> servicesList = new List<MetaEntity>();
   final String title = "Services Detail Form";
+  Map<String, Entity> _entityMap = Map<String, Entity>();
 
   Entity parentEntity;
   String _subEntityType;
@@ -35,17 +37,21 @@ class _EntityServicesListPageState extends State<EntityServicesListPage> {
     super.dispose();
   }
 
+  Future<Entity> getEntityById(String id) async {
+    Entity e = await EntityService().getEntity(id);
+    return e;
+  }
+
   @override
   void initState() {
     super.initState();
     parentEntity = widget.entity;
     if (parentEntity == null)
-      servicesList = List<Entity>();
+      servicesList = List<MetaEntity>();
     else {
       if (!Utils.isNullOrEmpty(parentEntity.childEntities))
         setState(() {
-          //TODO:Change to metaEn SMita
-          //  servicesList = parentEntity.childEntities;
+          servicesList = parentEntity.childEntities;
         });
     }
   }
@@ -53,24 +59,23 @@ class _EntityServicesListPageState extends State<EntityServicesListPage> {
   void _addNewServiceRow() {
     setState(() {
       var uuid = new Uuid();
-      String _serviceId = uuid.v1();
+      String serviceId = uuid.v1();
       Entity en = new Entity();
       en.type = _subEntityType;
-      en.entityId = _serviceId;
+      en.entityId = serviceId;
       en.parentId = parentEntity.entityId;
 
-      // .cType(
-      //     _serviceId, _subEntityType, parentEntity.id, parentEntity.adrs);
+      _entityMap[en.entityId] = en;
 
-      servicesList.add(en);
-      //  entity.childCollection.add(c);
-      //   saveChildEntity(c);
+      MetaEntity meta = en.getMetaEntity();
+      servicesList.add(meta);
       _count = _count + 1;
     });
   }
 
-  Widget _buildServiceItem(Entity childEntity) {
-    return new ServiceRow(childEntity: childEntity);
+  Widget _buildServiceItem(MetaEntity childEntity) {
+    Entity ent = _entityMap[childEntity.entityId];
+    return new ChildEntityRow(childEntity: ent);
   }
 
   @override

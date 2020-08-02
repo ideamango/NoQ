@@ -317,13 +317,13 @@ class _UserHomePageState extends State<UserHomePage> {
 
     User u = await UserService().getCurrentUser();
 
-    // try {
-    //   await createChildEntityAndAddToParent(
-    //       'Child101-1', "Bata", true); //should fail as entity does not exists
-    // } catch (EntityDoesNotExistsException) {
-    //   print(
-    //       "EntityService.upsertChildEntityToParent (expected exception thrown) --> SUCCESS");
-    // }
+    try {
+      await createChildEntityAndAddToParent(
+          'Child101-1', "Bata", true); //should fail as entity does not exists
+    } catch (EntityDoesNotExistsException) {
+      print(
+          "EntityService.upsertChildEntityToParent (expected exception thrown) --> SUCCESS");
+    }
     await createEntity();
 
     await createEntity2();
@@ -1389,7 +1389,7 @@ class _UserHomePageState extends State<UserHomePage> {
       await EntityService()
           .upsertChildEntityToParent(entity, "Entity101", "SampleChildRegNum");
     } catch (e) {
-      print("Exception occured " + e);
+      print("Exception occured " + e.toString());
     }
   }
 }
