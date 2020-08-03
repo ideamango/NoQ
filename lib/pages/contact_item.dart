@@ -80,13 +80,13 @@ class ContactRowState extends State<ContactRow> {
       keyboardType: TextInputType.text,
       controller: _ctEmpIdController,
       decoration: CommonStyle.textFieldStyle(
-          labelTextStr: "Person Id", hintTextStr: ""),
+          labelTextStr: "Employee Id", hintTextStr: ""),
       validator: validateText,
       onChanged: (String value) {
-        contact.id = value;
+        contact.employeeId = value;
       },
       onSaved: (String value) {
-        contact.id = value;
+        contact.employeeId = value;
       },
     );
     final ctPhn1Field = TextFormField(
@@ -116,9 +116,9 @@ class ContactRowState extends State<ContactRow> {
       decoration: CommonStyle.textFieldStyle(
           prefixText: '+91', labelTextStr: "Alternate Phone", hintTextStr: ""),
       validator: Utils.validateMobile,
-      // onChanged: (String value) {
-      //   contact.altPhone = "+91" + value;
-      // },
+      onChanged: (String value) {
+        contact.altPhone = "+91" + value;
+      },
       onSaved: (value) {
         contact.altPhone = "+91" + value;
       },
@@ -145,6 +145,11 @@ class ContactRowState extends State<ContactRow> {
           print(time);
 
           _ctAvlFromTimeController.text = time.toLowerCase();
+          if (_ctAvlFromTimeController.text != "") {
+            List<String> time = _ctAvlFromTimeController.text.split(':');
+            contact.shiftStartHour = int.parse(time[0]);
+            contact.shiftStartMinute = int.parse(time[1]);
+          }
         }, currentTime: DateTime.now());
       },
       decoration: InputDecoration(
@@ -208,6 +213,11 @@ class ContactRowState extends State<ContactRow> {
           print(time);
 
           _ctAvlTillTimeController.text = time.toLowerCase();
+          if (_ctAvlTillTimeController.text != "") {
+            List<String> time = _ctAvlTillTimeController.text.split(':');
+            contact.shiftEndHour = int.parse(time[0]);
+            contact.shiftEndMinute = int.parse(time[1]);
+          }
         }, currentTime: DateTime.now());
       },
       decoration: InputDecoration(
@@ -224,12 +234,7 @@ class ContactRowState extends State<ContactRow> {
         contact.shiftEndHour = int.parse(time[0]);
         contact.shiftEndMinute = int.parse(time[1]);
       },
-      onSaved: (String value) {
-        //TODO: test the values
-        List<String> time = value.split(':');
-        contact.shiftEndHour = int.parse(time[0]);
-        contact.shiftEndMinute = int.parse(time[1]);
-      },
+      onSaved: (String value) {},
     );
     final daysOffField = Padding(
       padding: EdgeInsets.only(top: 12, bottom: 8),

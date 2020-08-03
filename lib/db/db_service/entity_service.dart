@@ -90,6 +90,13 @@ class EntityService {
         //TODO: Update the meta in other Admin objects too
         await tx.set(entityPrivateRef, ePrivate.toJson());
 
+        if (entity.createdAt != null) {
+          entity.modifiedAt = DateTime.now();
+        } else {
+          entity.createdAt = DateTime.now();
+          entity.modifiedAt = DateTime.now();
+        }
+
         await tx.set(entityRef, entity.toJson());
 
         isSuccess = true;
@@ -440,6 +447,13 @@ class EntityService {
 
           await tx.set(childEntityPrivateRef, childEntityPrivate.toJson());
 
+          if (childEntity.createdAt != null) {
+            childEntity.modifiedAt = DateTime.now();
+          } else {
+            childEntity.createdAt = DateTime.now();
+            childEntity.modifiedAt = DateTime.now();
+          }
+
           await tx.set(childRef, childEntity.toJson());
 
           isSuccess = true;
@@ -451,7 +465,7 @@ class EntityService {
 
         isSuccess = true;
       } catch (e) {
-        print(e);
+        print('Error upsert child to parent' + e);
         isSuccess = false;
       }
     });

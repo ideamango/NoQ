@@ -11,18 +11,18 @@ import 'package:flutter/foundation.dart';
 import 'package:noq/utils.dart';
 import 'package:uuid/uuid.dart';
 
-class EntityServicesListPage extends StatefulWidget {
+class ChildEntitiesListPage extends StatefulWidget {
   final Entity entity;
-  EntityServicesListPage({Key key, @required this.entity}) : super(key: key);
+  ChildEntitiesListPage({Key key, @required this.entity}) : super(key: key);
   @override
-  _EntityServicesListPageState createState() => _EntityServicesListPageState();
+  _ChildEntitiesListPageState createState() => _ChildEntitiesListPageState();
 }
 
-class _EntityServicesListPageState extends State<EntityServicesListPage> {
+class _ChildEntitiesListPageState extends State<ChildEntitiesListPage> {
   String _msg;
   final GlobalKey<FormState> _servicesListFormKey = new GlobalKey<FormState>();
   List<MetaEntity> servicesList = new List<MetaEntity>();
-  final String title = "Services Detail Form";
+  final String title = "Child Entities Detail Form";
   Map<String, Entity> _entityMap = Map<String, Entity>();
 
   Entity parentEntity;
@@ -52,6 +52,9 @@ class _EntityServicesListPageState extends State<EntityServicesListPage> {
       if (!Utils.isNullOrEmpty(parentEntity.childEntities))
         setState(() {
           servicesList = parentEntity.childEntities;
+          // for (int i = 0; i < servicesList.length; i++) {
+          //   _entityMap[servicesList[i].entityId] = servicesList[i];
+          // }
         });
     }
   }
@@ -74,8 +77,7 @@ class _EntityServicesListPageState extends State<EntityServicesListPage> {
   }
 
   Widget _buildServiceItem(MetaEntity childEntity) {
-    Entity ent = _entityMap[childEntity.entityId];
-    return new ChildEntityRow(childEntity: ent);
+    return new ChildEntityRow(childEntity: childEntity, entityMap: _entityMap);
   }
 
   @override
@@ -124,9 +126,11 @@ class _EntityServicesListPageState extends State<EntityServicesListPage> {
       },
     );
     String title = "Manage Services in " +
-        ((parentEntity.name).isEmpty
-            ? (parentEntity.type)
-            : (parentEntity.name));
+        ((parentEntity != null)
+            ? ((parentEntity.name == null)
+                ? parentEntity.type
+                : parentEntity.name)
+            : 'XXX');
     return MaterialApp(
       title: 'Add child entities',
       //theme: ThemeData.light().copyWith(),

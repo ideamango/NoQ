@@ -28,8 +28,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uuid/uuid.dart';
 
 class ServiceEntityDetailsPage extends StatefulWidget {
-  final Entity serviceMetaEntity;
-  ServiceEntityDetailsPage({Key key, @required this.serviceMetaEntity})
+  final Entity childEntity;
+  ServiceEntityDetailsPage({Key key, @required this.childEntity})
       : super(key: key);
   @override
   _ServiceEntityDetailsPageState createState() =>
@@ -43,6 +43,7 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
   final Geolocator geolocator = Geolocator()..forceAndroidLocationManager;
 
   TextEditingController _nameController = TextEditingController();
+  TextEditingController _descController = TextEditingController();
   TextEditingController _regNumController = TextEditingController();
   TextEditingController _closeTimeController = TextEditingController();
   TextEditingController _openTimeController = TextEditingController();
@@ -50,6 +51,8 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
   TextEditingController _breakEndController = TextEditingController();
 
   TextEditingController _maxPeopleController = TextEditingController();
+  TextEditingController _slotDurationController = TextEditingController();
+  TextEditingController _whatsappPhoneController = TextEditingController();
   List<String> _closedOnDays = List<String>();
   // TextEditingController _subAreaController = TextEditingController();
   TextEditingController _adrs1Controller = TextEditingController();
@@ -95,7 +98,7 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
   @override
   void initState() {
     super.initState();
-    serviceEntity = widget.serviceMetaEntity;
+    serviceEntity = widget.childEntity;
     // var uuid = new Uuid();
     // serviceEntity.id = uuid.v1();
     _getCurrLocation();
@@ -266,7 +269,7 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
             context,
             MaterialPageRoute(
                 builder: (context) =>
-                    EntityServicesListPage(entity: this.serviceEntity)));
+                    ChildEntitiesListPage(entity: this.serviceEntity)));
       }
     });
   }
@@ -305,6 +308,24 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
         serviceEntity.name = value;
       },
     );
+    final descField = TextFormField(
+      obscureText: false,
+      //minLines: 1,
+      style: textInputTextStyle,
+      controller: _descController,
+      decoration: CommonStyle.textFieldStyle(
+          labelTextStr: "Description", hintTextStr: ""),
+      validator: validateText,
+      keyboardType: TextInputType.multiline,
+      maxLength: null,
+      maxLines: 3,
+      onChanged: (String value) {
+        serviceEntity.description = value;
+      },
+      onSaved: (String value) {
+        serviceEntity.description = value;
+      },
+    );
     final regNumField = TextFormField(
       obscureText: false,
       maxLines: 1,
@@ -339,10 +360,15 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
           print('confirm $date');
           //  String time = "${date.hour}:${date.minute} ${date.";
 
-          String time = DateFormat.jm().format(date);
+          String time = DateFormat.Hm().format(date);
           print(time);
 
           _openTimeController.text = time.toLowerCase();
+          if (_openTimeController.text != "") {
+            List<String> time = _openTimeController.text.split(':');
+            serviceEntity.startTimeHour = int.parse(time[0]);
+            serviceEntity.startTimeMinute = int.parse(time[1]);
+          }
         }, currentTime: DateTime.now());
       },
       controller: _openTimeController,
@@ -363,11 +389,6 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
       },
       onSaved: (String value) {
         //TODO: test the values
-        if (value != "") {
-          List<String> time = value.split(':');
-          serviceEntity.startTimeHour = int.parse(time[0]);
-          serviceEntity.startTimeMinute = int.parse(time[1]);
-        }
       },
     );
     final closeTimeField = TextFormField(
@@ -388,10 +409,15 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
           print('confirm $date');
           //  String time = "${date.hour}:${date.minute} ${date.";
 
-          String time = DateFormat.jm().format(date);
+          String time = DateFormat.Hm().format(date);
           print(time);
 
           _closeTimeController.text = time.toLowerCase();
+          if (_closeTimeController.text != "") {
+            List<String> time = _closeTimeController.text.split(':');
+            serviceEntity.endTimeHour = int.parse(time[0]);
+            serviceEntity.endTimeMinute = int.parse(time[1]);
+          }
         }, currentTime: DateTime.now());
       },
       decoration: InputDecoration(
@@ -408,14 +434,7 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
         serviceEntity.endTimeHour = int.parse(time[0]);
         serviceEntity.endTimeMinute = int.parse(time[1]);
       },
-      onSaved: (String value) {
-        //TODO: test the values
-        if (value != "") {
-          List<String> time = value.split(':');
-          serviceEntity.endTimeHour = int.parse(time[0]);
-          serviceEntity.endTimeMinute = int.parse(time[1]);
-        }
-      },
+      onSaved: (String value) {},
     );
     final breakSartTimeField = TextFormField(
       obscureText: false,
@@ -433,10 +452,15 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
           print('confirm $date');
           //  String time = "${date.hour}:${date.minute} ${date.";
 
-          String time = DateFormat.jm().format(date);
+          String time = DateFormat.Hm().format(date);
           print(time);
 
           _breakStartController.text = time.toLowerCase();
+          if (_breakStartController.text != "") {
+            List<String> time = _breakStartController.text.split(':');
+            serviceEntity.breakStartHour = int.parse(time[0]);
+            serviceEntity.breakStartMinute = int.parse(time[1]);
+          }
         }, currentTime: DateTime.now());
       },
       controller: _breakStartController,
@@ -455,14 +479,7 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
         serviceEntity.breakStartHour = int.parse(time[0]);
         serviceEntity.breakStartMinute = int.parse(time[1]);
       },
-      onSaved: (String value) {
-        //TODO: test the values
-        if (value != "") {
-          List<String> time = value.split(':');
-          serviceEntity.breakStartHour = int.parse(time[0]);
-          serviceEntity.breakStartMinute = int.parse(time[1]);
-        }
-      },
+      onSaved: (String value) {},
     );
     final breakEndTimeField = TextFormField(
       enabled: true,
@@ -482,10 +499,15 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
           print('confirm $date');
           //  String time = "${date.hour}:${date.minute} ${date.";
 
-          String time = DateFormat.jm().format(date);
+          String time = DateFormat.Hm().format(date);
           print(time);
 
           _breakEndController.text = time.toLowerCase();
+          if (_breakEndController.text != "") {
+            List<String> time = _breakEndController.text.split(':');
+            serviceEntity.breakEndHour = int.parse(time[0]);
+            serviceEntity.breakEndMinute = int.parse(time[1]);
+          }
         }, currentTime: DateTime.now());
       },
       decoration: InputDecoration(
@@ -504,11 +526,6 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
       },
       onSaved: (String value) {
         //TODO: test the values
-        if (value != "") {
-          List<String> time = value.split(':');
-          serviceEntity.breakEndHour = int.parse(time[0]);
-          serviceEntity.breakEndMinute = int.parse(time[1]);
-        }
       },
     );
     final daysClosedField = Padding(
@@ -562,6 +579,30 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
         ],
       ),
     );
+    final slotDuration = TextFormField(
+      obscureText: false,
+      maxLines: 1,
+      minLines: 1,
+      style: textInputTextStyle,
+      keyboardType: TextInputType.number,
+      controller: _slotDurationController,
+      decoration: InputDecoration(
+        labelText: 'Duration of time slot (in minutes)',
+        enabledBorder:
+            UnderlineInputBorder(borderSide: BorderSide(color: Colors.grey)),
+        focusedBorder:
+            UnderlineInputBorder(borderSide: BorderSide(color: Colors.orange)),
+      ),
+      validator: validateText,
+      onChanged: (value) {
+        if (value != "") serviceEntity.slotDuration = int.parse(value);
+        print("slot duration saved");
+      },
+      onSaved: (String value) {
+        if (value != "") serviceEntity.slotDuration = int.parse(value);
+        print("slot duration saved");
+      },
+    );
     final maxpeopleInASlot = TextFormField(
       obscureText: false,
       maxLines: 1,
@@ -578,7 +619,7 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
       ),
       validator: validateText,
       onChanged: (String value) {
-        serviceEntity.maxAllowed = int.parse(value);
+        serviceEntity.maxAllowed = int.tryParse(value);
       },
       onSaved: (String value) {
         if (value != "") serviceEntity.maxAllowed = int.parse(value);
@@ -586,30 +627,73 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
         // entity. = value;
       },
     );
-//Address fields
-    final adrsField1 = RichText(
-      text: TextSpan(
-        style: TextStyle(
-            color: Colors.blueGrey[700],
-            // fontWeight: FontWeight.w800,
-            fontFamily: 'Monsterrat',
-            letterSpacing: 0.5,
-            fontSize: 15.0,
-            decoration: TextDecoration.underline),
-        children: <TextSpan>[
-          TextSpan(
-            text: serviceEntity.address.address,
-          ),
-          TextSpan(text: serviceEntity.address.landmark),
-          TextSpan(text: serviceEntity.address.locality),
-          TextSpan(text: serviceEntity.address.city),
-          TextSpan(text: serviceEntity.address.zipcode),
-          TextSpan(text: serviceEntity.address.state),
-          TextSpan(text: serviceEntity.address.country),
-        ],
+    final whatsappPhone = TextFormField(
+      obscureText: false,
+      maxLines: 1,
+      minLines: 1,
+      style: textInputTextStyle,
+      keyboardType: TextInputType.phone,
+      controller: _whatsappPhoneController,
+      decoration: InputDecoration(
+        prefixText: '+91',
+        labelText: 'WhatsApp Number',
+        enabledBorder:
+            UnderlineInputBorder(borderSide: BorderSide(color: Colors.grey)),
+        focusedBorder:
+            UnderlineInputBorder(borderSide: BorderSide(color: Colors.orange)),
       ),
+      validator: Utils.validateMobile,
+      onChanged: (value) {
+        if (value != "") serviceEntity.whatsapp = "+91" + (value);
+        print("Whatsapp Number");
+      },
+      onSaved: (String value) {
+        if (value != "") serviceEntity.whatsapp = "+91" + (value);
+        print("Whatsapp Number");
+      },
     );
-
+//Address fields
+    // final adrsField1 = RichText(
+    //   text: TextSpan(
+    //     style: TextStyle(
+    //         color: Colors.blueGrey[700],
+    //         // fontWeight: FontWeight.w800,
+    //         fontFamily: 'Monsterrat',
+    //         letterSpacing: 0.5,
+    //         fontSize: 15.0,
+    //         decoration: TextDecoration.underline),
+    //     children: <TextSpan>[
+    //       TextSpan(
+    //         text: serviceEntity.address.address,
+    //       ),
+    //       TextSpan(text: serviceEntity.address.landmark),
+    //       TextSpan(text: serviceEntity.address.locality),
+    //       TextSpan(text: serviceEntity.address.city),
+    //       TextSpan(text: serviceEntity.address.zipcode),
+    //       TextSpan(text: serviceEntity.address.state),
+    //       TextSpan(text: serviceEntity.address.country),
+    //     ],
+    //   ),
+    // );
+    final adrsField1 = TextFormField(
+      obscureText: false,
+      maxLines: 1,
+      minLines: 1,
+      style: textInputTextStyle,
+      keyboardType: TextInputType.text,
+      controller: _adrs1Controller,
+      decoration: CommonStyle.textFieldStyle(
+          labelTextStr: "Apartment/ House No./ Lane", hintTextStr: ""),
+      validator: validateText,
+      onChanged: (String value) {
+        serviceEntity.address.address = value;
+        print("saved address");
+      },
+      onSaved: (String value) {
+        serviceEntity.address.address = value;
+        print("saved address");
+      },
+    );
     final landmarkField2 = TextFormField(
       obscureText: false,
       maxLines: 1,
@@ -625,6 +709,9 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
             UnderlineInputBorder(borderSide: BorderSide(color: Colors.orange)),
       ),
       validator: validateText,
+      onChanged: (String value) {
+        serviceEntity.address.landmark = value;
+      },
       onSaved: (String value) {
         serviceEntity.address.landmark = value;
       },
@@ -746,14 +833,15 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
           .upsertChildEntityToParent(
               serviceEntity, serviceEntity.parentId, _regNumController.text)
           .then((value) {
-        if (value) {
-          EntityService().getEntity(this.serviceEntity.parentId).then((value) =>
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) =>
-                          EntityServicesListPage(entity: value))));
-        }
+        print("child entity saved");
+        // if (value) {
+        //   EntityService().getEntity(this.serviceEntity.parentId).then((value) =>
+        //       Navigator.push(
+        //           context,
+        //           MaterialPageRoute(
+        //               builder: (context) =>
+        //                   ChildEntitiesListPage(entity: value))));
+        // }
       });
       //saveChildEntity(serviceEntity);
       // Navigator.push(
@@ -920,15 +1008,17 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
                               child: Column(
                                 children: <Widget>[
                                   nameField,
+                                  descField,
                                   // entityType,
                                   regNumField,
                                   opensTimeField,
                                   closeTimeField,
                                   breakSartTimeField,
                                   breakEndTimeField,
-
-                                  maxpeopleInASlot,
                                   daysClosedField,
+                                  slotDuration,
+                                  maxpeopleInASlot,
+                                  whatsappPhone,
                                 ],
                               ),
                             ),
@@ -1449,7 +1539,7 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
                                                       context,
                                                       MaterialPageRoute(
                                                           builder: (context) =>
-                                                              EntityServicesListPage(
+                                                              ChildEntitiesListPage(
                                                                   entity:
                                                                       parentEntity))));
                                             });

@@ -1,6 +1,9 @@
 import 'package:noq/db/db_model/user.dart';
 
-class Employee extends User {
+class Employee {
+  String name;
+  String employeeId;
+  String ph;
   int shiftStartHour;
   int shiftStartMinute;
   int shiftEndHour;
@@ -10,33 +13,50 @@ class Employee extends User {
   String altPhone;
 
   Employee(
-      {id,
-      name,
-      loc,
-      ph,
+      {this.name,
+      this.ph,
+      this.employeeId,
       this.shiftStartHour,
       this.shiftStartMinute,
       this.shiftEndHour,
       this.shiftEndMinute,
       this.daysOff,
       this.isManager,
-      this.altPhone})
-      : super(id: id, name: name, loc: loc, ph: ph);
+      this.altPhone});
 
-  factory Employee.fromJson(Map<String, dynamic> parsedJson) {
-    final User usr = User.fromJson(parsedJson);
-
+  static Employee fromJson(Map<String, dynamic> json) {
+    if (json == null) return null;
     return Employee(
-        id: usr.id,
-        name: usr.name,
-        ph: usr.ph,
-        loc: usr.loc,
-        shiftStartHour: parsedJson['shiftStartHour'],
-        shiftStartMinute: parsedJson['shiftStartMinute'],
-        shiftEndHour: parsedJson['shiftEndHour'],
-        shiftEndMinute: parsedJson['shiftEndMinute'],
-        daysOff: parsedJson['daysOff'],
-        isManager: parsedJson['isManager'],
-        altPhone: parsedJson['altPhone']);
+        employeeId: json['employeeId'],
+        name: json['name'],
+        ph: json['ph'],
+        shiftStartHour: json['shiftStartHour'],
+        shiftStartMinute: json['shiftStartMinute'],
+        shiftEndHour: json['shiftEndHour'],
+        shiftEndMinute: json['shiftEndMinute'],
+        daysOff: convertList(json['daysOff']),
+        isManager: json['isManager'],
+        altPhone: json['altPhone']);
   }
+
+  static List<String> convertList(List<dynamic> list) {
+    List<String> newList = new List();
+    for (dynamic day in list) {
+      newList.add(day.toString());
+    }
+    return newList;
+  }
+
+  Map<String, dynamic> toJson() => {
+        'employeeId': employeeId,
+        'name': name,
+        'ph': ph,
+        'shiftStartHour': shiftStartHour,
+        'shiftStartMinute': shiftStartMinute,
+        'shiftEndHour': shiftEndHour,
+        'shiftEndMinute': shiftEndMinute,
+        'daysOff': daysOff,
+        'isManager': isManager,
+        'altPhone': altPhone
+      };
 }

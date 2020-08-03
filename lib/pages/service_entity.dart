@@ -1,34 +1,62 @@
 import 'package:flutter/material.dart';
 import 'package:noq/db/db_model/entity.dart';
 import 'package:noq/db/db_model/meta_entity.dart';
+import 'package:noq/db/db_service/entity_service.dart';
 import 'package:noq/pages/entity_services_details_page.dart';
 import 'package:noq/style.dart';
 import 'package:flutter/foundation.dart';
+import 'package:noq/utils.dart';
 
 class ChildEntityRow extends StatefulWidget {
-  final Entity childEntity;
-  ChildEntityRow({Key key, @required this.childEntity}) : super(key: key);
+  final MetaEntity childEntity;
+  final Map<String, Entity> entityMap;
+  ChildEntityRow(
+      {Key key, @required this.childEntity, @required this.entityMap})
+      : super(key: key);
   @override
   State<StatefulWidget> createState() => new ChildEntityRowState();
 }
 
 class ChildEntityRowState extends State<ChildEntityRow> {
-  Entity serviceEntity;
+  Entity entity;
+  MetaEntity _metaEntity;
+  Map<String, Entity> _entityMap;
 
   @override
   void initState() {
     super.initState();
-    serviceEntity = widget.childEntity;
+    _metaEntity = widget.childEntity;
+    _entityMap = widget.entityMap;
+  }
+
+  Future<void> getEntity(String entityId) async {
+    if (_entityMap != null) {
+      if (_entityMap.length != 0) {
+        if (_entityMap.containsKey(entityId))
+          entity = _entityMap[entityId];
+        else {
+          entity = await EntityService().getEntity(entityId);
+        }
+      }
+    }
+    if (entity == null) {
+      entity = await EntityService().getEntity(entityId);
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     showServiceForm() {
-      Navigator.push(
-          context,
-          MaterialPageRoute(
-              builder: (context) => ServiceEntityDetailsPage(
-                  serviceMetaEntity: this.serviceEntity)));
+      //get Entity for this metaEntity
+      // if Entity is inentityMap it means its a new entity and is not created yet,
+      // else fetch from DB.
+      getEntity(_metaEntity.entityId).then((value) {
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) =>
+                    ServiceEntityDetailsPage(childEntity: this.entity)));
+      });
     }
 
     return new Card(
@@ -46,13 +74,13 @@ class ChildEntityRowState extends State<ChildEntityRow> {
           title: Column(
             children: <Widget>[
               Text(
-                serviceEntity.type,
+                _metaEntity.type,
                 //  "Swimming Pool",
                 style: TextStyle(color: Colors.blueGrey[700], fontSize: 17),
               ),
-              if (serviceEntity.name != null)
+              if (_metaEntity.name != null)
                 Text(
-                  serviceEntity.name,
+                  _metaEntity.name,
                   style: labelTextStyle,
                 ),
             ],

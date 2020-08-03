@@ -10,7 +10,9 @@ import 'package:flutter/foundation.dart';
 
 class EntityRow extends StatefulWidget {
   final MetaEntity entity;
-  EntityRow({Key key, @required this.entity}) : super(key: key);
+  final Map<String, Entity> parentEntityMap;
+  EntityRow({Key key, @required this.entity, this.parentEntityMap})
+      : super(key: key);
   @override
   State<StatefulWidget> createState() => new EntityRowState();
 }
@@ -19,21 +21,40 @@ class EntityRowState extends State<EntityRow> {
   MetaEntity _metaEntity;
   Entity entity;
   bool getEntityDone = false;
+  Map<String, Entity> _parentEntityMap;
 
   @override
   void initState() {
     super.initState();
     _metaEntity = widget.entity;
+    _parentEntityMap = widget.parentEntityMap;
+  }
+
+  Future<void> getEntity(String entityId) async {
+    if (_parentEntityMap != null) {
+      if (_parentEntityMap.length != 0) {
+        if (_parentEntityMap.containsKey(entityId))
+          entity = _parentEntityMap[entityId];
+        else {
+          entity = await EntityService().getEntity(entityId);
+        }
+      }
+    }
+    if (entity == null) {
+      entity = await EntityService().getEntity(entityId);
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     showServiceForm() {
-      Navigator.push(
-          context,
-          MaterialPageRoute(
-              builder: (context) =>
-                  ManageApartmentPage(metaEntity: _metaEntity)));
+      getEntity(_metaEntity.entityId).then((value) {
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) =>
+                    ManageApartmentPage(entity: entity)));
+      });
     }
 
     return new Card(

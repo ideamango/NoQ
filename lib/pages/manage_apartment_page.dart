@@ -28,8 +28,8 @@ import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:flushbar/flushbar.dart';
 
 class ManageApartmentPage extends StatefulWidget {
-  final MetaEntity metaEntity;
-  ManageApartmentPage({Key key, @required this.metaEntity}) : super(key: key);
+  final Entity entity;
+  ManageApartmentPage({Key key, @required this.entity}) : super(key: key);
   @override
   _ManageApartmentPageState createState() => _ManageApartmentPageState();
 }
@@ -42,7 +42,6 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
 //Basic Details
   TextEditingController _nameController = TextEditingController();
   TextEditingController _descController = TextEditingController();
-  TextEditingController _desc2Controller = TextEditingController();
   TextEditingController _regNumController = TextEditingController();
   TextEditingController _closeTimeController = TextEditingController();
   TextEditingController _openTimeController = TextEditingController();
@@ -100,63 +99,61 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
   void initState() {
     super.initState();
     _getCurrLocation();
-    _metaEntity = this.widget.metaEntity;
+    entity = this.widget.entity;
     initializeEntity().whenComplete(() {
       _initCompleted = true;
     });
   }
 
   initializeEntity() async {
-    getEntity(_metaEntity.entityId).then((value) {
-      entity = value;
-      if (entity != null) {
-        _nameController.text = entity.name;
-        // _entityType = entity.eType;
-        // _regNumController.text = entity.regNum;
-        if (entity.startTimeHour != null && entity.startTimeMinute != null)
-          _openTimeController.text = entity.startTimeHour.toString() +
-              ':' +
-              entity.startTimeMinute.toString();
-        if (entity.endTimeHour != null && entity.endTimeMinute != null)
-          _closeTimeController.text = entity.endTimeHour.toString() +
-              ':' +
-              entity.endTimeMinute.toString();
-        if (entity.breakStartHour != null && entity.breakStartMinute != null)
-          _breakStartController.text = entity.breakStartHour.toString() +
-              ':' +
-              entity.breakStartMinute.toString();
-        if (entity.breakEndHour != null && entity.breakEndMinute != null)
-          _breakEndController.text = entity.breakEndHour.toString() +
-              ':' +
-              entity.breakEndMinute.toString();
-        if (entity.closedOn != null) _daysOff = entity.closedOn;
-        if (entity.maxAllowed != null)
-          _maxPeopleController.text =
-              (entity.maxAllowed != null) ? entity.maxAllowed.toString() : "";
-        //address
-        if (entity.address != null) {
-          _adrs1Controller.text = entity.address.address;
-          _localityController.text = entity.address.locality;
-          _landController.text = entity.address.landmark;
-          _cityController.text = entity.address.city;
-          _stateController.text = entity.address.state;
-          _countryController.text = entity.address.country;
-          _pinController.text = entity.address.zipcode;
-        }
-//contact person
-        if (!(Utils.isNullOrEmpty(entity.managers))) {
-          contactList = entity.managers;
-        }
-      } else {
-        entity = createEntity(_metaEntity.entityId, _metaEntity.type);
-        print(entity.entityId.toString());
-        //TODO: Smita - check if we insert object at SAVE.
-        //  EntityService().upsertEntity(entity);
+    if (entity != null) {
+      _nameController.text = entity.name;
+      // _entityType = entity.eType;
+      // _regNumController.text = entity.regNum;
+      if (entity.startTimeHour != null && entity.startTimeMinute != null)
+        _openTimeController.text = entity.startTimeHour.toString() +
+            ':' +
+            entity.startTimeMinute.toString();
+      if (entity.endTimeHour != null && entity.endTimeMinute != null)
+        _closeTimeController.text = entity.endTimeHour.toString() +
+            ':' +
+            entity.endTimeMinute.toString();
+      if (entity.breakStartHour != null && entity.breakStartMinute != null)
+        _breakStartController.text = entity.breakStartHour.toString() +
+            ':' +
+            entity.breakStartMinute.toString();
+      if (entity.breakEndHour != null && entity.breakEndMinute != null)
+        _breakEndController.text = entity.breakEndHour.toString() +
+            ':' +
+            entity.breakEndMinute.toString();
+      if (entity.closedOn != null) _daysOff = entity.closedOn;
+      if (entity.maxAllowed != null)
+        _maxPeopleController.text =
+            (entity.maxAllowed != null) ? entity.maxAllowed.toString() : "";
+      //address
+      if (entity.address != null) {
+        _adrs1Controller.text = entity.address.address;
+        _localityController.text = entity.address.locality;
+        _landController.text = entity.address.landmark;
+        _cityController.text = entity.address.city;
+        _stateController.text = entity.address.state;
+        _countryController.text = entity.address.country;
+        _pinController.text = entity.address.zipcode;
       }
+//contact person
+      if (!(Utils.isNullOrEmpty(entity.managers))) {
+        contactList = entity.managers;
+      }
+    }
+    //  else {
+    //   entity = createEntity(_metaEntity.entityId, _metaEntity.type);
+    //   print(entity.entityId.toString());
+    //   //TODO: Smita - check if we insert object at SAVE.
+    //   //  EntityService().upsertEntity(entity);
+    // }
 
-      entity.address = (entity.address) ?? new Address();
-      contactList = contactList ?? new List<Employee>();
-    });
+    entity.address = (entity.address) ?? new Address();
+    contactList = contactList ?? new List<Employee>();
 
     //  _ctNameController.text = entity.contactPersons[0].perName;
   }
@@ -281,6 +278,9 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
         decoration: CommonStyle.textFieldStyle(
             labelTextStr: "Name of Establishment", hintTextStr: ""),
         validator: validateText,
+        onChanged: (String value) {
+          entity.name = value;
+        },
         onSaved: (String value) {
           entity.name = value;
         },
@@ -297,6 +297,9 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
         keyboardType: TextInputType.multiline,
         maxLength: null,
         maxLines: 3,
+        onChanged: (String value) {
+          entity.description = value;
+        },
         onSaved: (String value) {
           entity.description = value;
         },
@@ -337,6 +340,12 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
             print(time);
 
             _openTimeController.text = time.toLowerCase();
+            if (_openTimeController.text != "") {
+              List<String> time = _openTimeController.text.split(':');
+              entity.startTimeHour = int.parse(time[0]);
+
+              entity.startTimeMinute = int.parse(time[1]);
+            }
           }, currentTime: DateTime.now());
         },
         controller: _openTimeController,
@@ -361,13 +370,13 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
             //   },
             // ),
             labelText: "Opening time",
-            hintText: "HH:MM 24Hr time format",
+            hintText: "hh:mm 24 hour time format",
             enabledBorder: UnderlineInputBorder(
                 borderSide: BorderSide(color: Colors.grey)),
             focusedBorder: UnderlineInputBorder(
                 borderSide: BorderSide(color: Colors.orange))),
         validator: validateTime,
-        onSaved: (String value) {
+        onChanged: (String value) {
           //TODO: test the values
           if (value != "") {
             List<String> time = value.split(':');
@@ -376,6 +385,7 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
             entity.startTimeMinute = int.parse(time[1]);
           }
         },
+        onSaved: (String value) {},
       );
       final closeTimeField = TextFormField(
         enabled: true,
@@ -399,17 +409,23 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
             print(time);
 
             _closeTimeController.text = time.toLowerCase();
+            if (_closeTimeController.text != "") {
+              List<String> time = _closeTimeController.text.split(':');
+              entity.endTimeHour = int.parse(time[0]);
+
+              entity.endTimeMinute = int.parse(time[1]);
+            }
           }, currentTime: DateTime.now());
         },
         decoration: InputDecoration(
             labelText: "Closing time",
-            hintText: "HH:MM 24Hr time format",
+            hintText: "hh:mm 24 hour time format",
             enabledBorder: UnderlineInputBorder(
                 borderSide: BorderSide(color: Colors.grey)),
             focusedBorder: UnderlineInputBorder(
                 borderSide: BorderSide(color: Colors.orange))),
         validator: validateTime,
-        onSaved: (String value) {
+        onChanged: (String value) {
           //TODO: test the values
           if (value != "") {
             List<String> time = value.split(':');
@@ -417,6 +433,9 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
 
             entity.endTimeMinute = int.parse(time[1]);
           }
+        },
+        onSaved: (String value) {
+          //TODO: test the values
         },
       );
       final breakSartTimeField = TextFormField(
@@ -439,45 +458,32 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
             print(time);
 
             _breakStartController.text = time.toLowerCase();
+            if (_breakStartController.text != "") {
+              List<String> time = _breakStartController.text.split(':');
+              entity.breakStartHour = int.parse(time[0]);
+
+              entity.breakStartMinute = int.parse(time[1]);
+            }
           }, currentTime: DateTime.now());
         },
         controller: _breakStartController,
         keyboardType: TextInputType.text,
         decoration: InputDecoration(
-            // suffixIcon: IconButton(
-            //   icon: Icon(Icons.schedule),
-            //   onPressed: () {
-            //     DatePicker.showTime12hPicker(context, showTitleActions: true,
-            //         onChanged: (date) {
-            //       print('change $date in time zone ' +
-            //           date.timeZoneOffset.inHours.toString());
-            //     }, onConfirm: (date) {
-            //       print('confirm $date');
-            //       //  String time = "${date.hour}:${date.minute} ${date.";
-
-            //       String time = DateFormat.Hm().format(date);
-            //       print(time);
-
-            //       _openTimeController.text = time.toLowerCase();
-            //     }, currentTime: DateTime.now());
-            //   },
-            // ),
-            labelText: "Break start at",
-            hintText: "HH:MM 24Hr time format",
+            labelText: "Break starts at",
+            hintText: "hh:mm 24 hour time format",
             enabledBorder: UnderlineInputBorder(
                 borderSide: BorderSide(color: Colors.grey)),
             focusedBorder: UnderlineInputBorder(
                 borderSide: BorderSide(color: Colors.orange))),
         validator: validateTime,
-        onSaved: (String value) {
-          //TODO: test the values
+        onChanged: (value) {
           if (value != "") {
             List<String> time = value.split(':');
             entity.breakStartHour = int.parse(time[0]);
-
             entity.breakStartMinute = int.parse(time[1]);
           }
         },
+        onSaved: (String value) {},
       );
       final breakEndTimeField = TextFormField(
         enabled: true,
@@ -501,24 +507,29 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
             print(time);
 
             _breakEndController.text = time.toLowerCase();
+            if (_breakEndController.text != "") {
+              List<String> time = _breakEndController.text.split(':');
+              entity.breakEndHour = int.parse(time[0]);
+              entity.breakEndMinute = int.parse(time[1]);
+            }
           }, currentTime: DateTime.now());
         },
         decoration: InputDecoration(
             labelText: "Break ends at",
-            hintText: "HH:MM 24Hr time format",
+            hintText: "hh:mm 24 hour time format",
             enabledBorder: UnderlineInputBorder(
                 borderSide: BorderSide(color: Colors.grey)),
             focusedBorder: UnderlineInputBorder(
                 borderSide: BorderSide(color: Colors.orange))),
         validator: validateTime,
-        onSaved: (String value) {
-          //TODO: test the values
+        onChanged: (value) {
           if (value != "") {
             List<String> time = value.split(':');
             entity.breakEndHour = int.parse(time[0]);
             entity.breakEndMinute = int.parse(time[1]);
           }
         },
+        onSaved: (String value) {},
       );
 
       final daysClosedField = Padding(
@@ -587,6 +598,10 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
               borderSide: BorderSide(color: Colors.orange)),
         ),
         validator: validateText,
+        onChanged: (value) {
+          if (value != "") entity.slotDuration = int.parse(value);
+          print("slot duration saved");
+        },
         onSaved: (String value) {
           if (value != "") entity.slotDuration = int.parse(value);
           print("slot duration saved");
@@ -607,6 +622,10 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
               borderSide: BorderSide(color: Colors.orange)),
         ),
         validator: validateText,
+        onChanged: (value) {
+          if (value != "") entity.maxAllowed = int.parse(value);
+          print("saved max people");
+        },
         onSaved: (String value) {
           if (value != "") entity.maxAllowed = int.parse(value);
           print("saved max people");
@@ -628,6 +647,10 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
               borderSide: BorderSide(color: Colors.orange)),
         ),
         validator: Utils.validateMobile,
+        onChanged: (value) {
+          if (value != "") entity.whatsapp = "+91" + (value);
+          print("Whatsapp Number");
+        },
         onSaved: (String value) {
           if (value != "") entity.whatsapp = "+91" + (value);
           print("Whatsapp Number");
@@ -765,6 +788,10 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
               borderSide: BorderSide(color: Colors.orange)),
         ),
         validator: validateText,
+        onChanged: (String value) {
+          entity.address.zipcode = value;
+          print("saved address");
+        },
         onSaved: (String value) {
           entity.address.zipcode = value;
           print("saved address");
@@ -779,9 +806,9 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
         print("saving ");
 
         if (_entityDetailsFormKey.currentState.validate()) {
-          _entityDetailsFormKey.currentState.save();
           print("Saved formmmmmmm");
         }
+        _entityDetailsFormKey.currentState.save();
         // String address = entity.adrs.addressLine1 ??
         //     entity.adrs.addressLine1 +
         //         entity.adrs.locality +
@@ -804,7 +831,7 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
                 context,
                 MaterialPageRoute(
                     builder: (context) =>
-                        EntityServicesListPage(entity: this.entity)));
+                        ChildEntitiesListPage(entity: this.entity)));
           }
         });
       }
@@ -964,7 +991,7 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
                 print("gone");
               },
             ),
-            title: Text(_metaEntity.type, style: whiteBoldTextStyle1),
+            title: Text(entity.type, style: whiteBoldTextStyle1),
           ),
           body: Center(
             child: new SafeArea(
@@ -1629,7 +1656,7 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
                 Navigator.of(context).pop();
               },
             ),
-            title: Text(_metaEntity.type, style: whiteBoldTextStyle1),
+            title: Text(entity.type, style: whiteBoldTextStyle1),
           ),
 
           body: Center(

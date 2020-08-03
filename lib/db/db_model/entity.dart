@@ -36,7 +36,9 @@ class Entity {
       this.isActive,
       this.coordinates,
       this.distance,
-      this.whatsapp});
+      this.whatsapp,
+      this.createdAt,
+      this.modifiedAt});
 
   //SlotDocumentId is entityID#20~06~01 it is not auto-generated, will help in not duplicating the record
   String entityId;
@@ -68,6 +70,8 @@ class Entity {
   MyGeoFirePoint coordinates;
   double distance;
   String whatsapp;
+  DateTime createdAt;
+  DateTime modifiedAt;
 
   Map<String, dynamic> toJson() => {
         'entityId': entityId,
@@ -98,7 +102,9 @@ class Entity {
         'coordinates': coordinates != null ? coordinates.toJson() : null,
         'nameQuery': constructQueriableList(name),
         'distance': distance,
-        'whatsapp': whatsapp
+        'whatsapp': whatsapp,
+        'createdAt': createdAt.millisecondsSinceEpoch,
+        'modifiedAt': modifiedAt.millisecondsSinceEpoch
       };
 
   List<dynamic> usersToJson(List<MetaUser> users) {
@@ -158,7 +164,10 @@ class Entity {
         isActive: json['isActive'],
         coordinates: MyGeoFirePoint.fromJson(json['coordinates']),
         distance: json['distance'],
-        whatsapp: json['whatsapp']);
+        whatsapp: json['whatsapp'],
+        createdAt: new DateTime.fromMillisecondsSinceEpoch(json['createdAt']),
+        modifiedAt:
+            new DateTime.fromMillisecondsSinceEpoch(json['modifiedAt']));
   }
 
   static Address convertToAddressFromJson(Map<String, dynamic> json) {
