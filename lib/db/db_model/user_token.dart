@@ -54,8 +54,7 @@ class UserToken {
         entityId: json['entityId'].toString(),
         userId: json['userId'].toString(),
         number: json['number'],
-        dateTime: new DateTime.fromMillisecondsSinceEpoch(
-            json['dateTime'].millisecondsSinceEpoch),
+        dateTime: new DateTime.fromMillisecondsSinceEpoch(json['dateTime']),
         maxAllowed: json['maxAllowed'],
         slotDuration: json['slotDuration'],
         entityName: json['entityName'],

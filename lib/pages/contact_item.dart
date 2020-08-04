@@ -141,7 +141,7 @@ class ContactRowState extends State<ContactRow> {
           print('confirm $date');
           //  String time = "${date.hour}:${date.minute} ${date.";
 
-          String time = DateFormat.jm().format(date);
+          String time = DateFormat.Hm().format(date);
           print(time);
 
           _ctAvlFromTimeController.text = time.toLowerCase();
@@ -172,7 +172,7 @@ class ContactRowState extends State<ContactRow> {
           //   },
           // ),
           labelText: "Available from",
-          hintText: "HH:MM 24Hr time format",
+          hintText: "hh:mm 24 hour time format",
           enabledBorder:
               UnderlineInputBorder(borderSide: BorderSide(color: Colors.grey)),
           focusedBorder: UnderlineInputBorder(
@@ -209,7 +209,7 @@ class ContactRowState extends State<ContactRow> {
           print('confirm $date');
           //  String time = "${date.hour}:${date.minute} ${date.";
 
-          String time = DateFormat.jm().format(date);
+          String time = DateFormat.Hm().format(date);
           print(time);
 
           _ctAvlTillTimeController.text = time.toLowerCase();
@@ -222,7 +222,7 @@ class ContactRowState extends State<ContactRow> {
       },
       decoration: InputDecoration(
           labelText: "Available till",
-          hintText: "HH:MM 24Hr time format",
+          hintText: "hr:mm 24 hour time format",
           enabledBorder:
               UnderlineInputBorder(borderSide: BorderSide(color: Colors.grey)),
           focusedBorder: UnderlineInputBorder(

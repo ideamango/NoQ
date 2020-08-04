@@ -52,6 +52,7 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
   TextEditingController _whatsappPhoneController = TextEditingController();
 
   TextEditingController _slotDurationController = TextEditingController();
+  TextEditingController _advBookingInDaysController = TextEditingController();
 
   List<String> _closedOnDays = List<String>();
   List<String> _daysOff = List<String>();
@@ -94,6 +95,10 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
 
   bool getEntityDone = false;
   bool _initCompleted = false;
+
+  bool isPublic = false;
+  bool isActive = false;
+  bool isBookable = false;
 
   @override
   void initState() {
@@ -607,6 +612,30 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
           print("slot duration saved");
         },
       );
+      final advBookingInDays = TextFormField(
+        obscureText: false,
+        maxLines: 1,
+        minLines: 1,
+        style: textInputTextStyle,
+        keyboardType: TextInputType.number,
+        controller: _advBookingInDaysController,
+        decoration: InputDecoration(
+          labelText: 'Advance Booking Allowed(in days)',
+          enabledBorder:
+              UnderlineInputBorder(borderSide: BorderSide(color: Colors.grey)),
+          focusedBorder: UnderlineInputBorder(
+              borderSide: BorderSide(color: Colors.orange)),
+        ),
+        validator: validateText,
+        onChanged: (value) {
+          if (value != "") entity.advanceDays = int.parse(value);
+          print("Advance Booking Allowed saved");
+        },
+        onSaved: (String value) {
+          if (value != "") entity.advanceDays = int.parse(value);
+          print("Advance Booking Allowed saved");
+        },
+      );
       final maxpeopleInASlot = TextFormField(
         obscureText: false,
         maxLines: 1,
@@ -1004,6 +1033,84 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
                   padding: const EdgeInsets.all(5.0),
                   children: <Widget>[
                     Container(
+                      padding: EdgeInsets.symmetric(horizontal: 8),
+                      decoration: BoxDecoration(
+                          border: Border.all(color: containerColor),
+                          color: Colors.grey[50],
+                          shape: BoxShape.rectangle,
+                          borderRadius: BorderRadius.all(Radius.circular(5.0))),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: <Widget>[
+                          Row(
+                            children: <Widget>[
+                              Text('Public'),
+                              Container(
+                                width: MediaQuery.of(context).size.width * .17,
+                                child: Switch(
+                                  value: isPublic,
+                                  onChanged: (value) {
+                                    setState(() {
+                                      isPublic = value;
+                                      entity.isPublic = value;
+                                      print(isPublic);
+                                    });
+                                  },
+                                  // activeTrackColor: Colors.green,
+                                  activeColor: highlightColor,
+                                ),
+                              ),
+                            ],
+                          ),
+                          Row(
+                            children: <Widget>[
+                              Text('Bookable'),
+                              Container(
+                                width: MediaQuery.of(context).size.width * .17,
+                                child: Switch(
+                                  value: isBookable,
+                                  onChanged: (value) {
+                                    setState(() {
+                                      isBookable = value;
+                                      entity.isBookable = value;
+                                      print(isBookable);
+                                    });
+                                  },
+                                  // activeTrackColor: Colors.green,
+                                  activeColor: highlightColor,
+                                ),
+                              ),
+                            ],
+                          ),
+                          Row(
+                            children: <Widget>[
+                              Text('Active'),
+                              Container(
+                                width: MediaQuery.of(context).size.width * .17,
+                                child: Switch(
+                                  value: isActive,
+                                  onChanged: (value) {
+                                    setState(() {
+                                      isActive = value;
+                                      entity.isActive = value;
+                                      print(isActive);
+                                    });
+                                  },
+                                  // activeTrackColor: Colors.green,
+                                  activeColor: highlightColor,
+                                ),
+                              ),
+                            ],
+                          )
+                        ],
+                      ),
+                    ),
+
+                    SizedBox(
+                      height: 7,
+                    ),
+
+                    Container(
                       decoration: BoxDecoration(
                           border: Border.all(color: containerColor),
                           color: Colors.grey[50],
@@ -1067,6 +1174,7 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
                                     breakEndTimeField,
                                     daysClosedField,
                                     slotDuration,
+                                    advBookingInDays,
                                     maxpeopleInASlot,
                                     whatsappPhone,
                                   ],
@@ -1238,7 +1346,7 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
                                             _addNewContactRow();
                                           } else {
                                             setState(() {
-                                              _msg = "Select service type";
+                                              _msg = "Select role type";
                                             });
                                           }
                                         },
@@ -1253,13 +1361,13 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
                                       style: errorTextStyle,
                                     )
                                   : Container(),
+                              if (!Utils.isNullOrEmpty(contactList))
+                                Column(children: contactRowWidgets),
                             ],
                           ),
                         ],
                       ),
                     ),
-                    if (!Utils.isNullOrEmpty(contactList))
-                      Column(children: contactRowWidgets),
 
                     Builder(
                       builder: (context) => RaisedButton(

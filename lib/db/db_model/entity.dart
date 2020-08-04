@@ -38,7 +38,8 @@ class Entity {
       this.distance,
       this.whatsapp,
       this.createdAt,
-      this.modifiedAt});
+      this.modifiedAt,
+      this.verificationStatus});
 
   //SlotDocumentId is entityID#20~06~01 it is not auto-generated, will help in not duplicating the record
   String entityId;
@@ -72,6 +73,8 @@ class Entity {
   String whatsapp;
   DateTime createdAt;
   DateTime modifiedAt;
+  //"Verification Pending", "Verified", "Rejected"
+  String verificationStatus;
 
   Map<String, dynamic> toJson() => {
         'entityId': entityId,
@@ -104,7 +107,8 @@ class Entity {
         'distance': distance,
         'whatsapp': whatsapp,
         'createdAt': createdAt.millisecondsSinceEpoch,
-        'modifiedAt': modifiedAt.millisecondsSinceEpoch
+        'modifiedAt': modifiedAt.millisecondsSinceEpoch,
+        'verificationStatus': verificationStatus
       };
 
   List<dynamic> usersToJson(List<MetaUser> users) {
@@ -166,8 +170,8 @@ class Entity {
         distance: json['distance'],
         whatsapp: json['whatsapp'],
         createdAt: new DateTime.fromMillisecondsSinceEpoch(json['createdAt']),
-        modifiedAt:
-            new DateTime.fromMillisecondsSinceEpoch(json['modifiedAt']));
+        modifiedAt: new DateTime.fromMillisecondsSinceEpoch(json['modifiedAt']),
+        verificationStatus: json['verificationStatus']);
   }
 
   static Address convertToAddressFromJson(Map<String, dynamic> json) {

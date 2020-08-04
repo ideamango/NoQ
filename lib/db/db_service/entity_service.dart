@@ -68,6 +68,7 @@ class EntityService {
           ePrivate = new EntityPrivate();
           ePrivate.roles = {fireUser.phoneNumber: "admin"};
           ePrivate.registrationNumber = regNum;
+          entity.verificationStatus = "Verification Pending";
         }
 
         if (currentUser.isEntityAdmin(entity.entityId) == -1) {
@@ -239,7 +240,7 @@ class EntityService {
       } catch (e) {
         isSuccess = false;
         print(e);
-        throw e;
+        //throw e;
       }
     });
 
@@ -419,6 +420,7 @@ class EntityService {
             childEntityPrivate = new EntityPrivate(
                 registrationNumber: childRegNum,
                 roles: {fireUser.phoneNumber: "admin"});
+            childEntity.verificationStatus = "Verification Pending";
           }
           childEntity.parentId = parentEntityId;
 
@@ -465,7 +467,7 @@ class EntityService {
 
         isSuccess = true;
       } catch (e) {
-        print('Error upsert child to parent' + e);
+        print('Error upsert child to parent' + e.toString());
         isSuccess = false;
       }
     });
@@ -657,17 +659,23 @@ class EntityService {
           .collection('entities')
           .where("isActive", isEqualTo: true)
           .where("nameQuery", arrayContains: name)
-          .where("type", isEqualTo: type);
+          .where("type", isEqualTo: type)
+          .where("verificationStatus",
+              whereIn: ["Verification Pending", "Verified"]);
     } else if (name != null && name != "") {
       collectionReference = fStore
           .collection('entities')
           .where("isActive", isEqualTo: true)
-          .where("nameQuery", arrayContains: name);
+          .where("nameQuery", arrayContains: name)
+          .where("verificationStatus",
+              whereIn: ["Verification Pending", "Verified"]);
     } else if (type != null && type != "") {
       collectionReference = fStore
           .collection('entities')
           .where("isActive", isEqualTo: true)
-          .where("type", isEqualTo: type);
+          .where("type", isEqualTo: type)
+          .where("verificationStatus",
+              whereIn: ["Verification Pending", "Verified"]);
     } else {
       return entities;
     }

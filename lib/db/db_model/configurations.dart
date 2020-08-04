@@ -8,7 +8,8 @@ class Configurations {
       this.contactEmail,
       this.contactPhone,
       this.supportReasons,
-      this.enableDonation});
+      this.enableDonation,
+      this.phCountryCode});
 
   List<String> entityTypes;
   List<String> messages;
@@ -17,6 +18,7 @@ class Configurations {
   String contactPhone;
   List<String> supportReasons;
   bool enableDonation;
+  String phCountryCode;
 
   Map<String, dynamic> toJson() => {
         'entityTypes': entityTypes,
@@ -25,7 +27,8 @@ class Configurations {
         'contactEmail': contactEmail,
         'contactPhone': contactPhone,
         'supportReasons': supportReasons,
-        'enableDonation': enableDonation
+        'enableDonation': enableDonation,
+        'phCountryCode': phCountryCode
       };
 
   static Configurations fromJson(Map<String, dynamic> json) {
@@ -37,7 +40,8 @@ class Configurations {
         contactEmail: json['contactEmail'],
         contactPhone: json['contactPhone'],
         supportReasons: convertToStringsArrayFromJson(json['supportReasons']),
-        enableDonation: json['enableDonation']);
+        enableDonation: json['enableDonation'],
+        phCountryCode: json['phCountryCode']);
   }
 
   static List<String> convertToStringsArrayFromJson(List<dynamic> json) {

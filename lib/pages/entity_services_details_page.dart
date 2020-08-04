@@ -49,7 +49,7 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
   TextEditingController _openTimeController = TextEditingController();
   TextEditingController _breakStartController = TextEditingController();
   TextEditingController _breakEndController = TextEditingController();
-
+  TextEditingController _advBookingInDaysController = TextEditingController();
   TextEditingController _maxPeopleController = TextEditingController();
   TextEditingController _slotDurationController = TextEditingController();
   TextEditingController _whatsappPhoneController = TextEditingController();
@@ -88,6 +88,9 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
   String _role;
   String _entityType;
   String state;
+  bool isPublic = false;
+  bool isActive = false;
+  bool isBookable = false;
 // ChildEntityAppData serviceEntity;
 
   List<Employee> contactList = new List<Employee>();
@@ -603,6 +606,30 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
         print("slot duration saved");
       },
     );
+    final advBookingInDays = TextFormField(
+      obscureText: false,
+      maxLines: 1,
+      minLines: 1,
+      style: textInputTextStyle,
+      keyboardType: TextInputType.number,
+      controller: _advBookingInDaysController,
+      decoration: InputDecoration(
+        labelText: 'Advance Booking Allowed(in days)',
+        enabledBorder:
+            UnderlineInputBorder(borderSide: BorderSide(color: Colors.grey)),
+        focusedBorder:
+            UnderlineInputBorder(borderSide: BorderSide(color: Colors.orange)),
+      ),
+      validator: validateText,
+      onChanged: (value) {
+        if (value != "") serviceEntity.advanceDays = int.parse(value);
+        print("Advance Booking Allowed saved");
+      },
+      onSaved: (String value) {
+        if (value != "") serviceEntity.advanceDays = int.parse(value);
+        print("Advance Booking Allowed saved");
+      },
+    );
     final maxpeopleInASlot = TextFormField(
       obscureText: false,
       maxLines: 1,
@@ -955,6 +982,84 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
                 // crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
                   Container(
+                    padding: EdgeInsets.symmetric(horizontal: 8),
+                    decoration: BoxDecoration(
+                        border: Border.all(color: containerColor),
+                        color: Colors.grey[50],
+                        shape: BoxShape.rectangle,
+                        borderRadius: BorderRadius.all(Radius.circular(5.0))),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: <Widget>[
+                        Row(
+                          children: <Widget>[
+                            Text('Public'),
+                            Container(
+                              width: MediaQuery.of(context).size.width * .17,
+                              child: Switch(
+                                value: isPublic,
+                                onChanged: (value) {
+                                  setState(() {
+                                    isPublic = value;
+                                    serviceEntity.isPublic = value;
+                                    print(isPublic);
+                                  });
+                                },
+                                // activeTrackColor: Colors.green,
+                                activeColor: highlightColor,
+                              ),
+                            ),
+                          ],
+                        ),
+                        Row(
+                          children: <Widget>[
+                            Text('Bookable'),
+                            Container(
+                              width: MediaQuery.of(context).size.width * .17,
+                              child: Switch(
+                                value: isBookable,
+                                onChanged: (value) {
+                                  setState(() {
+                                    isBookable = value;
+                                    serviceEntity.isBookable = value;
+                                    print(isBookable);
+                                  });
+                                },
+                                // activeTrackColor: Colors.green,
+                                activeColor: highlightColor,
+                              ),
+                            ),
+                          ],
+                        ),
+                        Row(
+                          children: <Widget>[
+                            Text('Active'),
+                            Container(
+                              width: MediaQuery.of(context).size.width * .17,
+                              child: Switch(
+                                value: isActive,
+                                onChanged: (value) {
+                                  setState(() {
+                                    isActive = value;
+                                    serviceEntity.isActive = value;
+                                    print(isActive);
+                                  });
+                                },
+                                // activeTrackColor: Colors.green,
+                                activeColor: highlightColor,
+                              ),
+                            ),
+                          ],
+                        )
+                      ],
+                    ),
+                  ),
+
+                  SizedBox(
+                    height: 7,
+                  ),
+
+                  Container(
                     decoration: BoxDecoration(
                         border: Border.all(color: borderColor),
                         color: Colors.grey[50],
@@ -1017,6 +1122,7 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
                                   breakEndTimeField,
                                   daysClosedField,
                                   slotDuration,
+                                  advBookingInDays,
                                   maxpeopleInASlot,
                                   whatsappPhone,
                                 ],

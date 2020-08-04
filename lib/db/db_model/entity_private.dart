@@ -13,8 +13,10 @@ class EntityPrivate {
         registrationNumber: json['registrationNumber']);
   }
 
-  Map<String, dynamic> toJson() =>
-      {'roles': roles, 'registrationNumber': registrationNumber};
+  Map<String, dynamic> toJson() => {
+        'roles': roles,
+        'registrationNumber': registrationNumber
+      };
 
   static Map<String, String> convert(Map<dynamic, dynamic> jsonRoles) {
     Map<String, String> roles = new Map<String, String>();
