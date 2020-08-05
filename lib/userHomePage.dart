@@ -1319,6 +1319,7 @@ class _UserHomePageState extends State<UserHomePage> {
                         if (!cancelDone) {
                           Utils.showMyFlushbar(
                               context,
+                              Icons.info_outline,
                               "Couldn't cancel your booking for some reason. ",
                               "Please try again later.");
                         }
@@ -1326,8 +1327,8 @@ class _UserHomePageState extends State<UserHomePage> {
                         print(e);
                       });
                       Navigator.of(context, rootNavigator: true).pop();
-                      Utils.showMyFlushbar(
-                          context, "Cancelling your booking", "Please wait..");
+                      Utils.showMyFlushbar(context, Icons.cancel,
+                          "Cancelling your booking", "Please wait..");
                     },
                   ),
                 ),

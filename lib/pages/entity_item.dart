@@ -7,6 +7,9 @@ import 'package:noq/pages/manage_apartment_page.dart';
 import 'package:noq/services/circular_progress.dart';
 import 'package:noq/style.dart';
 import 'package:flutter/foundation.dart';
+import 'package:noq/pages/entity_services_list_page.dart';
+import 'package:noq/utils.dart';
+import 'package:noq/widget/widgets.dart';
 
 class EntityRow extends StatefulWidget {
   final MetaEntity entity;
@@ -52,47 +55,122 @@ class EntityRowState extends State<EntityRow> {
         Navigator.push(
             context,
             MaterialPageRoute(
-                builder: (context) =>
-                    ManageApartmentPage(entity: entity)));
+                builder: (context) => ManageApartmentPage(entity: entity)));
       });
     }
 
-    return new Card(
-      elevation: 20,
-      child: Container(
-        decoration: BoxDecoration(
-            border: Border.all(color: borderColor),
-            color: Colors.white,
-            shape: BoxShape.rectangle,
-            borderRadius: BorderRadius.all(Radius.circular(5.0))),
-        // padding: EdgeInsets.all(5.0),
+    showChildListPage() {
+      EntityService().getEntity(_metaEntity.entityId).then((value) {
+        //If no entity in DB then it means no entity created yet, only meta.
+        //So then msg to user to create entity first before adding children.
+        // Else Entity is present then take to child list page
+        if (value != null) {
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => ChildEntitiesListPage(entity: value)));
+        } else {
+          //No entity created yet.. show msg to create entity first.
 
-        child: ListTile(
-          title: Column(
+          Utils.showMyFlushbar(
+              context,
+              Icons.info_outline,
+              "Important premises details are missing, Click on 'Add details' to add now!",
+              "You need to add those before adding children.");
+        }
+      });
+    }
+
+    return Container(
+      margin: EdgeInsets.all(5),
+      padding: EdgeInsets.all(5),
+      decoration: BoxDecoration(
+          border: Border.all(color: borderColor),
+          color: Colors.white,
+          shape: BoxShape.rectangle,
+          borderRadius: BorderRadius.all(Radius.circular(5.0))),
+      // padding: EdgeInsets.all(5.0),
+
+      child: Row(
+        mainAxisSize: MainAxisSize.max,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          // Icon(
+          //   Icons.business,
+          //   color: primaryIcon,
+          // ),
+          Column(
             children: <Widget>[
-              Text(
-                _metaEntity.type,
-                //  "Swimming Pool",
-                style: TextStyle(color: Colors.blueGrey[700], fontSize: 17),
+              Column(
+                children: <Widget>[
+                  Text(
+                    _metaEntity.type,
+                    //  "Swimming Pool",
+                    style: TextStyle(color: Colors.blueGrey[700], fontSize: 17),
+                  ),
+                  if (_metaEntity.name != null)
+                    Text(
+                      _metaEntity.name,
+                      style: labelTextStyle,
+                    ),
+                ],
               ),
-              if (_metaEntity.name != null)
-                Text(
-                  _metaEntity.name,
-                  style: labelTextStyle,
-                ),
+              verticalSpacer,
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: <Widget>[
+                  Container(
+                    width: MediaQuery.of(context).size.width * .45,
+                    height: 25,
+                    child: RaisedButton(
+                      elevation: 10,
+                      color: Colors.cyanAccent,
+                      textColor: Colors.white,
+                      splashColor: highlightColor,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: <Widget>[
+                          Text('Add places'),
+                          Icon(Icons.playlist_add),
+                        ],
+                      ),
+                      onPressed: () {
+                        print("To child list page");
+                        showChildListPage();
+                      },
+                    ),
+                  ),
+                  horizontalSpacer,
+                  Container(
+                    height: 25,
+                    width: MediaQuery.of(context).size.width * .45,
+                    child: RaisedButton(
+                      elevation: 10,
+                      color: Colors.white,
+                      splashColor: highlightColor.withOpacity(.8),
+                      textColor: Colors.orange,
+                      shape: RoundedRectangleBorder(
+                          side: BorderSide(color: Colors.blueGrey[500]),
+                          borderRadius: BorderRadius.all(Radius.circular(5.0))),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: <Widget>[
+                          Text('Add details'),
+                          Icon(Icons.arrow_forward),
+                        ],
+                      ),
+                      onPressed: () {
+                        print("To Add details page");
+                        showServiceForm();
+                      },
+                    ),
+                  ),
+                ],
+              ),
             ],
-          ),
+          )
           // backgroundColor: Colors.white,
-          leading: Icon(
-            Icons.business,
-            color: primaryIcon,
-          ),
-          trailing: IconButton(
-              icon: Icon(Icons.arrow_forward),
-              onPressed: () {
-                showServiceForm();
-              }),
-        ),
+        ],
       ),
     );
   }

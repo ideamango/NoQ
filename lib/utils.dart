@@ -64,7 +64,8 @@ class Utils {
     return position;
   }
 
-  static void showMyFlushbar(BuildContext context, String title, String msg) {
+  static void showMyFlushbar(
+      BuildContext context, IconData icon, String title, String msg) {
     Flushbar(
       //padding: EdgeInsets.zero,
       margin: EdgeInsets.zero,
@@ -82,8 +83,9 @@ class Utils {
       isDismissible: false,
       duration: Duration(seconds: 6),
       icon: Icon(
-        Icons.cancel,
-        color: borderColor,
+        icon,
+        color: Colors.white,
+        size: 35,
       ),
       showProgressIndicator: false,
       // progressIndicatorBackgroundColor: Colors.blueGrey[800],
@@ -92,14 +94,14 @@ class Utils {
         title,
         style: TextStyle(
             //fontWeight: FontWeight.bold,
-            fontSize: 18.0,
-            color: borderColor,
+            fontSize: 15.0,
+            color: Colors.white,
             fontFamily: "Roboto"),
       ),
       messageText: Text(
         msg,
-        style: TextStyle(
-            fontSize: 14.0, color: Colors.white, fontFamily: "Roboto"),
+        style:
+            TextStyle(fontSize: 12.0, color: borderColor, fontFamily: "Roboto"),
       ),
     )..show(context);
   }
