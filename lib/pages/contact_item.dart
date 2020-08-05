@@ -5,7 +5,9 @@ import 'package:noq/db/db_model/employee.dart';
 import 'package:noq/style.dart';
 import 'package:flutter/foundation.dart';
 import 'package:noq/utils.dart';
+import 'package:noq/widget/custom_expansion_tile.dart';
 import 'package:noq/widget/weekday_selector.dart';
+import 'package:noq/widget/widgets.dart';
 
 class ContactRow extends StatefulWidget {
   final Employee contact;
@@ -289,59 +291,94 @@ class ContactRowState extends State<ContactRow> {
       ),
     );
 
-    return Container(
-      padding: EdgeInsets.only(left: 5.0, right: 5),
-      decoration: BoxDecoration(
-          border: Border.all(color: containerColor),
-          color: Colors.white,
-          shape: BoxShape.rectangle,
-          borderRadius: BorderRadius.all(Radius.circular(5.0))),
-      // padding: EdgeInsets.all(5.0),
-
-      child: new Form(
-        child: ListTile(
-          title: Column(
+    return Column(
+      children: <Widget>[
+        Theme(
+          data: ThemeData(
+            unselectedWidgetColor: Colors.black,
+            accentColor: highlightColor,
+          ),
+          child: ExpansionTile(
+            //key: PageStorageKey(this.widget.headerTitle),
+            initiallyExpanded: false,
+            title: Text(
+              (contact.name != null && contact.name != "")
+                  ? contact.name
+                  : "Manager",
+              style: TextStyle(color: Colors.blueGrey[700], fontSize: 17),
+            ),
+            backgroundColor: Colors.white,
+            leading: Icon(
+              Icons.person,
+              color: primaryIcon,
+            ),
             children: <Widget>[
-              ctNameField,
-              ctEmpIdField,
-              ctPhn1Field,
-              ctPhn2Field,
-              daysOffField,
-              Divider(
-                thickness: .7,
-                color: Colors.grey[600],
+              new Container(
+                width: MediaQuery.of(context).size.width * .97,
+                // decoration: darkContainer,
+                padding: EdgeInsets.all(0.0),
+                child: Expanded(
+                  child: Container(
+                    padding: EdgeInsets.only(left: 2.0, right: 2),
+                    // decoration: BoxDecoration(
+                    //     // border: Border.all(color: containerColor),
+                    //     color: Colors.white,
+                    //     shape: BoxShape.rectangle,
+                    //     borderRadius: BorderRadius.all(Radius.circular(5.0))),
+                    // padding: EdgeInsets.all(5.0),
+
+                    child: new Form(
+                      child: ListTile(
+                        title: Column(
+                          children: <Widget>[
+                            ctNameField,
+                            ctEmpIdField,
+                            ctPhn1Field,
+                            ctPhn2Field,
+                            daysOffField,
+                            Divider(
+                              thickness: .7,
+                              color: Colors.grey[600],
+                            ),
+                            ctAvlFromTimeField,
+                            ctAvlTillTimeField,
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
               ),
-              ctAvlFromTimeField,
-              ctAvlTillTimeField,
             ],
           ),
-        ),
-      ),
 
-      // ListTile(
-      //   title: Column(
-      //     children: <Widget>[
-      //       Text(
-      //         contact.role.toString(),
-      //         //  "Swimming Pool",
-      //         style: TextStyle(color: Colors.blueGrey[700], fontSize: 17),
-      //       ),
-      //       if (contact.perName != null)
-      //         Text(
-      //           contact.perName,
-      //           style: labelTextStyle,
-      //         ),
-      //     ],
-      //   ),
-      //   // backgroundColor: Colors.white,
-      //   leading: Icon(
-      //     Icons.slow_motion_video,
-      //     color: lightIcon,
-      //   ),
-      //   trailing: IconButton(icon: Icon(Icons.arrow_forward), onPressed: () {}
-      //       //showServiceForm
-      //       ),
-      // ),
+          // ListTile(
+          //   title: Column(
+          //     children: <Widget>[
+          //       Text(
+          //         contact.role.toString(),
+          //         //  "Swimming Pool",
+          //         style: TextStyle(color: Colors.blueGrey[700], fontSize: 17),
+          //       ),
+          //       if (contact.perName != null)
+          //         Text(
+          //           contact.perName,
+          //           style: labelTextStyle,
+          //         ),
+          //     ],
+          //   ),
+          //   // backgroundColor: Colors.white,
+          //   leading: Icon(
+          //     Icons.slow_motion_video,
+          //     color: lightIcon,
+          //   ),
+          //   trailing: IconButton(icon: Icon(Icons.arrow_forward), onPressed: () {}
+          //       //showServiceForm
+          //       ),
+          // ),
+        ),
+        myDivider
+      ],
     );
   }
 }

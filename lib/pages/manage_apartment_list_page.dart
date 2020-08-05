@@ -65,17 +65,16 @@ class _ManageApartmentsListPageState extends State<ManageApartmentsListPage> {
 
       MetaEntity metaEn = entity.getMetaEntity();
 
-      // TODO: Create Entity with given id and type.
-
       metaEntitiesList.add(metaEn);
       _parentEntityMap[metaEn.entityId] = entity;
-      // saveEntityDetails(en);
+
       _count = _count + 1;
     });
   }
 
   Widget _buildServiceItem(MetaEntity childEntity) {
-    return new EntityRow(entity: childEntity, parentEntityMap: _parentEntityMap);
+    return new EntityRow(
+        entity: childEntity, parentEntityMap: _parentEntityMap);
   }
 
   @override

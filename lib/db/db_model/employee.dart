@@ -1,4 +1,5 @@
 import 'package:noq/db/db_model/user.dart';
+import 'package:noq/utils.dart';
 
 class Employee {
   String name;
@@ -41,6 +42,7 @@ class Employee {
 
   static List<String> convertList(List<dynamic> list) {
     List<String> newList = new List();
+    if (Utils.isNullOrEmpty(list)) return newList;
     for (dynamic day in list) {
       newList.add(day.toString());
     }

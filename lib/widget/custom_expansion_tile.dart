@@ -160,23 +160,6 @@ class _CustomExpansionTileState extends State<CustomExpansionTile>
                 ],
               ),
             ),
-
-            // ListTile(
-            //   onTap: _handleTap,
-            //   leading: widget.leading,
-            //   title: DefaultTextStyle(
-            //     style: Theme.of(context)
-            //         .textTheme
-            //         .subhead
-            //         .copyWith(color: titleColor),
-            //     child: widget.title,
-            //   ),
-            //   trailing: widget.trailing ??
-            //       RotationTransition(
-            //         turns: _iconTurns,
-            //         child: const Icon(Icons.expand_more),
-            //       ),
-            // ),
           ),
           ClipRect(
             child: Align(
