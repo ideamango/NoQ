@@ -39,7 +39,10 @@ class Entity {
       this.whatsapp,
       this.createdAt,
       this.modifiedAt,
-      this.verificationStatus});
+      this.verificationStatus,
+      this.gpay,
+      this.paytm,
+      this.applepay});
 
   //SlotDocumentId is entityID#20~06~01 it is not auto-generated, will help in not duplicating the record
   String entityId;
@@ -75,6 +78,9 @@ class Entity {
   DateTime modifiedAt;
   //"Verification Pending", "Verified", "Rejected"
   String verificationStatus;
+  String gpay;
+  String paytm;
+  String applepay;
 
   Map<String, dynamic> toJson() => {
         'entityId': entityId,
@@ -108,7 +114,10 @@ class Entity {
         'whatsapp': whatsapp,
         'createdAt': createdAt.millisecondsSinceEpoch,
         'modifiedAt': modifiedAt.millisecondsSinceEpoch,
-        'verificationStatus': verificationStatus
+        'verificationStatus': verificationStatus,
+        'gpay': gpay,
+        'paytm': paytm,
+        'applepay': applepay
       };
 
   List<dynamic> usersToJson(List<MetaUser> users) {
@@ -171,7 +180,10 @@ class Entity {
         whatsapp: json['whatsapp'],
         createdAt: new DateTime.fromMillisecondsSinceEpoch(json['createdAt']),
         modifiedAt: new DateTime.fromMillisecondsSinceEpoch(json['modifiedAt']),
-        verificationStatus: json['verificationStatus']);
+        verificationStatus: json['verificationStatus'],
+        gpay: json['gpay'],
+        paytm: json['paytm'],
+        applepay: json['applepay']);
   }
 
   static Address convertToAddressFromJson(Map<String, dynamic> json) {
@@ -245,7 +257,10 @@ class Entity {
         maxAllowed: maxAllowed,
         distance: distance,
         whatsapp: whatsapp,
-        parentId: parentId);
+        parentId: parentId,
+        gpay: gpay,
+        paytm: paytm,
+        applepay: applepay);
 
     return meta;
   }

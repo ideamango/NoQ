@@ -23,13 +23,13 @@ class _LandingPageState extends State<LandingPage> {
 
   _initializeUserProfile() async {
     //Fetch bookings for current user
-    DateTime fromDate = DateTime.now().subtract(new Duration(days: 10));
-    DateTime toDate = DateTime.now().add(new Duration(days: 10));
-    List<UserToken> bookings =
-        await TokenService().getAllTokensForCurrentUser(fromDate, toDate);
+    // DateTime fromDate = DateTime.now().subtract(new Duration(days: 10));
+    // DateTime toDate = DateTime.now().add(new Duration(days: 10));
+    // List<UserToken> bookings =
+    //     await TokenService().getAllTokensForCurrentUser(fromDate, toDate);
     //Set bookings, conf for current user
     _state = await GlobalState.getGlobalState();
-    _state.bookings = bookings;
+    //_state.bookings = bookings;
 
     //getFromPrefs();
   }
@@ -37,7 +37,7 @@ class _LandingPageState extends State<LandingPage> {
   @override
   void initState() {
     super.initState();
-    _initializeUserProfile();
+    //_initializeUserProfile();
   }
 
   @override

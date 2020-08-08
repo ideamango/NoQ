@@ -133,7 +133,10 @@ class TokenService {
             'entityName': metaEntity.name,
             'lat': metaEntity.lat,
             'lon': metaEntity.lon,
-            'entityWhatsApp': metaEntity.whatsapp
+            'entityWhatsApp': metaEntity.whatsapp,
+            'gpay': metaEntity.gpay,
+            'paytm': metaEntity.paytm,
+            'applepay': metaEntity.applepay
           };
           //create token
           await tx.set(tokRef, tokenJson);
@@ -189,7 +192,10 @@ class TokenService {
             'entityName': metaEntity.name,
             'lat': metaEntity.lat,
             'lon': metaEntity.lon,
-            'entityWhatsApp': metaEntity.whatsapp
+            'entityWhatsApp': metaEntity.whatsapp,
+            'gpay': metaEntity.gpay,
+            'paytm': metaEntity.paytm,
+            'applepay': metaEntity.applepay
           };
 
           //create EntitySlots with one slot in it
@@ -280,24 +286,30 @@ class TokenService {
 
     QuerySnapshot qs;
 
-    if (from != null && to != null) {
-      qs = await fStore
-          .collection('tokens')
-          .where("dateTime", isGreaterThanOrEqualTo: from)
-          .where("dateTime", isLessThanOrEqualTo: to)
-          .where("userId", isEqualTo: user.phoneNumber)
-          .getDocuments();
-    } else if (from != null && to == null) {
-      qs = await fStore
-          .collection('tokens')
-          .where("dateTime", isGreaterThanOrEqualTo: from)
-          .where("userId", isEqualTo: user.phoneNumber)
-          .getDocuments();
-    }
+    try {
+      if (from != null && to != null) {
+        qs = await fStore
+            .collection('tokens')
+            .where("dateTime",
+                isGreaterThanOrEqualTo: from.millisecondsSinceEpoch)
+            .where("dateTime", isLessThanOrEqualTo: to.millisecondsSinceEpoch)
+            .where("userId", isEqualTo: user.phoneNumber)
+            .getDocuments();
+      } else if (from != null && to == null) {
+        qs = await fStore
+            .collection('tokens')
+            .where("dateTime",
+                isGreaterThanOrEqualTo: from.millisecondsSinceEpoch)
+            .where("userId", isEqualTo: user.phoneNumber)
+            .getDocuments();
+      }
 
-    for (DocumentSnapshot ds in qs.documents) {
-      UserToken tok = UserToken.fromJson(ds.data);
-      tokens.add(tok);
+      for (DocumentSnapshot ds in qs.documents) {
+        UserToken tok = UserToken.fromJson(ds.data);
+        tokens.add(tok);
+      }
+    } catch (e) {
+      print("Error while fetching tokens: " + e.toString());
     }
 
     return tokens;
@@ -311,16 +323,21 @@ class TokenService {
     DateTime inputDate = new DateTime(date.year, date.month, date.day);
     DateTime nextDay = inputDate.add(new Duration(days: 1));
 
-    QuerySnapshot qs = await fStore
-        .collection('tokens')
-        .where("dateTime", isGreaterThanOrEqualTo: date)
-        .where("dateTime", isLessThan: nextDay)
-        .where("userId", isEqualTo: user.phoneNumber)
-        .getDocuments();
+    try {
+      QuerySnapshot qs = await fStore
+          .collection('tokens')
+          .where("dateTime",
+              isGreaterThanOrEqualTo: date.millisecondsSinceEpoch)
+          .where("dateTime", isLessThan: nextDay.millisecondsSinceEpoch)
+          .where("userId", isEqualTo: user.phoneNumber)
+          .getDocuments();
 
-    for (DocumentSnapshot ds in qs.documents) {
-      UserToken tok = UserToken.fromJson(ds.data);
-      tokens.add(tok);
+      for (DocumentSnapshot ds in qs.documents) {
+        UserToken tok = UserToken.fromJson(ds.data);
+        tokens.add(tok);
+      }
+    } catch (e) {
+      print("Error while fetching token: " + e.toString());
     }
 
     return tokens;

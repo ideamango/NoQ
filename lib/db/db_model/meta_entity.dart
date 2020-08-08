@@ -32,7 +32,10 @@ class MetaEntity {
       this.slotDuration,
       this.maxAllowed,
       this.whatsapp,
-      this.parentId});
+      this.parentId,
+      this.gpay,
+      this.paytm,
+      this.applepay});
   MetaEntity.withValues({this.entityId, this.type});
 
   //SlotDocumentId is entityID#20~06~01 it is not auto-generated, will help in not duplicating the record
@@ -59,6 +62,9 @@ class MetaEntity {
   int maxAllowed;
   String whatsapp;
   String parentId;
+  String gpay;
+  String paytm;
+  String applepay;
 
   static MetaEntity fromJson(Map<String, dynamic> json) {
     if (json == null) return null;
@@ -81,7 +87,10 @@ class MetaEntity {
         slotDuration: json['slotDuration'],
         maxAllowed: json['maxAllowed'],
         whatsapp: json['whatsapp'],
-        parentId: json['parentId']);
+        parentId: json['parentId'],
+        gpay: json['gpay'],
+        paytm: json['paytm'],
+        applepay: json['applepay']);
   }
 
   static List<String> convertToClosedOnArrayFromJson(List<dynamic> daysJson) {
@@ -111,7 +120,10 @@ class MetaEntity {
         'slotDuration': slotDuration,
         'maxAllowed': maxAllowed,
         'whatsapp': whatsapp,
-        'parentId': parentId
+        'parentId': parentId,
+        'gpay': gpay,
+        'paytm': paytm,
+        'applepay': applepay
       };
 
   bool isEqual(MetaEntity metaEnt) {

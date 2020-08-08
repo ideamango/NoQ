@@ -15,7 +15,10 @@ class UserToken {
       this.lat,
       this.lon,
       this.entityWhatsApp,
-      this.items});
+      this.items,
+      this.gpay,
+      this.paytm,
+      this.applepay});
 
   String slotId; //entityID#20~06~01#9~30
   String entityId;
@@ -29,6 +32,9 @@ class UserToken {
   double lon;
   String entityWhatsApp;
   List<ListItem> items;
+  String gpay;
+  String paytm;
+  String applepay;
 
   //TokenDocumentId is SlotId#UserId it is not auto-generated, will help in not duplicating the record
 
@@ -44,7 +50,10 @@ class UserToken {
         'lat': lat,
         'lon': lon,
         'entityWhatsApp': entityWhatsApp,
-        'items': metaEntitiesToJson(items)
+        'items': metaEntitiesToJson(items),
+        'gpay': gpay,
+        'paytm': paytm,
+        'applepay': applepay
       };
 
   static UserToken fromJson(Map<String, dynamic> json) {
@@ -61,7 +70,10 @@ class UserToken {
         lat: json['lat'],
         lon: json['lon'],
         entityWhatsApp: json['entityWhatsApp'],
-        items: convertToListItemsFromJson(json['items']));
+        items: convertToListItemsFromJson(json['items']),
+        gpay: json['gpay'],
+        paytm: json['paytm'],
+        applepay: json['applepay']);
   }
 
   String getDisplayName() {

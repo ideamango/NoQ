@@ -476,6 +476,9 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
     bookSlotForStore(meta, selectedSlot).then((value) {
       if (value == null) {
         print("nuuuuuuuuuuuuull token");
+      } else {
+        //update in global State
+        _state.addBooking(value);
       }
       _token = value.getDisplayName();
 

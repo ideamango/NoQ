@@ -5,6 +5,7 @@ import 'package:noq/db/db_model/meta_entity.dart';
 import 'package:noq/db/db_model/user.dart';
 import 'package:noq/db/db_model/user_token.dart';
 import 'package:noq/db/db_service/configurations_service.dart';
+import 'package:noq/db/db_service/token_service.dart';
 import 'package:noq/repository/local_db_repository.dart';
 import 'package:noq/utils.dart';
 import 'db/db_service/user_service.dart';
@@ -51,6 +52,11 @@ class GlobalState {
         print(
             "Error initializing GlobalState, Configuration could not be fetched from server..");
       }
+      DateTime fromDate = DateTime.now().subtract(new Duration(days: 10));
+      DateTime toDate = DateTime.now().add(new Duration(days: 10));
+
+      _gs.bookings =
+          await TokenService().getAllTokensForCurrentUser(fromDate, toDate);
     }
     return _gs;
   }
@@ -78,7 +84,11 @@ class GlobalState {
     return true;
   }
 
-  addBooking() async {}
+  Future<bool> addBooking(UserToken token) async {
+    _gs.bookings.add(token);
+    saveGlobalState();
+    return true;
+  }
 
   cancelBooking() async {}
 
