@@ -45,6 +45,25 @@ callPhone(String phone) async {
   } else {}
 }
 
+void launchGPay() async {
+  print("inside gpay");
+  //tn: Message
+  //pa: UPI Payee addr
+  //pn: payee name
+  //cu: currency
+  String url() {
+    String url =
+        'upi://pay?pa=sumant.srivastava@okicici&pn=PayeeName&tn=PaymentFromSukoon&cu=INR';
+    return url;
+  }
+
+  if (await canLaunch(url())) {
+    await launch(url());
+  } else {
+    throw 'Could not launch ${url()}';
+  }
+}
+
 void launchWhatsApp({
   @required String phone,
   @required String message,

@@ -47,6 +47,7 @@ class EntityRowState extends State<EntityRow> {
       entity = await EntityService().getEntity(entityId);
     }
   }
+  
 
   @override
   Widget build(BuildContext context) {
@@ -83,7 +84,7 @@ class EntityRowState extends State<EntityRow> {
 
     return Container(
       margin: EdgeInsets.all(5),
-      padding: EdgeInsets.all(5),
+      padding: EdgeInsets.all(8),
       decoration: BoxDecoration(
           border: Border.all(color: borderColor),
           color: Colors.white,
@@ -92,80 +93,89 @@ class EntityRowState extends State<EntityRow> {
       // padding: EdgeInsets.all(5.0),
 
       child: Row(
-        mainAxisSize: MainAxisSize.max,
-        mainAxisAlignment: MainAxisAlignment.center,
+        //  mainAxisSize: MainAxisSize.max,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: <Widget>[
           // Icon(
           //   Icons.business,
           //   color: primaryIcon,
           // ),
           Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              Column(
-                children: <Widget>[
-                  Text(
-                    _metaEntity.type,
-                    //  "Swimming Pool",
-                    style: TextStyle(color: Colors.blueGrey[700], fontSize: 17),
+              Text(
+                _metaEntity.type,
+                //  "Swimming Pool",
+                style: TextStyle(color: Colors.blueGrey[700], fontSize: 17),
+              ),
+              if (_metaEntity.name != null)
+                Text(
+                  _metaEntity.name,
+                  style: labelTextStyle,
+                ),
+            ],
+          ),
+          horizontalSpacer,
+          Column(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: <Widget>[
+              Container(
+                width: MediaQuery.of(context).size.width * .45,
+                height: 30,
+                child: RaisedButton(
+                  elevation: 20,
+                  color: primaryDarkColor,
+                  textColor: Colors.white,
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(5.0))),
+                  splashColor: highlightColor,
+                  child: Text(
+                    'Manage Child Places',
+                    style: TextStyle(color: Colors.white, fontSize: 13),
                   ),
-                  if (_metaEntity.name != null)
-                    Text(
-                      _metaEntity.name,
-                      style: labelTextStyle,
-                    ),
-                ],
+                  // Text(
+                  //   (_metaEntity.name != null)
+                  //       ? (_metaEntity.name)
+                  //       : (_metaEntity.type),
+                  //   style: buttonSmlTextStyle,
+                  // ),
+
+                  onPressed: () {
+                    print("To child list page");
+                    showChildListPage();
+                  },
+                ),
               ),
               verticalSpacer,
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: <Widget>[
-                  Container(
-                    width: MediaQuery.of(context).size.width * .45,
-                    height: 25,
-                    child: RaisedButton(
-                      elevation: 10,
-                      color: Colors.cyanAccent,
-                      textColor: Colors.white,
-                      splashColor: highlightColor,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: <Widget>[
-                          Text('Add places'),
-                          Icon(Icons.playlist_add),
-                        ],
-                      ),
-                      onPressed: () {
-                        print("To child list page");
-                        showChildListPage();
-                      },
-                    ),
+              Container(
+                height: 30,
+                width: MediaQuery.of(context).size.width * .45,
+                child: RaisedButton(
+                  elevation: 10,
+                  color: Colors.white,
+                  splashColor: highlightColor.withOpacity(.8),
+
+                  shape: RoundedRectangleBorder(
+                      side: BorderSide(color: Colors.blueGrey[500]),
+                      borderRadius: BorderRadius.all(Radius.circular(5.0))),
+                  child: Text(
+                    'Manage details',
+                    style: TextStyle(color: primaryDarkColor, fontSize: 13),
                   ),
-                  horizontalSpacer,
-                  Container(
-                    height: 25,
-                    width: MediaQuery.of(context).size.width * .45,
-                    child: RaisedButton(
-                      elevation: 10,
-                      color: Colors.white,
-                      splashColor: highlightColor.withOpacity(.8),
-                      textColor: Colors.orange,
-                      shape: RoundedRectangleBorder(
-                          side: BorderSide(color: Colors.blueGrey[500]),
-                          borderRadius: BorderRadius.all(Radius.circular(5.0))),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: <Widget>[
-                          Text('Add details'),
-                          Icon(Icons.arrow_forward),
-                        ],
-                      ),
-                      onPressed: () {
-                        print("To Add details page");
-                        showServiceForm();
-                      },
-                    ),
-                  ),
-                ],
+                  // Text(
+                  //   (_metaEntity.name != null)
+                  //       ? (_metaEntity.name)
+                  //       : (_metaEntity.type),
+                  //   style: labelTextStyle,
+                  // ),
+
+                  //Icon(Icons.arrow_forward),
+
+                  onPressed: () {
+                    print("To Add details page");
+                    showServiceForm();
+                  },
+                ),
               ),
             ],
           )

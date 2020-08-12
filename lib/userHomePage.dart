@@ -69,6 +69,10 @@ class _UserHomePageState extends State<UserHomePage> {
   @override
   void initState() {
     super.initState();
+    setState(() {
+      _upcomingBkgStatus = 'Loading';
+      _pastBkgStatus = 'Loading';
+    });
     getGlobalState().whenComplete(() => _loadBookings());
   }
 
@@ -137,8 +141,7 @@ class _UserHomePageState extends State<UserHomePage> {
 
   void _loadBookings() async {
     //Fetch details from server
-    _upcomingBkgStatus = 'Loading';
-    _pastBkgStatus = 'Loading';
+
     //loadDataFromPrefs();
     fetchDataFromGlobalState();
   }
@@ -733,6 +736,4 @@ class _UserHomePageState extends State<UserHomePage> {
               ],
             ));
   }
-
-  
 }

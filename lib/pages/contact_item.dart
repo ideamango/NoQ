@@ -291,94 +291,89 @@ class ContactRowState extends State<ContactRow> {
       ),
     );
 
-    return Column(
-      children: <Widget>[
-        Theme(
-          data: ThemeData(
-            unselectedWidgetColor: Colors.black,
-            accentColor: highlightColor,
-          ),
-          child: ExpansionTile(
-            //key: PageStorageKey(this.widget.headerTitle),
-            initiallyExpanded: false,
-            title: Text(
-              (contact.name != null && contact.name != "")
-                  ? contact.name
-                  : "Manager",
-              style: TextStyle(color: Colors.blueGrey[700], fontSize: 17),
-            ),
-            backgroundColor: Colors.white,
-            leading: Icon(
-              Icons.person,
-              color: primaryIcon,
-            ),
-            children: <Widget>[
-              new Container(
-                width: MediaQuery.of(context).size.width * .97,
-                // decoration: darkContainer,
-                padding: EdgeInsets.all(0.0),
-                child: Expanded(
-                  child: Container(
-                    padding: EdgeInsets.only(left: 2.0, right: 2),
-                    // decoration: BoxDecoration(
-                    //     // border: Border.all(color: containerColor),
-                    //     color: Colors.white,
-                    //     shape: BoxShape.rectangle,
-                    //     borderRadius: BorderRadius.all(Radius.circular(5.0))),
-                    // padding: EdgeInsets.all(5.0),
+    return Theme(
+      data: ThemeData(
+        unselectedWidgetColor: Colors.black,
+        accentColor: highlightColor,
+      ),
+      child: ExpansionTile(
+        //key: PageStorageKey(this.widget.headerTitle),
+        initiallyExpanded: false,
+        title: Text(
+          (contact.name != null && contact.name != "")
+              ? contact.name
+              : "Manager",
+          style: TextStyle(color: Colors.blueGrey[700], fontSize: 17),
+        ),
+        backgroundColor: Colors.white,
+        leading: Icon(
+          Icons.person,
+          color: primaryIcon,
+        ),
+        children: <Widget>[
+          new Container(
+            //width: MediaQuery.of(context).size.width * .97,
+            // decoration: darkContainer,
+            padding: EdgeInsets.all(0.0),
+            child: Expanded(
+              child: Container(
+                padding: EdgeInsets.only(left: 2.0, right: 2),
+                // decoration: BoxDecoration(
+                //     // border: Border.all(color: containerColor),
+                //     color: Colors.white,
+                //     shape: BoxShape.rectangle,
+                //     borderRadius: BorderRadius.all(Radius.circular(5.0))),
+                // padding: EdgeInsets.all(5.0),
 
-                    child: new Form(
-                      child: ListTile(
-                        title: Column(
-                          children: <Widget>[
-                            ctNameField,
-                            ctEmpIdField,
-                            ctPhn1Field,
-                            ctPhn2Field,
-                            daysOffField,
-                            Divider(
-                              thickness: .7,
-                              color: Colors.grey[600],
-                            ),
-                            ctAvlFromTimeField,
-                            ctAvlTillTimeField,
-                          ],
+                child: new Form(
+                  child: ListTile(
+                    title: Column(
+                      children: <Widget>[
+                        ctNameField,
+                        ctEmpIdField,
+                        ctPhn1Field,
+                        ctPhn2Field,
+                        daysOffField,
+                        Divider(
+                          thickness: .7,
+                          color: Colors.grey[600],
                         ),
-                      ),
+                        ctAvlFromTimeField,
+                        ctAvlTillTimeField,
+                      ],
                     ),
                   ),
                 ),
               ),
-            ],
+            ),
           ),
+        ],
+      ),
 
-          // ListTile(
-          //   title: Column(
-          //     children: <Widget>[
-          //       Text(
-          //         contact.role.toString(),
-          //         //  "Swimming Pool",
-          //         style: TextStyle(color: Colors.blueGrey[700], fontSize: 17),
-          //       ),
-          //       if (contact.perName != null)
-          //         Text(
-          //           contact.perName,
-          //           style: labelTextStyle,
-          //         ),
-          //     ],
-          //   ),
-          //   // backgroundColor: Colors.white,
-          //   leading: Icon(
-          //     Icons.slow_motion_video,
-          //     color: lightIcon,
-          //   ),
-          //   trailing: IconButton(icon: Icon(Icons.arrow_forward), onPressed: () {}
-          //       //showServiceForm
-          //       ),
-          // ),
-        ),
-        myDivider
-      ],
+      // ListTile(
+      //   title: Column(
+      //     children: <Widget>[
+      //       Text(
+      //         contact.role.toString(),
+      //         //  "Swimming Pool",
+      //         style: TextStyle(color: Colors.blueGrey[700], fontSize: 17),
+      //       ),
+      //       if (contact.perName != null)
+      //         Text(
+      //           contact.perName,
+      //           style: labelTextStyle,
+      //         ),
+      //     ],
+      //   ),
+      //   // backgroundColor: Colors.white,
+      //   leading: Icon(
+      //     Icons.slow_motion_video,
+      //     color: lightIcon,
+      //   ),
+      //   trailing: IconButton(icon: Icon(Icons.arrow_forward), onPressed: () {}
+      //       //showServiceForm
+      //       ),
+      // ),
     );
   }
 }

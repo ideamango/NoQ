@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:noq/db/db_model/address.dart';
 import 'package:noq/db/db_model/configurations.dart';
+import 'package:noq/db/db_model/employee.dart';
 import 'package:noq/db/db_model/entity.dart';
 import 'package:noq/db/db_model/entity_private.dart';
 import 'package:noq/db/db_model/entity_slots.dart';
@@ -178,6 +179,8 @@ class DBTest {
         isBookable: false,
         isActive: true,
         coordinates: geoPoint);
+
+    // Employee manager1 = new Employee(name: "Rakesh", ph: "+91888888888", employeeId: "empyId", shiftStartHour: );
 
     try {
       await EntityService().upsertEntity(entity, "");

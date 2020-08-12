@@ -44,3 +44,17 @@ Entity createEntity(String entityId, String entityType) {
       coordinates: null);
   return entity;
 }
+
+Future<bool> assignAdminsFromList(
+    String entityId, List<String> adminsList) async {
+  try {
+    for (int i = 0; i < adminsList.length; i++) {
+      EntityService().assignAdmin(entityId, adminsList[i]);
+    }
+  } catch (e) {
+    print(e);
+    return false;
+  }
+
+  return true;
+}

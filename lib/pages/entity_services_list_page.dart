@@ -282,7 +282,7 @@ class _ChildEntitiesListPageState extends State<ChildEntitiesListPage> {
                                         }
                                       } else {
                                         setState(() {
-                                          _msg = "Select service type";
+                                          _msg = "Select Entity type";
                                         });
                                       }
                                     },
