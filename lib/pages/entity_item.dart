@@ -47,7 +47,6 @@ class EntityRowState extends State<EntityRow> {
       entity = await EntityService().getEntity(entityId);
     }
   }
-  
 
   @override
   Widget build(BuildContext context) {
@@ -124,7 +123,7 @@ class EntityRowState extends State<EntityRow> {
                 height: 30,
                 child: RaisedButton(
                   elevation: 20,
-                  color: primaryDarkColor,
+                  color: btnColor,
                   textColor: Colors.white,
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.all(Radius.circular(5.0))),

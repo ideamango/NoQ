@@ -157,7 +157,11 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
 //contact person
       if (!(Utils.isNullOrEmpty(entity.managers))) {
         contactList = entity.managers;
+        contactList.forEach((element) {
+          contactRowWidgets.insert(0, new ContactRow(contact: element));
+        });
       }
+      //TODO Smita - Load Admins from server and populate adminsList
     }
     //  else {
     //   entity = createEntity(_metaEntity.entityId, _metaEntity.type);
@@ -261,7 +265,7 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
     setState(() {
       Employee contact = new Employee();
 
-      contactRowWidgets.add(new ContactRow(contact: contact));
+      contactRowWidgets.insert(0, new ContactRow(contact: contact));
 
       contactList.add(contact);
       if (Utils.isNullOrEmpty(entity.managers)) {
@@ -904,9 +908,9 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
       bool _delEnabled = false;
       Flushbar flush;
       bool _wasButtonClicked;
-      void _addNewServiceRow() {
+      void _addNewAdminRow() {
         setState(() {
-          adminsList.insert(0, _item);
+          adminsList.insert(0, '+91' + _adminItemController.text);
 
           //TODO: Smita - Update GS
         });
@@ -926,7 +930,7 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
         return Card(
           semanticContainer: true,
           elevation: 15,
-          margin: EdgeInsets.all(2),
+          margin: EdgeInsets.fromLTRB(4, 2, 4, 4),
           child: Container(
             height: 25,
             //padding: EdgeInsets.fromLTRB(4, 8, 4, 14),
@@ -940,6 +944,7 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
                     width: MediaQuery.of(context).size.width * .5,
                     child: TextField(
                       cursorColor: highlightColor,
+                      keyboardType: TextInputType.phone,
                       inputFormatters: [
                         LengthLimitingTextInputFormatter(18),
                       ],
@@ -948,6 +953,7 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
                       decoration: InputDecoration(
                         //contentPadding: EdgeInsets.all(12),
                         // labelText: newItem.itemName,
+
                         hintText: 'Item name',
                         hintStyle: TextStyle(fontSize: 12, color: Colors.grey),
                         enabledBorder: InputBorder.none,
@@ -1700,7 +1706,7 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
                                                   color: highlightColor,
                                                   size: 38),
                                               onPressed: () {
-                                                _addNewServiceRow();
+                                                _addNewAdminRow();
                                                 _adminItemController.text = "";
                                               }),
                                         ),
@@ -1843,10 +1849,10 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
                                   'Save',
                                   style: buttonMedTextStyle,
                                 ),
-                                Text(
-                                  'Details of amenities/services',
-                                  style: buttonXSmlTextStyle,
-                                ),
+                                // Text(
+                                //   'Details of amenities/services',
+                                //   style: buttonXSmlTextStyle,
+                                // ),
                               ],
                             ),
                           ),

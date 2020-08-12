@@ -6,6 +6,7 @@ import 'package:noq/pages/entity_services_details_page.dart';
 import 'package:noq/style.dart';
 import 'package:flutter/foundation.dart';
 import 'package:noq/utils.dart';
+import 'package:noq/widget/widgets.dart';
 
 class ChildEntityRow extends StatefulWidget {
   final MetaEntity childEntity;
@@ -59,19 +60,19 @@ class ChildEntityRowState extends State<ChildEntityRow> {
       });
     }
 
-    return new Card(
-      elevation: 20,
-      child: Container(
-        decoration: BoxDecoration(
-            border: Border.all(color: borderColor),
-            color: Colors.white,
-            shape: BoxShape.rectangle,
-            borderRadius: BorderRadius.all(Radius.circular(5.0))),
-        // padding: EdgeInsets.all(5.0),
-
-        child: ListTile(
-          isThreeLine: false,
-          title: Column(
+    return Container(
+      margin: EdgeInsets.all(5),
+      padding: EdgeInsets.all(8),
+      decoration: BoxDecoration(
+          border: Border.all(color: borderColor),
+          color: Colors.white,
+          shape: BoxShape.rectangle,
+          borderRadius: BorderRadius.all(Radius.circular(5.0))),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: <Widget>[
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               Text(
                 _metaEntity.type,
@@ -85,14 +86,39 @@ class ChildEntityRowState extends State<ChildEntityRow> {
                 ),
             ],
           ),
+          horizontalSpacer,
+          Container(
+            height: 30,
+            width: MediaQuery.of(context).size.width * .4,
+            child: RaisedButton(
+              elevation: 10,
+              color: Colors.white,
+              splashColor: highlightColor.withOpacity(.8),
+              shape: RoundedRectangleBorder(
+                  side: BorderSide(color: Colors.blueGrey[500]),
+                  borderRadius: BorderRadius.all(Radius.circular(5.0))),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                  Text(
+                    'Manage details',
+                    style: TextStyle(color: primaryDarkColor, fontSize: 13),
+                  ),
+                  Icon(
+                    Icons.arrow_forward_ios,
+                    color: primaryDarkColor,
+                    size: 15,
+                  )
+                ],
+              ),
+              onPressed: () {
+                print("To Add details page");
+                showServiceForm();
+              },
+            ),
+          )
           // backgroundColor: Colors.white,
-          leading: Icon(
-            Icons.slow_motion_video,
-            color: primaryIcon,
-          ),
-          trailing: IconButton(
-              icon: Icon(Icons.arrow_forward), onPressed: showServiceForm),
-        ),
+        ],
       ),
     );
   }

@@ -63,6 +63,8 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
   TextEditingController _countryController = TextEditingController();
   TextEditingController _pinController = TextEditingController();
   // List<String> _addressList = new List<String>();
+  TextEditingController _adminItemController = new TextEditingController();
+  String _item;
 
   //ContactPerson Fields
   TextEditingController _ctNameController = TextEditingController();
@@ -94,13 +96,16 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
 // ChildEntityAppData serviceEntity;
 
   List<Employee> contactList = new List<Employee>();
+  List<String> adminsList = new List<String>();
   List<Widget> contactRowWidgets = new List<Widget>();
+  List<Widget> adminRowWidgets = new List<Widget>();
   int _contactCount = 0;
   String _roleType;
 
   Flushbar flush;
   bool _wasButtonClicked;
   String flushStatus = "Empty";
+
   @override
   void initState() {
     super.initState();
@@ -160,7 +165,11 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
 //contact person
         if (!(Utils.isNullOrEmpty(serviceEntity.managers))) {
           contactList = serviceEntity.managers;
+          contactList.forEach((element) {
+            contactRowWidgets.insert(0, new ContactRow(contact: element));
+          });
         }
+        //TODO Smita - Load Admins from server and populate adminsList
       }
     } else {
       //TODO:do nothing as this metaEntity is just created and will saved in DB only on save
@@ -251,6 +260,89 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
     }
   }
 
+  void _addNewAdminRow() {
+    setState(() {
+      adminsList.insert(0, '+91' + _adminItemController.text);
+
+      //TODO: Smita - Update GS
+    });
+  }
+
+  void _removeServiceRow(String currItem) {
+    setState(() {
+      adminsList.remove(currItem);
+
+      //TODO: Smita - Update GS
+    });
+  }
+
+  Widget _buildServiceItem(String newItem) {
+    TextEditingController itemNameController = new TextEditingController();
+    itemNameController.text = newItem;
+    return Card(
+      semanticContainer: true,
+      elevation: 15,
+      margin: EdgeInsets.fromLTRB(4, 2, 4, 4),
+      child: Container(
+        height: 25,
+        //padding: EdgeInsets.fromLTRB(4, 8, 4, 14),
+        margin: EdgeInsets.fromLTRB(4, 8, 4, 6),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: <Widget>[
+            Container(
+                height: 25,
+                width: MediaQuery.of(context).size.width * .5,
+                child: TextField(
+                  cursorColor: highlightColor,
+                  keyboardType: TextInputType.phone,
+                  inputFormatters: [
+                    LengthLimitingTextInputFormatter(18),
+                  ],
+                  style: TextStyle(fontSize: 14, color: primaryDarkColor),
+                  controller: itemNameController,
+                  decoration: InputDecoration(
+                    //contentPadding: EdgeInsets.all(12),
+                    // labelText: newItem.itemName,
+
+                    hintText: 'Item name',
+                    hintStyle: TextStyle(fontSize: 12, color: Colors.grey),
+                    enabledBorder: InputBorder.none,
+                    focusedBorder: InputBorder.none,
+                  ),
+                  onChanged: (value) {
+                    newItem = value;
+                  },
+                )
+
+                // Text(
+                //   newItem.itemName,ggg
+
+                // ),
+                ),
+            horizontalSpacer,
+            Container(
+              height: 25,
+              margin: EdgeInsets.fromLTRB(0, 0, 0, 0),
+              padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
+              width: MediaQuery.of(context).size.width * .1,
+              child: IconButton(
+                alignment: Alignment.topCenter,
+                padding: EdgeInsets.all(0),
+                icon: Icon(Icons.delete, color: Colors.blueGrey[300], size: 20),
+                onPressed: () {
+                  _removeServiceRow(newItem);
+                  _adminItemController.text = "";
+                },
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   void saveFormDetails() async {
     print("saving ");
 
@@ -280,6 +372,12 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
     });
   }
 
+  void addNewAdminRow() {
+    setState(() {
+      adminsList.add("Admin");
+    });
+  }
+
   void _addNewContactRow() {
     setState(() {
       Employee contact = new Employee();
@@ -287,6 +385,8 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
       contactRowWidgets.insert(0, new ContactRow(contact: contact));
 
       contactList.add(contact);
+      //TODO Smita check the logic for contactList
+
       serviceEntity.managers = contactList;
       // saveEntityDetails(en);
       //saveEntityDetails();
@@ -945,6 +1045,41 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
         //   saveEntityDetails(entity);
       },
     );
+    final itemField = new TextFormField(
+      autofocus: true,
+      inputFormatters: [
+        LengthLimitingTextInputFormatter(18),
+      ],
+      keyboardType: TextInputType.phone,
+      controller: _adminItemController,
+      cursorColor: highlightColor,
+      //cursorWidth: 1,
+      style: textInputTextStyle,
+      decoration: new InputDecoration(
+          contentPadding: EdgeInsets.fromLTRB(5, 7, 5, 7),
+          isDense: true,
+          prefixStyle: textInputTextStyle,
+          // hintStyle: hintTextStyle,
+          prefixText: '+91',
+          suffixIconConstraints: BoxConstraints(
+            maxWidth: 22,
+            maxHeight: 22,
+          ),
+          // contentPadding: EdgeInsets.all(0),
+          focusedBorder: InputBorder.none,
+          enabledBorder: InputBorder.none,
+          hintText: "Enter Admin's Contact number & Click (+)",
+          hintStyle: new TextStyle(fontSize: 12, color: Colors.blueGrey[500])),
+      onChanged: (value) {
+        setState(() {
+          _item = '+91' + value;
+          // _errMsg = "";
+        });
+      },
+      onSaved: (newValue) {
+        _item = '+91' + newValue;
+      },
+    );
 
     return MaterialApp(
       title: 'Add child entities',
@@ -1280,8 +1415,8 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
                                 color: btnColor,
                                 splashColor: highlightColor,
                                 textColor: Colors.white,
-                                shape: RoundedRectangleBorder(
-                                    side: BorderSide(color: btnColor)),
+                                // shape: RoundedRectangleBorder(
+                                //     side: BorderSide(color: btnColor)),
                                 child: Text('Use current location'),
                                 onPressed: _getCurrLocation,
                               ),
@@ -1303,7 +1438,133 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
                   ),
                   Container(
                     decoration: BoxDecoration(
-                        border: Border.all(color: borderColor),
+                        border: Border.all(color: containerColor),
+                        color: Colors.grey[50],
+                        shape: BoxShape.rectangle,
+                        borderRadius: BorderRadius.all(Radius.circular(5.0))),
+                    // padding: EdgeInsets.all(5.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Column(
+                          children: <Widget>[
+                            Container(
+                              //padding: EdgeInsets.only(left: 5),
+                              decoration: darkContainer,
+                              child: Theme(
+                                data: ThemeData(
+                                  unselectedWidgetColor: Colors.white,
+                                  accentColor: Colors.grey[50],
+                                ),
+                                child: CustomExpansionTile(
+                                  //key: PageStorageKey(this.widget.headerTitle),
+                                  initiallyExpanded: false,
+                                  title: Row(
+                                    children: <Widget>[
+                                      Text(
+                                        "Assign an Admin",
+                                        style: TextStyle(
+                                            color: Colors.white, fontSize: 15),
+                                      ),
+                                      SizedBox(width: 5),
+                                    ],
+                                  ),
+                                  trailing: IconButton(
+                                    icon: Icon(Icons.add_circle,
+                                        color: highlightColor, size: 40),
+                                    onPressed: () {
+                                      addNewAdminRow();
+                                    },
+                                  ),
+                                  backgroundColor: Colors.blueGrey[500],
+                                  children: <Widget>[
+                                    new Container(
+                                      width: MediaQuery.of(context).size.width *
+                                          .94,
+                                      decoration: darkContainer,
+                                      padding: EdgeInsets.all(2.0),
+                                      child: Row(
+                                        children: <Widget>[
+                                          Expanded(
+                                            child: Text(contactInfoStr,
+                                                style: buttonXSmlTextStyle),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                            //Add Admins list
+                            Column(
+                              children: <Widget>[
+                                Container(
+                                  margin: EdgeInsets.all(4),
+                                  padding: EdgeInsets.fromLTRB(0, 0, 4, 0),
+                                  height:
+                                      MediaQuery.of(context).size.width * .13,
+                                  decoration: BoxDecoration(
+                                      border: Border.all(color: borderColor),
+                                      color: Colors.white,
+                                      shape: BoxShape.rectangle,
+                                      borderRadius: BorderRadius.all(
+                                          Radius.circular(5.0))),
+                                  child: Row(
+                                    // mainAxisAlignment: MainAxisAlignment.end,
+                                    children: <Widget>[
+                                      Expanded(
+                                        child: itemField,
+                                      ),
+                                      Container(
+                                        padding:
+                                            EdgeInsets.fromLTRB(0, 0, 0, 0),
+                                        width:
+                                            MediaQuery.of(context).size.width *
+                                                .1,
+                                        height:
+                                            MediaQuery.of(context).size.width *
+                                                .1,
+                                        child: IconButton(
+                                            padding: EdgeInsets.all(0),
+                                            icon: Icon(Icons.add_circle,
+                                                color: highlightColor,
+                                                size: 38),
+                                            onPressed: () {
+                                              _addNewAdminRow();
+                                              _adminItemController.text = "";
+                                            }),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                ListView.builder(
+                                  shrinkWrap: true,
+                                  //scrollDirection: Axis.vertical,
+                                  itemBuilder:
+                                      (BuildContext context, int index) {
+                                    return new Column(
+                                        children: adminsList
+                                            .map(_buildServiceItem)
+                                            .toList());
+                                  },
+                                  itemCount: 1,
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  SizedBox(
+                    height: 7,
+                  ),
+                  //THIS CONTAINER
+                  Container(
+                    decoration: BoxDecoration(
+                        border: Border.all(color: containerColor),
                         color: Colors.grey[50],
                         shape: BoxShape.rectangle,
                         borderRadius: BorderRadius.all(Radius.circular(5.0))),
@@ -1342,9 +1603,13 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
                                           .94,
                                       decoration: darkContainer,
                                       padding: EdgeInsets.all(2.0),
-                                      child: Expanded(
-                                        child: Text(contactInfoStr,
-                                            style: buttonXSmlTextStyle),
+                                      child: Row(
+                                        children: <Widget>[
+                                          Expanded(
+                                            child: Text(contactInfoStr,
+                                                style: buttonXSmlTextStyle),
+                                          ),
+                                        ],
                                       ),
                                     ),
                                   ],
@@ -1354,7 +1619,7 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
                             Padding(
                               padding: const EdgeInsets.fromLTRB(8.0, 0, 8, 0),
                               child: Row(
-                                // mainAxisAlignment: MainAxisAlignment.end,
+                                mainAxisAlignment: MainAxisAlignment.end,
                                 children: <Widget>[
                                   // Expanded(
                                   //   child: roleType,
@@ -1368,11 +1633,10 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
                                         //   setState(() {
                                         //     _msg = null;
                                         //   });
-
                                         _addNewContactRow();
                                         // } else {
                                         //   setState(() {
-                                        //     _msg = "Select service type";
+                                        //     _msg = "Select role type";
                                         //   });
                                         // }
                                       },
@@ -1510,10 +1774,10 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
                                 'Save',
                                 style: buttonMedTextStyle,
                               ),
-                              Text(
-                                'Save this service',
-                                style: buttonXSmlTextStyle,
-                              ),
+                              // Text(
+                              //   'Save this service',
+                              //   style: buttonXSmlTextStyle,
+                              // ),
                             ],
                           ),
                         ),
