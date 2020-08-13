@@ -126,6 +126,23 @@ class EntityService {
     return entity;
   }
 
+  Future<EntityPrivate> getEntityPrivate(String entityId) async {
+    Firestore fStore = Firestore.instance;
+    EntityPrivate entityPrivate;
+
+    final DocumentReference entityPrivateRef =
+        fStore.document('entities/' + entityId + '/private_data/private');
+
+    DocumentSnapshot doc = await entityPrivateRef.get();
+
+    if (doc.exists) {
+      Map<String, dynamic> map = doc.data;
+      entityPrivate = EntityPrivate.fromJson(map);
+    }
+
+    return entityPrivate;
+  }
+
   Future<bool> deleteEntity(String entityId) async {
     final FirebaseUser fireUser = await FirebaseAuth.instance.currentUser();
     Firestore fStore = Firestore.instance;
