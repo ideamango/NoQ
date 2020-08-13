@@ -5,6 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:noq/style.dart';
+import 'package:noq/widget/weekday_selector.dart';
 
 class Utils {
   static String getDayOfWeek(DateTime date) {
@@ -67,7 +68,7 @@ class Utils {
   static void showMyFlushbar(
       BuildContext context, IconData icon, String title, String msg) {
     Flushbar(
-      //padding: EdgeInsets.zero,
+      padding: EdgeInsets.fromLTRB(4, 4, 4, 4),
       margin: EdgeInsets.zero,
       flushbarPosition: FlushbarPosition.BOTTOM,
       flushbarStyle: FlushbarStyle.FLOATING,
@@ -104,5 +105,57 @@ class Utils {
             TextStyle(fontSize: 12.0, color: borderColor, fontFamily: "Roboto"),
       ),
     )..show(context);
+  }
+
+  static List<days> convertStringsToDays(List<String> stringsList) {
+    List<days> daysList = List<days>();
+    stringsList.forEach((element) {
+      print(element);
+      switch (element) {
+        case 'monday':
+          {
+            daysList.add(days.monday);
+          }
+          break;
+        case 'tuesday':
+          {
+            daysList.add(days.tuesday);
+          }
+          break;
+        case 'wednesday':
+          {
+            daysList.add(days.wednesday);
+          }
+          break;
+
+        case 'thursday':
+          {
+            daysList.add(days.thursday);
+          }
+          break;
+        case 'friday':
+          {
+            daysList.add(days.friday);
+          }
+          break;
+        case 'saturday':
+          {
+            daysList.add(days.saturday);
+          }
+          break;
+        case 'sunday':
+          {
+            daysList.add(days.sunday);
+          }
+          break;
+
+        default:
+          {
+            daysList.add(days.sunday);
+          }
+          break;
+      }
+    });
+    return daysList;
   }
 }

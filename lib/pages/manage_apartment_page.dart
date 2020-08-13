@@ -58,7 +58,7 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
   TextEditingController _advBookingInDaysController = TextEditingController();
 
   List<String> _closedOnDays = List<String>();
-  List<String> _daysOff = List<String>();
+  List<days> _daysOff = List<days>();
 
   // TextEditingController _subAreaController = TextEditingController();
   TextEditingController _adrs1Controller = TextEditingController();
@@ -121,9 +121,11 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
 
   initializeEntity() async {
     if (entity != null) {
+      isPublic = entity.isPublic;
+      isBookable = entity.isBookable;
+      isActive = entity.isActive;
       _nameController.text = entity.name;
-      // _entityType = entity.eType;
-      // _regNumController.text = entity.regNum;
+      _descController.text = entity.description;
       if (entity.startTimeHour != null && entity.startTimeMinute != null)
         _openTimeController.text = entity.startTimeHour.toString() +
             ':' +
@@ -140,10 +142,15 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
         _breakEndController.text = entity.breakEndHour.toString() +
             ':' +
             entity.breakEndMinute.toString();
-      if (entity.closedOn != null) _daysOff = entity.closedOn;
+      if (entity.closedOn != null) {
+        _daysOff = Utils.convertStringsToDays(entity.closedOn);
+      }
+      _slotDurationController.text = entity.slotDuration.toString();
+      _advBookingInDaysController.text = entity.advanceDays.toString();
       if (entity.maxAllowed != null)
         _maxPeopleController.text =
             (entity.maxAllowed != null) ? entity.maxAllowed.toString() : "";
+      _whatsappPhoneController.text = entity.whatsapp.toString();
       //address
       if (entity.address != null) {
         _adrs1Controller.text = entity.address.address;
@@ -154,7 +161,7 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
         _countryController.text = entity.address.country;
         _pinController.text = entity.address.zipcode;
       }
-//contact person
+      //contact person
       if (!(Utils.isNullOrEmpty(entity.managers))) {
         contactList = entity.managers;
         contactList.forEach((element) {
@@ -162,6 +169,7 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
         });
       }
       //TODO Smita - Load Admins from server and populate adminsList
+      adminsList = fetchAdmins(entity.entityId);
     }
     //  else {
     //   entity = createEntity(_metaEntity.entityId, _metaEntity.type);
@@ -325,7 +333,10 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
 
   void saveNewAdminRow(String newAdmPh) {
     setState(() {
-      adminsList.add(newAdmPh);
+      adminsList.forEach((element) {
+        if (element.compareTo(newAdmPh) != 0) adminsList.add(newAdmPh);
+      });
+
       // adminsList.add
 
       //Check the admins already present
@@ -336,15 +347,6 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
       // saveEntityDetails(en);
       //saveEntityDetails();
     });
-  }
-
-  List<Widget> showAdmins() {
-    return adminsList.map(buildAdminRow).toList();
-    // return _stores.map((contact) => new ChildItem(contact.name)).toList();
-  }
-
-  Widget _buildContactItem(Employee contact) {
-    return new ContactRow(contact: contact);
   }
 
   @override
@@ -641,7 +643,7 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
                 days.saturday,
                 days.sunday
               ],
-              initialValue: [days.sunday],
+              initialValue: _daysOff,
               borderRadius: 20,
               elevation: 10,
               textStyle: buttonXSmlTextStyle,
@@ -909,8 +911,27 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
       Flushbar flush;
       bool _wasButtonClicked;
       void _addNewAdminRow() {
+        bool insert = true;
+        String newAdminPh = '+91' + _adminItemController.text;
+
         setState(() {
-          adminsList.insert(0, '+91' + _adminItemController.text);
+          if (adminsList.length != 0) {
+            for (int i = 0; i < adminsList.length; i++) {
+              if (adminsList[i] == (newAdminPh)) {
+                insert = false;
+                Utils.showMyFlushbar(context, Icons.info_outline, "Error",
+                    "Phone number already exists !!");
+                break;
+              }
+              print("in for loop $insert");
+              print(adminsList[i] == newAdminPh);
+              print(newAdminPh);
+              print(adminsList[i]);
+            }
+          }
+
+          if (insert) adminsList.insert(0, newAdminPh);
+          print("after foreach");
 
           //TODO: Smita - Update GS
         });
@@ -1022,7 +1043,7 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
               if (!value) {
                 Utils.showMyFlushbar(
                     context,
-                    Icons.notification_important,
+                    Icons.info_outline,
                     "Couldn't save the Entity for some reason. ",
                     "Please try again.");
               }
@@ -1706,8 +1727,20 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
                                                   color: highlightColor,
                                                   size: 38),
                                               onPressed: () {
-                                                _addNewAdminRow();
-                                                _adminItemController.text = "";
+                                                if (_adminItemController.text ==
+                                                        null ||
+                                                    _adminItemController
+                                                        .text.isEmpty) {
+                                                  Utils.showMyFlushbar(
+                                                      context,
+                                                      Icons.info_outline,
+                                                      "Something Missing ..",
+                                                      "Please enter Phone number !!");
+                                                } else {
+                                                  _addNewAdminRow();
+                                                  _adminItemController.text =
+                                                      "";
+                                                }
                                               }),
                                         ),
                                       ],
@@ -1915,7 +1948,7 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
                               duration: Duration(seconds: 4),
                               icon: Icon(
                                 Icons.save,
-                                color: Colors.blueGrey[50],
+                                color: Colors.orangeAccent[400],
                               ),
                               showProgressIndicator: true,
                               progressIndicatorBackgroundColor:
@@ -1930,7 +1963,7 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
                                     fontFamily: "ShadowsIntoLightTwo"),
                               ),
                               messageText: Text(
-                                " Loading the services offered!!",
+                                "This will take just a moment !!",
                                 style: TextStyle(
                                     fontSize: 12.0,
                                     color: Colors.blueGrey[50],

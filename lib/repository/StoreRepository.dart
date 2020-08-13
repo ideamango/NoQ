@@ -60,3 +60,9 @@ Future<bool> assignAdminsFromList(
 
   return true;
 }
+
+Future<List<String>> fetchAdmins(String entityId) async {
+  List<String> adminsList;
+  //adminsList = EntityService().
+  return adminsList;
+}

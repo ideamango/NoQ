@@ -26,11 +26,32 @@ class ContactRowState extends State<ContactRow> {
   TextEditingController _ctAvlTillTimeController = TextEditingController();
 
   List<String> _daysOff = List<String>();
+  bool _initCompleted = false;
+  List<days> _closedOnDays;
 
   @override
   void initState() {
     super.initState();
     contact = widget.contact;
+    initializeContactDetails();
+  }
+
+  void initializeContactDetails() {
+    _ctNameController.text = contact.name;
+    _ctEmpIdController.text = contact.employeeId;
+    _ctPhn1controller.text = contact.ph;
+    _ctPhn2controller.text = contact.altPhone;
+    _ctAvlFromTimeController.text = contact.shiftStartHour.toString() +
+        ':' +
+        contact.shiftStartMinute.toString();
+    _ctAvlTillTimeController.text = contact.shiftEndHour.toString() +
+        ':' +
+        contact.shiftEndMinute.toString();
+    _daysOff = contact.daysOff;
+    if (contact.daysOff != null) {
+      _closedOnDays = List<days>();
+      _closedOnDays = Utils.convertStringsToDays(contact.daysOff);
+    }
   }
 
   String validateText(String value) {
@@ -265,7 +286,7 @@ class ContactRowState extends State<ContactRow> {
               days.saturday,
               days.sunday
             ],
-            initialValue: [days.sunday],
+            initialValue: _closedOnDays,
             borderRadius: 20,
             elevation: 10,
             textStyle: buttonXSmlTextStyle,
