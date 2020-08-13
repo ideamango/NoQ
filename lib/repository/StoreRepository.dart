@@ -44,3 +44,19 @@ Entity createEntity(String entityId, String entityType) {
       coordinates: null);
   return entity;
 }
+
+Future<bool> assignAdminsFromList(
+    String entityId, List<String> adminsList) async {
+  //TODO Smita - Get all admins and check which entries already exists in DB
+  // Add rest of admins then
+  try {
+    for (int i = 0; i < adminsList.length; i++) {
+      await EntityService().assignAdmin(entityId, adminsList[i]);
+    }
+  } catch (e) {
+    print(e);
+    return false;
+  }
+
+  return true;
+}

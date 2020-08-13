@@ -236,7 +236,7 @@ class _ShoppingListState extends State<ShoppingList> {
                 child: IconButton(
                   icon: ImageIcon(
                     AssetImage('assets/whatsapp.png'),
-                    size: 28,
+                    size: 26,
                     color: Colors.white,
                   ),
                   onPressed: () {
@@ -251,7 +251,7 @@ class _ShoppingListState extends State<ShoppingList> {
                       concatenate.writeln('Shopping List from Sukoon');
                       concatenate.writeln('-----------------------------');
                       //concatenate.writeln(heading);
-                      for (int i; i < listOfShoppingItems.length; i++) {
+                      for (int i = 0; i < listOfShoppingItems.length; i++) {
                         print('i----' +
                             listOfShoppingItems[i].itemName +
                             ' - ' +
@@ -276,6 +276,15 @@ class _ShoppingListState extends State<ShoppingList> {
                         _errMsg = 'Nothing to share, add items to list first.';
                       });
                     }
+                  },
+                ),
+              ),
+              Container(
+                padding: EdgeInsets.fromLTRB(0, 0, 10, 0),
+                child: IconButton(
+                  icon: Icon(Icons.payment, size: 28),
+                  onPressed: () {
+                    launchGPay();
                   },
                 ),
               ),

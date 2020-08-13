@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flushbar/flushbar_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
@@ -68,6 +69,10 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
   TextEditingController _countryController = TextEditingController();
   TextEditingController _pinController = TextEditingController();
   // List<String> _addressList = new List<String>();
+  TextEditingController _ctPhn1controller = TextEditingController();
+
+  TextEditingController _adminItemController = new TextEditingController();
+  String _item;
 
   //ContactPerson Fields
 
@@ -77,7 +82,9 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
   Entity entity;
 
   List<Employee> contactList = new List<Employee>();
+  List<String> adminsList = new List<String>();
   List<Widget> contactRowWidgets = new List<Widget>();
+  List<Widget> adminRowWidgets = new List<Widget>();
   int _contactCount = 0;
 
   //bool _autoPopulate = false;
@@ -150,7 +157,11 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
 //contact person
       if (!(Utils.isNullOrEmpty(entity.managers))) {
         contactList = entity.managers;
+        contactList.forEach((element) {
+          contactRowWidgets.insert(0, new ContactRow(contact: element));
+        });
       }
+      //TODO Smita - Load Admins from server and populate adminsList
     }
     //  else {
     //   entity = createEntity(_metaEntity.entityId, _metaEntity.type);
@@ -254,7 +265,7 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
     setState(() {
       Employee contact = new Employee();
 
-      contactRowWidgets.add(new ContactRow(contact: contact));
+      contactRowWidgets.insert(0, new ContactRow(contact: contact));
 
       contactList.add(contact);
       if (Utils.isNullOrEmpty(entity.managers)) {
@@ -265,6 +276,71 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
       //saveEntityDetails();
       _contactCount = _contactCount + 1;
     });
+  }
+
+  void addNewAdminRow() {
+    setState(() {
+      adminsList.add("Admin");
+    });
+  }
+
+  Widget buildAdminRow(String admPh) {
+    Widget ctPhn1Field = TextFormField(
+      obscureText: false,
+      maxLines: 1,
+      minLines: 1,
+      style: textInputTextStyle,
+      keyboardType: TextInputType.phone,
+      controller: _ctPhn1controller,
+      decoration: CommonStyle.textFieldStyle(
+          prefixText: '+91', labelTextStr: "Primary Phone", hintTextStr: ""),
+      validator: Utils.validateMobile,
+      onChanged: (String value) {
+        //  contact.ph = "+91" + value;
+      },
+      onSaved: (value) {
+        //   contact.ph = "+91" + value;
+      },
+    );
+    _ctPhn1controller.text = admPh;
+
+    return ListTile(
+      title: Column(
+        children: <Widget>[ctPhn1Field],
+      ),
+      // backgroundColor: Colors.white,
+      leading: Icon(
+        Icons.person,
+        color: lightIcon,
+      ),
+      trailing: IconButton(
+          icon: Icon(Icons.save),
+          onPressed: () {
+            saveNewAdminRow(_ctPhn1controller.text);
+          }
+          //showServiceForm
+          ),
+    );
+  }
+
+  void saveNewAdminRow(String newAdmPh) {
+    setState(() {
+      adminsList.add(newAdmPh);
+      // adminsList.add
+
+      //Check the admins already present
+      // if (Utils.isNullOrEmpty(entity.managers)) {
+      //   entity.managers = new List<Employee>();
+      // }
+      //entity.managers = contactList;
+      // saveEntityDetails(en);
+      //saveEntityDetails();
+    });
+  }
+
+  List<Widget> showAdmins() {
+    return adminsList.map(buildAdminRow).toList();
+    // return _stores.map((contact) => new ChildItem(contact.name)).toList();
   }
 
   Widget _buildContactItem(Employee contact) {
@@ -832,6 +908,89 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
       bool _delEnabled = false;
       Flushbar flush;
       bool _wasButtonClicked;
+      void _addNewAdminRow() {
+        setState(() {
+          adminsList.insert(0, '+91' + _adminItemController.text);
+
+          //TODO: Smita - Update GS
+        });
+      }
+
+      void _removeServiceRow(String currItem) {
+        setState(() {
+          adminsList.remove(currItem);
+
+          //TODO: Smita - Update GS
+        });
+      }
+
+      Widget _buildServiceItem(String newItem) {
+        TextEditingController itemNameController = new TextEditingController();
+        itemNameController.text = newItem;
+        return Card(
+          semanticContainer: true,
+          elevation: 15,
+          margin: EdgeInsets.fromLTRB(4, 2, 4, 4),
+          child: Container(
+            height: 25,
+            //padding: EdgeInsets.fromLTRB(4, 8, 4, 14),
+            margin: EdgeInsets.fromLTRB(4, 8, 4, 6),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: <Widget>[
+                Container(
+                    height: 25,
+                    width: MediaQuery.of(context).size.width * .5,
+                    child: TextField(
+                      cursorColor: highlightColor,
+                      keyboardType: TextInputType.phone,
+                      inputFormatters: [
+                        LengthLimitingTextInputFormatter(18),
+                      ],
+                      style: TextStyle(fontSize: 14, color: primaryDarkColor),
+                      controller: itemNameController,
+                      decoration: InputDecoration(
+                        //contentPadding: EdgeInsets.all(12),
+                        // labelText: newItem.itemName,
+
+                        hintText: 'Item name',
+                        hintStyle: TextStyle(fontSize: 12, color: Colors.grey),
+                        enabledBorder: InputBorder.none,
+                        focusedBorder: InputBorder.none,
+                      ),
+                      onChanged: (value) {
+                        newItem = value;
+                      },
+                    )
+
+                    // Text(
+                    //   newItem.itemName,ggg
+
+                    // ),
+                    ),
+                horizontalSpacer,
+                Container(
+                  height: 25,
+                  margin: EdgeInsets.fromLTRB(0, 0, 0, 0),
+                  padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
+                  width: MediaQuery.of(context).size.width * .1,
+                  child: IconButton(
+                    alignment: Alignment.topCenter,
+                    padding: EdgeInsets.all(0),
+                    icon: Icon(Icons.delete,
+                        color: Colors.blueGrey[300], size: 20),
+                    onPressed: () {
+                      _removeServiceRow(newItem);
+                      _adminItemController.text = "";
+                    },
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      }
 
       void saveFormDetails() {
         print("saving ");
@@ -858,11 +1017,22 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
         saveFormDetails();
         upsertEntity(entity, _regNumController.text).then((value) {
           if (value) {
-            Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) =>
-                        ChildEntitiesListPage(entity: this.entity)));
+            // Assign admins to newly upserted entity
+            assignAdminsFromList(entity.entityId, adminsList).then((value) {
+              if (!value) {
+                Utils.showMyFlushbar(
+                    context,
+                    Icons.notification_important,
+                    "Couldn't save the Entity for some reason. ",
+                    "Please try again.");
+              }
+
+              // Navigator.push(
+              //       context,
+              //       MaterialPageRoute(
+              //           builder: (context) =>
+              //               ChildEntitiesListPage(entity: this.entity)));
+            });
           }
         });
       }
@@ -930,6 +1100,43 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
           //   saveEntityDetails(entity);
         },
       );
+      final itemField = new TextFormField(
+        autofocus: true,
+        inputFormatters: [
+          LengthLimitingTextInputFormatter(18),
+        ],
+        keyboardType: TextInputType.phone,
+        controller: _adminItemController,
+        cursorColor: highlightColor,
+        //cursorWidth: 1,
+        style: textInputTextStyle,
+        decoration: new InputDecoration(
+            contentPadding: EdgeInsets.fromLTRB(5, 7, 5, 7),
+            isDense: true,
+            prefixStyle: textInputTextStyle,
+            // hintStyle: hintTextStyle,
+            prefixText: '+91',
+            suffixIconConstraints: BoxConstraints(
+              maxWidth: 22,
+              maxHeight: 22,
+            ),
+            // contentPadding: EdgeInsets.all(0),
+            focusedBorder: InputBorder.none,
+            enabledBorder: InputBorder.none,
+            hintText: "Enter Admin's Contact number & Click (+)",
+            hintStyle:
+                new TextStyle(fontSize: 12, color: Colors.blueGrey[500])),
+        onChanged: (value) {
+          setState(() {
+            _item = '+91' + value;
+            // _errMsg = "";
+          });
+        },
+        onSaved: (newValue) {
+          _item = '+91' + newValue;
+        },
+      );
+
       return MaterialApp(
         // title: 'Add child entities',
         theme: ThemeData.light().copyWith(),
@@ -1271,9 +1478,13 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
                                                 .94,
                                         decoration: darkContainer,
                                         padding: EdgeInsets.all(2.0),
-                                        child: Expanded(
-                                          child: Text(basicInfoStr,
-                                              style: buttonXSmlTextStyle),
+                                        child: Row(
+                                          children: <Widget>[
+                                            Expanded(
+                                              child: Text(basicInfoStr,
+                                                  style: buttonXSmlTextStyle),
+                                            ),
+                                          ],
                                         ),
                                       ),
                                     ],
@@ -1350,9 +1561,13 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
                                                 .94,
                                         decoration: darkContainer,
                                         padding: EdgeInsets.all(2.0),
-                                        child: Expanded(
-                                          child: Text(addressInfoStr,
-                                              style: buttonXSmlTextStyle),
+                                        child: Row(
+                                          children: <Widget>[
+                                            Expanded(
+                                              child: Text(addressInfoStr,
+                                                  style: buttonXSmlTextStyle),
+                                            ),
+                                          ],
                                         ),
                                       ),
                                     ],
@@ -1418,7 +1633,7 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
                                     title: Row(
                                       children: <Widget>[
                                         Text(
-                                          "Add an Admin",
+                                          "Assign an Admin",
                                           style: TextStyle(
                                               color: Colors.white,
                                               fontSize: 15),
@@ -1430,7 +1645,7 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
                                       icon: Icon(Icons.add_circle,
                                           color: highlightColor, size: 40),
                                       onPressed: () {
-                                        _addNewContactRow();
+                                        addNewAdminRow();
                                       },
                                     ),
                                     backgroundColor: Colors.blueGrey[500],
@@ -1441,26 +1656,77 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
                                                 .94,
                                         decoration: darkContainer,
                                         padding: EdgeInsets.all(2.0),
-                                        child: Expanded(
-                                          child: Text(contactInfoStr,
-                                              style: buttonXSmlTextStyle),
+                                        child: Row(
+                                          children: <Widget>[
+                                            Expanded(
+                                              child: Text(contactInfoStr,
+                                                  style: buttonXSmlTextStyle),
+                                            ),
+                                          ],
                                         ),
                                       ),
                                     ],
                                   ),
                                 ),
                               ),
-                              Container(
-                                child: IconButton(
-                                  icon: Icon(Icons.add_circle,
-                                      color: highlightColor, size: 40),
-                                  onPressed: () {
-                                    _addNewContactRow();
-                                  },
-                                ),
+                              //Add Admins list
+                              Column(
+                                children: <Widget>[
+                                  Container(
+                                    margin: EdgeInsets.all(4),
+                                    padding: EdgeInsets.fromLTRB(0, 0, 4, 0),
+                                    height:
+                                        MediaQuery.of(context).size.width * .13,
+                                    decoration: BoxDecoration(
+                                        border: Border.all(color: borderColor),
+                                        color: Colors.white,
+                                        shape: BoxShape.rectangle,
+                                        borderRadius: BorderRadius.all(
+                                            Radius.circular(5.0))),
+                                    child: Row(
+                                      // mainAxisAlignment: MainAxisAlignment.end,
+                                      children: <Widget>[
+                                        Expanded(
+                                          child: itemField,
+                                        ),
+                                        Container(
+                                          padding:
+                                              EdgeInsets.fromLTRB(0, 0, 0, 0),
+                                          width: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                              .1,
+                                          height: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                              .1,
+                                          child: IconButton(
+                                              padding: EdgeInsets.all(0),
+                                              icon: Icon(Icons.add_circle,
+                                                  color: highlightColor,
+                                                  size: 38),
+                                              onPressed: () {
+                                                _addNewAdminRow();
+                                                _adminItemController.text = "";
+                                              }),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  ListView.builder(
+                                    shrinkWrap: true,
+                                    //scrollDirection: Axis.vertical,
+                                    itemBuilder:
+                                        (BuildContext context, int index) {
+                                      return new Column(
+                                          children: adminsList
+                                              .map(_buildServiceItem)
+                                              .toList());
+                                    },
+                                    itemCount: 1,
+                                  ),
+                                ],
                               ),
-                              if (!Utils.isNullOrEmpty(contactList))
-                                Column(children: contactRowWidgets),
                             ],
                           ),
                         ],
@@ -1514,9 +1780,13 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
                                                 .94,
                                         decoration: darkContainer,
                                         padding: EdgeInsets.all(2.0),
-                                        child: Expanded(
-                                          child: Text(contactInfoStr,
-                                              style: buttonXSmlTextStyle),
+                                        child: Row(
+                                          children: <Widget>[
+                                            Expanded(
+                                              child: Text(contactInfoStr,
+                                                  style: buttonXSmlTextStyle),
+                                            ),
+                                          ],
                                         ),
                                       ),
                                     ],
@@ -1527,7 +1797,7 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
                                 padding:
                                     const EdgeInsets.fromLTRB(8.0, 0, 8, 0),
                                 child: Row(
-                                  // mainAxisAlignment: MainAxisAlignment.end,
+                                  mainAxisAlignment: MainAxisAlignment.end,
                                   children: <Widget>[
                                     // Expanded(
                                     //   child: roleType,
@@ -1579,10 +1849,10 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
                                   'Save',
                                   style: buttonMedTextStyle,
                                 ),
-                                Text(
-                                  'Details of amenities/services',
-                                  style: buttonXSmlTextStyle,
-                                ),
+                                // Text(
+                                //   'Details of amenities/services',
+                                //   style: buttonXSmlTextStyle,
+                                // ),
                               ],
                             ),
                           ),
@@ -1641,15 +1911,6 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
                                     offset: Offset(0.0, 2.0),
                                     blurRadius: 3.0)
                               ],
-                              // backgroundGradient: new LinearGradient(
-                              //     colors: [
-                              //       Colors.blueGrey,
-                              //       Colors.black,
-                              //     ],
-                              //     begin: const FractionalOffset(0.0, 0.0),
-                              //     end: const FractionalOffset(1.0, 0.0),
-                              //     stops: [0.0, 1.0],
-                              //     tileMode: TileMode.repeated),
                               isDismissible: false,
                               duration: Duration(seconds: 4),
                               icon: Icon(
