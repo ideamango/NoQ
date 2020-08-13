@@ -1,10 +1,9 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:geoflutterfire/geoflutterfire.dart';
 import 'package:noq/db/db_model/address.dart';
 import 'package:noq/db/db_model/employee.dart';
 import 'package:noq/db/db_model/meta_entity.dart';
 import 'package:noq/db/db_model/meta_user.dart';
 import 'package:noq/db/db_model/my_geo_fire_point.dart';
+import 'package:noq/db/db_model/offer.dart';
 
 class Entity {
   Entity(
@@ -42,7 +41,8 @@ class Entity {
       this.verificationStatus,
       this.gpay,
       this.paytm,
-      this.applepay});
+      this.applepay,
+      this.offer});
 
   //SlotDocumentId is entityID#20~06~01 it is not auto-generated, will help in not duplicating the record
   String entityId;
@@ -81,6 +81,7 @@ class Entity {
   String gpay;
   String paytm;
   String applepay;
+  Offer offer;
 
   Map<String, dynamic> toJson() => {
         'entityId': entityId,
@@ -117,7 +118,8 @@ class Entity {
         'verificationStatus': verificationStatus,
         'gpay': gpay,
         'paytm': paytm,
-        'applepay': applepay
+        'applepay': applepay,
+        'offer': offer != null ? offer.toJson() : null
       };
 
   List<dynamic> usersToJson(List<MetaUser> users) {
@@ -183,7 +185,8 @@ class Entity {
         verificationStatus: json['verificationStatus'],
         gpay: json['gpay'],
         paytm: json['paytm'],
-        applepay: json['applepay']);
+        applepay: json['applepay'],
+        offer: Offer.fromJson(json['offer']));
   }
 
   static Address convertToAddressFromJson(Map<String, dynamic> json) {
@@ -260,7 +263,8 @@ class Entity {
         parentId: parentId,
         gpay: gpay,
         paytm: paytm,
-        applepay: applepay);
+        applepay: applepay,
+        offer: offer);
 
     return meta;
   }

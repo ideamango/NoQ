@@ -8,6 +8,7 @@ import 'package:noq/db/db_model/entity_private.dart';
 import 'package:noq/db/db_model/entity_slots.dart';
 import 'package:noq/db/db_model/meta_entity.dart';
 import 'package:noq/db/db_model/my_geo_fire_point.dart';
+import 'package:noq/db/db_model/offer.dart';
 import 'package:noq/db/db_model/slot.dart';
 import 'package:noq/db/db_model/user.dart';
 import 'package:noq/db/db_model/user_token.dart';
@@ -51,6 +52,46 @@ class DBTest {
 
     try {
       await EntityService().upsertEntity(entity, "testReg");
+    } catch (e) {
+      print("Exception occured " + e.toString());
+    }
+  }
+
+  void updateChildEntityBataWithOfferAndManager() async {
+    Entity ent = await EntityService().getEntity("Child101-1");
+
+    Address adrs = new Address(
+        city: "Hyderbad",
+        state: "Telangana",
+        country: "India",
+        address: "Shop 10, Gachibowli");
+
+    //update the offer and manager
+
+    Offer offer = new Offer(
+        message: "Get 10% off on branded items",
+        startDateTime: new DateTime(2020, 8, 13, 10, 30, 0, 0),
+        endDateTime: new DateTime(2020, 8, 20, 10, 30, 0, 0),
+        coupon: "Coup10");
+
+    Employee manager1 = new Employee(
+        name: "Manager1 LName",
+        ph: "+91999999999",
+        employeeId: "Emp410",
+        shiftStartHour: 9,
+        shiftStartMinute: 30,
+        shiftEndHour: 8,
+        shiftEndMinute: 30);
+
+    ent.address = adrs;
+    ent.offer = offer;
+    if (ent.managers == null) {
+      ent.managers = new List<Employee>();
+    }
+    ent.managers.add(manager1);
+
+    try {
+      await EntityService().upsertEntity(ent, "BataRegNumber");
     } catch (e) {
       print("Exception occured " + e.toString());
     }
@@ -633,6 +674,20 @@ class DBTest {
     } else {
       print(
           "EntityService.upsertChildEntityToParent (metaEntity updated in the Admin) ---------------------> Failure");
+    }
+
+    await updateChildEntityBataWithOfferAndManager();
+
+    Entity bata = await EntityService().getEntity('Child101-1');
+
+    if (bata.offer != null &&
+        bata.offer.coupon == "Coup10" &&
+        bata.managers != null &&
+        bata.managers[0].employeeId == "Emp410") {
+      print("Offer and Manager added on Entity --> SUCCESS");
+    } else {
+      print(
+          "Offer and Manager added on Entity ------------------------------> Failure");
     }
 
     print(

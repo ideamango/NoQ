@@ -1,4 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
+import 'package:noq/db/db_model/offer.dart';
 
 /// This allows the `User` class to access private members in
 /// the generated file. The value for this is *.g.dart, where
@@ -35,7 +36,8 @@ class MetaEntity {
       this.parentId,
       this.gpay,
       this.paytm,
-      this.applepay});
+      this.applepay,
+      this.offer});
   MetaEntity.withValues({this.entityId, this.type});
 
   //SlotDocumentId is entityID#20~06~01 it is not auto-generated, will help in not duplicating the record
@@ -65,6 +67,7 @@ class MetaEntity {
   String gpay;
   String paytm;
   String applepay;
+  Offer offer;
 
   static MetaEntity fromJson(Map<String, dynamic> json) {
     if (json == null) return null;
@@ -90,7 +93,8 @@ class MetaEntity {
         parentId: json['parentId'],
         gpay: json['gpay'],
         paytm: json['paytm'],
-        applepay: json['applepay']);
+        applepay: json['applepay'],
+        offer: Offer.fromJson(json['offer']));
   }
 
   static List<String> convertToClosedOnArrayFromJson(List<dynamic> daysJson) {
@@ -123,7 +127,8 @@ class MetaEntity {
         'parentId': parentId,
         'gpay': gpay,
         'paytm': paytm,
-        'applepay': applepay
+        'applepay': applepay,
+        'offer': offer != null ? offer.toJson() : null
       };
 
   bool isEqual(MetaEntity metaEnt) {
