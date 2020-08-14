@@ -25,7 +25,7 @@ class ContactRowState extends State<ContactRow> {
   TextEditingController _ctAvlFromTimeController = TextEditingController();
   TextEditingController _ctAvlTillTimeController = TextEditingController();
 
-  List<String> _daysOff = List<String>();
+  List<String> _daysOff;
   bool _initCompleted = false;
   List<days> _closedOnDays;
 
@@ -37,21 +37,28 @@ class ContactRowState extends State<ContactRow> {
   }
 
   void initializeContactDetails() {
-    _ctNameController.text = contact.name;
-    _ctEmpIdController.text = contact.employeeId;
-    _ctPhn1controller.text = contact.ph;
-    _ctPhn2controller.text = contact.altPhone;
-    _ctAvlFromTimeController.text = contact.shiftStartHour.toString() +
-        ':' +
-        contact.shiftStartMinute.toString();
-    _ctAvlTillTimeController.text = contact.shiftEndHour.toString() +
-        ':' +
-        contact.shiftEndMinute.toString();
-    _daysOff = contact.daysOff;
-    if (contact.daysOff != null) {
-      _closedOnDays = List<days>();
-      _closedOnDays = Utils.convertStringsToDays(contact.daysOff);
+    if (contact != null) {
+      _ctNameController.text = contact.name;
+      _ctEmpIdController.text = contact.employeeId;
+      _ctPhn1controller.text = contact.ph;
+      _ctPhn2controller.text = contact.altPhone;
+      if (contact.shiftStartHour != null && contact.shiftStartMinute != null)
+        _ctAvlFromTimeController.text = contact.shiftStartHour.toString() +
+            ':' +
+            contact.shiftStartMinute.toString();
+      if (contact.shiftEndHour != null && contact.shiftEndMinute != null)
+        _ctAvlTillTimeController.text = contact.shiftEndHour.toString() +
+            ':' +
+            contact.shiftEndMinute.toString();
+      _daysOff = (contact.daysOff) ?? new List<String>();
     }
+    if (_daysOff.length == 0) {
+      _daysOff.add('days.sunday');
+    }
+    _closedOnDays = List<days>();
+    _closedOnDays = Utils.convertStringsToDays(_daysOff);
+
+    contact.isManager = true;
   }
 
   String validateText(String value) {

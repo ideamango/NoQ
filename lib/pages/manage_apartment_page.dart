@@ -121,11 +121,13 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
 
   initializeEntity() async {
     if (entity != null) {
+      _regNumController.text = await fetchRegNum(entity.entityId);
       isPublic = entity.isPublic;
       isBookable = entity.isBookable;
       isActive = entity.isActive;
-      _nameController.text = entity.name;
-      _descController.text = entity.description;
+      _nameController.text = (entity.name) ?? "";
+      _descController.text = (entity.description) ?? "";
+
       if (entity.startTimeHour != null && entity.startTimeMinute != null)
         _openTimeController.text = entity.startTimeHour.toString() +
             ':' +
@@ -142,15 +144,24 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
         _breakEndController.text = entity.breakEndHour.toString() +
             ':' +
             entity.breakEndMinute.toString();
+
       if (entity.closedOn != null) {
-        _daysOff = Utils.convertStringsToDays(entity.closedOn);
+        if (entity.closedOn.length != 0)
+          _daysOff = Utils.convertStringsToDays(entity.closedOn);
       }
-      _slotDurationController.text = entity.slotDuration.toString();
-      _advBookingInDaysController.text = entity.advanceDays.toString();
+      if (_daysOff.length == 0) {
+        _closedOnDays.add('days.sunday');
+        _daysOff = Utils.convertStringsToDays(_closedOnDays);
+      }
+      _slotDurationController.text =
+          entity.slotDuration != null ? entity.slotDuration.toString() : "";
+      _advBookingInDaysController.text =
+          entity.advanceDays != null ? entity.advanceDays.toString() : "";
       if (entity.maxAllowed != null)
         _maxPeopleController.text =
             (entity.maxAllowed != null) ? entity.maxAllowed.toString() : "";
-      _whatsappPhoneController.text = entity.whatsapp.toString();
+      _whatsappPhoneController.text =
+          entity.whatsapp != null ? entity.whatsapp.toString() : "";
       //address
       if (entity.address != null) {
         _adrs1Controller.text = entity.address.address;
@@ -169,7 +180,7 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
         });
       }
       //TODO Smita - Load Admins from server and populate adminsList
-      adminsList = fetchAdmins(entity.entityId);
+      adminsList = await fetchAdmins(entity.entityId);
     }
     //  else {
     //   entity = createEntity(_metaEntity.entityId, _metaEntity.type);
@@ -1384,10 +1395,8 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
                                                                     .orange)),
                                                         child: Text('Yes'),
                                                         onPressed: () {
-                                                          // Navigator.of(context,
-                                                          //         rootNavigator:
-                                                          //             true)
-                                                          //     .pop();
+                                                          Navigator.of(context)
+                                                              .pop();
                                                         },
                                                       ),
                                                     ),
@@ -1409,11 +1418,10 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
                                                                     .orange)),
                                                         child: Text('No'),
                                                         onPressed: () {
-                                                          // Navigator.of(context,
-                                                          //         rootNavigator:
-                                                          //             true)
-                                                          //     .pop();
-                                                          // Navigator.of(context, rootNavigator: true).pop('dialog');
+                                                          Navigator.of(context,
+                                                                  rootNavigator:
+                                                                      true)
+                                                              .pop('dialog');
                                                         },
                                                       ),
                                                     ),

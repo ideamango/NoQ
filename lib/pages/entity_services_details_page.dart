@@ -74,7 +74,7 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
   TextEditingController _ctAvlFromTimeController = TextEditingController();
   TextEditingController _ctAvlTillTimeController = TextEditingController();
 
-  List<String> _daysOff = List<String>();
+  List<days> _daysOff = List<days>();
 
   Entity serviceEntity;
 
@@ -110,24 +110,21 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
   void initState() {
     super.initState();
     serviceEntity = widget.childEntity;
-    // var uuid = new Uuid();
-    // serviceEntity.id = uuid.v1();
     _getCurrLocation();
     initializeEntity();
-
-    //load the service details
-    //loadServiceEntity(serviceEntity.id);
-
-    //  serviceEntity.contactPersons = new List<ContactAppData>();
     serviceEntity.address = new Address();
-    // serviceEntity.contactPersons.add(cp1);
-    // addPerson();
   }
 
   initializeEntity() async {
     // serviceEntity = await getEntity(_metaEntity.entityId);
     if (serviceEntity != null) {
+      isPublic = serviceEntity.isPublic;
+      isBookable = serviceEntity.isBookable;
+      isActive = serviceEntity.isActive;
+
       _nameController.text = serviceEntity.name;
+      _descController.text = serviceEntity.description;
+
       //TODO-Smita  add later code for getting reg thru private
       // _regNumController.text = serviceEntity.regNum;
       if (serviceEntity.startTimeHour != null &&
@@ -150,9 +147,18 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
         _breakEndController.text = serviceEntity.breakEndHour.toString() +
             ':' +
             serviceEntity.breakEndMinute.toString();
-      if (serviceEntity.closedOn != null) _daysOff = serviceEntity.closedOn;
+
+      if (serviceEntity.closedOn != null) {
+        _daysOff = Utils.convertStringsToDays(serviceEntity.closedOn);
+      }
+
+      _slotDurationController.text = serviceEntity.slotDuration.toString();
+      _advBookingInDaysController.text = serviceEntity.advanceDays.toString();
       if (serviceEntity.maxAllowed != null)
-        _maxPeopleController.text = serviceEntity.maxAllowed.toString();
+        _maxPeopleController.text = (serviceEntity.maxAllowed != null)
+            ? serviceEntity.maxAllowed.toString()
+            : "";
+      _whatsappPhoneController.text = serviceEntity.whatsapp.toString();
       //address
       if (serviceEntity.address != null) {
         _adrs1Controller.text = serviceEntity.address.address;
@@ -170,6 +176,7 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
           });
         }
         //TODO Smita - Load Admins from server and populate adminsList
+        adminsList = await fetchAdmins(serviceEntity.entityId);
       }
     } else {
       //TODO:do nothing as this metaEntity is just created and will saved in DB only on save
@@ -261,8 +268,27 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
   }
 
   void _addNewAdminRow() {
+    bool insert = true;
+    String newAdminPh = '+91' + _adminItemController.text;
+
     setState(() {
-      adminsList.insert(0, '+91' + _adminItemController.text);
+      if (adminsList.length != 0) {
+        for (int i = 0; i < adminsList.length; i++) {
+          if (adminsList[i] == (newAdminPh)) {
+            insert = false;
+            Utils.showMyFlushbar(context, Icons.info_outline, "Error",
+                "Phone number already exists !!");
+            break;
+          }
+          print("in for loop $insert");
+          print(adminsList[i] == newAdminPh);
+          print(newAdminPh);
+          print(adminsList[i]);
+        }
+      }
+
+      if (insert) adminsList.insert(0, newAdminPh);
+      print("after foreach");
 
       //TODO: Smita - Update GS
     });
@@ -660,7 +686,7 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
               days.saturday,
               days.sunday
             ],
-            initialValue: [days.sunday],
+            initialValue: _daysOff,
             borderRadius: 20,
             elevation: 10,
             textStyle: buttonXSmlTextStyle,
@@ -964,6 +990,26 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
               serviceEntity, serviceEntity.parentId, _regNumController.text)
           .then((value) {
         print("child entity saved");
+
+        if (value) {
+          // Assign admins to newly upserted entity
+          assignAdminsFromList(serviceEntity.entityId, adminsList)
+              .then((value) {
+            if (!value) {
+              Utils.showMyFlushbar(
+                  context,
+                  Icons.info_outline,
+                  "Couldn't save the Entity for some reason. ",
+                  "Please try again.");
+            }
+
+            // Navigator.push(
+            //       context,
+            //       MaterialPageRoute(
+            //           builder: (context) =>
+            //               ChildEntitiesListPage(entity: this.entity)));
+          });
+        }
         // if (value) {
         //   EntityService().getEntity(this.serviceEntity.parentId).then((value) =>
         //       Navigator.push(
@@ -1473,7 +1519,17 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
                                     icon: Icon(Icons.add_circle,
                                         color: highlightColor, size: 40),
                                     onPressed: () {
-                                      addNewAdminRow();
+                                      if (_adminItemController.text == null ||
+                                          _adminItemController.text.isEmpty) {
+                                        Utils.showMyFlushbar(
+                                            context,
+                                            Icons.info_outline,
+                                            "Something Missing ..",
+                                            "Please enter Phone number !!");
+                                      } else {
+                                        _addNewAdminRow();
+                                        _adminItemController.text = "";
+                                      }
                                     },
                                   ),
                                   backgroundColor: Colors.blueGrey[500],
@@ -1800,19 +1856,25 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
                             //duration: Duration(seconds: 4),
                             icon: Icon(
                               Icons.cancel,
-                              color: Colors.blueGrey[50],
+                              color: Colors.orangeAccent[400],
                             ),
                             showProgressIndicator: true,
                             progressIndicatorBackgroundColor:
                                 Colors.blueGrey[800],
                             routeBlur: 10.0,
-                            titleText: Text(""),
-                            messageText: Text(
-                              "Saving details..",
+                            titleText: Text(
+                              "Saving Details",
                               style: TextStyle(
                                   fontWeight: FontWeight.bold,
                                   fontSize: 16.0,
-                                  color: highlightColor,
+                                  color: primaryAccentColor,
+                                  fontFamily: "ShadowsIntoLightTwo"),
+                            ),
+                            messageText: Text(
+                              "This will take just a moment !!",
+                              style: TextStyle(
+                                  fontSize: 12.0,
+                                  color: Colors.blueGrey[50],
                                   fontFamily: "ShadowsIntoLightTwo"),
                             ),
                             duration: Duration(seconds: 4),
@@ -1841,7 +1903,12 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
                             //     ),
                             //   ],
                             // ),
-                          )..show(context);
+                          )
+                            ..onStatusChanged = (FlushbarStatus status) {
+                              print("FlushbarStatus-------$status");
+                            }
+                            ..show(context);
+                          print("FlushbarStatus-------");
 
                           processSaveWithTimer();
 

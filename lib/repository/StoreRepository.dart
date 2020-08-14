@@ -1,5 +1,7 @@
 import 'package:noq/db/db_model/entity.dart';
+import 'package:noq/db/db_model/entity_private.dart';
 import 'package:noq/db/db_service/entity_service.dart';
+import 'package:noq/utils.dart';
 
 // Get list of Stores from Server
 
@@ -62,7 +64,25 @@ Future<bool> assignAdminsFromList(
 }
 
 Future<List<String>> fetchAdmins(String entityId) async {
-  List<String> adminsList;
-  //adminsList = EntityService().
+  List<String> adminsList = List<String>();
+  Map<String, String> adminMap = Map<String, String>();
+
+  EntityPrivate entityPrivateList =
+      await EntityService().getEntityPrivate(entityId);
+  if (entityPrivateList != null) {
+    adminMap = entityPrivateList.roles;
+    if (adminMap != null) adminMap.forEach((k, v) => adminsList.add(v));
+  }
   return adminsList;
+}
+
+Future<String> fetchRegNum(String entityId) async {
+  String regNum;
+ 
+  EntityPrivate entityPrivateList =
+      await EntityService().getEntityPrivate(entityId);
+  if (entityPrivateList != null) {
+    regNum = entityPrivateList.registrationNumber;
+  }
+  return regNum;
 }
