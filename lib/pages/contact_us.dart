@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:noq/constants.dart';
 import 'package:noq/services/mapService.dart';
 import 'package:noq/style.dart';
+import 'package:noq/utils.dart';
 import 'package:noq/widget/appbar.dart';
 import 'package:noq/widget/bottom_nav_bar.dart';
 import 'package:noq/widget/header.dart';
@@ -91,6 +92,7 @@ class _ContactUsPageState extends State<ContactUsPage> {
             UnderlineInputBorder(borderSide: BorderSide(color: Colors.orange)),
       ),
       // validator: validateText,
+      validator: Utils.validateMobile,
       onChanged: (value) {
         setState(() {
           _altPh = 'Alternate phone number: ' + _phController.text;

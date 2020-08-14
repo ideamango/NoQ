@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:noq/db/db_model/address.dart';
 import 'package:noq/db/db_model/employee.dart';
 import 'package:noq/db/db_model/entity.dart';
+import 'package:noq/db/db_model/entity_private.dart';
 import 'package:noq/db/db_model/meta_entity.dart';
 import 'package:noq/db/db_service/entity_service.dart';
 import 'dart:async';
@@ -118,12 +119,12 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
   initializeEntity() async {
     // serviceEntity = await getEntity(_metaEntity.entityId);
     if (serviceEntity != null) {
-      isPublic = serviceEntity.isPublic;
-      isBookable = serviceEntity.isBookable;
-      isActive = serviceEntity.isActive;
+      isPublic = (serviceEntity.isPublic) ?? false;
+      isBookable = (serviceEntity.isBookable) ?? false;
+      isActive = (serviceEntity.isActive) ?? false;
 
-      _nameController.text = serviceEntity.name;
-      _descController.text = serviceEntity.description;
+      _nameController.text = (serviceEntity.name) ?? "";
+      _descController.text = (serviceEntity.description) ?? "";
 
       //TODO-Smita  add later code for getting reg thru private
       // _regNumController.text = serviceEntity.regNum;
@@ -149,7 +150,12 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
             serviceEntity.breakEndMinute.toString();
 
       if (serviceEntity.closedOn != null) {
-        _daysOff = Utils.convertStringsToDays(serviceEntity.closedOn);
+        if (serviceEntity.closedOn.length != 0)
+          _daysOff = Utils.convertStringsToDays(serviceEntity.closedOn);
+      }
+      if (_daysOff.length == 0) {
+        _closedOnDays.add('days.sunday');
+        _daysOff = Utils.convertStringsToDays(_closedOnDays);
       }
 
       _slotDurationController.text = serviceEntity.slotDuration.toString();
@@ -158,7 +164,9 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
         _maxPeopleController.text = (serviceEntity.maxAllowed != null)
             ? serviceEntity.maxAllowed.toString()
             : "";
-      _whatsappPhoneController.text = serviceEntity.whatsapp.toString();
+      _whatsappPhoneController.text = serviceEntity.whatsapp != null
+          ? serviceEntity.whatsapp.toString()
+          : "";
       //address
       if (serviceEntity.address != null) {
         _adrs1Controller.text = serviceEntity.address.address;
@@ -175,8 +183,14 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
             contactRowWidgets.insert(0, new ContactRow(contact: element));
           });
         }
-        //TODO Smita - Load Admins from server and populate adminsList
-        adminsList = await fetchAdmins(serviceEntity.entityId);
+        Map<String, String> adminMap = Map<String, String>();
+        EntityPrivate entityPrivateList;
+        if (entityPrivateList != null) {
+          adminMap = entityPrivateList.roles;
+          if (adminMap != null) adminMap.forEach((k, v) => adminsList.add(k));
+        }
+        entityPrivateList = await fetchAdmins(serviceEntity.entityId);
+        _regNumController.text = entityPrivateList.registrationNumber;
       }
     } else {
       //TODO:do nothing as this metaEntity is just created and will saved in DB only on save
@@ -1116,6 +1130,7 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
           enabledBorder: InputBorder.none,
           hintText: "Enter Admin's Contact number & Click (+)",
           hintStyle: new TextStyle(fontSize: 12, color: Colors.blueGrey[500])),
+      validator: Utils.validateMobile,
       onChanged: (value) {
         setState(() {
           _item = '+91' + value;

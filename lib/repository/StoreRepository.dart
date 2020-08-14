@@ -63,22 +63,18 @@ Future<bool> assignAdminsFromList(
   return true;
 }
 
-Future<List<String>> fetchAdmins(String entityId) async {
-  List<String> adminsList = List<String>();
-  Map<String, String> adminMap = Map<String, String>();
+Future<EntityPrivate> fetchAdmins(String entityId) async {
+  
 
   EntityPrivate entityPrivateList =
       await EntityService().getEntityPrivate(entityId);
-  if (entityPrivateList != null) {
-    adminMap = entityPrivateList.roles;
-    if (adminMap != null) adminMap.forEach((k, v) => adminsList.add(v));
-  }
-  return adminsList;
+
+  return entityPrivateList;
 }
 
 Future<String> fetchRegNum(String entityId) async {
   String regNum;
- 
+
   EntityPrivate entityPrivateList =
       await EntityService().getEntityPrivate(entityId);
   if (entityPrivateList != null) {

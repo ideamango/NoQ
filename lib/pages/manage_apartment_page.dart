@@ -8,6 +8,7 @@ import 'package:noq/constants.dart';
 import 'package:noq/db/db_model/address.dart';
 import 'package:noq/db/db_model/employee.dart';
 import 'package:noq/db/db_model/entity.dart';
+import 'package:noq/db/db_model/entity_private.dart';
 import 'package:noq/db/db_model/meta_entity.dart';
 import 'package:noq/db/db_service/entity_service.dart';
 
@@ -121,10 +122,9 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
 
   initializeEntity() async {
     if (entity != null) {
-      _regNumController.text = await fetchRegNum(entity.entityId);
-      isPublic = entity.isPublic;
-      isBookable = entity.isBookable;
-      isActive = entity.isActive;
+      isPublic = (entity.isPublic) ?? false;
+      isBookable = (entity.isBookable) ?? false;
+      isActive = (entity.isActive) ?? false;
       _nameController.text = (entity.name) ?? "";
       _descController.text = (entity.description) ?? "";
 
@@ -179,15 +179,16 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
           contactRowWidgets.insert(0, new ContactRow(contact: element));
         });
       }
-      //TODO Smita - Load Admins from server and populate adminsList
-      adminsList = await fetchAdmins(entity.entityId);
+
+      Map<String, String> adminMap = Map<String, String>();
+      EntityPrivate entityPrivateList;
+      if (entityPrivateList != null) {
+        adminMap = entityPrivateList.roles;
+        if (adminMap != null) adminMap.forEach((k, v) => adminsList.add(k));
+      }
+      entityPrivateList = await fetchAdmins(entity.entityId);
+      _regNumController.text = entityPrivateList.registrationNumber;
     }
-    //  else {
-    //   entity = createEntity(_metaEntity.entityId, _metaEntity.type);
-    //   print(entity.entityId.toString());
-    //   //TODO: Smita - check if we insert object at SAVE.
-    //   //  EntityService().upsertEntity(entity);
-    // }
 
     entity.address = (entity.address) ?? new Address();
     contactList = contactList ?? new List<Employee>();
@@ -974,7 +975,7 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
                 Container(
                     height: 25,
                     width: MediaQuery.of(context).size.width * .5,
-                    child: TextField(
+                    child: TextFormField(
                       cursorColor: highlightColor,
                       keyboardType: TextInputType.phone,
                       inputFormatters: [
@@ -991,6 +992,7 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
                         enabledBorder: InputBorder.none,
                         focusedBorder: InputBorder.none,
                       ),
+                      validator: Utils.validateMobile,
                       onChanged: (value) {
                         newItem = value;
                       },
@@ -1158,6 +1160,7 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
             hintText: "Enter Admin's Contact number & Click (+)",
             hintStyle:
                 new TextStyle(fontSize: 12, color: Colors.blueGrey[500])),
+        validator: Utils.validateMobile,
         onChanged: (value) {
           setState(() {
             _item = '+91' + value;
