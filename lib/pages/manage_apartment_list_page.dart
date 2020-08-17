@@ -24,7 +24,10 @@ class _ManageApartmentsListPageState extends State<ManageApartmentsListPage> {
   List<MetaEntity> metaEntitiesList;
   Entity entity;
   String _entityType;
-  int _count = 0;
+  ScrollController _scrollController;
+  final itemSize = 100.0;
+  List<String> entityTypes;
+
   GlobalState _state;
   bool stateInitFinished = false;
   Map<String, Entity> _parentEntityMap = Map<String, Entity>();
@@ -36,45 +39,43 @@ class _ManageApartmentsListPageState extends State<ManageApartmentsListPage> {
 
   @override
   void initState() {
+    _scrollController = ScrollController();
     super.initState();
-
-    getEntityList();
+    initialize();
+    entityTypes = new List<String>();
   }
 
   Future<void> getGlobalState() async {
     _state = await GlobalState.getGlobalState();
   }
 
-  void getEntityList() async {
+  void initialize() async {
     await getGlobalState();
     if (!Utils.isNullOrEmpty(_state.currentUser.entities)) {
       metaEntitiesList = _state.currentUser.entities;
     } else
       metaEntitiesList = List<MetaEntity>();
-
+    entityTypes = _state.conf.entityTypes;
     setState(() {
       stateInitFinished = true;
     });
   }
 
   void _addNewServiceRow() {
+    var uuid = new Uuid();
+    String _entityId = uuid.v1();
+    entity = createEntity(_entityId, _entityType);
+
+    MetaEntity metaEn = entity.getMetaEntity();
+
     setState(() {
-      var uuid = new Uuid();
-      String _entityId = uuid.v1();
-      entity = createEntity(_entityId, _entityType);
-
-      MetaEntity metaEn = entity.getMetaEntity();
-
       metaEntitiesList.add(metaEn);
-      _parentEntityMap[metaEn.entityId] = entity;
-
-      _count = _count + 1;
     });
-  }
 
-  Widget _buildServiceItem(MetaEntity childEntity) {
-    return new EntityRow(
-        entity: childEntity, parentEntityMap: _parentEntityMap);
+    _parentEntityMap[metaEn.entityId] = entity;
+
+    _scrollController.animateTo(_scrollController.offset + itemSize,
+        curve: Curves.linear, duration: Duration(milliseconds: 200));
   }
 
   @override
@@ -129,28 +130,6 @@ class _ManageApartmentsListPageState extends State<ManageApartmentsListPage> {
           backRoute: UserHomePage(),
           titleTxt: title,
         ),
-        // appBar: AppBar(
-        //     actions: <Widget>[],
-        //     flexibleSpace: Container(
-        //       decoration: gradientBackground,
-        //     ),
-        //     leading: IconButton(
-        //         padding: EdgeInsets.all(0),
-        //         alignment: Alignment.center,
-        //         highlightColor: Colors.orange[300],
-        //         icon: Icon(Icons.arrow_back),
-        //         color: Colors.white,
-        //         onPressed: () {
-        //           Navigator.of(context).pop();
-        //           Navigator.push(context,
-        //               MaterialPageRoute(builder: (context) => UserHomePage()));
-        //         }),
-        //     title: Text(
-        //       title,
-        //       style: TextStyle(color: Colors.white, fontSize: 16),
-        //       overflow: TextOverflow.ellipsis,
-        //     )),
-        //
         body: Center(
           child: new Form(
             key: _entityListFormKey,
@@ -167,44 +146,6 @@ class _ManageApartmentsListPageState extends State<ManageApartmentsListPage> {
                         borderRadius: BorderRadius.all(Radius.circular(5.0))),
                     child: Column(
                       children: <Widget>[
-                        // Container(
-                        //   height: MediaQuery.of(context).size.width * .13,
-                        //   decoration: indigoContainer,
-                        //   child: ListTile(
-                        //     //key: PageStorageKey(this.widget.headerTitle),
-                        //     leading: Padding(
-                        //       padding:
-                        //           const EdgeInsets.fromLTRB(0, 0, 0, 10.0),
-                        //       child: Icon(
-                        //         Icons.home,
-                        //         size: 35,
-                        //         color: Colors.white,
-                        //       ),
-                        //     ),
-                        //     title: Row(
-                        //       children: <Widget>[
-                        //         Column(
-                        //           children: <Widget>[
-                        //             Text(
-                        //               //entity.name
-                        //               "My Home Vihanga",
-                        //               style: TextStyle(
-                        //                   color: Colors.white, fontSize: 15),
-                        //             ),
-                        //             Text(
-                        //               // entity.adrs.locality +
-                        //               //     ", " +
-                        //               //     entity.adrs.city +
-                        //               //     "."
-                        //               "Gachibowli, Hyderabad",
-                        //               style: buttonXSmlTextStyle,
-                        //             ),
-                        //           ],
-                        //         ),
-                        //       ],
-                        //     ),
-                        //   ),
-                        // ),
                         Container(
                           height: MediaQuery.of(context).size.width * .1,
                           padding: EdgeInsets.fromLTRB(6, 0, 0, 0),
@@ -274,18 +215,20 @@ class _ManageApartmentsListPageState extends State<ManageApartmentsListPage> {
                   ),
                 ),
                 if (!Utils.isNullOrEmpty(metaEntitiesList))
-                  new Expanded(
+                  Expanded(
                     child: ListView.builder(
-                      shrinkWrap: true,
+                      controller: _scrollController,
+                      reverse: true,
+                      itemExtent: itemSize,
+                      // shrinkWrap: true,
                       itemBuilder: (BuildContext context, int index) {
                         return Container(
-                          child: new Column(
-                              children: metaEntitiesList
-                                  .map(_buildServiceItem)
-                                  .toList()),
+                          child: EntityRow(
+                              entity: metaEntitiesList[index],
+                              parentEntityMap: _parentEntityMap),
                         );
                       },
-                      itemCount: 1,
+                      itemCount: metaEntitiesList.length,
                     ),
                   ),
               ],

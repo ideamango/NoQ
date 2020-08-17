@@ -38,7 +38,7 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
   List<Entity> _pastSearches = new List<Entity>();
   List<Entity> _searchResultstores = new List<Entity>();
   String _entityType;
-  String _searchAll;
+  String _searchInAll = 'Search in All';
   bool searchBoxClicked = false;
   bool fetchFromServer = false;
   // bool searchDone = false;
@@ -70,6 +70,8 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
     getGlobalState().whenComplete(() {
       getList();
       searchTypes = _state.conf.entityTypes;
+      searchTypes.insert(0, _searchInAll);
+
       setState(() {
         initCompleted = true;
       });
@@ -417,7 +419,8 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
                   style: TextStyle(color: Colors.white, fontSize: 16),
                   overflow: TextOverflow.ellipsis,
                 )),
-            body: Center(
+            body: SingleChildScrollView(
+              padding: EdgeInsets.all(5),
               child: Column(
                 children: <Widget>[
                   filterBar,
@@ -873,13 +876,16 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
     //TODO: comment - only for testing
     //lat = 12.960632;
     //lon = 77.641603;
-    lat = 68;
-    lon = 78;
+    lat = 12.960632;
+    lon = 77.641603;
 
     //TODO: comment - only for testing
+    String entityTypeForSearch;
+    entityTypeForSearch = (_entityType == _searchInAll) ? null : _entityType;
+
     List<Entity> searchEntityList = await EntityService().search(
         _searchText.toLowerCase(),
-        _entityType,
+        entityTypeForSearch,
         lat,
         lon,
         radiusOfSearch,

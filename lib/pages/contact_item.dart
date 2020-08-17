@@ -5,9 +5,7 @@ import 'package:noq/db/db_model/employee.dart';
 import 'package:noq/style.dart';
 import 'package:flutter/foundation.dart';
 import 'package:noq/utils.dart';
-import 'package:noq/widget/custom_expansion_tile.dart';
 import 'package:noq/widget/weekday_selector.dart';
-import 'package:noq/widget/widgets.dart';
 
 class ContactRow extends StatefulWidget {
   final Employee contact;
@@ -17,6 +15,7 @@ class ContactRow extends StatefulWidget {
 }
 
 class ContactRowState extends State<ContactRow> {
+  bool _autoValidate = false;
   Employee contact;
   TextEditingController _ctNameController = TextEditingController();
   TextEditingController _ctEmpIdController = TextEditingController();
@@ -24,6 +23,9 @@ class ContactRowState extends State<ContactRow> {
   TextEditingController _ctPhn2controller = TextEditingController();
   TextEditingController _ctAvlFromTimeController = TextEditingController();
   TextEditingController _ctAvlTillTimeController = TextEditingController();
+
+  final GlobalKey<FormFieldState> phn1Key = new GlobalKey<FormFieldState>();
+  final GlobalKey<FormFieldState> phn2Key = new GlobalKey<FormFieldState>();
 
   List<String> _daysOff;
   bool _initCompleted = false;
@@ -40,8 +42,10 @@ class ContactRowState extends State<ContactRow> {
     if (contact != null) {
       _ctNameController.text = contact.name;
       _ctEmpIdController.text = contact.employeeId;
-      _ctPhn1controller.text = contact.ph;
-      _ctPhn2controller.text = contact.altPhone;
+      _ctPhn1controller.text =
+          contact.ph != null ? contact.ph.substring(3) : "";
+      _ctPhn2controller.text =
+          contact.altPhone != null ? contact.altPhone.substring(3) : "";
       if (contact.shiftStartHour != null && contact.shiftStartMinute != null)
         _ctAvlFromTimeController.text = contact.shiftStartHour.toString() +
             ':' +
@@ -121,6 +125,7 @@ class ContactRowState extends State<ContactRow> {
     );
     final ctPhn1Field = TextFormField(
       obscureText: false,
+      key: phn1Key,
       maxLines: 1,
       minLines: 1,
       style: textInputTextStyle,
@@ -128,8 +133,9 @@ class ContactRowState extends State<ContactRow> {
       controller: _ctPhn1controller,
       decoration: CommonStyle.textFieldStyle(
           prefixText: '+91', labelTextStr: "Primary Phone", hintTextStr: ""),
-      validator: Utils.validateMobile,
+      validator: Utils.validateMobileField,
       onChanged: (String value) {
+        phn1Key.currentState.validate();
         contact.ph = "+91" + value;
       },
       onSaved: (value) {
@@ -138,6 +144,7 @@ class ContactRowState extends State<ContactRow> {
     );
     final ctPhn2Field = TextFormField(
       obscureText: false,
+      key: phn2Key,
       maxLines: 1,
       minLines: 1,
       style: textInputTextStyle,
@@ -145,8 +152,9 @@ class ContactRowState extends State<ContactRow> {
       controller: _ctPhn2controller,
       decoration: CommonStyle.textFieldStyle(
           prefixText: '+91', labelTextStr: "Alternate Phone", hintTextStr: ""),
-      validator: Utils.validateMobile,
+      validator: Utils.validateMobileField,
       onChanged: (String value) {
+        phn2Key.currentState.validate();
         contact.altPhone = "+91" + value;
       },
       onSaved: (value) {
@@ -354,6 +362,7 @@ class ContactRowState extends State<ContactRow> {
                 // padding: EdgeInsets.all(5.0),
 
                 child: new Form(
+                  autovalidate: _autoValidate,
                   child: ListTile(
                     title: Column(
                       children: <Widget>[

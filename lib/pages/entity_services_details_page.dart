@@ -54,6 +54,9 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
   TextEditingController _maxPeopleController = TextEditingController();
   TextEditingController _slotDurationController = TextEditingController();
   TextEditingController _whatsappPhoneController = TextEditingController();
+
+  final GlobalKey<FormFieldState> whatsappPhnKey =
+      new GlobalKey<FormFieldState>();
   List<String> _closedOnDays = List<String>();
   // TextEditingController _subAreaController = TextEditingController();
   TextEditingController _adrs1Controller = TextEditingController();
@@ -65,6 +68,9 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
   TextEditingController _pinController = TextEditingController();
   // List<String> _addressList = new List<String>();
   TextEditingController _adminItemController = new TextEditingController();
+
+  final GlobalKey<FormFieldState> adminItemKey =
+      new GlobalKey<FormFieldState>();
   String _item;
 
   //ContactPerson Fields
@@ -799,6 +805,7 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
     );
     final whatsappPhone = TextFormField(
       obscureText: false,
+      key: whatsappPhnKey,
       maxLines: 1,
       minLines: 1,
       style: textInputTextStyle,
@@ -812,7 +819,7 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
         focusedBorder:
             UnderlineInputBorder(borderSide: BorderSide(color: Colors.orange)),
       ),
-      validator: Utils.validateMobile,
+      validator: Utils.validateMobileField,
       onChanged: (value) {
         if (value != "") serviceEntity.whatsapp = "+91" + (value);
         print("Whatsapp Number");
@@ -1106,6 +1113,7 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
       },
     );
     final itemField = new TextFormField(
+      key: adminItemKey,
       autofocus: true,
       inputFormatters: [
         LengthLimitingTextInputFormatter(18),
@@ -1130,8 +1138,9 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
           enabledBorder: InputBorder.none,
           hintText: "Enter Admin's Contact number & Click (+)",
           hintStyle: new TextStyle(fontSize: 12, color: Colors.blueGrey[500])),
-      validator: Utils.validateMobile,
+      validator: Utils.validateMobileField,
       onChanged: (value) {
+        adminItemKey.currentState.validate();
         setState(() {
           _item = '+91' + value;
           // _errMsg = "";

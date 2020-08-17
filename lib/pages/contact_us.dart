@@ -18,6 +18,7 @@ class _ContactUsPageState extends State<ContactUsPage> {
   TextEditingController _mailController = new TextEditingController();
   TextEditingController _nameController = new TextEditingController();
   TextEditingController _phController = new TextEditingController();
+  final GlobalKey<FormFieldState> phnKey = new GlobalKey<FormFieldState>();
   TextEditingController _msgController = new TextEditingController();
   String _reasonType;
   List<String> attachments = [];
@@ -79,8 +80,10 @@ class _ContactUsPageState extends State<ContactUsPage> {
     );
     final phField = TextFormField(
       obscureText: false,
+
       maxLines: 1,
       minLines: 1,
+      key: phnKey,
       style: textInputTextStyle,
       keyboardType: TextInputType.phone,
       controller: _phController,
@@ -92,7 +95,7 @@ class _ContactUsPageState extends State<ContactUsPage> {
             UnderlineInputBorder(borderSide: BorderSide(color: Colors.orange)),
       ),
       // validator: validateText,
-      validator: Utils.validateMobile,
+      validator: Utils.validateMobileField,
       onChanged: (value) {
         setState(() {
           _altPh = 'Alternate phone number: ' + _phController.text;

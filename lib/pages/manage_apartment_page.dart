@@ -38,7 +38,16 @@ class ManageApartmentPage extends StatefulWidget {
 }
 
 class _ManageApartmentPageState extends State<ManageApartmentPage> {
+  bool _autoValidate = false;
   final GlobalKey<FormState> _entityDetailsFormKey = new GlobalKey<FormState>();
+  final GlobalKey<FormFieldState> adminPhoneKey =
+      new GlobalKey<FormFieldState>();
+  final GlobalKey<FormFieldState> whatsappPhoneKey =
+      new GlobalKey<FormFieldState>();
+  final GlobalKey<FormFieldState> newAdminRowItemKey =
+      new GlobalKey<FormFieldState>();
+  bool _autoValidateWhatsapp = false;
+
   final String title = "Managers Form";
   final Geolocator geolocator = Geolocator()..forceAndroidLocationManager;
   String flushStatus = "Empty";
@@ -116,7 +125,9 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
     _getCurrLocation();
     entity = this.widget.entity;
     initializeEntity().whenComplete(() {
-      _initCompleted = true;
+      setState(() {
+        _initCompleted = true;
+      });
     });
   }
 
@@ -160,8 +171,9 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
       if (entity.maxAllowed != null)
         _maxPeopleController.text =
             (entity.maxAllowed != null) ? entity.maxAllowed.toString() : "";
-      _whatsappPhoneController.text =
-          entity.whatsapp != null ? entity.whatsapp.toString() : "";
+      _whatsappPhoneController.text = entity.whatsapp != null
+          ? entity.whatsapp.toString().substring(3)
+          : "";
       //address
       if (entity.address != null) {
         _adrs1Controller.text = entity.address.address;
@@ -187,7 +199,8 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
         if (adminMap != null) adminMap.forEach((k, v) => adminsList.add(k));
       }
       entityPrivateList = await fetchAdmins(entity.entityId);
-      _regNumController.text = entityPrivateList.registrationNumber;
+      if (entityPrivateList != null)
+        _regNumController.text = entityPrivateList.registrationNumber;
     }
 
     entity.address = (entity.address) ?? new Address();
@@ -304,44 +317,45 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
     });
   }
 
-  Widget buildAdminRow(String admPh) {
-    Widget ctPhn1Field = TextFormField(
-      obscureText: false,
-      maxLines: 1,
-      minLines: 1,
-      style: textInputTextStyle,
-      keyboardType: TextInputType.phone,
-      controller: _ctPhn1controller,
-      decoration: CommonStyle.textFieldStyle(
-          prefixText: '+91', labelTextStr: "Primary Phone", hintTextStr: ""),
-      validator: Utils.validateMobile,
-      onChanged: (String value) {
-        //  contact.ph = "+91" + value;
-      },
-      onSaved: (value) {
-        //   contact.ph = "+91" + value;
-      },
-    );
-    _ctPhn1controller.text = admPh;
+  // Widget buildAdminRow(String admPh) {
+  //   Widget ctPhn1Field = TextFormField(
+  //     obscureText: false,
+  //     autovalidate: false,
+  //     maxLines: 1,
+  //     minLines: 1,
+  //     style: textInputTextStyle,
+  //     keyboardType: TextInputType.phone,
+  //     controller: _ctPhn1controller,
+  //     decoration: CommonStyle.textFieldStyle(
+  //         prefixText: '+91', labelTextStr: "Primary Phone", hintTextStr: ""),
+  //     validator: Utils.validateMobile,
+  //     onChanged: (String value) {
+  //       //  contact.ph = "+91" + value;
+  //     },
+  //     onSaved: (value) {
+  //       //   contact.ph = "+91" + value;
+  //     },
+  //   );
+  //   _ctPhn1controller.text = admPh;
 
-    return ListTile(
-      title: Column(
-        children: <Widget>[ctPhn1Field],
-      ),
-      // backgroundColor: Colors.white,
-      leading: Icon(
-        Icons.person,
-        color: lightIcon,
-      ),
-      trailing: IconButton(
-          icon: Icon(Icons.save),
-          onPressed: () {
-            saveNewAdminRow(_ctPhn1controller.text);
-          }
-          //showServiceForm
-          ),
-    );
-  }
+  //   return ListTile(
+  //     title: Column(
+  //       children: <Widget>[ctPhn1Field],
+  //     ),
+  //     // backgroundColor: Colors.white,
+  //     leading: Icon(
+  //       Icons.person,
+  //       color: lightIcon,
+  //     ),
+  //     trailing: IconButton(
+  //         icon: Icon(Icons.save),
+  //         onPressed: () {
+  //           saveNewAdminRow(_ctPhn1controller.text);
+  //         }
+  //         //showServiceForm
+  //         ),
+  //   );
+  // }
 
   void saveNewAdminRow(String newAdmPh) {
     setState(() {
@@ -752,10 +766,12 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
           print("saved max people");
         },
       );
+
       final whatsappPhone = TextFormField(
         obscureText: false,
         maxLines: 1,
         minLines: 1,
+        key: whatsappPhoneKey,
         style: textInputTextStyle,
         keyboardType: TextInputType.phone,
         controller: _whatsappPhoneController,
@@ -767,8 +783,10 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
           focusedBorder: UnderlineInputBorder(
               borderSide: BorderSide(color: Colors.orange)),
         ),
-        validator: Utils.validateMobile,
+        validator: Utils.validateMobileField,
         onChanged: (value) {
+          //_autoValidateWhatsapp = true;
+          whatsappPhoneKey.currentState.validate();
           if (value != "") entity.whatsapp = "+91" + (value);
           print("Whatsapp Number");
         },
@@ -957,9 +975,9 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
         });
       }
 
-      Widget _buildServiceItem(String newItem) {
+      Widget _buildServiceItem(String newAdminRowItem) {
         TextEditingController itemNameController = new TextEditingController();
-        itemNameController.text = newItem;
+        itemNameController.text = newAdminRowItem;
         return Card(
           semanticContainer: true,
           elevation: 15,
@@ -976,6 +994,8 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
                     height: 25,
                     width: MediaQuery.of(context).size.width * .5,
                     child: TextFormField(
+                      // key: newAdminRowItemKey,
+                      autovalidate: _autoValidate,
                       cursorColor: highlightColor,
                       keyboardType: TextInputType.phone,
                       inputFormatters: [
@@ -987,14 +1007,15 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
                         //contentPadding: EdgeInsets.all(12),
                         // labelText: newItem.itemName,
 
-                        hintText: 'Item name',
+                        hintText: 'Admin\'s phone number',
                         hintStyle: TextStyle(fontSize: 12, color: Colors.grey),
                         enabledBorder: InputBorder.none,
                         focusedBorder: InputBorder.none,
                       ),
-                      validator: Utils.validateMobile,
+                      validator: Utils.validateMobileField,
                       onChanged: (value) {
-                        newItem = value;
+                        //newAdminRowItemKey.currentState.validate();
+                        newAdminRowItem = value;
                       },
                     )
 
@@ -1015,7 +1036,7 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
                     icon: Icon(Icons.delete,
                         color: Colors.blueGrey[300], size: 20),
                     onPressed: () {
-                      _removeServiceRow(newItem);
+                      _removeServiceRow(newAdminRowItem);
                       _adminItemController.text = "";
                     },
                   ),
@@ -1026,49 +1047,42 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
         );
       }
 
-      void saveFormDetails() {
+      saveRoute() {
         print("saving ");
 
         if (_entityDetailsFormKey.currentState.validate()) {
           print("Saved formmmmmmm");
+          _entityDetailsFormKey.currentState.save();
+          upsertEntity(entity, _regNumController.text).then((value) {
+            if (value) {
+              // Assign admins to newly upserted entity
+              assignAdminsFromList(entity.entityId, adminsList).then((value) {
+                if (!value) {
+                  Utils.showMyFlushbar(
+                      context,
+                      Icons.info_outline,
+                      "Seems like you have some incorrect data. Please enter valid details. ",
+                      "Try again.");
+                }
+
+                // Navigator.push(
+                //       context,
+                //       MaterialPageRoute(
+                //           builder: (context) =>
+                //               ChildEntitiesListPage(entity: this.entity)));
+              });
+            }
+          });
+        } else {
+          Utils.showMyFlushbar(
+              context,
+              Icons.info_outline,
+              "Couldn't save the Entity for some reason. ",
+              "Please try again.");
+          setState(() {
+            _autoValidate = true;
+          });
         }
-        _entityDetailsFormKey.currentState.save();
-        // String address = entity.adrs.addressLine1 ??
-        //     entity.adrs.addressLine1 +
-        //         entity.adrs.locality +
-        //         entity.adrs.city +
-        //         entity.adrs.state +
-        //         entity.adrs.country;
-        // List<Placemark> placemark =
-        //     await Geolocator().placemarkFromAddress(address);
-
-        // print(placemark);
-        // entity.lat = placemark[0].position.latitude;
-        // entity.long = placemark[0].position.longitude;
-      }
-
-      saveRoute() {
-        saveFormDetails();
-        upsertEntity(entity, _regNumController.text).then((value) {
-          if (value) {
-            // Assign admins to newly upserted entity
-            assignAdminsFromList(entity.entityId, adminsList).then((value) {
-              if (!value) {
-                Utils.showMyFlushbar(
-                    context,
-                    Icons.info_outline,
-                    "Couldn't save the Entity for some reason. ",
-                    "Please try again.");
-              }
-
-              // Navigator.push(
-              //       context,
-              //       MaterialPageRoute(
-              //           builder: (context) =>
-              //               ChildEntitiesListPage(entity: this.entity)));
-            });
-          }
-        });
       }
 
       backRoute() {
@@ -1088,6 +1102,94 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
       processGoBackWithTimer() async {
         var duration = new Duration(seconds: 1);
         return new Timer(duration, backRoute);
+      }
+
+      Future<void> showConfirmationDialog() async {
+        bool returnVal = await showDialog(
+            barrierDismissible: false,
+            context: context,
+            builder: (_) => AlertDialog(
+                  titlePadding: EdgeInsets.fromLTRB(5, 10, 0, 0),
+                  contentPadding: EdgeInsets.all(0),
+                  actionsPadding: EdgeInsets.all(0),
+                  //buttonPadding: EdgeInsets.all(0),
+                  title: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Text(
+                        'Bookable premise means that time-slots can be booked, for eg. Shopping store, Salon. Premises that are not bookable are Apartments, Malls etc.',
+                        style: TextStyle(
+                          fontSize: 15,
+                          color: Colors.blueGrey[600],
+                        ),
+                      ),
+                      verticalSpacer,
+                      Text(
+                        'Are you sure you make this premise bookable?',
+                        style: TextStyle(
+                          fontSize: 15,
+                          color: Colors.blueGrey[600],
+                        ),
+                      ),
+                      verticalSpacer,
+                      // myDivider,
+                    ],
+                  ),
+                  content: Divider(
+                    color: Colors.blueGrey[400],
+                    height: 1,
+                    //indent: 40,
+                    //endIndent: 30,
+                  ),
+
+                  //content: Text('This is my content'),
+                  actions: <Widget>[
+                    SizedBox(
+                      height: 24,
+                      child: RaisedButton(
+                        elevation: 0,
+                        color: Colors.transparent,
+                        splashColor: highlightColor.withOpacity(.8),
+                        textColor: Colors.orange,
+                        shape: RoundedRectangleBorder(
+                            side: BorderSide(color: Colors.orange)),
+                        child: Text('Yes'),
+                        onPressed: () {
+                          Navigator.of(_).pop(true);
+                        },
+                      ),
+                    ),
+                    SizedBox(
+                      height: 24,
+                      child: RaisedButton(
+                        elevation: 20,
+                        autofocus: true,
+                        focusColor: highlightColor,
+                        splashColor: highlightColor,
+                        color: Colors.white,
+                        textColor: Colors.orange,
+                        shape: RoundedRectangleBorder(
+                            side: BorderSide(color: Colors.orange)),
+                        child: Text('No'),
+                        onPressed: () {
+                          Navigator.of(_).pop(false);
+                        },
+                      ),
+                    ),
+                  ],
+                ));
+
+        if (returnVal) {
+          setState(() {
+            isBookable = true;
+          });
+          entity.isBookable = true;
+        } else {
+          setState(() {
+            isBookable = false;
+          });
+          entity.isBookable = false;
+        }
       }
 
       String _msg;
@@ -1134,12 +1236,14 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
           //   saveEntityDetails(entity);
         },
       );
-      final itemField = new TextFormField(
+      final adminInputField = new TextFormField(
+        key: adminPhoneKey,
         autofocus: true,
         inputFormatters: [
           LengthLimitingTextInputFormatter(18),
         ],
         keyboardType: TextInputType.phone,
+
         controller: _adminItemController,
         cursorColor: highlightColor,
         //cursorWidth: 1,
@@ -1160,8 +1264,10 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
             hintText: "Enter Admin's Contact number & Click (+)",
             hintStyle:
                 new TextStyle(fontSize: 12, color: Colors.blueGrey[500])),
-        validator: Utils.validateMobile,
+        validator: Utils.validateMobileField,
         onChanged: (value) {
+          adminPhoneKey.currentState.validate();
+
           setState(() {
             _item = '+91' + value;
             // _errMsg = "";
@@ -1285,7 +1391,7 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
               bottom: true,
               child: new Form(
                 key: _entityDetailsFormKey,
-                autovalidate: true,
+                autovalidate: _autoValidate,
                 child: new ListView(
                   padding: const EdgeInsets.all(5.0),
                   children: <Widget>[
@@ -1332,104 +1438,8 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
                                       entity.isBookable = value;
 
                                       if (value) {
+                                        showConfirmationDialog();
                                         //TODO: SMita - show msg with info, yes/no
-                                        showDialog(
-                                            barrierDismissible: false,
-                                            context: context,
-                                            builder: (_) => AlertDialog(
-                                                  titlePadding:
-                                                      EdgeInsets.fromLTRB(
-                                                          5, 10, 0, 0),
-                                                  contentPadding:
-                                                      EdgeInsets.all(0),
-                                                  actionsPadding:
-                                                      EdgeInsets.all(0),
-                                                  //buttonPadding: EdgeInsets.all(0),
-                                                  title: Column(
-                                                    crossAxisAlignment:
-                                                        CrossAxisAlignment
-                                                            .start,
-                                                    children: <Widget>[
-                                                      Text(
-                                                        'Bookable premise means that time-slots can be booked, for eg. Shopping store, Salon. Premises that are not bookable are Apartments, Malls etc.',
-                                                        style: TextStyle(
-                                                          fontSize: 15,
-                                                          color: Colors
-                                                              .blueGrey[600],
-                                                        ),
-                                                      ),
-                                                      verticalSpacer,
-                                                      Text(
-                                                        'Are you sure you make this premise bookable?',
-                                                        style: TextStyle(
-                                                          fontSize: 15,
-                                                          color: Colors
-                                                              .blueGrey[600],
-                                                        ),
-                                                      ),
-                                                      verticalSpacer,
-                                                      // myDivider,
-                                                    ],
-                                                  ),
-                                                  content: Divider(
-                                                    color: Colors.blueGrey[400],
-                                                    height: 1,
-                                                    //indent: 40,
-                                                    //endIndent: 30,
-                                                  ),
-
-                                                  //content: Text('This is my content'),
-                                                  actions: <Widget>[
-                                                    SizedBox(
-                                                      height: 24,
-                                                      child: RaisedButton(
-                                                        elevation: 0,
-                                                        color:
-                                                            Colors.transparent,
-                                                        splashColor:
-                                                            highlightColor
-                                                                .withOpacity(
-                                                                    .8),
-                                                        textColor:
-                                                            Colors.orange,
-                                                        shape: RoundedRectangleBorder(
-                                                            side: BorderSide(
-                                                                color: Colors
-                                                                    .orange)),
-                                                        child: Text('Yes'),
-                                                        onPressed: () {
-                                                          Navigator.of(context)
-                                                              .pop();
-                                                        },
-                                                      ),
-                                                    ),
-                                                    SizedBox(
-                                                      height: 24,
-                                                      child: RaisedButton(
-                                                        elevation: 20,
-                                                        autofocus: true,
-                                                        focusColor:
-                                                            highlightColor,
-                                                        splashColor:
-                                                            highlightColor,
-                                                        color: Colors.white,
-                                                        textColor:
-                                                            Colors.orange,
-                                                        shape: RoundedRectangleBorder(
-                                                            side: BorderSide(
-                                                                color: Colors
-                                                                    .orange)),
-                                                        child: Text('No'),
-                                                        onPressed: () {
-                                                          Navigator.of(context,
-                                                                  rootNavigator:
-                                                                      true)
-                                                              .pop('dialog');
-                                                        },
-                                                      ),
-                                                    ),
-                                                  ],
-                                                ));
                                       }
                                       print(isBookable);
                                     });
@@ -1719,7 +1729,7 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
                                       // mainAxisAlignment: MainAxisAlignment.end,
                                       children: <Widget>[
                                         Expanded(
-                                          child: itemField,
+                                          child: adminInputField,
                                         ),
                                         Container(
                                           padding:
