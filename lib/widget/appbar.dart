@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:noq/services/authService.dart';
 import 'package:noq/style.dart';
 import 'package:noq/userHomePage.dart';
+import 'package:noq/utils.dart';
 import 'package:noq/widget/widgets.dart';
 
 class CustomAppBar extends StatefulWidget implements PreferredSizeWidget {
@@ -24,9 +25,9 @@ class _CustomAppBarState extends State<CustomAppBar> {
         barrierDismissible: false,
         context: context,
         builder: (_) => AlertDialog(
-              titlePadding: EdgeInsets.fromLTRB(5, 10, 0, 0),
+              titlePadding: EdgeInsets.fromLTRB(10, 15, 10, 10),
               contentPadding: EdgeInsets.all(0),
-              actionsPadding: EdgeInsets.all(0),
+              actionsPadding: EdgeInsets.all(5),
               //buttonPadding: EdgeInsets.all(0),
               title: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -62,6 +63,8 @@ class _CustomAppBarState extends State<CustomAppBar> {
                         side: BorderSide(color: Colors.orange)),
                     child: Text('Yes'),
                     onPressed: () {
+                      Utils.showMyFlushbar(context, Icons.info_outline,
+                          "Logging off.. ", "Hope to see you soon!!");
                       Navigator.of(context, rootNavigator: true).pop();
                       AuthService().signOut(context);
                     },

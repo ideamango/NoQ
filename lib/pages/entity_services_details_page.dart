@@ -38,6 +38,7 @@ class ServiceEntityDetailsPage extends StatefulWidget {
 }
 
 class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
+  bool _autoValidate = false;
   final GlobalKey<FormState> _serviceDetailsFormKey =
       new GlobalKey<FormState>();
   final String title = "Managers Form";
@@ -164,8 +165,12 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
         _daysOff = Utils.convertStringsToDays(_closedOnDays);
       }
 
-      _slotDurationController.text = serviceEntity.slotDuration.toString();
-      _advBookingInDaysController.text = serviceEntity.advanceDays.toString();
+      _slotDurationController.text = (serviceEntity.slotDuration != null)
+          ? serviceEntity.slotDuration.toString()
+          : "";
+      _advBookingInDaysController.text = (serviceEntity.advanceDays != null)
+          ? serviceEntity.advanceDays.toString()
+          : "";
       if (serviceEntity.maxAllowed != null)
         _maxPeopleController.text = (serviceEntity.maxAllowed != null)
             ? serviceEntity.maxAllowed.toString()
@@ -315,10 +320,17 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
   }
 
   void _removeServiceRow(String currItem) {
-    setState(() {
-      adminsList.remove(currItem);
-
-      //TODO: Smita - Update GS
+    removeAdmin(serviceEntity.entityId, currItem).then((delStatus) {
+      if (delStatus)
+        setState(() {
+          adminsList.remove(currItem);
+        });
+      else
+        Utils.showMyFlushbar(
+            context,
+            Icons.info_outline,
+            'Oops!! There is some trouble deleting that admin.',
+            'Please check and try again..');
     });
   }
 
@@ -341,6 +353,7 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
                 height: 25,
                 width: MediaQuery.of(context).size.width * .5,
                 child: TextField(
+                  enabled: false,
                   cursorColor: highlightColor,
                   keyboardType: TextInputType.phone,
                   inputFormatters: [
@@ -352,7 +365,7 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
                     //contentPadding: EdgeInsets.all(12),
                     // labelText: newItem.itemName,
 
-                    hintText: 'Item name',
+                    hintText: 'Admin\'s phone number',
                     hintStyle: TextStyle(fontSize: 12, color: Colors.grey),
                     enabledBorder: InputBorder.none,
                     focusedBorder: InputBorder.none,
@@ -389,33 +402,58 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
     );
   }
 
-  void saveFormDetails() async {
-    print("saving ");
-
-    if (_serviceDetailsFormKey.currentState.validate()) {
-      _serviceDetailsFormKey.currentState.save();
-      print("Saved formmmmmmm");
-    }
-  }
+  void saveFormDetails() async {}
 
   saveDetails() async {
     // List<Placemark> placemark = await Geolocator().placemarkFromAddress(
     //     "My Home Vihanga, Financial District, Gachibowli, Hyderabad, Telangana, India");
 
     // print(placemark);
-    saveFormDetails();
-    EntityService()
-        .upsertChildEntityToParent(
-            serviceEntity, serviceEntity.parentId, _regNumController.text)
-        .then((value) {
-      if (value) {
-        Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) =>
-                    ChildEntitiesListPage(entity: this.serviceEntity)));
+
+    String validationPh1;
+    String validationPh2;
+    bool isContactValid = true;
+
+    for (int i = 0; i < contactList.length; i++) {
+      validationPh1 = (contactList[i].ph != null)
+          ? Utils.validateMobileField(contactList[i].ph.substring(3))
+          : true;
+      validationPh2 = (contactList[i].altPhone != null)
+          ? Utils.validateMobileField(contactList[i].altPhone.substring(3))
+          : true;
+
+      if (validationPh2 != null || validationPh1 != null) {
+        isContactValid = false;
+        break;
       }
-    });
+    }
+    print("saving ");
+
+    if (_serviceDetailsFormKey.currentState.validate() && isContactValid) {
+      _serviceDetailsFormKey.currentState.save();
+      print("Saved formmmmmmm");
+      EntityService()
+          .upsertChildEntityToParent(
+              serviceEntity, serviceEntity.parentId, _regNumController.text)
+          .then((value) {
+        if (value) {
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) =>
+                      ChildEntitiesListPage(entity: this.serviceEntity)));
+        }
+      });
+    } else {
+      Utils.showMyFlushbar(
+          context,
+          Icons.info_outline,
+          "Seems like you have entered some incorrect details!! ",
+          "Please verify the details and try again.");
+      setState(() {
+        _autoValidate = true;
+      });
+    }
   }
 
   void addNewAdminRow() {
@@ -1264,7 +1302,7 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
           child: SafeArea(
             child: new Form(
               key: _serviceDetailsFormKey,
-              autovalidate: true,
+              autovalidate: _autoValidate,
               child: ListView(
                 padding: const EdgeInsets.all(5.0),
                 // crossAxisAlignment: CrossAxisAlignment.start,

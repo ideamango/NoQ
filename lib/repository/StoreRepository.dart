@@ -64,12 +64,15 @@ Future<bool> assignAdminsFromList(
 }
 
 Future<EntityPrivate> fetchAdmins(String entityId) async {
-  
-
   EntityPrivate entityPrivateList =
       await EntityService().getEntityPrivate(entityId);
 
   return entityPrivateList;
+}
+
+Future<bool> removeAdmin(String entityId, String phone) async {
+  bool status = await EntityService().removeAdmin(entityId, phone);
+  return status;
 }
 
 Future<String> fetchRegNum(String entityId) async {

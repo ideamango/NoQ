@@ -10,7 +10,9 @@ import 'package:noq/db/db_model/employee.dart';
 import 'package:noq/db/db_model/entity.dart';
 import 'package:noq/db/db_model/entity_private.dart';
 import 'package:noq/db/db_model/meta_entity.dart';
+import 'package:noq/db/db_model/user.dart';
 import 'package:noq/db/db_service/entity_service.dart';
+import 'package:noq/db/db_service/user_service.dart';
 
 import 'package:noq/pages/contact_item.dart';
 import 'package:noq/pages/entity_services_list_page.dart';
@@ -191,16 +193,18 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
           contactRowWidgets.insert(0, new ContactRow(contact: element));
         });
       }
-
+      User currUser = await UserService().getCurrentUser();
       Map<String, String> adminMap = Map<String, String>();
       EntityPrivate entityPrivateList;
+      entityPrivateList = await fetchAdmins(entity.entityId);
       if (entityPrivateList != null) {
         adminMap = entityPrivateList.roles;
-        if (adminMap != null) adminMap.forEach((k, v) => adminsList.add(k));
-      }
-      entityPrivateList = await fetchAdmins(entity.entityId);
-      if (entityPrivateList != null)
+        if (adminMap != null)
+          adminMap.forEach((k, v) {
+            if (currUser.ph != k) adminsList.add(k);
+          });
         _regNumController.text = entityPrivateList.registrationNumber;
+      }
     }
 
     entity.address = (entity.address) ?? new Address();
@@ -968,10 +972,17 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
       }
 
       void _removeServiceRow(String currItem) {
-        setState(() {
-          adminsList.remove(currItem);
-
-          //TODO: Smita - Update GS
+        removeAdmin(entity.entityId, currItem).then((delStatus) {
+          if (delStatus)
+            setState(() {
+              adminsList.remove(currItem);
+            });
+          else
+            Utils.showMyFlushbar(
+                context,
+                Icons.info_outline,
+                'Oops!! There is some trouble deleting that admin.',
+                'Please check and try again..');
         });
       }
 
@@ -995,7 +1006,8 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
                     width: MediaQuery.of(context).size.width * .5,
                     child: TextFormField(
                       // key: newAdminRowItemKey,
-                      autovalidate: _autoValidate,
+                      //  autovalidate: _autoValidate,
+                      enabled: false,
                       cursorColor: highlightColor,
                       keyboardType: TextInputType.phone,
                       inputFormatters: [
@@ -1012,7 +1024,7 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
                         enabledBorder: InputBorder.none,
                         focusedBorder: InputBorder.none,
                       ),
-                      validator: Utils.validateMobileField,
+                      // validator: Utils.validateMobileField,
                       onChanged: (value) {
                         //newAdminRowItemKey.currentState.validate();
                         newAdminRowItem = value;
@@ -1049,8 +1061,24 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
 
       saveRoute() {
         print("saving ");
+        String validationPh1;
+        String validationPh2;
+        bool isContactValid = true;
 
-        if (_entityDetailsFormKey.currentState.validate()) {
+        for (int i = 0; i < contactList.length; i++) {
+          validationPh1 = (contactList[i].ph != null)
+              ? Utils.validateMobileField(contactList[i].ph.substring(3))
+              : true;
+          validationPh2 = (contactList[i].altPhone != null)
+              ? Utils.validateMobileField(contactList[i].altPhone.substring(3))
+              : true;
+
+          if (validationPh2 != null || validationPh1 != null) {
+            isContactValid = false;
+            break;
+          }
+        }
+        if (_entityDetailsFormKey.currentState.validate() && isContactValid) {
           print("Saved formmmmmmm");
           _entityDetailsFormKey.currentState.save();
           upsertEntity(entity, _regNumController.text).then((value) {
@@ -1061,15 +1089,9 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
                   Utils.showMyFlushbar(
                       context,
                       Icons.info_outline,
-                      "Seems like you have some incorrect data. Please enter valid details. ",
-                      "Try again.");
+                      "Seems like you have entered some incorrect details!! ",
+                      "Please verify the details and try again.");
                 }
-
-                // Navigator.push(
-                //       context,
-                //       MaterialPageRoute(
-                //           builder: (context) =>
-                //               ChildEntitiesListPage(entity: this.entity)));
               });
             }
           });
@@ -1077,8 +1099,8 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
           Utils.showMyFlushbar(
               context,
               Icons.info_outline,
-              "Couldn't save the Entity for some reason. ",
-              "Please try again.");
+              "Seems like you have entered some incorrect details!! ",
+              "Please verify the details and try again.");
           setState(() {
             _autoValidate = true;
           });
@@ -1194,48 +1216,6 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
 
       String _msg;
 
-      final roleType = new FormField(
-        builder: (FormFieldState state) {
-          return InputDecorator(
-            decoration: InputDecoration(
-              labelText: 'Role Type',
-              focusedBorder: InputBorder.none,
-              enabledBorder: InputBorder.none,
-            ),
-            child: new DropdownButtonHideUnderline(
-              child: new DropdownButton(
-                hint: new Text("Select Role of Person"),
-                value: _roleType,
-                isDense: true,
-                onChanged: (newValue) {
-                  setState(() {
-                    _roleType = newValue;
-                    state.didChange(newValue);
-                  });
-                },
-                items: roleTypes.map((type) {
-                  return DropdownMenuItem(
-                    value: type,
-                    child: new Text(
-                      type.toString(),
-                      style: textInputTextStyle,
-                    ),
-                  );
-                }).toList(),
-              ),
-            ),
-          );
-        },
-        onSaved: (String value) {
-          _roleType = value;
-          // setState(() {
-          //   _msg = null;
-          // });
-          // entity.childCollection
-          //    .add(new ChildEntityAppData.cType(value, entity.id));
-          //   saveEntityDetails(entity);
-        },
-      );
       final adminInputField = new TextFormField(
         key: adminPhoneKey,
         autofocus: true,
@@ -1758,9 +1738,20 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
                                                       "Something Missing ..",
                                                       "Please enter Phone number !!");
                                                 } else {
-                                                  _addNewAdminRow();
-                                                  _adminItemController.text =
-                                                      "";
+                                                  bool result = adminPhoneKey
+                                                      .currentState
+                                                      .validate();
+                                                  if (result) {
+                                                    _addNewAdminRow();
+                                                    _adminItemController.text =
+                                                        "";
+                                                  } else {
+                                                    Utils.showMyFlushbar(
+                                                        context,
+                                                        Icons.info_outline,
+                                                        "Oops!! Seems like the phone number is not valid",
+                                                        "Please check and try again !!");
+                                                  }
                                                 }
                                               }),
                                         ),

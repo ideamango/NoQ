@@ -15,7 +15,7 @@ class ContactRow extends StatefulWidget {
 }
 
 class ContactRowState extends State<ContactRow> {
-  bool _autoValidate = false;
+  bool _isValid = false;
   Employee contact;
   TextEditingController _ctNameController = TextEditingController();
   TextEditingController _ctEmpIdController = TextEditingController();
@@ -347,39 +347,32 @@ class ContactRowState extends State<ContactRow> {
           color: primaryIcon,
         ),
         children: <Widget>[
-          new Container(
-            //width: MediaQuery.of(context).size.width * .97,
-            // decoration: darkContainer,
-            padding: EdgeInsets.all(0.0),
-            child: Expanded(
-              child: Container(
-                padding: EdgeInsets.only(left: 2.0, right: 2),
-                // decoration: BoxDecoration(
-                //     // border: Border.all(color: containerColor),
-                //     color: Colors.white,
-                //     shape: BoxShape.rectangle,
-                //     borderRadius: BorderRadius.all(Radius.circular(5.0))),
-                // padding: EdgeInsets.all(5.0),
+          Container(
+            padding: EdgeInsets.only(left: 2.0, right: 2),
+            // decoration: BoxDecoration(
+            //     // border: Border.all(color: containerColor),
+            //     color: Colors.white,
+            //     shape: BoxShape.rectangle,
+            //     borderRadius: BorderRadius.all(Radius.circular(5.0))),
+            // padding: EdgeInsets.all(5.0),
 
-                child: new Form(
-                  autovalidate: _autoValidate,
-                  child: ListTile(
-                    title: Column(
-                      children: <Widget>[
-                        ctNameField,
-                        ctEmpIdField,
-                        ctPhn1Field,
-                        ctPhn2Field,
-                        daysOffField,
-                        Divider(
-                          thickness: .7,
-                          color: Colors.grey[600],
-                        ),
-                        ctAvlFromTimeField,
-                        ctAvlTillTimeField,
-                      ],
+            child: new Form(
+              //  autovalidate: _autoValidate,
+              child: ListTile(
+                title: Column(
+                  children: <Widget>[
+                    ctNameField,
+                    ctEmpIdField,
+                    ctPhn1Field,
+                    ctPhn2Field,
+                    daysOffField,
+                    Divider(
+                      thickness: .7,
+                      color: Colors.grey[600],
                     ),
-                  ),
+                    ctAvlFromTimeField,
+                    ctAvlTillTimeField,
+                  ],
                 ),
               ),
             ),

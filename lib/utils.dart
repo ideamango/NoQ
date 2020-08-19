@@ -62,6 +62,7 @@ class Utils {
 
   static String validateMobileField(String value) {
     String errMsg = 'Enter a valid Phone number';
+    if (value == null || value == "") return null;
     var potentialNumber = int.tryParse(value);
     if (potentialNumber == null) return errMsg;
     if ((value.length > 10)) {
