@@ -10,6 +10,7 @@ import 'package:noq/db/db_model/employee.dart';
 import 'package:noq/db/db_model/entity.dart';
 import 'package:noq/db/db_model/entity_private.dart';
 import 'package:noq/db/db_model/meta_entity.dart';
+import 'package:noq/db/db_model/my_geo_fire_point.dart';
 import 'package:noq/db/db_model/user.dart';
 import 'package:noq/db/db_service/entity_service.dart';
 import 'package:noq/db/db_service/user_service.dart';
@@ -55,6 +56,7 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
   String flushStatus = "Empty";
 
 //Basic Details
+  bool validateField = false;
   TextEditingController _nameController = TextEditingController();
   TextEditingController _descController = TextEditingController();
   TextEditingController _regNumController = TextEditingController();
@@ -214,15 +216,21 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
   }
 
   String validateText(String value) {
-    if (value == null) {
-      return 'Field is empty';
+    if (validateField) {
+      if (value == null || value == "") {
+        return 'Field is empty';
+      } else
+        return null;
     } else
       return null;
   }
 
   String validateTime(String value) {
-    if (value == null) {
-      return 'Field is empty';
+    if (validateField) {
+      if (value == null || value == "") {
+        return 'Field is empty';
+      } else
+        return null;
     } else
       return null;
   }
@@ -811,6 +819,10 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
         decoration: CommonStyle.textFieldStyle(
             labelTextStr: "Apartment/ House No./ Lane", hintTextStr: ""),
         validator: validateText,
+        onChanged: (String value) {
+          entity.address.address = value;
+          print("changed address");
+        },
         onSaved: (String value) {
           entity.address.address = value;
           print("saved address");
@@ -831,9 +843,13 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
               borderSide: BorderSide(color: Colors.orange)),
         ),
         validator: validateText,
+        onChanged: (String value) {
+          entity.address.landmark = value;
+          print("changed landmark");
+        },
         onSaved: (String value) {
           entity.address.landmark = value;
-          print("saved address");
+          print("saved landmark");
         },
       );
       final localityField = TextFormField(
@@ -1061,6 +1077,42 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
 
       saveRoute() {
         print("saving ");
+
+        String addressStr1;
+
+        addressStr1 =
+            (_localityController.text != null) ? _localityController.text : "";
+        String addressStr2 =
+            (_cityController.text != null) ? _cityController.text : "";
+
+        String addressStr3 =
+            _stateController.text != null ? _stateController.text : "";
+        String addressStr4 =
+            _countryController.text != null ? _countryController.text : "";
+        String finalAddressStr;
+        if (addressStr2 != "" && addressStr3 != "" && addressStr4 != "")
+          finalAddressStr = addressStr1 +
+              ", " +
+              addressStr2 +
+              ", " +
+              addressStr3 +
+              ", " +
+              addressStr4;
+        List<Placemark> placemark;
+        double lat;
+        double long;
+        Geolocator().placemarkFromAddress(finalAddressStr).then((value) {
+          placemark = value;
+          lat = placemark[0].position.latitude;
+          print(lat);
+          long = placemark[0].position.longitude;
+          print(long);
+          MyGeoFirePoint geoPoint = new MyGeoFirePoint(lat, long);
+          entity.coordinates = geoPoint;
+        });
+
+        print(placemark);
+
         String validationPh1;
         String validationPh2;
         bool isContactValid = true;
@@ -1068,10 +1120,10 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
         for (int i = 0; i < contactList.length; i++) {
           validationPh1 = (contactList[i].ph != null)
               ? Utils.validateMobileField(contactList[i].ph.substring(3))
-              : true;
+              : null;
           validationPh2 = (contactList[i].altPhone != null)
               ? Utils.validateMobileField(contactList[i].altPhone.substring(3))
-              : true;
+              : null;
 
           if (validationPh2 != null || validationPh1 != null) {
             isContactValid = false;
@@ -1212,6 +1264,15 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
           });
           entity.isBookable = false;
         }
+      }
+
+      validateAllFields() {
+        bool retVal;
+        if (_entityDetailsFormKey.currentState.validate())
+          retVal = true;
+        else
+          retVal = false;
+        return retVal;
       }
 
       String _msg;
@@ -1394,9 +1455,28 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
                                   value: isPublic,
                                   onChanged: (value) {
                                     setState(() {
-                                      isPublic = value;
-                                      entity.isPublic = value;
-                                      print(isPublic);
+                                      if (value) {
+                                        validateField = true;
+                                        _autoValidate = true;
+                                        bool retVal = validateAllFields();
+                                        if (!retVal) {
+                                          //Show flushbar with info that fields has invalid data
+                                          Utils.showMyFlushbar(
+                                              context,
+                                              Icons.info_outline,
+                                              "Oops!! Making premises public requires this important information of some fields",
+                                              "Please check and try again !!");
+                                        } else {
+                                          validateField = false;
+                                          isPublic = value;
+                                          entity.isPublic = value;
+                                          print(isPublic);
+                                        }
+                                      } else {
+                                        isPublic = value;
+                                        entity.isPublic = value;
+                                        print(isPublic);
+                                      }
                                     });
                                   },
                                   // activeTrackColor: Colors.green,
@@ -1439,9 +1519,28 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
                                   value: isActive,
                                   onChanged: (value) {
                                     setState(() {
-                                      isActive = value;
-                                      entity.isActive = value;
-                                      print(isActive);
+                                      if (value) {
+                                        validateField = true;
+                                        _autoValidate = true;
+                                        bool retVal = validateAllFields();
+                                        if (!retVal) {
+                                          //Show flushbar with info that fields has invalid data
+                                          Utils.showMyFlushbar(
+                                              context,
+                                              Icons.info_outline,
+                                              "Oops!! Making premises public requires this important information of some fields",
+                                              "Please check and try again !!");
+                                        } else {
+                                          validateField = false;
+                                          isActive = value;
+                                          entity.isActive = value;
+                                          print(isActive);
+                                        }
+                                      } else {
+                                        isActive = value;
+                                        entity.isActive = value;
+                                        print(isActive);
+                                      }
                                     });
                                   },
                                   // activeTrackColor: Colors.green,
@@ -1663,13 +1762,13 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
                                         SizedBox(width: 5),
                                       ],
                                     ),
-                                    trailing: IconButton(
-                                      icon: Icon(Icons.add_circle,
-                                          color: highlightColor, size: 40),
-                                      onPressed: () {
-                                        addNewAdminRow();
-                                      },
-                                    ),
+                                    // trailing: IconButton(
+                                    //   icon: Icon(Icons.add_circle,
+                                    //       color: highlightColor, size: 40),
+                                    //   onPressed: () {
+                                    //     addNewAdminRow();
+                                    //   },
+                                    // ),
                                     backgroundColor: Colors.blueGrey[500],
                                     children: <Widget>[
                                       new Container(

@@ -876,8 +876,6 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
     //TODO: comment - only for testing
     //lat = 12.960632;
     //lon = 77.641603;
-    lat = 12.960632;
-    lon = 77.641603;
 
     //TODO: comment - only for testing
     String entityTypeForSearch;

@@ -7,11 +7,14 @@ import 'package:noq/db/db_model/employee.dart';
 import 'package:noq/db/db_model/entity.dart';
 import 'package:noq/db/db_model/entity_private.dart';
 import 'package:noq/db/db_model/meta_entity.dart';
+import 'package:noq/db/db_model/my_geo_fire_point.dart';
+import 'package:noq/db/db_model/user.dart';
 import 'package:noq/db/db_service/entity_service.dart';
 import 'dart:async';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:noq/constants.dart';
+import 'package:noq/db/db_service/user_service.dart';
 import 'package:noq/pages/contact_item.dart';
 import 'package:noq/pages/entity_services_list_page.dart';
 import 'package:noq/repository/StoreRepository.dart';
@@ -43,7 +46,7 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
       new GlobalKey<FormState>();
   final String title = "Managers Form";
   final Geolocator geolocator = Geolocator()..forceAndroidLocationManager;
-
+  bool validateField = false;
   TextEditingController _nameController = TextEditingController();
   TextEditingController _descController = TextEditingController();
   TextEditingController _regNumController = TextEditingController();
@@ -120,7 +123,6 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
     serviceEntity = widget.childEntity;
     _getCurrLocation();
     initializeEntity();
-    serviceEntity.address = new Address();
   }
 
   initializeEntity() async {
@@ -187,20 +189,25 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
         _stateController.text = serviceEntity.address.state;
         _countryController.text = serviceEntity.address.country;
         _pinController.text = serviceEntity.address.zipcode;
+      } else
+        serviceEntity.address = new Address();
 //contact person
-        if (!(Utils.isNullOrEmpty(serviceEntity.managers))) {
-          contactList = serviceEntity.managers;
-          contactList.forEach((element) {
-            contactRowWidgets.insert(0, new ContactRow(contact: element));
+      if (!(Utils.isNullOrEmpty(serviceEntity.managers))) {
+        contactList = serviceEntity.managers;
+        contactList.forEach((element) {
+          contactRowWidgets.insert(0, new ContactRow(contact: element));
+        });
+      }
+      User currUser = await UserService().getCurrentUser();
+      Map<String, String> adminMap = Map<String, String>();
+      EntityPrivate entityPrivateList;
+      entityPrivateList = await fetchAdmins(serviceEntity.entityId);
+      if (entityPrivateList != null) {
+        adminMap = entityPrivateList.roles;
+        if (adminMap != null)
+          adminMap.forEach((k, v) {
+            if (currUser.ph != k) adminsList.add(k);
           });
-        }
-        Map<String, String> adminMap = Map<String, String>();
-        EntityPrivate entityPrivateList;
-        if (entityPrivateList != null) {
-          adminMap = entityPrivateList.roles;
-          if (adminMap != null) adminMap.forEach((k, v) => adminsList.add(k));
-        }
-        entityPrivateList = await fetchAdmins(serviceEntity.entityId);
         _regNumController.text = entityPrivateList.registrationNumber;
       }
     } else {
@@ -209,27 +216,30 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
         'type': serviceEntity.type,
         'entityId': serviceEntity.entityId
       };
-
       serviceEntity = Entity.fromJson(entityJSON);
-      // EntityService().upsertEntity(serviceEntity);
+      serviceEntity.address = (serviceEntity.address) ?? new Address();
+      contactList = contactList ?? new List<Employee>();
     }
-    serviceEntity.address = (serviceEntity.address) ?? new Address();
-    contactList = contactList ?? new List<Employee>();
   }
 
   String validateText(String value) {
-    if (value == null) {
-      return 'Field is empty';
-    }
-    return null;
+    if (validateField) {
+      if (value == null || value == "") {
+        return 'Field is empty';
+      }
+      return null;
+    } else
+      return null;
   }
 
   String validateTime(String value) {
-    if (value == null) {
-      return 'Field is empty';
-    }
-
-    return null;
+    if (validateField) {
+      if (value == null || value == "") {
+        return 'Field is empty';
+      }
+      return null;
+    } else
+      return null;
   }
 
   void _getCurrLocation() async {
@@ -352,7 +362,7 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
             Container(
                 height: 25,
                 width: MediaQuery.of(context).size.width * .5,
-                child: TextField(
+                child: TextFormField(
                   enabled: false,
                   cursorColor: highlightColor,
                   keyboardType: TextInputType.phone,
@@ -402,13 +412,20 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
     );
   }
 
-  void saveFormDetails() async {}
-
   saveDetails() async {
-    // List<Placemark> placemark = await Geolocator().placemarkFromAddress(
-    //     "My Home Vihanga, Financial District, Gachibowli, Hyderabad, Telangana, India");
+    //TODO Smita: build string to get lat, long from address(UI) and save it in entity.
+    String addressStr;
+    addressStr = serviceEntity.address.locality +
+        ", " +
+        serviceEntity.address.city +
+        "," +
+        serviceEntity.address.state +
+        "," +
+        serviceEntity.address.country;
+    List<Placemark> placemark =
+        await Geolocator().placemarkFromAddress(addressStr);
 
-    // print(placemark);
+    print(placemark);
 
     String validationPh1;
     String validationPh2;
@@ -859,6 +876,7 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
       ),
       validator: Utils.validateMobileField,
       onChanged: (value) {
+        whatsappPhnKey.currentState.validate();
         if (value != "") serviceEntity.whatsapp = "+91" + (value);
         print("Whatsapp Number");
       },
@@ -1028,13 +1046,6 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
     );
     //Contact person
 
-    void saveFormDetails() {
-      print("saving ");
-      if (_serviceDetailsFormKey.currentState.validate()) {
-        _serviceDetailsFormKey.currentState.save();
-      }
-    }
-
     void updateModel() {
 //Read local file and update the entities.
       print("saving locally");
@@ -1042,48 +1053,96 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
 
     TextEditingController _txtController = new TextEditingController();
     bool _delEnabled = false;
+
     saveRoute() {
-      saveFormDetails();
-      EntityService()
-          .upsertChildEntityToParent(
-              serviceEntity, serviceEntity.parentId, _regNumController.text)
-          .then((value) {
-        print("child entity saved");
+      print("saving ");
 
-        if (value) {
-          // Assign admins to newly upserted entity
-          assignAdminsFromList(serviceEntity.entityId, adminsList)
-              .then((value) {
-            if (!value) {
-              Utils.showMyFlushbar(
-                  context,
-                  Icons.info_outline,
-                  "Couldn't save the Entity for some reason. ",
-                  "Please try again.");
-            }
+      String addressStr1;
 
-            // Navigator.push(
-            //       context,
-            //       MaterialPageRoute(
-            //           builder: (context) =>
-            //               ChildEntitiesListPage(entity: this.entity)));
-          });
-        }
-        // if (value) {
-        //   EntityService().getEntity(this.serviceEntity.parentId).then((value) =>
-        //       Navigator.push(
-        //           context,
-        //           MaterialPageRoute(
-        //               builder: (context) =>
-        //                   ChildEntitiesListPage(entity: value))));
-        // }
+      addressStr1 =
+          (_localityController.text != null) ? _localityController.text : "";
+      String addressStr2 =
+          (_cityController.text != null) ? _cityController.text : "";
+
+      String addressStr3 =
+          _stateController.text != null ? _stateController.text : "";
+      String addressStr4 =
+          _countryController.text != null ? _countryController.text : "";
+      String finalAddressStr;
+      if (addressStr2 != "" && addressStr3 != "" && addressStr4 != "")
+        finalAddressStr = addressStr1 +
+            ", " +
+            addressStr2 +
+            ", " +
+            addressStr3 +
+            ", " +
+            addressStr4;
+      List<Placemark> placemark;
+      double lat;
+      double long;
+      Geolocator().placemarkFromAddress(finalAddressStr).then((value) {
+        placemark = value;
+        lat = placemark[0].position.latitude;
+        print(lat);
+        long = placemark[0].position.longitude;
+        print(long);
+        MyGeoFirePoint geoPoint = new MyGeoFirePoint(lat, long);
+        serviceEntity.coordinates = geoPoint;
       });
-      //saveChildEntity(serviceEntity);
-      // Navigator.push(
-      //     context,
-      //     MaterialPageRoute(
-      //         builder: (context) =>
-      //             EntityServicesListPage(entity: this.entity)));
+
+      print(placemark);
+
+      String validationPh1;
+      String validationPh2;
+      bool isContactValid = true;
+
+      for (int i = 0; i < contactList.length; i++) {
+        validationPh1 = (contactList[i].ph != null)
+            ? Utils.validateMobileField(contactList[i].ph.substring(3))
+            : null;
+        validationPh2 = (contactList[i].altPhone != null)
+            ? Utils.validateMobileField(contactList[i].altPhone.substring(3))
+            : null;
+        print(validationPh1);
+        print(validationPh2);
+        if (validationPh2 != null || validationPh1 != null) {
+          isContactValid = false;
+          break;
+        }
+      }
+      if (_serviceDetailsFormKey.currentState.validate() && isContactValid) {
+        _serviceDetailsFormKey.currentState.save();
+
+        EntityService()
+            .upsertChildEntityToParent(
+                serviceEntity, serviceEntity.parentId, _regNumController.text)
+            .then((value) {
+          print("child entity saved");
+
+          if (value) {
+            // Assign admins to newly upserted entity
+            assignAdminsFromList(serviceEntity.entityId, adminsList)
+                .then((value) {
+              if (!value) {
+                Utils.showMyFlushbar(
+                    context,
+                    Icons.info_outline,
+                    "Couldn't save the Entity for some reason. ",
+                    "Please try again.");
+              }
+            });
+          }
+        });
+      } else {
+        Utils.showMyFlushbar(
+            context,
+            Icons.info_outline,
+            "Seems like you have entered some incorrect details!! ",
+            "Please verify the details and try again.");
+        setState(() {
+          _autoValidate = true;
+        });
+      }
     }
 
     processSaveWithTimer() async {
@@ -1110,47 +1169,104 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
       return new Timer(duration, backRoute);
     }
 
-    final roleType = new FormField(
-      builder: (FormFieldState state) {
-        return InputDecorator(
-          decoration: InputDecoration(
-            labelText: 'Role Type',
-          ),
-          child: new DropdownButtonHideUnderline(
-            child: new DropdownButton(
-              hint: new Text("Select Role of Person"),
-              value: _roleType,
-              isDense: true,
-              onChanged: (newValue) {
-                setState(() {
-                  _roleType = newValue;
-                  state.didChange(newValue);
-                });
-              },
-              items: roleTypes.map((type) {
-                return DropdownMenuItem(
-                  value: type,
-                  child: new Text(
-                    type.toString(),
-                    style: textInputTextStyle,
+    Future<void> showConfirmationDialog() async {
+      bool returnVal = await showDialog(
+          barrierDismissible: false,
+          context: context,
+          builder: (_) => AlertDialog(
+                titlePadding: EdgeInsets.fromLTRB(5, 10, 0, 0),
+                contentPadding: EdgeInsets.all(0),
+                actionsPadding: EdgeInsets.all(0),
+                //buttonPadding: EdgeInsets.all(0),
+                title: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Text(
+                      'Bookable premise means that time-slots can be booked, for eg. Shopping store, Salon. Premises that are not bookable are Apartments, Malls etc.',
+                      style: TextStyle(
+                        fontSize: 15,
+                        color: Colors.blueGrey[600],
+                      ),
+                    ),
+                    verticalSpacer,
+                    Text(
+                      'Are you sure you make this premise bookable?',
+                      style: TextStyle(
+                        fontSize: 15,
+                        color: Colors.blueGrey[600],
+                      ),
+                    ),
+                    verticalSpacer,
+                    // myDivider,
+                  ],
+                ),
+                content: Divider(
+                  color: Colors.blueGrey[400],
+                  height: 1,
+                  //indent: 40,
+                  //endIndent: 30,
+                ),
+
+                //content: Text('This is my content'),
+                actions: <Widget>[
+                  SizedBox(
+                    height: 24,
+                    child: RaisedButton(
+                      elevation: 0,
+                      color: Colors.transparent,
+                      splashColor: highlightColor.withOpacity(.8),
+                      textColor: Colors.orange,
+                      shape: RoundedRectangleBorder(
+                          side: BorderSide(color: Colors.orange)),
+                      child: Text('Yes'),
+                      onPressed: () {
+                        Navigator.of(_).pop(true);
+                      },
+                    ),
                   ),
-                );
-              }).toList(),
-            ),
-          ),
-        );
-      },
-      onSaved: (String value) {
-        _roleType = value;
-        // setState(() {
-        //   _msg = null;
-        // });
-        // entity.childCollection
-        //    .add(new ChildEntityAppData.cType(value, entity.id));
-        //   saveEntityDetails(entity);
-      },
-    );
-    final itemField = new TextFormField(
+                  SizedBox(
+                    height: 24,
+                    child: RaisedButton(
+                      elevation: 20,
+                      autofocus: true,
+                      focusColor: highlightColor,
+                      splashColor: highlightColor,
+                      color: Colors.white,
+                      textColor: Colors.orange,
+                      shape: RoundedRectangleBorder(
+                          side: BorderSide(color: Colors.orange)),
+                      child: Text('No'),
+                      onPressed: () {
+                        Navigator.of(_).pop(false);
+                      },
+                    ),
+                  ),
+                ],
+              ));
+
+      if (returnVal) {
+        setState(() {
+          isBookable = true;
+        });
+        serviceEntity.isBookable = true;
+      } else {
+        setState(() {
+          isBookable = false;
+        });
+        serviceEntity.isBookable = false;
+      }
+    }
+
+    validateAllFields() {
+      bool retVal;
+      if (_serviceDetailsFormKey.currentState.validate())
+        retVal = true;
+      else
+        retVal = false;
+      return retVal;
+    }
+
+    final adminItemField = new TextFormField(
       key: adminItemKey,
       autofocus: true,
       inputFormatters: [
@@ -1326,9 +1442,28 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
                                 value: isPublic,
                                 onChanged: (value) {
                                   setState(() {
-                                    isPublic = value;
-                                    serviceEntity.isPublic = value;
-                                    print(isPublic);
+                                    if (value) {
+                                      validateField = true;
+                                      _autoValidate = true;
+                                      bool retVal = validateAllFields();
+                                      if (!retVal) {
+                                        //Show flushbar with info that fields has invalid data
+                                        Utils.showMyFlushbar(
+                                            context,
+                                            Icons.info_outline,
+                                            "Oops!! Making premises public requires this important information of some fields",
+                                            "Please check and try again !!");
+                                      } else {
+                                        validateField = false;
+                                        isPublic = value;
+                                        serviceEntity.isPublic = value;
+                                        print(isPublic);
+                                      }
+                                    } else {
+                                      isPublic = value;
+                                      serviceEntity.isPublic = value;
+                                      print(isPublic);
+                                    }
                                   });
                                 },
                                 // activeTrackColor: Colors.green,
@@ -1348,6 +1483,10 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
                                   setState(() {
                                     isBookable = value;
                                     serviceEntity.isBookable = value;
+                                    if (value) {
+                                      showConfirmationDialog();
+                                      //TODO: SMita - show msg with info, yes/no
+                                    }
                                     print(isBookable);
                                   });
                                 },
@@ -1366,9 +1505,28 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
                                 value: isActive,
                                 onChanged: (value) {
                                   setState(() {
-                                    isActive = value;
-                                    serviceEntity.isActive = value;
-                                    print(isActive);
+                                    if (value) {
+                                      validateField = true;
+                                      _autoValidate = true;
+                                      bool retVal = validateAllFields();
+                                      if (!retVal) {
+                                        //Show flushbar with info that fields has invalid data
+                                        Utils.showMyFlushbar(
+                                            context,
+                                            Icons.info_outline,
+                                            "Oops!! Making premises public requires this important information of some fields",
+                                            "Please check and try again !!");
+                                      } else {
+                                        validateField = false;
+                                        isActive = value;
+                                        serviceEntity.isActive = value;
+                                        print(isActive);
+                                      }
+                                    } else {
+                                      isActive = value;
+                                      serviceEntity.isActive = value;
+                                      print(isActive);
+                                    }
                                   });
                                 },
                                 // activeTrackColor: Colors.green,
@@ -1577,23 +1735,33 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
                                       SizedBox(width: 5),
                                     ],
                                   ),
-                                  trailing: IconButton(
-                                    icon: Icon(Icons.add_circle,
-                                        color: highlightColor, size: 40),
-                                    onPressed: () {
-                                      if (_adminItemController.text == null ||
-                                          _adminItemController.text.isEmpty) {
-                                        Utils.showMyFlushbar(
-                                            context,
-                                            Icons.info_outline,
-                                            "Something Missing ..",
-                                            "Please enter Phone number !!");
-                                      } else {
-                                        _addNewAdminRow();
-                                        _adminItemController.text = "";
-                                      }
-                                    },
-                                  ),
+                                  // trailing: IconButton(
+                                  //   icon: Icon(Icons.add_circle,
+                                  //       color: highlightColor, size: 40),
+                                  //   onPressed: () {
+                                  //     if (_adminItemController.text == null ||
+                                  //         _adminItemController.text.isEmpty) {
+                                  //       Utils.showMyFlushbar(
+                                  //           context,
+                                  //           Icons.info_outline,
+                                  //           "Something Missing ..",
+                                  //           "Please enter Phone number !!");
+                                  //     } else {
+                                  //       bool result = adminItemKey.currentState
+                                  //           .validate();
+                                  //       if (result) {
+                                  //         _addNewAdminRow();
+                                  //         _adminItemController.text = "";
+                                  //       } else {
+                                  //         Utils.showMyFlushbar(
+                                  //             context,
+                                  //             Icons.info_outline,
+                                  //             "Oops!! Seems like the phone number is not valid",
+                                  //             "Please check and try again !!");
+                                  //       }
+                                  //     }
+                                  //   },
+                                  // ),
                                   backgroundColor: Colors.blueGrey[500],
                                   children: <Widget>[
                                     new Container(
@@ -1632,7 +1800,7 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
                                     // mainAxisAlignment: MainAxisAlignment.end,
                                     children: <Widget>[
                                       Expanded(
-                                        child: itemField,
+                                        child: adminItemField,
                                       ),
                                       Container(
                                         padding:
@@ -1649,8 +1817,31 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
                                                 color: highlightColor,
                                                 size: 38),
                                             onPressed: () {
-                                              _addNewAdminRow();
-                                              _adminItemController.text = "";
+                                              if (_adminItemController.text ==
+                                                      null ||
+                                                  _adminItemController
+                                                      .text.isEmpty) {
+                                                Utils.showMyFlushbar(
+                                                    context,
+                                                    Icons.info_outline,
+                                                    "Something Missing ..",
+                                                    "Please enter Phone number !!");
+                                              } else {
+                                                bool result = adminItemKey
+                                                    .currentState
+                                                    .validate();
+                                                if (result) {
+                                                  _addNewAdminRow();
+                                                  _adminItemController.text =
+                                                      "";
+                                                } else {
+                                                  Utils.showMyFlushbar(
+                                                      context,
+                                                      Icons.info_outline,
+                                                      "Oops!! Seems like the phone number is not valid",
+                                                      "Please check and try again !!");
+                                                }
+                                              }
                                             }),
                                       ),
                                     ],
