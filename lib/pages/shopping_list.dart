@@ -3,6 +3,8 @@ import 'package:flutter/services.dart';
 import 'package:noq/constants.dart';
 import 'package:noq/db/db_model/entity.dart';
 import 'package:noq/db/db_model/list_item.dart';
+import 'package:noq/db/db_model/message.dart';
+import 'package:noq/db/db_model/order.dart';
 import 'package:noq/db/db_model/user_token.dart';
 import 'package:noq/pages/service_entity.dart';
 import 'package:noq/repository/slotRepository.dart';
@@ -46,10 +48,23 @@ class _ShoppingListState extends State<ShoppingList> {
   void initState() {
     super.initState();
     token = widget.token;
-    if (Utils.isNullOrEmpty(token.items))
-      listOfShoppingItems = List<ListItem>();
-    else {
-      listOfShoppingItems = token.items;
+    if (token.order == null) {
+      Order ord = new Order(
+          billNo: "",
+          items: List<ListItem>(),
+          comments: List<Message>(),
+          status: null,
+          billAmount: null,
+          deliveryMode: null,
+          deliveryAddress: null,
+          orderCreatedDateTime: null,
+          deliveryDateTime: null,
+          entityId: token.entityId,
+          userId: token.userId);
+      token.order = ord;
+      listOfShoppingItems = token.order.items;
+    } else {
+      listOfShoppingItems = token.order.items;
     }
   }
 
@@ -59,7 +74,7 @@ class _ShoppingListState extends State<ShoppingList> {
           new ListItem(itemName: _item, quantity: "", isDone: false);
       listOfShoppingItems.add(sItem);
       _count = _count + 1;
-      token.items.add(sItem);
+      token.order.items.add(sItem);
       //TODO: Smita - Update GS
     });
   }
@@ -68,7 +83,7 @@ class _ShoppingListState extends State<ShoppingList> {
     setState(() {
       listOfShoppingItems.remove(currItem);
       _count = _count - 1;
-      token.items.remove(currItem);
+      token.order.items.remove(currItem);
       print(currItem.itemName + ' deleted ' + currItem.quantity);
       //TODO: Smita - Update GS
     });

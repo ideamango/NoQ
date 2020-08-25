@@ -1,5 +1,6 @@
 import 'package:intl/intl.dart';
 import 'package:noq/db/db_model/list_item.dart';
+import 'package:noq/db/db_model/order.dart';
 import 'package:noq/utils.dart';
 
 class UserToken {
@@ -15,7 +16,7 @@ class UserToken {
       this.lat,
       this.lon,
       this.entityWhatsApp,
-      this.items,
+      this.order,
       this.gpay,
       this.paytm,
       this.applepay});
@@ -31,7 +32,7 @@ class UserToken {
   double lat;
   double lon;
   String entityWhatsApp;
-  List<ListItem> items;
+  Order order;
   String gpay;
   String paytm;
   String applepay;
@@ -50,7 +51,7 @@ class UserToken {
         'lat': lat,
         'lon': lon,
         'entityWhatsApp': entityWhatsApp,
-        'items': metaEntitiesToJson(items),
+        'order': order,
         'gpay': gpay,
         'paytm': paytm,
         'applepay': applepay
@@ -59,9 +60,9 @@ class UserToken {
   static UserToken fromJson(Map<String, dynamic> json) {
     if (json == null) return null;
     return new UserToken(
-        slotId: json['slotId'].toString(),
-        entityId: json['entityId'].toString(),
-        userId: json['userId'].toString(),
+        slotId: json['slotId'],
+        entityId: json['entityId'],
+        userId: json['userId'],
         number: json['number'],
         dateTime: new DateTime.fromMillisecondsSinceEpoch(json['dateTime']),
         maxAllowed: json['maxAllowed'],
@@ -70,7 +71,7 @@ class UserToken {
         lat: json['lat'],
         lon: json['lon'],
         entityWhatsApp: json['entityWhatsApp'],
-        items: convertToListItemsFromJson(json['items']),
+        order: Order.fromJson(json['order']),
         gpay: json['gpay'],
         paytm: json['paytm'],
         applepay: json['applepay']);
