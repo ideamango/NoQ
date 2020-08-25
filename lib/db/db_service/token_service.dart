@@ -330,6 +330,7 @@ class TokenService {
               isGreaterThanOrEqualTo: date.millisecondsSinceEpoch)
           .where("dateTime", isLessThan: nextDay.millisecondsSinceEpoch)
           .where("userId", isEqualTo: user.phoneNumber)
+          .where("entityId", isEqualTo: entityId)
           .getDocuments();
 
       for (DocumentSnapshot ds in qs.documents) {
