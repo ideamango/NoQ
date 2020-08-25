@@ -267,7 +267,7 @@ class _FavsListPageState extends State<FavsListPage> {
               context,
               MaterialPageRoute(
                   builder: (context) =>
-                      SearchServicesPage(childList: str.childEntities)));
+                      SearchChildrenPage(childList: str.childEntities)));
         }
 
         // if (child.length != 0) {

@@ -51,10 +51,23 @@ class _ManageApartmentsListPageState extends State<ManageApartmentsListPage> {
 
   void initialize() async {
     await getGlobalState();
+    metaEntitiesList = List<MetaEntity>();
     if (!Utils.isNullOrEmpty(_state.currentUser.entities)) {
-      metaEntitiesList = _state.currentUser.entities;
-    } else
-      metaEntitiesList = List<MetaEntity>();
+//Check if entity is child and parent os same entity is also enlisted in entities then dont show child.
+// Show only first level entities to user.
+      for (int i = 0; i < _state.currentUser.entities.length; i++) {
+        MetaEntity m = _state.currentUser.entities[i];
+        String parentName = (m.parentId) ?? "null";
+        print(m.name + '::' + parentName);
+        if (m.parentId != null) {
+          if (_state.currentUser.entities.contains(m.parentId)) continue;
+          continue;
+        }
+        metaEntitiesList.add(m);
+      }
+      // metaEntitiesList = _state.currentUser.entities;
+    }
+
     entityTypes = _state.conf.entityTypes;
     setState(() {
       stateInitFinished = true;
@@ -73,9 +86,9 @@ class _ManageApartmentsListPageState extends State<ManageApartmentsListPage> {
     });
 
     _parentEntityMap[metaEn.entityId] = entity;
-
-    _scrollController.animateTo(_scrollController.offset + itemSize,
-        curve: Curves.linear, duration: Duration(milliseconds: 200));
+    if (_scrollController.hasClients)
+      _scrollController.animateTo(_scrollController.offset + itemSize,
+          curve: Curves.easeInToLinear, duration: Duration(milliseconds: 200));
   }
 
   @override

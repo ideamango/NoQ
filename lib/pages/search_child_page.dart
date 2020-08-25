@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:intl/intl.dart';
+import 'package:noq/db/db_model/address.dart';
 import 'package:noq/db/db_model/entity.dart';
 import 'package:noq/db/db_model/meta_entity.dart';
 import 'package:noq/db/db_model/user_token.dart';
@@ -17,14 +18,16 @@ import 'package:noq/widget/bottom_nav_bar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../userHomePage.dart';
 
-class SearchServicesPage extends StatefulWidget {
+class SearchChildrenPage extends StatefulWidget {
   final List<MetaEntity> childList;
-  SearchServicesPage({Key key, this.childList}) : super(key: key);
+  final String parentName;
+  SearchChildrenPage({Key key, this.childList, this.parentName})
+      : super(key: key);
   @override
-  _SearchServicesPageState createState() => _SearchServicesPageState();
+  _SearchChildrenPageState createState() => _SearchChildrenPageState();
 }
 
-class _SearchServicesPageState extends State<SearchServicesPage> {
+class _SearchChildrenPageState extends State<SearchChildrenPage> {
   bool initCompleted = false;
   bool isFavourited = false;
   DateTime dateTime = DateTime.now();
@@ -74,7 +77,18 @@ class _SearchServicesPageState extends State<SearchServicesPage> {
     });
   }
 
-  _SearchServicesPageState() {
+  String getFormattedAddress(Address address) {
+    String adr = address.address +
+        ', ' +
+        address.locality +
+        ', ' +
+        address.landmark +
+        ', ' +
+        address.city;
+    return adr;
+  }
+
+  _SearchChildrenPageState() {
     _searchQuery.addListener(() {
       if (_searchQuery.text.isEmpty && _entityType == null) {
         setState(() {
@@ -101,15 +115,15 @@ class _SearchServicesPageState extends State<SearchServicesPage> {
     List<Entity> enList = new List<Entity>();
     if (!Utils.isNullOrEmpty(widget.childList)) {
       for (int i = 0; i < widget.childList.length; i++) {
-        getEntity(widget.childList[i].entityId).then((value) {
-          if (value != null) {
-            enList.add(value);
-          }
-        });
+        Entity value = await getEntity(widget.childList[i].entityId);
+        if (value != null) {
+          enList.add(value);
+        }
       }
     }
     setState(() {
       _stores.addAll(enList);
+      _pastSearches.addAll(enList);
     });
   }
 
@@ -360,7 +374,7 @@ class _SearchServicesPageState extends State<SearchServicesPage> {
           children: <Widget>[categoryDropDown, appBarTitle],
         ),
       );
-      String title = "Search";
+      String title = "Search inside " + widget.parentName;
       print(_searchText);
       print(_entityType);
       if (_isSearching == "initial" &&
@@ -618,7 +632,7 @@ class _SearchServicesPageState extends State<SearchServicesPage> {
                         width: MediaQuery.of(context).size.width * .67,
                         child: Text(
                           (str.address != null)
-                              ? str.address.toString()
+                              ? getFormattedAddress(str.address)
                               : "Address",
                           overflow: TextOverflow.ellipsis,
                           style: textInputTextStyle,

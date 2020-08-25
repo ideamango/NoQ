@@ -178,7 +178,7 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
             ? serviceEntity.maxAllowed.toString()
             : "";
       _whatsappPhoneController.text = serviceEntity.whatsapp != null
-          ? serviceEntity.whatsapp.toString()
+          ? serviceEntity.whatsapp.toString().substring(3)
           : "";
       //address
       if (serviceEntity.address != null) {
@@ -1451,7 +1451,7 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
                                         Utils.showMyFlushbar(
                                             context,
                                             Icons.info_outline,
-                                            "Oops!! Making premises public requires this important information of some fields",
+                                            "Missing Information!! Making premises public require the basic details",
                                             "Please check and try again !!");
                                       } else {
                                         validateField = false;
@@ -1485,7 +1485,6 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
                                     serviceEntity.isBookable = value;
                                     if (value) {
                                       showConfirmationDialog();
-                                      //TODO: SMita - show msg with info, yes/no
                                     }
                                     print(isBookable);
                                   });
@@ -1514,7 +1513,7 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
                                         Utils.showMyFlushbar(
                                             context,
                                             Icons.info_outline,
-                                            "Oops!! Making premises public requires this important information of some fields",
+                                            "Missing Information!! Making premises active require the basic details",
                                             "Please check and try again !!");
                                       } else {
                                         validateField = false;

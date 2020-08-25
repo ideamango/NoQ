@@ -183,4 +183,11 @@ class Utils {
     (double.tryParse(s) != null) ? result = true : result = false;
     return result;
   }
+
+  static String formatTime(String hr) {
+    if (hr.length == 1) {
+      hr = '0' + hr;
+    }
+    return hr;
+  }
 }

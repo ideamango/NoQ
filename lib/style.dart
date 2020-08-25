@@ -139,6 +139,14 @@ final textLabelTextStyle = TextStyle(
   fontSize: 15.0,
   //height: 2,
 );
+final labelSmlTextStyle = TextStyle(
+  color: Colors.blueGrey[800],
+  // fontWeight: FontWeight.w800,
+  fontFamily: 'Monsterrat',
+  letterSpacing: 0.5,
+  fontSize: 13.0,
+  //height: 2,
+);
 final labelMedTextStyle = TextStyle(
   color: Colors.grey[700],
   // fontWeight: FontWeight.w800,

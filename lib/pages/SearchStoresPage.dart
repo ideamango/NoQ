@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:intl/intl.dart';
 import 'package:noq/constants.dart';
+import 'package:noq/db/db_model/address.dart';
 import 'package:noq/db/db_model/entity.dart';
 import 'package:noq/db/db_model/meta_entity.dart';
 import 'package:noq/db/db_model/user_token.dart';
@@ -20,9 +21,8 @@ import '../userHomePage.dart';
 
 class SearchStoresPage extends StatefulWidget {
   final String forPage;
-  final List<Entity> childList;
-  SearchStoresPage({Key key, @required this.forPage, this.childList})
-      : super(key: key);
+
+  SearchStoresPage({Key key, @required this.forPage}) : super(key: key);
   @override
   _SearchStoresPageState createState() => _SearchStoresPageState();
 }
@@ -70,7 +70,9 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
     getGlobalState().whenComplete(() {
       getList();
       searchTypes = _state.conf.entityTypes;
-      searchTypes.insert(0, _searchInAll);
+      //insert only if not there
+      if (!searchTypes.contains(_searchInAll))
+        searchTypes.insert(0, _searchInAll);
 
       setState(() {
         initCompleted = true;
@@ -118,11 +120,6 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
   }
 
   void getChildStoresList() async {
-    setState(() {
-      if (!Utils.isNullOrEmpty(widget.childList)) {
-        _stores.addAll(widget.childList);
-      }
-    });
     _list = _stores;
   }
 
@@ -179,6 +176,17 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
         _state.addFavourite(en);
       });
     }
+  }
+
+  String getFormattedAddress(Address address) {
+    String adr = address.address +
+        ', ' +
+        address.locality +
+        ', ' +
+        address.landmark +
+        ', ' +
+        address.city;
+    return adr;
   }
 
   Widget _emptySearchPage() {
@@ -526,8 +534,8 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
           Navigator.push(
               context,
               MaterialPageRoute(
-                  builder: (context) =>
-                      SearchServicesPage(childList: str.childEntities)));
+                  builder: (context) => SearchChildrenPage(
+                      childList: str.childEntities, parentName: str.name)));
         }
 
         // if (child.length != 0) {
@@ -702,13 +710,13 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: <Widget>[
                       Container(
-                        width: MediaQuery.of(context).size.width * .67,
+                        width: MediaQuery.of(context).size.width * .78,
                         child: Text(
                           (str.address != null)
-                              ? str.address.toString()
+                              ? getFormattedAddress(str.address)
                               : "Address",
                           overflow: TextOverflow.ellipsis,
-                          style: textInputTextStyle,
+                          style: labelSmlTextStyle,
                         ),
                       ),
                     ],
@@ -738,10 +746,11 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
                             //Icon(Icons.play_circle_filled, color: Colors.blueGrey[300]),
                             Text('Opens at:', style: labelTextStyle),
                             Text(
-                                str.startTimeHour.toString() +
+                                Utils.formatTime(str.startTimeHour.toString()) +
                                     ':' +
-                                    str.startTimeMinute.toString(),
-                                style: textInputTextStyle),
+                                    Utils.formatTime(
+                                        str.startTimeMinute.toString()),
+                                style: labelSmlTextStyle),
                           ],
                         ),
                         Container(
@@ -752,10 +761,11 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
                             //Icon(Icons.pause_circle_filled, color: Colors.blueGrey[300]),
                             Text('Closes at:', style: labelTextStyle),
                             Text(
-                                str.endTimeHour.toString() +
+                                Utils.formatTime(str.endTimeHour.toString()) +
                                     ':' +
-                                    str.endTimeMinute.toString(),
-                                style: textInputTextStyle),
+                                    Utils.formatTime(
+                                        str.endTimeMinute.toString()),
+                                style: labelSmlTextStyle),
                           ],
                         ),
                       ]),
@@ -898,7 +908,13 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
     //   //return _stores.map((contact) => new ChildItem(contact.name)).toList();
     // } else {
     await getSearchEntitiesList().then((value) {
-      _stores = value;
+      //Scrutinize the list returned froms server.
+
+      //1. entities that are bookable, public and active only should be listed
+      //2. Parent entities
+      for (int i = 0; i < value.length; i++) {
+        if (value[i].isActive) _stores.add(value[i]);
+      }
 
       //Write Gstate to file
       _state.updateSearchResults(_stores);

@@ -47,13 +47,15 @@ class ContactRowState extends State<ContactRow> {
       _ctPhn2controller.text =
           contact.altPhone != null ? contact.altPhone.substring(3) : "";
       if (contact.shiftStartHour != null && contact.shiftStartMinute != null)
-        _ctAvlFromTimeController.text = contact.shiftStartHour.toString() +
-            ':' +
-            contact.shiftStartMinute.toString();
+        _ctAvlFromTimeController.text =
+            Utils.formatTime(contact.shiftStartHour.toString()) +
+                ':' +
+                Utils.formatTime(contact.shiftStartMinute.toString());
       if (contact.shiftEndHour != null && contact.shiftEndMinute != null)
-        _ctAvlTillTimeController.text = contact.shiftEndHour.toString() +
-            ':' +
-            contact.shiftEndMinute.toString();
+        _ctAvlTillTimeController.text =
+            Utils.formatTime(contact.shiftEndHour.toString()) +
+                ':' +
+                Utils.formatTime(contact.shiftEndMinute.toString());
       _daysOff = (contact.daysOff) ?? new List<String>();
     }
     if (_daysOff.length == 0) {
