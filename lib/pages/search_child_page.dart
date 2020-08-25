@@ -42,7 +42,7 @@ class _SearchChildrenPageState extends State<SearchChildrenPage> {
   bool searchBoxClicked = false;
   bool fetchFromServer = false;
   // bool searchDone = false;
-
+  String title;
   final compareDateFormat = new DateFormat('YYYYMMDD');
   List<DateTime> _dateList = new List<DateTime>();
 
@@ -67,6 +67,7 @@ class _SearchChildrenPageState extends State<SearchChildrenPage> {
   void initState() {
     super.initState();
     _isSearching = "initial";
+    title = "Search inside " + widget.parentName;
     getGlobalState().whenComplete(() {
       searchTypes = _state.conf.entityTypes;
       getEntitiesList().whenComplete(() {
@@ -220,7 +221,7 @@ class _SearchChildrenPageState extends State<SearchChildrenPage> {
         theme: ThemeData.light().copyWith(),
         home: Scaffold(
           appBar: CustomAppBar(
-            titleTxt: "Search",
+            titleTxt: title,
           ),
           body: Center(
             child: Column(
@@ -374,7 +375,7 @@ class _SearchChildrenPageState extends State<SearchChildrenPage> {
           children: <Widget>[categoryDropDown, appBarTitle],
         ),
       );
-      String title = "Search inside " + widget.parentName;
+
       print(_searchText);
       print(_entityType);
       if (_isSearching == "initial" &&
@@ -809,27 +810,23 @@ class _SearchChildrenPageState extends State<SearchChildrenPage> {
   }
 
   Future<void> _buildSearchList() async {
-    // if (_searchText.isEmpty && _entityType.isEmpty) {
-    //   return _stores.map(_buildItem).toList();
-    //   //return _stores.map((contact) => new ChildItem(contact.name)).toList();
-    // } else {
-    await getSearchEntitiesList().then((value) {
-      _stores = value;
+    //Search in _stores list if search criteria matches
+    List<Entity> searchList = new List<Entity>();
+    for (int i = 0; i < _stores.length; i++) {
+      String name = _stores.elementAt(i).name;
+      if (name.toLowerCase().contains(_searchText.toLowerCase())) {
+        searchList.add(_stores.elementAt(i));
+      }
+    }
+    _stores.clear();
+    _stores.addAll(searchList);
 
-      //Write Gstate to file
-      _state.updateSearchResults(_stores);
-      setState(() {
-        //searchDone = true;
-        _isSearching = "done";
-      });
+    //Write Gstate to file
+    _state.updateSearchResults(_stores);
+    setState(() {
+      //searchDone = true;
+      _isSearching = "done";
     });
-
-    // for (int i = 0; i < _stores.length; i++) {
-    //   String name = _stores.elementAt(i).name;
-    //   if (name.toLowerCase().contains(_searchText.toLowerCase())) {
-    //     _searchList.add(_stores.elementAt(i));
-    //   }
-    // }
   }
 
   void addFilterCriteria() {}

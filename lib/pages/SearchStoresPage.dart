@@ -427,8 +427,7 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
                   style: TextStyle(color: Colors.white, fontSize: 16),
                   overflow: TextOverflow.ellipsis,
                 )),
-            body: SingleChildScrollView(
-              padding: EdgeInsets.all(5),
+            body: Center(
               child: Column(
                 children: <Widget>[
                   filterBar,
