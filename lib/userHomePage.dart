@@ -709,6 +709,10 @@ class _UserHomePageState extends State<UserHomePage> {
                       print("Cancel booking");
                       bool cancelDone = false;
                       cancelToken(booking.slotId).then((value) {
+                        setState(() {
+                          booking.number = -1;
+                        });
+
                         cancelDone = value;
                         if (!cancelDone) {
                           Utils.showMyFlushbar(
