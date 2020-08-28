@@ -53,7 +53,11 @@ class _TermsOfUsePageState extends State<TermsOfUsePage> {
               });
             },
           ),
-          title: Text("Agreement", style: whiteBoldTextStyle1),
+          title: Text(
+            "Agreement",
+            style: drawerdefaultTextStyle,
+            overflow: TextOverflow.ellipsis,
+          ),
         ),
         body: Center(
             child: Container(

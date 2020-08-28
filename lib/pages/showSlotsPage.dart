@@ -7,6 +7,8 @@ import 'package:noq/db/db_model/user_token.dart';
 import 'package:noq/db/db_service/entity_service.dart';
 import 'package:noq/global_state.dart';
 import 'package:noq/pages/SearchStoresPage.dart';
+import 'package:noq/pages/favs_list_page.dart';
+import 'package:noq/pages/search_child_page.dart';
 import 'package:noq/pages/token_alert.dart';
 import 'package:noq/repository/slotRepository.dart';
 import 'package:noq/style.dart';
@@ -23,7 +25,13 @@ import '../constants.dart';
 class ShowSlotsPage extends StatefulWidget {
   final Entity entity;
   final DateTime dateTime;
-  ShowSlotsPage({Key key, @required this.entity, @required this.dateTime})
+  final String forPage;
+
+  ShowSlotsPage(
+      {Key key,
+      @required this.entity,
+      @required this.dateTime,
+      @required this.forPage})
       : super(key: key);
 
   @override
@@ -132,14 +140,17 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
           bookingTime =
               DateFormat.Hm().format(selectedSlot.dateTime).toString();
         }
+        dynamic backRoute;
+        if (widget.forPage == 'MainSearch') backRoute = SearchStoresPage();
+        if (widget.forPage == 'ChildSearch') backRoute = SearchStoresPage();
+        if (widget.forPage == 'FavSearch') backRoute = FavsListPage();
 
         return MaterialApp(
           theme: ThemeData.light().copyWith(),
           home: Scaffold(
             drawer: CustomDrawer(),
             appBar: CustomAppBarWithBackButton(
-                titleTxt: _storeName,
-                backRoute: SearchStoresPage(forPage: "Search")),
+                titleTxt: _storeName, backRoute: backRoute),
             body: Padding(
               padding: const EdgeInsets.fromLTRB(6, 6, 6, 6),
               child: Container(
@@ -475,7 +486,9 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
     MetaEntity meta = entity.getMetaEntity();
     bookSlotForStore(meta, selectedSlot).then((value) {
       if (value == null) {
+        showFlushBar();
         print("nuuuuuuuuuuuuull token");
+        return;
       } else {
         //update in global State
         _state.addBooking(value);

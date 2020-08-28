@@ -42,7 +42,7 @@ Future<String> showTokenAlert(
   return showDialog(
       context: context,
       barrierDismissible: true,
-      builder: (BuildContext context) {
+      builder: (_) {
         return new AlertDialog(
           //  title:
           backgroundColor: Colors.grey[200],
@@ -98,7 +98,7 @@ Future<String> showTokenAlert(
                 child: Text('Ok'),
                 onPressed: () {
                   //Navigator.of(context).pushReplacement(StoreLiPage());
-                  Navigator.of(context).pop(tokenNo);
+                  Navigator.of(_).pop(tokenNo);
                 },
               ),
             ),

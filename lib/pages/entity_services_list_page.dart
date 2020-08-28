@@ -22,7 +22,7 @@ class _ChildEntitiesListPageState extends State<ChildEntitiesListPage> {
   String _msg;
   final GlobalKey<FormState> _servicesListFormKey = new GlobalKey<FormState>();
   List<MetaEntity> servicesList = new List<MetaEntity>();
-  final String title = "Child Entities Detail Form";
+  final String title = "Child Amenities Details Form";
   Map<String, Entity> _entityMap = Map<String, Entity>();
 
   Entity parentEntity;
@@ -89,11 +89,11 @@ class _ChildEntitiesListPageState extends State<ChildEntitiesListPage> {
             enabledBorder: InputBorder.none,
             focusedBorder: InputBorder.none,
             //  icon: const Icon(Icons.person),
-            labelText: 'Type of Service',
+            labelText: 'Type of Amenity',
           ),
           child: new DropdownButtonHideUnderline(
             child: new DropdownButton(
-              hint: new Text("Select Type of Service"),
+              hint: new Text("Select type of amenity"),
               value: _subEntityType,
               isDense: true,
               onChanged: (newValue) {
@@ -125,14 +125,14 @@ class _ChildEntitiesListPageState extends State<ChildEntitiesListPage> {
         //   saveEntityDetails(entity);
       },
     );
-    String title = "Manage Services in " +
+    String title = "Manage child amenities in " +
         ((parentEntity != null)
             ? ((parentEntity.name == null)
                 ? parentEntity.type
                 : parentEntity.name)
             : 'XXX');
     return MaterialApp(
-      title: 'Add child entities',
+      title: 'Add child amenities',
       //theme: ThemeData.light().copyWith(),
       home: Scaffold(
         appBar: AppBar(

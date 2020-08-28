@@ -74,7 +74,7 @@ class _ShoppingListState extends State<ShoppingList> {
           new ListItem(itemName: _item, quantity: "", isDone: false);
       listOfShoppingItems.add(sItem);
       _count = _count + 1;
-      token.order.items.add(sItem);
+      //token.order.items.add(sItem);
       //TODO: Smita - Update GS
     });
   }
@@ -83,8 +83,8 @@ class _ShoppingListState extends State<ShoppingList> {
     setState(() {
       listOfShoppingItems.remove(currItem);
       _count = _count - 1;
-      token.order.items.remove(currItem);
-      print(currItem.itemName + ' deleted ' + currItem.quantity);
+      //token.order.items.remove(currItem);
+      print(currItem.itemName + ' deleted- qty ' + currItem.quantity);
       //TODO: Smita - Update GS
     });
   }

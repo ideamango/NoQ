@@ -7,6 +7,7 @@ import 'package:noq/db/db_model/meta_entity.dart';
 import 'package:noq/db/db_model/user_token.dart';
 import 'package:noq/db/db_service/entity_service.dart';
 import 'package:noq/global_state.dart';
+import 'package:noq/pages/SearchStoresPage.dart';
 import 'package:noq/pages/showSlotsPage.dart';
 import 'package:noq/repository/StoreRepository.dart';
 import 'package:noq/services/circular_progress.dart';
@@ -51,7 +52,8 @@ class _SearchChildrenPageState extends State<SearchChildrenPage> {
     color: Colors.white,
   );
   final key = new GlobalKey<ScaffoldState>();
-  static final TextEditingController _searchQuery = new TextEditingController();
+  static final TextEditingController _searchTextController =
+      new TextEditingController();
   List<Entity> _list;
   //"initial, searching,done"
   String _isSearching = "initial";
@@ -62,14 +64,17 @@ class _SearchChildrenPageState extends State<SearchChildrenPage> {
   bool stateInitFinished = false;
   String emptyPageMsg;
   List<String> searchTypes;
+  String _searchInAll = 'Search in All';
 
   @override
   void initState() {
     super.initState();
     _isSearching = "initial";
-    title = "Search inside " + widget.parentName;
+    title = "Amenities in " + widget.parentName;
     getGlobalState().whenComplete(() {
       searchTypes = _state.conf.entityTypes;
+      if (!searchTypes.contains(_searchInAll))
+        searchTypes.insert(0, _searchInAll);
       getEntitiesList().whenComplete(() {
         setState(() {
           initCompleted = true;
@@ -90,17 +95,17 @@ class _SearchChildrenPageState extends State<SearchChildrenPage> {
   }
 
   _SearchChildrenPageState() {
-    _searchQuery.addListener(() {
-      if (_searchQuery.text.isEmpty && _entityType == null) {
+    _searchTextController.addListener(() {
+      if (_searchTextController.text.isEmpty && _entityType == null) {
         setState(() {
           _isSearching = "initial";
           _searchText = "";
         });
       } else {
-        if (_searchQuery.text.length >= 3) {
+        if (_searchTextController.text.length >= 3) {
           setState(() {
             _isSearching = "searching";
-            _searchText = _searchQuery.text;
+            _searchText = _searchTextController.text;
           });
           _buildSearchList();
         }
@@ -172,41 +177,38 @@ class _SearchChildrenPageState extends State<SearchChildrenPage> {
   Widget _emptySearchPage() {
     String defaultMsg = 'No match found. Try again!!';
     String txtMsg = (emptyPageMsg != null) ? emptyPageMsg : defaultMsg;
-    return Center(
-        child: Container(
-            margin: EdgeInsets.fromLTRB(
-                10,
-                MediaQuery.of(context).size.width * .5,
-                10,
-                MediaQuery.of(context).size.width * .5),
-            child: Expanded(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  Text(txtMsg, style: highlightTextStyle),
-                  Text(
-                      'Add your favourite places to quickly browse through later!! ',
-                      style: highlightSubTextStyle),
-                ],
-              ),
-            )));
+    return Expanded(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          Text(txtMsg, style: highlightTextStyle),
+          Text('Add your favourite places to quickly browse through later!! ',
+              style: highlightSubTextStyle),
+        ],
+      ),
+    );
   }
 
   Widget _listSearchResults() {
     if (_stores.length == 0)
       return _emptySearchPage();
     else {
-      return Expanded(
-        child: ListView.builder(
-            itemCount: 1,
-            itemBuilder: (BuildContext context, int index) {
-              return Container(
-                margin: EdgeInsets.fromLTRB(10, 10, 10, 10),
-                child: new Column(
-                  children: showSearchResults(),
-                ),
-              );
-            }),
+      // _state.pastSearches = _stores;
+      return Column(
+        children: <Widget>[
+          Expanded(
+            child: ListView.builder(
+                itemCount: 1,
+                itemBuilder: (BuildContext context, int index) {
+                  return Container(
+                    margin: EdgeInsets.fromLTRB(10, 10, 10, 10),
+                    child: new Column(
+                      children: showSearchResults(),
+                    ),
+                  );
+                }),
+          ),
+        ],
       );
     }
 
@@ -288,7 +290,7 @@ class _SearchChildrenPageState extends State<SearchChildrenPage> {
               }).toList(),
             ),
           )));
-      Widget appBarTitle = Container(
+      Widget searchInputText = Container(
         width: MediaQuery.of(context).size.width * .48,
         height: MediaQuery.of(context).size.width * .1,
         decoration: new BoxDecoration(
@@ -303,7 +305,7 @@ class _SearchChildrenPageState extends State<SearchChildrenPage> {
         ),
         child: new TextField(
           // autofocus: true,
-          controller: _searchQuery,
+          controller: _searchTextController,
           cursorColor: Colors.blueGrey[500],
           cursorWidth: 1,
 
@@ -348,7 +350,12 @@ class _SearchChildrenPageState extends State<SearchChildrenPage> {
                   onPressed: () {
                     //TODO: correct search end
                     searchBoxClicked = false;
-                    _searchQuery.clear();
+                    _searchTextController.clear();
+                    _searchText = "";
+                    setState(() {
+                      _isSearching = "searching";
+                    });
+                    _buildSearchList();
                   }),
 
               // Container(
@@ -364,6 +371,27 @@ class _SearchChildrenPageState extends State<SearchChildrenPage> {
               hintText: "Search by Name",
               hintStyle:
                   new TextStyle(fontSize: 12, color: Colors.blueGrey[500])),
+          onChanged: (value) {
+            if (_searchTextController.text.isEmpty) {
+              if (_entityType == null)
+                setState(() {
+                  _isSearching = "initial";
+                  _searchText = "";
+                });
+              else {
+                _searchText = _searchTextController.text;
+                _buildSearchList();
+              }
+            } else {
+              if (_searchTextController.text.length >= 3) {
+                setState(() {
+                  _isSearching = "searching";
+                  _searchText = _searchTextController.text;
+                });
+                _buildSearchList();
+              }
+            }
+          },
         ),
       );
       Widget filterBar = Container(
@@ -372,7 +400,7 @@ class _SearchChildrenPageState extends State<SearchChildrenPage> {
         //decoration: gradientBackground,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: <Widget>[categoryDropDown, appBarTitle],
+          children: <Widget>[categoryDropDown, searchInputText],
         ),
       );
 
@@ -397,10 +425,7 @@ class _SearchChildrenPageState extends State<SearchChildrenPage> {
                     color: Colors.white,
                     onPressed: () {
                       Navigator.of(context).pop();
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => UserHomePage()));
+                      //  Navigator.pushNamed(context, '/mainSearch');
                     }),
                 title: Text(
                   title,
@@ -457,7 +482,7 @@ class _SearchChildrenPageState extends State<SearchChildrenPage> {
                       Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => UserHomePage()));
+                              builder: (context) => SearchStoresPage()));
                     }),
                 title: Text(
                   title,
@@ -646,14 +671,11 @@ class _SearchChildrenPageState extends State<SearchChildrenPage> {
                       //padding: EdgeInsets.fromLTRB(0, 5, 5, 5),
                       child: Row(
                         children: <Widget>[
-                          Text(
-                            '',
-                            style: highlightSubTextStyle,
-                          ),
-                          Row(
-                            children: _buildDateGridItems(
-                                str, str.entityId, str.name, str.closedOn),
-                          ),
+                          if (str.childEntities.length == 0)
+                            Row(
+                              children: _buildDateGridItems(
+                                  str, str.entityId, str.name, str.closedOn),
+                            ),
                         ],
                       )),
                   Row(
@@ -665,7 +687,12 @@ class _SearchChildrenPageState extends State<SearchChildrenPage> {
                           children: [
                             //Icon(Icons.play_circle_filled, color: Colors.blueGrey[300]),
                             Text('Opens at:', style: labelTextStyle),
-                            //Text(str.opensAt, style: textInputTextStyle),
+                            Text(
+                                Utils.formatTime(str.startTimeHour.toString()) +
+                                    ':' +
+                                    Utils.formatTime(
+                                        str.startTimeMinute.toString()),
+                                style: labelSmlTextStyle),
                           ],
                         ),
                         Container(
@@ -675,10 +702,49 @@ class _SearchChildrenPageState extends State<SearchChildrenPage> {
                           children: [
                             //Icon(Icons.pause_circle_filled, color: Colors.blueGrey[300]),
                             Text('Closes at:', style: labelTextStyle),
-                            // Text(str.closesAt, style: textInputTextStyle),
+                            Text(
+                                Utils.formatTime(str.endTimeHour.toString()) +
+                                    ':' +
+                                    Utils.formatTime(
+                                        str.endTimeMinute.toString()),
+                                style: labelSmlTextStyle),
                           ],
                         ),
                       ]),
+                  if (str.childEntities.length != 0)
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: <Widget>[
+                        RaisedButton(
+                          color: primaryDarkColor,
+                          onPressed: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => SearchChildrenPage(
+                                        childList: str.childEntities,
+                                        parentName: str.name)));
+                          },
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: <Widget>[
+                              Text(
+                                'Explore amenities   ',
+                                style: TextStyle(color: Colors.white),
+                              ),
+                              Icon(
+                                Icons.arrow_forward_ios,
+                                color: Colors.white38,
+                              ),
+                              Icon(
+                                Icons.arrow_forward_ios,
+                                color: Colors.white70,
+                              )
+                            ],
+                          ),
+                        )
+                      ],
+                    )
                 ],
               ),
             ),
@@ -694,8 +760,11 @@ class _SearchChildrenPageState extends State<SearchChildrenPage> {
     Navigator.push(
         context,
         MaterialPageRoute(
-            builder: (context) =>
-                ShowSlotsPage(entity: store, dateTime: dateTime)));
+            builder: (context) => ShowSlotsPage(
+                  entity: store,
+                  dateTime: dateTime,
+                  forPage: 'ChildSearch',
+                )));
 
     print('After showDialog:');
     // });
@@ -783,31 +852,31 @@ class _SearchChildrenPageState extends State<SearchChildrenPage> {
     // return _stores.map((contact) => new ChildItem(contact.name)).toList();
   }
 
-  Future<List<Entity>> getSearchEntitiesList() async {
-    double lat = 0;
-    double lon = 0;
-    double radiusOfSearch = 10;
-    int pageNumber = 0;
-    int pageSize = 0;
+  // Future<List<Entity>> getSearchEntitiesList() async {
+  //   double lat = 0;
+  //   double lon = 0;
+  //   double radiusOfSearch = 10;
+  //   int pageNumber = 0;
+  //   int pageSize = 0;
 
-    Position pos = await Utils().getCurrLocation();
-    lat = pos.latitude;
-    lon = pos.longitude;
-    //TODO: comment - only for testing
-    lat = 12.960632;
-    lon = 77.641603;
+  //   Position pos = await Utils().getCurrLocation();
+  //   lat = pos.latitude;
+  //   lon = pos.longitude;
+  //   //TODO: comment - only for testing
+  //   lat = 12.960632;
+  //   lon = 77.641603;
 
-    //TODO: comment - only for testing
-    List<Entity> searchEntityList = await EntityService().search(
-        _searchText.toLowerCase(),
-        _entityType,
-        lat,
-        lon,
-        radiusOfSearch,
-        pageNumber,
-        pageSize);
-    return searchEntityList;
-  }
+  //   //TODO: comment - only for testing
+  //   List<Entity> searchEntityList = await EntityService().search(
+  //       _searchText.toLowerCase(),
+  //       _entityType,
+  //       lat,
+  //       lon,
+  //       radiusOfSearch,
+  //       pageNumber,
+  //       pageSize);
+  //   return searchEntityList;
+  // }
 
   Future<void> _buildSearchList() async {
     //Search in _stores list if search criteria matches
@@ -822,7 +891,7 @@ class _SearchChildrenPageState extends State<SearchChildrenPage> {
     _stores.addAll(searchList);
 
     //Write Gstate to file
-    _state.updateSearchResults(_stores);
+    //_state.updateSearchResults(_stores);
     setState(() {
       //searchDone = true;
       _isSearching = "done";

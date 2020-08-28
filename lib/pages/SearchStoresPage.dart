@@ -20,9 +20,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../userHomePage.dart';
 
 class SearchStoresPage extends StatefulWidget {
-  final String forPage;
+  //final String forPage;
 
-  SearchStoresPage({Key key, @required this.forPage}) : super(key: key);
+  //SearchStoresPage({Key key, @required this.forPage}) : super(key: key);
   @override
   _SearchStoresPageState createState() => _SearchStoresPageState();
 }
@@ -51,7 +51,8 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
     color: Colors.white,
   );
   final key = new GlobalKey<ScaffoldState>();
-  static final TextEditingController _searchQuery = new TextEditingController();
+  static final TextEditingController _searchTextController =
+      new TextEditingController();
   List<Entity> _list;
   //"initial, searching,done"
   String _isSearching = "initial";
@@ -68,30 +69,43 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
     super.initState();
     _isSearching = "initial";
     getGlobalState().whenComplete(() {
-      getList();
+      fetchPastSearchesList();
       searchTypes = _state.conf.entityTypes;
-      //insert only if not there
+      //insert only if 'All' option not there
       if (!searchTypes.contains(_searchInAll))
         searchTypes.insert(0, _searchInAll);
-
       setState(() {
         initCompleted = true;
       });
     });
   }
 
+  void fetchPastSearchesList() {
+    //Load details from local files
+    // if (initCompleted) {
+    if (!Utils.isNullOrEmpty(_state.pastSearches)) {
+      setState(() {
+        _pastSearches = _state.pastSearches;
+      });
+
+      // }
+    } else if (_state.pastSearches != null && _state.pastSearches.length == 0)
+      emptyPageMsg = "No previous searches. Start Exploring now!!";
+    //  _list = _stores;
+  }
+
   _SearchStoresPageState() {
-    _searchQuery.addListener(() {
-      if (_searchQuery.text.isEmpty && _entityType == null) {
+    _searchTextController.addListener(() {
+      if (_searchTextController.text.isEmpty && _entityType == null) {
         setState(() {
           _isSearching = "initial";
           _searchText = "";
         });
       } else {
-        if (_searchQuery.text.length >= 3) {
+        if (_searchTextController.text.length >= 3) {
           setState(() {
             _isSearching = "searching";
-            _searchText = _searchQuery.text;
+            _searchText = _searchTextController.text;
           });
           _buildSearchList();
         }
@@ -107,34 +121,8 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
     _state = await GlobalState.getGlobalState();
   }
 
-  void getList() {
-    pageName = widget.forPage;
-    if (pageName == "Search") {
-      fetchPastSearchesList();
-
-      //getFavStoresList();
-    } else if (pageName == "Child") {
-      //TODO: Uncomment this and resolve errors.
-      // getChildStoresList();
-    }
-  }
-
   void getChildStoresList() async {
     _list = _stores;
-  }
-
-  void fetchPastSearchesList() async {
-    //Load details from local files
-    // if (initCompleted) {
-    if (!Utils.isNullOrEmpty(_state.pastSearches)) {
-      setState(() {
-        _pastSearches = _state.pastSearches;
-      });
-
-      // }
-    } else if (_state.pastSearches != null && _state.pastSearches.length == 0)
-      emptyPageMsg = "No match found. Try again!!";
-    //  _list = _stores;
   }
 
   void _prepareDateList() {
@@ -241,29 +229,26 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
       return MaterialApp(
         theme: ThemeData.light().copyWith(),
         home: Scaffold(
-          appBar: CustomAppBar(
-            titleTxt: "Search",
-          ),
-          body: Center(
-            child: Container(
-              margin: EdgeInsets.fromLTRB(
-                  10,
-                  MediaQuery.of(context).size.width * .5,
-                  10,
-                  MediaQuery.of(context).size.width * .5),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  showCircularProgress(),
-                ],
+            appBar: CustomAppBar(
+              titleTxt: "Search",
+            ),
+            body: Center(
+              child: Container(
+                margin: EdgeInsets.fromLTRB(
+                    10,
+                    MediaQuery.of(context).size.width * .5,
+                    10,
+                    MediaQuery.of(context).size.width * .5),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    showCircularProgress(),
+                  ],
+                ),
               ),
             ),
-          ),
-          //drawer: CustomDrawer(),
-          bottomNavigationBar: (widget.forPage == "Search")
-              ? CustomBottomBar(barIndex: 1)
-              : CustomBottomBar(barIndex: 2),
-        ),
+            //drawer: CustomDrawer(),
+            bottomNavigationBar: CustomBottomBar(barIndex: 1)),
       );
     } else {
       Widget categoryDropDown = Container(
@@ -308,7 +293,7 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
               }).toList(),
             ),
           )));
-      Widget appBarTitle = Container(
+      Widget searchInputText = Container(
         width: MediaQuery.of(context).size.width * .48,
         height: MediaQuery.of(context).size.width * .1,
         decoration: new BoxDecoration(
@@ -323,7 +308,7 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
         ),
         child: new TextField(
           // autofocus: true,
-          controller: _searchQuery,
+          controller: _searchTextController,
           cursorColor: Colors.blueGrey[500],
           cursorWidth: 1,
 
@@ -368,7 +353,12 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
                   onPressed: () {
                     //TODO: correct search end
                     searchBoxClicked = false;
-                    _searchQuery.clear();
+                    _searchTextController.clear();
+                    _searchText = "";
+                    setState(() {
+                      _isSearching = "searching";
+                    });
+                    _buildSearchList();
                   }),
 
               // Container(
@@ -384,6 +374,27 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
               hintText: "Search by Name",
               hintStyle:
                   new TextStyle(fontSize: 12, color: Colors.blueGrey[500])),
+          onChanged: (value) {
+            if (_searchTextController.text.isEmpty) {
+              if (_entityType == null)
+                setState(() {
+                  _isSearching = "initial";
+                  _searchText = "";
+                });
+              else {
+                _searchText = _searchTextController.text;
+                _buildSearchList();
+              }
+            } else {
+              if (_searchTextController.text.length >= 3) {
+                setState(() {
+                  _isSearching = "searching";
+                  _searchText = _searchTextController.text;
+                });
+                _buildSearchList();
+              }
+            }
+          },
         ),
       );
       Widget filterBar = Container(
@@ -392,7 +403,7 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
         //decoration: gradientBackground,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: <Widget>[categoryDropDown, appBarTitle],
+          children: <Widget>[categoryDropDown, searchInputText],
         ),
       );
       String title = "Search";
@@ -402,120 +413,126 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
           _searchText.isEmpty &&
           _entityType == null)
         return MaterialApp(
+          routes: <String, WidgetBuilder>{
+            '/childSearch': (BuildContext context) => SearchChildrenPage(),
+            '/mainSearch': (BuildContext context) => SearchStoresPage(),
+          },
           theme: ThemeData.light().copyWith(),
           home: Scaffold(
-            appBar: AppBar(
-                actions: <Widget>[],
-                flexibleSpace: Container(
-                  decoration: gradientBackground,
+              appBar: AppBar(
+                  actions: <Widget>[],
+                  flexibleSpace: Container(
+                    decoration: gradientBackground,
+                  ),
+                  leading: IconButton(
+                      padding: EdgeInsets.all(0),
+                      alignment: Alignment.center,
+                      highlightColor: Colors.orange[300],
+                      icon: Icon(Icons.arrow_back),
+                      color: Colors.white,
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => UserHomePage()));
+                      }),
+                  title: Text(
+                    title,
+                    style: TextStyle(color: Colors.white, fontSize: 16),
+                    overflow: TextOverflow.ellipsis,
+                  )),
+              body: Center(
+                child: Column(
+                  children: <Widget>[
+                    filterBar,
+                    (!Utils.isNullOrEmpty(_pastSearches))
+                        ? Expanded(
+                            child: ListView.builder(
+                                itemCount: 1,
+                                itemBuilder: (BuildContext context, int index) {
+                                  return Container(
+                                    margin: EdgeInsets.fromLTRB(10, 10, 10, 10),
+                                    child: new Column(
+                                      children: showPastSearches(),
+                                    ),
+                                  );
+                                }),
+                          )
+                        : _emptySearchPage(),
+                  ],
                 ),
-                leading: IconButton(
-                    padding: EdgeInsets.all(0),
-                    alignment: Alignment.center,
-                    highlightColor: Colors.orange[300],
-                    icon: Icon(Icons.arrow_back),
-                    color: Colors.white,
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => UserHomePage()));
-                    }),
-                title: Text(
-                  title,
-                  style: TextStyle(color: Colors.white, fontSize: 16),
-                  overflow: TextOverflow.ellipsis,
-                )),
-            body: Center(
-              child: Column(
-                children: <Widget>[
-                  filterBar,
-                  (!Utils.isNullOrEmpty(_pastSearches))
-                      ? Expanded(
-                          child: ListView.builder(
-                              itemCount: 1,
-                              itemBuilder: (BuildContext context, int index) {
-                                return Container(
-                                  margin: EdgeInsets.fromLTRB(10, 10, 10, 10),
-                                  child: new Column(
-                                    children: showPastSearches(),
-                                  ),
-                                );
-                              }),
-                        )
-                      : _emptySearchPage(),
-                ],
               ),
-            ),
-            // drawer: CustomDrawer(),
-            bottomNavigationBar: (widget.forPage == "Search")
-                ? CustomBottomBar(barIndex: 1)
-                : CustomBottomBar(barIndex: 2),
-            // drawer: CustomDrawer(),
-          ),
+              // drawer: CustomDrawer(),
+              bottomNavigationBar: CustomBottomBar(barIndex: 1)
+
+              // drawer: CustomDrawer(),
+              ),
         );
       else {
         print("Came in isSearching");
         return MaterialApp(
+          routes: <String, WidgetBuilder>{
+            '/childSearch': (BuildContext context) => SearchChildrenPage(),
+            '/mainSearch': (BuildContext context) => SearchStoresPage(),
+          },
           theme: ThemeData.light().copyWith(),
           home: Scaffold(
-            appBar: AppBar(
-                actions: <Widget>[],
-                flexibleSpace: Container(
-                  decoration: gradientBackground,
-                ),
-                leading: IconButton(
-                    padding: EdgeInsets.all(0),
-                    alignment: Alignment.center,
-                    highlightColor: Colors.orange[300],
-                    icon: Icon(Icons.arrow_back),
-                    color: Colors.white,
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => UserHomePage()));
-                    }),
-                title: Text(
-                  title,
-                  style: TextStyle(color: Colors.white, fontSize: 16),
-                  overflow: TextOverflow.ellipsis,
-                )),
-            body: Center(
-              child: Column(
-                children: <Widget>[
-                  filterBar,
-                  Expanded(
-                    child: (_isSearching == "done")
-                        ? _listSearchResults()
-                        //Else could be one when isSearching is 'searching', show circular progress.
-                        : Center(
-                            child: Container(
-                              margin: EdgeInsets.fromLTRB(
-                                  10,
-                                  MediaQuery.of(context).size.width * .45,
-                                  10,
-                                  MediaQuery.of(context).size.width * .45),
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: <Widget>[
-                                  showCircularProgress(),
-                                ],
+              appBar: AppBar(
+                  actions: <Widget>[],
+                  flexibleSpace: Container(
+                    decoration: gradientBackground,
+                  ),
+                  leading: IconButton(
+                      padding: EdgeInsets.all(0),
+                      alignment: Alignment.center,
+                      highlightColor: Colors.orange[300],
+                      icon: Icon(Icons.arrow_back),
+                      color: Colors.white,
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => UserHomePage()));
+                      }),
+                  title: Text(
+                    title,
+                    style: TextStyle(color: Colors.white, fontSize: 16),
+                    overflow: TextOverflow.ellipsis,
+                  )),
+              body: Center(
+                child: Column(
+                  children: <Widget>[
+                    filterBar,
+                    Expanded(
+                      child: (_isSearching == "done")
+                          ? _listSearchResults()
+                          //Else could be one when isSearching is 'searching', show circular progress.
+                          : Center(
+                              child: Container(
+                                margin: EdgeInsets.fromLTRB(
+                                    10,
+                                    MediaQuery.of(context).size.width * .45,
+                                    10,
+                                    MediaQuery.of(context).size.width * .45),
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: <Widget>[
+                                    showCircularProgress(),
+                                  ],
+                                ),
                               ),
                             ),
-                          ),
-                  ),
-                ],
+                    ),
+                  ],
+                ),
               ),
-            ),
-            // drawer: CustomDrawer(),
-            bottomNavigationBar: (widget.forPage == "Search")
-                ? CustomBottomBar(barIndex: 1)
-                : CustomBottomBar(barIndex: 2),
-            // drawer: CustomDrawer(),
-          ),
+              // drawer: CustomDrawer(),
+              bottomNavigationBar: CustomBottomBar(barIndex: 1)
+
+              // drawer: CustomDrawer(),
+              ),
         );
       }
     }
@@ -664,7 +681,7 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
                                     ),
                                     onPressed: () => launchURL(
                                         str.name,
-                                        str.address.toString(),
+                                        getFormattedAddress(str.address),
                                         str.coordinates.geopoint.latitude,
                                         str.coordinates.geopoint.longitude),
                                   ),
@@ -725,14 +742,11 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
                       //padding: EdgeInsets.fromLTRB(0, 5, 5, 5),
                       child: Row(
                         children: <Widget>[
-                          Text(
-                            '',
-                            style: highlightSubTextStyle,
-                          ),
-                          Row(
-                            children: _buildDateGridItems(
-                                str, str.entityId, str.name, str.closedOn),
-                          ),
+                          if (str.isBookable && str.isActive)
+                            Row(
+                              children: _buildDateGridItems(
+                                  str, str.entityId, str.name, str.closedOn),
+                            ),
                         ],
                       )),
                   Row(
@@ -768,6 +782,52 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
                           ],
                         ),
                       ]),
+                  if (!str.isBookable && str.isActive)
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: <Widget>[
+                        RaisedButton(
+                          color: btnColor,
+                          onPressed: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => SearchChildrenPage(
+                                        childList: str.childEntities,
+                                        parentName: str.name)));
+                          },
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: <Widget>[
+                              Text(
+                                'Explore amenities   ',
+                                style: TextStyle(color: Colors.white),
+                              ),
+                              Container(
+                                transform:
+                                    Matrix4.translationValues(28.0, 0, 0),
+                                child: Icon(
+                                  Icons.arrow_forward_ios,
+                                  color: Colors.white38,
+                                ),
+                              ),
+                              Container(
+                                transform:
+                                    Matrix4.translationValues(14.0, 0, 0),
+                                child: Icon(
+                                  Icons.arrow_forward_ios,
+                                  color: Colors.white70,
+                                ),
+                              ),
+                              Icon(
+                                Icons.arrow_forward_ios,
+                                color: Colors.white,
+                              )
+                            ],
+                          ),
+                        )
+                      ],
+                    )
                 ],
               ),
             ),
@@ -783,8 +843,11 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
     Navigator.push(
         context,
         MaterialPageRoute(
-            builder: (context) =>
-                ShowSlotsPage(entity: store, dateTime: dateTime)));
+            builder: (context) => ShowSlotsPage(
+                  entity: store,
+                  dateTime: dateTime,
+                  forPage: 'MainSearch',
+                )));
 
     print('After showDialog:');
     // });
@@ -911,6 +974,7 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
 
       //1. entities that are bookable, public and active only should be listed
       //2. Parent entities
+      _stores.clear();
       for (int i = 0; i < value.length; i++) {
         if (value[i].isActive) _stores.add(value[i]);
       }
