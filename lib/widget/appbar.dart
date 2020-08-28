@@ -96,7 +96,11 @@ class _CustomAppBarState extends State<CustomAppBar> {
   Widget build(BuildContext context) {
     return AppBar(
       key: _appBarKey,
-      title: Text(widget.titleTxt, style: whiteBoldTextStyle1),
+      title: Text(
+        widget.titleTxt,
+        style: drawerdefaultTextStyle,
+        overflow: TextOverflow.ellipsis,
+      ),
       flexibleSpace: Container(
         decoration: gradientBackground,
       ),
@@ -204,7 +208,11 @@ class _CustomAppBarWithBackButtonState
   Widget build(BuildContext context) {
     return AppBar(
       key: _appBarKey,
-      title: Text(widget.titleTxt, style: whiteBoldTextStyle1),
+      title: Text(
+        widget.titleTxt,
+        style: drawerdefaultTextStyle,
+        overflow: TextOverflow.ellipsis,
+      ),
       flexibleSpace: Container(
         decoration: gradientBackground,
       ),
@@ -218,7 +226,6 @@ class _CustomAppBarWithBackButtonState
             Navigator.of(context).pop();
             Navigator.push(context,
                 MaterialPageRoute(builder: (context) => widget.backRoute));
-            //Navigator.pushReplacementNamed(context, widget.backRoute);
           }),
 
       actions: <Widget>[

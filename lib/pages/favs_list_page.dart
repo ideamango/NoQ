@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:intl/intl.dart';
 import 'package:noq/constants.dart';
+import 'package:noq/db/db_model/address.dart';
 import 'package:noq/db/db_model/entity.dart';
 import 'package:noq/db/db_model/meta_entity.dart';
 import 'package:noq/db/db_model/user_token.dart';
@@ -74,8 +75,7 @@ class _FavsListPageState extends State<FavsListPage> {
     Entity e;
     //if (initCompleted) {
     print(_state.currentUser.favourites);
-    GlobalState gs = await GlobalState.getGlobalState();
-    print(gs.currentUser.favourites);
+
     if (!Utils.isNullOrEmpty(_state.currentUser.favourites)) {
       for (MetaEntity fs in _state.currentUser.favourites) {
         e = await EntityService().getEntity(fs.entityId);
@@ -152,24 +152,29 @@ class _FavsListPageState extends State<FavsListPage> {
     }
   }
 
+  String getFormattedAddress(Address address) {
+    String adr = address.address +
+        ', ' +
+        address.locality +
+        ', ' +
+        address.landmark +
+        ', ' +
+        address.city;
+    return adr;
+  }
+
   Widget _emptyFavsPage() {
     String txtMsg = (emptyPageMsg != null) ? emptyPageMsg : noFavMsg;
-    return Center(
-        child: Container(
-            margin: EdgeInsets.fromLTRB(
-                10,
-                MediaQuery.of(context).size.width * .5,
-                10,
-                MediaQuery.of(context).size.width * .5),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                Text(txtMsg, style: highlightTextStyle),
-                Text(
-                    'Add your favourite places to quickly browse through later!! ',
-                    style: highlightSubTextStyle),
-              ],
-            )));
+    return Expanded(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          Text(txtMsg, style: highlightTextStyle),
+          Text('Add your favourite places to quickly browse through later!! ',
+              style: highlightSubTextStyle),
+        ],
+      ),
+    );
   }
 
   @override
@@ -267,7 +272,7 @@ class _FavsListPageState extends State<FavsListPage> {
               context,
               MaterialPageRoute(
                   builder: (context) =>
-                      SearchServicesPage(childList: str.childEntities)));
+                      SearchChildrenPage(childList: str.childEntities)));
         }
 
         // if (child.length != 0) {
@@ -340,10 +345,34 @@ class _FavsListPageState extends State<FavsListPage> {
                                 Container(
                                   padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
                                   margin: EdgeInsets.fromLTRB(0, 0, 0, 0),
-                                  height: 22.0,
+                                  height: 25.0,
                                   width: 28.0,
                                   child: IconButton(
-                                    alignment: Alignment.topCenter,
+                                    padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
+                                    alignment: Alignment.center,
+                                    highlightColor: Colors.orange[300],
+                                    icon: ImageIcon(
+                                      AssetImage('assets/whatsapp.png'),
+                                      size: 20,
+                                      color: primaryIcon,
+                                    ),
+                                    onPressed: () {
+                                      launchWhatsApp(
+                                          message: whatsappMessage,
+                                          phone: '+919611009823');
+                                      // callPhone('+919611009823');
+                                      //callPhone(str.);
+                                    },
+                                  ),
+                                ),
+                                Container(
+                                  padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
+                                  margin: EdgeInsets.fromLTRB(0, 0, 0, 0),
+                                  height: 25.0,
+                                  width: 28.0,
+                                  child: IconButton(
+                                    padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
+                                    alignment: Alignment.center,
                                     highlightColor: Colors.orange[300],
                                     icon: Icon(
                                       Icons.phone,
@@ -362,12 +391,13 @@ class _FavsListPageState extends State<FavsListPage> {
                                   ),
                                 ),
                                 Container(
-                                  padding: EdgeInsets.fromLTRB(0, 0, 5, 5),
+                                  padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
                                   margin: EdgeInsets.fromLTRB(0, 0, 0, 0),
-                                  height: 22.0,
+                                  height: 25.0,
                                   width: 28.0,
                                   child: IconButton(
-                                    alignment: Alignment.topCenter,
+                                    padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
+                                    alignment: Alignment.center,
                                     highlightColor: Colors.orange[300],
                                     icon: Icon(
                                       Icons.location_on,
@@ -376,7 +406,7 @@ class _FavsListPageState extends State<FavsListPage> {
                                     ),
                                     onPressed: () => launchURL(
                                         str.name,
-                                        str.address.toString(),
+                                        getFormattedAddress(str.address),
                                         str.coordinates.geopoint.latitude,
                                         str.coordinates.geopoint.longitude),
                                   ),
@@ -384,10 +414,11 @@ class _FavsListPageState extends State<FavsListPage> {
                                 Container(
                                   padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
                                   margin: EdgeInsets.fromLTRB(0, 0, 0, 0),
-                                  height: 22,
+                                  height: 25,
                                   width: 25,
                                   child: IconButton(
-                                    alignment: Alignment.topRight,
+                                    padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
+                                    alignment: Alignment.center,
                                     onPressed: () => toggleFavorite(str),
                                     highlightColor: Colors.orange[300],
                                     iconSize: 20,
@@ -420,13 +451,13 @@ class _FavsListPageState extends State<FavsListPage> {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: <Widget>[
                       Container(
-                        width: MediaQuery.of(context).size.width * .67,
+                        width: MediaQuery.of(context).size.width * .78,
                         child: Text(
                           (str.address != null)
-                              ? str.address.toString()
+                              ? getFormattedAddress(str.address)
                               : "Address",
                           overflow: TextOverflow.ellipsis,
-                          style: textInputTextStyle,
+                          style: labelSmlTextStyle,
                         ),
                       ),
                     ],
@@ -436,14 +467,11 @@ class _FavsListPageState extends State<FavsListPage> {
                       //padding: EdgeInsets.fromLTRB(0, 5, 5, 5),
                       child: Row(
                         children: <Widget>[
-                          Text(
-                            '',
-                            style: highlightSubTextStyle,
-                          ),
-                          Row(
-                            children: _buildDateGridItems(
-                                str, str.entityId, str.name, str.closedOn),
-                          ),
+                          if (str.isBookable && str.isActive)
+                            Row(
+                              children: _buildDateGridItems(
+                                  str, str.entityId, str.name, str.closedOn),
+                            ),
                         ],
                       )),
                   Row(
@@ -455,7 +483,12 @@ class _FavsListPageState extends State<FavsListPage> {
                           children: [
                             //Icon(Icons.play_circle_filled, color: Colors.blueGrey[300]),
                             Text('Opens at:', style: labelTextStyle),
-                            //Text(str.opensAt, style: textInputTextStyle),
+                            Text(
+                                Utils.formatTime(str.startTimeHour.toString()) +
+                                    ':' +
+                                    Utils.formatTime(
+                                        str.startTimeMinute.toString()),
+                                style: labelSmlTextStyle),
                           ],
                         ),
                         Container(
@@ -465,10 +498,49 @@ class _FavsListPageState extends State<FavsListPage> {
                           children: [
                             //Icon(Icons.pause_circle_filled, color: Colors.blueGrey[300]),
                             Text('Closes at:', style: labelTextStyle),
-                            // Text(str.closesAt, style: textInputTextStyle),
+                            Text(
+                                Utils.formatTime(str.endTimeHour.toString()) +
+                                    ':' +
+                                    Utils.formatTime(
+                                        str.endTimeMinute.toString()),
+                                style: labelSmlTextStyle),
                           ],
                         ),
                       ]),
+                  if (!str.isBookable && str.isActive)
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: <Widget>[
+                        RaisedButton(
+                          color: btnColor,
+                          onPressed: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => SearchChildrenPage(
+                                        childList: str.childEntities,
+                                        parentName: str.name)));
+                          },
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: <Widget>[
+                              Text(
+                                'Explore amenities   ',
+                                style: TextStyle(color: Colors.white),
+                              ),
+                              Icon(
+                                Icons.arrow_forward_ios,
+                                color: Colors.white38,
+                              ),
+                              Icon(
+                                Icons.arrow_forward_ios,
+                                color: Colors.white70,
+                              )
+                            ],
+                          ),
+                        )
+                      ],
+                    )
                 ],
               ),
             ),
@@ -482,8 +554,11 @@ class _FavsListPageState extends State<FavsListPage> {
     Navigator.push(
         context,
         MaterialPageRoute(
-            builder: (context) =>
-                ShowSlotsPage(entity: store, dateTime: dateTime)));
+            builder: (context) => ShowSlotsPage(
+                  entity: store,
+                  dateTime: dateTime,
+                  forPage: 'FavSearch',
+                )));
   }
 
   List<Widget> _buildDateGridItems(

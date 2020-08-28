@@ -72,10 +72,8 @@ class _CustomBottomBarState extends State<CustomBottomBar> {
           break;
         case 1:
           {
-            Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => SearchStoresPage(forPage: 'Search')));
+            Navigator.push(context,
+                MaterialPageRoute(builder: (context) => SearchStoresPage()));
           }
           break;
         case 2:

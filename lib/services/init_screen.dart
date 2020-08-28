@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:noq/global_state.dart';
 import 'package:noq/services/authService.dart';
 import 'package:noq/style.dart';
 import 'package:noq/widget/widgets.dart';
@@ -10,10 +11,22 @@ class SplashScreen extends StatefulWidget {
 }
 
 class SplashState extends State<SplashScreen> {
+  bool _initialize = false;
+  GlobalState _state;
+
+  Future<void> initialize() async {
+    _state = await GlobalState.getGlobalState();
+    print(_state.conf.entityTypes.length);
+  }
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+    initialize().whenComplete(() {
+      _initialize = true;
+      print(_state.conf.entityTypes.length);
+    });
     startTime();
   }
 

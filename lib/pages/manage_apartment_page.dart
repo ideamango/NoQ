@@ -144,21 +144,25 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
       _descController.text = (entity.description) ?? "";
 
       if (entity.startTimeHour != null && entity.startTimeMinute != null)
-        _openTimeController.text = entity.startTimeHour.toString() +
-            ':' +
-            entity.startTimeMinute.toString();
+        _openTimeController.text =
+            Utils.formatTime(entity.startTimeHour.toString()) +
+                ':' +
+                Utils.formatTime(entity.startTimeMinute.toString());
       if (entity.endTimeHour != null && entity.endTimeMinute != null)
-        _closeTimeController.text = entity.endTimeHour.toString() +
-            ':' +
-            entity.endTimeMinute.toString();
+        _closeTimeController.text =
+            Utils.formatTime(entity.endTimeHour.toString()) +
+                ':' +
+                Utils.formatTime(entity.endTimeMinute.toString());
       if (entity.breakStartHour != null && entity.breakStartMinute != null)
-        _breakStartController.text = entity.breakStartHour.toString() +
-            ':' +
-            entity.breakStartMinute.toString();
+        _breakStartController.text =
+            Utils.formatTime(entity.breakStartHour.toString()) +
+                ':' +
+                Utils.formatTime(entity.breakStartMinute.toString());
       if (entity.breakEndHour != null && entity.breakEndMinute != null)
-        _breakEndController.text = entity.breakEndHour.toString() +
-            ':' +
-            entity.breakEndMinute.toString();
+        _breakEndController.text =
+            Utils.formatTime(entity.breakEndHour.toString()) +
+                ':' +
+                Utils.formatTime(entity.breakEndMinute.toString());
 
       if (entity.closedOn != null) {
         if (entity.closedOn.length != 0)
@@ -1464,8 +1468,8 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
                                           Utils.showMyFlushbar(
                                               context,
                                               Icons.info_outline,
-                                              "Oops!! Making premises public requires this important information of some fields",
-                                              "Please check and try again !!");
+                                              "Missing Information!! Making premises public require the basic details",
+                                              "Please fill and try again !!");
                                         } else {
                                           validateField = false;
                                           isPublic = value;
@@ -1528,7 +1532,7 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
                                           Utils.showMyFlushbar(
                                               context,
                                               Icons.info_outline,
-                                              "Oops!! Making premises public requires this important information of some fields",
+                                              "Missing Information!! Making premises active require the basic details",
                                               "Please check and try again !!");
                                         } else {
                                           validateField = false;
