@@ -136,7 +136,8 @@ class TokenService {
             'entityWhatsApp': metaEntity.whatsapp,
             'gpay': metaEntity.gpay,
             'paytm': metaEntity.paytm,
-            'applepay': metaEntity.applepay
+            'applepay': metaEntity.applepay,
+            'order': null
           };
           //create token
           await tx.set(tokRef, tokenJson);
@@ -195,7 +196,8 @@ class TokenService {
             'entityWhatsApp': metaEntity.whatsapp,
             'gpay': metaEntity.gpay,
             'paytm': metaEntity.paytm,
-            'applepay': metaEntity.applepay
+            'applepay': metaEntity.applepay,
+            'order': null
           };
 
           //create EntitySlots with one slot in it
