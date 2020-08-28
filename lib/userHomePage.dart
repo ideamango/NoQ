@@ -445,210 +445,222 @@ class _UserHomePageState extends State<UserHomePage> {
   Widget _buildItem(UserToken booking) {
     String address = getEntityAddress(booking.entityId);
     return Container(
-      width: MediaQuery.of(context).size.width,
-      height: MediaQuery.of(context).size.width * .7 / 2.7,
-      decoration: BoxDecoration(
-        image: DecorationImage(
-          image: AssetImage('assets/ticket.jpg'),
-          fit: BoxFit.fill,
+        width: MediaQuery.of(context).size.width,
+        height: MediaQuery.of(context).size.width * .7 / 2.7,
+        decoration: BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage('assets/ticket.jpg'),
+            fit: BoxFit.fill,
+          ),
         ),
-      ),
-      child: new Row(
-          mainAxisAlignment: MainAxisAlignment.center,
+        child: Stack(
           children: <Widget>[
-            Container(
-              width: MediaQuery.of(context).size.width * .7,
-              height: MediaQuery.of(context).size.width * .7 / 3.5,
-              child: Column(
-                //mainAxisSize: MainAxisSize.max,
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: <Widget>[
-                  Container(
-                    padding: EdgeInsets.fromLTRB(5, 0, 0, 0),
-                    alignment: Alignment.centerLeft,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
+            new Row(mainAxisAlignment: MainAxisAlignment.center, children: <
+                Widget>[
+              Container(
+                width: MediaQuery.of(context).size.width * .7,
+                height: MediaQuery.of(context).size.width * .7 / 3.5,
+                child: Column(
+                  //mainAxisSize: MainAxisSize.max,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: <Widget>[
+                    Container(
+                      padding: EdgeInsets.fromLTRB(5, 0, 0, 0),
+                      alignment: Alignment.centerLeft,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          // Text(
+                          //   'TOKEN No. -',
+                          //   style: tokenTextStyle,
+                          //   textAlign: TextAlign.left,
+                          // ),
+                          Text(
+                            booking.getDisplayName(),
+                            style: tokenTextStyle,
+                            textAlign: TextAlign.left,
+                          ),
+                        ],
+                      ),
+                    ),
+                    Divider(
+                      indent: 5,
+
+                      // thickness: 1,
+                      height: 1,
+                      color: Colors.blueGrey[300],
+                    ),
+                    Column(
+                      // mainAxisAlignment: MainAxisAlignment.end,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
-                        // Text(
-                        //   'TOKEN No. -',
-                        //   style: tokenTextStyle,
-                        //   textAlign: TextAlign.left,
-                        // ),
-                        Text(
-                          booking.getDisplayName(),
-                          style: tokenTextStyle,
-                          textAlign: TextAlign.left,
+                        Container(
+                          padding: EdgeInsets.fromLTRB(5, 0, 0, 0),
+                          child: Text(
+                            booking.entityName + ', ' + address,
+                            overflow: TextOverflow.ellipsis,
+                            style: tokenDataTextStyle,
+                          ),
                         ),
-                      ],
-                    ),
-                  ),
-                  Divider(
-                    indent: 5,
-
-                    // thickness: 1,
-                    height: 1,
-                    color: Colors.blueGrey[300],
-                  ),
-                  Column(
-                    // mainAxisAlignment: MainAxisAlignment.end,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Container(
-                        padding: EdgeInsets.fromLTRB(5, 0, 0, 0),
-                        child: Text(
-                          booking.entityName + ', ' + address,
-                          overflow: TextOverflow.ellipsis,
-                          style: tokenDataTextStyle,
+                        SizedBox(
+                          height: 2,
                         ),
-                      ),
-                      SizedBox(
-                        height: 2,
-                      ),
-                      Container(
-                        // alignment: Alignment.centerLeft,
-                        height: MediaQuery.of(context).size.width * .06,
-                        //Text('Where: ', style: tokenHeadingTextStyle),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: <Widget>[
-                            Container(
-                              width: MediaQuery.of(context).size.width * .08,
-                              height: MediaQuery.of(context).size.width * .07,
-                              child: IconButton(
+                        Container(
+                          // alignment: Alignment.centerLeft,
+                          height: MediaQuery.of(context).size.width * .06,
+                          //Text('Where: ', style: tokenHeadingTextStyle),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: <Widget>[
+                              Container(
+                                width: MediaQuery.of(context).size.width * .08,
+                                height: MediaQuery.of(context).size.width * .07,
+                                child: IconButton(
+                                    padding: EdgeInsets.all(0),
+                                    alignment: Alignment.center,
+                                    highlightColor: Colors.orange[300],
+                                    icon: Icon(
+                                      Icons.phone,
+                                      color: lightIcon,
+                                      size: 20,
+                                    ),
+                                    onPressed: () {
+// TODO Smita - Get public contact and update booking.entityId
+                                      callPhone('+919611009823');
+                                    }),
+                              ),
+                              Container(
+                                width: MediaQuery.of(context).size.width * .08,
+                                height: MediaQuery.of(context).size.width * .07,
+                                // width: 20.0,
+                                child: IconButton(
                                   padding: EdgeInsets.all(0),
                                   alignment: Alignment.center,
                                   highlightColor: Colors.orange[300],
                                   icon: Icon(
-                                    Icons.phone,
+                                    Icons.cancel,
                                     color: lightIcon,
-                                    size: 20,
+                                    size: 22,
+                                  ),
+                                  onPressed: () => showCancelBooking(booking),
+                                ),
+                              ),
+                              Container(
+                                width: MediaQuery.of(context).size.width * .08,
+                                height: MediaQuery.of(context).size.width * .07,
+                                // width: 20.0,
+                                child: IconButton(
+                                  padding: EdgeInsets.all(0),
+                                  alignment: Alignment.center,
+                                  highlightColor: Colors.orange[300],
+                                  icon: Icon(
+                                    Icons.location_on,
+                                    color: lightIcon,
+                                    size: 21,
+                                  ),
+                                  onPressed: () => launchURL(booking.entityName,
+                                      address, booking.lat, booking.lon),
+                                ),
+                              ),
+                              Container(
+                                width: MediaQuery.of(context).size.width * .08,
+                                height: MediaQuery.of(context).size.width * .07,
+                                child: IconButton(
+                                  padding: EdgeInsets.all(0),
+                                  alignment: Alignment.center,
+                                  highlightColor: Colors.orange[300],
+                                  icon: ImageIcon(
+                                    AssetImage('assets/whatsapp.png'),
+                                    size: 18,
+                                    color: Colors.white,
                                   ),
                                   onPressed: () {
-// TODO Smita - Get public contact and update booking.entityId
-                                    callPhone('+919611009823');
-                                  }),
-                            ),
-                            Container(
-                              width: MediaQuery.of(context).size.width * .08,
-                              height: MediaQuery.of(context).size.width * .07,
-                              // width: 20.0,
-                              child: IconButton(
-                                padding: EdgeInsets.all(0),
-                                alignment: Alignment.center,
-                                highlightColor: Colors.orange[300],
-                                icon: Icon(
-                                  Icons.cancel,
-                                  color: lightIcon,
-                                  size: 22,
+                                    String phoneNo = booking.entityWhatsApp;
+                                    //TODO Smita - remove once whatsapp number gets populated.
+                                    phoneNo = '+919611009823';
+                                    if (phoneNo != null)
+                                      launchWhatsApp(
+                                          message: whatsappMessage,
+                                          phone: phoneNo);
+                                  },
                                 ),
-                                onPressed: () => showCancelBooking(booking),
                               ),
-                            ),
-                            Container(
-                              width: MediaQuery.of(context).size.width * .08,
-                              height: MediaQuery.of(context).size.width * .07,
-                              // width: 20.0,
-                              child: IconButton(
-                                padding: EdgeInsets.all(0),
-                                alignment: Alignment.center,
-                                highlightColor: Colors.orange[300],
-                                icon: Icon(
-                                  Icons.location_on,
-                                  color: lightIcon,
-                                  size: 21,
+                              Container(
+                                width: MediaQuery.of(context).size.width * .08,
+                                height: MediaQuery.of(context).size.width * .07,
+                                // width: 20.0,
+                                child: IconButton(
+                                  padding: EdgeInsets.all(0),
+                                  alignment: Alignment.center,
+                                  highlightColor: Colors.orange[300],
+                                  icon: Icon(
+                                    Icons.list,
+                                    color: lightIcon,
+                                    size: 22,
+                                  ),
+                                  onPressed: () => showShoppingList(booking),
                                 ),
-                                onPressed: () => launchURL(booking.entityName,
-                                    address, booking.lat, booking.lon),
                               ),
-                            ),
-                            Container(
-                              width: MediaQuery.of(context).size.width * .08,
-                              height: MediaQuery.of(context).size.width * .07,
-                              child: IconButton(
-                                padding: EdgeInsets.all(0),
-                                alignment: Alignment.center,
-                                highlightColor: Colors.orange[300],
-                                icon: ImageIcon(
-                                  AssetImage('assets/whatsapp.png'),
-                                  size: 18,
-                                  color: Colors.white,
-                                ),
-                                onPressed: () {
-                                  String phoneNo = booking.entityWhatsApp;
-                                  //TODO Smita - remove once whatsapp number gets populated.
-                                  phoneNo = '+919611009823';
-                                  if (phoneNo != null)
-                                    launchWhatsApp(
-                                        message: whatsappMessage,
-                                        phone: phoneNo);
-                                },
-                              ),
-                            ),
-                            Container(
-                              width: MediaQuery.of(context).size.width * .08,
-                              height: MediaQuery.of(context).size.width * .07,
-                              // width: 20.0,
-                              child: IconButton(
-                                padding: EdgeInsets.all(0),
-                                alignment: Alignment.center,
-                                highlightColor: Colors.orange[300],
-                                icon: Icon(
-                                  Icons.list,
-                                  color: lightIcon,
-                                  size: 22,
-                                ),
-                                onPressed: () => showShoppingList(booking),
-                              ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
-                      ),
-                    ],
-                  ),
-                ],
+                      ],
+                    ),
+                  ],
+                ),
               ),
-            ),
-            VerticalDivider(
-              indent: 5,
-              endIndent: 5,
-              // thickness: 1,
-              width: 1,
-              color: Colors.blueGrey[300],
-            ),
-            Container(
-              width: MediaQuery.of(context).size.width * .25,
-              // padding: EdgeInsets.fromLTRB(5, 5, 0, 0),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  //verticalSpacer,
-                  Text(
-                    dtFormat.format(booking.dateTime),
-                    style: tokenDataTextStyle,
-                  ),
-                  Container(
-                    height: 5,
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: <Widget>[
-                      // Text('Time: ', style: tokenHeadingTextStyle),
-                      Text(
-                        booking.dateTime.hour.toString() +
-                            ':' +
-                            booking.dateTime.minute.toString(),
-                        style: tokenDateTextStyle,
-                      ),
-                    ],
-                  ),
-                ],
+              VerticalDivider(
+                indent: 5,
+                endIndent: 5,
+                // thickness: 1,
+                width: 1,
+                color: Colors.blueGrey[300],
               ),
-            ),
-          ]),
-    );
+              Container(
+                width: MediaQuery.of(context).size.width * .25,
+                // padding: EdgeInsets.fromLTRB(5, 5, 0, 0),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    //verticalSpacer,
+                    Text(
+                      dtFormat.format(booking.dateTime),
+                      style: tokenDataTextStyle,
+                    ),
+                    Container(
+                      height: 5,
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: <Widget>[
+                        // Text('Time: ', style: tokenHeadingTextStyle),
+                        Text(
+                          booking.dateTime.hour.toString() +
+                              ':' +
+                              booking.dateTime.minute.toString(),
+                          style: tokenDateTextStyle,
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ]),
+            if (booking.number == -1)
+              new Positioned(
+                left: 180,
+                bottom: 20,
+                child: new Container(
+                  height: 80,
+                  width: 150,
+                  child: Image.asset('assets/cancelled.png'),
+                ),
+              ),
+          ],
+        ));
   }
 
   void showCancelBooking(UserToken booking) {

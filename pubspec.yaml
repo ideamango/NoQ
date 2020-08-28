@@ -88,6 +88,7 @@ flutter:
     - paytm.svg
     - gpay.png
     - gpay_icon.png
+    - cancelled.png
     
   #  - images/a_dot_ham.jpeg
 
