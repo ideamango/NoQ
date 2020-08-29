@@ -37,27 +37,28 @@ class GlobalState {
       // if (_gs == null) {
       _gs = new GlobalState._();
       // }
-      try {
-        _gs.currentUser = await UserService().getCurrentUser();
-      } catch (e) {
-        print(
-            "Error initializing GlobalState, User could not be fetched from server..");
-      }
-
-      if (Utils.isNullOrEmpty(_gs.currentUser.favourites))
-        _gs.currentUser.favourites = new List<MetaEntity>();
-      try {
-        _gs.conf = await ConfigurationService().getConfigurations();
-      } catch (e) {
-        print(
-            "Error initializing GlobalState, Configuration could not be fetched from server..");
-      }
-      DateTime fromDate = DateTime.now().subtract(new Duration(days: 10));
-      DateTime toDate = DateTime.now().add(new Duration(days: 10));
-
-      _gs.bookings =
-          await TokenService().getAllTokensForCurrentUser(fromDate, toDate);
     }
+    try {
+      _gs.currentUser = await UserService().getCurrentUser();
+    } catch (e) {
+      print(
+          "Error initializing GlobalState, User could not be fetched from server..");
+    }
+
+    if (Utils.isNullOrEmpty(_gs.currentUser.favourites))
+      _gs.currentUser.favourites = new List<MetaEntity>();
+    try {
+      _gs.conf = await ConfigurationService().getConfigurations();
+    } catch (e) {
+      print(
+          "Error initializing GlobalState, Configuration could not be fetched from server..");
+    }
+    DateTime fromDate = DateTime.now().subtract(new Duration(days: 10));
+    DateTime toDate = DateTime.now().add(new Duration(days: 10));
+
+    _gs.bookings =
+        await TokenService().getAllTokensForCurrentUser(fromDate, toDate);
+
     return _gs;
   }
 

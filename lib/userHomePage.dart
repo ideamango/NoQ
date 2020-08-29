@@ -651,12 +651,12 @@ class _UserHomePageState extends State<UserHomePage> {
             ]),
             if (booking.number == -1)
               new Positioned(
-                left: 180,
-                bottom: 20,
+                left: MediaQuery.of(context).size.width * .29,
+                bottom: MediaQuery.of(context).size.width * .013,
                 child: new Container(
-                  height: 80,
-                  width: 150,
-                  child: Image.asset('assets/cancelled.png'),
+                  height: MediaQuery.of(context).size.width * .3,
+                  width: MediaQuery.of(context).size.width * .7,
+                  child: Image.asset('assets/cancelled_2.png'),
                 ),
               ),
           ],

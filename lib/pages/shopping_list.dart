@@ -91,7 +91,9 @@ class _ShoppingListState extends State<ShoppingList> {
 
   Widget _buildServiceItem(ListItem newItem) {
     TextEditingController itemNameController = new TextEditingController();
+    TextEditingController itemQtyController = new TextEditingController();
     itemNameController.text = newItem.itemName;
+    itemQtyController.text = newItem.quantity;
     return Container(
         height: 40,
         child: Card(
@@ -159,6 +161,7 @@ class _ShoppingListState extends State<ShoppingList> {
                         LengthLimitingTextInputFormatter(12),
                       ],
                       style: TextStyle(fontSize: 14, color: primaryDarkColor),
+                      controller: itemQtyController,
                       decoration: InputDecoration(
                         //contentPadding: EdgeInsets.all(12),
                         // labelText: labelTextStr,
