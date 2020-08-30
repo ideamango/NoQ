@@ -209,8 +209,8 @@ class TokenService {
           token = UserToken.fromJson(tokenJson);
         }
       } catch (e) {
-        print(
-            "Error while generting token -> Transactio Error: " + e.toString());
+        print("Error while generting token -> Transaction Error: " +
+            e.toString());
       }
     });
 
