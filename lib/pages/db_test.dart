@@ -237,13 +237,13 @@ class DBTest {
       await TokenService().deleteSlot("Child101-1#2020~7~8");
 
       await TokenService()
-          .deleteToken("Child101-1#2020~7~6#10~30#+916052069984");
+          .deleteToken("Child101-1#2020~7~6#10~30#+919999999999");
       await TokenService()
-          .deleteToken("Child101-1#2020~7~7#10~30#+916052069984");
+          .deleteToken("Child101-1#2020~7~7#10~30#+919999999999");
       await TokenService()
-          .deleteToken("Child101-1#2020~7~7#12~30#+916052069984");
+          .deleteToken("Child101-1#2020~7~7#12~30#+919999999999");
       await TokenService()
-          .deleteToken("Child101-1#2020~7~8#10~30#+916052069984");
+          .deleteToken("Child101-1#2020~7~8#10~30#+919999999999");
       await EntityService().deleteEntity('Entity101');
 
       await EntityService().deleteEntity('Entity102');
@@ -308,20 +308,31 @@ class DBTest {
 
     Entity child3 = await EntityService().getEntity('Child101-3');
 
+    print("Token generation started..");
+
     UserToken tok1 = await TokenService().generateToken(
         child1.getMetaEntity(), new DateTime(2020, 7, 6, 10, 30, 0, 0));
 
+    print("Tok1 generated");
+
     UserToken tok21 = await TokenService().generateToken(
         child1.getMetaEntity(), new DateTime(2020, 7, 7, 12, 30, 0, 0));
+    print("Tok21 generated");
 
     UserToken tok22 = await TokenService().generateToken(
         child1.getMetaEntity(), new DateTime(2020, 7, 7, 10, 30, 0, 0));
+    print("Tok22 generated");
 
     UserToken tok3 = await TokenService().generateToken(
         child1.getMetaEntity(), new DateTime(2020, 7, 8, 10, 30, 0, 0));
+    print("Tok3 generated");
+
+    print("Token generation ended.");
 
     List<UserToken> toks = await TokenService().getAllTokensForCurrentUser(
         new DateTime(2020, 7, 8), new DateTime(2020, 7, 9));
+    print("Got the Tokens between 8th July and 9th July: " +
+        toks.length.toString());
 
     bool isAdminAssignedOnEntity = false;
 
@@ -373,7 +384,7 @@ class DBTest {
     }
 
     if (isEntityAddedToAdmin) {
-      print("EntityService.assignAdmin --> SUCCESS");
+      print("EntityService.assignAdmin ---> SUCCESS");
     } else {
       print(
           "EntityService.assignAdmin ------------------------------> FAILURE");
@@ -428,7 +439,26 @@ class DBTest {
           "TokenService.getTokensForEntityBookedByCurrentUser ------------------------> FAILURE");
     }
 
-    await TokenService().cancelToken("Child101-1#2020~7~7#10~30#+916052069984");
+    bool isTokenCancelled = await TokenService()
+        .cancelToken("Child101-1#2020~7~7#10~30#+919999999999");
+
+    if (!isTokenCancelled) {
+      print("TokenService.cancelToken ------> FAILURE");
+    }
+
+    List<UserToken> toksForDayForEntityAfterCancellation = await TokenService()
+        .getTokensForEntityBookedByCurrentUser(
+            'Child101-1', new DateTime(2020, 7, 7));
+    for (UserToken tokenOnSeventh in toksForDayForEntityAfterCancellation) {
+      if (tokenOnSeventh.slotId + "#" + tokenOnSeventh.userId ==
+          "Child101-1#2020~7~7#10~30#+919999999999") {
+        if (tokenOnSeventh.number == -1) {
+          print("TokenService.cancelToken ------> Success");
+        } else {
+          print("TokenService.cancelToken --------------------> FAILURE");
+        }
+      }
+    }
 
     EntitySlots esWithCancelledSlot = await TokenService()
         .getEntitySlots('Child101-1', new DateTime(2020, 7, 7));
