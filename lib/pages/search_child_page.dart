@@ -22,7 +22,8 @@ import '../userHomePage.dart';
 class SearchChildrenPage extends StatefulWidget {
   final List<MetaEntity> childList;
   final String parentName;
-  SearchChildrenPage({Key key, this.childList, this.parentName})
+  final String parentId;
+  SearchChildrenPage({Key key, this.childList, this.parentName, this.parentId})
       : super(key: key);
   @override
   _SearchChildrenPageState createState() => _SearchChildrenPageState();

@@ -31,11 +31,11 @@ final whiteBoldTextStyle1 = TextStyle(
   //height: 2,
 );
 final drawerdefaultTextStyle = TextStyle(
-  color: Colors.grey[200],
-  fontWeight: FontWeight.w800,
-  fontFamily: 'Roboto',
-  letterSpacing: 0.6,
-  fontSize: 15,
+  color: Colors.grey[100],
+  //fontWeight: FontWeight.w800,
+  fontFamily: 'Montserrat',
+  // letterSpacing: 0.6,
+  fontSize: 18,
   //height: 2,
 );
 

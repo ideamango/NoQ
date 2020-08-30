@@ -60,11 +60,13 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
   bool _gStateInitFinished = false;
   MetaEntity metaEn;
   Entity entity;
+  Entity parentEntity;
 
   @override
   void initState() {
     //dt = dateFormat.format(DateTime.now());
     super.initState();
+    getEntityDetails(entity.parentId).then((value) => parentEntity = value);
     getGlobalState().whenComplete(() => _loadSlots());
   }
 
@@ -113,6 +115,12 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
     );
   }
 
+  Future<Entity> getEntityDetails(String id) async {
+    Entity en;
+    en = await EntityService().getEntity(id);
+    return en;
+  }
+
   @override
   Widget build(BuildContext context) {
     // pr = new ProgressDialog(context);
@@ -140,9 +148,15 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
           bookingTime =
               DateFormat.Hm().format(selectedSlot.dateTime).toString();
         }
+
         dynamic backRoute;
         if (widget.forPage == 'MainSearch') backRoute = SearchStoresPage();
-        if (widget.forPage == 'ChildSearch') backRoute = SearchStoresPage();
+        if (widget.forPage == 'ChildSearch')
+          backRoute = SearchChildrenPage(
+            parentName: parentEntity.name,
+            childList: parentEntity.childEntities,
+            parentId: parentEntity.entityId,
+          );
         if (widget.forPage == 'FavSearch') backRoute = FavsListPage();
 
         return MaterialApp(
@@ -510,7 +524,7 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
 //Update local file with new booking.
 
         String returnVal = value + '-' + slotTiming;
-        Navigator.of(context).pop(returnVal);
+        // Navigator.of(context).pop(returnVal);
         // print(value);
       });
     }).catchError((error, stackTrace) {

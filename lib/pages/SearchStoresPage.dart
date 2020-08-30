@@ -794,7 +794,8 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
                                 MaterialPageRoute(
                                     builder: (context) => SearchChildrenPage(
                                         childList: str.childEntities,
-                                        parentName: str.name)));
+                                        parentName: str.name,
+                                        parentId: str.entityId)));
                           },
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,

@@ -99,11 +99,11 @@ class _ManageApartmentsListPageState extends State<ManageApartmentsListPage> {
           decoration: InputDecoration(
             enabledBorder: InputBorder.none,
             focusedBorder: InputBorder.none,
-            labelText: 'Type of Entity',
+            labelText: 'Type of Premise',
           ),
           child: new DropdownButtonHideUnderline(
             child: new DropdownButton(
-              hint: new Text("Select Type of Entity"),
+              hint: new Text("Select Type of Premise"),
               value: _entityType,
               isDense: true,
               onChanged: (newValue) {
@@ -135,7 +135,7 @@ class _ManageApartmentsListPageState extends State<ManageApartmentsListPage> {
         //   saveEntityDetails(entity);
       },
     );
-    String title = "Manage Entities";
+    String title = "Manage Premises";
     return MaterialApp(
       theme: ThemeData.light().copyWith(),
       home: Scaffold(
@@ -172,7 +172,7 @@ class _ManageApartmentsListPageState extends State<ManageApartmentsListPage> {
                               ),
                               SizedBox(width: 12),
                               Text(
-                                "Add Entities to manage",
+                                "Add Premises to manage",
                                 style: TextStyle(
                                     color: Colors.white, fontSize: 15),
                               ),
@@ -229,19 +229,23 @@ class _ManageApartmentsListPageState extends State<ManageApartmentsListPage> {
                 ),
                 if (!Utils.isNullOrEmpty(metaEntitiesList))
                   Expanded(
-                    child: ListView.builder(
-                      controller: _scrollController,
-                      reverse: true,
-                      itemExtent: itemSize,
-                      // shrinkWrap: true,
-                      itemBuilder: (BuildContext context, int index) {
-                        return Container(
-                          child: EntityRow(
-                              entity: metaEntitiesList[index],
-                              parentEntityMap: _parentEntityMap),
-                        );
-                      },
-                      itemCount: metaEntitiesList.length,
+                    child: Align(
+                      alignment: Alignment.topCenter,
+                      child: ListView.builder(
+                        controller: _scrollController,
+                        reverse: true,
+                        shrinkWrap: true,
+                        itemExtent: itemSize,
+                        // shrinkWrap: true,
+                        itemBuilder: (BuildContext context, int index) {
+                          return Container(
+                            child: EntityRow(
+                                entity: metaEntitiesList[index],
+                                parentEntityMap: _parentEntityMap),
+                          );
+                        },
+                        itemCount: metaEntitiesList.length,
+                      ),
                     ),
                   ),
               ],

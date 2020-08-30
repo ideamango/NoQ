@@ -22,6 +22,8 @@ class _ChildEntitiesListPageState extends State<ChildEntitiesListPage> {
   String _msg;
   final GlobalKey<FormState> _servicesListFormKey = new GlobalKey<FormState>();
   List<MetaEntity> servicesList = new List<MetaEntity>();
+  ScrollController _childScrollController;
+  final itemSize = 70.0;
   final String title = "Child Amenities Details Form";
   Map<String, Entity> _entityMap = Map<String, Entity>();
 
@@ -45,6 +47,7 @@ class _ChildEntitiesListPageState extends State<ChildEntitiesListPage> {
   @override
   void initState() {
     super.initState();
+    _childScrollController = ScrollController();
     parentEntity = widget.entity;
     if (parentEntity == null)
       servicesList = List<MetaEntity>();
@@ -74,6 +77,10 @@ class _ChildEntitiesListPageState extends State<ChildEntitiesListPage> {
       servicesList.add(meta);
       _count = _count + 1;
     });
+
+    if (_childScrollController.hasClients)
+      _childScrollController.animateTo(_childScrollController.offset + itemSize,
+          curve: Curves.easeInToLinear, duration: Duration(milliseconds: 200));
   }
 
   Widget _buildServiceItem(MetaEntity childEntity) {
@@ -228,10 +235,10 @@ class _ChildEntitiesListPageState extends State<ChildEntitiesListPage> {
                                 ),
                                 SizedBox(width: 12),
                                 Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
                                   children: <Widget>[
                                     Text(
-                                      (parentEntity.name) ??
-                                          (parentEntity.type),
+                                      "Add Child Premises/ Amenities to manage",
                                       style: TextStyle(
                                           color: Colors.white, fontSize: 15),
                                     ),
@@ -296,17 +303,23 @@ class _ChildEntitiesListPageState extends State<ChildEntitiesListPage> {
                     ),
                   ),
                   new Expanded(
-                    child: ListView.builder(
-                      shrinkWrap: true,
-                      //scrollDirection: Axis.vertical,
-                      itemBuilder: (BuildContext context, int index) {
-                        return Container(
-                          child: new Column(
-                              children:
-                                  servicesList.map(_buildServiceItem).toList()),
-                        );
-                      },
-                      itemCount: 1,
+                    child: Align(
+                      alignment: Alignment.topCenter,
+                      child: ListView.builder(
+                        controller: _childScrollController,
+                        reverse: true,
+                        shrinkWrap: true,
+                        itemExtent: itemSize,
+                        //scrollDirection: Axis.vertical,
+                        itemBuilder: (BuildContext context, int index) {
+                          return Container(
+                            child: ChildEntityRow(
+                                childEntity: servicesList[index],
+                                entityMap: _entityMap),
+                          );
+                        },
+                        itemCount: servicesList.length,
+                      ),
                     ),
                   ),
                 ],
