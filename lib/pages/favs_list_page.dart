@@ -528,13 +528,25 @@ class _FavsListPageState extends State<FavsListPage> {
                                 'Explore amenities   ',
                                 style: TextStyle(color: Colors.white),
                               ),
-                              Icon(
-                                Icons.arrow_forward_ios,
-                                color: Colors.white38,
+                              Container(
+                                transform:
+                                    Matrix4.translationValues(28.0, 0, 0),
+                                child: Icon(
+                                  Icons.arrow_forward_ios,
+                                  color: Colors.white38,
+                                ),
+                              ),
+                              Container(
+                                transform:
+                                    Matrix4.translationValues(14.0, 0, 0),
+                                child: Icon(
+                                  Icons.arrow_forward_ios,
+                                  color: Colors.white70,
+                                ),
                               ),
                               Icon(
                                 Icons.arrow_forward_ios,
-                                color: Colors.white70,
+                                color: Colors.white,
                               )
                             ],
                           ),

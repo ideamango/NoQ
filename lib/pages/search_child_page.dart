@@ -39,7 +39,7 @@ class _SearchChildrenPageState extends State<SearchChildrenPage> {
   List<Entity> _stores = new List<Entity>();
   List<Entity> _pastSearches = new List<Entity>();
   List<Entity> _searchResultstores = new List<Entity>();
-  String _entityType;
+
   String _searchAll;
   bool searchBoxClicked = false;
   bool fetchFromServer = false;
@@ -59,6 +59,7 @@ class _SearchChildrenPageState extends State<SearchChildrenPage> {
   //"initial, searching,done"
   String _isSearching = "initial";
   String _searchText = "";
+  String _entityType;
   String searchType = "";
   String pageName;
   GlobalState _state;
@@ -108,7 +109,7 @@ class _SearchChildrenPageState extends State<SearchChildrenPage> {
             _isSearching = "searching";
             _searchText = _searchTextController.text;
           });
-          _buildSearchList();
+          _buildSearchList(_entityType, _searchText);
         }
       }
     });
@@ -278,7 +279,7 @@ class _SearchChildrenPageState extends State<SearchChildrenPage> {
                 setState(() {
                   _entityType = newValue;
                   _isSearching = "searching";
-                  _buildSearchList();
+                  _buildSearchList(_entityType, _searchText);
                 });
               },
               items: searchTypes.map((type) {
@@ -356,7 +357,7 @@ class _SearchChildrenPageState extends State<SearchChildrenPage> {
                     setState(() {
                       _isSearching = "searching";
                     });
-                    _buildSearchList();
+                    _buildSearchList(_entityType, _searchText);
                   }),
 
               // Container(
@@ -381,7 +382,7 @@ class _SearchChildrenPageState extends State<SearchChildrenPage> {
                 });
               else {
                 _searchText = _searchTextController.text;
-                _buildSearchList();
+                _buildSearchList(_entityType, _searchText);
               }
             } else {
               if (_searchTextController.text.length >= 3) {
@@ -389,7 +390,7 @@ class _SearchChildrenPageState extends State<SearchChildrenPage> {
                   _isSearching = "searching";
                   _searchText = _searchTextController.text;
                 });
-                _buildSearchList();
+                _buildSearchList(_entityType, _searchText);
               }
             }
           },
@@ -426,7 +427,10 @@ class _SearchChildrenPageState extends State<SearchChildrenPage> {
                     color: Colors.white,
                     onPressed: () {
                       Navigator.of(context).pop();
-                      //  Navigator.pushNamed(context, '/mainSearch');
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => SearchStoresPage()));
                     }),
                 title: Text(
                   title,
@@ -879,13 +883,19 @@ class _SearchChildrenPageState extends State<SearchChildrenPage> {
   //   return searchEntityList;
   // }
 
-  Future<void> _buildSearchList() async {
+  Future<void> _buildSearchList(String type, String name) async {
     //Search in _stores list if search criteria matches
     List<Entity> searchList = new List<Entity>();
     for (int i = 0; i < _stores.length; i++) {
-      String name = _stores.elementAt(i).name;
-      if (name.toLowerCase().contains(_searchText.toLowerCase())) {
-        searchList.add(_stores.elementAt(i));
+      Entity en = _stores.elementAt(i);
+
+      if (type != null) {
+        if (en.type != type) {
+          continue;
+        }
+        if (name.toLowerCase().contains(_searchText.toLowerCase())) {
+          searchList.add(_stores.elementAt(i));
+        }
       }
     }
     _stores.clear();

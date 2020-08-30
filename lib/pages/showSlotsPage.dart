@@ -64,17 +64,16 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
 
   @override
   void initState() {
-    //dt = dateFormat.format(DateTime.now());
+    entity = widget.entity;
+    _date = widget.dateTime;
+    _storeId = entity.entityId;
+    _storeName = entity.name;
     super.initState();
     getEntityDetails(entity.parentId).then((value) => parentEntity = value);
     getGlobalState().whenComplete(() => _loadSlots());
   }
 
   Future<void> _loadSlots() async {
-    entity = widget.entity;
-    _date = widget.dateTime;
-    _storeId = entity.entityId;
-    _storeName = entity.name;
     //Format date to display in UI
     final dtFormat = new DateFormat(dateDisplayFormat);
     _dateFormatted = dtFormat.format(_date);
