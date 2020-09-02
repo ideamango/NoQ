@@ -893,8 +893,12 @@ class _SearchChildrenPageState extends State<SearchChildrenPage> {
         if (en.type != type) {
           continue;
         }
-        if (name.toLowerCase().contains(_searchText.toLowerCase())) {
-          searchList.add(_stores.elementAt(i));
+        if (name != null && name != "") {
+          if (name.toLowerCase().contains(_searchText.toLowerCase())) {
+            searchList.add(en);
+          }
+        } else {
+          searchList.add(en);
         }
       }
     }

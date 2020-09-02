@@ -5,6 +5,7 @@ import 'package:noq/db/db_model/meta_entity.dart';
 import 'package:noq/global_state.dart';
 import 'package:noq/pages/entity_item.dart';
 import 'package:noq/repository/StoreRepository.dart';
+import 'package:noq/services/circular_progress.dart';
 import 'package:noq/style.dart';
 import 'package:noq/userHomePage.dart';
 import 'package:noq/utils.dart';
@@ -31,7 +32,7 @@ class _ManageApartmentsListPageState extends State<ManageApartmentsListPage> {
   GlobalState _state;
   bool stateInitFinished = false;
   Map<String, Entity> _parentEntityMap = Map<String, Entity>();
-
+  bool _initCompleted = false;
   @override
   void dispose() {
     super.dispose();
@@ -41,7 +42,11 @@ class _ManageApartmentsListPageState extends State<ManageApartmentsListPage> {
   void initState() {
     _scrollController = ScrollController();
     super.initState();
-    initialize();
+    initialize().whenComplete(() {
+      setState(() {
+        _initCompleted = true;
+      });
+    });
     entityTypes = new List<String>();
   }
 
@@ -49,7 +54,7 @@ class _ManageApartmentsListPageState extends State<ManageApartmentsListPage> {
     _state = await GlobalState.getGlobalState();
   }
 
-  void initialize() async {
+  initialize() async {
     await getGlobalState();
     metaEntitiesList = List<MetaEntity>();
     if (!Utils.isNullOrEmpty(_state.currentUser.entities)) {
@@ -136,127 +141,151 @@ class _ManageApartmentsListPageState extends State<ManageApartmentsListPage> {
       },
     );
     String title = "Manage Premises";
-    return MaterialApp(
-      theme: ThemeData.light().copyWith(),
-      home: Scaffold(
-        appBar: CustomAppBarWithBackButton(
-          backRoute: UserHomePage(),
-          titleTxt: title,
-        ),
-        body: Center(
-          child: new Form(
-            key: _entityListFormKey,
-            autovalidate: true,
-            child: Column(
-              children: <Widget>[
-                Card(
-                  elevation: 20,
-                  child: Container(
-                    decoration: BoxDecoration(
-                        border: Border.all(color: borderColor),
-                        color: Colors.white,
-                        shape: BoxShape.rectangle,
-                        borderRadius: BorderRadius.all(Radius.circular(5.0))),
-                    child: Column(
-                      children: <Widget>[
-                        Container(
-                          height: MediaQuery.of(context).size.width * .1,
-                          padding: EdgeInsets.fromLTRB(6, 0, 0, 0),
-                          decoration: darkContainer,
-                          child: Row(
-                            children: <Widget>[
-                              Icon(
-                                Icons.business,
-                                size: 35,
-                                color: Colors.white,
-                              ),
-                              SizedBox(width: 12),
-                              Text(
-                                "Add Premises to manage",
-                                style: TextStyle(
-                                    color: Colors.white, fontSize: 15),
-                              ),
-                            ],
-                          ),
-                        ),
-                        // subEntityType,
-                        (_msg != null)
-                            ? Text(
-                                _msg,
-                                style: errorTextStyle,
-                              )
-                            : Container(),
-                        Padding(
-                          padding: const EdgeInsets.fromLTRB(8.0, 0, 8, 0),
-                          child: Row(
-                            // mainAxisAlignment: MainAxisAlignment.end,
-                            children: <Widget>[
-                              Expanded(
-                                child: subEntityType,
-                              ),
-                              Container(
-                                child: IconButton(
-                                  icon: Icon(Icons.add_circle,
-                                      color: highlightColor, size: 40),
-                                  onPressed: () {
-                                    if (_entityType != null) {
-                                      setState(() {
-                                        _msg = null;
-                                      });
-                                      if (_entityListFormKey.currentState
-                                          .validate()) {
-                                        _entityListFormKey.currentState.save();
-                                        _addNewServiceRow();
-                                        //   _subEntityType = "Select";
-                                        // } else {
-                                        //   _msg = "Select service type";
-                                        // }
-                                      }
-                                    } else {
-                                      setState(() {
-                                        _msg = "Select service type";
-                                      });
-                                    }
-                                  },
+    if (_initCompleted) {
+      return MaterialApp(
+        theme: ThemeData.light().copyWith(),
+        home: Scaffold(
+          appBar: CustomAppBarWithBackButton(
+            backRoute: UserHomePage(),
+            titleTxt: title,
+          ),
+          body: Center(
+            child: new Form(
+              key: _entityListFormKey,
+              autovalidate: true,
+              child: Column(
+                children: <Widget>[
+                  Card(
+                    elevation: 20,
+                    child: Container(
+                      decoration: BoxDecoration(
+                          border: Border.all(color: borderColor),
+                          color: Colors.white,
+                          shape: BoxShape.rectangle,
+                          borderRadius: BorderRadius.all(Radius.circular(5.0))),
+                      child: Column(
+                        children: <Widget>[
+                          Container(
+                            height: MediaQuery.of(context).size.width * .1,
+                            padding: EdgeInsets.fromLTRB(6, 0, 0, 0),
+                            decoration: darkContainer,
+                            child: Row(
+                              children: <Widget>[
+                                Icon(
+                                  Icons.business,
+                                  size: 35,
+                                  color: Colors.white,
                                 ),
-                              ),
-                            ],
+                                SizedBox(width: 12),
+                                Text(
+                                  "Add Premises to manage",
+                                  style: TextStyle(
+                                      color: Colors.white, fontSize: 15),
+                                ),
+                              ],
+                            ),
                           ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                if (!Utils.isNullOrEmpty(metaEntitiesList))
-                  Expanded(
-                    child: Align(
-                      alignment: Alignment.topCenter,
-                      child: ListView.builder(
-                        controller: _scrollController,
-                        reverse: true,
-                        shrinkWrap: true,
-                        itemExtent: itemSize,
-                        // shrinkWrap: true,
-                        itemBuilder: (BuildContext context, int index) {
-                          return Container(
-                            child: EntityRow(
-                                entity: metaEntitiesList[index],
-                                parentEntityMap: _parentEntityMap),
-                          );
-                        },
-                        itemCount: metaEntitiesList.length,
+                          // subEntityType,
+                          (_msg != null)
+                              ? Text(
+                                  _msg,
+                                  style: errorTextStyle,
+                                )
+                              : Container(),
+                          Padding(
+                            padding: const EdgeInsets.fromLTRB(8.0, 0, 8, 0),
+                            child: Row(
+                              // mainAxisAlignment: MainAxisAlignment.end,
+                              children: <Widget>[
+                                Expanded(
+                                  child: subEntityType,
+                                ),
+                                Container(
+                                  child: IconButton(
+                                    icon: Icon(Icons.add_circle,
+                                        color: highlightColor, size: 40),
+                                    onPressed: () {
+                                      if (_entityType != null) {
+                                        setState(() {
+                                          _msg = null;
+                                        });
+                                        if (_entityListFormKey.currentState
+                                            .validate()) {
+                                          _entityListFormKey.currentState
+                                              .save();
+                                          _addNewServiceRow();
+                                          //   _subEntityType = "Select";
+                                          // } else {
+                                          //   _msg = "Select service type";
+                                          // }
+                                        }
+                                      } else {
+                                        setState(() {
+                                          _msg = "Select service type";
+                                        });
+                                      }
+                                    },
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ),
-              ],
+                  if (!Utils.isNullOrEmpty(metaEntitiesList))
+                    Expanded(
+                      child: Align(
+                        alignment: Alignment.topCenter,
+                        child: ListView.builder(
+                          controller: _scrollController,
+                          reverse: true,
+                          shrinkWrap: true,
+                          itemExtent: itemSize,
+                          // shrinkWrap: true,
+                          itemBuilder: (BuildContext context, int index) {
+                            return Container(
+                              child: EntityRow(
+                                  entity: metaEntitiesList[index],
+                                  parentEntityMap: _parentEntityMap),
+                            );
+                          },
+                          itemCount: metaEntitiesList.length,
+                        ),
+                      ),
+                    ),
+                ],
+              ),
+              // bottomNavigationBar: buildBottomItems()
             ),
-            // bottomNavigationBar: buildBottomItems()
+          ),
+          bottomNavigationBar: CustomBottomBar(
+            barIndex: 0,
           ),
         ),
-        bottomNavigationBar: CustomBottomBar(
-          barIndex: 0,
+      );
+    } else {
+      return MaterialApp(
+        theme: ThemeData.light().copyWith(),
+        home: Scaffold(
+          appBar: CustomAppBarWithBackButton(
+            backRoute: UserHomePage(),
+            titleTxt: title,
+          ),
+
+          body: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                showCircularProgress(),
+              ],
+            ),
+          ),
+          //drawer: CustomDrawer(),
+          bottomNavigationBar: CustomBottomBar(barIndex: 0),
         ),
-      ),
-    );
+      );
+    }
   }
 }
