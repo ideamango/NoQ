@@ -44,14 +44,14 @@ class UserToken {
         'entityId': entityId,
         'userId': userId,
         'number': number,
-        'dateTime': dateTime.millisecondsSinceEpoch,
+        'dateTime': dateTime != null ? dateTime.millisecondsSinceEpoch : null,
         'maxAllowed': maxAllowed,
         'slotDuration': slotDuration,
         'entityName': entityName,
         'lat': lat,
         'lon': lon,
         'entityWhatsApp': entityWhatsApp,
-        'order': order,
+        'order': order != null ? order.toJson() : null,
         'gpay': gpay,
         'paytm': paytm,
         'applepay': applepay
@@ -64,7 +64,9 @@ class UserToken {
         entityId: json['entityId'],
         userId: json['userId'],
         number: json['number'],
-        dateTime: new DateTime.fromMillisecondsSinceEpoch(json['dateTime']),
+        dateTime: json['dateTime'] != null
+            ? new DateTime.fromMillisecondsSinceEpoch(json['dateTime'])
+            : null,
         maxAllowed: json['maxAllowed'],
         slotDuration: json['slotDuration'],
         entityName: json['entityName'],

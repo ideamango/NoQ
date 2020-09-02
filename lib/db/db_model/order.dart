@@ -38,8 +38,12 @@ class Order {
         'billAmount': billAmount,
         'deliveryMode': deliveryMode,
         'deliveryAddress': deliveryAddress,
-        'orderCreatedDateTime': orderCreatedDateTime.millisecondsSinceEpoch,
-        'deliveryDateTime': deliveryDateTime.millisecondsSinceEpoch,
+        'orderCreatedDateTime': orderCreatedDateTime != null
+            ? orderCreatedDateTime.millisecondsSinceEpoch
+            : null,
+        'deliveryDateTime': deliveryDateTime != null
+            ? deliveryDateTime.millisecondsSinceEpoch
+            : null,
         'entityId': entityId,
         'userId': userId
       };
@@ -47,17 +51,20 @@ class Order {
   static Order fromJson(Map<String, dynamic> json) {
     if (json == null) return null;
     return new Order(
-        billNo: json['items'],
+        billNo: json['billNo'],
         items: convertToListItemsFromJson(json['items']),
         comments: convertToMessageFromJson(json['comments']),
         status: json['status'],
         billAmount: json['billAmount'],
         deliveryMode: json['deliveryMode'],
         deliveryAddress: json['deliveryAddress'],
-        orderCreatedDateTime: new DateTime.fromMillisecondsSinceEpoch(
-            json['orderCreatedDateTime']),
-        deliveryDateTime:
-            new DateTime.fromMillisecondsSinceEpoch(json['deliveryDateTime']),
+        orderCreatedDateTime: json['orderCreatedDateTime'] != null
+            ? new DateTime.fromMillisecondsSinceEpoch(
+                json['orderCreatedDateTime'])
+            : null,
+        deliveryDateTime: json['deliveryDateTime'] != null
+            ? new DateTime.fromMillisecondsSinceEpoch(json['deliveryDateTime'])
+            : null,
         entityId: json['entityId'],
         userId: json['userId']);
   }

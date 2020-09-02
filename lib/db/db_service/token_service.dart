@@ -383,8 +383,7 @@ class TokenService {
     final FirebaseUser user = await FirebaseAuth.instance.currentUser();
     Firestore fStore = Firestore.instance;
 
-    DocumentReference tokRef =
-        fStore.document('tokens/' + token.slotId + '#' + user.phoneNumber);
+    DocumentReference tokRef = fStore.document('tokens/' + token.getTokenId());
 
     try {
       DocumentSnapshot doc = await tokRef.get();
