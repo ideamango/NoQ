@@ -53,8 +53,8 @@ class GlobalState {
       print(
           "Error initializing GlobalState, Configuration could not be fetched from server..");
     }
-    DateTime fromDate = DateTime.now().subtract(new Duration(days: 10));
-    DateTime toDate = DateTime.now().add(new Duration(days: 10));
+    DateTime fromDate = DateTime.now().subtract(new Duration(days: 60));
+    DateTime toDate = DateTime.now().add(new Duration(days: 30));
 
     _gs.bookings =
         await TokenService().getAllTokensForCurrentUser(fromDate, toDate);

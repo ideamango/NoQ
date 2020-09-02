@@ -77,6 +77,13 @@ class UserToken {
         applepay: json['applepay']);
   }
 
+  String getTokenId() {
+    if (slotId == null || userId == null) {
+      return null;
+    }
+    return slotId + '#' + userId;
+  }
+
   String getDisplayName() {
     //First 3 chars of the Entity name, followed by the date and then time and Token number
     //E.g. BAT-200708-0930-10
