@@ -353,52 +353,57 @@ class _ShoppingListState extends State<ShoppingList> {
                     (_errMsg != null) ? _errMsg : "",
                     style: errorTextStyle,
                   ),
-                  Card(
-                    elevation: 20,
-                    child: Container(
-                      height: MediaQuery.of(context).size.width * .13,
-                      decoration: BoxDecoration(
-                          border: Border.all(color: borderColor),
-                          color: Colors.white,
-                          shape: BoxShape.rectangle,
-                          borderRadius: BorderRadius.all(Radius.circular(5.0))),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          //subEntityType,
+                  Padding(
+                    padding: EdgeInsets.fromLTRB(5, 5, 5, 8),
+                    child: Card(
+                      elevation: 20,
+                      child: Container(
+                        height: MediaQuery.of(context).size.width * .13,
+                        decoration: BoxDecoration(
+                            border: Border.all(color: borderColor),
+                            color: Colors.white,
+                            shape: BoxShape.rectangle,
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(5.0))),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: <Widget>[
+                            //subEntityType,
 
-                          Padding(
-                            padding: const EdgeInsets.fromLTRB(8.0, 0, 8, 0),
-                            child: Row(
-                              // mainAxisAlignment: MainAxisAlignment.end,
-                              children: <Widget>[
-                                Expanded(
-                                  child: itemField,
-                                ),
-                                Container(
-                                  padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
-                                  width: MediaQuery.of(context).size.width * .1,
-                                  height:
-                                      MediaQuery.of(context).size.width * .1,
-                                  child: IconButton(
-                                    padding: EdgeInsets.all(0),
-                                    icon: Icon(Icons.add_circle,
-                                        color: highlightColor, size: 38),
-                                    onPressed: () {
-                                      if (_shoppingListFormKey.currentState
-                                          .validate()) {
-                                        _shoppingListFormKey.currentState
-                                            .save();
-                                        _addNewServiceRow();
-                                        _listItem.text = "";
-                                      }
-                                    },
+                            Padding(
+                              padding: const EdgeInsets.fromLTRB(8.0, 0, 8, 0),
+                              child: Row(
+                                // mainAxisAlignment: MainAxisAlignment.end,
+                                children: <Widget>[
+                                  Expanded(
+                                    child: itemField,
                                   ),
-                                ),
-                              ],
+                                  Container(
+                                    padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
+                                    width:
+                                        MediaQuery.of(context).size.width * .1,
+                                    height:
+                                        MediaQuery.of(context).size.width * .1,
+                                    child: IconButton(
+                                      padding: EdgeInsets.all(0),
+                                      icon: Icon(Icons.add_circle,
+                                          color: highlightColor, size: 38),
+                                      onPressed: () {
+                                        if (_shoppingListFormKey.currentState
+                                            .validate()) {
+                                          _shoppingListFormKey.currentState
+                                              .save();
+                                          _addNewServiceRow();
+                                          _listItem.text = "";
+                                        }
+                                      },
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
                     ),
                   ),

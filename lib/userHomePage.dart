@@ -544,7 +544,12 @@ class _UserHomePageState extends State<UserHomePage> {
                                     color: lightIcon,
                                     size: 22,
                                   ),
-                                  onPressed: () => showCancelBooking(booking),
+                                  onPressed: () {
+                                    if (booking.number == -1)
+                                      return null;
+                                    else
+                                      showCancelBooking(booking);
+                                  },
                                 ),
                               ),
                               Container(
@@ -651,11 +656,12 @@ class _UserHomePageState extends State<UserHomePage> {
             ]),
             if (booking.number == -1)
               new Positioned(
-                left: MediaQuery.of(context).size.width * .29,
-                bottom: MediaQuery.of(context).size.width * .013,
+                left: MediaQuery.of(context).size.width * .5,
+                bottom: MediaQuery.of(context).size.width * .14,
                 child: new Container(
-                  height: MediaQuery.of(context).size.width * .3,
-                  width: MediaQuery.of(context).size.width * .7,
+                  //color: Colors.red,
+                  height: MediaQuery.of(context).size.width * .1,
+                  width: MediaQuery.of(context).size.width * .4,
                   child: Image.asset('assets/cancelled_2.png'),
                 ),
               ),
