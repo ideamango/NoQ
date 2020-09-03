@@ -240,15 +240,17 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
   }
 
   void _getCurrLocation() async {
-    final Geolocator geolocator = Geolocator()..forceAndroidLocationManager;
-
-    geolocator
+    //final Geolocator geolocator = Geolocator()..forceAndroidLocationManager;
+    final Geolocator geolocator = await Geolocator();
+    GeolocationStatus geolocationStatus =
+        await Geolocator().checkGeolocationPermissionStatus();
+    print(geolocationStatus);
+    Position position = await geolocator
         .getCurrentPosition(desiredAccuracy: LocationAccuracy.best)
-        .then((Position position) {
-      _getAddressFromLatLng(position);
-    }).catchError((e) {
+        .catchError((e) {
       print(e);
     });
+    _getAddressFromLatLng(position);
   }
 
   _getAddressFromLatLng(Position position) async {
