@@ -311,7 +311,13 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
         for (int i = 0; i < adminsList.length; i++) {
           if (adminsList[i] == (newAdminPh)) {
             insert = false;
-            Utils.showMyFlushbar(context, Icons.info_outline, "Error",
+            Utils.showMyFlushbar(
+                context,
+                Icons.info_outline,
+                Duration(
+                  seconds: 3,
+                ),
+                "Error",
                 "Phone number already exists !!");
             break;
           }
@@ -339,6 +345,9 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
         Utils.showMyFlushbar(
             context,
             Icons.info_outline,
+            Duration(
+              seconds: 3,
+            ),
             'Oops!! There is some trouble deleting that admin.',
             'Please check and try again..');
     });
@@ -465,6 +474,9 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
       Utils.showMyFlushbar(
           context,
           Icons.info_outline,
+          Duration(
+            seconds: 4,
+          ),
           "Seems like you have entered some incorrect details!! ",
           "Please verify the details and try again.");
       setState(() {
@@ -1127,6 +1139,9 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
                 Utils.showMyFlushbar(
                     context,
                     Icons.info_outline,
+                    Duration(
+                      seconds: 4,
+                    ),
                     "Couldn't save the Entity for some reason. ",
                     "Please try again.");
               }
@@ -1137,6 +1152,9 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
         Utils.showMyFlushbar(
             context,
             Icons.info_outline,
+            Duration(
+              seconds: 5,
+            ),
             "Seems like you have entered some incorrect details!! ",
             "Please verify the details and try again.");
         setState(() {
@@ -1451,6 +1469,9 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
                                         Utils.showMyFlushbar(
                                             context,
                                             Icons.info_outline,
+                                            Duration(
+                                              seconds: 4,
+                                            ),
                                             "Missing Information!! Making premises public require the basic details",
                                             "Please check and try again !!");
                                       } else {
@@ -1513,6 +1534,9 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
                                         Utils.showMyFlushbar(
                                             context,
                                             Icons.info_outline,
+                                            Duration(
+                                              seconds: 4,
+                                            ),
                                             "Missing Information!! Making premises active require the basic details",
                                             "Please check and try again !!");
                                       } else {
@@ -1823,6 +1847,9 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
                                                 Utils.showMyFlushbar(
                                                     context,
                                                     Icons.info_outline,
+                                                    Duration(
+                                                      seconds: 3,
+                                                    ),
                                                     "Something Missing ..",
                                                     "Please enter Phone number !!");
                                               } else {
@@ -1837,6 +1864,9 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
                                                   Utils.showMyFlushbar(
                                                       context,
                                                       Icons.info_outline,
+                                                      Duration(
+                                                        seconds: 5,
+                                                      ),
                                                       "Oops!! Seems like the phone number is not valid",
                                                       "Please check and try again !!");
                                                 }

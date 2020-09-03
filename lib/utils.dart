@@ -81,8 +81,8 @@ class Utils {
     return position;
   }
 
-  static void showMyFlushbar(
-      BuildContext context, IconData icon, String title, String msg) {
+  static void showMyFlushbar(BuildContext context, IconData icon,
+      Duration duration, String title, String msg) {
     Flushbar(
       padding: EdgeInsets.fromLTRB(4, 4, 4, 4),
       margin: EdgeInsets.zero,
@@ -98,7 +98,7 @@ class Utils {
             blurRadius: 3.0)
       ],
       isDismissible: false,
-      duration: Duration(seconds: 6),
+      duration: duration,
       icon: Icon(
         icon,
         color: Colors.white,

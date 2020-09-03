@@ -314,12 +314,13 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
     setState(() {
       Employee contact = new Employee();
 
-      contactRowWidgets.insert(0, new ContactRow(contact: contact));
+      contactRowWidgets.add(new ContactRow(contact: contact));
 
       contactList.add(contact);
-      if (Utils.isNullOrEmpty(entity.managers)) {
-        entity.managers = new List<Employee>();
-      }
+      // if (Utils.isNullOrEmpty(entity.managers)) {
+      //   entity.managers = new List<Employee>();
+      // }
+
       entity.managers = contactList;
       // saveEntityDetails(en);
       //saveEntityDetails();
@@ -973,7 +974,13 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
             for (int i = 0; i < adminsList.length; i++) {
               if (adminsList[i] == (newAdminPh)) {
                 insert = false;
-                Utils.showMyFlushbar(context, Icons.info_outline, "Error",
+                Utils.showMyFlushbar(
+                    context,
+                    Icons.info_outline,
+                    Duration(
+                      seconds: 3,
+                    ),
+                    "Error",
                     "Phone number already exists !!");
                 break;
               }
@@ -1001,6 +1008,9 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
             Utils.showMyFlushbar(
                 context,
                 Icons.info_outline,
+                Duration(
+                  seconds: 3,
+                ),
                 'Oops!! There is some trouble deleting that admin.',
                 'Please check and try again..');
         });
@@ -1145,6 +1155,9 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
                   Utils.showMyFlushbar(
                       context,
                       Icons.info_outline,
+                      Duration(
+                        seconds: 3,
+                      ),
                       "Seems like you have entered some incorrect details!! ",
                       "Please verify the details and try again.");
                 }
@@ -1155,6 +1168,9 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
           Utils.showMyFlushbar(
               context,
               Icons.info_outline,
+              Duration(
+                seconds: 4,
+              ),
               "Seems like you have entered some incorrect details!! ",
               "Please verify the details and try again.");
           setState(() {
@@ -1468,6 +1484,9 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
                                           Utils.showMyFlushbar(
                                               context,
                                               Icons.info_outline,
+                                              Duration(
+                                                seconds: 4,
+                                              ),
                                               "Missing Information!! Making premises public require the basic details",
                                               "Please fill and try again !!");
                                         } else {
@@ -1532,6 +1551,9 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
                                           Utils.showMyFlushbar(
                                               context,
                                               Icons.info_outline,
+                                              Duration(
+                                                seconds: 4,
+                                              ),
                                               "Missing Information!! Making premises active require the basic details",
                                               "Please check and try again !!");
                                         } else {
@@ -1838,6 +1860,9 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
                                                   Utils.showMyFlushbar(
                                                       context,
                                                       Icons.info_outline,
+                                                      Duration(
+                                                        seconds: 4,
+                                                      ),
                                                       "Something Missing ..",
                                                       "Please enter Phone number !!");
                                                 } else {
@@ -1852,6 +1877,9 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
                                                     Utils.showMyFlushbar(
                                                         context,
                                                         Icons.info_outline,
+                                                        Duration(
+                                                          seconds: 5,
+                                                        ),
                                                         "Oops!! Seems like the phone number is not valid",
                                                         "Please check and try again !!");
                                                   }

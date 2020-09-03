@@ -75,6 +75,9 @@ class EntityRowState extends State<EntityRow> {
           Utils.showMyFlushbar(
               context,
               Icons.info_outline,
+              Duration(
+                seconds: 6,
+              ),
               "Important premises details are missing, Click on 'Add details' to add now!",
               "You need to add those before adding children.");
         }

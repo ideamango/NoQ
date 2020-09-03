@@ -274,7 +274,12 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
                                       : disabledColor,
                                   textColor: Colors.white,
                                   child: Text('Book Slot'),
-                                  onPressed: bookSlot,
+                                  onPressed: () {
+                                    if (selectedSlot != null)
+                                      bookSlot();
+                                    else
+                                      return null;
+                                  },
                                 ),
                               ),
                               (_errorMessage != null
@@ -459,6 +464,13 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
           onPressed: () {
             if (isBooked(sl.dateTime, entity.entityId)) {
               print("Slot already booked");
+              Utils.showMyFlushbar(
+                  context,
+                  Icons.info_outline,
+                  Duration(seconds: 6),
+                  "You already have an active booking for same time.",
+                  "If you wish to book for another time, cancel this one from your bookings in Home Page");
+              return null;
             }
             if (sl.isFull == false) {
               setState(() {
@@ -483,9 +495,14 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
   }
 
   void bookSlot() {
-    setState(() {
-      _showProgressInd = true;
-    });
+    Utils.showMyFlushbar(
+        context,
+        Icons.info_outline,
+        Duration(
+          seconds: 3,
+        ),
+        "Hold on..Booking slot for you!!",
+        "This would take a moment.");
 
     print(selectedSlot.dateTime);
     if (isBooked(selectedSlot.dateTime, entity.entityId)) {
@@ -518,6 +535,7 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
 
         setState(() {
           bookedSlot = selectedSlot;
+          selectedSlot = null;
         });
 
 //Update local file with new booking.
