@@ -239,6 +239,11 @@ class TokenService {
                 "Token does not belong to the requested user");
           }
 
+          int currentNum = tokenSnapshot.data['number'];
+          if (currentNum == -1) {
+            throw new Exception("Token is already cancelled");
+          }
+
           String slotId = tokenSnapshot.data['slotId'];
           List<String> parts = slotId.split("#");
 
@@ -383,8 +388,7 @@ class TokenService {
     final FirebaseUser user = await FirebaseAuth.instance.currentUser();
     Firestore fStore = Firestore.instance;
 
-    DocumentReference tokRef =
-        fStore.document('tokens/' + token.slotId + '#' + user.phoneNumber);
+    DocumentReference tokRef = fStore.document('tokens/' + token.getTokenId());
 
     try {
       DocumentSnapshot doc = await tokRef.get();
