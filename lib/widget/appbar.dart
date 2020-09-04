@@ -63,8 +63,14 @@ class _CustomAppBarState extends State<CustomAppBar> {
                         side: BorderSide(color: Colors.orange)),
                     child: Text('Yes'),
                     onPressed: () {
-                      Utils.showMyFlushbar(context, Icons.info_outline,
-                          "Logging off.. ", "Hope to see you soon!!");
+                      Utils.showMyFlushbar(
+                          context,
+                          Icons.info_outline,
+                          Duration(
+                            seconds: 3,
+                          ),
+                          "Logging off.. ",
+                          "Hope to see you soon!!");
                       Navigator.of(context, rootNavigator: true).pop();
                       AuthService().signOut(context);
                     },
@@ -210,8 +216,8 @@ class _CustomAppBarWithBackButtonState
       key: _appBarKey,
       title: Text(
         widget.titleTxt,
-        style: drawerdefaultTextStyle,
-        overflow: TextOverflow.ellipsis,
+         style: TextStyle(color: Colors.white, fontSize: 16),
+                    overflow: TextOverflow.ellipsis,
       ),
       flexibleSpace: Container(
         decoration: gradientBackground,

@@ -4,11 +4,16 @@ import 'package:noq/constants.dart';
 import 'package:noq/db/db_model/entity.dart';
 import 'package:noq/db/db_model/meta_entity.dart';
 import 'package:noq/db/db_service/entity_service.dart';
+import 'package:noq/global_state.dart';
 import 'package:noq/pages/service_entity.dart';
 import 'package:noq/repository/local_db_repository.dart';
+import 'package:noq/services/circular_progress.dart';
 import 'package:noq/style.dart';
 import 'package:flutter/foundation.dart';
+import 'package:noq/userHomePage.dart';
 import 'package:noq/utils.dart';
+import 'package:noq/widget/appbar.dart';
+import 'package:noq/widget/bottom_nav_bar.dart';
 import 'package:uuid/uuid.dart';
 
 class ChildEntitiesListPage extends StatefulWidget {
@@ -30,6 +35,8 @@ class _ChildEntitiesListPageState extends State<ChildEntitiesListPage> {
   Entity parentEntity;
   String _subEntityType;
   bool _initCompleted = false;
+  List<String> subEntityTypes;
+  GlobalState _state;
 
 //Add service Row
 
@@ -60,19 +67,33 @@ class _ChildEntitiesListPageState extends State<ChildEntitiesListPage> {
           // }
         });
     }
+    initialize().whenComplete(() {
+      setState(() {
+        _initCompleted = true;
+      });
+    });
+
+    // subEntityTypes = new List<String>();
+  }
+
+  Future<void> getGlobalState() async {
+    _state = await GlobalState.getGlobalState();
+  }
+
+  initialize() async {
+    await getGlobalState();
+    subEntityTypes = _state.conf.entityTypes;
   }
 
   void _addNewServiceRow() {
+    var uuid = new Uuid();
+    String serviceId = uuid.v1();
+    Entity en = new Entity();
+    en.type = _subEntityType;
+    en.entityId = serviceId;
+    en.parentId = parentEntity.entityId;
     setState(() {
-      var uuid = new Uuid();
-      String serviceId = uuid.v1();
-      Entity en = new Entity();
-      en.type = _subEntityType;
-      en.entityId = serviceId;
-      en.parentId = parentEntity.entityId;
-
       _entityMap[en.entityId] = en;
-
       MetaEntity meta = en.getMetaEntity();
       servicesList.add(meta);
       _count = _count + 1;
@@ -83,9 +104,9 @@ class _ChildEntitiesListPageState extends State<ChildEntitiesListPage> {
           curve: Curves.easeInToLinear, duration: Duration(milliseconds: 200));
   }
 
-  Widget _buildServiceItem(MetaEntity childEntity) {
-    return new ChildEntityRow(childEntity: childEntity, entityMap: _entityMap);
-  }
+  // Widget _buildServiceItem(MetaEntity childEntity) {
+  //   return new ChildEntityRow(childEntity: childEntity, entityMap: _entityMap);
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -96,11 +117,11 @@ class _ChildEntitiesListPageState extends State<ChildEntitiesListPage> {
             enabledBorder: InputBorder.none,
             focusedBorder: InputBorder.none,
             //  icon: const Icon(Icons.person),
-            labelText: 'Type of Amenity',
+            labelText: 'Type of Premise/Amenity',
           ),
           child: new DropdownButtonHideUnderline(
             child: new DropdownButton(
-              hint: new Text("Select type of amenity"),
+              hint: new Text("Select type of premise/amenity"),
               value: _subEntityType,
               isDense: true,
               onChanged: (newValue) {
@@ -132,203 +153,222 @@ class _ChildEntitiesListPageState extends State<ChildEntitiesListPage> {
         //   saveEntityDetails(entity);
       },
     );
-    String title = "Manage child amenities in " +
-        ((parentEntity != null)
-            ? ((parentEntity.name == null)
-                ? parentEntity.type
-                : parentEntity.name)
-            : 'XXX');
-    return MaterialApp(
-      title: 'Add child amenities',
-      //theme: ThemeData.light().copyWith(),
-      home: Scaffold(
-        appBar: AppBar(
-            actions: <Widget>[],
-            flexibleSpace: Container(
-              decoration: gradientBackground,
-            ),
-            leading: IconButton(
-                padding: EdgeInsets.all(0),
-                alignment: Alignment.center,
-                highlightColor: highlightColor,
-                icon: Icon(Icons.arrow_back),
-                color: Colors.white,
-                onPressed: () {
-                  // saveEntityDetails(parentEntity);
-                  print("going back");
-                  //Show flush bar to notify user
-                  // Flushbar(
-                  //   //padding: EdgeInsets.zero,
-                  //   margin: EdgeInsets.zero,
-                  //   flushbarPosition: FlushbarPosition.BOTTOM,
-                  //   flushbarStyle: FlushbarStyle.FLOATING,
-                  //   reverseAnimationCurve: Curves.decelerate,
-                  //   forwardAnimationCurve: Curves.easeInToLinear,
-                  //   backgroundColor: headerBarColor,
-                  //   boxShadows: [
-                  //     BoxShadow(
-                  //         color: primaryAccentColor,
-                  //         offset: Offset(0.0, 2.0),
-                  //         blurRadius: 3.0)
-                  //   ],
-                  //   isDismissible: false,
-                  //   duration: Duration(seconds: 4),
-                  //   icon: Icon(
-                  //     Icons.save,
-                  //     color: Colors.blueGrey[50],
-                  //   ),
-                  //   showProgressIndicator: true,
-                  //   progressIndicatorBackgroundColor: Colors.blueGrey[800],
-                  //   routeBlur: 10.0,
-                  //   titleText: Text(
-                  //     "Go Back to Home",
-                  //     style: TextStyle(
-                  //         fontWeight: FontWeight.bold,
-                  //         fontSize: 16.0,
-                  //         color: primaryAccentColor,
-                  //         fontFamily: "ShadowsIntoLightTwo"),
-                  //   ),
-                  //   messageText: Text(
-                  //     "The changes you made will not be saved. To Save now, click Cancel.",
-                  //     style: TextStyle(
-                  //         fontSize: 12.0,
-                  //         color: Colors.blueGrey[50],
-                  //         fontFamily: "ShadowsIntoLightTwo"),
-                  //   ),
-                  // )..show(context);
-
-                  Navigator.of(context).pop();
-                }),
-            title: Text(
-              title,
-              style: drawerdefaultTextStyle,
-              overflow: TextOverflow.ellipsis,
-            )),
-        body: Center(
-          child: new Form(
-            key: _servicesListFormKey,
-            autovalidate: true,
-            child: Padding(
-              padding: const EdgeInsets.all(5.0),
-              child: Column(
-                children: <Widget>[
-                  Card(
-                    elevation: 20,
-                    child: Container(
-                      decoration: BoxDecoration(
-                          border: Border.all(color: borderColor),
-                          color: Colors.white,
-                          shape: BoxShape.rectangle,
-                          borderRadius: BorderRadius.all(Radius.circular(5.0))),
-                      child: Column(
-                        children: <Widget>[
-                          Container(
-                            height: MediaQuery.of(context).size.width * .1,
-                            padding: EdgeInsets.fromLTRB(6, 0, 0, 0),
-                            decoration: darkContainer,
-                            child: Row(
-                              children: <Widget>[
-                                Icon(
-                                  Icons.business,
-                                  size: 35,
-                                  color: Colors.white,
-                                ),
-                                SizedBox(width: 12),
-                                Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: <Widget>[
-                                    Text(
-                                      "Add Child Premises/ Amenities to manage",
-                                      style: TextStyle(
-                                          color: Colors.white, fontSize: 15),
-                                    ),
-                                    //TODO: Smita- uncomment after adding null check
-                                    // Text(
-
-                                    //   (parentEntity.address.locality +
-                                    //           ", " +
-                                    //           parentEntity.address.city +
-                                    //           ".") ??
-                                    //       "",
-                                    //   style: buttonXSmlTextStyle,
-                                    // ),
-                                  ],
-                                ),
-                              ],
-                            ),
-                          ),
-                          //subEntityType,
-                          (_msg != null)
-                              ? Text(
-                                  _msg,
-                                  style: errorTextStyle,
-                                )
-                              : Container(),
-                          Padding(
-                            padding: const EdgeInsets.fromLTRB(8.0, 0, 8, 0),
-                            child: Row(
-                              // mainAxisAlignment: MainAxisAlignment.end,
-                              children: <Widget>[
-                                Expanded(
-                                  child: subEntityType,
-                                ),
-                                Container(
-                                  child: IconButton(
-                                    icon: Icon(Icons.add_circle,
-                                        color: highlightColor, size: 40),
-                                    onPressed: () {
-                                      if (_subEntityType != null) {
-                                        setState(() {
-                                          _msg = null;
-                                        });
-                                        if (_servicesListFormKey.currentState
-                                            .validate()) {
-                                          _servicesListFormKey.currentState
-                                              .save();
-                                          _addNewServiceRow();
-                                        }
-                                      } else {
-                                        setState(() {
-                                          _msg = "Select Entity type";
-                                        });
-                                      }
-                                    },
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  new Expanded(
-                    child: Align(
-                      alignment: Alignment.topCenter,
-                      child: ListView.builder(
-                        controller: _childScrollController,
-                        reverse: true,
-                        shrinkWrap: true,
-                        itemExtent: itemSize,
-                        //scrollDirection: Axis.vertical,
-                        itemBuilder: (BuildContext context, int index) {
-                          return Container(
-                            child: ChildEntityRow(
-                                childEntity: servicesList[index],
-                                entityMap: _entityMap),
-                          );
-                        },
-                        itemCount: servicesList.length,
-                      ),
-                    ),
-                  ),
-                ],
+    String title = "Manage child premises/amenities";
+    if (_initCompleted) {
+      return MaterialApp(
+        title: 'Add child premises/amenities',
+        //theme: ThemeData.light().copyWith(),
+        home: Scaffold(
+          appBar: AppBar(
+              actions: <Widget>[],
+              flexibleSpace: Container(
+                decoration: gradientBackground,
               ),
+              leading: IconButton(
+                  padding: EdgeInsets.all(0),
+                  alignment: Alignment.center,
+                  highlightColor: highlightColor,
+                  icon: Icon(Icons.arrow_back),
+                  color: Colors.white,
+                  onPressed: () {
+                    // saveEntityDetails(parentEntity);
+                    print("going back");
+                    //Show flush bar to notify user
+                    // Flushbar(
+                    //   //padding: EdgeInsets.zero,
+                    //   margin: EdgeInsets.zero,
+                    //   flushbarPosition: FlushbarPosition.BOTTOM,
+                    //   flushbarStyle: FlushbarStyle.FLOATING,
+                    //   reverseAnimationCurve: Curves.decelerate,
+                    //   forwardAnimationCurve: Curves.easeInToLinear,
+                    //   backgroundColor: headerBarColor,
+                    //   boxShadows: [
+                    //     BoxShadow(
+                    //         color: primaryAccentColor,
+                    //         offset: Offset(0.0, 2.0),
+                    //         blurRadius: 3.0)
+                    //   ],
+                    //   isDismissible: false,
+                    //   duration: Duration(seconds: 4),
+                    //   icon: Icon(
+                    //     Icons.save,
+                    //     color: Colors.blueGrey[50],
+                    //   ),
+                    //   showProgressIndicator: true,
+                    //   progressIndicatorBackgroundColor: Colors.blueGrey[800],
+                    //   routeBlur: 10.0,
+                    //   titleText: Text(
+                    //     "Go Back to Home",
+                    //     style: TextStyle(
+                    //         fontWeight: FontWeight.bold,
+                    //         fontSize: 16.0,
+                    //         color: primaryAccentColor,
+                    //         fontFamily: "ShadowsIntoLightTwo"),
+                    //   ),
+                    //   messageText: Text(
+                    //     "The changes you made will not be saved. To Save now, click Cancel.",
+                    //     style: TextStyle(
+                    //         fontSize: 12.0,
+                    //         color: Colors.blueGrey[50],
+                    //         fontFamily: "ShadowsIntoLightTwo"),
+                    //   ),
+                    // )..show(context);
+
+                    Navigator.of(context).pop();
+                  }),
+              title: Text(
+                title,
+                style: TextStyle(color: Colors.white, fontSize: 16),
+                overflow: TextOverflow.ellipsis,
+              )),
+          body: Center(
+            child: new Form(
+              key: _servicesListFormKey,
+              autovalidate: true,
+              child: Padding(
+                padding: const EdgeInsets.all(5.0),
+                child: Column(
+                  children: <Widget>[
+                    Card(
+                      elevation: 20,
+                      child: Container(
+                        decoration: BoxDecoration(
+                            border: Border.all(color: borderColor),
+                            color: Colors.white,
+                            shape: BoxShape.rectangle,
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(5.0))),
+                        child: Column(
+                          children: <Widget>[
+                            Container(
+                              height: MediaQuery.of(context).size.width * .1,
+                              padding: EdgeInsets.fromLTRB(6, 0, 0, 0),
+                              decoration: darkContainer,
+                              child: Row(
+                                children: <Widget>[
+                                  Icon(
+                                    Icons.business,
+                                    size: 35,
+                                    color: Colors.white,
+                                  ),
+                                  SizedBox(width: 12),
+                                  Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: <Widget>[
+                                      Text(
+                                        "Add child premises/amenities",
+                                        style: TextStyle(
+                                            color: Colors.white, fontSize: 15),
+                                      ),
+                                      //TODO: Smita- uncomment after adding null check
+                                      // Text(
+
+                                      //   (parentEntity.address.locality +
+                                      //           ", " +
+                                      //           parentEntity.address.city +
+                                      //           ".") ??
+                                      //       "",
+                                      //   style: buttonXSmlTextStyle,
+                                      // ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ),
+                            //subEntityType,
+                            (_msg != null)
+                                ? Text(
+                                    _msg,
+                                    style: errorTextStyle,
+                                  )
+                                : Container(),
+                            Padding(
+                              padding: const EdgeInsets.fromLTRB(8.0, 0, 8, 0),
+                              child: Row(
+                                // mainAxisAlignment: MainAxisAlignment.end,
+                                children: <Widget>[
+                                  Expanded(
+                                    child: subEntityType,
+                                  ),
+                                  Container(
+                                    child: IconButton(
+                                      icon: Icon(Icons.add_circle,
+                                          color: highlightColor, size: 40),
+                                      onPressed: () {
+                                        if (_subEntityType != null) {
+                                          setState(() {
+                                            _msg = null;
+                                          });
+                                          if (_servicesListFormKey.currentState
+                                              .validate()) {
+                                            _servicesListFormKey.currentState
+                                                .save();
+                                            _addNewServiceRow();
+                                          }
+                                        } else {
+                                          setState(() {
+                                            _msg = "Select Entity type";
+                                          });
+                                        }
+                                      },
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    new Expanded(
+                      child: Align(
+                        alignment: Alignment.topCenter,
+                        child: ListView.builder(
+                          controller: _childScrollController,
+                          reverse: true,
+                          shrinkWrap: true,
+                          itemExtent: itemSize,
+                          //scrollDirection: Axis.vertical,
+                          itemBuilder: (BuildContext context, int index) {
+                            return Container(
+                              child: ChildEntityRow(
+                                  childEntity: servicesList[index],
+                                  entityMap: _entityMap),
+                            );
+                          },
+                          itemCount: servicesList.length,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              // bottomNavigationBar: buildBottomItems()
             ),
-            // bottomNavigationBar: buildBottomItems()
           ),
         ),
-      ),
-    );
+      );
+    } else {
+      return MaterialApp(
+        theme: ThemeData.light().copyWith(),
+        home: Scaffold(
+          appBar: CustomAppBarWithBackButton(
+            backRoute: UserHomePage(),
+            titleTxt: title,
+          ),
+
+          body: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                showCircularProgress(),
+              ],
+            ),
+          ),
+          //drawer: CustomDrawer(),
+          bottomNavigationBar: CustomBottomBar(barIndex: 0),
+        ),
+      );
+    }
   }
 }

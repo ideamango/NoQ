@@ -75,6 +75,9 @@ class EntityRowState extends State<EntityRow> {
           Utils.showMyFlushbar(
               context,
               Icons.info_outline,
+              Duration(
+                seconds: 6,
+              ),
               "Important premises details are missing, Click on 'Add details' to add now!",
               "You need to add those before adding children.");
         }
@@ -103,16 +106,18 @@ class EntityRowState extends State<EntityRow> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               Text(
-                _metaEntity.type,
-                //  "Swimming Pool",
+                (_metaEntity.name != null) ? _metaEntity.name : "Untitled",
                 style: TextStyle(color: Colors.blueGrey[700], fontSize: 17),
               ),
-              if (_metaEntity.name != null)
-                Text(
-                  _metaEntity.name,
-                  style: labelTextStyle,
-                ),
+              Text(
+                _metaEntity.type,
+                style: labelTextStyle,
+              ),
             ],
+          ),
+          horizontalSpacer,
+          Container(
+            child: IconButton(icon: Icon(Icons.code), onPressed: null),
           ),
           horizontalSpacer,
           Column(
@@ -129,16 +134,9 @@ class EntityRowState extends State<EntityRow> {
                       borderRadius: BorderRadius.all(Radius.circular(5.0))),
                   splashColor: highlightColor,
                   child: Text(
-                    'Manage Child Places',
+                    'Manage child amenities',
                     style: TextStyle(color: Colors.white, fontSize: 13),
                   ),
-                  // Text(
-                  //   (_metaEntity.name != null)
-                  //       ? (_metaEntity.name)
-                  //       : (_metaEntity.type),
-                  //   style: buttonSmlTextStyle,
-                  // ),
-
                   onPressed: () {
                     print("To child list page");
                     showChildListPage();

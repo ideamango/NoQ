@@ -38,6 +38,11 @@ class ContactRowState extends State<ContactRow> {
     initializeContactDetails();
   }
 
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
   void initializeContactDetails() {
     if (contact != null) {
       _ctNameController.text = contact.name;
