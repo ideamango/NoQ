@@ -62,8 +62,7 @@ class _ManageApartmentsListPageState extends State<ManageApartmentsListPage> {
 // Show only first level entities to user.
       for (int i = 0; i < _state.currentUser.entities.length; i++) {
         MetaEntity m = _state.currentUser.entities[i];
-        String parentName = (m.parentId) ?? "null";
-        print(m.name + '::' + parentName);
+        // print(m.name + '::' + parentName);
         if (m.parentId != null) {
           if (_state.currentUser.entities.contains(m.parentId)) continue;
           continue;

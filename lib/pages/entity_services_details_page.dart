@@ -116,6 +116,7 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
   Flushbar flush;
   bool _wasButtonClicked;
   String flushStatus = "Empty";
+  bool isAnythingChanged = false;
 
   @override
   void initState() {
@@ -522,6 +523,7 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
       validator: validateText,
       onChanged: (String value) {
         serviceEntity.name = value;
+        isAnythingChanged = true;
       },
       onSaved: (String value) {
         serviceEntity.name = value;
@@ -540,6 +542,7 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
       maxLines: 3,
       onChanged: (String value) {
         serviceEntity.description = value;
+        isAnythingChanged = true;
       },
       onSaved: (String value) {
         serviceEntity.description = value;
@@ -556,6 +559,7 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
           labelTextStr: "Registration Number", hintTextStr: ""),
       validator: validateText,
       onChanged: (String value) {
+        isAnythingChanged = true;
         //serviceEntity.regNum = value;
       },
       onSaved: (String value) {
@@ -601,6 +605,7 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
               borderSide: BorderSide(color: Colors.orange))),
       validator: validateTime,
       onChanged: (String value) {
+        isAnythingChanged = true;
         //TODO: test the values
         List<String> time = value.split(':');
         serviceEntity.startTimeHour = int.parse(time[0]);
@@ -648,6 +653,7 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
               borderSide: BorderSide(color: Colors.orange))),
       validator: validateTime,
       onChanged: (String value) {
+        isAnythingChanged = true;
         //TODO: test the values
         List<String> time = value.split(':');
         serviceEntity.endTimeHour = int.parse(time[0]);
@@ -693,6 +699,7 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
               borderSide: BorderSide(color: Colors.orange))),
       validator: validateTime,
       onChanged: (String value) {
+        isAnythingChanged = true;
         //TODO: test the values
         List<String> time = value.split(':');
         serviceEntity.breakStartHour = int.parse(time[0]);
@@ -738,6 +745,7 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
               borderSide: BorderSide(color: Colors.orange))),
       validator: validateTime,
       onChanged: (String value) {
+        isAnythingChanged = true;
         //TODO: test the values
         List<String> time = value.split(':');
         serviceEntity.breakEndHour = int.parse(time[0]);
@@ -784,6 +792,7 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
             borderSide: BorderSide(color: Colors.white, width: 0),
             language: lang.en,
             onChange: (days) {
+              isAnythingChanged = true;
               print("Selected Days: " + days.toString());
               _closedOnDays.clear();
               days.forEach((element) {
@@ -814,6 +823,7 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
       ),
       validator: validateText,
       onChanged: (value) {
+        isAnythingChanged = true;
         if (value != "") serviceEntity.slotDuration = int.parse(value);
         print("slot duration saved");
       },
@@ -838,6 +848,7 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
       ),
       validator: validateText,
       onChanged: (value) {
+        isAnythingChanged = true;
         if (value != "") serviceEntity.advanceDays = int.parse(value);
         print("Advance Booking Allowed saved");
       },
@@ -862,6 +873,7 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
       ),
       validator: validateText,
       onChanged: (String value) {
+        isAnythingChanged = true;
         serviceEntity.maxAllowed = int.tryParse(value);
       },
       onSaved: (String value) {
@@ -888,6 +900,7 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
       ),
       validator: Utils.validateMobileField,
       onChanged: (value) {
+        isAnythingChanged = true;
         whatsappPhnKey.currentState.validate();
         if (value != "") serviceEntity.whatsapp = "+91" + (value);
         print("Whatsapp Number");
@@ -931,6 +944,7 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
           labelTextStr: "Apartment/ House No./ Lane", hintTextStr: ""),
       validator: validateText,
       onChanged: (String value) {
+        isAnythingChanged = true;
         serviceEntity.address.address = value;
         print("saved address");
       },
@@ -955,6 +969,7 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
       ),
       validator: validateText,
       onChanged: (String value) {
+        isAnythingChanged = true;
         serviceEntity.address.landmark = value;
       },
       onSaved: (String value) {
@@ -975,6 +990,10 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
         focusedBorder:
             UnderlineInputBorder(borderSide: BorderSide(color: Colors.orange)),
       ),
+      onChanged: (String value) {
+        isAnythingChanged = true;
+        serviceEntity.address.locality = value;
+      },
       validator: validateText,
       onSaved: (String value) {
         serviceEntity.address.locality = value;
@@ -995,6 +1014,9 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
             UnderlineInputBorder(borderSide: BorderSide(color: Colors.orange)),
       ),
       validator: validateText,
+      onChanged: (String value) {
+        serviceEntity.address.city = value;
+      },
       onSaved: (String value) {
         serviceEntity.address.city = value;
       },
@@ -1014,6 +1036,10 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
             UnderlineInputBorder(borderSide: BorderSide(color: Colors.orange)),
       ),
       validator: validateText,
+      onChanged: (String value) {
+        isAnythingChanged = true;
+        serviceEntity.address.state = value;
+      },
       onSaved: (String value) {
         serviceEntity.address.state = value;
       },
@@ -1374,7 +1400,7 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
                           fontFamily: "ShadowsIntoLightTwo"),
                     ),
                     messageText: Text(
-                      "The changes you made might be lost.",
+                      "Make sure you SAVE the changes else they might be lost.",
                       style: TextStyle(
                           fontSize: 10.0,
                           color: Colors.blueGrey[50],

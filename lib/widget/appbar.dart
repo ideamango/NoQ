@@ -216,8 +216,8 @@ class _CustomAppBarWithBackButtonState
       key: _appBarKey,
       title: Text(
         widget.titleTxt,
-        style: drawerdefaultTextStyle,
-        overflow: TextOverflow.ellipsis,
+         style: TextStyle(color: Colors.white, fontSize: 16),
+                    overflow: TextOverflow.ellipsis,
       ),
       flexibleSpace: Container(
         decoration: gradientBackground,
