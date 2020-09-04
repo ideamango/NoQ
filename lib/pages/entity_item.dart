@@ -94,7 +94,7 @@ class EntityRowState extends State<EntityRow> {
           borderRadius: BorderRadius.all(Radius.circular(5.0))),
       // padding: EdgeInsets.all(5.0),
 
-      child: Column(
+      child: Row(
         //  mainAxisSize: MainAxisSize.max,
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: <Widget>[
@@ -116,12 +116,16 @@ class EntityRowState extends State<EntityRow> {
             ],
           ),
           horizontalSpacer,
-          Row(
+          Container(
+            child: IconButton(icon: Icon(Icons.code), onPressed: null),
+          ),
+          horizontalSpacer,
+          Column(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: <Widget>[
               Container(
                 width: MediaQuery.of(context).size.width * .45,
-                height: 34,
+                height: 30,
                 child: RaisedButton(
                   elevation: 20,
                   color: btnColor,
@@ -130,7 +134,7 @@ class EntityRowState extends State<EntityRow> {
                       borderRadius: BorderRadius.all(Radius.circular(5.0))),
                   splashColor: highlightColor,
                   child: Text(
-                    'Manage child premises/amenities',
+                    'Manage child amenities',
                     style: TextStyle(color: Colors.white, fontSize: 13),
                   ),
                   onPressed: () {
