@@ -74,10 +74,15 @@ class Utils {
   }
 
   Future<Position> getCurrLocation() async {
-    final Geolocator geolocator = Geolocator()..forceAndroidLocationManager;
-
-    Position position = await geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.best);
+    final Geolocator geolocator = await Geolocator();
+    GeolocationStatus geolocationStatus =
+        await Geolocator().checkGeolocationPermissionStatus();
+    print(geolocationStatus);
+    Position position = await geolocator
+        .getCurrentPosition(desiredAccuracy: LocationAccuracy.best)
+        .catchError((e) {
+      print(e);
+    });
     return position;
   }
 

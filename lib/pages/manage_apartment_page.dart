@@ -126,7 +126,12 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
   @override
   void initState() {
     super.initState();
-    _getCurrLocation();
+    Position pos;
+    Utils().getCurrLocation().then((value) {
+      pos = value;
+      _getAddressFromLatLng(pos);
+    });
+
     entity = this.widget.entity;
     initializeEntity().whenComplete(() {
       setState(() {
@@ -237,20 +242,6 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
         return null;
     } else
       return null;
-  }
-
-  void _getCurrLocation() async {
-    //final Geolocator geolocator = Geolocator()..forceAndroidLocationManager;
-    final Geolocator geolocator = await Geolocator();
-    GeolocationStatus geolocationStatus =
-        await Geolocator().checkGeolocationPermissionStatus();
-    print(geolocationStatus);
-    Position position = await geolocator
-        .getCurrentPosition(desiredAccuracy: LocationAccuracy.best)
-        .catchError((e) {
-      print(e);
-    });
-    _getAddressFromLatLng(position);
   }
 
   _getAddressFromLatLng(Position position) async {
