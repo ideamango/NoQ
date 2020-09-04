@@ -122,11 +122,12 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
   bool isPublic = false;
   bool isActive = false;
   bool isBookable = false;
+  Position pos;
 
   @override
   void initState() {
     super.initState();
-    Position pos;
+
     Utils().getCurrLocation().then((value) {
       pos = value;
       _getAddressFromLatLng(pos);
@@ -1191,6 +1192,13 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
         return new Timer(duration, backRoute);
       }
 
+      void useCurrLocation() {
+        Utils().getCurrLocation().then((value) {
+          pos = value;
+          _getAddressFromLatLng(pos);
+        });
+      }
+
       Future<void> showConfirmationDialog() async {
         bool returnVal = await showDialog(
             barrierDismissible: false,
@@ -1728,7 +1736,7 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
                                   shape: RoundedRectangleBorder(
                                       side: BorderSide(color: btnColor)),
                                   child: Text('Use current location'),
-                                  onPressed: _getCurrLocation,
+                                  onPressed: useCurrLocation,
                                 ),
                                 adrsField1,
                                 landmarkField2,

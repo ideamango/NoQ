@@ -117,12 +117,16 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
   bool _wasButtonClicked;
   String flushStatus = "Empty";
   bool isAnythingChanged = false;
+  Position pos;
 
   @override
   void initState() {
     super.initState();
     serviceEntity = widget.childEntity;
-    _getCurrLocation();
+    Utils().getCurrLocation().then((value) {
+      pos = value;
+      _getAddressFromLatLng(pos);
+    });
     initializeEntity();
   }
 
@@ -243,15 +247,10 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
       return null;
   }
 
-  void _getCurrLocation() async {
-    final Geolocator geolocator = Geolocator()..forceAndroidLocationManager;
-
-    geolocator
-        .getCurrentPosition(desiredAccuracy: LocationAccuracy.best)
-        .then((Position position) {
-      _getAddressFromLatLng(position);
-    }).catchError((e) {
-      print(e);
+  void useCurrLocation() {
+    Utils().getCurrLocation().then((value) {
+      pos = value;
+      _getAddressFromLatLng(pos);
     });
   }
 
@@ -1733,7 +1732,7 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
                                 // shape: RoundedRectangleBorder(
                                 //     side: BorderSide(color: btnColor)),
                                 child: Text('Use current location'),
-                                onPressed: _getCurrLocation,
+                                onPressed: useCurrLocation,
                               ),
                               adrsField1,
                               landmarkField2,
