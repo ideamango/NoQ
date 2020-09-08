@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:noq/dashboard.dart';
 import 'package:noq/login_page.dart';
+import 'package:noq/userHomePage.dart';
 
 class AuthService {
   handleAuth() {
@@ -11,7 +12,7 @@ class AuthService {
         stream: FirebaseAuth.instance.onAuthStateChanged,
         builder: (BuildContext context, snapshot) {
           if (snapshot.hasData) {
-            return LandingPage();
+            return UserHomePage();
           } else {
             return LoginPage();
           }

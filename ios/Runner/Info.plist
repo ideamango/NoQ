@@ -58,6 +58,11 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
+	<key>FirebaseDynamicLinksCustomDomains</key>
+	<array>
+  	<string>https://testphone.page.link</string>
+  	<string>https://testphone.page.promos</string>
+	</array>
 	<key>LSApplicationQueriesSchemes</key>
 	<array>
   		<string>whatsapp</string>

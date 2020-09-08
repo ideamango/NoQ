@@ -1,10 +1,12 @@
 import 'package:barcode_scan/barcode_scan.dart';
+import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:noq/constants.dart';
 import 'package:noq/db/db_model/user_token.dart';
 import 'package:noq/global_state.dart';
+import 'package:noq/pages/dynamic_links.dart';
 import 'package:noq/pages/notifications_page.dart';
 import 'package:noq/pages/shopping_list.dart';
 import 'package:noq/repository/slotRepository.dart';
@@ -516,6 +518,46 @@ class _UserAccountPageState extends State<UserAccountPage> {
     _pageController.jumpToPage(page);
   }
 
+  generateLinkAndShare() async {
+    var dynamicLink = await createDynamicLink(
+        entityId: _state.currentUser.entities[0].entityId);
+    print("Dynamic Link: $dynamicLink");
+    print(_state.currentUser.entities[0].entityId);
+    // dynamicLink has been generated. share it with others to use it accordingly.
+    Share.share(Uri.https(dynamicLink.authority, dynamicLink.path).toString());
+
+    // try {
+    //   Share.share(inviteText,
+    //       subject: inviteSubject,
+    //       sharePositionOrigin: box.localToGlobal(Offset.zero) & box.size);
+    // } on PlatformException catch (e) {
+    //   print('${e.message}');
+    // }
+  }
+
+  Future<Uri> createDynamicLink({@required String entityId}) async {
+    final DynamicLinkParameters parameters = DynamicLinkParameters(
+      // This should match firebase but without the username query param
+      uriPrefix: 'https://sukoonnoq.page.link/',
+      // This can be whatever you want for the uri, https://yourapp.com/groupinvite?username=$userName
+      link:
+          Uri.parse('https://watcharoundyou.wordpress.com/?entityId=$entityId'),
+      androidParameters: AndroidParameters(
+        packageName: 'com.example.noq',
+        minimumVersion: 1,
+      ),
+      iosParameters: IosParameters(
+        bundleId: 'com.example.noq',
+        minimumVersion: '1',
+        appStoreId: '',
+      ),
+    );
+    final link = await parameters.buildUrl();
+    final ShortDynamicLink shortenedLink = await parameters.buildShortLink();
+
+    return shortenedLink.shortUrl;
+  }
+
   @override
   void dispose() {
     super.dispose();
@@ -582,12 +624,12 @@ class _UserAccountPageState extends State<UserAccountPage> {
                                       textColor: Colors.white,
                                       splashColor: Colors.blueGrey,
                                       onPressed: () {
-                                        Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (context) =>
-                                                  GenerateScreen()),
-                                        );
+                                        // Navigator.push(
+                                        //     context,
+                                        //     MaterialPageRoute(
+                                        //         builder: (context) =>
+                                        //             DynamicLinksPage()));
+                                        generateLinkAndShare();
                                       },
                                       child: const Text('Generate QR code')),
                                 ),
@@ -610,16 +652,8 @@ class _UserAccountPageState extends State<UserAccountPage> {
                                               // has its position and size after it's built.
                                               final RenderBox box =
                                                   context.findRenderObject();
-                                              try {
-                                                Share.share(inviteText,
-                                                    subject: inviteSubject,
-                                                    sharePositionOrigin:
-                                                        box.localToGlobal(
-                                                                Offset.zero) &
-                                                            box.size);
-                                              } on PlatformException catch (e) {
-                                                print('${e.message}');
-                                              }
+
+                                              generateLinkAndShare();
                                             },
                                       child: const Text('Invite friends')),
                                 ),

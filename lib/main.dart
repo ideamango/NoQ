@@ -1,8 +1,10 @@
+import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:noq/dashboard.dart';
 import 'package:noq/login_page.dart';
 import 'package:noq/services/init_screen.dart';
+import 'package:noq/userHomePage.dart';
 
 //import 'services/authService.dart';
 
@@ -15,12 +17,37 @@ void main() {
   });
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
+  @override
+  _MyAppState createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
   // This widget is the root of your application.
 
   void initState() {
     //super.initState();
-    //  new FirebaseNotifications().setUpFirebase();
+    super.initState();
+    this.initDynamicLinks(context);
+  }
+
+  initDynamicLinks(BuildContext context) async {
+    await Future.delayed(Duration(seconds: 3));
+    var data = await FirebaseDynamicLinks.instance.getInitialLink();
+    var deepLink = data?.link;
+    final queryParams = deepLink.queryParameters;
+    if (queryParams.length > 0) {
+      var entityId = queryParams['entityId'];
+      print("entityId from dynamic link");
+      print(entityId);
+    }
+    FirebaseDynamicLinks.instance.onLink(onSuccess: (dynamicLink) async {
+      var deepLink = dynamicLink?.link;
+      debugPrint('DynamicLinks onLink $deepLink');
+      Navigator.pushNamed(context, deepLink.path);
+    }, onError: (e) async {
+      debugPrint('DynamicLinks onError $e');
+    });
   }
 
   @override
@@ -28,7 +55,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       routes: <String, WidgetBuilder>{
-        '/landingPage': (BuildContext context) => LandingPage(),
+        '/landingPage': (BuildContext context) => UserHomePage(),
         '/loginpage': (BuildContext context) => LoginPage(),
       },
       theme: ThemeData(
