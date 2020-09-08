@@ -1177,7 +1177,10 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
         // saveFormDetails();
         // upsertEntity(entity).then((value) {
         //   if (value) {
-        Navigator.pop(context);
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => ManageApartmentsListPage()));
         //                }
         // });
       }
