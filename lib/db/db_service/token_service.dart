@@ -42,6 +42,9 @@ class TokenService {
     final FirebaseUser user = await FirebaseAuth.instance.currentUser();
     Firestore fStore = Firestore.instance;
     String userPhone = user.phoneNumber;
+    Exception exception;
+    SlotFullException slotFullException;
+    TokenAlreadyExistsException tokenAlreadyExistsException;
     //TODO: To run the validation on DateTime for holidays, break, advnanceDays and during closing hours
 
     String entitySlotsDocId = metaEntity.entityId +
@@ -70,12 +73,14 @@ class TokenService {
       try {
         DocumentSnapshot entitySlotsSnapshot = await tx.get(entitySlotsRef);
         EntitySlots es;
+
         if (entitySlotsSnapshot.exists) {
           DocumentSnapshot tokenSnapshot = await tx.get(tokRef);
           if (tokenSnapshot.exists) {
             throw new TokenAlreadyExistsException(
                 "Token for this user is already booked");
           }
+
           //atleast one token is issued for the given entity for that day
           es = EntitySlots.fromJson(entitySlotsSnapshot.data);
           int maxAllowed = es.maxAllowed;
@@ -211,8 +216,27 @@ class TokenService {
       } catch (e) {
         print("Error while generting token -> Transaction Error: " +
             e.toString());
+        if (e is SlotFullException) {
+          slotFullException = e;
+        }
+        if (e is TokenAlreadyExistsException) {
+          tokenAlreadyExistsException = e;
+        }
+        exception = e;
       }
     });
+
+    if (slotFullException != null) {
+      throw slotFullException;
+    }
+
+    if (tokenAlreadyExistsException != null) {
+      throw tokenAlreadyExistsException;
+    }
+
+    if (exception != null) {
+      throw exception;
+    }
 
     return token;
   }
