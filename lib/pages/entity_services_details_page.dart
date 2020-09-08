@@ -44,6 +44,10 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
   bool _autoValidate = false;
   final GlobalKey<FormState> _serviceDetailsFormKey =
       new GlobalKey<FormState>();
+  final GlobalKey<FormFieldState> gpayPhoneKey =
+      new GlobalKey<FormFieldState>();
+  final GlobalKey<FormFieldState> paytmPhoneKey =
+      new GlobalKey<FormFieldState>();
   final String title = "Managers Form";
   final Geolocator geolocator = Geolocator()..forceAndroidLocationManager;
   bool validateField = false;
@@ -58,7 +62,8 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
   TextEditingController _maxPeopleController = TextEditingController();
   TextEditingController _slotDurationController = TextEditingController();
   TextEditingController _whatsappPhoneController = TextEditingController();
-
+  TextEditingController _gpayPhoneController = TextEditingController();
+  TextEditingController _paytmPhoneController = TextEditingController();
   final GlobalKey<FormFieldState> whatsappPhnKey =
       new GlobalKey<FormFieldState>();
   List<String> _closedOnDays = List<String>();
@@ -184,6 +189,12 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
             : "";
       _whatsappPhoneController.text = serviceEntity.whatsapp != null
           ? serviceEntity.whatsapp.toString().substring(3)
+          : "";
+      _gpayPhoneController.text = serviceEntity.gpay != null
+          ? serviceEntity.gpay.toString().substring(3)
+          : "";
+      _paytmPhoneController.text = serviceEntity.paytm != null
+          ? serviceEntity.paytm.toString().substring(3)
           : "";
       //address
       if (serviceEntity.address != null) {
@@ -907,6 +918,61 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
       onSaved: (String value) {
         if (value != "") serviceEntity.whatsapp = "+91" + (value);
         print("Whatsapp Number");
+      },
+    );
+    final paytmPhone = TextFormField(
+      obscureText: false,
+      maxLines: 1,
+      minLines: 1,
+      key: paytmPhoneKey,
+      style: textInputTextStyle,
+      keyboardType: TextInputType.phone,
+      controller: _paytmPhoneController,
+      decoration: InputDecoration(
+        prefixText: '+91',
+        labelText: 'PayTm Number',
+        enabledBorder:
+            UnderlineInputBorder(borderSide: BorderSide(color: Colors.grey)),
+        focusedBorder:
+            UnderlineInputBorder(borderSide: BorderSide(color: Colors.orange)),
+      ),
+      validator: Utils.validateMobileField,
+      onChanged: (value) {
+        //_autoValidateWhatsapp = true;
+        paytmPhoneKey.currentState.validate();
+        if (value != "") serviceEntity.paytm = "+91" + (value);
+      },
+      onSaved: (String value) {
+        if (value != "") serviceEntity.paytm = "+91" + (value);
+      },
+    );
+
+    final gPayPhone = TextFormField(
+      obscureText: false,
+      maxLines: 1,
+      minLines: 1,
+      key: gpayPhoneKey,
+      style: textInputTextStyle,
+      keyboardType: TextInputType.phone,
+      controller: _gpayPhoneController,
+      decoration: InputDecoration(
+        prefixText: '+91',
+        labelText: 'GPay Number',
+        enabledBorder:
+            UnderlineInputBorder(borderSide: BorderSide(color: Colors.grey)),
+        focusedBorder:
+            UnderlineInputBorder(borderSide: BorderSide(color: Colors.orange)),
+      ),
+      validator: Utils.validateMobileField,
+      onChanged: (value) {
+        //_autoValidateWhatsapp = true;
+        gpayPhoneKey.currentState.validate();
+        if (value != "") serviceEntity.gpay = "+91" + (value);
+        print("GPay Number");
+      },
+      onSaved: (String value) {
+        if (value != "") serviceEntity.gpay = "+91" + (value);
+        print("GPay Number");
       },
     );
 //Address fields
@@ -1665,6 +1731,78 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
                       ],
                     ),
                   ),
+                  SizedBox(
+                    height: 7,
+                  ),
+                  Container(
+                    decoration: BoxDecoration(
+                        border: Border.all(color: containerColor),
+                        color: Colors.grey[50],
+                        shape: BoxShape.rectangle,
+                        borderRadius: BorderRadius.all(Radius.circular(5.0))),
+                    //padding: EdgeInsets.all(5.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Column(
+                          children: <Widget>[
+                            Container(
+                              //padding: EdgeInsets.only(left: 5),
+                              decoration: darkContainer,
+                              child: Theme(
+                                data: ThemeData(
+                                  unselectedWidgetColor: Colors.white,
+                                  accentColor: Colors.grey[50],
+                                ),
+                                child: CustomExpansionTile(
+                                  //key: PageStorageKey(this.widget.headerTitle),
+                                  initiallyExpanded: false,
+                                  title: Row(
+                                    children: <Widget>[
+                                      Text(
+                                        "Payment Details",
+                                        style: TextStyle(
+                                            color: Colors.white, fontSize: 15),
+                                      ),
+                                      SizedBox(width: 5),
+                                    ],
+                                  ),
+                                  backgroundColor: Colors.blueGrey[500],
+
+                                  children: <Widget>[
+                                    new Container(
+                                      width: MediaQuery.of(context).size.width *
+                                          .94,
+                                      decoration: darkContainer,
+                                      padding: EdgeInsets.all(2.0),
+                                      child: Row(
+                                        children: <Widget>[
+                                          Expanded(
+                                            child: Text(addressInfoStr,
+                                                style: buttonXSmlTextStyle),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        Container(
+                          padding: EdgeInsets.only(left: 5.0, right: 5),
+                          child: Column(
+                            children: <Widget>[
+                              gPayPhone,
+                              paytmPhone,
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+
                   SizedBox(
                     height: 7,
                   ),

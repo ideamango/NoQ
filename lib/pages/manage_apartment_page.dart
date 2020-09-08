@@ -47,6 +47,10 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
       new GlobalKey<FormFieldState>();
   final GlobalKey<FormFieldState> whatsappPhoneKey =
       new GlobalKey<FormFieldState>();
+  final GlobalKey<FormFieldState> gpayPhoneKey =
+      new GlobalKey<FormFieldState>();
+  final GlobalKey<FormFieldState> paytmPhoneKey =
+      new GlobalKey<FormFieldState>();
   final GlobalKey<FormFieldState> newAdminRowItemKey =
       new GlobalKey<FormFieldState>();
   bool _autoValidateWhatsapp = false;
@@ -67,6 +71,8 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
 
   TextEditingController _maxPeopleController = TextEditingController();
   TextEditingController _whatsappPhoneController = TextEditingController();
+  TextEditingController _gpayPhoneController = TextEditingController();
+  TextEditingController _paytmPhoneController = TextEditingController();
 
   TextEditingController _slotDurationController = TextEditingController();
   TextEditingController _advBookingInDaysController = TextEditingController();
@@ -188,6 +194,10 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
       _whatsappPhoneController.text = entity.whatsapp != null
           ? entity.whatsapp.toString().substring(3)
           : "";
+      _gpayPhoneController.text =
+          entity.gpay != null ? entity.gpay.toString().substring(3) : "";
+      _paytmPhoneController.text =
+          entity.paytm != null ? entity.paytm.toString().substring(3) : "";
       //address
       if (entity.address != null) {
         _adrs1Controller.text = entity.address.address;
@@ -799,11 +809,64 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
           //_autoValidateWhatsapp = true;
           whatsappPhoneKey.currentState.validate();
           if (value != "") entity.whatsapp = "+91" + (value);
-          print("Whatsapp Number");
         },
         onSaved: (String value) {
           if (value != "") entity.whatsapp = "+91" + (value);
-          print("Whatsapp Number");
+        },
+      );
+      final paytmPhone = TextFormField(
+        obscureText: false,
+        maxLines: 1,
+        minLines: 1,
+        key: paytmPhoneKey,
+        style: textInputTextStyle,
+        keyboardType: TextInputType.phone,
+        controller: _paytmPhoneController,
+        decoration: InputDecoration(
+          prefixText: '+91',
+          labelText: 'PayTm Number',
+          enabledBorder:
+              UnderlineInputBorder(borderSide: BorderSide(color: Colors.grey)),
+          focusedBorder: UnderlineInputBorder(
+              borderSide: BorderSide(color: Colors.orange)),
+        ),
+        validator: Utils.validateMobileField,
+        onChanged: (value) {
+          //_autoValidateWhatsapp = true;
+          paytmPhoneKey.currentState.validate();
+          if (value != "") entity.paytm = "+91" + (value);
+        },
+        onSaved: (String value) {
+          if (value != "") entity.paytm = "+91" + (value);
+        },
+      );
+
+      final gPayPhone = TextFormField(
+        obscureText: false,
+        maxLines: 1,
+        minLines: 1,
+        key: gpayPhoneKey,
+        style: textInputTextStyle,
+        keyboardType: TextInputType.phone,
+        controller: _gpayPhoneController,
+        decoration: InputDecoration(
+          prefixText: '+91',
+          labelText: 'GPay Number',
+          enabledBorder:
+              UnderlineInputBorder(borderSide: BorderSide(color: Colors.grey)),
+          focusedBorder: UnderlineInputBorder(
+              borderSide: BorderSide(color: Colors.orange)),
+        ),
+        validator: Utils.validateMobileField,
+        onChanged: (value) {
+          //_autoValidateWhatsapp = true;
+          whatsappPhoneKey.currentState.validate();
+          if (value != "") entity.gpay = "+91" + (value);
+          print("GPay Number");
+        },
+        onSaved: (String value) {
+          if (value != "") entity.gpay = "+91" + (value);
+          print("GPay Number");
         },
       );
 
@@ -1662,6 +1725,79 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
                                 ),
                               ),
                             ],
+                          ),
+                        ],
+                      ),
+                    ),
+                    SizedBox(
+                      height: 7,
+                    ),
+                    Container(
+                      decoration: BoxDecoration(
+                          border: Border.all(color: containerColor),
+                          color: Colors.grey[50],
+                          shape: BoxShape.rectangle,
+                          borderRadius: BorderRadius.all(Radius.circular(5.0))),
+                      //padding: EdgeInsets.all(5.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Column(
+                            children: <Widget>[
+                              Container(
+                                //padding: EdgeInsets.only(left: 5),
+                                decoration: darkContainer,
+                                child: Theme(
+                                  data: ThemeData(
+                                    unselectedWidgetColor: Colors.white,
+                                    accentColor: Colors.grey[50],
+                                  ),
+                                  child: CustomExpansionTile(
+                                    //key: PageStorageKey(this.widget.headerTitle),
+                                    initiallyExpanded: false,
+                                    title: Row(
+                                      children: <Widget>[
+                                        Text(
+                                          "Payment Details",
+                                          style: TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 15),
+                                        ),
+                                        SizedBox(width: 5),
+                                      ],
+                                    ),
+                                    backgroundColor: Colors.blueGrey[500],
+
+                                    children: <Widget>[
+                                      new Container(
+                                        width:
+                                            MediaQuery.of(context).size.width *
+                                                .94,
+                                        decoration: darkContainer,
+                                        padding: EdgeInsets.all(2.0),
+                                        child: Row(
+                                          children: <Widget>[
+                                            Expanded(
+                                              child: Text(addressInfoStr,
+                                                  style: buttonXSmlTextStyle),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                          Container(
+                            padding: EdgeInsets.only(left: 5.0, right: 5),
+                            child: Column(
+                              children: <Widget>[
+                                gPayPhone,
+                                paytmPhone,
+                              ],
+                            ),
                           ),
                         ],
                       ),
