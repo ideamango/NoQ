@@ -204,7 +204,7 @@ class DBTest {
         advanceDays: 3,
         isPublic: true,
         //geo: geoPoint,
-        maxAllowed: 60,
+        maxAllowed: 3,
         slotDuration: 60,
         closedOn: ["Saturday", "Sunday"],
         breakStartHour: 13,
@@ -310,8 +310,12 @@ class DBTest {
 
     print("Token generation started..");
 
-    UserToken tok1 = await TokenService().generateToken(
-        child1.getMetaEntity(), new DateTime(2020, 7, 6, 10, 30, 0, 0));
+    try {
+      UserToken tok1 = await TokenService().generateToken(
+          child1.getMetaEntity(), new DateTime(2020, 7, 6, 10, 30, 0, 0));
+    } catch (e) {
+      print("generate token threw Slotful exception");
+    }
 
     print("Tok1 generated");
 
