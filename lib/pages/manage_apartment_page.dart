@@ -105,8 +105,11 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
   List<Employee> contactList = new List<Employee>();
   List<String> adminsList = new List<String>();
   List<Widget> contactRowWidgets = new List<Widget>();
+  List<Widget> contactRowWidgetsNew = new List<Widget>();
   List<Widget> adminRowWidgets = new List<Widget>();
-  int _contactCount = 0;
+
+  ScrollController _scrollController;
+  final itemSize = 80.0;
 
   //bool _autoPopulate = false;
 
@@ -135,6 +138,7 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
 
   @override
   void initState() {
+    _scrollController = ScrollController();
     super.initState();
 
     Utils().getCurrLocation().then((value) {
@@ -327,18 +331,15 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
   void _addNewContactRow() {
     setState(() {
       Employee contact = new Employee();
-
       contactRowWidgets.add(new ContactRow(contact: contact));
 
       contactList.add(contact);
-      // if (Utils.isNullOrEmpty(entity.managers)) {
-      //   entity.managers = new List<Employee>();
-      // }
-
       entity.managers = contactList;
-      // saveEntityDetails(en);
-      //saveEntityDetails();
-      _contactCount = _contactCount + 1;
+
+      // if (_scrollController.hasClients)
+      //   _scrollController.animateTo(_scrollController.offset + itemSize,
+      //       curve: Curves.easeInToLinear,
+      //       duration: Duration(milliseconds: 200));
     });
   }
 
@@ -2162,7 +2163,6 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
                         ],
                       ),
                     ),
-
                     Builder(
                       builder: (context) => RaisedButton(
                           color: btnColor,
