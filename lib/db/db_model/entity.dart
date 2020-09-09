@@ -152,8 +152,8 @@ class Entity {
   static Entity fromJson(Map<String, dynamic> json) {
     if (json == null) return null;
     return new Entity(
-        entityId: json['entityId'].toString(),
-        name: json['name'].toString(),
+        entityId: json['entityId'],
+        name: json['name'],
         description: json['description'],
         //regNum: json['regNum'],
         address: Address.fromJson(json['address']),

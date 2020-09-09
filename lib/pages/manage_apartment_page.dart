@@ -14,6 +14,7 @@ import 'package:noq/db/db_model/my_geo_fire_point.dart';
 import 'package:noq/db/db_model/user.dart';
 import 'package:noq/db/db_service/entity_service.dart';
 import 'package:noq/db/db_service/user_service.dart';
+import 'package:noq/global_state.dart';
 
 import 'package:noq/pages/contact_item.dart';
 import 'package:noq/pages/entity_services_list_page.dart';
@@ -129,6 +130,8 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
   bool isActive = false;
   bool isBookable = false;
   Position pos;
+  GlobalState _gState;
+  String _phCountryCode;
 
   @override
   void initState() {
@@ -140,11 +143,18 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
     });
 
     entity = this.widget.entity;
-    initializeEntity().whenComplete(() {
-      setState(() {
-        _initCompleted = true;
+    getGlobalState().whenComplete(() {
+      initializeEntity().whenComplete(() {
+        setState(() {
+          _initCompleted = true;
+        });
       });
     });
+  }
+
+  Future<void> getGlobalState() async {
+    _gState = await GlobalState.getGlobalState();
+    _phCountryCode = _gState.conf.phCountryCode;
   }
 
   initializeEntity() async {
@@ -152,8 +162,8 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
       isPublic = (entity.isPublic) ?? false;
       isBookable = (entity.isBookable) ?? false;
       isActive = (entity.isActive) ?? false;
-      _nameController.text = (entity.name) ?? "";
-      _descController.text = (entity.description) ?? "";
+      _nameController.text = entity.name;
+      _descController.text = (entity.description);
 
       if (entity.startTimeHour != null && entity.startTimeMinute != null)
         _openTimeController.text =
@@ -808,10 +818,10 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
         onChanged: (value) {
           //_autoValidateWhatsapp = true;
           whatsappPhoneKey.currentState.validate();
-          if (value != "") entity.whatsapp = "+91" + (value);
+          if (value != "") entity.whatsapp = _phCountryCode + (value);
         },
         onSaved: (String value) {
-          if (value != "") entity.whatsapp = "+91" + (value);
+          if (value != "") entity.whatsapp = _phCountryCode + (value);
         },
       );
       final paytmPhone = TextFormField(
@@ -834,10 +844,10 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
         onChanged: (value) {
           //_autoValidateWhatsapp = true;
           paytmPhoneKey.currentState.validate();
-          if (value != "") entity.paytm = "+91" + (value);
+          if (value != "") entity.paytm = _phCountryCode + (value);
         },
         onSaved: (String value) {
-          if (value != "") entity.paytm = "+91" + (value);
+          if (value != "") entity.paytm = _phCountryCode + (value);
         },
       );
 
@@ -861,11 +871,11 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
         onChanged: (value) {
           //_autoValidateWhatsapp = true;
           whatsappPhoneKey.currentState.validate();
-          if (value != "") entity.gpay = "+91" + (value);
+          if (value != "") entity.gpay = _phCountryCode + (value);
           print("GPay Number");
         },
         onSaved: (String value) {
-          if (value != "") entity.gpay = "+91" + (value);
+          if (value != "") entity.gpay = _phCountryCode + (value);
           print("GPay Number");
         },
       );
