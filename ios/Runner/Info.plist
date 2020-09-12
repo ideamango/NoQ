@@ -31,6 +31,10 @@
 	</array>
 	<key>CFBundleVersion</key>
 	<string>$(FLUTTER_BUILD_NUMBER)</string>
+	<key>FirebaseDynamicLinksCustomDomains</key>
+	<array>
+  	<string>https://sukoontest2.page.link</string>  
+	</array>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSCameraUsageDescription</key>
@@ -57,12 +61,7 @@
 		<string>UIInterfaceOrientationPortraitUpsideDown</string>
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
-	</array>
-	<key>FirebaseDynamicLinksCustomDomains</key>
-	<array>
-  	<string>https://testphone.page.link</string>
-  	<string>https://testphone.page.promos</string>
-	</array>
+	</array>	
 	<key>LSApplicationQueriesSchemes</key>
 	<array>
   		<string>whatsapp</string>

@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:flushbar/flushbar_route.dart';
 import 'package:flutter/material.dart';
 import 'package:geoflutterfire/geoflutterfire.dart';
@@ -78,32 +77,6 @@ class _UserHomePageState extends State<UserHomePage> {
     getGlobalState().whenComplete(() => _loadBookings());
 
     //  this.initDynamicLinks();
-  }
-
-  void initDynamicLinks() async {
-    final PendingDynamicLinkData data =
-        await FirebaseDynamicLinks.instance.getInitialLink();
-    final Uri deepLink = data?.link;
-
-    if (deepLink != null) {
-      Navigator.pushNamed(context, deepLink.path);
-    }
-
-    FirebaseDynamicLinks.instance.onLink(
-        onSuccess: (PendingDynamicLinkData dynamicLink) async {
-      final Uri deepLink = dynamicLink?.link;
-      print(deepLink.path);
-
-      if (deepLink != null) {
-        print(deepLink.path);
-        Navigator.pushNamed(context, deepLink.path);
-      } else {
-        Navigator.pushNamed(context, "/DLink");
-      }
-    }, onError: (OnLinkErrorException e) async {
-      print('onLinkError');
-      print(e.message);
-    });
   }
 
   Future<void> getGlobalState() async {

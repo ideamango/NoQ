@@ -25,28 +25,19 @@ class GlobalState {
 
   static Future<GlobalState> getGlobalState() async {
     if (_gs == null) {
-      // try {
-      //   Map<String, dynamic> gsJson = await readData();
-      //   if (gsJson != null) {
-      //     _gs = await GlobalState.fromJson(gsJson);
-      //   }
-      // } catch (e) {
-      //   print("Error reading data from file..");
-      // }
-
-      // if (_gs == null) {
       _gs = new GlobalState._();
-      // }
     }
-    try {
-      _gs.currentUser = await UserService().getCurrentUser();
-    } catch (e) {
-      print(
-          "Error initializing GlobalState, User could not be fetched from server..");
+    if (_gs.currentUser == null) {
+      try {
+        _gs.currentUser = await UserService().getCurrentUser();
+        if (Utils.isNullOrEmpty(_gs.currentUser.favourites))
+          _gs.currentUser.favourites = new List<MetaEntity>();
+      } catch (e) {
+        print(
+            "Error initializing GlobalState, User could not be fetched from server..");
+      }
     }
 
-    if (Utils.isNullOrEmpty(_gs.currentUser.favourites))
-      _gs.currentUser.favourites = new List<MetaEntity>();
     try {
       _gs.conf = await ConfigurationService().getConfigurations();
     } catch (e) {
@@ -63,9 +54,6 @@ class GlobalState {
   }
 
   Future<bool> addFavourite(MetaEntity me) async {
-    // if (_gs.currentUser.favourites
-    //         .firstWhere((element) => element.entityId == me.entityId) !=
-    //     null)
     _gs.currentUser.favourites.add(me);
     saveGlobalState();
     return true;
@@ -80,8 +68,6 @@ class GlobalState {
 
   Future<bool> updateSearchResults(List<Entity> list) async {
     _gs.pastSearches = list;
-
-    // saveGlobalState();
     return true;
   }
 

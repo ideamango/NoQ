@@ -11,22 +11,11 @@ class SplashScreen extends StatefulWidget {
 }
 
 class SplashState extends State<SplashScreen> {
-  bool _initialize = false;
-  GlobalState _state;
-
-  Future<void> initialize() async {
-    _state = await GlobalState.getGlobalState();
-    print(_state.conf.entityTypes.length);
-  }
-
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    initialize().whenComplete(() {
-      _initialize = true;
-      print(_state.conf.entityTypes.length);
-    });
+
     startTime();
   }
 
