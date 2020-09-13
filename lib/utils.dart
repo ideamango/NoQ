@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:flushbar/flushbar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -71,19 +70,6 @@ class Utils {
       return errMsg;
     } else
       return null;
-  }
-
-  Future<Position> getCurrLocation() async {
-    final Geolocator geolocator = await Geolocator();
-    GeolocationStatus geolocationStatus =
-        await Geolocator().checkGeolocationPermissionStatus();
-    print(geolocationStatus);
-    Position position = await geolocator
-        .getCurrentPosition(desiredAccuracy: LocationAccuracy.best)
-        .catchError((e) {
-      print(e);
-    });
-    return position;
   }
 
   static void showMyFlushbar(BuildContext context, IconData icon,
@@ -194,5 +180,25 @@ class Utils {
       hr = '0' + hr;
     }
     return hr;
+  }
+
+  static Future<Position> getCurrLocation(BuildContext context) async {
+    LocationPermission permission = await checkPermission();
+
+    if (permission == LocationPermission.deniedForever) {
+      LocationPermission permission = await requestPermission();
+      print(permission);
+      showDialog(context: context, child: Text("Are you here?"));
+      await openAppSettings();
+      await openLocationSettings();
+    }
+
+    if (permission == LocationPermission.denied) {
+      permission = await requestPermission();
+    }
+
+    Position pos =
+        await getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+    return pos;
   }
 }

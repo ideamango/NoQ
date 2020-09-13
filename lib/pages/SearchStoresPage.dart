@@ -943,7 +943,7 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
     int pageNumber = 0;
     int pageSize = 0;
 
-    Position pos = await Utils().getCurrLocation();
+    Position pos = await Utils.getCurrLocation(context);
     lat = pos.latitude;
     lon = pos.longitude;
     //TODO: comment - only for testing

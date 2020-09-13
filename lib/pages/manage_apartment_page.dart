@@ -52,7 +52,7 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
   bool _autoValidateWhatsapp = false;
 
   final String title = "Managers Form";
-  final Geolocator geolocator = Geolocator()..forceAndroidLocationManager;
+
   String flushStatus = "Empty";
 
 //Basic Details
@@ -128,7 +128,7 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
   void initState() {
     super.initState();
 
-    Utils().getCurrLocation().then((value) {
+    Utils.getCurrLocation(context).then((value) {
       pos = value;
       _getAddressFromLatLng(pos);
     });
@@ -247,42 +247,42 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
 
   _getAddressFromLatLng(Position position) async {
     try {
-      List<Placemark> p = await geolocator.placemarkFromCoordinates(
-          position.latitude, position.longitude);
+      // List<Placemark> p = await geolocator.placemarkFromCoordinates(
+      //     position.latitude, position.longitude);
 
-      Placemark place = p[0];
+      // Placemark place = p[0];
 
-      setState(() {
-        // _autoPopulate = true;
-        _subArea = place.subAdministrativeArea;
-        _state = place.administrativeArea;
-        _mainArea = place.subLocality;
-        _currentCity = place.locality;
-        _postalCode = place.postalCode;
-        _country = place.country;
+      // setState(() {
+      //   // _autoPopulate = true;
+      //   _subArea = place.subAdministrativeArea;
+      //   _state = place.administrativeArea;
+      //   _mainArea = place.subLocality;
+      //   _currentCity = place.locality;
+      //   _postalCode = place.postalCode;
+      //   _country = place.country;
 
-        // _address = new Address(
-        //     _subArea, _mainArea, _currentCity, _country, _postalCode);
-      });
-      print('get Address From LantLong');
-      print(_subArea +
-          "..." +
-          _mainArea +
-          "..." +
-          _currentCity +
-          "..." +
-          _postalCode +
-          "..." +
-          _country +
-          "..." +
-          place.administrativeArea);
-      setState(() {
-        _localityController.text = _subArea;
-        _cityController.text = _currentCity;
-        _stateController.text = _state;
-        _countryController.text = _country;
-        _pinController.text = _postalCode;
-      });
+      //   // _address = new Address(
+      //   //     _subArea, _mainArea, _currentCity, _country, _postalCode);
+      // });
+      // print('get Address From LantLong');
+      // print(_subArea +
+      //     "..." +
+      //     _mainArea +
+      //     "..." +
+      //     _currentCity +
+      //     "..." +
+      //     _postalCode +
+      //     "..." +
+      //     _country +
+      //     "..." +
+      //     place.administrativeArea);
+      // setState(() {
+      //   _localityController.text = _subArea;
+      //   _cityController.text = _currentCity;
+      //   _stateController.text = _state;
+      //   _countryController.text = _country;
+      //   _pinController.text = _postalCode;
+      // });
 
       // _subAreaController.text = _subArea;
       // setState(() {
@@ -1106,20 +1106,20 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
               addressStr3 +
               ", " +
               addressStr4;
-        List<Placemark> placemark;
-        double lat;
-        double long;
-        Geolocator().placemarkFromAddress(finalAddressStr).then((value) {
-          placemark = value;
-          lat = placemark[0].position.latitude;
-          print(lat);
-          long = placemark[0].position.longitude;
-          print(long);
-          MyGeoFirePoint geoPoint = new MyGeoFirePoint(lat, long);
-          entity.coordinates = geoPoint;
-        });
+        // List<Placemark> placemark;
+        // double lat;
+        // double long;
+        // Geolocator().placemarkFromAddress(finalAddressStr).then((value) {
+        //   placemark = value;
+        //   lat = placemark[0].position.latitude;
+        //   print(lat);
+        //   long = placemark[0].position.longitude;
+        //   print(long);
+        //   MyGeoFirePoint geoPoint = new MyGeoFirePoint(lat, long);
+        //   entity.coordinates = geoPoint;
+        // });
 
-        print(placemark);
+        // print(placemark);
 
         String validationPh1;
         String validationPh2;
@@ -1193,7 +1193,7 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
       }
 
       void useCurrLocation() {
-        Utils().getCurrLocation().then((value) {
+        Utils.getCurrLocation(context).then((value) {
           pos = value;
           _getAddressFromLatLng(pos);
         });

@@ -30,6 +30,7 @@ import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:noq/widget/widgets.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uuid/uuid.dart';
+import 'package:geolocator/geolocator.dart';
 
 class ServiceEntityDetailsPage extends StatefulWidget {
   final Entity childEntity;
@@ -45,7 +46,7 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
   final GlobalKey<FormState> _serviceDetailsFormKey =
       new GlobalKey<FormState>();
   final String title = "Managers Form";
-  final Geolocator geolocator = Geolocator()..forceAndroidLocationManager;
+
   bool validateField = false;
   TextEditingController _nameController = TextEditingController();
   TextEditingController _descController = TextEditingController();
@@ -123,10 +124,6 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
   void initState() {
     super.initState();
     serviceEntity = widget.childEntity;
-    Utils().getCurrLocation().then((value) {
-      pos = value;
-      _getAddressFromLatLng(pos);
-    });
     initializeEntity();
   }
 
@@ -247,51 +244,46 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
       return null;
   }
 
-  void useCurrLocation() {
-    Utils().getCurrLocation().then((value) {
-      pos = value;
-      _getAddressFromLatLng(pos);
-    });
-  }
+  void useCurrLocation() {}
 
   _getAddressFromLatLng(Position position) async {
     try {
-      List<Placemark> p = await geolocator.placemarkFromCoordinates(
-          position.latitude, position.longitude);
+      // List<Placemark> p = await geolocator.placemarkFromCoordinates(
+      //     position.latitude, position.longitude);
 
-      Placemark place = p[0];
+      // Placemark place = p[0];
 
-      setState(() {
-        // _autoPopulate = true;
-        _subArea = place.subAdministrativeArea;
-        _state = place.administrativeArea;
-        _mainArea = place.subLocality;
-        _currentCity = place.locality;
-        _postalCode = place.postalCode;
-        _country = place.country;
+      // setState(() {
+      //   // _autoPopulate = true;
+      //   _subArea = place.subAdministrativeArea;
+      //   _state = place.administrativeArea;
+      //   _mainArea = place.subLocality;
+      //   _currentCity = place.locality;
+      //   _postalCode = place.postalCode;
+      //   _country = place.country;
 
-        // _address = new Address(
-        //     _subArea, _mainArea, _currentCity, _country, _postalCode);
-      });
-      print('ghythyt');
-      print(_subArea +
-          "..." +
-          _mainArea +
-          "..." +
-          _currentCity +
-          "..." +
-          _postalCode +
-          "..." +
-          _country +
-          "..." +
-          place.administrativeArea);
-      setState(() {
-        _localityController.text = _subArea;
-        _cityController.text = _currentCity;
-        _stateController.text = _state;
-        _countryController.text = _country;
-        _pinController.text = _postalCode;
-      });
+      //   // _address = new Address(
+      //   //     _subArea, _mainArea, _currentCity, _country, _postalCode);
+      // });
+      // print('ghythyt');
+      // print(_subArea +
+      //     "..." +
+      //     _mainArea +
+      //     "..." +
+      //     _currentCity +
+      //     "..." +
+      //     _postalCode +
+      //     "..." +
+      //     _country +
+      //     "..." +
+      //     place.administrativeArea);
+      // setState(() {
+      //   _localityController.text = _subArea;
+      //   _cityController.text = _currentCity;
+      //   _stateController.text = _state;
+      //   _countryController.text = _country;
+      //   _pinController.text = _postalCode;
+      // });
 
       // _subAreaController.text = _subArea;
       // setState(() {
@@ -431,10 +423,10 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
         serviceEntity.address.state +
         "," +
         serviceEntity.address.country;
-    List<Placemark> placemark =
-        await Geolocator().placemarkFromAddress(addressStr);
+    // List<Placemark> placemark =
+    //     await Geolocator().placemarkFromAddress(addressStr);
 
-    print(placemark);
+    // print(placemark);
 
     String validationPh1;
     String validationPh2;
@@ -1114,20 +1106,20 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
             addressStr3 +
             ", " +
             addressStr4;
-      List<Placemark> placemark;
+      //List<Placemark> placemark;
       double lat;
       double long;
-      Geolocator().placemarkFromAddress(finalAddressStr).then((value) {
-        placemark = value;
-        lat = placemark[0].position.latitude;
-        print(lat);
-        long = placemark[0].position.longitude;
-        print(long);
-        MyGeoFirePoint geoPoint = new MyGeoFirePoint(lat, long);
-        serviceEntity.coordinates = geoPoint;
-      });
+      // Geolocator().placemarkFromAddress(finalAddressStr).then((value) {
+      //   placemark = value;
+      //   lat = placemark[0].position.latitude;
+      //   print(lat);
+      //   long = placemark[0].position.longitude;
+      //   print(long);
+      //   MyGeoFirePoint geoPoint = new MyGeoFirePoint(lat, long);
+      //   serviceEntity.coordinates = geoPoint;
+      // });
 
-      print(placemark);
+      //print(placemark);
 
       String validationPh1;
       String validationPh2;
