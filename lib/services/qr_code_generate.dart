@@ -2,7 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:noq/constants.dart';
 import 'package:noq/pages/manage_apartment_list_page.dart';
 import 'package:noq/pages/manage_apartment_page.dart';
+import 'package:noq/services/circular_progress.dart';
+import 'package:noq/style.dart';
+import 'package:noq/utils.dart';
 import 'package:noq/widget/appbar.dart';
+import 'package:noq/widget/bottom_nav_bar.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:flutter/services.dart';
 import 'dart:async';
@@ -26,10 +30,13 @@ class GenerateScreenState extends State<GenerateScreen> {
   static const double _topSectionHeight = 5.0;
 
   GlobalKey globalKey = new GlobalKey();
-  String _dataString = "Sample QR for NoQ";
+  String _dataString;
   String _inputErrorText;
   final TextEditingController _textController = TextEditingController();
   Directory tempDir;
+  Uri uriLink;
+  bool _initCompleted = false;
+
   @override
   void initState() {
     // TODO: implement initState
@@ -39,14 +46,51 @@ class GenerateScreenState extends State<GenerateScreen> {
 
   void generateQrCode() {
     //dataString needs to be set, using this the Qr code is generated.
-    _dataString = widget.entityId;
-    _inputErrorText = null;
-    _saveImage();
+
+    Utils.createDynamicLinkWithParams(entityId: widget.entityId).then((value) {
+      uriLink = value;
+      _dataString = uriLink.toString();
+      _inputErrorText = null;
+      _saveImage();
+      setState(() {
+        _initCompleted = true;
+      });
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    return _contentWidget();
+    if (_initCompleted)
+      return _contentWidget();
+    else
+      return MaterialApp(
+        theme: ThemeData.light().copyWith(),
+        home: Scaffold(
+          appBar: CustomAppBar(
+            titleTxt: "Generate Qr",
+          ),
+          body: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                // Padding(padding: EdgeInsets.only(top: 20.0)),
+                Text(
+                  "Loading..",
+                  style: TextStyle(fontSize: 20.0, color: borderColor),
+                ),
+                Padding(padding: EdgeInsets.only(top: 20.0)),
+                CircularProgressIndicator(
+                  backgroundColor: primaryAccentColor,
+                  valueColor: AlwaysStoppedAnimation<Color>(Colors.amber),
+                  strokeWidth: 3,
+                )
+              ],
+            ),
+          ),
+          //drawer: CustomDrawer(),
+          bottomNavigationBar: CustomBottomBar(barIndex: 1),
+        ),
+      );
   }
 
   Future<void> _saveImage() async {
@@ -83,11 +127,11 @@ class GenerateScreenState extends State<GenerateScreen> {
             'I use to book appointment for the\n'
             'places I wish to go. It helps to \n'
             'avoid waiting. Check it out yourself.';
-    String link = "www.playstore.com";
+    //String link = "www.playstore.com";
     //  Share.share(message + link);
     Share.shareFiles(
       ['${tempDir.path}/qrcodeForShare.png'],
-      text: 'Check this out',
+      text: message,
       subject: "Subject from NoQ",
     );
   }

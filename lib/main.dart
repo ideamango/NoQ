@@ -158,6 +158,8 @@ class DynamicLinkService {
       FirebaseDynamicLinks.instance.onLink(onSuccess: (dynamicLink) async {
         final Uri deepLink = dynamicLink?.link;
         print(deepLink.queryParameters);
+        print("Deep link path ");
+        print(deepLink.path);
         if (deepLink.queryParameters.containsKey("entityId")) {
           print("there are query params");
           //check if user authenticated
@@ -181,11 +183,11 @@ class DynamicLinkService {
             if (!entityContains)
               gs.currentUser.favourites.add(entity.getMetaEntity());
 
-            Navigator.push(context,
+            Navigator.pushReplacement(context,
                 MaterialPageRoute(builder: (context) => FavsListPage()));
           }
         } else
-          Navigator.push(
+          Navigator.pushReplacement(
               context, MaterialPageRoute(builder: (context) => UserHomePage()));
         // Navigator.pushNamed(context, deepLink.path);
       });

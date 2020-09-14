@@ -113,6 +113,27 @@ class EntityRowState extends State<EntityRow> {
       });
     }
 
+    shareQr() {
+      Entity en;
+      EntityService().getEntity(_metaEntity.entityId).then((value) {
+        en = value;
+        if (en == null) {
+          Utils.showMyFlushbar(
+              context,
+              Icons.info,
+              Duration(seconds: 4),
+              "Important details are missing in entity, Please fill those first.",
+              "Save Entity and then Share!!");
+        } else
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => GenerateScreen(
+                        entityId: _metaEntity.entityId,
+                      )));
+      });
+    }
+
     return Container(
       margin: EdgeInsets.all(5),
       padding: EdgeInsets.all(8),
@@ -175,12 +196,7 @@ class EntityRowState extends State<EntityRow> {
                               //color: primaryIcon,
                             ),
                             onPressed: () {
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => GenerateScreen(
-                                            entityId: _metaEntity.entityId,
-                                          )));
+                              shareQr();
                             }),
                       ),
                       horizontalSpacer,

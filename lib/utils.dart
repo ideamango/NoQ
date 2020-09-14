@@ -1,9 +1,5 @@
 import 'dart:async';
-<<<<<<< HEAD
-=======
-
 import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
->>>>>>> adf117973ea5955a5a1b01ae71a3f4143d866b2b
 import 'package:flushbar/flushbar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -186,7 +182,6 @@ class Utils {
     }
     return hr;
   }
-<<<<<<< HEAD
 
   static Future<Position> getCurrLocation(BuildContext context) async {
     LocationPermission permission = await checkPermission();
@@ -207,32 +202,34 @@ class Utils {
         await getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
     return pos;
   }
-=======
-static  Future<Uri> createDynamicLinkWithParams({@required String entityId}) async {
-      final DynamicLinkParameters parameters = DynamicLinkParameters(
-        // This should match firebase but without the username query param
-        uriPrefix: 'https://sukoontest2.page.link',
-        // This can be whatever you want for the uri, https://yourapp.com/groupinvite?username=$userName
-        link: Uri.parse('https://sukoontest2.page.link/?entityId=$entityId'),
-        androidParameters: AndroidParameters(
-          packageName: 'com.example.noq',
-          minimumVersion: 1,
-        ),
-        iosParameters: IosParameters(
-          bundleId: 'com.example.noq',
-          minimumVersion: '1',
-          appStoreId: '',
-        ),
-        socialMetaTagParameters: SocialMetaTagParameters(
-          title: 'Check out this amazing app',
-          description: 'It saves time and keeps you at safe-distance!',
-        ),
-      );
-      final link = await parameters.buildUrl();
-      final ShortDynamicLink shortenedLink = await parameters.buildShortLink();
-      return shortenedLink.shortUrl;
-    }
-static Future<Uri> createDynamicLink() async {
+
+  static Future<Uri> createDynamicLinkWithParams(
+      {@required String entityId}) async {
+    final DynamicLinkParameters parameters = DynamicLinkParameters(
+      // This should match firebase but without the username query param
+      uriPrefix: 'https://sukoontest2.page.link',
+      // This can be whatever you want for the uri, https://yourapp.com/groupinvite?username=$userName
+      link: Uri.parse('https://sukoontest2.page.link/?entityId=$entityId'),
+      androidParameters: AndroidParameters(
+        packageName: 'com.example.noq',
+        minimumVersion: 1,
+      ),
+      iosParameters: IosParameters(
+        bundleId: 'com.example.noq',
+        minimumVersion: '1',
+        appStoreId: '',
+      ),
+      socialMetaTagParameters: SocialMetaTagParameters(
+        title: 'Check out this amazing app',
+        description: 'It saves time and keeps you at safe-distance!',
+      ),
+    );
+    final link = await parameters.buildUrl();
+    final ShortDynamicLink shortenedLink = await parameters.buildShortLink();
+    return shortenedLink.shortUrl;
+  }
+
+  static Future<Uri> createDynamicLink() async {
     final DynamicLinkParameters parameters = DynamicLinkParameters(
       // This should match firebase but without the username query param
       uriPrefix: 'https://sukoontest2.page.link',
@@ -256,9 +253,4 @@ static Future<Uri> createDynamicLink() async {
     // final ShortDynamicLink shortenedLink = await parameters.buildShortLink();
     return link;
   }
-
-
-
-
->>>>>>> adf117973ea5955a5a1b01ae71a3f4143d866b2b
 }
