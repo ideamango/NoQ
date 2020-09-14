@@ -1,12 +1,16 @@
 import 'dart:async';
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:noq/dashboard.dart';
+import 'package:noq/db/db_model/entity.dart';
+import 'package:noq/global_state.dart';
 import 'package:noq/login_page.dart';
 import 'package:noq/pages/SearchStoresPage.dart';
 import 'package:noq/pages/favs_list_page.dart';
+import 'package:noq/repository/StoreRepository.dart';
 import 'package:noq/services/init_screen.dart';
 import 'package:noq/userHomePage.dart';
 
@@ -17,8 +21,15 @@ void main() {
   WidgetsFlutterBinding.ensureInitialized();
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp])
       .then((_) {
-    runApp(new MyApp());
+    runApp(new MyHome());
   });
+}
+
+class MyHome extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(home: MyApp());
+  }
 }
 
 class MyApp extends StatefulWidget {
@@ -57,44 +68,44 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
     super.dispose();
   }
 
-  initDynamicLinks(BuildContext context) async {
-    await Future.delayed(Duration(seconds: 3));
-    var data = await FirebaseDynamicLinks.instance.getInitialLink();
-    var deepLink = data?.link;
-    Map queryParams;
-    if (deepLink != null) {
-      queryParams = deepLink.queryParameters;
-      if (queryParams.length > 0) {
-        var entityId = queryParams['entityId'];
-        print("entityId from dynamic link -- $entityId");
-        print(entityId);
-        if (entityId != null) {
-          Navigator.push(
-              context, MaterialPageRoute(builder: (context) => FavsListPage()));
-        } else {
-          Navigator.push(
-              context, MaterialPageRoute(builder: (context) => LoginPage()));
-        }
-      }
-    } else {
-      Navigator.push(
-          context, MaterialPageRoute(builder: (context) => LoginPage()));
-    }
+  // initDynamicLinks(BuildContext context) async {
+  //   await Future.delayed(Duration(seconds: 3));
+  //   var data = await FirebaseDynamicLinks.instance.getInitialLink();
+  //   var deepLink = data?.link;
+  //   Map queryParams;
+  //   if (deepLink != null) {
+  //     queryParams = deepLink.queryParameters;
+  //     if (queryParams.length > 0) {
+  //       var entityId = queryParams['entityId'];
+  //       print("entityId from dynamic link -- $entityId");
+  //       print(entityId);
+  //       if (entityId != null) {
+  //         Navigator.push(
+  //             context, MaterialPageRoute(builder: (context) => FavsListPage()));
+  //       } else {
+  //         Navigator.push(
+  //             context, MaterialPageRoute(builder: (context) => LoginPage()));
+  //       }
+  //     }
+  //   } else {
+  //     Navigator.push(
+  //         context, MaterialPageRoute(builder: (context) => LoginPage()));
+  //   }
 
-    FirebaseDynamicLinks.instance.onLink(onSuccess: (dynamicLink) async {
-      var deepLink = dynamicLink?.link;
-      debugPrint('DynamicLinks onLink $deepLink');
-      if (queryParams.length > 0) {
-        Navigator.push(
-            context, MaterialPageRoute(builder: (context) => FavsListPage()));
-      } else {
-        Navigator.push(
-            context, MaterialPageRoute(builder: (context) => LoginPage()));
-      }
-    }, onError: (e) async {
-      debugPrint('DynamicLinks onError $e');
-    });
-  }
+  //   FirebaseDynamicLinks.instance.onLink(onSuccess: (dynamicLink) async {
+  //     var deepLink = dynamicLink?.link;
+  //     debugPrint('DynamicLinks onLink $deepLink');
+  //     if (queryParams.length > 0) {
+  //       Navigator.push(
+  //           context, MaterialPageRoute(builder: (context) => FavsListPage()));
+  //     } else {
+  //       Navigator.push(
+  //           context, MaterialPageRoute(builder: (context) => LoginPage()));
+  //     }
+  //   }, onError: (e) async {
+  //     debugPrint('DynamicLinks onError $e');
+  //   });
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -131,24 +142,56 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
 }
 
 class DynamicLinkService {
-  Future<void> retrieveDynamicLink(BuildContext context) async {
+  void retrieveDynamicLink(BuildContext context) async {
     try {
       // showDialog(context: context, child: Text('Yay!!!'));
       final PendingDynamicLinkData data =
           await FirebaseDynamicLinks.instance.getInitialLink();
       final Uri deepLink = data?.link;
-      print(deepLink.queryParameters);
-      
+
       if (deepLink != null) {
-        Navigator.pushNamed(context, deepLink.path);
+        print(deepLink.queryParameters);
+        Navigator.push(
+            context, MaterialPageRoute(builder: (context) => FavsListPage()));
       }
 
-      FirebaseDynamicLinks.instance.onLink(
-          onSuccess: (PendingDynamicLinkData dynamicLink) async {
-        Navigator.pushNamed(context, deepLink.path);
+      FirebaseDynamicLinks.instance.onLink(onSuccess: (dynamicLink) async {
+        final Uri deepLink = dynamicLink?.link;
+        print(deepLink.queryParameters);
+        if (deepLink.queryParameters.containsKey("entityId")) {
+          print("there are query params");
+          //check if user authenticated
+          if (await FirebaseAuth.instance.currentUser() != null) {
+            // signed in
+            print("current user already logged in");
+            GlobalState gs = await GlobalState.getGlobalState();
+            String entityId = deepLink.queryParameters['entityId'];
+            Entity entity =
+                await getEntity(deepLink.queryParameters['entityId']);
+            //get global state
+            // add entity to favuorites and show favs list.
+            bool entityContains = false;
+            for (int i = 0; i < gs.currentUser.favourites.length; i++) {
+              if (gs.currentUser.favourites[i].entityId == entityId) {
+                entityContains = true;
+                break;
+              } else
+                continue;
+            }
+            if (!entityContains)
+              gs.currentUser.favourites.add(entity.getMetaEntity());
+
+            Navigator.push(context,
+                MaterialPageRoute(builder: (context) => FavsListPage()));
+          }
+        } else
+          Navigator.push(
+              context, MaterialPageRoute(builder: (context) => UserHomePage()));
+        // Navigator.pushNamed(context, deepLink.path);
       });
     } catch (e) {
       print(e.toString());
+      print(e.message);
     }
   }
 }

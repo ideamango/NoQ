@@ -156,44 +156,22 @@ class _FavsListPageState extends State<FavsListPage> {
   }
 
   String getFormattedAddress(Address address) {
-    String adr = address.address +
-        ', ' +
-        address.locality +
-        ', ' +
-        address.landmark +
-        ', ' +
-        address.city;
+    String adr = (address.address != null ? (address.address + ', ') : "") +
+        (address.locality != null ? (address.locality + ', ') : "") +
+        (address.landmark != null ? (address.landmark + ', ') : "") +
+        (address.city != null ? (address.city + ', ') : "");
     return adr;
   }
 
-  generateLinkShareWithParams(String entityId) async {
-    var dynamicLink = await createDynamicLinkWithParams(entityId: entityId);
+  generateLinkAndShareWithParams(String entityId) async {
+    var dynamicLink =
+        await Utils.createDynamicLinkWithParams(entityId: entityId);
     print("Dynamic Link: $dynamicLink");
+
     _dynamicLink =
         Uri.https(dynamicLink.authority, dynamicLink.path).toString();
     // dynamicLink has been generated. share it with others to use it accordingly.
-    Share.share(Uri.https(dynamicLink.authority, dynamicLink.path, {"entityId":entityId}).toString());
-  }
-
-  Future<Uri> createDynamicLinkWithParams({@required String entityId}) async {
-    final DynamicLinkParameters parameters = DynamicLinkParameters(
-      // This should match firebase but without the username query param
-      uriPrefix: 'https://sukoonnoq.page.link/',
-      // This can be whatever you want for the uri, https://yourapp.com/groupinvite?username=$userName
-      link: Uri.parse('https://watcharoundyou.wordpress.com/'),
-      androidParameters: AndroidParameters(
-        packageName: 'com.example.noq',
-        minimumVersion: 1,
-      ),
-      iosParameters: IosParameters(
-        bundleId: 'com.example.noq',
-        minimumVersion: '1',
-        appStoreId: '',
-      ),
-    );
-    final link = await parameters.buildUrl();
-    final ShortDynamicLink shortenedLink = await parameters.buildShortLink();
-    return shortenedLink.shortUrl;
+    Share.share(_dynamicLink.toString());
   }
 
   Widget _emptyFavsPage() {
@@ -387,7 +365,7 @@ class _FavsListPageState extends State<FavsListPage> {
                                       icon: Icon(Icons.share),
                                       iconSize: 20,
                                       onPressed: () {
-                                        generateLinkShareWithParams(
+                                        generateLinkAndShareWithParams(
                                             str.entityId);
                                       },
                                     )),

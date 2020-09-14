@@ -72,8 +72,6 @@ class TokenService {
 
     await fStore.runTransaction((Transaction tx) async {
       try {
-        throw new TokenAlreadyExistsException("test");
-
         DocumentSnapshot entitySlotsSnapshot = await tx.get(entitySlotsRef);
         EntitySlots es;
 
