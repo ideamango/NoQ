@@ -11,6 +11,7 @@ import 'package:flutter/foundation.dart';
 import 'package:noq/pages/entity_services_list_page.dart';
 import 'package:noq/utils.dart';
 import 'package:noq/widget/widgets.dart';
+import 'package:share/share.dart';
 
 class EntityRow extends StatefulWidget {
   final MetaEntity entity;
@@ -60,6 +61,17 @@ class EntityRowState extends State<EntityRow> {
       });
     }
 
+    generateLinkAndShareWithParams(String entityId) async {
+      var dynamicLink =
+          await Utils.createDynamicLinkWithParams(entityId: entityId);
+      print("Dynamic Link: $dynamicLink");
+
+      String _dynamicLink =
+          Uri.https(dynamicLink.authority, dynamicLink.path).toString();
+      // dynamicLink has been generated. share it with others to use it accordingly.
+      Share.share(_dynamicLink.toString());
+    }
+
     showChildListPage() {
       EntityService().getEntity(_metaEntity.entityId).then((value) {
         //If no entity in DB then it means no entity created yet, only meta.
@@ -82,6 +94,22 @@ class EntityRowState extends State<EntityRow> {
               "Important premises details are missing, Click on 'Add details' to add now!",
               "You need to add those before adding children.");
         }
+      });
+    }
+
+    share() {
+      Entity en;
+      EntityService().getEntity(_metaEntity.entityId).then((value) {
+        en = value;
+        if (en == null) {
+          Utils.showMyFlushbar(
+              context,
+              Icons.info,
+              Duration(seconds: 4),
+              "Important details are missing in entity, Please fill those first.",
+              "Save Entity and then Share!!");
+        } else
+          generateLinkAndShareWithParams(_metaEntity.entityId);
       });
     }
 
@@ -168,7 +196,7 @@ class EntityRowState extends State<EntityRow> {
                             icon: Icon(Icons.share),
                             iconSize: 20,
                             onPressed: () {
-                              
+                              share();
                             },
                           )),
                     ],

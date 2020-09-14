@@ -167,13 +167,10 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
   }
 
   String getFormattedAddress(Address address) {
-    String adr = address.address +
-        ', ' +
-        address.locality +
-        ', ' +
-        address.landmark +
-        ', ' +
-        address.city;
+    String adr = (address.address != null ? (address.address + ', ') : "") +
+        (address.locality != null ? (address.locality + ', ') : "") +
+        (address.landmark != null ? (address.landmark + ', ') : "") +
+        (address.city != null ? (address.city + ', ') : "");
     return adr;
   }
 

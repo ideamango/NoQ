@@ -540,7 +540,7 @@ class _UserAccountPageState extends State<UserAccountPage> {
   }
 
   generateLinkAndShare() async {
-    var dynamicLink = await createDynamicLink();
+    var dynamicLink = await Utils.createDynamicLink();
     print("Dynamic Link: $dynamicLink");
     // _dynamicLink =
     //     Uri.https(dynamicLink.authority, dynamicLink.path).toString();
@@ -548,64 +548,7 @@ class _UserAccountPageState extends State<UserAccountPage> {
     Share.share(Uri.https(dynamicLink.authority, dynamicLink.path).toString());
   }
 
-  Future<Uri> createDynamicLink() async {
-    final DynamicLinkParameters parameters = DynamicLinkParameters(
-      // This should match firebase but without the username query param
-      uriPrefix: 'https://sukoontest2.page.link',
-      // This can be whatever you want for the uri, https://yourapp.com/groupinvite?username=$userName
-      link: Uri.parse('https://sukoontest2.page.link'),
-      androidParameters: AndroidParameters(
-        packageName: 'com.example.noq',
-        minimumVersion: 1,
-      ),
-      iosParameters: IosParameters(
-        bundleId: 'com.example.noq',
-        minimumVersion: '1',
-        appStoreId: '',
-      ),
-      socialMetaTagParameters: SocialMetaTagParameters(
-        title: 'Check out this amazing app',
-        description: 'It saves time and keeps you at safe-distance!',
-      ),
-    );
-    final link = await parameters.buildUrl();
-    // final ShortDynamicLink shortenedLink = await parameters.buildShortLink();
-    return link;
-  }
-
-  generateLinkShareWithParams() async {
-    var dynamicLink = await createDynamicLinkWithParams(
-        entityId: _state.currentUser.entities[0].entityId);
-    print("Dynamic Link: $dynamicLink");
-    print(_state.currentUser.entities[0].entityId);
-    _dynamicLink =
-        Uri.https(dynamicLink.authority, dynamicLink.path).toString();
-    // dynamicLink has been generated. share it with others to use it accordingly.
-    Share.share(dynamicLink.toString());
-  }
-
-  Future<Uri> createDynamicLinkWithParams({@required String entityId}) async {
-    final DynamicLinkParameters parameters = DynamicLinkParameters(
-      // This should match firebase but without the username query param
-      uriPrefix: 'https://sukoontest2.page.link',
-      // This can be whatever you want for the uri, https://yourapp.com/groupinvite?username=$userName
-      link: Uri.parse('https://sukoontest2.page.link/?entityId=$entityId'),
-      androidParameters: AndroidParameters(
-        packageName: 'com.example.noq',
-        minimumVersion: 1,
-      ),
-      iosParameters: IosParameters(
-        bundleId: 'com.example.noq',
-        minimumVersion: '1',
-        appStoreId: '',
-      ),
-    );
-    final link = await parameters.buildUrl();
-    //final ShortDynamicLink shortenedLink = await parameters.buildShortLink();
-
-    return link;
-  }
-
+  
   @override
   void dispose() {
     super.dispose();
