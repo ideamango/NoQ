@@ -14,6 +14,7 @@ import 'package:noq/db/db_model/my_geo_fire_point.dart';
 import 'package:noq/db/db_model/user.dart';
 import 'package:noq/db/db_service/entity_service.dart';
 import 'package:noq/db/db_service/user_service.dart';
+import 'package:noq/global_state.dart';
 
 import 'package:noq/pages/contact_item.dart';
 import 'package:noq/pages/entity_services_list_page.dart';
@@ -47,6 +48,10 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
       new GlobalKey<FormFieldState>();
   final GlobalKey<FormFieldState> whatsappPhoneKey =
       new GlobalKey<FormFieldState>();
+  final GlobalKey<FormFieldState> gpayPhoneKey =
+      new GlobalKey<FormFieldState>();
+  final GlobalKey<FormFieldState> paytmPhoneKey =
+      new GlobalKey<FormFieldState>();
   final GlobalKey<FormFieldState> newAdminRowItemKey =
       new GlobalKey<FormFieldState>();
   bool _autoValidateWhatsapp = false;
@@ -67,6 +72,8 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
 
   TextEditingController _maxPeopleController = TextEditingController();
   TextEditingController _whatsappPhoneController = TextEditingController();
+  TextEditingController _gpayPhoneController = TextEditingController();
+  TextEditingController _paytmPhoneController = TextEditingController();
 
   TextEditingController _slotDurationController = TextEditingController();
   TextEditingController _advBookingInDaysController = TextEditingController();
@@ -98,8 +105,11 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
   List<Employee> contactList = new List<Employee>();
   List<String> adminsList = new List<String>();
   List<Widget> contactRowWidgets = new List<Widget>();
+  List<Widget> contactRowWidgetsNew = new List<Widget>();
   List<Widget> adminRowWidgets = new List<Widget>();
-  int _contactCount = 0;
+
+  ScrollController _scrollController;
+  final itemSize = 80.0;
 
   //bool _autoPopulate = false;
 
@@ -123,9 +133,12 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
   bool isActive = false;
   bool isBookable = false;
   Position pos;
+  GlobalState _gState;
+  String _phCountryCode;
 
   @override
   void initState() {
+    _scrollController = ScrollController();
     super.initState();
 
     Utils.getCurrLocation(context).then((value) {
@@ -134,11 +147,18 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
     });
 
     entity = this.widget.entity;
-    initializeEntity().whenComplete(() {
-      setState(() {
-        _initCompleted = true;
+    getGlobalState().whenComplete(() {
+      initializeEntity().whenComplete(() {
+        setState(() {
+          _initCompleted = true;
+        });
       });
     });
+  }
+
+  Future<void> getGlobalState() async {
+    _gState = await GlobalState.getGlobalState();
+    _phCountryCode = _gState.conf.phCountryCode;
   }
 
   initializeEntity() async {
@@ -146,8 +166,8 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
       isPublic = (entity.isPublic) ?? false;
       isBookable = (entity.isBookable) ?? false;
       isActive = (entity.isActive) ?? false;
-      _nameController.text = (entity.name) ?? "";
-      _descController.text = (entity.description) ?? "";
+      _nameController.text = entity.name;
+      _descController.text = (entity.description);
 
       if (entity.startTimeHour != null && entity.startTimeMinute != null)
         _openTimeController.text =
@@ -188,6 +208,10 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
       _whatsappPhoneController.text = entity.whatsapp != null
           ? entity.whatsapp.toString().substring(3)
           : "";
+      _gpayPhoneController.text =
+          entity.gpay != null ? entity.gpay.toString().substring(3) : "";
+      _paytmPhoneController.text =
+          entity.paytm != null ? entity.paytm.toString().substring(3) : "";
       //address
       if (entity.address != null) {
         _adrs1Controller.text = entity.address.address;
@@ -307,18 +331,15 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
   void _addNewContactRow() {
     setState(() {
       Employee contact = new Employee();
-
       contactRowWidgets.add(new ContactRow(contact: contact));
 
       contactList.add(contact);
-      // if (Utils.isNullOrEmpty(entity.managers)) {
-      //   entity.managers = new List<Employee>();
-      // }
-
       entity.managers = contactList;
-      // saveEntityDetails(en);
-      //saveEntityDetails();
-      _contactCount = _contactCount + 1;
+
+      // if (_scrollController.hasClients)
+      //   _scrollController.animateTo(_scrollController.offset + itemSize,
+      //       curve: Curves.easeInToLinear,
+      //       duration: Duration(milliseconds: 200));
     });
   }
 
@@ -798,12 +819,65 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
         onChanged: (value) {
           //_autoValidateWhatsapp = true;
           whatsappPhoneKey.currentState.validate();
-          if (value != "") entity.whatsapp = "+91" + (value);
-          print("Whatsapp Number");
+          if (value != "") entity.whatsapp = _phCountryCode + (value);
         },
         onSaved: (String value) {
-          if (value != "") entity.whatsapp = "+91" + (value);
-          print("Whatsapp Number");
+          if (value != "") entity.whatsapp = _phCountryCode + (value);
+        },
+      );
+      final paytmPhone = TextFormField(
+        obscureText: false,
+        maxLines: 1,
+        minLines: 1,
+        key: paytmPhoneKey,
+        style: textInputTextStyle,
+        keyboardType: TextInputType.phone,
+        controller: _paytmPhoneController,
+        decoration: InputDecoration(
+          prefixText: '+91',
+          labelText: 'PayTm Number',
+          enabledBorder:
+              UnderlineInputBorder(borderSide: BorderSide(color: Colors.grey)),
+          focusedBorder: UnderlineInputBorder(
+              borderSide: BorderSide(color: Colors.orange)),
+        ),
+        validator: Utils.validateMobileField,
+        onChanged: (value) {
+          //_autoValidateWhatsapp = true;
+          paytmPhoneKey.currentState.validate();
+          if (value != "") entity.paytm = _phCountryCode + (value);
+        },
+        onSaved: (String value) {
+          if (value != "") entity.paytm = _phCountryCode + (value);
+        },
+      );
+
+      final gPayPhone = TextFormField(
+        obscureText: false,
+        maxLines: 1,
+        minLines: 1,
+        key: gpayPhoneKey,
+        style: textInputTextStyle,
+        keyboardType: TextInputType.phone,
+        controller: _gpayPhoneController,
+        decoration: InputDecoration(
+          prefixText: '+91',
+          labelText: 'GPay Number',
+          enabledBorder:
+              UnderlineInputBorder(borderSide: BorderSide(color: Colors.grey)),
+          focusedBorder: UnderlineInputBorder(
+              borderSide: BorderSide(color: Colors.orange)),
+        ),
+        validator: Utils.validateMobileField,
+        onChanged: (value) {
+          //_autoValidateWhatsapp = true;
+          whatsappPhoneKey.currentState.validate();
+          if (value != "") entity.gpay = _phCountryCode + (value);
+          print("GPay Number");
+        },
+        onSaved: (String value) {
+          if (value != "") entity.gpay = _phCountryCode + (value);
+          print("GPay Number");
         },
       );
 
@@ -1177,7 +1251,10 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
         // saveFormDetails();
         // upsertEntity(entity).then((value) {
         //   if (value) {
-        Navigator.pop(context);
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => ManageApartmentsListPage()));
         //                }
         // });
       }
@@ -1692,6 +1769,79 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
                                     title: Row(
                                       children: <Widget>[
                                         Text(
+                                          "Payment Details",
+                                          style: TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 15),
+                                        ),
+                                        SizedBox(width: 5),
+                                      ],
+                                    ),
+                                    backgroundColor: Colors.blueGrey[500],
+
+                                    children: <Widget>[
+                                      new Container(
+                                        width:
+                                            MediaQuery.of(context).size.width *
+                                                .94,
+                                        decoration: darkContainer,
+                                        padding: EdgeInsets.all(2.0),
+                                        child: Row(
+                                          children: <Widget>[
+                                            Expanded(
+                                              child: Text(addressInfoStr,
+                                                  style: buttonXSmlTextStyle),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                          Container(
+                            padding: EdgeInsets.only(left: 5.0, right: 5),
+                            child: Column(
+                              children: <Widget>[
+                                gPayPhone,
+                                paytmPhone,
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    SizedBox(
+                      height: 7,
+                    ),
+                    Container(
+                      decoration: BoxDecoration(
+                          border: Border.all(color: containerColor),
+                          color: Colors.grey[50],
+                          shape: BoxShape.rectangle,
+                          borderRadius: BorderRadius.all(Radius.circular(5.0))),
+                      //padding: EdgeInsets.all(5.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Column(
+                            children: <Widget>[
+                              Container(
+                                //padding: EdgeInsets.only(left: 5),
+                                decoration: darkContainer,
+                                child: Theme(
+                                  data: ThemeData(
+                                    unselectedWidgetColor: Colors.white,
+                                    accentColor: Colors.grey[50],
+                                  ),
+                                  child: CustomExpansionTile(
+                                    //key: PageStorageKey(this.widget.headerTitle),
+                                    initiallyExpanded: false,
+                                    title: Row(
+                                      children: <Widget>[
+                                        Text(
                                           "Address",
                                           style: TextStyle(
                                               color: Colors.white,
@@ -2013,7 +2163,6 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
                         ],
                       ),
                     ),
-
                     Builder(
                       builder: (context) => RaisedButton(
                           color: btnColor,

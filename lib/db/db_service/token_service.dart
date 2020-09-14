@@ -45,6 +45,7 @@ class TokenService {
     Exception exception;
     SlotFullException slotFullException;
     TokenAlreadyExistsException tokenAlreadyExistsException;
+
     //TODO: To run the validation on DateTime for holidays, break, advnanceDays and during closing hours
 
     String entitySlotsDocId = metaEntity.entityId +
@@ -71,6 +72,8 @@ class TokenService {
 
     await fStore.runTransaction((Transaction tx) async {
       try {
+        throw new TokenAlreadyExistsException("test");
+
         DocumentSnapshot entitySlotsSnapshot = await tx.get(entitySlotsRef);
         EntitySlots es;
 

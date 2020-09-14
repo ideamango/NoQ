@@ -5,6 +5,8 @@ import 'package:noq/db/db_model/meta_entity.dart';
 import 'package:noq/db/db_model/slot.dart';
 import 'package:noq/db/db_model/user_token.dart';
 import 'package:noq/db/db_service/entity_service.dart';
+import 'package:noq/db/db_service/slot_full_exception.dart';
+import 'package:noq/db/db_service/token_already_exists_exception.dart';
 import 'package:noq/global_state.dart';
 import 'package:noq/pages/SearchStoresPage.dart';
 import 'package:noq/pages/favs_list_page.dart';
@@ -514,6 +516,7 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
     //   pr.hide().whenComplete(() {
 //Test - Smita
     MetaEntity meta = entity.getMetaEntity();
+
     bookSlotForStore(meta, selectedSlot).then((value) {
       if (value == null) {
         showFlushBar();
@@ -546,7 +549,30 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
       });
     }).catchError((error, stackTrace) {
       print("Error in token booking" + error.toString());
-      showFlushBar();
+
+      //TODO Smita - Not going in any of if bcoz exception is wrapped in type platform exception.
+      if (error is SlotFullException) {
+        Utils.showMyFlushbar(
+            context,
+            Icons.error,
+            Duration(seconds: 5),
+            "Oops! Couldn't book the token.",
+            "All slots full in this time slot. Please choose different time or date.");
+      } else if (error is TokenAlreadyExistsException) {
+        Utils.showMyFlushbar(
+            context,
+            Icons.error,
+            Duration(seconds: 5),
+            "Oops! Couldn't book the token.",
+            "Its because you already have an active booking for same time.");
+      } else {
+        Utils.showMyFlushbar(
+            context,
+            Icons.error,
+            Duration(seconds: 5),
+            "Oops! Couldn't book the token.",
+            "Please try again or choose a different time or date.");
+      }
     });
   }
 

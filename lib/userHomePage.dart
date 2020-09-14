@@ -13,6 +13,7 @@ import 'package:noq/db/db_service/entity_service.dart';
 import 'package:noq/db/db_service/token_service.dart';
 import 'package:noq/db/db_service/user_service.dart';
 import 'package:noq/global_state.dart';
+import 'package:noq/pages/SearchStoresPage.dart';
 import 'package:noq/pages/db_test.dart';
 import 'package:noq/pages/shopping_list.dart';
 import 'package:noq/repository/local_db_repository.dart';
@@ -74,6 +75,8 @@ class _UserHomePageState extends State<UserHomePage> {
       _pastBkgStatus = 'Loading';
     });
     getGlobalState().whenComplete(() => _loadBookings());
+
+    //  this.initDynamicLinks();
   }
 
   Future<void> getGlobalState() async {
@@ -161,216 +164,170 @@ class _UserHomePageState extends State<UserHomePage> {
     //if (_upcomingBkgStatus == 'Success') {
     String title = "Home Page";
     return MaterialApp(
-      theme: ThemeData.light().copyWith(),
-      home: Scaffold(
-        appBar: CustomAppBar(
-          titleTxt: title,
-        ),
-        body: Scrollbar(
-          child: SingleChildScrollView(
-            child: Column(
-              children: <Widget>[
-                Card(
-                  elevation: 20,
-                  child: Container(
-                    padding: EdgeInsets.all(5),
-                    child: Column(
-                      children: <Widget>[
-                        // Container(
-                        //   color: Colors.teal,
-                        //   padding: EdgeInsets.all(3),
-                        //   child: Image.asset(
-                        //     'assets/noq_home_bookPremises.png',
-                        //     width: MediaQuery.of(context).size.width * .95,
-                        //   ),
-                        // ),
-                        // Text(homeScreenMsgTxt, style: homeMsgStyle),
-                        Column(
-                          children: <Widget>[
-                            CarouselSlider(
-                              height: 150.0,
-                              autoPlay: true,
-                              autoPlayInterval: Duration(seconds: 3),
-                              autoPlayAnimationDuration:
-                                  Duration(milliseconds: 800),
-                              autoPlayCurve: Curves.easeInCubic,
-                              pauseAutoPlayOnTouch: Duration(seconds: 10),
-                              aspectRatio: 2.0,
-                              onPageChanged: (index) {
-                                setState(() {
-                                  _currentIndex = index;
-                                });
-                              },
-                              items: cardList.map((card) {
-                                return Builder(builder: (BuildContext context) {
-                                  return Container(
-                                    height: MediaQuery.of(context).size.height *
-                                        0.40,
-                                    width: MediaQuery.of(context).size.width,
-                                    child: Card(
-                                      color: primaryAccentColor,
-                                      child: card,
-                                    ),
-                                  );
-                                });
-                              }).toList(),
-                            ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: <Widget>[
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: map<Widget>(cardList, (index, url) {
+        theme: ThemeData.light().copyWith(),
+        home: Scaffold(
+          appBar: CustomAppBar(
+            titleTxt: title,
+          ),
+          body: Scrollbar(
+            child: SingleChildScrollView(
+              child: Column(
+                children: <Widget>[
+                  Card(
+                    elevation: 20,
+                    child: Container(
+                      padding: EdgeInsets.all(5),
+                      child: Column(
+                        children: <Widget>[
+                          // Container(
+                          //   color: Colors.teal,
+                          //   padding: EdgeInsets.all(3),
+                          //   child: Image.asset(
+                          //     'assets/noq_home_bookPremises.png',
+                          //     width: MediaQuery.of(context).size.width * .95,
+                          //   ),
+                          // ),
+                          // Text(homeScreenMsgTxt, style: homeMsgStyle),
+                          Column(
+                            children: <Widget>[
+                              CarouselSlider(
+                                height: 150.0,
+                                autoPlay: true,
+                                autoPlayInterval: Duration(seconds: 3),
+                                autoPlayAnimationDuration:
+                                    Duration(milliseconds: 800),
+                                autoPlayCurve: Curves.easeInCubic,
+                                pauseAutoPlayOnTouch: Duration(seconds: 10),
+                                aspectRatio: 2.0,
+                                onPageChanged: (index) {
+                                  setState(() {
+                                    _currentIndex = index;
+                                  });
+                                },
+                                items: cardList.map((card) {
+                                  return Builder(
+                                      builder: (BuildContext context) {
                                     return Container(
-                                      width: 7.0,
-                                      height: 7.0,
-                                      margin: EdgeInsets.symmetric(
-                                          vertical: 2.0, horizontal: 2.0),
-                                      decoration: BoxDecoration(
-                                        shape: BoxShape.circle,
-                                        color: _currentIndex == index
-                                            ? highlightColor
-                                            : Colors.grey,
+                                      height:
+                                          MediaQuery.of(context).size.height *
+                                              0.40,
+                                      width: MediaQuery.of(context).size.width,
+                                      child: Card(
+                                        color: primaryAccentColor,
+                                        child: card,
                                       ),
                                     );
-                                  }),
-                                ),
-                              ],
-                            )
-                          ],
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: <Widget>[
-                            Column(
-                              children: <Widget>[
-                                Text(homeScreenMsgTxt2, style: homeMsgStyle2),
-                                Text(
-                                  homeScreenMsgTxt3,
-                                  style: homeMsgStyle3,
-                                ),
-                              ],
-                            ),
-                            QrCodeScanner().build(context),
-
-                            //GenerateScreen(),
-                            // RaisedButton(
-                            //   padding: EdgeInsets.all(1),
-                            //   autofocus: false,
-                            //   clipBehavior: Clip.none,
-                            //   elevation: 20,
-                            //   color: highlightColor,
-                            //   child: Row(
-                            //     children: <Widget>[
-                            //       Text('Scan QR', style: buttonSmlTextStyle),
-                            //       SizedBox(width: 5),
-                            //       Icon(
-                            //         Icons.camera,
-                            //         color: tealIcon,
-                            //         size: 26,
-                            //       ),
-                            //     ],
-                            //   ),
-                            //   onPressed: scan,
-                            // )
-                          ],
-                        )
-                      ],
-                    ),
-                  ),
-                  //child: Image.asset('assets/noq_home.png'),
-                ),
-                Card(
-                  elevation: 20,
-                  child: Theme(
-                    data: ThemeData(
-                      unselectedWidgetColor: Colors.grey[600],
-                      accentColor: Colors.teal,
-                    ),
-                    child: ExpansionTile(
-                      //key: PageStorageKey(this.widget.headerTitle),
-                      initiallyExpanded: true,
-                      title: Text(
-                        "Upcoming Bookings",
-                        style: TextStyle(
-                            color: Colors.blueGrey[700], fontSize: 17),
-                      ),
-                      backgroundColor: Colors.white,
-                      leading: Icon(
-                        Icons.date_range,
-                        color: primaryIcon,
-                      ),
-                      children: <Widget>[
-                        if (_upcomingBkgStatus == 'Success')
-                          ConstrainedBox(
-                            constraints: new BoxConstraints(
-                              maxHeight:
-                                  MediaQuery.of(context).size.height * .4,
-                            ),
-
-                            // decoration: BoxDecoration(
-                            //     shape: BoxShape.rectangle,
-                            //     borderRadius: BorderRadius.all(Radius.circular(8.0))),
-                            // height: MediaQuery.of(context).size.height * .6,
-                            // margin: EdgeInsets.fromLTRB(10, 10, 10, 10),
-                            child: Scrollbar(
-                              child: ListView.builder(
-                                shrinkWrap: true,
-                                //scrollDirection: Axis.vertical,
-                                itemBuilder: (BuildContext context, int index) {
-                                  return Container(
-                                    child: new Column(
-                                        children: _newBookingsList
-                                            .map(_buildItem)
-                                            .toList()),
-                                    //children: <Widget>[firstRow, secondRow],
-                                  );
-                                },
-                                itemCount: 1,
+                                  });
+                                }).toList(),
                               ),
-                            ),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: <Widget>[
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children:
+                                        map<Widget>(cardList, (index, url) {
+                                      return Container(
+                                        width: 7.0,
+                                        height: 7.0,
+                                        margin: EdgeInsets.symmetric(
+                                            vertical: 2.0, horizontal: 2.0),
+                                        decoration: BoxDecoration(
+                                          shape: BoxShape.circle,
+                                          color: _currentIndex == index
+                                              ? highlightColor
+                                              : Colors.grey,
+                                        ),
+                                      );
+                                    }),
+                                  ),
+                                ],
+                              )
+                            ],
                           ),
-                        if (_upcomingBkgStatus == 'NoBookings')
-                          _emptyStorePage("No bookings yet.. ",
-                              "Book now to save time later!! "),
-                        if (_upcomingBkgStatus == 'Loading')
-                          showCircularProgress(),
-                      ],
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: <Widget>[
+                              Column(
+                                children: <Widget>[
+                                  Text(homeScreenMsgTxt2, style: homeMsgStyle2),
+                                  Text(
+                                    homeScreenMsgTxt3,
+                                    style: homeMsgStyle3,
+                                  ),
+                                ],
+                              ),
+                              QrCodeScanner().build(context),
+
+                              //GenerateScreen(),
+                              // RaisedButton(
+                              //   padding: EdgeInsets.all(1),
+                              //   autofocus: false,
+                              //   clipBehavior: Clip.none,
+                              //   elevation: 20,
+                              //   color: highlightColor,
+                              //   child: Row(
+                              //     children: <Widget>[
+                              //       Text('Scan QR', style: buttonSmlTextStyle),
+                              //       SizedBox(width: 5),
+                              //       Icon(
+                              //         Icons.camera,
+                              //         color: tealIcon,
+                              //         size: 26,
+                              //       ),
+                              //     ],
+                              //   ),
+                              //   onPressed: scan,
+                              // )
+                            ],
+                          )
+                        ],
+                      ),
                     ),
+                    //child: Image.asset('assets/noq_home.png'),
                   ),
-                ),
-                Card(
-                  elevation: 20,
-                  child: Theme(
-                    data: ThemeData(
-                      unselectedWidgetColor: Colors.grey[600],
-                      accentColor: Colors.teal,
-                    ),
-                    child: ExpansionTile(
-                      title: Text(
-                        "Past Bookings",
-                        style: TextStyle(
-                            color: Colors.blueGrey[700], fontSize: 17),
+                  Card(
+                    elevation: 20,
+                    child: Theme(
+                      data: ThemeData(
+                        unselectedWidgetColor: Colors.grey[600],
+                        accentColor: Colors.teal,
                       ),
-                      backgroundColor: Colors.white,
-                      leading: Icon(
-                        Icons.access_time,
-                        color: primaryIcon,
-                      ),
-                      children: <Widget>[
-                        Column(
-                          children: <Widget>[
-                            if (_pastBkgStatus == "Success")
-                              Container(
-                                //height: MediaQuery.of(context).size.width * .5,
+                      child: ExpansionTile(
+                        //key: PageStorageKey(this.widget.headerTitle),
+                        initiallyExpanded: true,
+                        title: Text(
+                          "Upcoming Bookings",
+                          style: TextStyle(
+                              color: Colors.blueGrey[700], fontSize: 17),
+                        ),
+                        backgroundColor: Colors.white,
+                        leading: Icon(
+                          Icons.date_range,
+                          color: primaryIcon,
+                        ),
+                        children: <Widget>[
+                          if (_upcomingBkgStatus == 'Success')
+                            ConstrainedBox(
+                              constraints: new BoxConstraints(
+                                maxHeight:
+                                    MediaQuery.of(context).size.height * .4,
+                              ),
+
+                              // decoration: BoxDecoration(
+                              //     shape: BoxShape.rectangle,
+                              //     borderRadius: BorderRadius.all(Radius.circular(8.0))),
+                              // height: MediaQuery.of(context).size.height * .6,
+                              // margin: EdgeInsets.fromLTRB(10, 10, 10, 10),
+                              child: Scrollbar(
                                 child: ListView.builder(
                                   shrinkWrap: true,
-                                  scrollDirection: Axis.vertical,
+                                  //scrollDirection: Axis.vertical,
                                   itemBuilder:
                                       (BuildContext context, int index) {
                                     return Container(
                                       child: new Column(
-                                          children: _pastBookingsList
+                                          children: _newBookingsList
                                               .map(_buildItem)
                                               .toList()),
                                       //children: <Widget>[firstRow, secondRow],
@@ -379,37 +336,89 @@ class _UserHomePageState extends State<UserHomePage> {
                                   itemCount: 1,
                                 ),
                               ),
-                            if (_pastBkgStatus == 'NoBookings')
-                              _emptyStorePage("No bookings in past..",
-                                  "Book now to save time later!! "),
-                            if (_pastBkgStatus == 'Loading')
-                              showCircularProgress(),
-                          ],
-                        )
-                      ],
+                            ),
+                          if (_upcomingBkgStatus == 'NoBookings')
+                            _emptyStorePage("No bookings yet.. ",
+                                "Book now to save time later!! "),
+                          if (_upcomingBkgStatus == 'Loading')
+                            showCircularProgress(),
+                        ],
+                      ),
                     ),
                   ),
-                ),
-                RaisedButton(
-                  color: Colors.blue,
-                  onPressed: DBTest().dbCall1,
-                  child: Icon(Icons.add),
-                ),
-              ],
+                  Card(
+                    elevation: 20,
+                    child: Theme(
+                      data: ThemeData(
+                        unselectedWidgetColor: Colors.grey[600],
+                        accentColor: Colors.teal,
+                      ),
+                      child: ExpansionTile(
+                        title: Text(
+                          "Past Bookings",
+                          style: TextStyle(
+                              color: Colors.blueGrey[700], fontSize: 17),
+                        ),
+                        backgroundColor: Colors.white,
+                        leading: Icon(
+                          Icons.access_time,
+                          color: primaryIcon,
+                        ),
+                        children: <Widget>[
+                          Column(
+                            children: <Widget>[
+                              if (_pastBkgStatus == "Success")
+                                Container(
+                                  //height: MediaQuery.of(context).size.width * .5,
+                                  child: ListView.builder(
+                                    shrinkWrap: true,
+                                    scrollDirection: Axis.vertical,
+                                    itemBuilder:
+                                        (BuildContext context, int index) {
+                                      return Container(
+                                        child: new Column(
+                                            children: _pastBookingsList
+                                                .map(_buildItem)
+                                                .toList()),
+                                        //children: <Widget>[firstRow, secondRow],
+                                      );
+                                    },
+                                    itemCount: 1,
+                                  ),
+                                ),
+                              if (_pastBkgStatus == 'NoBookings')
+                                _emptyStorePage("No bookings in past..",
+                                    "Book now to save time later!! "),
+                              if (_pastBkgStatus == 'Loading')
+                                showCircularProgress(),
+                            ],
+                          )
+                        ],
+                      ),
+                    ),
+                  ),
+                  RaisedButton(
+                    color: Colors.blue,
+                    onPressed: DBTest().dbCall1,
+                    child: Icon(Icons.add),
+                  ),
+                ],
+              ),
             ),
           ),
+          drawer: CustomDrawer(),
+          bottomNavigationBar: CustomBottomBar(
+            barIndex: 0,
+          ),
+          // if (_upcomingBkgStatus == 'NoBookings') {
+          //   return _emptyStorePage();
+          // } else {
+          //   return showCircularProgress();
+          // }
         ),
-        drawer: CustomDrawer(),
-        bottomNavigationBar: CustomBottomBar(
-          barIndex: 0,
-        ),
-        // if (_upcomingBkgStatus == 'NoBookings') {
-        //   return _emptyStorePage();
-        // } else {
-        //   return showCircularProgress();
-        // }
-      ),
-    );
+        routes: <String, WidgetBuilder>{
+          '/DLink': (BuildContext context) => new SearchStoresPage(),
+        });
   }
 
   String getEntityAddress(String entityId) {

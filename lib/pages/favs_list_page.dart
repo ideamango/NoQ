@@ -1,3 +1,4 @@
+import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:intl/intl.dart';
@@ -18,6 +19,7 @@ import 'package:noq/style.dart';
 import 'package:noq/utils.dart';
 import 'package:noq/widget/appbar.dart';
 import 'package:noq/widget/bottom_nav_bar.dart';
+import 'package:share/share.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:noq/userHomePage.dart';
 
@@ -41,6 +43,7 @@ class _FavsListPageState extends State<FavsListPage> {
 
   final compareDateFormat = new DateFormat('YYYYMMDD');
   List<DateTime> _dateList = new List<DateTime>();
+  String _dynamicLink;
 
   Icon actionIcon = new Icon(
     Icons.search,
@@ -161,6 +164,36 @@ class _FavsListPageState extends State<FavsListPage> {
         ', ' +
         address.city;
     return adr;
+  }
+
+  generateLinkShareWithParams(String entityId) async {
+    var dynamicLink = await createDynamicLinkWithParams(entityId: entityId);
+    print("Dynamic Link: $dynamicLink");
+    _dynamicLink =
+        Uri.https(dynamicLink.authority, dynamicLink.path).toString();
+    // dynamicLink has been generated. share it with others to use it accordingly.
+    Share.share(Uri.https(dynamicLink.authority, dynamicLink.path, {"entityId":entityId}).toString());
+  }
+
+  Future<Uri> createDynamicLinkWithParams({@required String entityId}) async {
+    final DynamicLinkParameters parameters = DynamicLinkParameters(
+      // This should match firebase but without the username query param
+      uriPrefix: 'https://sukoonnoq.page.link/',
+      // This can be whatever you want for the uri, https://yourapp.com/groupinvite?username=$userName
+      link: Uri.parse('https://watcharoundyou.wordpress.com/'),
+      androidParameters: AndroidParameters(
+        packageName: 'com.example.noq',
+        minimumVersion: 1,
+      ),
+      iosParameters: IosParameters(
+        bundleId: 'com.example.noq',
+        minimumVersion: '1',
+        appStoreId: '',
+      ),
+    );
+    final link = await parameters.buildUrl();
+    final ShortDynamicLink shortenedLink = await parameters.buildShortLink();
+    return shortenedLink.shortUrl;
   }
 
   Widget _emptyFavsPage() {
@@ -342,6 +375,22 @@ class _FavsListPageState extends State<FavsListPage> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               // crossAxisAlignment: CrossAxisAlignment.start,
                               children: <Widget>[
+                                Container(
+                                    padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
+                                    margin: EdgeInsets.fromLTRB(0, 0, 0, 0),
+                                    height: 25.0,
+                                    width: 28.0,
+                                    child: IconButton(
+                                      padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
+                                      alignment: Alignment.center,
+                                      highlightColor: Colors.orange[300],
+                                      icon: Icon(Icons.share),
+                                      iconSize: 20,
+                                      onPressed: () {
+                                        generateLinkShareWithParams(
+                                            str.entityId);
+                                      },
+                                    )),
                                 Container(
                                   padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
                                   margin: EdgeInsets.fromLTRB(0, 0, 0, 0),

@@ -5,6 +5,7 @@ import 'package:noq/db/db_service/entity_service.dart';
 import 'package:noq/pages/entity_services_details_page.dart';
 import 'package:noq/pages/manage_apartment_page.dart';
 import 'package:noq/services/circular_progress.dart';
+import 'package:noq/services/qr_code_generate.dart';
 import 'package:noq/style.dart';
 import 'package:flutter/foundation.dart';
 import 'package:noq/pages/entity_services_list_page.dart';
@@ -94,7 +95,7 @@ class EntityRowState extends State<EntityRow> {
           borderRadius: BorderRadius.all(Radius.circular(5.0))),
       // padding: EdgeInsets.all(5.0),
 
-      child: Row(
+      child: Column(
         //  mainAxisSize: MainAxisSize.max,
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: <Widget>[
@@ -102,30 +103,85 @@ class EntityRowState extends State<EntityRow> {
           //   Icons.business,
           //   color: primaryIcon,
           // ),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+          Row(
             children: <Widget>[
-              Text(
-                (_metaEntity.name != null) ? _metaEntity.name : "Untitled",
-                style: TextStyle(color: Colors.blueGrey[700], fontSize: 17),
+              Container(
+                width: MediaQuery.of(context).size.width * .5,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Text(
+                      (_metaEntity.name != null)
+                          ? _metaEntity.name
+                          : "Untitled",
+                      style:
+                          TextStyle(color: Colors.blueGrey[700], fontSize: 17),
+                    ),
+                    Text(
+                      _metaEntity.type,
+                      style: labelTextStyle,
+                    ),
+                  ],
+                ),
               ),
-              Text(
-                _metaEntity.type,
-                style: labelTextStyle,
-              ),
+              Container(
+                  padding: EdgeInsets.zero,
+                  margin: EdgeInsets.zero,
+                  width: MediaQuery.of(context).size.width * .4,
+                  height: MediaQuery.of(context).size.width * .05,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: <Widget>[
+                      Container(
+                        padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
+                        margin: EdgeInsets.fromLTRB(0, 0, 0, 0),
+                        height: 25.0,
+                        width: 28.0,
+                        child: IconButton(
+                            padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
+                            alignment: Alignment.center,
+                            highlightColor: Colors.orange[300],
+                            icon: ImageIcon(
+                              AssetImage('assets/qrcode.png'),
+                              size: 20,
+                              //color: primaryIcon,
+                            ),
+                            onPressed: () {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => GenerateScreen(
+                                            entityId: _metaEntity.entityId,
+                                          )));
+                            }),
+                      ),
+                      horizontalSpacer,
+                      Container(
+                          padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
+                          margin: EdgeInsets.fromLTRB(0, 0, 0, 0),
+                          height: 25.0,
+                          width: 28.0,
+                          child: IconButton(
+                            padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
+                            alignment: Alignment.center,
+                            highlightColor: Colors.orange[300],
+                            icon: Icon(Icons.share),
+                            iconSize: 20,
+                            onPressed: () {
+                              
+                            },
+                          )),
+                    ],
+                  )),
             ],
           ),
           horizontalSpacer,
-          Container(
-            child: IconButton(icon: Icon(Icons.code), onPressed: null),
-          ),
-          horizontalSpacer,
-          Column(
+          Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: <Widget>[
               Container(
                 width: MediaQuery.of(context).size.width * .45,
-                height: 30,
+                height: 34,
                 child: RaisedButton(
                   elevation: 20,
                   color: btnColor,

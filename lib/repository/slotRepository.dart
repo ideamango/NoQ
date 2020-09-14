@@ -8,6 +8,7 @@ import 'package:noq/db/db_model/meta_entity.dart';
 import 'package:noq/db/db_model/slot.dart';
 import 'package:noq/db/db_model/user_token.dart';
 import 'package:noq/db/db_service/entity_service.dart';
+import 'package:noq/db/db_service/slot_full_exception.dart';
 import 'package:noq/db/db_service/token_service.dart';
 
 Future<List<Slot>> getSlotsListForStore(
@@ -90,7 +91,7 @@ Future<UserToken> bookSlotForStore(MetaEntity meta, Slot slot) async {
     token = await TokenService().generateToken(meta, slot.dateTime);
     print("Token Booked: $token");
   } catch (e) {
-    print(e.toString());
+    throw e;
   }
   return token;
 }

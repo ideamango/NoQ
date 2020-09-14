@@ -1,10 +1,12 @@
 import 'package:barcode_scan/barcode_scan.dart';
+import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:noq/constants.dart';
 import 'package:noq/db/db_model/user_token.dart';
 import 'package:noq/global_state.dart';
+import 'package:noq/pages/dynamic_links.dart';
 import 'package:noq/pages/notifications_page.dart';
 import 'package:noq/pages/shopping_list.dart';
 import 'package:noq/repository/slotRepository.dart';
@@ -44,6 +46,7 @@ class _UserAccountPageState extends State<UserAccountPage> {
 //Qr code scan result
   ScanResult scanResult;
   GlobalState _state;
+  String _dynamicLink;
 
   @override
   void initState() {
@@ -516,6 +519,93 @@ class _UserAccountPageState extends State<UserAccountPage> {
     _pageController.jumpToPage(page);
   }
 
+  openPlayStoreAndRate() async {
+    print("To be done next....hold on!!!");
+    Utils.showMyFlushbar(
+        context,
+        Icons.help_outline,
+        Duration(seconds: 3),
+        "It seems you might have to wait a little longer!!",
+        "...work in progress");
+  }
+
+  openFeedbackPage() async {
+    print("To be done next....hold on!!!");
+    Utils.showMyFlushbar(
+        context,
+        Icons.help_outline,
+        Duration(seconds: 3),
+        "It seems you might have to wait a little longer!!",
+        "...work in progress");
+  }
+
+  generateLinkAndShare() async {
+    var dynamicLink = await createDynamicLink();
+    print("Dynamic Link: $dynamicLink");
+    // _dynamicLink =
+    //     Uri.https(dynamicLink.authority, dynamicLink.path).toString();
+    // dynamicLink has been generated. share it with others to use it accordingly.
+    Share.share(Uri.https(dynamicLink.authority, dynamicLink.path).toString());
+  }
+
+  Future<Uri> createDynamicLink() async {
+    final DynamicLinkParameters parameters = DynamicLinkParameters(
+      // This should match firebase but without the username query param
+      uriPrefix: 'https://sukoontest2.page.link',
+      // This can be whatever you want for the uri, https://yourapp.com/groupinvite?username=$userName
+      link: Uri.parse('https://sukoontest2.page.link'),
+      androidParameters: AndroidParameters(
+        packageName: 'com.example.noq',
+        minimumVersion: 1,
+      ),
+      iosParameters: IosParameters(
+        bundleId: 'com.example.noq',
+        minimumVersion: '1',
+        appStoreId: '',
+      ),
+      socialMetaTagParameters: SocialMetaTagParameters(
+        title: 'Check out this amazing app',
+        description: 'It saves time and keeps you at safe-distance!',
+      ),
+    );
+    final link = await parameters.buildUrl();
+    // final ShortDynamicLink shortenedLink = await parameters.buildShortLink();
+    return link;
+  }
+
+  generateLinkShareWithParams() async {
+    var dynamicLink = await createDynamicLinkWithParams(
+        entityId: _state.currentUser.entities[0].entityId);
+    print("Dynamic Link: $dynamicLink");
+    print(_state.currentUser.entities[0].entityId);
+    _dynamicLink =
+        Uri.https(dynamicLink.authority, dynamicLink.path).toString();
+    // dynamicLink has been generated. share it with others to use it accordingly.
+    Share.share(dynamicLink.toString());
+  }
+
+  Future<Uri> createDynamicLinkWithParams({@required String entityId}) async {
+    final DynamicLinkParameters parameters = DynamicLinkParameters(
+      // This should match firebase but without the username query param
+      uriPrefix: 'https://sukoontest2.page.link',
+      // This can be whatever you want for the uri, https://yourapp.com/groupinvite?username=$userName
+      link: Uri.parse('https://sukoontest2.page.link/?entityId=$entityId'),
+      androidParameters: AndroidParameters(
+        packageName: 'com.example.noq',
+        minimumVersion: 1,
+      ),
+      iosParameters: IosParameters(
+        bundleId: 'com.example.noq',
+        minimumVersion: '1',
+        appStoreId: '',
+      ),
+    );
+    final link = await parameters.buildUrl();
+    //final ShortDynamicLink shortenedLink = await parameters.buildShortLink();
+
+    return link;
+  }
+
   @override
   void dispose() {
     super.dispose();
@@ -550,6 +640,7 @@ class _UserAccountPageState extends State<UserAccountPage> {
                 Card(
                   margin: EdgeInsets.zero,
                   child: Container(
+                      width: MediaQuery.of(context).size.width,
                       decoration: BoxDecoration(
                           border: Border.all(color: containerColor),
                           color: Colors.grey[50],
@@ -565,7 +656,7 @@ class _UserAccountPageState extends State<UserAccountPage> {
                                   mainAxisSize: MainAxisSize.max,
                                   children: <Widget>[
                                     Text(
-                                      " What more to do!!",
+                                      " ...what more to do!!",
                                       style: TextStyle(
                                           color: Colors.white, fontSize: 15),
                                     ),
@@ -574,30 +665,40 @@ class _UserAccountPageState extends State<UserAccountPage> {
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                               children: <Widget>[
-                                Padding(
-                                  padding: EdgeInsets.symmetric(
-                                      vertical: 8.0, horizontal: 16.0),
+                                Container(
+                                  width: MediaQuery.of(context).size.width * .3,
                                   child: RaisedButton(
                                       color: btnColor,
                                       textColor: Colors.white,
-                                      splashColor: Colors.blueGrey,
+                                      splashColor: highlightColor,
                                       onPressed: () {
-                                        Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (context) =>
-                                                  GenerateScreen()),
-                                        );
+                                        openPlayStoreAndRate();
                                       },
-                                      child: const Text('Generate QR code')),
+                                      child: const Text(
+                                        'Rate the app',
+                                        textAlign: TextAlign.center,
+                                      )),
                                 ),
-                                Padding(
-                                  padding: EdgeInsets.symmetric(
-                                      vertical: 8.0, horizontal: 16.0),
+                                Container(
+                                  width: MediaQuery.of(context).size.width * .3,
                                   child: RaisedButton(
                                       color: btnColor,
                                       textColor: Colors.white,
-                                      splashColor: Colors.blueGrey,
+                                      splashColor: highlightColor,
+                                      onPressed: () {
+                                        openFeedbackPage();
+                                      },
+                                      child: const Text(
+                                        'Give Feedback',
+                                        textAlign: TextAlign.center,
+                                      )),
+                                ),
+                                Container(
+                                  width: MediaQuery.of(context).size.width * .3,
+                                  child: RaisedButton(
+                                      color: btnColor,
+                                      textColor: Colors.white,
+                                      splashColor: highlightColor,
                                       onPressed: inviteText.isEmpty
                                           ? null
                                           : () {
@@ -610,18 +711,13 @@ class _UserAccountPageState extends State<UserAccountPage> {
                                               // has its position and size after it's built.
                                               final RenderBox box =
                                                   context.findRenderObject();
-                                              try {
-                                                Share.share(inviteText,
-                                                    subject: inviteSubject,
-                                                    sharePositionOrigin:
-                                                        box.localToGlobal(
-                                                                Offset.zero) &
-                                                            box.size);
-                                              } on PlatformException catch (e) {
-                                                print('${e.message}');
-                                              }
+
+                                              generateLinkAndShare();
                                             },
-                                      child: const Text('Invite friends')),
+                                      child: const Text(
+                                        'Invite friends',
+                                        textAlign: TextAlign.center,
+                                      )),
                                 ),
                               ],
                             ),
