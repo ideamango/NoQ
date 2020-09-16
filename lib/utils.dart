@@ -185,6 +185,7 @@ class Utils {
   }
 
   static bool askPermission(BuildContext context) {
+    bool retVal = false;
     showDialog(
         barrierDismissible: false,
         context: context,
@@ -226,6 +227,7 @@ class Utils {
                         side: BorderSide(color: Colors.orange)),
                     child: Text('Yes'),
                     onPressed: () {
+                      retVal = true;
                       Utils.showMyFlushbar(
                           context,
                           Icons.info_outline,
@@ -234,6 +236,7 @@ class Utils {
                           ),
                           "Ok..u clicked YES, wait we will do something.",
                           "Need to Open Settings and give permissions!!");
+                      Navigator.pop(context, retVal);
                     },
                   ),
                 ),
@@ -250,6 +253,7 @@ class Utils {
                         side: BorderSide(color: Colors.orange)),
                     child: Text('No'),
                     onPressed: () {
+                      retVal = false;
                       Utils.showMyFlushbar(
                           context,
                           Icons.info_outline,
@@ -258,6 +262,7 @@ class Utils {
                           ),
                           "Oops.. Cant Search as location permissions are not given.",
                           "Open Settings and give permissions!!");
+                      Navigator.pop(context, retVal);
                     },
                   ),
                 ),
@@ -271,7 +276,7 @@ class Utils {
     if (permission == LocationPermission.deniedForever) {
       LocationPermission permission = await requestPermission();
       print(permission);
-      askPermission(context);
+      bool retVal = askPermission(context);
 
       await openAppSettings();
       await openLocationSettings();
