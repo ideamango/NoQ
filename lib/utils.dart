@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:noq/style.dart';
 import 'package:noq/widget/weekday_selector.dart';
+import 'package:noq/widget/widgets.dart';
 
 class Utils {
   static String getDayOfWeek(DateTime date) {
@@ -183,9 +184,86 @@ class Utils {
     return hr;
   }
 
+  static void askPermission(BuildContext context) {
+    showDialog(
+        barrierDismissible: false,
+        context: context,
+        builder: (_) => AlertDialog(
+              titlePadding: EdgeInsets.fromLTRB(10, 15, 10, 10),
+              contentPadding: EdgeInsets.all(0),
+              actionsPadding: EdgeInsets.all(5),
+              //buttonPadding: EdgeInsets.all(0),
+              title: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Text(
+                    'Give permission for accessing location ?',
+                    style: TextStyle(
+                      fontSize: 15,
+                      color: Colors.blueGrey[600],
+                    ),
+                  ),
+                  verticalSpacer,
+                  // myDivider,
+                ],
+              ),
+              content: Divider(
+                color: Colors.blueGrey[400],
+                height: 1,
+                //indent: 40,
+                //endIndent: 30,
+              ),
+
+              //content: Text('This is my content'),
+              actions: <Widget>[
+                SizedBox(
+                  height: 24,
+                  child: RaisedButton(
+                    elevation: 0,
+                    color: Colors.transparent,
+                    splashColor: highlightColor.withOpacity(.8),
+                    textColor: Colors.orange,
+                    shape: RoundedRectangleBorder(
+                        side: BorderSide(color: Colors.orange)),
+                    child: Text('Yes'),
+                    onPressed: () {
+                      Utils.showMyFlushbar(
+                          context,
+                          Icons.info_outline,
+                          Duration(
+                            seconds: 3,
+                          ),
+                          "Logging off.. ",
+                          "Hope to see you soon!!");
+                      Navigator.of(context, rootNavigator: true).pop();
+                    },
+                  ),
+                ),
+                SizedBox(
+                  height: 24,
+                  child: RaisedButton(
+                    elevation: 20,
+                    autofocus: true,
+                    focusColor: highlightColor,
+                    splashColor: highlightColor,
+                    color: Colors.white,
+                    textColor: Colors.orange,
+                    shape: RoundedRectangleBorder(
+                        side: BorderSide(color: Colors.orange)),
+                    child: Text('No'),
+                    onPressed: () {
+                      Navigator.of(context, rootNavigator: true).pop();
+                      // Navigator.of(context, rootNavigator: true).pop('dialog');
+                    },
+                  ),
+                ),
+              ],
+            ));
+  }
+
   static Future<Position> getCurrLocation(BuildContext context) async {
     LocationPermission permission = await checkPermission();
-    showDialog(context: context, child: Text("Are you here?"));
+    askPermission(context);
     if (permission == LocationPermission.deniedForever) {
       LocationPermission permission = await requestPermission();
       print(permission);

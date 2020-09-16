@@ -136,10 +136,10 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
     _scrollController = ScrollController();
     super.initState();
 
-    Utils.getCurrLocation(context).then((value) {
-      pos = value;
-      _getAddressFromLatLng(pos);
-    });
+    // Utils.getCurrLocation(context).then((value) {
+    //   pos = value;
+    //   _getAddressFromLatLng(pos);
+    // });
 
     entity = this.widget.entity;
     getGlobalState().whenComplete(() {
