@@ -676,23 +676,17 @@ class EntityService {
           .collection('entities')
           .where("isActive", isEqualTo: true)
           .where("nameQuery", arrayContains: name)
-          .where("type", isEqualTo: type)
-          .where("verificationStatus",
-              whereIn: ["Verification Pending", "Verified"]);
+          .where("type", isEqualTo: type);
     } else if (name != null && name != "") {
       collectionReference = fStore
           .collection('entities')
           .where("isActive", isEqualTo: true)
-          .where("nameQuery", arrayContains: name)
-          .where("verificationStatus",
-              whereIn: ["Verification Pending", "Verified"]);
+          .where("nameQuery", arrayContains: name);
     } else if (type != null && type != "") {
       collectionReference = fStore
           .collection('entities')
           .where("isActive", isEqualTo: true)
-          .where("type", isEqualTo: type)
-          .where("verificationStatus",
-              whereIn: ["Verification Pending", "Verified"]);
+          .where("type", isEqualTo: type);
     } else {
       return entities;
     }
