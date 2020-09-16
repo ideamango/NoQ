@@ -185,11 +185,11 @@ class Utils {
 
   static Future<Position> getCurrLocation(BuildContext context) async {
     LocationPermission permission = await checkPermission();
-
+    showDialog(context: context, child: Text("Are you here?"));
     if (permission == LocationPermission.deniedForever) {
       LocationPermission permission = await requestPermission();
       print(permission);
-      showDialog(context: context, child: Text("Are you here?"));
+
       await openAppSettings();
       await openLocationSettings();
     }
