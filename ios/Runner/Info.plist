@@ -43,9 +43,9 @@
 		<key>NSCameraUsageDescription</key>
 		<string>This app needs permission to use Camera for QR code scanning.</string>
 		<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-		<string>This app needs access to location when open and in the background.</string>
+		<string>This app needs location turned on to work properly. We'll access your location only when we really need it.</string>
 		<key>NSLocationWhenInUseUsageDescription</key>
-		<string>This app needs access to location.</string>
+		<string>This app needs location turned on to work properly. We'll access your location only when we really need it.</string>
 		<key>UIBackgroundModes</key>
 		<array>
 			<string>location</string>

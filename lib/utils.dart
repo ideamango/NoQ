@@ -184,7 +184,7 @@ class Utils {
     return hr;
   }
 
-  static void askPermission(BuildContext context) {
+  static bool askPermission(BuildContext context) {
     showDialog(
         barrierDismissible: false,
         context: context,
@@ -197,7 +197,7 @@ class Utils {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
                   Text(
-                    'Access to your current location is required for optimum search results, Would you like to open seetings and give permissions now?',
+                    'Access to your current location is required for optimum search results, Would you like to open settings and give permissions now?',
                     style: TextStyle(
                       fontSize: 15,
                       color: Colors.blueGrey[600],
@@ -213,7 +213,6 @@ class Utils {
                 //indent: 40,
                 //endIndent: 30,
               ),
-
               //content: Text('This is my content'),
               actions: <Widget>[
                 SizedBox(
