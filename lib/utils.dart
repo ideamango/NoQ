@@ -197,7 +197,7 @@ class Utils {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
                   Text(
-                    'Give permission for accessing location ?',
+                    'Access to your current location is required for optimum search results, Would you like to open seetings and give permissions now?',
                     style: TextStyle(
                       fontSize: 15,
                       color: Colors.blueGrey[600],
@@ -233,9 +233,8 @@ class Utils {
                           Duration(
                             seconds: 3,
                           ),
-                          "Logging off.. ",
-                          "Hope to see you soon!!");
-                      Navigator.of(context, rootNavigator: true).pop();
+                          "Ok..u clicked YES, wait we will do something.",
+                          "Need to Open Settings and give permissions!!");
                     },
                   ),
                 ),
@@ -252,8 +251,14 @@ class Utils {
                         side: BorderSide(color: Colors.orange)),
                     child: Text('No'),
                     onPressed: () {
-                      Navigator.of(context, rootNavigator: true).pop();
-                      // Navigator.of(context, rootNavigator: true).pop('dialog');
+                      Utils.showMyFlushbar(
+                          context,
+                          Icons.info_outline,
+                          Duration(
+                            seconds: 3,
+                          ),
+                          "Oops.. Cant Search as location permissions are not given.",
+                          "Open Settings and give permissions!!");
                     },
                   ),
                 ),
@@ -263,10 +268,11 @@ class Utils {
 
   static Future<Position> getCurrLocation(BuildContext context) async {
     LocationPermission permission = await checkPermission();
-    askPermission(context);
+
     if (permission == LocationPermission.deniedForever) {
       LocationPermission permission = await requestPermission();
       print(permission);
+      askPermission(context);
 
       await openAppSettings();
       await openLocationSettings();
