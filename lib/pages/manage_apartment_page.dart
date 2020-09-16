@@ -1,8 +1,7 @@
 import 'dart:async';
-
-import 'package:flushbar/flushbar_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:intl/intl.dart';
 import 'package:noq/constants.dart';
 import 'package:noq/db/db_model/address.dart';
@@ -12,24 +11,18 @@ import 'package:noq/db/db_model/entity_private.dart';
 import 'package:noq/db/db_model/meta_entity.dart';
 import 'package:noq/db/db_model/my_geo_fire_point.dart';
 import 'package:noq/db/db_model/user.dart';
-import 'package:noq/db/db_service/entity_service.dart';
 import 'package:noq/db/db_service/user_service.dart';
 import 'package:noq/global_state.dart';
-
 import 'package:noq/pages/contact_item.dart';
-import 'package:noq/pages/entity_services_list_page.dart';
 import 'package:noq/pages/manage_apartment_list_page.dart';
 import 'package:noq/repository/StoreRepository.dart';
 import 'package:noq/services/circular_progress.dart';
-
 import 'package:noq/style.dart';
 import 'package:noq/utils.dart';
 import 'package:noq/widget/bottom_nav_bar.dart';
 import 'package:noq/widget/custom_expansion_tile.dart';
 import 'package:noq/widget/weekday_selector.dart';
-
 import 'package:flutter/foundation.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:flushbar/flushbar.dart';
 import 'package:noq/widget/widgets.dart';
@@ -80,7 +73,8 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
 
   List<String> _closedOnDays = List<String>();
   List<days> _daysOff = List<days>();
-
+  TextEditingController _latController = TextEditingController();
+  TextEditingController _lonController = TextEditingController();
   // TextEditingController _subAreaController = TextEditingController();
   TextEditingController _adrs1Controller = TextEditingController();
   TextEditingController _landController = TextEditingController();
@@ -135,6 +129,7 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
   Position pos;
   GlobalState _gState;
   String _phCountryCode;
+  //final Geolocator geolocator = Geolocator()..forceAndroidLocationManager;
 
   @override
   void initState() {
@@ -212,6 +207,12 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
           entity.gpay != null ? entity.gpay.toString().substring(3) : "";
       _paytmPhoneController.text =
           entity.paytm != null ? entity.paytm.toString().substring(3) : "";
+
+      if (entity.coordinates != null) {
+        _latController.text = entity.coordinates.geopoint.latitude.toString();
+        _lonController.text = entity.coordinates.geopoint.longitude.toString();
+      }
+
       //address
       if (entity.address != null) {
         _adrs1Controller.text = entity.address.address;
@@ -270,51 +271,18 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
   }
 
   _getAddressFromLatLng(Position position) async {
-    try {
-      // List<Placemark> p = await geolocator.placemarkFromCoordinates(
-      //     position.latitude, position.longitude);
+    setState(() {
+      entity.coordinates =
+          new MyGeoFirePoint(position.latitude, position.longitude);
+      _latController.text = position.latitude.toString();
+      _lonController.text = position.longitude.toString();
+    });
+  }
 
-      // Placemark place = p[0];
-
-      // setState(() {
-      //   // _autoPopulate = true;
-      //   _subArea = place.subAdministrativeArea;
-      //   _state = place.administrativeArea;
-      //   _mainArea = place.subLocality;
-      //   _currentCity = place.locality;
-      //   _postalCode = place.postalCode;
-      //   _country = place.country;
-
-      //   // _address = new Address(
-      //   //     _subArea, _mainArea, _currentCity, _country, _postalCode);
-      // });
-      // print('get Address From LantLong');
-      // print(_subArea +
-      //     "..." +
-      //     _mainArea +
-      //     "..." +
-      //     _currentCity +
-      //     "..." +
-      //     _postalCode +
-      //     "..." +
-      //     _country +
-      //     "..." +
-      //     place.administrativeArea);
-      // setState(() {
-      //   _localityController.text = _subArea;
-      //   _cityController.text = _currentCity;
-      //   _stateController.text = _state;
-      //   _countryController.text = _country;
-      //   _pinController.text = _postalCode;
-      // });
-
-      // _subAreaController.text = _subArea;
-      // setState(() {
-      //   _textEditingController.text = _address.country;
-      // });
-    } catch (e) {
-      print(e);
-    }
+  void clearLocation() {
+    _latController.text = "";
+    _lonController.text = "";
+    entity.coordinates = null;
   }
 
   getEntityDetails() {
@@ -349,61 +317,11 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
     });
   }
 
-  // Widget buildAdminRow(String admPh) {
-  //   Widget ctPhn1Field = TextFormField(
-  //     obscureText: false,
-  //     autovalidate: false,
-  //     maxLines: 1,
-  //     minLines: 1,
-  //     style: textInputTextStyle,
-  //     keyboardType: TextInputType.phone,
-  //     controller: _ctPhn1controller,
-  //     decoration: CommonStyle.textFieldStyle(
-  //         prefixText: '+91', labelTextStr: "Primary Phone", hintTextStr: ""),
-  //     validator: Utils.validateMobile,
-  //     onChanged: (String value) {
-  //       //  contact.ph = "+91" + value;
-  //     },
-  //     onSaved: (value) {
-  //       //   contact.ph = "+91" + value;
-  //     },
-  //   );
-  //   _ctPhn1controller.text = admPh;
-
-  //   return ListTile(
-  //     title: Column(
-  //       children: <Widget>[ctPhn1Field],
-  //     ),
-  //     // backgroundColor: Colors.white,
-  //     leading: Icon(
-  //       Icons.person,
-  //       color: lightIcon,
-  //     ),
-  //     trailing: IconButton(
-  //         icon: Icon(Icons.save),
-  //         onPressed: () {
-  //           saveNewAdminRow(_ctPhn1controller.text);
-  //         }
-  //         //showServiceForm
-  //         ),
-  //   );
-  // }
-
   void saveNewAdminRow(String newAdmPh) {
     setState(() {
       adminsList.forEach((element) {
         if (element.compareTo(newAdmPh) != 0) adminsList.add(newAdmPh);
       });
-
-      // adminsList.add
-
-      //Check the admins already present
-      // if (Utils.isNullOrEmpty(entity.managers)) {
-      //   entity.managers = new List<Employee>();
-      // }
-      //entity.managers = contactList;
-      // saveEntityDetails(en);
-      //saveEntityDetails();
     });
   }
 
@@ -881,6 +799,53 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
         },
       );
 
+      final latField = Container(
+          width: MediaQuery.of(context).size.width * .3,
+          child: TextFormField(
+            obscureText: false,
+            maxLines: 1,
+            minLines: 1,
+            enabled: false,
+            style: textInputTextStyle,
+            keyboardType: TextInputType.text,
+            controller: _latController,
+            decoration: CommonStyle.textFieldStyle(
+                labelTextStr: "Latitude", hintTextStr: ""),
+            validator: validateText,
+            onChanged: (String value) {},
+            onSaved: (String value) {},
+          ));
+
+      final lonField = Container(
+          width: MediaQuery.of(context).size.width * .3,
+          child: TextFormField(
+            obscureText: false,
+            maxLines: 1,
+            minLines: 1,
+            enabled: false,
+            style: textInputTextStyle,
+            keyboardType: TextInputType.text,
+            controller: _lonController,
+            decoration: CommonStyle.textFieldStyle(
+                labelTextStr: "Longitude", hintTextStr: ""),
+            validator: validateText,
+            onChanged: (String value) {},
+            onSaved: (String value) {},
+          ));
+      final clearBtn = Container(
+          width: MediaQuery.of(context).size.width * .3,
+          child: FlatButton(
+            //elevation: 20,
+            color: Colors.transparent,
+            splashColor: highlightColor,
+            textColor: btnColor,
+            shape: RoundedRectangleBorder(side: BorderSide(color: btnColor)),
+            child: Text(
+              'Clear',
+              textAlign: TextAlign.center,
+            ),
+            onPressed: clearLocation,
+          ));
 //Address fields
       final adrsField1 = TextFormField(
         obscureText: false,
@@ -1272,8 +1237,8 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
       void useCurrLocation() {
         Utils.getCurrLocation(context).then((value) {
           pos = value;
-          _getAddressFromLatLng(pos);
         });
+        _getAddressFromLatLng(pos);
       }
 
       Future<void> showConfirmationDialog() async {
@@ -1878,15 +1843,51 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
                             padding: EdgeInsets.only(left: 5.0, right: 5),
                             child: Column(
                               children: <Widget>[
-                                RaisedButton(
-                                  elevation: 20,
-                                  color: btnColor,
-                                  splashColor: highlightColor,
-                                  textColor: Colors.white,
-                                  shape: RoundedRectangleBorder(
-                                      side: BorderSide(color: btnColor)),
-                                  child: Text('Use current location'),
-                                  onPressed: useCurrLocation,
+                                Row(children: <Widget>[
+                                  Container(
+                                    padding: EdgeInsets.all(6),
+                                    width:
+                                        MediaQuery.of(context).size.width * .55,
+                                    child: RichText(
+                                        text: TextSpan(
+                                            style: highlightSubTextStyle,
+                                            children: <TextSpan>[
+                                          TextSpan(
+                                              text:
+                                                  'Press USE CURRENT LOCATION to get the current GPS coordinates.'),
+                                          TextSpan(
+                                              text:
+                                                  'This will help in locating your premises and gives better search results.'),
+                                        ])),
+                                  ),
+                                  SizedBox(
+                                    width:
+                                        MediaQuery.of(context).size.width * .05,
+                                  ),
+                                  Container(
+                                    width:
+                                        MediaQuery.of(context).size.width * .3,
+                                    child: RaisedButton(
+                                      elevation: 10,
+                                      color: btnColor,
+                                      splashColor: highlightColor,
+                                      textColor: Colors.white,
+                                      shape: RoundedRectangleBorder(
+                                          side: BorderSide(color: btnColor)),
+                                      child: Text(
+                                        'Use current location',
+                                        textAlign: TextAlign.center,
+                                      ),
+                                      onPressed: useCurrLocation,
+                                    ),
+                                  ),
+                                ]),
+                                Row(
+                                  children: <Widget>[
+                                    latField,
+                                    lonField,
+                                    clearBtn
+                                  ],
                                 ),
                                 adrsField1,
                                 landmarkField2,

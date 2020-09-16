@@ -49,7 +49,9 @@ class GenerateScreenState extends State<GenerateScreen> {
 
     Utils.createDynamicLinkWithParams(entityId: widget.entityId).then((value) {
       uriLink = value;
-      _dataString = uriLink.toString();
+      var _dynamicLink = Uri.https(uriLink.authority, uriLink.path).toString();
+
+      _dataString = _dynamicLink.toString();
       _inputErrorText = null;
       _saveImage();
       setState(() {

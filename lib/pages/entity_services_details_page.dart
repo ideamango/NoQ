@@ -15,8 +15,10 @@ import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:noq/constants.dart';
 import 'package:noq/db/db_service/user_service.dart';
+import 'package:noq/global_state.dart';
 import 'package:noq/pages/contact_item.dart';
 import 'package:noq/pages/entity_services_list_page.dart';
+import 'package:noq/pages/manage_apartment_list_page.dart';
 import 'package:noq/repository/StoreRepository.dart';
 import 'package:noq/repository/local_db_repository.dart';
 import 'package:noq/style.dart';
@@ -68,6 +70,8 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
   final GlobalKey<FormFieldState> whatsappPhnKey =
       new GlobalKey<FormFieldState>();
   List<String> _closedOnDays = List<String>();
+  TextEditingController _latController = TextEditingController();
+  TextEditingController _lonController = TextEditingController();
   // TextEditingController _subAreaController = TextEditingController();
   TextEditingController _adrs1Controller = TextEditingController();
   TextEditingController _landController = TextEditingController();
@@ -124,12 +128,29 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
   String flushStatus = "Empty";
   bool isAnythingChanged = false;
   Position pos;
+  bool _initCompleted = false;
+  GlobalState _gState;
+  String _phCountryCode;
+  ScrollController _scrollController;
+  final itemSize = 80.0;
 
   @override
   void initState() {
+    _scrollController = ScrollController();
     super.initState();
     serviceEntity = widget.childEntity;
-    initializeEntity();
+    getGlobalState().whenComplete(() {
+      initializeEntity().whenComplete(() {
+        setState(() {
+          _initCompleted = true;
+        });
+      });
+    });
+  }
+
+  Future<void> getGlobalState() async {
+    _gState = await GlobalState.getGlobalState();
+    _phCountryCode = _gState.conf.phCountryCode;
   }
 
   initializeEntity() async {
@@ -139,8 +160,8 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
       isBookable = (serviceEntity.isBookable) ?? false;
       isActive = (serviceEntity.isActive) ?? false;
 
-      _nameController.text = (serviceEntity.name) ?? "";
-      _descController.text = (serviceEntity.description) ?? "";
+      _nameController.text = (serviceEntity.name);
+      _descController.text = (serviceEntity.description);
 
       //TODO-Smita  add later code for getting reg thru private
       // _regNumController.text = serviceEntity.regNum;
@@ -193,6 +214,12 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
       _paytmPhoneController.text = serviceEntity.paytm != null
           ? serviceEntity.paytm.toString().substring(3)
           : "";
+      if (serviceEntity.coordinates != null) {
+        _latController.text =
+            serviceEntity.coordinates.geopoint.latitude.toString();
+        _lonController.text =
+            serviceEntity.coordinates.geopoint.longitude.toString();
+      }
       //address
       if (serviceEntity.address != null) {
         _adrs1Controller.text = serviceEntity.address.address;
@@ -255,54 +282,26 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
       return null;
   }
 
-  void useCurrLocation() {}
+  void useCurrLocation() {
+    Utils.getCurrLocation(context).then((value) {
+      pos = value;
+      _getAddressFromLatLng(pos);
+    });
+  }
+
+  void clearLocation() {
+    _latController.text = "";
+    _lonController.text = "";
+    serviceEntity.coordinates = null;
+  }
 
   _getAddressFromLatLng(Position position) async {
-    try {
-      // List<Placemark> p = await geolocator.placemarkFromCoordinates(
-      //     position.latitude, position.longitude);
-
-      // Placemark place = p[0];
-
-      // setState(() {
-      //   // _autoPopulate = true;
-      //   _subArea = place.subAdministrativeArea;
-      //   _state = place.administrativeArea;
-      //   _mainArea = place.subLocality;
-      //   _currentCity = place.locality;
-      //   _postalCode = place.postalCode;
-      //   _country = place.country;
-
-      //   // _address = new Address(
-      //   //     _subArea, _mainArea, _currentCity, _country, _postalCode);
-      // });
-      // print('ghythyt');
-      // print(_subArea +
-      //     "..." +
-      //     _mainArea +
-      //     "..." +
-      //     _currentCity +
-      //     "..." +
-      //     _postalCode +
-      //     "..." +
-      //     _country +
-      //     "..." +
-      //     place.administrativeArea);
-      // setState(() {
-      //   _localityController.text = _subArea;
-      //   _cityController.text = _currentCity;
-      //   _stateController.text = _state;
-      //   _countryController.text = _country;
-      //   _pinController.text = _postalCode;
-      // });
-
-      // _subAreaController.text = _subArea;
-      // setState(() {
-      //   _textEditingController.text = _address.country;
-      // });
-    } catch (e) {
-      print(e);
-    }
+    setState(() {
+      serviceEntity.coordinates =
+          new MyGeoFirePoint(position.latitude, position.longitude);
+      _latController.text = position.latitude.toString();
+      _lonController.text = position.longitude.toString();
+    });
   }
 
   void _addNewAdminRow() {
@@ -967,29 +966,53 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
         print("GPay Number");
       },
     );
-//Address fields
-    // final adrsField1 = RichText(
-    //   text: TextSpan(
-    //     style: TextStyle(
-    //         color: Colors.blueGrey[700],
-    //         // fontWeight: FontWeight.w800,
-    //         fontFamily: 'Monsterrat',
-    //         letterSpacing: 0.5,
-    //         fontSize: 15.0,
-    //         decoration: TextDecoration.underline),
-    //     children: <TextSpan>[
-    //       TextSpan(
-    //         text: serviceEntity.address.address,
-    //       ),
-    //       TextSpan(text: serviceEntity.address.landmark),
-    //       TextSpan(text: serviceEntity.address.locality),
-    //       TextSpan(text: serviceEntity.address.city),
-    //       TextSpan(text: serviceEntity.address.zipcode),
-    //       TextSpan(text: serviceEntity.address.state),
-    //       TextSpan(text: serviceEntity.address.country),
-    //     ],
-    //   ),
-    // );
+    final latField = Container(
+        width: MediaQuery.of(context).size.width * .3,
+        child: TextFormField(
+          obscureText: false,
+          maxLines: 1,
+          minLines: 1,
+          enabled: false,
+          style: textInputTextStyle,
+          keyboardType: TextInputType.text,
+          controller: _latController,
+          decoration: CommonStyle.textFieldStyle(
+              labelTextStr: "Latitude", hintTextStr: ""),
+          validator: validateText,
+          onChanged: (String value) {},
+          onSaved: (String value) {},
+        ));
+
+    final lonField = Container(
+        width: MediaQuery.of(context).size.width * .3,
+        child: TextFormField(
+          obscureText: false,
+          maxLines: 1,
+          minLines: 1,
+          enabled: false,
+          style: textInputTextStyle,
+          keyboardType: TextInputType.text,
+          controller: _lonController,
+          decoration: CommonStyle.textFieldStyle(
+              labelTextStr: "Longitude", hintTextStr: ""),
+          validator: validateText,
+          onChanged: (String value) {},
+          onSaved: (String value) {},
+        ));
+    final clearBtn = Container(
+        width: MediaQuery.of(context).size.width * .3,
+        child: FlatButton(
+          //elevation: 20,
+          color: Colors.transparent,
+          splashColor: highlightColor,
+          textColor: btnColor,
+          shape: RoundedRectangleBorder(side: BorderSide(color: btnColor)),
+          child: Text(
+            'Clear',
+            textAlign: TextAlign.center,
+          ),
+          onPressed: clearLocation,
+        ));
     final adrsField1 = TextFormField(
       obscureText: false,
       maxLines: 1,
@@ -1010,6 +1033,7 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
         print("saved address");
       },
     );
+
     final landmarkField2 = TextFormField(
       obscureText: false,
       maxLines: 1,
@@ -1227,6 +1251,15 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
                     ),
                     "Couldn't save the Entity for some reason. ",
                     "Please try again.");
+              } else {
+                Utils.showMyFlushbar(
+                    context,
+                    Icons.check_box,
+                    Duration(
+                      seconds: 4,
+                    ),
+                    "Saved successfully!!",
+                    "");
               }
             });
           }
@@ -1260,7 +1293,8 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
       // saveFormDetails();
       // upsertEntity(entity).then((value) {
       //   if (value) {
-      Navigator.pop(context);
+      Navigator.of(context).pop();
+
       //                }
       // });
     }
@@ -1854,15 +1888,50 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
                           padding: EdgeInsets.only(left: 5.0, right: 5),
                           child: Column(
                             children: <Widget>[
-                              RaisedButton(
-                                elevation: 20,
-                                color: btnColor,
-                                splashColor: highlightColor,
-                                textColor: Colors.white,
-                                // shape: RoundedRectangleBorder(
-                                //     side: BorderSide(color: btnColor)),
-                                child: Text('Use current location'),
-                                onPressed: useCurrLocation,
+                              Row(children: <Widget>[
+                                Container(
+                                  padding: EdgeInsets.all(6),
+                                  width:
+                                      MediaQuery.of(context).size.width * .55,
+                                  child: RichText(
+                                      text: TextSpan(
+                                          style: highlightSubTextStyle,
+                                          children: <TextSpan>[
+                                        TextSpan(
+                                            text:
+                                                'Press USE CURRENT LOCATION to get the current GPS coordinates.'),
+                                        TextSpan(
+                                            text:
+                                                'This will help in locating your premises and gives better search results.'),
+                                      ])),
+                                ),
+                                SizedBox(
+                                  width:
+                                      MediaQuery.of(context).size.width * .05,
+                                ),
+                                Container(
+                                  width: MediaQuery.of(context).size.width * .3,
+                                  child: RaisedButton(
+                                    elevation: 10,
+                                    color: btnColor,
+                                    splashColor: highlightColor,
+                                    textColor: Colors.white,
+                                    shape: RoundedRectangleBorder(
+                                        side: BorderSide(color: btnColor)),
+                                    child: Text(
+                                      'Use current location',
+                                      textAlign: TextAlign.center,
+                                    ),
+                                    onPressed: useCurrLocation,
+                                  ),
+                                ),
+                              ]),
+                              Row(
+                                children: <Widget>[
+                                  latField,
+                                  lonField,
+                                  clearBtn
+                                ],
                               ),
                               adrsField1,
                               landmarkField2,

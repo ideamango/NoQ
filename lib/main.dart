@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:noq/dashboard.dart';
 import 'package:noq/db/db_model/entity.dart';
+import 'package:noq/db/db_service/entity_service.dart';
 import 'package:noq/global_state.dart';
 import 'package:noq/login_page.dart';
 import 'package:noq/pages/SearchStoresPage.dart';
@@ -13,6 +14,7 @@ import 'package:noq/pages/favs_list_page.dart';
 import 'package:noq/repository/StoreRepository.dart';
 import 'package:noq/services/init_screen.dart';
 import 'package:noq/userHomePage.dart';
+import 'package:noq/utils.dart';
 
 //import 'services/authService.dart';
 
@@ -180,8 +182,19 @@ class DynamicLinkService {
               } else
                 continue;
             }
-            if (!entityContains)
-              gs.currentUser.favourites.add(entity.getMetaEntity());
+            if (!entityContains) {
+              Utils.showMyFlushbar(context, Icons.info, Duration(seconds: 3),
+                  "Processing...", "");
+              EntityService()
+                  .addEntityToUserFavourite(entity.getMetaEntity())
+                  .then((value) => value
+                      ? gs.currentUser.favourites.add(entity.getMetaEntity())
+                      : print("Entity can't be added to favorite"))
+                  .catchError((onError) {
+                Utils.showMyFlushbar(context, Icons.info, Duration(seconds: 3),
+                    "Oops error...", "");
+              });
+            }
 
             Navigator.pushReplacement(context,
                 MaterialPageRoute(builder: (context) => FavsListPage()));
