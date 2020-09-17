@@ -271,7 +271,7 @@ class Utils {
       //             crossAxisAlignment: CrossAxisAlignment.start,
       //             children: <Widget>[
       //               Text(
-      //                 'To find nearby places we need access to your current location. Open settings and give permission to access your location.',
+      //                 'To find nearby places we need access to your current location. Open Location Services (Settings) and give permission to access your location.',
       //                 style: TextStyle(
       //                   fontSize: 15,
       //                   color: Colors.blueGrey[600],
