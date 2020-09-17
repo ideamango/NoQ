@@ -941,6 +941,10 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
     int pageSize = 0;
 
     Position pos = await Utils.getCurrLocation(context);
+    if (pos == null) {
+      return null;
+    }
+
     lat = pos.latitude;
     lon = pos.longitude;
     //TODO: comment - only for testing
@@ -968,6 +972,9 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
     //   //return _stores.map((contact) => new ChildItem(contact.name)).toList();
     // } else {
     await getSearchEntitiesList().then((value) {
+      if (value == null) {
+        return;
+      }
       //Scrutinize the list returned froms server.
 
       //1. entities that are bookable, public and active only should be listed
