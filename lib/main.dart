@@ -70,45 +70,6 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
     super.dispose();
   }
 
-  // initDynamicLinks(BuildContext context) async {
-  //   await Future.delayed(Duration(seconds: 3));
-  //   var data = await FirebaseDynamicLinks.instance.getInitialLink();
-  //   var deepLink = data?.link;
-  //   Map queryParams;
-  //   if (deepLink != null) {
-  //     queryParams = deepLink.queryParameters;
-  //     if (queryParams.length > 0) {
-  //       var entityId = queryParams['entityId'];
-  //       print("entityId from dynamic link -- $entityId");
-  //       print(entityId);
-  //       if (entityId != null) {
-  //         Navigator.push(
-  //             context, MaterialPageRoute(builder: (context) => FavsListPage()));
-  //       } else {
-  //         Navigator.push(
-  //             context, MaterialPageRoute(builder: (context) => LoginPage()));
-  //       }
-  //     }
-  //   } else {
-  //     Navigator.push(
-  //         context, MaterialPageRoute(builder: (context) => LoginPage()));
-  //   }
-
-  //   FirebaseDynamicLinks.instance.onLink(onSuccess: (dynamicLink) async {
-  //     var deepLink = dynamicLink?.link;
-  //     debugPrint('DynamicLinks onLink $deepLink');
-  //     if (queryParams.length > 0) {
-  //       Navigator.push(
-  //           context, MaterialPageRoute(builder: (context) => FavsListPage()));
-  //     } else {
-  //       Navigator.push(
-  //           context, MaterialPageRoute(builder: (context) => LoginPage()));
-  //     }
-  //   }, onError: (e) async {
-  //     debugPrint('DynamicLinks onError $e');
-  //   });
-  // }
-
   @override
   Widget build(BuildContext context) {
     return MaterialApp(

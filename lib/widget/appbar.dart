@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:noq/global_state.dart';
 import 'package:noq/services/authService.dart';
 import 'package:noq/style.dart';
 import 'package:noq/userHomePage.dart';
@@ -54,8 +55,7 @@ class _CustomAppBarState extends State<CustomAppBar> {
               actions: <Widget>[
                 SizedBox(
                   height: 24,
-                  child: RaisedButton(
-                    elevation: 0,
+                  child: FlatButton(
                     color: Colors.transparent,
                     splashColor: highlightColor.withOpacity(.8),
                     textColor: Colors.orange,
@@ -72,14 +72,17 @@ class _CustomAppBarState extends State<CustomAppBar> {
                           "Logging off.. ",
                           "Hope to see you soon!!");
                       Navigator.of(context, rootNavigator: true).pop();
-                      AuthService().signOut(context);
+                      Future.delayed(Duration(seconds: 2)).then((value) {
+                        AuthService().signOut(context);
+                        GlobalState.resetGlobalState();
+                      });
                     },
                   ),
                 ),
                 SizedBox(
                   height: 24,
-                  child: RaisedButton(
-                    elevation: 20,
+                  child: FlatButton(
+                    // elevation: 20,
                     autofocus: true,
                     focusColor: highlightColor,
                     splashColor: highlightColor,
@@ -216,8 +219,8 @@ class _CustomAppBarWithBackButtonState
       key: _appBarKey,
       title: Text(
         widget.titleTxt,
-         style: TextStyle(color: Colors.white, fontSize: 16),
-                    overflow: TextOverflow.ellipsis,
+        style: TextStyle(color: Colors.white, fontSize: 16),
+        overflow: TextOverflow.ellipsis,
       ),
       flexibleSpace: Container(
         decoration: gradientBackground,

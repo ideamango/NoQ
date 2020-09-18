@@ -47,27 +47,29 @@ class SplashState extends State<SplashScreen> {
               image: DecorationImage(
                   image: AssetImage("assets/background.png"),
                   fit: BoxFit.cover)),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              Container(
-                height: MediaQuery.of(context).size.width,
-                child: Image.asset(
-                  "assets/logo.png",
-                  fit: BoxFit.fitWidth,
+          child: SafeArea(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Container(
+                  height: MediaQuery.of(context).size.width,
+                  child: Image.asset(
+                    "assets/logo.png",
+                    fit: BoxFit.fitWidth,
+                  ),
                 ),
-              ),
-              Text(
-                "Loading",
-                style: TextStyle(fontSize: 20.0, color: Colors.blueGrey[50]),
-              ),
-              verticalSpacer,
-              CircularProgressIndicator(
-                backgroundColor: primaryAccentColor,
-                valueColor: AlwaysStoppedAnimation<Color>(highlightColor),
-                strokeWidth: 3,
-              )
-            ],
+                Text(
+                  "Loading",
+                  style: TextStyle(fontSize: 20.0, color: Colors.blueGrey[50]),
+                ),
+                verticalSpacer,
+                CircularProgressIndicator(
+                  backgroundColor: primaryAccentColor,
+                  valueColor: AlwaysStoppedAnimation<Color>(highlightColor),
+                  strokeWidth: 3,
+                )
+              ],
+            ),
           ),
         ),
       ),

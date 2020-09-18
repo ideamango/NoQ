@@ -1,4 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:noq/services/authService.dart';
@@ -8,7 +10,9 @@ import 'package:pinput/pin_put/pin_put.dart';
 
 class OTPDialog extends StatefulWidget {
   final String verificationId;
-  OTPDialog({Key key, @required this.verificationId}) : super(key: key);
+  final String phoneNo;
+  OTPDialog({Key key, @required this.verificationId, @required this.phoneNo})
+      : super(key: key);
   @override
   _OTPDialogState createState() => _OTPDialogState();
 }
@@ -19,6 +23,7 @@ class _OTPDialogState extends State<OTPDialog> {
   final FocusNode _pinPutFocusNode = FocusNode();
   String _pin;
   String _errorMessage;
+  String _phoneNo;
 
   BoxDecoration get _pinPutDecoration {
     return BoxDecoration(
@@ -30,8 +35,36 @@ class _OTPDialogState extends State<OTPDialog> {
   @override
   void initState() {
     super.initState();
+    _phoneNo = widget.phoneNo;
 
     verId = widget.verificationId;
+  }
+
+  void resendVerificationCode(String phoneNumber, var token) {
+    final PhoneVerificationCompleted phoneVerified =
+        (AuthCredential authResult) {
+      AuthService().signIn(authResult, context);
+    };
+
+    final PhoneVerificationFailed verificationFailed =
+        (AuthException authException) {};
+
+    final PhoneCodeSent otpSent = (String verId, [int forceResend]) {
+      this.verId = verId;
+    };
+
+    final PhoneCodeAutoRetrievalTimeout autoTimeout = (String verId) {
+      this.verId = verId;
+    };
+
+    FirebaseAuth.instance.verifyPhoneNumber(
+        phoneNumber: _phoneNo,
+        timeout: const Duration(seconds: 60),
+        verificationCompleted: phoneVerified,
+        verificationFailed: verificationFailed,
+        codeSent: otpSent,
+        codeAutoRetrievalTimeout: autoTimeout,
+        forceResendingToken: token);
   }
 
   void _submitPin(String pin, BuildContext context) {
@@ -43,7 +76,7 @@ class _OTPDialogState extends State<OTPDialog> {
           Navigator.of(context).pop();
           Navigator.of(context).pushReplacementNamed('/dashboard');
         } else {
-          if (_pin == null) {
+          if (_pin == null || _pin == "") {
             setState(() {
               _errorMessage = "Enter 6 digit otp sent on your phone.";
             });
@@ -57,8 +90,8 @@ class _OTPDialogState extends State<OTPDialog> {
               //     .signInWithOTP(_pin, verificationId, context)
               // .then(() {
               print("inside then");
-              //Navigator.of(context).pop();
-              Navigator.of(context).pushReplacementNamed('/landingPage');
+              Navigator.of(context).pop();
+              Navigator.of(context).pushReplacementNamed('/dashboard');
             }).catchError((onError) {
               print("printing Errorrrrrrrrrr");
               // print(onError.toString());
@@ -71,21 +104,6 @@ class _OTPDialogState extends State<OTPDialog> {
       print("$err.toString()");
       _errorMessage = err.toString();
     }
-
-    // final snackBar = SnackBar(
-    //   //duration: Duration(seconds: 3),
-    //   content: Container(
-    //       height: 80.0,
-    //       child: Center(
-    //         child: Text(
-    //           'Pin Submitted. Value: $pin',
-    //           style: TextStyle(fontSize: 25.0),
-    //         ),
-    //       )),
-    //   backgroundColor: Colors.teal,
-    // );
-    // Scaffold.of(context).hideCurrentSnackBar();
-    // Scaffold.of(context).showSnackBar(snackBar);
   }
 
   handleError(PlatformException error) {
@@ -94,14 +112,14 @@ class _OTPDialogState extends State<OTPDialog> {
       case 'ERROR_INVALID_VERIFICATION_CODE':
         // FocusScope.of(context).requestFocus(new FocusNode());
         setState(() {
-          _errorMessage = 'Invalid OTP Code';
+          _errorMessage = 'Please enter a valid OTP code';
         });
 
         print(_errorMessage);
 
         break;
       case 'firebaseAuth':
-        _errorMessage = 'Invalid phone number';
+        _errorMessage = 'Please enter a valid Phone number';
         print(_errorMessage);
 
         break;
@@ -115,6 +133,7 @@ class _OTPDialogState extends State<OTPDialog> {
 
   @override
   Widget build(BuildContext context) {
+    String last4digits = _phoneNo.substring(_phoneNo.length - 4);
     // return showDialog(
     //     context: context,
     //     barrierDismissible: false,
@@ -131,16 +150,30 @@ class _OTPDialogState extends State<OTPDialog> {
           mainAxisSize: MainAxisSize.max,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            Text('Enter OTP',
-                style: TextStyle(
-                  fontSize: 20,
-                  color: Colors.blueGrey[600],
-                )),
-            Text('One time password(OTP) is sent on your mobile device',
-                style: TextStyle(
-                  fontSize: 10,
-                  color: Colors.blueGrey[500],
-                )),
+            // Text('OTP',
+            //     style: TextStyle(
+            //       fontSize: 20,
+            //       color: Colors.blueGrey[600],
+            //     )),
+            verticalSpacer,
+            RichText(
+              text: TextSpan(style: highlightSubTextStyle, children: <TextSpan>[
+                TextSpan(
+                    text: 'OTP',
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w800,
+                      color: Colors.blueGrey[500],
+                    )),
+                TextSpan(
+                    text:
+                        ' is sent on your phone number ending with $last4digits',
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: Colors.blueGrey[500],
+                    )),
+              ]),
+            ),
             SizedBox(
               height: 10,
             ),
@@ -150,7 +183,7 @@ class _OTPDialogState extends State<OTPDialog> {
               // padding: EdgeInsets.all(0),
               child: PinPut(
                 fieldsCount: 6,
-                onSubmit: (String pin) => _submitPin(pin, context),
+                onSubmit: (String pin) => {},
                 focusNode: _pinPutFocusNode,
                 controller: _pinPutController,
                 submittedFieldDecoration: _pinPutDecoration.copyWith(
@@ -187,14 +220,18 @@ class _OTPDialogState extends State<OTPDialog> {
       actionsPadding: EdgeInsets.all(0),
       actions: <Widget>[
         SizedBox(
-          height: 28,
+          height: 30,
           width: 80,
-          child: RaisedButton(
-            color: btnColor,
-            textColor: Colors.white,
-            // shape:
-            //     RoundedRectangleBorder(side: BorderSide(color: highlightColor)),
-            child: Text('Clear All'),
+          child: FlatButton(
+            color: Colors.transparent,
+            textColor: btnColor,
+            shape: RoundedRectangleBorder(
+                side: BorderSide(color: btnColor),
+                borderRadius: BorderRadius.all(Radius.circular(3.0))),
+            child: Text(
+              'Clear All',
+              style: TextStyle(fontSize: 11),
+            ),
             onPressed: () {
               setState(() {
                 _errorMessage = null;
@@ -203,57 +240,42 @@ class _OTPDialogState extends State<OTPDialog> {
             },
           ),
         ),
-        // FlatButton(
-        //   color: Colors.orange,
-        //   textColor: Colors.white,
-        //   child: Text('Submit'),
-        //   onPressed: () {
-        //     print("OTP Submitted");
-        //     print(_pinPutController.text);
-        //     //  print('$_pinPutController.text');
-        //     try {
-        //       FirebaseAuth.instance.currentUser().then((user) {
-        //         if (user != null) {
-        //           Navigator.of(context).pop();
-        //           Navigator.of(context).pushReplacementNamed('/dashboard');
-        //         } else {
-        //           if (_pin == null) {
-        //             setState(() {
-        //               _errorMessage = "Enter 6 digit otp sent on your phone.";
-        //             });
-        //           } else {
-        //             AuthCredential authCreds = PhoneAuthProvider.getCredential(
-        //                 verificationId: verId, smsCode: _pin);
-        //             FirebaseAuth.instance
-        //                 .signInWithCredential(authCreds)
-        //                 .then((AuthResult authResult) {
-        //               // AuthService()
-        //               //     .signInWithOTP(_pin, verificationId, context)
-        //               // .then(() {
-        //               print("inside then");
-        //               //Navigator.of(context).pop();
-        //               Navigator.of(context)
-        //                   .pushReplacementNamed('/landingPage');
-        //             }).catchError((onError) {
-        //               print("printing Errorrrrrrrrrr");
-        //               // print(onError.toString());
-        //               handleError(onError);
-        //             });
-        //           }
-        //         }
-        //       });
-        //     } catch (err) {
-        //       print("$err.toString()");
-        //       _errorMessage = err.toString();
-        //     }
-
-        //     //     : verifyPhone(_mobile);
-        //     //if success proceed to next screen
-        //     // Navigator.of(context).pop();
-        //     // Navigator.of(context).pushReplacementNamed('/landingPage');
-        //     //else go back to signin page
-        //   },
-        // ),
+        Container(
+          height: 30,
+          width: 80,
+          alignment: Alignment.center,
+          child: FlatButton(
+            color: Colors.transparent,
+            textColor: btnColor,
+            shape: RoundedRectangleBorder(
+                side: BorderSide(color: btnColor),
+                borderRadius: BorderRadius.all(Radius.circular(3.0))),
+            child: Text(
+              'Resend OTP',
+              style: TextStyle(fontSize: 11),
+            ),
+            onPressed: () {
+              //TODO SMITA add code for resend
+              resendVerificationCode(_phoneNo, verId);
+            },
+          ),
+        ),
+        SizedBox(
+          height: 30,
+          width: 80,
+          child: RaisedButton(
+            color: btnColor,
+            textColor: Colors.white,
+            shape: RoundedRectangleBorder(
+                side: BorderSide(color: btnColor),
+                borderRadius: BorderRadius.all(Radius.circular(3.0))),
+            child: Text('Submit', style: TextStyle(fontSize: 11)),
+            onPressed: () {
+              print(_pinPutController.text);
+              _submitPin(_pinPutController.text, context);
+            },
+          ),
+        ),
       ],
     );
     // });

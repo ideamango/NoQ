@@ -34,35 +34,39 @@ class GlobalState {
           _gs.currentUser.favourites = new List<MetaEntity>();
       } catch (e) {
         print(
-            "Error initializing GlobalState, User could not be fetched from server..");
+            "Error initializing GlobalState, User details could not be fetched from server..");
       }
     }
 
-    try {
-      _gs.conf = await ConfigurationService().getConfigurations();
-    } catch (e) {
-      print(
-          "Error initializing GlobalState, Configuration could not be fetched from server..");
+    if (_gs.conf == null) {
+      try {
+        _gs.conf = await ConfigurationService().getConfigurations();
+      } catch (e) {
+        print(
+            "Error initializing GlobalState, Configuration could not be fetched from server..");
+      }
     }
-    DateTime fromDate = DateTime.now().subtract(new Duration(days: 60));
-    DateTime toDate = DateTime.now().add(new Duration(days: 30));
+    if (_gs.bookings == null) {
+      DateTime fromDate = DateTime.now().subtract(new Duration(days: 60));
+      DateTime toDate = DateTime.now().add(new Duration(days: 30));
 
-    _gs.bookings =
-        await TokenService().getAllTokensForCurrentUser(fromDate, toDate);
+      _gs.bookings =
+          await TokenService().getAllTokensForCurrentUser(fromDate, toDate);
+    }
 
     return _gs;
   }
 
   Future<bool> addFavourite(MetaEntity me) async {
     _gs.currentUser.favourites.add(me);
-    saveGlobalState();
+    // saveGlobalState();
     return true;
   }
 
   Future<bool> removeFavourite(MetaEntity me) async {
     _gs.currentUser.favourites
         .removeWhere((element) => element.entityId == me.entityId);
-    saveGlobalState();
+    //  saveGlobalState();
     return true;
   }
 
@@ -73,14 +77,18 @@ class GlobalState {
 
   Future<bool> addBooking(UserToken token) async {
     _gs.bookings.add(token);
-    saveGlobalState();
+    //  saveGlobalState();
     return true;
+  }
+
+  static resetGlobalState() {
+    _gs = null;
   }
 
   cancelBooking() async {}
 
   static Future<void> saveGlobalState() async {
-    writeData(_gs.toJson());
+    // writeData(_gs.toJson());
   }
 
   Map<String, dynamic> toJson() => {

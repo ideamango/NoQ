@@ -62,7 +62,9 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
   String pageName;
   GlobalState _state;
   bool stateInitFinished = false;
-  String emptyPageMsg;
+  String messageTitle;
+  String messageSubTitle;
+
   List<String> searchTypes;
 
   @override
@@ -91,7 +93,7 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
 
       // }
     } else if (_state.pastSearches != null && _state.pastSearches.length == 0)
-      emptyPageMsg = "No previous searches. Start Exploring now!!";
+      messageTitle = "No previous searches!!";
     //  _list = _stores;
   }
 
@@ -112,10 +114,6 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
     //     }
     //   }
     // });
-  }
-
-  Future<void> getPrefInstance() async {
-    _prefs = await SharedPreferences.getInstance();
   }
 
   Future<void> getGlobalState() async {
@@ -175,19 +173,22 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
     return adr;
   }
 
-  Widget _emptySearchPage() {
-    String defaultMsg = 'No matching results.Try again. ';
-    String txtMsg = (emptyPageMsg != null) ? emptyPageMsg : defaultMsg;
+  Widget _emptySearchPage(String message1, String message2) {
+    String defaultMsg = 'No matching results.Try again!! ';
+    String defaultSubMsg =
+        'Add places to favourites, and quickly browse through later. ';
+    String txtMsg = (messageTitle != null) ? messageTitle : defaultMsg;
+    String txtSubMsg =
+        (messageSubTitle != null) ? messageSubTitle : defaultSubMsg;
     return Center(
         child: Container(
       margin: EdgeInsets.fromLTRB(10, MediaQuery.of(context).size.width * .45,
           10, MediaQuery.of(context).size.width * .45),
       child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.start,
         children: <Widget>[
           Text(txtMsg, style: highlightTextStyle),
-          Text('Add your favourite places to quickly browse through later!! ',
-              style: highlightSubTextStyle),
+          Text(txtSubMsg, style: highlightSubTextStyle),
         ],
       ),
     ));
@@ -195,7 +196,7 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
 
   Widget _listSearchResults() {
     if (_stores.length == 0)
-      return _emptySearchPage();
+      return _emptySearchPage(null, null);
     else {
       //Add search results to past searches.
       _state.pastSearches = _stores;
@@ -313,7 +314,7 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
 
           style: new TextStyle(fontSize: 12, color: Colors.blueGrey[700]),
           decoration: new InputDecoration(
-              contentPadding: EdgeInsets.fromLTRB(20, 7, 5, 7),
+              contentPadding: EdgeInsets.all(2),
               isDense: true,
               prefixIconConstraints: BoxConstraints(
                 maxWidth: 25,
@@ -323,6 +324,7 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
                 maxWidth: 25,
                 maxHeight: 22,
               ),
+
               //contentPadding: EdgeInsets.all(0),
               focusedBorder: UnderlineInputBorder(
                   borderSide: BorderSide(color: Colors.transparent)),
@@ -332,8 +334,8 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
               prefixIcon: IconButton(
                 // transform: Matrix4.translationValues(-10.0, 0, 0),
                 icon: new Icon(Icons.search,
-                    size: 20, color: Colors.blueGrey[500]),
-                alignment: Alignment.centerRight,
+                    size: 17, color: Colors.blueGrey[500]),
+                alignment: Alignment.center,
                 padding: EdgeInsets.all(0),
                 onPressed: () {},
               ),
@@ -438,7 +440,7 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
                     style: TextStyle(color: Colors.white, fontSize: 16),
                     overflow: TextOverflow.ellipsis,
                   )),
-              body: Center(
+              body: SingleChildScrollView(
                 child: Column(
                   children: <Widget>[
                     filterBar,
@@ -455,7 +457,7 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
                                   );
                                 }),
                           )
-                        : _emptySearchPage(),
+                        : _emptySearchPage(null, null),
                   ],
                 ),
               ),
@@ -952,14 +954,6 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
                     ),
                   ),
                   verticalSpacer,
-                  Text(
-                    'Are you sure you make this premise bookable?',
-                    style: TextStyle(
-                      fontSize: 15,
-                      color: Colors.blueGrey[600],
-                    ),
-                  ),
-                  verticalSpacer,
                   // myDivider,
                 ],
               ),
@@ -1026,6 +1020,7 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
     Position pos = await Utils.getCurrLocation();
     if (pos == null) {
       showLocationAccessDialog();
+      return null;
     }
 
     lat = pos.latitude;
@@ -1056,6 +1051,13 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
     // } else {
     await getSearchEntitiesList().then((value) {
       if (value == null) {
+        _stores.clear();
+        setState(() {
+          _isSearching = "done";
+          messageTitle = "Cannot Search as current location not known";
+          messageSubTitle =
+              "Open location settings and give permissions to access current location";
+        });
         return;
       }
       //Scrutinize the list returned froms server.

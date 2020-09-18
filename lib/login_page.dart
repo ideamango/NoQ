@@ -274,7 +274,7 @@ class _LoginPageState extends State<LoginPage> {
         barrierDismissible: true,
         builder: (BuildContext context) {
           return StatefulBuilder(builder: (context, setState) {
-            return OTPDialog(verificationId: verId);
+            return OTPDialog(verificationId: verId, phoneNo: _mobile);
           });
         });
   }

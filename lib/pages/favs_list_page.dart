@@ -181,7 +181,7 @@ class _FavsListPageState extends State<FavsListPage> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
           Text(txtMsg, style: highlightTextStyle),
-          Text('Add your favourite places to quickly browse through later!! ',
+          Text('Add places to favourites, and quickly browse through later. ',
               style: highlightSubTextStyle),
         ],
       ),
