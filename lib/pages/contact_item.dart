@@ -348,11 +348,13 @@ class ContactRowState extends State<ContactRow> {
               : "Manager",
           style: TextStyle(color: Colors.blueGrey[700], fontSize: 17),
         ),
+
         backgroundColor: Colors.white,
-        leading: Icon(
-          Icons.person,
-          color: primaryIcon,
-        ),
+        leading: IconButton(
+            icon: Icon(Icons.delete, color: Colors.blueGrey[300], size: 20),
+            onPressed: () {
+              // contact.isManager = false;
+            }),
         children: <Widget>[
           Container(
             padding: EdgeInsets.only(left: 2.0, right: 2),

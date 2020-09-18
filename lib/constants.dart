@@ -32,9 +32,13 @@ String drawerHeaderTxt41 = 'Save ';
 String drawerHeaderTxt42 = 'time !!';
 String addressInfoStr =
     'The address is using the current location, and same will be used by customers when searching your location.';
+String locationInfoStr = 'Current location details.';
+String paymentInfoStr = 'Payments details.';
 
 String basicInfoStr =
     'These are important details of the establishment, Same will be shown to customer while search.';
+
+String adminInfoStr = 'The perosn who manages the premises.';
 String contactInfoStr =
     'The perosn who can be contacted for any queries regarding your services.';
 

@@ -109,11 +109,11 @@ final labelTextStyle = TextStyle(
     fontSize: 11.0);
 
 final errorTextStyle = TextStyle(
-    color: Colors.red,
+    color: Colors.red[400],
     letterSpacing: 0.5,
     //fontWeight: FontWeight.w500,
-    fontFamily: 'Roboto',
-    fontSize: 12);
+    fontFamily: 'Monsterrat',
+    fontSize: 11);
 
 final lightSubTextStyle = TextStyle(
   color: Colors.blueGrey[700],

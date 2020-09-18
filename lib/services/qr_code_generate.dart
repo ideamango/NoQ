@@ -110,32 +110,33 @@ class GenerateScreenState extends State<GenerateScreen> {
       var image = await boundary.toImage();
       ByteData byteData = await image.toByteData(format: ImageByteFormat.png);
       Uint8List pngBytes = byteData.buffer.asUint8List();
-      tempDir = await getTemporaryDirectory();
+      tempDir = await getApplicationDocumentsDirectory();
       final file =
           await new File('${tempDir.path}/qrcodeForShare.png').create();
       await file.writeAsBytes(pngBytes);
-      // final channel = const MethodChannel('channel:me.alfian.share/share');
-      // channel.invokeMethod('shareFile', 'qrcodeForShare.png');
+      final channel = const MethodChannel('channel:me.sukoon.share/share');
+      channel.invokeMethod('shareFile', 'qrcodeForShare.png');
     } catch (e) {
       print(e.toString());
     }
   }
 
   _shareContent() {
-    _loadImage();
     String message = 'Hey,' +
         appName +
         ' app is simple and fast way that\n'
             'I use to book appointment for the\n'
             'places I wish to go. It helps to \n'
             'avoid waiting. Check it out yourself.';
-    //String link = "www.playstore.com";
-    //  Share.share(message + link);
-    Share.shareFiles(
-      ['${tempDir.path}/qrcodeForShare.png'],
-      text: message,
-      subject: "Subject from NoQ",
-    );
+    _loadImage().then((value) {
+      //String link = "www.playstore.com";
+      //  Share.share(message + link);
+      Share.shareFiles(
+        ['${tempDir.path}/qrcodeForShare.png'],
+        text: message,
+        subject: "Subject from NoQ",
+      );
+    });
   }
 
   _contentWidget() {
