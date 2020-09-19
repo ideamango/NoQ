@@ -368,10 +368,11 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
 
   void useCurrLocation() {
     Position pos;
-        Utils.getCurrLocation().then((value) {
-          pos = value;
-          if (pos == null) showLocationAccessDialog();
-        });
+    Utils.getCurrLocation().then((value) {
+      pos = value;
+      if (pos == null) showLocationAccessDialog();
+      _getAddressFromLatLng(pos);
+    });
   }
 
   void clearLocation() {

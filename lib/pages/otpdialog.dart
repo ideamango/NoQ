@@ -36,7 +36,6 @@ class _OTPDialogState extends State<OTPDialog> {
   void initState() {
     super.initState();
     _phoneNo = widget.phoneNo;
-
     verId = widget.verificationId;
   }
 
@@ -183,7 +182,7 @@ class _OTPDialogState extends State<OTPDialog> {
               // padding: EdgeInsets.all(0),
               child: PinPut(
                 fieldsCount: 6,
-                onSubmit: (String pin) => {},
+                onSubmit: (String pin) => _submitPin(pin, context),
                 focusNode: _pinPutFocusNode,
                 controller: _pinPutController,
                 submittedFieldDecoration: _pinPutDecoration.copyWith(
@@ -273,6 +272,7 @@ class _OTPDialogState extends State<OTPDialog> {
             onPressed: () {
               print(_pinPutController.text);
               _submitPin(_pinPutController.text, context);
+              
             },
           ),
         ),

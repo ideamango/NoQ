@@ -300,6 +300,8 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
     setState(() {
       Employee contact = new Employee();
       contactRowWidgets.add(new ContactRow(contact: contact));
+      //   mgrList: contactList,
+      // ));
 
       contactList.add(contact);
       entity.managers = contactList;
@@ -1323,9 +1325,8 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
         Utils.getCurrLocation().then((value) {
           pos = value;
           if (pos == null) showLocationAccessDialog();
+          _getAddressFromLatLng(pos);
         });
-
-        _getAddressFromLatLng(pos);
       }
 
       Future<void> showConfirmationDialog() async {
@@ -1841,7 +1842,7 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
                                         child: Row(
                                           children: <Widget>[
                                             Expanded(
-                                              child: Text(addressInfoStr,
+                                              child: Text(paymentInfoStr,
                                                   style: buttonXSmlTextStyle),
                                             ),
                                           ],
@@ -1868,6 +1869,129 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
                     SizedBox(
                       height: 7,
                     ),
+                    Container(
+                      decoration: BoxDecoration(
+                          border: Border.all(color: containerColor),
+                          color: Colors.grey[50],
+                          shape: BoxShape.rectangle,
+                          borderRadius: BorderRadius.all(Radius.circular(5.0))),
+                      //padding: EdgeInsets.all(5.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Column(
+                            children: <Widget>[
+                              Container(
+                                //padding: EdgeInsets.only(left: 5),
+                                decoration: darkContainer,
+                                child: Theme(
+                                  data: ThemeData(
+                                    unselectedWidgetColor: Colors.white,
+                                    accentColor: Colors.grey[50],
+                                  ),
+                                  child: CustomExpansionTile(
+                                    //key: PageStorageKey(this.widget.headerTitle),
+                                    initiallyExpanded: false,
+                                    title: Row(
+                                      children: <Widget>[
+                                        Text(
+                                          "Current Location Details",
+                                          style: TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 15),
+                                        ),
+                                        SizedBox(width: 5),
+                                      ],
+                                    ),
+                                    backgroundColor: Colors.blueGrey[500],
+
+                                    children: <Widget>[
+                                      new Container(
+                                        width:
+                                            MediaQuery.of(context).size.width *
+                                                .94,
+                                        decoration: darkContainer,
+                                        padding: EdgeInsets.all(2.0),
+                                        child: Row(
+                                          children: <Widget>[
+                                            Expanded(
+                                              child: Text(locationInfoStr,
+                                                  style: buttonXSmlTextStyle),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                          Container(
+                            padding: EdgeInsets.only(left: 5.0, right: 5),
+                            child: Column(
+                              children: <Widget>[
+                                Column(children: <Widget>[
+                                  Container(
+                                    padding: EdgeInsets.all(4),
+                                    width:
+                                        MediaQuery.of(context).size.width * .95,
+                                    child: RichText(
+                                        text: TextSpan(
+                                            style: highlightSubTextStyle,
+                                            children: <TextSpan>[
+                                          TextSpan(
+                                              text:
+                                                  'Press USE CURRENT LOCATION to get the current GPS coordinates.'),
+                                          TextSpan(
+                                              text:
+                                                  'This will help in locating your premises and lists it in search results by user.'),
+                                        ])),
+                                  ),
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceAround,
+                                    children: <Widget>[
+                                      latField,
+                                      lonField,
+                                    ],
+                                  ),
+                                  verticalSpacer,
+                                ]),
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceAround,
+                                  children: <Widget>[
+                                    clearBtn,
+                                    Container(
+                                      width: MediaQuery.of(context).size.width *
+                                          .6,
+                                      child: RaisedButton(
+                                        elevation: 10,
+                                        color: btnColor,
+                                        splashColor: highlightColor,
+                                        textColor: Colors.white,
+                                        shape: RoundedRectangleBorder(
+                                            side: BorderSide(color: btnColor)),
+                                        child: Text(
+                                          'Use current location',
+                                          textAlign: TextAlign.center,
+                                        ),
+                                        onPressed: useCurrLocation,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    SizedBox(
+                      height: 7,
+                    ),
+
                     Container(
                       decoration: BoxDecoration(
                           border: Border.all(color: containerColor),
@@ -1930,52 +2054,6 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
                             padding: EdgeInsets.only(left: 5.0, right: 5),
                             child: Column(
                               children: <Widget>[
-                                Row(children: <Widget>[
-                                  Container(
-                                    padding: EdgeInsets.all(6),
-                                    width:
-                                        MediaQuery.of(context).size.width * .55,
-                                    child: RichText(
-                                        text: TextSpan(
-                                            style: highlightSubTextStyle,
-                                            children: <TextSpan>[
-                                          TextSpan(
-                                              text:
-                                                  'Press USE CURRENT LOCATION to get the current GPS coordinates.'),
-                                          TextSpan(
-                                              text:
-                                                  'This will help in locating your premises and gives better search results.'),
-                                        ])),
-                                  ),
-                                  SizedBox(
-                                    width:
-                                        MediaQuery.of(context).size.width * .05,
-                                  ),
-                                  Container(
-                                    width:
-                                        MediaQuery.of(context).size.width * .3,
-                                    child: RaisedButton(
-                                      elevation: 10,
-                                      color: btnColor,
-                                      splashColor: highlightColor,
-                                      textColor: Colors.white,
-                                      shape: RoundedRectangleBorder(
-                                          side: BorderSide(color: btnColor)),
-                                      child: Text(
-                                        'Use current location',
-                                        textAlign: TextAlign.center,
-                                      ),
-                                      onPressed: useCurrLocation,
-                                    ),
-                                  ),
-                                ]),
-                                Row(
-                                  children: <Widget>[
-                                    latField,
-                                    lonField,
-                                    clearBtn
-                                  ],
-                                ),
                                 adrsField1,
                                 landmarkField2,
                                 localityField,
@@ -2045,7 +2123,7 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
                                         child: Row(
                                           children: <Widget>[
                                             Expanded(
-                                              child: Text(contactInfoStr,
+                                              child: Text(adminInfoStr,
                                                   style: buttonXSmlTextStyle),
                                             ),
                                           ],
@@ -2246,6 +2324,21 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
                                   : Container(),
                               if (!Utils.isNullOrEmpty(contactList))
                                 Column(children: contactRowWidgets),
+                              // ListView.builder(
+                              //   // controller: _childScrollController,
+                              //   reverse: true,
+                              //   shrinkWrap: true,
+                              //   itemExtent: itemSize,
+                              //   //scrollDirection: Axis.vertical,
+                              //   itemBuilder:
+                              //       (BuildContext context, int index) {
+                              //     return Container(
+                              //       child: ContactRow(
+                              //           contact: contactList[index]),
+                              //     );
+                              //   },
+                              //   itemCount: contactList.length,
+                              // ),
                             ],
                           ),
                         ],

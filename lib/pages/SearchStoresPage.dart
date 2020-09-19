@@ -573,6 +573,7 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
             Container(
               width: MediaQuery.of(context).size.width * .1,
               child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: <Widget>[
                   new Container(
                     margin: EdgeInsets.fromLTRB(
@@ -588,11 +589,35 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
                       color: primaryIcon,
                     ),
                     child: Icon(
-                      Icons.shopping_cart,
+                      Icons.business,
                       color: Colors.white,
                       size: 20,
                     ),
-                  )
+                  ),
+                  verticalSpacer,
+                  verticalSpacer,
+                  verticalSpacer,
+                  (str.verificationStatus == "Verified")
+                      ? new Container(
+                          margin: EdgeInsets.fromLTRB(
+                              MediaQuery.of(context).size.width * .01,
+                              MediaQuery.of(context).size.width * .01,
+                              MediaQuery.of(context).size.width * .005,
+                              MediaQuery.of(context).size.width * .005),
+                          padding: EdgeInsets.all(
+                              MediaQuery.of(context).size.width * .01),
+                          alignment: Alignment.topCenter,
+                          decoration: ShapeDecoration(
+                            shape: CircleBorder(),
+                            color: primaryIcon,
+                          ),
+                          child: Icon(
+                            Icons.verified_user,
+                            color: Colors.green,
+                            size: 20,
+                          ),
+                        )
+                      : Container(),
                 ],
               ),
             ),
@@ -611,8 +636,30 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         // crossAxisAlignment: CrossAxisAlignment.center,
                         children: <Widget>[
-                          Text(
-                            (str.name) ?? str.name.toString(),
+                          Row(
+                            children: <Widget>[
+                              Text(
+                                (str.name) ?? str.name.toString(),
+                              ),
+                              IconButton(
+                                padding: EdgeInsets.fromLTRB(1, 1, 1, 1),
+                                constraints:
+                                    BoxConstraints(maxHeight: 14, maxWidth: 12),
+                                icon: Icon(
+                                  Icons.lock,
+                                  color: primaryIcon,
+                                  size: 12,
+                                ),
+                                onPressed: () {
+                                  Utils.showMyFlushbar(
+                                      context,
+                                      Icons.info,
+                                      Duration(seconds: 5),
+                                      "Access to this place is restricted to its residents or employees.",
+                                      "");
+                                },
+                              ),
+                            ],
                           ),
                           Row(
                               mainAxisAlignment: MainAxisAlignment.start,

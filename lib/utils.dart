@@ -185,6 +185,7 @@ class Utils {
   }
 
   static Future<Position> getCurrLocation() async {
+    //TODO SMita = getting lost at this statement
     LocationPermission permission = await checkPermission();
 
     if (permission == LocationPermission.deniedForever) {

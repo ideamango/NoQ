@@ -6,6 +6,7 @@ import 'package:noq/pages/otpdialog.dart';
 import 'package:noq/pages/terms_of_use.dart';
 import 'package:noq/utils.dart';
 import 'package:noq/widget/widgets.dart';
+import 'package:pinput/pin_put/pin_put.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'style.dart';
@@ -268,37 +269,286 @@ class _LoginPageState extends State<LoginPage> {
     }
   }
 
-  showDialogForOtp(String verId) async {
-    await showDialog(
-        context: context,
-        barrierDismissible: true,
-        builder: (BuildContext context) {
-          return StatefulBuilder(builder: (context, setState) {
-            return OTPDialog(verificationId: verId, phoneNo: _mobile);
-          });
-        });
+  final TextEditingController _pinPutController = TextEditingController();
+  final FocusNode _pinPutFocusNode = FocusNode();
+  String _pin;
+  String _errorMessage;
+  String _phoneNo;
+
+  BoxDecoration get _pinPutDecoration {
+    return BoxDecoration(
+      border: Border.all(color: highlightColor),
+      //borderRadius: BorderRadius.circular(15),
+    );
   }
 
-  handleError(AuthException error) {
+  void resendVerificationCode(String phoneNumber, var token) {
+    final PhoneVerificationCompleted phoneVerified =
+        (AuthCredential authResult) {
+      AuthService().signIn(authResult, context);
+    };
+
+    final PhoneVerificationFailed verificationFailed =
+        (AuthException authException) {};
+
+    final PhoneCodeSent otpSent = (String verId, [int forceResend]) {
+      this.verificationId = verId;
+    };
+
+    final PhoneCodeAutoRetrievalTimeout autoTimeout = (String verId) {
+      this.verificationId = verId;
+    };
+
+    FirebaseAuth.instance.verifyPhoneNumber(
+        phoneNumber: _phoneNo,
+        timeout: const Duration(seconds: 60),
+        verificationCompleted: phoneVerified,
+        verificationFailed: verificationFailed,
+        codeSent: otpSent,
+        codeAutoRetrievalTimeout: autoTimeout,
+        forceResendingToken: token);
+  }
+
+  void _submitPin(String pin, BuildContext context) {
+    _pin = pin;
+    print(_pin);
+    try {
+      FirebaseAuth.instance.currentUser().then((user) {
+        if (user != null) {
+          Navigator.of(context).pop();
+          Navigator.of(context).pushReplacementNamed('/dashboard');
+        } else {
+          if (_pin == null || _pin == "") {
+            setState(() {
+              _errorMessage = "Enter 6 digit otp sent on your phone.";
+            });
+          } else {
+            AuthCredential authCreds = PhoneAuthProvider.getCredential(
+                verificationId: verificationId, smsCode: _pin);
+            FirebaseAuth.instance
+                .signInWithCredential(authCreds)
+                .then((AuthResult authResult) {
+              // AuthService()
+              //     .signInWithOTP(_pin, verificationId, context)
+              // .then(() {
+              print("inside then");
+              Navigator.of(context).pop();
+              Navigator.of(context).pushReplacementNamed('/dashboard');
+            }).catchError((onError) {
+              print("printing Errorrrrrrrrrr");
+              // print(onError.toString());
+              handleError(onError);
+            });
+          }
+        }
+      });
+    } catch (err) {
+      print("$err.toString()");
+      _errorMessage = err.toString();
+    }
+  }
+
+  handleError(PlatformException error) {
     print(error);
     switch (error.code) {
       case 'ERROR_INVALID_VERIFICATION_CODE':
         // FocusScope.of(context).requestFocus(new FocusNode());
         setState(() {
-          _errorMsg = 'Invalid OTP Code';
+          _errorMessage = 'Please enter a valid OTP code';
         });
+
+        print(_errorMessage);
+
         break;
       case 'firebaseAuth':
-        setState(() {
-          _errorMsg = 'Invalid phone number';
-        });
+        _errorMessage = 'Please enter a valid Phone number';
+        print(_errorMessage);
+
         break;
       default:
-        setState(() {
-          _errorMsg = 'Oops, something went wrong. Try again.';
-        });
+        _errorMessage = 'Oops, something went wrong. Try again.';
+        print(_errorMessage);
 
         break;
     }
   }
+
+  showDialogForOtp(String verId) async {
+    String last4digits = _mobile.substring(_mobile.length - 4);
+    _errorMessage = "";
+    await showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (BuildContext context) {
+          return StatefulBuilder(builder: (context, setState) {
+            return new AlertDialog(
+              // title:
+              backgroundColor: Colors.grey[200],
+              titleTextStyle: inputTextStyle,
+              elevation: 10.0,
+              contentTextStyle: TextStyle(color: primaryDarkColor),
+              content: Container(
+                height: MediaQuery.of(context).size.height * .2,
+                child: Column(
+                  mainAxisSize: MainAxisSize.max,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    // Text('OTP',
+                    //     style: TextStyle(
+                    //       fontSize: 20,
+                    //       color: Colors.blueGrey[600],
+                    //     )),
+                    verticalSpacer,
+                    RichText(
+                      text: TextSpan(
+                          style: highlightSubTextStyle,
+                          children: <TextSpan>[
+                            TextSpan(
+                                text: 'OTP',
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w800,
+                                  color: Colors.blueGrey[500],
+                                )),
+                            TextSpan(
+                                text:
+                                    ' is sent on your phone number ending with $last4digits',
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  color: Colors.blueGrey[500],
+                                )),
+                          ]),
+                    ),
+                    SizedBox(
+                      height: 10,
+                    ),
+                    Container(
+                      //color: Colors.black,
+                      //margin: EdgeInsets.all(5),
+                      // padding: EdgeInsets.all(0),
+                      child: PinPut(
+                        fieldsCount: 6,
+                        onSubmit: (String pin) => _submitPin(pin, context),
+                        focusNode: _pinPutFocusNode,
+                        controller: _pinPutController,
+                        submittedFieldDecoration: _pinPutDecoration.copyWith(
+                            borderRadius: BorderRadius.circular(10)),
+                        selectedFieldDecoration: _pinPutDecoration,
+                        followingFieldDecoration: _pinPutDecoration.copyWith(
+                          borderRadius: BorderRadius.circular(5),
+                          border: Border.all(
+                            color: btnColor,
+                          ),
+                        ),
+                      ),
+                    ),
+                    Divider(
+                      color: Colors.blueGrey[400],
+                      height: 1,
+                      //indent: 40,
+                      //endIndent: 30,
+                    ),
+                    (_errorMessage != null
+                        ? Text(
+                            _errorMessage,
+                            textAlign: TextAlign.left,
+                            style: errorTextStyle,
+                          )
+                        : SizedBox(height: 1)),
+                    // SizedBox(height: 10),
+                    //Divider(),
+                  ],
+                ),
+              ),
+              // titlePadding: EdgeInsets.fromLTRB(5, 10, 0, 0),
+              contentPadding: EdgeInsets.all(8),
+              actionsPadding: EdgeInsets.all(0),
+              actions: <Widget>[
+                SizedBox(
+                  height: 30,
+                  width: 80,
+                  child: FlatButton(
+                    color: Colors.transparent,
+                    textColor: btnColor,
+                    shape: RoundedRectangleBorder(
+                        side: BorderSide(color: btnColor),
+                        borderRadius: BorderRadius.all(Radius.circular(3.0))),
+                    child: Text(
+                      'Clear All',
+                      style: TextStyle(fontSize: 11),
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        _errorMessage = null;
+                      });
+                      _pinPutController.text = '';
+                      _pinPutFocusNode.requestFocus();
+                    },
+                  ),
+                ),
+                Container(
+                  height: 30,
+                  width: 80,
+                  alignment: Alignment.center,
+                  child: FlatButton(
+                    color: Colors.transparent,
+                    textColor: btnColor,
+                    shape: RoundedRectangleBorder(
+                        side: BorderSide(color: btnColor),
+                        borderRadius: BorderRadius.all(Radius.circular(3.0))),
+                    child: Text(
+                      'Resend OTP',
+                      style: TextStyle(fontSize: 11),
+                    ),
+                    onPressed: () {
+                      //TODO SMITA add code for resend
+                      //resendVerificationCode(_phoneNo, verId);
+                    },
+                  ),
+                ),
+                SizedBox(
+                  height: 30,
+                  width: 80,
+                  child: RaisedButton(
+                    color: btnColor,
+                    textColor: Colors.white,
+                    shape: RoundedRectangleBorder(
+                        side: BorderSide(color: btnColor),
+                        borderRadius: BorderRadius.all(Radius.circular(3.0))),
+                    child: Text('Submit', style: TextStyle(fontSize: 11)),
+                    onPressed: () {
+                      print(_pinPutController.text);
+                      _submitPin(_pinPutController.text, context);
+                    },
+                  ),
+                ),
+              ],
+            );
+            //  OTPDialog(verificationId: verId, phoneNo: _mobile);
+          });
+        });
+  }
+
+  // handleError(AuthException error) {
+  //   print(error);
+  //   switch (error.code) {
+  //     case 'ERROR_INVALID_VERIFICATION_CODE':
+  //       // FocusScope.of(context).requestFocus(new FocusNode());
+  //       setState(() {
+  //         _errorMsg = 'Invalid OTP Code';
+  //       });
+  //       break;
+  //     case 'firebaseAuth':
+  //       setState(() {
+  //         _errorMsg = 'Invalid phone number';
+  //       });
+  //       break;
+  //     default:
+  //       setState(() {
+  //         _errorMsg = 'Oops, something went wrong. Try again.';
+  //       });
+
+  //       break;
+  //   }
+  // }
 }
