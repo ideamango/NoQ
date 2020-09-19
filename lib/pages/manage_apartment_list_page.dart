@@ -64,8 +64,9 @@ class _ManageApartmentsListPageState extends State<ManageApartmentsListPage> {
         MetaEntity m = _state.currentUser.entities[i];
         // print(m.name + '::' + parentName);
         if (m.parentId != null) {
-          if (_state.currentUser.entities.contains(m.parentId)) continue;
-          continue;
+          if (_state.currentUser.entities.contains(m.parentId)) {
+            continue;
+          }
         }
         metaEntitiesList.add(m);
       }
