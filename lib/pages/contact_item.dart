@@ -351,12 +351,13 @@ class ContactRowState extends State<ContactRow> {
 
         backgroundColor: Colors.white,
         leading: IconButton(
-            icon: Icon(Icons.delete, color: Colors.blueGrey[300], size: 20),
+            icon: Icon(Icons.person, color: Colors.blueGrey[300], size: 20),
             onPressed: () {
               // contact.isManager = false;
             }),
         children: <Widget>[
           Container(
+            color: Colors.cyan[50],
             padding: EdgeInsets.only(left: 2.0, right: 2),
             // decoration: BoxDecoration(
             //     // border: Border.all(color: containerColor),
@@ -381,6 +382,13 @@ class ContactRowState extends State<ContactRow> {
                     ),
                     ctAvlFromTimeField,
                     ctAvlTillTimeField,
+                    RaisedButton(
+                        color: btnColor,
+                        child: Text(
+                          "Remove",
+                          style: buttonMedTextStyle,
+                        ),
+                        onPressed: () {})
                   ],
                 ),
               ),

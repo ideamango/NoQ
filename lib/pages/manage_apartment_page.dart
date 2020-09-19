@@ -2166,7 +2166,7 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
                                               .1,
                                           child: IconButton(
                                               padding: EdgeInsets.all(0),
-                                              icon: Icon(Icons.add_circle,
+                                              icon: Icon(Icons.person_add,
                                                   color: highlightColor,
                                                   size: 38),
                                               onPressed: () {
@@ -2233,7 +2233,7 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
                     Container(
                       decoration: BoxDecoration(
                           border: Border.all(color: containerColor),
-                          color: Colors.grey[50],
+                          color: Colors.white,
                           shape: BoxShape.rectangle,
                           borderRadius: BorderRadius.all(Radius.circular(5.0))),
                       // padding: EdgeInsets.all(5.0),
@@ -2251,6 +2251,7 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
                                     accentColor: Colors.grey[50],
                                   ),
                                   child: CustomExpansionTile(
+                                    
                                     //key: PageStorageKey(this.widget.headerTitle),
                                     initiallyExpanded: false,
                                     title: Row(
@@ -2286,7 +2287,8 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
                                   ),
                                 ),
                               ),
-                              Padding(
+                              Container(
+                                color: Colors.grey[100],
                                 padding:
                                     const EdgeInsets.fromLTRB(8.0, 0, 8, 0),
                                 child: Row(
@@ -2297,7 +2299,7 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
                                     // ),
                                     Container(
                                       child: IconButton(
-                                        icon: Icon(Icons.add_circle,
+                                        icon: Icon(Icons.person_add,
                                             color: highlightColor, size: 40),
                                         onPressed: () {
                                           // if (_roleType != null) {
