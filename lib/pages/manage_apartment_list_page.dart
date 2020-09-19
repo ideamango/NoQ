@@ -63,12 +63,20 @@ class _ManageApartmentsListPageState extends State<ManageApartmentsListPage> {
       for (int i = 0; i < _state.currentUser.entities.length; i++) {
         MetaEntity m = _state.currentUser.entities[i];
         // print(m.name + '::' + parentName);
+
+        bool isAdminOfParent = false;
         if (m.parentId != null) {
-          if (_state.currentUser.entities.contains(m.parentId)) {
-            continue;
+          for (MetaEntity parent in _state.currentUser.entities) {
+            if (parent.entityId == m.parentId) {
+              isAdminOfParent = true;
+              continue;
+            }
           }
         }
-        metaEntitiesList.add(m);
+
+        if (!isAdminOfParent) {
+          metaEntitiesList.add(m);
+        }
       }
       // metaEntitiesList = _state.currentUser.entities;
     }
