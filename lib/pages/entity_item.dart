@@ -225,7 +225,7 @@ class EntityRowState extends State<EntityRow> {
             children: <Widget>[
               Container(
                 width: MediaQuery.of(context).size.width * .45,
-                height: 34,
+                height: 30,
                 child: RaisedButton(
                   elevation: 20,
                   color: btnColor,
