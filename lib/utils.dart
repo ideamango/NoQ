@@ -192,12 +192,16 @@ class Utils {
       return null;
     }
 
-    if (permission == LocationPermission.denied) {
-      permission = await requestPermission();
-    }
+    // if (permission == LocationPermission.denied) {
+    //   permission = await requestPermission();
+    // }
 
-    Position pos =
-        await getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+    Position pos;
+    try {
+      pos = await getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+    } catch (e) {
+      print(e);
+    }
     return pos;
   }
 

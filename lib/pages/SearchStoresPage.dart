@@ -98,22 +98,22 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
   }
 
   _SearchStoresPageState() {
-    // _searchTextController.addListener(() {
-    //   if (_searchTextController.text.isEmpty && _entityType == null) {
-    //     setState(() {
-    //       _isSearching = "initial";
-    //       _searchText = "";
-    //     });
-    //   } else {
-    //     if (_searchTextController.text.length >= 3) {
-    //       setState(() {
-    //         _isSearching = "searching";
-    //         _searchText = _searchTextController.text;
-    //       });
-    //       _buildSearchList();
-    //     }
-    //   }
-    // });
+    _searchTextController.addListener(() {
+      if (_searchTextController.text.isEmpty && _entityType == null) {
+        setState(() {
+          _isSearching = "initial";
+          _searchText = "";
+        });
+      } else {
+        if (_searchTextController.text.length >= 3) {
+          setState(() {
+            _isSearching = "searching";
+            _searchText = _searchTextController.text;
+          });
+          _buildSearchList();
+        }
+      }
+    });
   }
 
   Future<void> getGlobalState() async {
@@ -173,7 +173,7 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
     return adr;
   }
 
-  Widget _emptySearchPage(String message1, String message2) {
+  Widget _emptySearchPage() {
     String defaultMsg = 'No matching results.Try again!! ';
     String defaultSubMsg =
         'Add places to favourites, and quickly browse through later. ';
@@ -181,40 +181,51 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
     String txtSubMsg =
         (messageSubTitle != null) ? messageSubTitle : defaultSubMsg;
     return Center(
-        child: Container(
-      margin: EdgeInsets.fromLTRB(10, MediaQuery.of(context).size.width * .45,
-          10, MediaQuery.of(context).size.width * .45),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: <Widget>[
-          Text(txtMsg, style: highlightTextStyle),
-          Text(txtSubMsg, style: highlightSubTextStyle),
-        ],
+      child: Container(
+        margin: EdgeInsets.fromLTRB(10, MediaQuery.of(context).size.width * .45,
+            10, MediaQuery.of(context).size.width * .45),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Text(
+              txtMsg,
+              style: highlightTextStyle,
+              textAlign: TextAlign.center,
+            ),
+            Text(
+              txtSubMsg,
+              style: highlightSubTextStyle,
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
       ),
-    ));
+    );
   }
 
   Widget _listSearchResults() {
     if (_stores.length == 0)
-      return _emptySearchPage(null, null);
+      return _emptySearchPage();
     else {
       //Add search results to past searches.
       _state.pastSearches = _stores;
-      return Column(
-        children: <Widget>[
-          Expanded(
-            child: ListView.builder(
-                itemCount: 1,
-                itemBuilder: (BuildContext context, int index) {
-                  return Container(
-                    margin: EdgeInsets.fromLTRB(10, 10, 10, 10),
-                    child: new Column(
-                      children: showSearchResults(),
-                    ),
-                  );
-                }),
-          ),
-        ],
+      return Center(
+        child: Column(
+          children: <Widget>[
+            Expanded(
+              child: ListView.builder(
+                  itemCount: 1,
+                  itemBuilder: (BuildContext context, int index) {
+                    return Container(
+                      margin: EdgeInsets.fromLTRB(10, 10, 10, 10),
+                      child: new Column(
+                        children: showSearchResults(),
+                      ),
+                    );
+                  }),
+            ),
+          ],
+        ),
       );
     }
 
@@ -246,6 +257,7 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
                 ),
               ),
             ),
+
             //drawer: CustomDrawer(),
             bottomNavigationBar: CustomBottomBar(barIndex: 1)),
       );
@@ -311,6 +323,7 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
           controller: _searchTextController,
           cursorColor: Colors.blueGrey[500],
           cursorWidth: 1,
+          textAlignVertical: TextAlignVertical.center,
 
           style: new TextStyle(fontSize: 12, color: Colors.blueGrey[700]),
           decoration: new InputDecoration(
@@ -440,26 +453,24 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
                     style: TextStyle(color: Colors.white, fontSize: 16),
                     overflow: TextOverflow.ellipsis,
                   )),
-              body: SingleChildScrollView(
-                child: Column(
-                  children: <Widget>[
-                    filterBar,
-                    (!Utils.isNullOrEmpty(_pastSearches))
-                        ? Expanded(
-                            child: ListView.builder(
-                                itemCount: 1,
-                                itemBuilder: (BuildContext context, int index) {
-                                  return Container(
-                                    margin: EdgeInsets.fromLTRB(10, 10, 10, 10),
-                                    child: new Column(
-                                      children: showPastSearches(),
-                                    ),
-                                  );
-                                }),
-                          )
-                        : _emptySearchPage(null, null),
-                  ],
-                ),
+              body: Column(
+                children: <Widget>[
+                  filterBar,
+                  (!Utils.isNullOrEmpty(_pastSearches))
+                      ? Expanded(
+                          child: ListView.builder(
+                              itemCount: 1,
+                              itemBuilder: (BuildContext context, int index) {
+                                return Container(
+                                  margin: EdgeInsets.fromLTRB(10, 10, 10, 10),
+                                  child: new Column(
+                                    children: showPastSearches(),
+                                  ),
+                                );
+                              }),
+                        )
+                      : _emptySearchPage(),
+                ],
               ),
               // drawer: CustomDrawer(),
               bottomNavigationBar: CustomBottomBar(barIndex: 1)
@@ -1101,21 +1112,23 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
         _stores.clear();
         setState(() {
           _isSearching = "done";
-          messageTitle = "Cannot Search as current location not known";
+          messageTitle = "Oops.. Can't Search!!";
           messageSubTitle =
-              "Open location settings and give permissions to access current location";
+              "Open location settings and give permissions to access current location.";
         });
         return;
       }
-      //Scrutinize the list returned froms server.
-
-      //1. entities that are bookable, public and active only should be listed
-      //2. Parent entities
-      _stores.clear();
-      for (int i = 0; i < value.length; i++) {
-        if (value[i].isActive) _stores.add(value[i]);
+      if (value.length == 0) {
+        _stores.clear();
+      } else {
+        //Scrutinize the list returned froms server.
+        //1. entities that are bookable, public and active only should be listed
+        //2. Parent entities
+        _stores.clear();
+        for (int i = 0; i < value.length; i++) {
+          if (value[i].isActive) _stores.add(value[i]);
+        }
       }
-
       //Write Gstate to file
       _state.updateSearchResults(_stores);
       setState(() {
