@@ -389,6 +389,7 @@ class _LoginPageState extends State<LoginPage> {
               contentTextStyle: TextStyle(color: primaryDarkColor),
               content: Container(
                 height: MediaQuery.of(context).size.height * .2,
+                width: MediaQuery.of(context).size.width * .85,
                 child: Column(
                   mainAxisSize: MainAxisSize.max,
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -466,7 +467,6 @@ class _LoginPageState extends State<LoginPage> {
               actions: <Widget>[
                 SizedBox(
                   height: 30,
-                  width: 80,
                   child: FlatButton(
                     color: Colors.transparent,
                     textColor: btnColor,
@@ -488,7 +488,6 @@ class _LoginPageState extends State<LoginPage> {
                 ),
                 Container(
                   height: 30,
-                  width: 80,
                   alignment: Alignment.center,
                   child: FlatButton(
                     color: Colors.transparent,
@@ -508,7 +507,6 @@ class _LoginPageState extends State<LoginPage> {
                 ),
                 SizedBox(
                   height: 30,
-                  width: 80,
                   child: RaisedButton(
                     color: btnColor,
                     textColor: Colors.white,

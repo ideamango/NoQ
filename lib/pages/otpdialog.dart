@@ -220,7 +220,7 @@ class _OTPDialogState extends State<OTPDialog> {
       actions: <Widget>[
         SizedBox(
           height: 30,
-          width: 80,
+          width: MediaQuery.of(context).size.width * .3,
           child: FlatButton(
             color: Colors.transparent,
             textColor: btnColor,
@@ -241,7 +241,7 @@ class _OTPDialogState extends State<OTPDialog> {
         ),
         Container(
           height: 30,
-          width: 80,
+          width: MediaQuery.of(context).size.width * .3,
           alignment: Alignment.center,
           child: FlatButton(
             color: Colors.transparent,
@@ -260,8 +260,8 @@ class _OTPDialogState extends State<OTPDialog> {
           ),
         ),
         SizedBox(
-          height: 30,
-          width: 80,
+          height: MediaQuery.of(context).size.width * .13,
+          width: MediaQuery.of(context).size.width * .3,
           child: RaisedButton(
             color: btnColor,
             textColor: Colors.white,
@@ -272,7 +272,6 @@ class _OTPDialogState extends State<OTPDialog> {
             onPressed: () {
               print(_pinPutController.text);
               _submitPin(_pinPutController.text, context);
-              
             },
           ),
         ),
