@@ -25,7 +25,7 @@ class DBTest {
         country: "India",
         address: "Shop 10, Gachibowli");
 
-    MyGeoFirePoint geoPoint = new MyGeoFirePoint(68, 78);
+    MyGeoFirePoint geoPoint = new MyGeoFirePoint(17.444317, 78.355321);
     Entity entity = new Entity(
         entityId: "Entity101",
         name: "Inorbit",
@@ -122,7 +122,7 @@ class DBTest {
         country: "India",
         address: "Shop 10, Gachibowli");
 
-    MyGeoFirePoint geoPoint = new MyGeoFirePoint(12.960632, 77.641603);
+    MyGeoFirePoint geoPoint = new MyGeoFirePoint(17.444317, 78.355321);
 
     Entity child1 = new Entity(
         entityId: id,
@@ -162,7 +162,7 @@ class DBTest {
         country: "India",
         address: "Shop 10, Gachibowli");
 
-    MyGeoFirePoint geoPoint = new MyGeoFirePoint(12.960632, 77.641603);
+    MyGeoFirePoint geoPoint = new MyGeoFirePoint(17.444317, 78.355321);
 
     Entity child1 = new Entity(
         entityId: id,
@@ -196,7 +196,8 @@ class DBTest {
         country: "India",
         address: "Shop 10, Gachibowli");
 
-    MyGeoFirePoint geoPoint = new MyGeoFirePoint(12.960632, 77.641603);
+    MyGeoFirePoint geoPoint =
+        new MyGeoFirePoint(17.430290, 78.324762); //yum yum tree
     Entity entity = new Entity(
         entityId: "Entity102",
         name: "Habinaro",
@@ -486,8 +487,8 @@ class DBTest {
 
     print("----------Search Only Type--with Name null ----------");
 
-    List<Entity> entitiesByTypeAndNameNull = await EntityService()
-        .search(null, "Shop", 12.970632, 77.641603, 2, 1, 2);
+    List<Entity> entitiesByTypeAndNameNull =
+        await EntityService().search(null, "Shop", 17.4338, 78.3321, 2, 1, 2);
 
     for (Entity me in entitiesByTypeAndNameNull) {
       print(me.name + ":" + me.distance.toString());
@@ -503,7 +504,7 @@ class DBTest {
     print("----------Search Only Partial Name-- Type null-----------");
 
     List<Entity> entitiesByTypeNullAndName =
-        await EntityService().search("Habi", "", 12.970632, 77.641603, 2, 1, 2);
+        await EntityService().search("Habi", "", 17.4338, 78.3321, 2, 1, 2);
 
     for (Entity me in entitiesByTypeNullAndName) {
       print(me.name + ":" + me.distance.toString());
@@ -518,8 +519,8 @@ class DBTest {
 
     print("---------Search By Partial Name and Type --------------");
 
-    List<Entity> entitiesByTypeAndName = await EntityService()
-        .search("Bat", "Shop", 12.970632, 77.641603, 2, 1, 2);
+    List<Entity> entitiesByTypeAndName =
+        await EntityService().search("Bat", "Shop", 17.4338, 78.3321, 2, 1, 2);
 
     for (Entity me in entitiesByTypeAndName) {
       print(me.name + ":" + me.distance.toString());
@@ -535,7 +536,7 @@ class DBTest {
         "---------Search By Name and Type again for 2 Habi but of different type--------------");
 
     List<Entity> entitiesByTypeAndNameAgain = await EntityService()
-        .search("Habina", "Shop", 12.970632, 77.641603, 2, 1, 2);
+        .search("Habina", "Shop", 17.4338, 78.3321, 2, 1, 2);
 
     for (Entity me in entitiesByTypeAndNameAgain) {
       print(me.name + ":" + me.distance.toString());
@@ -552,7 +553,7 @@ class DBTest {
         "---------Search By Name and Type Store (no intersection) --------------");
 
     List<Entity> noIntersection = await EntityService()
-        .search("Bata", "Store", 12.970632, 77.641603, 2, 1, 2);
+        .search("Bata", "Store", 17.4338, 78.3321, 2, 1, 2);
 
     for (Entity me in noIntersection) {
       print(me.name + ":" + me.distance.toString());
@@ -724,6 +725,12 @@ class DBTest {
           "Offer and Manager added on Entity ------------------------------> Failure");
     }
 
+    bool admin6955 =
+        await EntityService().assignAdmin("Child101-3", "+919611006955");
+
+    print(
+        "+919611006955 added as an admin to the Child101-3, check on the real device");
+
     print(
         "<==========================================TESTING DONE=========================================>");
 
@@ -737,7 +744,8 @@ class DBTest {
         country: "India",
         address: "Shop 10, Gachibowli");
 
-    MyGeoFirePoint geoPoint = new MyGeoFirePoint(12.960632, 77.641603);
+    MyGeoFirePoint geoPoint =
+        new MyGeoFirePoint(17.433643, 78.369051); //sweet basket, gachibowli
     Entity entity = new Entity(
         entityId: "Child101-1",
         name: "Bata updated",
