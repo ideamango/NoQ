@@ -182,22 +182,26 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
         (messageSubTitle != null) ? messageSubTitle : defaultSubMsg;
     return Center(
       child: Container(
-        margin: EdgeInsets.fromLTRB(10, MediaQuery.of(context).size.width * .45,
-            10, MediaQuery.of(context).size.width * .45),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Text(
-              txtMsg,
-              style: highlightTextStyle,
-              textAlign: TextAlign.center,
-            ),
-            Text(
-              txtSubMsg,
-              style: highlightSubTextStyle,
-              textAlign: TextAlign.center,
-            ),
-          ],
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              SizedBox(
+                height: MediaQuery.of(context).size.width * .5,
+              ),
+              Text(
+                txtMsg,
+                style: highlightTextStyle,
+                textAlign: TextAlign.center,
+              ),
+              Text(
+                txtSubMsg,
+                style: highlightSubTextStyle,
+                textAlign: TextAlign.center,
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -430,6 +434,7 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
           },
           theme: ThemeData.light().copyWith(),
           home: Scaffold(
+              resizeToAvoidBottomInset: false,
               appBar: AppBar(
                   actions: <Widget>[],
                   flexibleSpace: Container(

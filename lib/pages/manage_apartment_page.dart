@@ -129,6 +129,7 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
   Position pos;
   GlobalState _gState;
   String _phCountryCode;
+  bool setActive = false;
   //final Geolocator geolocator = Geolocator()..forceAndroidLocationManager;
 
   @override
@@ -280,9 +281,21 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
   }
 
   void clearLocation() {
-    _latController.text = "";
-    _lonController.text = "";
-    entity.coordinates = null;
+//If entity is Public or entity is active, latitude, longitude must be given.
+    if (entity.isActive) {
+      Utils.showMyFlushbar(
+          context,
+          Icons.info_outline,
+          Duration(
+            seconds: 6,
+          ),
+          "CURRENT LOCATION is must if entity is ACTIVE.",
+          "If you really want to clear location, deselect ACTIVE on top of the page.");
+    } else {
+      _latController.text = "";
+      _lonController.text = "";
+      entity.coordinates = null;
+    }
   }
 
   getEntityDetails() {
@@ -356,7 +369,12 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
         controller: _descController,
         decoration: CommonStyle.textFieldStyle(
             labelTextStr: "Description", hintTextStr: ""),
-        validator: validateText,
+        validator: (value) {
+          if (!validateField)
+            return validateText(value);
+          else
+            return null;
+        },
         keyboardType: TextInputType.multiline,
         maxLength: null,
         maxLines: 3,
@@ -376,7 +394,12 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
         controller: _regNumController,
         decoration: CommonStyle.textFieldStyle(
             labelTextStr: "Registration Number", hintTextStr: ""),
-        validator: validateText,
+        validator: (value) {
+          if (!validateField)
+            return validateText(value);
+          else
+            return null;
+        },
         onSaved: (String value) {
           //TODO: test if regNum is getting saved
           //entity.regNum = value;
@@ -538,7 +561,12 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
                 borderSide: BorderSide(color: Colors.grey)),
             focusedBorder: UnderlineInputBorder(
                 borderSide: BorderSide(color: Colors.orange))),
-        validator: validateTime,
+        validator: (value) {
+          if (!validateField)
+            return validateTime(value);
+          else
+            return null;
+        },
         onChanged: (value) {
           if (value != "") {
             List<String> time = value.split(':');
@@ -584,7 +612,12 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
                 borderSide: BorderSide(color: Colors.grey)),
             focusedBorder: UnderlineInputBorder(
                 borderSide: BorderSide(color: Colors.orange))),
-        validator: validateTime,
+        validator: (value) {
+          if (!validateField)
+            return validateTime(value);
+          else
+            return null;
+        },
         onChanged: (value) {
           if (value != "") {
             List<String> time = value.split(':');
@@ -735,7 +768,12 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
           focusedBorder: UnderlineInputBorder(
               borderSide: BorderSide(color: Colors.orange)),
         ),
-        validator: Utils.validateMobileField,
+        validator: (value) {
+          if (!validateField)
+            return Utils.validateMobileField(value);
+          else
+            return null;
+        },
         onChanged: (value) {
           //_autoValidateWhatsapp = true;
           whatsappPhoneKey.currentState.validate();
@@ -813,7 +851,9 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
             controller: _latController,
             decoration: CommonStyle.textFieldStyle(
                 labelTextStr: "Latitude", hintTextStr: ""),
-            validator: validateText,
+            validator: (value) {
+              return validateText(value);
+            },
             onChanged: (String value) {},
             onSaved: (String value) {},
           ));
@@ -830,7 +870,9 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
             controller: _lonController,
             decoration: CommonStyle.textFieldStyle(
                 labelTextStr: "Longitude", hintTextStr: ""),
-            validator: validateText,
+            validator: (value) {
+              return validateText(value);
+            },
             onChanged: (String value) {},
             onSaved: (String value) {},
           ));
@@ -858,7 +900,12 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
         controller: _adrs1Controller,
         decoration: CommonStyle.textFieldStyle(
             labelTextStr: "Apartment/ House No./ Lane", hintTextStr: ""),
-        validator: validateText,
+        validator: (value) {
+          if (!validateField)
+            return validateText(value);
+          else
+            return null;
+        },
         onChanged: (String value) {
           entity.address.address = value;
           print("changed address");
@@ -882,7 +929,12 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
           focusedBorder: UnderlineInputBorder(
               borderSide: BorderSide(color: Colors.orange)),
         ),
-        validator: validateText,
+        validator: (value) {
+          if (!validateField)
+            return validateText(value);
+          else
+            return null;
+        },
         onChanged: (String value) {
           entity.address.landmark = value;
           print("changed landmark");
@@ -906,7 +958,12 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
           focusedBorder: UnderlineInputBorder(
               borderSide: BorderSide(color: Colors.orange)),
         ),
-        validator: validateText,
+        validator: (value) {
+          if (!validateField)
+            return validateText(value);
+          else
+            return null;
+        },
         onSaved: (String value) {
           entity.address.locality = value;
           print("saved address");
@@ -926,7 +983,12 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
           focusedBorder: UnderlineInputBorder(
               borderSide: BorderSide(color: Colors.orange)),
         ),
-        validator: validateText,
+        validator: (value) {
+          if (!validateField)
+            return validateText(value);
+          else
+            return null;
+        },
         onSaved: (String value) {
           entity.address.city = value;
           print("saved address");
@@ -946,7 +1008,12 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
           focusedBorder: UnderlineInputBorder(
               borderSide: BorderSide(color: Colors.orange)),
         ),
-        validator: validateText,
+        validator: (value) {
+          if (!validateField)
+            return validateText(value);
+          else
+            return null;
+        },
         onSaved: (String value) {
           entity.address.state = value;
           print("saved address");
@@ -966,7 +1033,12 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
           focusedBorder: UnderlineInputBorder(
               borderSide: BorderSide(color: Colors.orange)),
         ),
-        validator: validateText,
+        validator: (value) {
+          if (!validateField)
+            return validateText(value);
+          else
+            return null;
+        },
         onSaved: (String value) {
           entity.address.country = value;
           print("saved address");
@@ -986,7 +1058,12 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
           focusedBorder: UnderlineInputBorder(
               borderSide: BorderSide(color: Colors.orange)),
         ),
-        validator: validateText,
+        validator: (value) {
+          if (!validateField)
+            return validateText(value);
+          else
+            return null;
+        },
         onChanged: (String value) {
           entity.address.zipcode = value;
           print("saved address");
@@ -1013,7 +1090,7 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
                     context,
                     Icons.info_outline,
                     Duration(
-                      seconds: 3,
+                      seconds: 5,
                     ),
                     "Error",
                     "Phone number already exists !!");
@@ -1044,7 +1121,7 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
                 context,
                 Icons.info_outline,
                 Duration(
-                  seconds: 3,
+                  seconds: 5,
                 ),
                 'Oops!! There is some trouble deleting that admin.',
                 'Please check and try again..');
@@ -1191,12 +1268,30 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
                       context,
                       Icons.info_outline,
                       Duration(
-                        seconds: 3,
+                        seconds: 4,
                       ),
-                      "Seems like you have entered some incorrect details!! ",
+                      "Admin details could not be saved!! ",
                       "Please verify the details and try again.");
+                } else {
+                  Utils.showMyFlushbar(
+                      context,
+                      Icons.check,
+                      Duration(
+                        seconds: 5,
+                      ),
+                      "Premise details saved!!",
+                      "Be found, by marking it ACTIVE.");
                 }
               });
+            } else {
+              Utils.showMyFlushbar(
+                  context,
+                  Icons.info_outline,
+                  Duration(
+                    seconds: 5,
+                  ),
+                  "Seems like you have entered some incorrect details, Please verify!! ",
+                  "Check your internet connection and try again.");
             }
           });
         } else {
@@ -1417,6 +1512,15 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
         }
       }
 
+      validateLatLon() {
+        bool retVal;
+        if (_latController.text == null || _latController.text == "")
+          retVal = false;
+        else
+          retVal = true;
+        return retVal;
+      }
+
       validateAllFields() {
         bool retVal;
         if (_entityDetailsFormKey.currentState.validate())
@@ -1616,10 +1720,10 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
                                               context,
                                               Icons.info_outline,
                                               Duration(
-                                                seconds: 4,
+                                                seconds: 6,
                                               ),
-                                              "Missing Information!! Making premises public require the basic details",
-                                              "Please fill and try again !!");
+                                              "Missing Information!! ",
+                                              "Making premises PUBLIC requires basic details. Please fill and try again !!");
                                         } else {
                                           validateField = false;
                                           isPublic = value;
@@ -1676,17 +1780,32 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
                                       if (value) {
                                         validateField = true;
                                         _autoValidate = true;
-                                        bool retVal = validateAllFields();
-                                        if (!retVal) {
-                                          //Show flushbar with info that fields has invalid data
-                                          Utils.showMyFlushbar(
-                                              context,
-                                              Icons.info_outline,
-                                              Duration(
-                                                seconds: 4,
-                                              ),
-                                              "Missing Information!! Making premises active require the basic details",
-                                              "Please check and try again !!");
+                                        bool retVal = false;
+                                        bool locValid = false;
+                                        if (validateAllFields()) retVal = true;
+                                        if (validateLatLon()) locValid = true;
+
+                                        if (!locValid || !retVal) {
+                                          if (!locValid) {
+                                            Utils.showMyFlushbar(
+                                                context,
+                                                Icons.info_outline,
+                                                Duration(
+                                                  seconds: 6,
+                                                ),
+                                                "Current location is must for your entity to be searchable by users!! ",
+                                                "USE CURRENT LOCATION in Location Details section which auto-populates your current location using the device.");
+                                          } else if (!retVal) {
+                                            //Show flushbar with info that fields has invalid data
+                                            Utils.showMyFlushbar(
+                                                context,
+                                                Icons.info_outline,
+                                                Duration(
+                                                  seconds: 6,
+                                                ),
+                                                "Missing Information!! ",
+                                                "Making premises ACTIVE requires basic details. Please fill and try again !!");
+                                          }
                                         } else {
                                           validateField = false;
                                           isActive = value;
@@ -1974,7 +2093,7 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
                                         shape: RoundedRectangleBorder(
                                             side: BorderSide(color: btnColor)),
                                         child: Text(
-                                          'Use current location',
+                                          'Use Current Location',
                                           textAlign: TextAlign.center,
                                         ),
                                         onPressed: useCurrLocation,
@@ -2251,7 +2370,6 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
                                     accentColor: Colors.grey[50],
                                   ),
                                   child: CustomExpansionTile(
-                                    
                                     //key: PageStorageKey(this.widget.headerTitle),
                                     initiallyExpanded: false,
                                     title: Row(

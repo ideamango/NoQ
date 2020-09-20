@@ -227,14 +227,14 @@ class EntityRowState extends State<EntityRow> {
                 width: MediaQuery.of(context).size.width * .45,
                 height: 30,
                 child: RaisedButton(
-                  elevation: 20,
+                  elevation: 10,
                   color: btnColor,
                   textColor: Colors.white,
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.all(Radius.circular(5.0))),
                   splashColor: highlightColor,
                   child: Text(
-                    'Manage child amenities',
+                    'Child Premises',
                     style: TextStyle(color: Colors.white, fontSize: 13),
                   ),
                   onPressed: () {
@@ -256,7 +256,7 @@ class EntityRowState extends State<EntityRow> {
                       side: BorderSide(color: Colors.blueGrey[500]),
                       borderRadius: BorderRadius.all(Radius.circular(5.0))),
                   child: Text(
-                    'Manage details',
+                    'Manage Details',
                     style: TextStyle(color: primaryDarkColor, fontSize: 13),
                   ),
                   // Text(
