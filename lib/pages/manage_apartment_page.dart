@@ -47,6 +47,15 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
       new GlobalKey<FormFieldState>();
   final GlobalKey<FormFieldState> newAdminRowItemKey =
       new GlobalKey<FormFieldState>();
+
+  //Fields used in info - animated container
+  double _width = 0;
+  double _height = 0;
+  EdgeInsets _margin = EdgeInsets.fromLTRB(0, 0, 0, 0);
+  Text _text = Text("Information block");
+  bool _expandClick = false;
+  // Color _color = Colors.green;
+  BorderRadiusGeometry _borderRadius = BorderRadius.circular(5);
   bool _autoValidateWhatsapp = false;
 
   final String title = "Managers Form";
@@ -1692,139 +1701,304 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
                   padding: const EdgeInsets.all(5.0),
                   children: <Widget>[
                     Container(
-                      padding: EdgeInsets.symmetric(horizontal: 8),
+                      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
                       decoration: BoxDecoration(
                           border: Border.all(color: containerColor),
                           color: Colors.grey[50],
                           shape: BoxShape.rectangle,
                           borderRadius: BorderRadius.all(Radius.circular(5.0))),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
                         children: <Widget>[
                           Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: <Widget>[
-                              Text('Public'),
-                              Container(
-                                width: MediaQuery.of(context).size.width * .17,
-                                child: Switch(
-                                  value: isPublic,
-                                  onChanged: (value) {
-                                    setState(() {
-                                      if (value) {
-                                        validateField = true;
-                                        _autoValidate = true;
-                                        bool retVal = validateAllFields();
-                                        if (!retVal) {
-                                          //Show flushbar with info that fields has invalid data
-                                          Utils.showMyFlushbar(
-                                              context,
-                                              Icons.info_outline,
-                                              Duration(
-                                                seconds: 6,
-                                              ),
-                                              "Missing Information!! ",
-                                              "Making premises PUBLIC requires basic details. Please fill and try again !!");
-                                        } else {
-                                          validateField = false;
-                                          isPublic = value;
-                                          entity.isPublic = value;
-                                          print(isPublic);
-                                        }
-                                      } else {
-                                        isPublic = value;
-                                        entity.isPublic = value;
-                                        print(isPublic);
-                                      }
-                                    });
-                                  },
-                                  // activeTrackColor: Colors.green,
-                                  activeColor: highlightColor,
-                                ),
-                              ),
-                            ],
-                          ),
-                          Row(
-                            children: <Widget>[
-                              Text('Bookable'),
-                              Container(
-                                width: MediaQuery.of(context).size.width * .17,
-                                child: Switch(
-                                  value: isBookable,
-                                  onChanged: (value) {
-                                    setState(() {
-                                      isBookable = value;
-                                      entity.isBookable = value;
+                              Row(
+                                children: <Widget>[
+                                  Row(
+                                    children: <Widget>[
+                                      Text('Public'),
+                                      SizedBox(
+                                        width:
+                                            MediaQuery.of(context).size.width *
+                                                .05,
+                                        height:
+                                            MediaQuery.of(context).size.width *
+                                                .05,
+                                        child: IconButton(
+                                            padding: EdgeInsets.all(0),
+                                            icon: Icon(
+                                              Icons.info,
+                                              color: Colors.blueGrey[600],
+                                            ),
+                                            iconSize: 17,
+                                            onPressed: () {
+                                              //TODO Smita show info on public
+                                              if (!_expandClick) {
+                                                setState(() {
+                                                  _expandClick = true;
+                                                  _margin = EdgeInsets.fromLTRB(
+                                                      0, 0, 0, 8);
+                                                  _width =
+                                                      MediaQuery.of(context)
+                                                              .size
+                                                              .width *
+                                                          .9;
+                                                  _text = Text(
+                                                    "Select this if your premise is public. Default is private, means ....",
+                                                    textAlign: TextAlign.center,
+                                                  );
 
-                                      if (value) {
-                                        showConfirmationDialog();
-                                        //TODO: SMita - show msg with info, yes/no
-                                      }
-                                      print(isBookable);
-                                    });
-                                  },
-                                  // activeTrackColor: Colors.green,
-                                  activeColor: highlightColor,
-                                ),
-                              ),
-                            ],
-                          ),
-                          Row(
-                            children: <Widget>[
-                              Text('Active'),
-                              Container(
-                                width: MediaQuery.of(context).size.width * .17,
-                                child: Switch(
-                                  value: isActive,
-                                  onChanged: (value) {
-                                    setState(() {
-                                      if (value) {
-                                        validateField = true;
-                                        _autoValidate = true;
-                                        bool retVal = false;
-                                        bool locValid = false;
-                                        if (validateAllFields()) retVal = true;
-                                        if (validateLatLon()) locValid = true;
-
-                                        if (!locValid || !retVal) {
-                                          if (!locValid) {
-                                            Utils.showMyFlushbar(
-                                                context,
-                                                Icons.info_outline,
-                                                Duration(
-                                                  seconds: 6,
-                                                ),
-                                                "Current location is must for your entity to be searchable by users!! ",
-                                                "USE CURRENT LOCATION in Location Details section which auto-populates your current location using the device.");
-                                          } else if (!retVal) {
-                                            //Show flushbar with info that fields has invalid data
-                                            Utils.showMyFlushbar(
-                                                context,
-                                                Icons.info_outline,
-                                                Duration(
-                                                  seconds: 6,
-                                                ),
-                                                "Missing Information!! ",
-                                                "Making premises ACTIVE requires basic details. Please fill and try again !!");
+                                                  _height = 30;
+                                                });
+                                              } else {
+                                                setState(() {
+                                                  _expandClick = false;
+                                                  _width = 0;
+                                                  _height = 0;
+                                                });
+                                              }
+                                            }),
+                                      ),
+                                    ],
+                                  ),
+                                  Container(
+                                    width:
+                                        MediaQuery.of(context).size.width * .13,
+                                    child: Switch(
+                                      value: isPublic,
+                                      onChanged: (value) {
+                                        setState(() {
+                                          if (value) {
+                                            validateField = true;
+                                            _autoValidate = true;
+                                            bool retVal = validateAllFields();
+                                            if (!retVal) {
+                                              //Show flushbar with info that fields has invalid data
+                                              Utils.showMyFlushbar(
+                                                  context,
+                                                  Icons.info_outline,
+                                                  Duration(
+                                                    seconds: 6,
+                                                  ),
+                                                  "Missing Information!! ",
+                                                  "Making premises PUBLIC requires basic details. Please fill and try again !!");
+                                            } else {
+                                              validateField = false;
+                                              isPublic = value;
+                                              entity.isPublic = value;
+                                              print(isPublic);
+                                            }
+                                          } else {
+                                            isPublic = value;
+                                            entity.isPublic = value;
+                                            print(isPublic);
                                           }
-                                        } else {
-                                          validateField = false;
-                                          isActive = value;
-                                          entity.isActive = value;
-                                          print(isActive);
-                                        }
-                                      } else {
-                                        isActive = value;
-                                        entity.isActive = value;
-                                        print(isActive);
-                                      }
-                                    });
-                                  },
-                                  // activeTrackColor: Colors.green,
-                                  activeColor: highlightColor,
-                                ),
+                                        });
+                                      },
+                                      // activeTrackColor: Colors.green,
+                                      activeColor: highlightColor,
+                                    ),
+                                  ),
+                                ],
                               ),
+                              Row(
+                                children: <Widget>[
+                                  Row(
+                                    children: <Widget>[
+                                      Text('Bookable'),
+                                      SizedBox(
+                                        width:
+                                            MediaQuery.of(context).size.width *
+                                                .05,
+                                        height:
+                                            MediaQuery.of(context).size.width *
+                                                .05,
+                                        child: IconButton(
+                                            padding: EdgeInsets.all(0),
+                                            icon: Icon(
+                                              Icons.info,
+                                              color: Colors.blueGrey[600],
+                                            ),
+                                            iconSize: 17,
+                                            onPressed: () {
+                                              //TODO Smita show info on Bookable
+                                              if (!_expandClick) {
+                                                setState(() {
+                                                  _expandClick = true;
+                                                  _margin = EdgeInsets.fromLTRB(
+                                                      0, 0, 0, 8);
+                                                  _width =
+                                                      MediaQuery.of(context)
+                                                              .size
+                                                              .width *
+                                                          .9;
+                                                  _text = Text(
+                                                    "Premises would be bookable",
+                                                    textAlign: TextAlign.center,
+                                                  );
+
+                                                  _height = 30;
+                                                });
+                                              } else {
+                                                setState(() {
+                                                  _expandClick = false;
+                                                  _width = 0;
+                                                  _height = 0;
+                                                });
+                                              }
+                                            }),
+                                      ),
+                                    ],
+                                  ),
+                                  Container(
+                                    width:
+                                        MediaQuery.of(context).size.width * .13,
+                                    child: Switch(
+                                      value: isBookable,
+                                      onChanged: (value) {
+                                        setState(() {
+                                          isBookable = value;
+                                          entity.isBookable = value;
+
+                                          if (value) {
+                                            showConfirmationDialog();
+                                            //TODO: SMita - show msg with info, yes/no
+                                          }
+                                          print(isBookable);
+                                        });
+                                      },
+                                      // activeTrackColor: Colors.green,
+                                      activeColor: highlightColor,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              Row(
+                                children: <Widget>[
+                                  Row(
+                                    children: <Widget>[
+                                      Text('Active'),
+                                      SizedBox(
+                                        width:
+                                            MediaQuery.of(context).size.width *
+                                                .05,
+                                        height:
+                                            MediaQuery.of(context).size.width *
+                                                .05,
+                                        child: IconButton(
+                                            padding: EdgeInsets.all(0),
+                                            icon: Icon(
+                                              Icons.info,
+                                              color: Colors.blueGrey[600],
+                                            ),
+                                            iconSize: 17,
+                                            onPressed: () {
+                                              //TODO Smita show info on active
+                                              if (!_expandClick) {
+                                                setState(() {
+                                                  _expandClick = true;
+                                                  _margin = EdgeInsets.fromLTRB(
+                                                      0, 0, 0, 8);
+                                                  _width =
+                                                      MediaQuery.of(context)
+                                                              .size
+                                                              .width *
+                                                          .9;
+                                                  _text = Text(
+                                                    "Active: Premises would be searchable",
+                                                    textAlign: TextAlign.center,
+                                                  );
+
+                                                  _height = 30;
+                                                });
+                                              } else {
+                                                setState(() {
+                                                  _expandClick = false;
+                                                  _width = 0;
+                                                  _height = 0;
+                                                });
+                                              }
+                                            }),
+                                      ),
+                                    ],
+                                  ),
+                                  Container(
+                                    width:
+                                        MediaQuery.of(context).size.width * .13,
+                                    child: Switch(
+                                      value: isActive,
+                                      onChanged: (value) {
+                                        setState(() {
+                                          if (value) {
+                                            validateField = true;
+                                            _autoValidate = true;
+                                            bool retVal = false;
+                                            bool locValid = false;
+                                            if (validateAllFields())
+                                              retVal = true;
+                                            if (validateLatLon())
+                                              locValid = true;
+
+                                            if (!locValid || !retVal) {
+                                              if (!locValid) {
+                                                Utils.showMyFlushbar(
+                                                    context,
+                                                    Icons.info_outline,
+                                                    Duration(
+                                                      seconds: 6,
+                                                    ),
+                                                    "Current location is must for your entity to be searchable by users!! ",
+                                                    "USE CURRENT LOCATION in Location Details section which auto-populates your current location using the device.");
+                                              } else if (!retVal) {
+                                                //Show flushbar with info that fields has invalid data
+                                                Utils.showMyFlushbar(
+                                                    context,
+                                                    Icons.info_outline,
+                                                    Duration(
+                                                      seconds: 6,
+                                                    ),
+                                                    "Missing Information!! ",
+                                                    "Making premises ACTIVE requires basic details. Please fill and try again !!");
+                                              }
+                                            } else {
+                                              validateField = false;
+                                              isActive = value;
+                                              entity.isActive = value;
+                                              print(isActive);
+                                            }
+                                          } else {
+                                            isActive = value;
+                                            entity.isActive = value;
+                                            print(isActive);
+                                          }
+                                        });
+                                      },
+                                      // activeTrackColor: Colors.green,
+                                      activeColor: highlightColor,
+                                    ),
+                                  ),
+                                ],
+                              )
                             ],
-                          )
+                          ),
+                          AnimatedContainer(
+                            margin: _margin,
+                            // Use the properties stored in the State class.
+                            width: _width,
+                            height: _height,
+                            alignment: Alignment.center,
+                            decoration: BoxDecoration(
+                              color: Colors.cyan[50],
+                              border: Border.all(color: primaryIcon),
+                              borderRadius: _borderRadius,
+                            ),
+                            // Define how long the animation should take.
+                            duration: Duration(seconds: 1),
+                            // Provide an optional curve to make the animation feel smoother.
+                            curve: Curves.easeInOutCirc,
+                            child: Center(child: _text),
+                          ),
                         ],
                       ),
                     ),
