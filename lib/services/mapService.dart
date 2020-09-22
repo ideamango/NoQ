@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:map_launcher/map_launcher.dart';
+import 'package:noq/utils.dart';
 import 'package:url_launcher/url_launcher.dart' as UrlLauncher;
 import 'package:url_launcher/url_launcher.dart';
 
@@ -42,7 +43,9 @@ callPhone(String phone) async {
   String phoneStr = "tel://$phone";
   if (await UrlLauncher.canLaunch(phoneStr)) {
     await UrlLauncher.launch(phoneStr);
-  } else {}
+  } else {
+    throw 'Could not launch $phoneStr';
+  }
 }
 
 void launchGPay() async {

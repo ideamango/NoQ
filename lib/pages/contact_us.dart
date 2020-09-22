@@ -50,13 +50,14 @@ class _ContactUsPageState extends State<ContactUsPage> {
   _launchURL(String toMailId, String subject, String body) async {
     var url = 'mailto:$toMailId?subject=$subject&body=$body';
     if (await canLaunch(url)) {
-      await launch(url);
-      Utils.showMyFlushbar(
+      launch(url).then((value) => Utils.showMyFlushbar(
           context,
           Icons.check,
-          Duration(seconds: 3),
+          Duration(seconds: 5),
           "Your message has been sent.",
-          "Our team will contact you as soon as possible.");
+          "Our team will contact you as soon as possible."));
+
+      print("Mail sent");
     } else {
       //throw 'Could not launch $url';
       Utils.showMyFlushbar(

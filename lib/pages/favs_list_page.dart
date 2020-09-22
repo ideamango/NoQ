@@ -412,8 +412,18 @@ class _FavsListPageState extends State<FavsListPage> {
                                       if (!Utils.isNullOrEmpty(
                                           str.managers)) if (str
                                               .managers.first.ph !=
-                                          null)
-                                        callPhone(str.managers.first.ph);
+                                          null) {
+                                        try {
+                                          callPhone(str.managers.first.ph);
+                                        } catch (error) {
+                                          Utils.showMyFlushbar(
+                                              context,
+                                              Icons.error,
+                                              Duration(seconds: 5),
+                                              "Could not connect call to the number ${str.managers.first.ph} !!",
+                                              "Check if the number is valid and try again.");
+                                        }
+                                      }
                                     },
                                   ),
                                 ),
