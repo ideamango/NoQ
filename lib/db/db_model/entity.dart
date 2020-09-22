@@ -10,14 +10,11 @@ class Entity {
       {this.entityId,
       this.name,
       this.description,
-      //this.regNum,
       this.address,
       this.advanceDays,
       this.isPublic,
-      //this.admins,
       this.managers,
       this.childEntities,
-      //this.geo,
       this.maxAllowed,
       this.slotDuration,
       this.closedOn,
@@ -42,7 +39,8 @@ class Entity {
       this.gpay,
       this.paytm,
       this.applepay,
-      this.offer});
+      this.offer,
+      this.phone});
 
   //SlotDocumentId is entityID#20~06~01 it is not auto-generated, will help in not duplicating the record
   String entityId;
@@ -82,6 +80,7 @@ class Entity {
   String paytm;
   String applepay;
   Offer offer;
+  String phone;
 
   Map<String, dynamic> toJson() => {
         'entityId': entityId,
@@ -119,7 +118,8 @@ class Entity {
         'gpay': gpay,
         'paytm': paytm,
         'applepay': applepay,
-        'offer': offer != null ? offer.toJson() : null
+        'offer': offer != null ? offer.toJson() : null,
+        'phone': phone
       };
 
   List<dynamic> usersToJson(List<MetaUser> users) {
@@ -186,7 +186,8 @@ class Entity {
         gpay: json['gpay'],
         paytm: json['paytm'],
         applepay: json['applepay'],
-        offer: Offer.fromJson(json['offer']));
+        offer: Offer.fromJson(json['offer']),
+        phone: json['phone']);
   }
 
   static Address convertToAddressFromJson(Map<String, dynamic> json) {
@@ -264,7 +265,8 @@ class Entity {
         gpay: gpay,
         paytm: paytm,
         applepay: applepay,
-        offer: offer);
+        offer: offer,
+        phone: phone);
 
     return meta;
   }

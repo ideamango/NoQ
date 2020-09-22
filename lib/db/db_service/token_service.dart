@@ -143,7 +143,8 @@ class TokenService {
             'gpay': metaEntity.gpay,
             'paytm': metaEntity.paytm,
             'applepay': metaEntity.applepay,
-            'order': null
+            'order': null,
+            'phone': metaEntity.phone
           };
           //create token
           await tx.set(tokRef, tokenJson);
@@ -203,7 +204,8 @@ class TokenService {
             'gpay': metaEntity.gpay,
             'paytm': metaEntity.paytm,
             'applepay': metaEntity.applepay,
-            'order': null
+            'order': null,
+            'phone': metaEntity.phone
           };
 
           //create EntitySlots with one slot in it

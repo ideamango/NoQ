@@ -19,7 +19,8 @@ class UserToken {
       this.order,
       this.gpay,
       this.paytm,
-      this.applepay});
+      this.applepay,
+      this.phone});
 
   String slotId; //entityID#20~06~01#9~30
   String entityId;
@@ -36,6 +37,7 @@ class UserToken {
   String gpay;
   String paytm;
   String applepay;
+  String phone;
 
   //TokenDocumentId is SlotId#UserId it is not auto-generated, will help in not duplicating the record
 
@@ -54,7 +56,8 @@ class UserToken {
         'order': order != null ? order.toJson() : null,
         'gpay': gpay,
         'paytm': paytm,
-        'applepay': applepay
+        'applepay': applepay,
+        'phone': phone
       };
 
   static UserToken fromJson(Map<String, dynamic> json) {
@@ -76,7 +79,8 @@ class UserToken {
         order: Order.fromJson(json['order']),
         gpay: json['gpay'],
         paytm: json['paytm'],
-        applepay: json['applepay']);
+        applepay: json['applepay'],
+        phone: json['phone']);
   }
 
   String getTokenId() {
