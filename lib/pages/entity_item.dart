@@ -228,14 +228,14 @@ class EntityRowState extends State<EntityRow> {
                 height: 30,
                 child: RaisedButton(
                   elevation: 10,
-                  color: btnColor,
-                  textColor: Colors.white,
+                  color: Colors.white,
+                  splashColor: highlightColor.withOpacity(.8),
                   shape: RoundedRectangleBorder(
+                      side: BorderSide(color: Colors.blueGrey[500]),
                       borderRadius: BorderRadius.all(Radius.circular(5.0))),
-                  splashColor: highlightColor,
                   child: Text(
                     'Child Premises',
-                    style: TextStyle(color: Colors.white, fontSize: 13),
+                    style: TextStyle(color: primaryDarkColor, fontSize: 13),
                   ),
                   onPressed: () {
                     print("To child list page");
@@ -249,15 +249,14 @@ class EntityRowState extends State<EntityRow> {
                 width: MediaQuery.of(context).size.width * .45,
                 child: RaisedButton(
                   elevation: 10,
-                  color: Colors.white,
-                  splashColor: highlightColor.withOpacity(.8),
-
+                  color: btnColor,
+                  textColor: Colors.white,
                   shape: RoundedRectangleBorder(
-                      side: BorderSide(color: Colors.blueGrey[500]),
                       borderRadius: BorderRadius.all(Radius.circular(5.0))),
+                  splashColor: highlightColor,
                   child: Text(
                     'Manage Details',
-                    style: TextStyle(color: primaryDarkColor, fontSize: 13),
+                    style: TextStyle(color: Colors.white, fontSize: 13),
                   ),
                   // Text(
                   //   (_metaEntity.name != null)
