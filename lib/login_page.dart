@@ -215,10 +215,12 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   Future<void> verifyPhone(phoneNo) async {
+    int _forceResendingToken;
     try {
       final PhoneVerificationCompleted phoneVerified =
           (AuthCredential authResult) {
         print("Main - verification completed");
+        showDialogForOtp(verificationId, authResult);
         AuthService().signIn(authResult, context);
       };
 
@@ -232,10 +234,13 @@ class _LoginPageState extends State<LoginPage> {
             _errorMsg = 'Something has gone wrong, please try later';
           else if (authException.message.contains('Network'))
             _errorMsg = 'Please check your internet connection and try again';
+          else if (authException.message.contains('Network'))
+            _errorMsg = 'The phone number is not correct, try again.';
           else
-            _errorMsg = 'Something has gone wrong, please try again later';
+            _errorMsg = '$_errorMsg';
         });
         print("Main - verification failed");
+        return;
         //handleError(authException);
       };
 
@@ -243,7 +248,8 @@ class _LoginPageState extends State<LoginPage> {
         print("Main - code sent");
         this.verificationId = verId;
         print("before dialog callhbksdjfhskjfyhewroiuytfewqorhy");
-        showDialogForOtp(verId);
+        showDialogForOtp(verId, null);
+        _forceResendingToken = forceResend;
         //smsOTPDialog(context, verificationId).then((value) {
         //print('sign in');
         // });
@@ -260,9 +266,10 @@ class _LoginPageState extends State<LoginPage> {
 
       await FirebaseAuth.instance.verifyPhoneNumber(
           phoneNumber: phoneNo,
-          timeout: const Duration(seconds: 5),
+          timeout: Duration(seconds: 120),
           verificationCompleted: phoneVerified,
           verificationFailed: verificationFailed,
+          forceResendingToken: _forceResendingToken,
           codeSent: otpSent,
           codeAutoRetrievalTimeout: autoTimeout);
     } catch (e) {
@@ -360,7 +367,7 @@ class _LoginPageState extends State<LoginPage> {
   //   }
   // }
 
-  showDialogForOtp(String verId) async {
+  showDialogForOtp(String verId, AuthCredential autoAuth) async {
     String last4digits = _mobile.substring(_mobile.length - 4);
     _errorMessage = "";
 
@@ -370,6 +377,9 @@ class _LoginPageState extends State<LoginPage> {
         builder: (context) {
           String _errorMessage;
           return StatefulBuilder(builder: (context, setState) {
+            if (autoAuth != null) {
+              //  _pinPutController.text = autoAuth.;
+            }
             return AlertDialog(
               // title:
               backgroundColor: Colors.grey[200],
@@ -383,11 +393,26 @@ class _LoginPageState extends State<LoginPage> {
                   mainAxisSize: MainAxisSize.max,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
-                    // Text('OTP',
-                    //     style: TextStyle(
-                    //       fontSize: 20,
-                    //       color: Colors.blueGrey[600],
-                    //     )),
+                    Row(
+                      mainAxisSize: MainAxisSize.max,
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: <Widget>[
+                        Container(
+                          height: MediaQuery.of(context).size.width * .09,
+                          transform: Matrix4.translationValues(12.0, -10, 0),
+                          child: IconButton(
+                            icon: Icon(
+                              Icons.cancel,
+                              color: primaryIcon,
+                            ),
+                            onPressed: () {
+                              codeSent = false;
+                              Navigator.of(context).pop();
+                            },
+                          ),
+                        ),
+                      ],
+                    ),
                     verticalSpacer,
                     RichText(
                       text: TextSpan(
@@ -420,6 +445,7 @@ class _LoginPageState extends State<LoginPage> {
                         fieldsCount: 6,
                         onSubmit: (String pin) {
                           //_submitPin(pin, context);
+
                           //   _pin = pin;
                           print(pin);
                           try {
@@ -562,7 +588,8 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                     onPressed: () {
                       //TODO SMITA add code for resend
-                      resendVerificationCode(_phoneNo, verId);
+                      verifyPhone(_mobile);
+                      // resendVerificationCode(_phoneNo, verId);
                     },
                   ),
                 ),
