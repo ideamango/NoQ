@@ -13,15 +13,16 @@ launchURL(String tit, String addr, double lat, double long) async {
   final availableMaps = await MapLauncher.installedMaps;
   print(availableMaps);
 
-  if (await MapLauncher.isMapAvailable(MapType.google)) {
-    await MapLauncher.launchMap(
-      mapType: MapType.google,
-      coords: coords,
-      title: title,
-      description: description,
-    );
-  } else if (Platform.isIOS) {
-    if (await MapLauncher.isMapAvailable(MapType.apple)) {
+  if (Platform.isIOS) {
+    if (await MapLauncher.isMapAvailable(MapType.google)) {
+      await MapLauncher.launchMap(
+        mapType: MapType.google,
+        coords: coords,
+        title: "",
+        description:
+            "", //in Iphone not opening with lat,lon but instead with the name
+      );
+    } else if (await MapLauncher.isMapAvailable(MapType.apple)) {
       await MapLauncher.launchMap(
         mapType: MapType.apple,
         coords: coords,
@@ -36,6 +37,13 @@ launchURL(String tit, String addr, double lat, double long) async {
         description: description,
       );
     }
+  } else if (await MapLauncher.isMapAvailable(MapType.google)) {
+    await MapLauncher.launchMap(
+      mapType: MapType.google,
+      coords: coords,
+      title: title,
+      description: description,
+    );
   } else {
     await availableMaps.first.showMarker(
       coords: coords,
