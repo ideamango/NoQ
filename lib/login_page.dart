@@ -403,7 +403,7 @@ class _LoginPageState extends State<LoginPage> {
                           child: IconButton(
                             icon: Icon(
                               Icons.cancel,
-                              color: primaryIcon,
+                              color: Colors.grey[600],
                             ),
                             onPressed: () {
                               codeSent = false;
