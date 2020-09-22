@@ -767,7 +767,8 @@ class DBTest {
         type: "Shop",
         isBookable: false,
         isActive: true,
-        coordinates: geoPoint);
+        coordinates: geoPoint,
+        phone: "+919611009823");
 
     try {
       await EntityService()
