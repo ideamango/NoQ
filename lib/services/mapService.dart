@@ -21,22 +21,28 @@ launchURL(String tit, String addr, double lat, double long) async {
       description: description,
     );
   } else if (Platform.isIOS) {
-    //if (await MapLauncher.isMapAvailable(MapType.amap)) {
-    await MapLauncher.launchMap(
-      mapType: MapType.apple,
+    if (await MapLauncher.isMapAvailable(MapType.apple)) {
+      await MapLauncher.launchMap(
+        mapType: MapType.apple,
+        coords: coords,
+        title: title,
+        description: description,
+      );
+    } else if (await MapLauncher.isMapAvailable(MapType.amap)) {
+      await MapLauncher.launchMap(
+        mapType: MapType.apple,
+        coords: coords,
+        title: title,
+        description: description,
+      );
+    }
+  } else {
+    await availableMaps.first.showMarker(
       coords: coords,
       title: title,
       description: description,
     );
-    //}
   }
-  //else {
-  await availableMaps.first.showMarker(
-    coords: coords,
-    title: title,
-    description: description,
-  );
-//}
   print("Maps launched");
 }
 
