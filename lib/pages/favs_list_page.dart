@@ -384,9 +384,28 @@ class _FavsListPageState extends State<FavsListPage> {
                                       color: primaryIcon,
                                     ),
                                     onPressed: () {
-                                      launchWhatsApp(
-                                          message: whatsappMessage,
-                                          phone: '+919611009823');
+                                      if (str.whatsapp != null &&
+                                          str.whatsapp != "") {
+                                        try {
+                                          launchWhatsApp(
+                                              message: whatsappMessage,
+                                              phone: str.whatsapp);
+                                        } catch (error) {
+                                          Utils.showMyFlushbar(
+                                              context,
+                                              Icons.error,
+                                              Duration(seconds: 5),
+                                              "Could not connect to the Whatsapp number ${str.whatsapp} !!",
+                                              "Try again later");
+                                        }
+                                      } else {
+                                        Utils.showMyFlushbar(
+                                            context,
+                                            Icons.info,
+                                            Duration(seconds: 5),
+                                            "Whatsapp contact information not found!!",
+                                            "");
+                                      }
                                       // callPhone('+919611009823');
                                       //callPhone(str.);
                                     },
@@ -409,20 +428,25 @@ class _FavsListPageState extends State<FavsListPage> {
                                     onPressed: () {
                                       // callPhone('+919611009823');
                                       //TODO: Change this phone number later
-                                      if (!Utils.isNullOrEmpty(
-                                          str.managers)) if (str
-                                              .managers.first.ph !=
-                                          null) {
+
+                                      if (str.phone != null) {
                                         try {
-                                          callPhone(str.managers.first.ph);
+                                          callPhone(str.phone);
                                         } catch (error) {
                                           Utils.showMyFlushbar(
                                               context,
                                               Icons.error,
                                               Duration(seconds: 5),
-                                              "Could not connect call to the number ${str.managers.first.ph} !!",
-                                              "Check if the number is valid and try again.");
+                                              "Could not connect call to the number ${str.phone} !!",
+                                              "Try again later.");
                                         }
+                                      } else {
+                                        Utils.showMyFlushbar(
+                                            context,
+                                            Icons.info,
+                                            Duration(seconds: 5),
+                                            "Contact information not found!!",
+                                            "");
                                       }
                                     },
                                   ),
@@ -433,20 +457,31 @@ class _FavsListPageState extends State<FavsListPage> {
                                   height: 25.0,
                                   width: 28.0,
                                   child: IconButton(
-                                    padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
-                                    alignment: Alignment.center,
-                                    highlightColor: Colors.orange[300],
-                                    icon: Icon(
-                                      Icons.location_on,
-                                      color: primaryIcon,
-                                      size: 20,
-                                    ),
-                                    onPressed: () => launchURL(
-                                        str.name,
-                                        getFormattedAddress(str.address),
-                                        str.coordinates.geopoint.latitude,
-                                        str.coordinates.geopoint.longitude),
-                                  ),
+                                      padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
+                                      alignment: Alignment.center,
+                                      highlightColor: Colors.orange[300],
+                                      icon: Icon(
+                                        Icons.location_on,
+                                        color: primaryIcon,
+                                        size: 20,
+                                      ),
+                                      onPressed: () {
+                                        try {
+                                          launchURL(
+                                              str.name,
+                                              getFormattedAddress(str.address),
+                                              str.coordinates.geopoint.latitude,
+                                              str.coordinates.geopoint
+                                                  .longitude);
+                                        } catch (error) {
+                                          Utils.showMyFlushbar(
+                                              context,
+                                              Icons.error,
+                                              Duration(seconds: 5),
+                                              "Could not open Maps!!",
+                                              "Try again later.");
+                                        }
+                                      }),
                                 ),
                                 Container(
                                   padding: EdgeInsets.fromLTRB(0, 0, 0, 0),

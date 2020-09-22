@@ -697,9 +697,28 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
                                       color: primaryIcon,
                                     ),
                                     onPressed: () {
-                                      launchWhatsApp(
-                                          message: whatsappMessage,
-                                          phone: '+919611009823');
+                                      if (str.whatsapp != null &&
+                                          str.whatsapp != "") {
+                                        try {
+                                          launchWhatsApp(
+                                              message: whatsappMessage,
+                                              phone: str.whatsapp);
+                                        } catch (error) {
+                                          Utils.showMyFlushbar(
+                                              context,
+                                              Icons.error,
+                                              Duration(seconds: 5),
+                                              "Could not connect to the Whatsapp number ${str.whatsapp} !!",
+                                              "Try again later");
+                                        }
+                                      } else {
+                                        Utils.showMyFlushbar(
+                                            context,
+                                            Icons.info,
+                                            Duration(seconds: 5),
+                                            "Whatsapp contact information not found!!",
+                                            "");
+                                      }
                                       // callPhone('+919611009823');
                                       //callPhone(str.);
                                     },
@@ -721,8 +740,25 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
                                     ),
                                     onPressed: () {
                                       // callPhone('+919611009823');
-//TODO : SMita Edit this to pick phone number of public contact person.
-                                      callPhone(str.managers[0].ph);
+                                      if (str.phone != null) {
+                                        try {
+                                          callPhone(str.phone);
+                                        } catch (error) {
+                                          Utils.showMyFlushbar(
+                                              context,
+                                              Icons.error,
+                                              Duration(seconds: 5),
+                                              "Could not connect call to the number ${str.phone} !!",
+                                              "Try again later.");
+                                        }
+                                      } else {
+                                        Utils.showMyFlushbar(
+                                            context,
+                                            Icons.info,
+                                            Duration(seconds: 5),
+                                            "Contact information not found!!",
+                                            "");
+                                      }
                                     },
                                   ),
                                 ),
@@ -732,20 +768,31 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
                                   height: 25.0,
                                   width: 28.0,
                                   child: IconButton(
-                                    padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
-                                    alignment: Alignment.center,
-                                    highlightColor: Colors.orange[300],
-                                    icon: Icon(
-                                      Icons.location_on,
-                                      color: primaryIcon,
-                                      size: 20,
-                                    ),
-                                    onPressed: () => launchURL(
-                                        str.name,
-                                        getFormattedAddress(str.address),
-                                        str.coordinates.geopoint.latitude,
-                                        str.coordinates.geopoint.longitude),
-                                  ),
+                                      padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
+                                      alignment: Alignment.center,
+                                      highlightColor: Colors.orange[300],
+                                      icon: Icon(
+                                        Icons.location_on,
+                                        color: primaryIcon,
+                                        size: 20,
+                                      ),
+                                      onPressed: () {
+                                        try {
+                                          launchURL(
+                                              str.name,
+                                              getFormattedAddress(str.address),
+                                              str.coordinates.geopoint.latitude,
+                                              str.coordinates.geopoint
+                                                  .longitude);
+                                        } catch (error) {
+                                          Utils.showMyFlushbar(
+                                              context,
+                                              Icons.error,
+                                              Duration(seconds: 5),
+                                              "Could not open Maps!!",
+                                              "Try again later.");
+                                        }
+                                      }),
                                 ),
                                 Container(
                                   padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
