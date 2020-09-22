@@ -2,6 +2,7 @@ import 'package:noq/db/db_model/user.dart';
 import 'package:noq/utils.dart';
 
 class Employee {
+  String id;
   String name;
   String employeeId;
   String ph;
@@ -14,7 +15,8 @@ class Employee {
   String altPhone;
 
   Employee(
-      {this.name,
+      {this.id,
+      this.name,
       this.ph,
       this.employeeId,
       this.shiftStartHour,
@@ -28,6 +30,7 @@ class Employee {
   static Employee fromJson(Map<String, dynamic> json) {
     if (json == null) return null;
     return Employee(
+        id: json['id'],
         employeeId: json['employeeId'],
         name: json['name'],
         ph: json['ph'],
@@ -50,6 +53,7 @@ class Employee {
   }
 
   Map<String, dynamic> toJson() => {
+        'id': id,
         'employeeId': employeeId,
         'name': name,
         'ph': ph,

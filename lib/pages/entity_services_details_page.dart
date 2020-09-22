@@ -235,7 +235,8 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
       if (!(Utils.isNullOrEmpty(serviceEntity.managers))) {
         contactList = serviceEntity.managers;
         contactList.forEach((element) {
-          contactRowWidgets.insert(0, new ContactRow(contact: element));
+          contactRowWidgets.insert(
+              0, new ContactRow(contact: element, entity: serviceEntity));
         });
       }
       User currUser = await UserService().getCurrentUser();
@@ -582,8 +583,14 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
   void _addNewContactRow() {
     setState(() {
       Employee contact = new Employee();
-
-      contactRowWidgets.insert(0, new ContactRow(contact: contact));
+      var uuid = new Uuid();
+      contact.id = uuid.v1();
+      contactRowWidgets.insert(
+          0,
+          new ContactRow(
+            contact: contact,
+            entity: serviceEntity,
+          ));
 
       contactList.add(contact);
       //TODO Smita check the logic for contactList

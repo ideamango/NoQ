@@ -51,8 +51,20 @@ class _ContactUsPageState extends State<ContactUsPage> {
     var url = 'mailto:$toMailId?subject=$subject&body=$body';
     if (await canLaunch(url)) {
       await launch(url);
+      Utils.showMyFlushbar(
+          context,
+          Icons.check,
+          Duration(seconds: 3),
+          "Your message has been sent.",
+          "Our team will contact you as soon as possible.");
     } else {
-      throw 'Could not launch $url';
+      //throw 'Could not launch $url';
+      Utils.showMyFlushbar(
+          context,
+          Icons.check,
+          Duration(seconds: 3),
+          "Seems to be some problem with internet connection, Please check and try again.",
+          "");
     }
   }
 

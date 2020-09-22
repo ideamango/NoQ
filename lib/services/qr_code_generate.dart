@@ -111,11 +111,17 @@ class GenerateScreenState extends State<GenerateScreen> {
       ByteData byteData = await image.toByteData(format: ImageByteFormat.png);
       Uint8List pngBytes = byteData.buffer.asUint8List();
       tempDir = await getApplicationDocumentsDirectory();
-      final file =
-          await new File('${tempDir.path}/qrcodeForShare.png').create();
+      // final file =
+      //     await new File('${tempDir.path}/qrcodeForShare.png').create();
+      final file = new File('${tempDir.path}/qrcodeForShare.png');
       await file.writeAsBytes(pngBytes);
-      final channel = const MethodChannel('channel:me.sukoon.share/share');
-      channel.invokeMethod('shareFile', 'qrcodeForShare.png');
+      // final channel = const MethodChannel('channel:me.sukoon.share/share');
+      // channel.invokeMethod('shareFile', 'qrcodeForShare.png');
+      final RenderBox box = context.findRenderObject();
+      Share.shareFiles(['${tempDir.path}/qrcodeForShare.png'],
+          subject: 'Screenshot + Share',
+          text: 'Hey, check it out the sharefiles repo!',
+          sharePositionOrigin: box.localToGlobal(Offset.zero) & box.size);
     } catch (e) {
       print(e.toString());
     }
@@ -131,11 +137,12 @@ class GenerateScreenState extends State<GenerateScreen> {
     _loadImage().then((value) {
       //String link = "www.playstore.com";
       //  Share.share(message + link);
-      Share.shareFiles(
-        ['${tempDir.path}/qrcodeForShare.png'],
-        text: message,
-        subject: "Subject from NoQ",
-      );
+      // Share.shareFiles(
+      //   ['${tempDir.path}/qrcodeForShare.png'],
+      //   text: message,
+      //   subject: "Subject from NoQ",
+      print("Share done");
+      // );
     });
   }
 

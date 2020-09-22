@@ -26,6 +26,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:flushbar/flushbar.dart';
 import 'package:noq/widget/widgets.dart';
+import 'package:uuid/uuid.dart';
 
 class ManageApartmentPage extends StatefulWidget {
   final Entity entity;
@@ -237,7 +238,12 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
       if (!(Utils.isNullOrEmpty(entity.managers))) {
         contactList = entity.managers;
         contactList.forEach((element) {
-          contactRowWidgets.insert(0, new ContactRow(contact: element));
+          contactRowWidgets.insert(
+              0,
+              new ContactRow(
+                contact: element,
+                entity: entity,
+              ));
         });
       }
       User currUser = await UserService().getCurrentUser();
@@ -321,7 +327,13 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
   void _addNewContactRow() {
     setState(() {
       Employee contact = new Employee();
-      contactRowWidgets.add(new ContactRow(contact: contact));
+      var uuid = new Uuid();
+      contact.id = uuid.v1();
+      contactRowWidgets.add(new ContactRow(
+        contact: contact,
+        entity: entity,
+        list:contactRowWidgets,
+      ));
       //   mgrList: contactList,
       // ));
 

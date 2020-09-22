@@ -2,14 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:noq/db/db_model/employee.dart';
+import 'package:noq/db/db_model/entity.dart';
 import 'package:noq/style.dart';
 import 'package:flutter/foundation.dart';
 import 'package:noq/utils.dart';
 import 'package:noq/widget/weekday_selector.dart';
 
 class ContactRow extends StatefulWidget {
+  final Entity entity;
   final Employee contact;
-  ContactRow({Key key, @required this.contact}) : super(key: key);
+  final List<Widget> list;
+  ContactRow(
+      {Key key, @required this.contact, @required this.entity, this.list})
+      : super(key: key);
   @override
   State<StatefulWidget> createState() => new ContactRowState();
 }
@@ -30,11 +35,15 @@ class ContactRowState extends State<ContactRow> {
   List<String> _daysOff;
   bool _initCompleted = false;
   List<days> _closedOnDays;
+  Entity _entity;
+  List<Widget> _list;
 
   @override
   void initState() {
     super.initState();
     contact = widget.contact;
+    _entity = widget.entity;
+    _list = widget.list;
     initializeContactDetails();
   }
 
@@ -388,7 +397,13 @@ class ContactRowState extends State<ContactRow> {
                           "Remove",
                           style: buttonMedTextStyle,
                         ),
-                        onPressed: () {})
+                        onPressed: () {
+                          for (int i = 0; i <= _entity.managers.length; i++) {
+                            if (_entity.managers[i].id == contact.id) {
+                              _entity.managers.remove(_entity.managers[i]);
+                            }
+                          }
+                        })
                   ],
                 ),
               ),
