@@ -611,11 +611,22 @@ class _SearchChildrenPageState extends State<SearchChildrenPage> {
                                       color: primaryIcon,
                                       size: 20,
                                     ),
-                                    onPressed: () => launchURL(
-                                        str.name,
-                                        str.address.toString(),
-                                        str.coordinates.geopoint.latitude,
-                                        str.coordinates.geopoint.longitude),
+                                    onPressed: () {
+                                      try {
+                                        launchURL(
+                                            str.name,
+                                            str.address.toString(),
+                                            str.coordinates.geopoint.latitude,
+                                            str.coordinates.geopoint.longitude);
+                                      } catch (error) {
+                                        Utils.showMyFlushbar(
+                                            context,
+                                            Icons.error,
+                                            Duration(seconds: 5),
+                                            "Could not open Maps!!",
+                                            "Try again later.");
+                                      }
+                                    },
                                   ),
                                 ),
                                 Container(

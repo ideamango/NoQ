@@ -537,7 +537,26 @@ class _UserHomePageState extends State<UserHomePage> {
                                     ),
                                     onPressed: () {
 // TODO Smita - Get public contact and update booking.entityId
-                                      callPhone('+919611009823');
+
+                                      if (booking.phone != null) {
+                                        try {
+                                          callPhone(booking.phone);
+                                        } catch (error) {
+                                          Utils.showMyFlushbar(
+                                              context,
+                                              Icons.error,
+                                              Duration(seconds: 5),
+                                              "Could not connect call to the number ${booking.phone} !!",
+                                              "Try again later.");
+                                        }
+                                      } else {
+                                        Utils.showMyFlushbar(
+                                            context,
+                                            Icons.info,
+                                            Duration(seconds: 5),
+                                            "Contact information not found!!",
+                                            "");
+                                      }
                                     }),
                               ),
                               Container(
@@ -566,17 +585,27 @@ class _UserHomePageState extends State<UserHomePage> {
                                 height: MediaQuery.of(context).size.width * .07,
                                 // width: 20.0,
                                 child: IconButton(
-                                  padding: EdgeInsets.all(0),
-                                  alignment: Alignment.center,
-                                  highlightColor: Colors.orange[300],
-                                  icon: Icon(
-                                    Icons.location_on,
-                                    color: lightIcon,
-                                    size: 21,
-                                  ),
-                                  onPressed: () => launchURL(booking.entityName,
-                                      address, booking.lat, booking.lon),
-                                ),
+                                    padding: EdgeInsets.all(0),
+                                    alignment: Alignment.center,
+                                    highlightColor: Colors.orange[300],
+                                    icon: Icon(
+                                      Icons.location_on,
+                                      color: lightIcon,
+                                      size: 21,
+                                    ),
+                                    onPressed: () {
+                                      try {
+                                        launchURL(booking.entityName, address,
+                                            booking.lat, booking.lon);
+                                      } catch (error) {
+                                        Utils.showMyFlushbar(
+                                            context,
+                                            Icons.error,
+                                            Duration(seconds: 5),
+                                            "Could not open Maps!!",
+                                            "Try again later.");
+                                      }
+                                    }),
                               ),
                               Container(
                                 width: MediaQuery.of(context).size.width * .08,
@@ -592,12 +621,27 @@ class _UserHomePageState extends State<UserHomePage> {
                                   ),
                                   onPressed: () {
                                     String phoneNo = booking.entityWhatsApp;
-                                    //TODO Smita - remove once whatsapp number gets populated.
-                                    phoneNo = '+919611009823';
-                                    if (phoneNo != null)
-                                      launchWhatsApp(
-                                          message: whatsappMessage,
-                                          phone: phoneNo);
+                                    if (phoneNo != null && phoneNo != "") {
+                                      try {
+                                        launchWhatsApp(
+                                            message: whatsappMessage,
+                                            phone: phoneNo);
+                                      } catch (error) {
+                                        Utils.showMyFlushbar(
+                                            context,
+                                            Icons.error,
+                                            Duration(seconds: 5),
+                                            "Could not connect to the Whatsapp number $phoneNo !!",
+                                            "Try again later");
+                                      }
+                                    } else {
+                                      Utils.showMyFlushbar(
+                                          context,
+                                          Icons.info,
+                                          Duration(seconds: 5),
+                                          "Whatsapp contact information not found!!",
+                                          "");
+                                    }
                                   },
                                 ),
                               ),
