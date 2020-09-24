@@ -75,9 +75,12 @@ class Utils {
   }
 
   static void showMyFlushbar(BuildContext context, IconData icon,
-      Duration duration, String title, String msg) {
+      Duration duration, String title, String msg,
+      [Color color = Colors.white, bool showFlushBar = false]) {
+    Animation<Color> animationColor =
+        AlwaysStoppedAnimation<Color>(Color(0xFF00ACC1));
     Flushbar(
-      padding: EdgeInsets.fromLTRB(4, 4, 4, 4),
+      padding: EdgeInsets.fromLTRB(4, 8, 8, 4),
       margin: EdgeInsets.zero,
       flushbarPosition: FlushbarPosition.BOTTOM,
       flushbarStyle: FlushbarStyle.FLOATING,
@@ -94,11 +97,12 @@ class Utils {
       duration: duration,
       icon: Icon(
         icon,
-        color: Colors.white,
+        color: color,
         size: 35,
       ),
-      showProgressIndicator: false,
-      // progressIndicatorBackgroundColor: Colors.blueGrey[800],
+      showProgressIndicator: showFlushBar,
+      progressIndicatorBackgroundColor: highlightColor,
+      progressIndicatorValueColor: animationColor,
       routeBlur: 1.0,
       titleText: Text(
         title,

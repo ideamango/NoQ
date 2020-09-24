@@ -47,10 +47,28 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
   bool _autoValidate = false;
   final GlobalKey<FormState> _serviceDetailsFormKey =
       new GlobalKey<FormState>();
+  final GlobalKey<FormFieldState> adminPhoneKey =
+      new GlobalKey<FormFieldState>();
+  final GlobalKey<FormFieldState> whatsappPhoneKey =
+      new GlobalKey<FormFieldState>();
+  final GlobalKey<FormFieldState> contactPhoneKey =
+      new GlobalKey<FormFieldState>();
+  final GlobalKey<FormFieldState> newAdminRowItemKey =
+      new GlobalKey<FormFieldState>();
   final GlobalKey<FormFieldState> gpayPhoneKey =
       new GlobalKey<FormFieldState>();
   final GlobalKey<FormFieldState> paytmPhoneKey =
       new GlobalKey<FormFieldState>();
+
+  //Fields used in info - animated container
+  double _width = 0;
+  double _height = 0;
+  EdgeInsets _margin = EdgeInsets.fromLTRB(0, 0, 0, 0);
+  Text _text = Text("Information block");
+  bool _isExpanded = false;
+  bool _publicExpandClick = false;
+  bool _activeExpandClick = false;
+  bool _bookExpandClick = false;
   final String title = "Managers Form";
 
   bool validateField = false;
@@ -64,7 +82,9 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
   TextEditingController _advBookingInDaysController = TextEditingController();
   TextEditingController _maxPeopleController = TextEditingController();
   TextEditingController _slotDurationController = TextEditingController();
+
   TextEditingController _whatsappPhoneController = TextEditingController();
+  TextEditingController _contactPhoneController = TextEditingController();
   TextEditingController _gpayPhoneController = TextEditingController();
   TextEditingController _paytmPhoneController = TextEditingController();
   final GlobalKey<FormFieldState> whatsappPhnKey =
@@ -208,6 +228,9 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
       _whatsappPhoneController.text = serviceEntity.whatsapp != null
           ? serviceEntity.whatsapp.toString().substring(3)
           : "";
+      _contactPhoneController.text = serviceEntity.phone != null
+          ? serviceEntity.phone.toString().substring(3)
+          : "";
       _gpayPhoneController.text = serviceEntity.gpay != null
           ? serviceEntity.gpay.toString().substring(3)
           : "";
@@ -281,6 +304,22 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
       return null;
     } else
       return null;
+  }
+
+  String validateTimeFields() {
+    if ((serviceEntity.breakEndHour != null &&
+            serviceEntity.breakStartHour == null) ||
+        (serviceEntity.breakEndHour == null &&
+            serviceEntity.breakStartHour != null)) {
+      return "Both Break Start and Break End time should be specified.";
+    }
+    if ((serviceEntity.startTimeHour != null &&
+            serviceEntity.endTimeHour == null) ||
+        (serviceEntity.startTimeHour == null &&
+            serviceEntity.endTimeHour != null)) {
+      return "Both Day Start and Day End time should be specified.";
+    }
+    return null;
   }
 
   Future<void> showLocationAccessDialog() async {
@@ -588,9 +627,9 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
       contactRowWidgets.insert(
           0,
           new ContactRow(
-            contact: contact,
-            entity: serviceEntity,
-          ));
+              contact: contact,
+              entity: serviceEntity,
+              list: contactRowWidgets));
 
       contactList.add(contact);
       //TODO Smita check the logic for contactList
@@ -630,7 +669,12 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
       controller: _descController,
       decoration: CommonStyle.textFieldStyle(
           labelTextStr: "Description", hintTextStr: ""),
-      validator: validateText,
+      validator: (value) {
+        if (!validateField)
+          return validateText(value);
+        else
+          return null;
+      },
       keyboardType: TextInputType.multiline,
       maxLength: null,
       maxLines: 3,
@@ -651,7 +695,12 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
       controller: _regNumController,
       decoration: CommonStyle.textFieldStyle(
           labelTextStr: "Registration Number", hintTextStr: ""),
-      validator: validateText,
+      validator: (value) {
+        if (!validateField)
+          return validateText(value);
+        else
+          return null;
+      },
       onChanged: (String value) {
         isAnythingChanged = true;
         //serviceEntity.regNum = value;
@@ -791,7 +840,12 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
               UnderlineInputBorder(borderSide: BorderSide(color: Colors.grey)),
           focusedBorder: UnderlineInputBorder(
               borderSide: BorderSide(color: Colors.orange))),
-      validator: validateTime,
+      validator: (value) {
+        if (!validateField)
+          return validateTime(value);
+        else
+          return null;
+      },
       onChanged: (String value) {
         isAnythingChanged = true;
         //TODO: test the values
@@ -837,7 +891,12 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
               UnderlineInputBorder(borderSide: BorderSide(color: Colors.grey)),
           focusedBorder: UnderlineInputBorder(
               borderSide: BorderSide(color: Colors.orange))),
-      validator: validateTime,
+      validator: (value) {
+        if (!validateField)
+          return validateTime(value);
+        else
+          return null;
+      },
       onChanged: (String value) {
         isAnythingChanged = true;
         //TODO: test the values
@@ -992,7 +1051,12 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
         focusedBorder:
             UnderlineInputBorder(borderSide: BorderSide(color: Colors.orange)),
       ),
-      validator: Utils.validateMobileField,
+      validator: (value) {
+        if (!validateField)
+          return Utils.validateMobileField(value);
+        else
+          return null;
+      },
       onChanged: (value) {
         isAnythingChanged = true;
         whatsappPhnKey.currentState.validate();
@@ -1004,6 +1068,32 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
         print("Whatsapp Number");
       },
     );
+    final callingPhone = TextFormField(
+      obscureText: false,
+      maxLines: 1,
+      minLines: 1,
+      key: contactPhoneKey,
+      style: textInputTextStyle,
+      keyboardType: TextInputType.phone,
+      controller: _contactPhoneController,
+      decoration: InputDecoration(
+        prefixText: '+91',
+        labelText: 'Contact Number',
+        enabledBorder:
+            UnderlineInputBorder(borderSide: BorderSide(color: Colors.grey)),
+        focusedBorder:
+            UnderlineInputBorder(borderSide: BorderSide(color: Colors.orange)),
+      ),
+      validator: Utils.validateMobileField,
+      onChanged: (value) {
+        contactPhoneKey.currentState.validate();
+        if (value != "") serviceEntity.phone = _phCountryCode + (value);
+      },
+      onSaved: (String value) {
+        if (value != "") serviceEntity.phone = _phCountryCode + (value);
+      },
+    );
+
     final paytmPhone = TextFormField(
       obscureText: false,
       maxLines: 1,
@@ -1307,6 +1397,9 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
       String validationPh1;
       String validationPh2;
       bool isContactValid = true;
+      bool timeFieldsValid = true;
+      String errTimeFields;
+      String errContactPhone;
 
       for (int i = 0; i < contactList.length; i++) {
         validationPh1 = (contactList[i].ph != null)
@@ -1319,9 +1412,26 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
         print(validationPh2);
         if (validationPh2 != null || validationPh1 != null) {
           isContactValid = false;
+          errContactPhone =
+              "The Contact information for managers is not valid.";
           break;
         }
       }
+       errTimeFields = validateTimeFields();
+        timeFieldsValid = (errTimeFields == null) ? true : false;
+        if (_serviceDetailsFormKey.currentState.validate() &&
+            isContactValid &&
+            timeFieldsValid) {
+          Utils.showMyFlushbar(
+              context,
+              Icons.info_outline,
+              Duration(
+                seconds: 3,
+              ),
+              "Saving details!! ",
+              "This would take just a moment.",
+              Colors.white,
+              true);
       if (_serviceDetailsFormKey.currentState.validate() && isContactValid) {
         _serviceDetailsFormKey.currentState.save();
 

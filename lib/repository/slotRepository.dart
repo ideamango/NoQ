@@ -15,18 +15,27 @@ Future<List<Slot>> getSlotsListForStore(
     Entity entity, DateTime dateTime) async {
   EntitySlots entitySlots;
   List<Slot> slotList = new List<Slot>();
+  DateTime breakStartTime;
+  DateTime breakEndTime;
+  DateTime dayStartTime;
+  DateTime dayEndTime;
   entitySlots = await TokenService().getEntitySlots(entity.entityId, dateTime);
-  DateTime dayStartTime = new DateTime(dateTime.year, dateTime.month,
-      dateTime.day, entity.startTimeHour, entity.startTimeMinute);
-  DateTime breakStartTime = new DateTime(dateTime.year, dateTime.month,
-      dateTime.day, entity.breakStartHour, entity.breakEndMinute);
+  dayStartTime = new DateTime(dateTime.year, dateTime.month, dateTime.day,
+      entity.startTimeHour, entity.startTimeMinute);
+  dayEndTime = new DateTime(dateTime.year, dateTime.month, dateTime.day,
+      entity.endTimeHour, entity.endTimeMinute);
+
+  if (entity.breakEndHour == null || entity.breakStartHour == null) {
+    breakStartTime = dayStartTime;
+    breakEndTime = dayStartTime;
+  } else {
+    breakStartTime = new DateTime(dateTime.year, dateTime.month, dateTime.day,
+        entity.breakStartHour, entity.breakEndMinute);
+    breakEndTime = new DateTime(dateTime.year, dateTime.month, dateTime.day,
+        entity.breakEndHour, entity.breakEndMinute);
+  }
 
   int firstHalfDuration = breakStartTime.difference(dayStartTime).inMinutes;
-
-  DateTime breakEndTime = new DateTime(dateTime.year, dateTime.month,
-      dateTime.day, entity.breakEndHour, entity.breakEndMinute);
-  DateTime dayEndTime = new DateTime(dateTime.year, dateTime.month,
-      dateTime.day, entity.endTimeHour, entity.endTimeMinute);
 
   int secondHalfDuration = dayEndTime.difference(breakEndTime).inMinutes;
 

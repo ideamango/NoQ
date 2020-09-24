@@ -42,6 +42,8 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
       new GlobalKey<FormFieldState>();
   final GlobalKey<FormFieldState> whatsappPhoneKey =
       new GlobalKey<FormFieldState>();
+  final GlobalKey<FormFieldState> contactPhoneKey =
+      new GlobalKey<FormFieldState>();
   final GlobalKey<FormFieldState> gpayPhoneKey =
       new GlobalKey<FormFieldState>();
   final GlobalKey<FormFieldState> paytmPhoneKey =
@@ -54,7 +56,10 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
   double _height = 0;
   EdgeInsets _margin = EdgeInsets.fromLTRB(0, 0, 0, 0);
   Text _text = Text("Information block");
-  bool _expandClick = false;
+  bool _isExpanded = false;
+  bool _publicExpandClick = false;
+  bool _activeExpandClick = false;
+  bool _bookExpandClick = false;
   // Color _color = Colors.green;
   BorderRadiusGeometry _borderRadius = BorderRadius.circular(5);
   bool _autoValidateWhatsapp = false;
@@ -75,6 +80,8 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
 
   TextEditingController _maxPeopleController = TextEditingController();
   TextEditingController _whatsappPhoneController = TextEditingController();
+  TextEditingController _contactPhoneController = TextEditingController();
+
   TextEditingController _gpayPhoneController = TextEditingController();
   TextEditingController _paytmPhoneController = TextEditingController();
 
@@ -214,6 +221,8 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
       _whatsappPhoneController.text = entity.whatsapp != null
           ? entity.whatsapp.toString().substring(3)
           : "";
+      _contactPhoneController.text =
+          entity.phone != null ? entity.phone.toString().substring(3) : "";
       _gpayPhoneController.text =
           entity.gpay != null ? entity.gpay.toString().substring(3) : "";
       _paytmPhoneController.text =
@@ -286,6 +295,18 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
       return null;
   }
 
+  String validateTimeFields() {
+    if ((entity.breakEndHour != null && entity.breakStartHour == null) ||
+        (entity.breakEndHour == null && entity.breakStartHour != null)) {
+      return "Both Break Start and Break End time should be specified.";
+    }
+    if ((entity.startTimeHour != null && entity.endTimeHour == null) ||
+        (entity.startTimeHour == null && entity.endTimeHour != null)) {
+      return "Both Day Start and Day End time should be specified.";
+    }
+    return null;
+  }
+
   _getAddressFromLatLng(Position position) async {
     setState(() {
       entity.coordinates =
@@ -332,7 +353,7 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
       contactRowWidgets.add(new ContactRow(
         contact: contact,
         entity: entity,
-        list:contactRowWidgets,
+        list: contactRowWidgets,
       ));
       //   mgrList: contactList,
       // ));
@@ -804,6 +825,32 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
           if (value != "") entity.whatsapp = _phCountryCode + (value);
         },
       );
+      final callingPhone = TextFormField(
+        obscureText: false,
+        maxLines: 1,
+        minLines: 1,
+        key: contactPhoneKey,
+        style: textInputTextStyle,
+        keyboardType: TextInputType.phone,
+        controller: _contactPhoneController,
+        decoration: InputDecoration(
+          prefixText: '+91',
+          labelText: 'Contact Number',
+          enabledBorder:
+              UnderlineInputBorder(borderSide: BorderSide(color: Colors.grey)),
+          focusedBorder: UnderlineInputBorder(
+              borderSide: BorderSide(color: Colors.orange)),
+        ),
+        validator: Utils.validateMobileField,
+        onChanged: (value) {
+          contactPhoneKey.currentState.validate();
+          if (value != "") entity.phone = _phCountryCode + (value);
+        },
+        onSaved: (String value) {
+          if (value != "") entity.phone = _phCountryCode + (value);
+        },
+      );
+
       final paytmPhone = TextFormField(
         obscureText: false,
         maxLines: 1,
@@ -921,12 +968,7 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
         controller: _adrs1Controller,
         decoration: CommonStyle.textFieldStyle(
             labelTextStr: "Apartment/ House No./ Lane", hintTextStr: ""),
-        validator: (value) {
-          if (!validateField)
-            return validateText(value);
-          else
-            return null;
-        },
+        validator: validateText,
         onChanged: (String value) {
           entity.address.address = value;
           print("changed address");
@@ -950,12 +992,7 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
           focusedBorder: UnderlineInputBorder(
               borderSide: BorderSide(color: Colors.orange)),
         ),
-        validator: (value) {
-          if (!validateField)
-            return validateText(value);
-          else
-            return null;
-        },
+        validator: validateText,
         onChanged: (String value) {
           entity.address.landmark = value;
           print("changed landmark");
@@ -979,12 +1016,7 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
           focusedBorder: UnderlineInputBorder(
               borderSide: BorderSide(color: Colors.orange)),
         ),
-        validator: (value) {
-          if (!validateField)
-            return validateText(value);
-          else
-            return null;
-        },
+        validator: validateText,
         onSaved: (String value) {
           entity.address.locality = value;
           print("saved address");
@@ -1004,12 +1036,7 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
           focusedBorder: UnderlineInputBorder(
               borderSide: BorderSide(color: Colors.orange)),
         ),
-        validator: (value) {
-          if (!validateField)
-            return validateText(value);
-          else
-            return null;
-        },
+        validator: validateText,
         onSaved: (String value) {
           entity.address.city = value;
           print("saved address");
@@ -1029,12 +1056,7 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
           focusedBorder: UnderlineInputBorder(
               borderSide: BorderSide(color: Colors.orange)),
         ),
-        validator: (value) {
-          if (!validateField)
-            return validateText(value);
-          else
-            return null;
-        },
+        validator: validateText,
         onSaved: (String value) {
           entity.address.state = value;
           print("saved address");
@@ -1054,12 +1076,7 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
           focusedBorder: UnderlineInputBorder(
               borderSide: BorderSide(color: Colors.orange)),
         ),
-        validator: (value) {
-          if (!validateField)
-            return validateText(value);
-          else
-            return null;
-        },
+        validator: validateText,
         onSaved: (String value) {
           entity.address.country = value;
           print("saved address");
@@ -1079,12 +1096,7 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
           focusedBorder: UnderlineInputBorder(
               borderSide: BorderSide(color: Colors.orange)),
         ),
-        validator: (value) {
-          if (!validateField)
-            return validateText(value);
-          else
-            return null;
-        },
+        validator: validateText,
         onChanged: (String value) {
           entity.address.zipcode = value;
           print("saved address");
@@ -1263,6 +1275,9 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
         String validationPh1;
         String validationPh2;
         bool isContactValid = true;
+        bool timeFieldsValid = true;
+        String errTimeFields;
+        String errContactPhone;
 
         for (int i = 0; i < contactList.length; i++) {
           validationPh1 = (contactList[i].ph != null)
@@ -1274,10 +1289,27 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
 
           if (validationPh2 != null || validationPh1 != null) {
             isContactValid = false;
+            errContactPhone =
+                "The Contact information for managers is not valid.";
             break;
           }
         }
-        if (_entityDetailsFormKey.currentState.validate() && isContactValid) {
+        errTimeFields = validateTimeFields();
+        timeFieldsValid = (errTimeFields == null) ? true : false;
+        if (_entityDetailsFormKey.currentState.validate() &&
+            isContactValid &&
+            timeFieldsValid) {
+          Utils.showMyFlushbar(
+              context,
+              Icons.info_outline,
+              Duration(
+                seconds: 3,
+              ),
+              "Saving details!! ",
+              "This would take just a moment.",
+              Colors.white,
+              true);
+
           print("Saved formmmmmmm");
           _entityDetailsFormKey.currentState.save();
           upsertEntity(entity, _regNumController.text).then((value) {
@@ -1287,12 +1319,13 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
                 if (!value) {
                   Utils.showMyFlushbar(
                       context,
-                      Icons.info_outline,
+                      Icons.error,
                       Duration(
                         seconds: 4,
                       ),
                       "Admin details could not be saved!! ",
-                      "Please verify the details and try again.");
+                      "Please verify the details and try again.",
+                      Colors.red);
                 } else {
                   Utils.showMyFlushbar(
                       context,
@@ -1307,23 +1340,27 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
             } else {
               Utils.showMyFlushbar(
                   context,
-                  Icons.info_outline,
+                  Icons.error,
                   Duration(
                     seconds: 5,
                   ),
                   "Seems like you have entered some incorrect details, Please verify!! ",
-                  "Check your internet connection and try again.");
+                  "Check your internet connection and try again.",
+                  Colors.red);
             }
           });
         } else {
           Utils.showMyFlushbar(
               context,
-              Icons.info_outline,
+              Icons.error,
               Duration(
-                seconds: 4,
+                seconds: 10,
               ),
-              "Seems like you have entered some incorrect details!! ",
-              "Please verify the details and try again.");
+              ((errContactPhone == null) ? "" : (errContactPhone + "\n")) +
+                  ((errTimeFields == null) ? "" : (errTimeFields + "\n")) +
+                  "Some fields are empty or have invalid details.",
+              "Please verify all the information provided and try again.",
+              Colors.red);
           setState(() {
             _autoValidate = true;
           });
@@ -1745,27 +1782,30 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
                                             ),
                                             iconSize: 17,
                                             onPressed: () {
-                                              //TODO Smita show info on public
-                                              if (!_expandClick) {
+                                              if (!_isExpanded) {
+                                                if (!_publicExpandClick) {
+                                                  setState(() {
+                                                    _publicExpandClick = true;
+                                                    _margin =
+                                                        EdgeInsets.fromLTRB(
+                                                            0, 0, 0, 8);
+                                                    _width =
+                                                        MediaQuery.of(context)
+                                                                .size
+                                                                .width *
+                                                            .9;
+                                                    _text = Text(
+                                                      "Select this if your premise is public. Default is private, means ....",
+                                                      textAlign:
+                                                          TextAlign.center,
+                                                    );
+                                                    _height = 30;
+                                                  });
+                                                }
+                                              } else if (_publicExpandClick) {
                                                 setState(() {
-                                                  _expandClick = true;
-                                                  _margin = EdgeInsets.fromLTRB(
-                                                      0, 0, 0, 8);
-                                                  _width =
-                                                      MediaQuery.of(context)
-                                                              .size
-                                                              .width *
-                                                          .9;
-                                                  _text = Text(
-                                                    "Select this if your premise is public. Default is private, means ....",
-                                                    textAlign: TextAlign.center,
-                                                  );
-
-                                                  _height = 30;
-                                                });
-                                              } else {
-                                                setState(() {
-                                                  _expandClick = false;
+                                                  _publicExpandClick = false;
+                                                  _isExpanded = false;
                                                   _width = 0;
                                                   _height = 0;
                                                 });
@@ -1834,10 +1874,14 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
                                             ),
                                             iconSize: 17,
                                             onPressed: () {
-                                              //TODO Smita show info on Bookable
-                                              if (!_expandClick) {
+                                              if (_isExpanded) {
                                                 setState(() {
-                                                  _expandClick = true;
+                                                  _isExpanded = false;
+                                                  _width = 0;
+                                                  _height = 0;
+                                                });
+                                                setState(() {
+                                                  _isExpanded = true;
                                                   _margin = EdgeInsets.fromLTRB(
                                                       0, 0, 0, 8);
                                                   _width =
@@ -1846,7 +1890,7 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
                                                               .width *
                                                           .9;
                                                   _text = Text(
-                                                    "Premises would be bookable",
+                                                    "Bookable premise",
                                                     textAlign: TextAlign.center,
                                                   );
 
@@ -1854,9 +1898,20 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
                                                 });
                                               } else {
                                                 setState(() {
-                                                  _expandClick = false;
-                                                  _width = 0;
-                                                  _height = 0;
+                                                  _isExpanded = true;
+                                                  _margin = EdgeInsets.fromLTRB(
+                                                      0, 0, 0, 8);
+                                                  _width =
+                                                      MediaQuery.of(context)
+                                                              .size
+                                                              .width *
+                                                          .9;
+                                                  _text = Text(
+                                                    "Bookable premise",
+                                                    textAlign: TextAlign.center,
+                                                  );
+
+                                                  _height = 30;
                                                 });
                                               }
                                             }),
@@ -1906,10 +1961,15 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
                                             ),
                                             iconSize: 17,
                                             onPressed: () {
-                                              //TODO Smita show info on active
-                                              if (!_expandClick) {
+                                              if (_isExpanded) {
                                                 setState(() {
-                                                  _expandClick = true;
+                                                  _isExpanded = false;
+                                                  _width = 0;
+                                                  _height = 0;
+                                                });
+
+                                                setState(() {
+                                                  _isExpanded = true;
                                                   _margin = EdgeInsets.fromLTRB(
                                                       0, 0, 0, 8);
                                                   _width =
@@ -1926,9 +1986,20 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
                                                 });
                                               } else {
                                                 setState(() {
-                                                  _expandClick = false;
-                                                  _width = 0;
-                                                  _height = 0;
+                                                  _isExpanded = true;
+                                                  _margin = EdgeInsets.fromLTRB(
+                                                      0, 0, 0, 8);
+                                                  _width =
+                                                      MediaQuery.of(context)
+                                                              .size
+                                                              .width *
+                                                          .9;
+                                                  _text = Text(
+                                                    "Active: Premises would be searchable",
+                                                    textAlign: TextAlign.center,
+                                                  );
+
+                                                  _height = 30;
                                                 });
                                               }
                                             }),
@@ -2090,6 +2161,7 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
                                     advBookingInDays,
                                     maxpeopleInASlot,
                                     whatsappPhone,
+                                    callingPhone,
                                   ],
                                 ),
                               ),
@@ -2710,50 +2782,50 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
                             // Scaffold.of(context).showSnackBar(snackBar);
                             // processSaveWithTimer();
 
-                            Flushbar(
-                              //padding: EdgeInsets.zero,
-                              margin: EdgeInsets.zero,
-                              flushbarPosition: FlushbarPosition.BOTTOM,
-                              flushbarStyle: FlushbarStyle.GROUNDED,
-                              reverseAnimationCurve: Curves.decelerate,
-                              forwardAnimationCurve: Curves.easeInToLinear,
-                              backgroundColor: headerBarColor,
-                              boxShadows: [
-                                BoxShadow(
-                                    color: primaryAccentColor,
-                                    offset: Offset(0.0, 2.0),
-                                    blurRadius: 3.0)
-                              ],
-                              isDismissible: false,
-                              duration: Duration(seconds: 4),
-                              icon: Icon(
-                                Icons.save,
-                                color: Colors.orangeAccent[400],
-                              ),
-                              showProgressIndicator: true,
-                              progressIndicatorBackgroundColor:
-                                  Colors.blueGrey[800],
-                              routeBlur: 10.0,
-                              titleText: Text(
-                                "Saving Details",
-                                style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 16.0,
-                                    color: primaryAccentColor,
-                                    fontFamily: "ShadowsIntoLightTwo"),
-                              ),
-                              messageText: Text(
-                                "This will take just a moment !!",
-                                style: TextStyle(
-                                    fontSize: 12.0,
-                                    color: Colors.blueGrey[50],
-                                    fontFamily: "ShadowsIntoLightTwo"),
-                              ),
-                            )
-                              ..onStatusChanged = (FlushbarStatus status) {
-                                print("FlushbarStatus-------$status");
-                              }
-                              ..show(context);
+                            // Flushbar(
+                            //   //padding: EdgeInsets.zero,
+                            //   margin: EdgeInsets.zero,
+                            //   flushbarPosition: FlushbarPosition.BOTTOM,
+                            //   flushbarStyle: FlushbarStyle.GROUNDED,
+                            //   reverseAnimationCurve: Curves.decelerate,
+                            //   forwardAnimationCurve: Curves.easeInToLinear,
+                            //   backgroundColor: headerBarColor,
+                            //   boxShadows: [
+                            //     BoxShadow(
+                            //         color: primaryAccentColor,
+                            //         offset: Offset(0.0, 2.0),
+                            //         blurRadius: 3.0)
+                            //   ],
+                            //   isDismissible: false,
+                            //   duration: Duration(seconds: 4),
+                            //   icon: Icon(
+                            //     Icons.save,
+                            //     color: Colors.orangeAccent[400],
+                            //   ),
+                            //   showProgressIndicator: true,
+                            //   progressIndicatorBackgroundColor:
+                            //       Colors.blueGrey[800],
+                            //   routeBlur: 10.0,
+                            //   titleText: Text(
+                            //     "Saving Details",
+                            //     style: TextStyle(
+                            //         fontWeight: FontWeight.bold,
+                            //         fontSize: 16.0,
+                            //         color: primaryAccentColor,
+                            //         fontFamily: "ShadowsIntoLightTwo"),
+                            //   ),
+                            //   messageText: Text(
+                            //     "This will take just a moment !!",
+                            //     style: TextStyle(
+                            //         fontSize: 12.0,
+                            //         color: Colors.blueGrey[50],
+                            //         fontFamily: "ShadowsIntoLightTwo"),
+                            //   ),
+                            // )
+                            //   ..onStatusChanged = (FlushbarStatus status) {
+                            //     print("FlushbarStatus-------$status");
+                            //   }
+                            //   ..show(context);
                             print("FlushbarStatus-------");
                             processSaveWithTimer();
                           }),

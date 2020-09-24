@@ -71,7 +71,9 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
     _storeId = entity.entityId;
     _storeName = entity.name;
     super.initState();
-    getEntityDetails(entity.parentId).then((value) => parentEntity = value);
+    if (entity.parentId != null) {
+      getEntityDetails(entity.parentId).then((value) => parentEntity = value);
+    }
     getGlobalState().whenComplete(() => _loadSlots());
   }
 
@@ -270,7 +272,7 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
                                 height: MediaQuery.of(context).size.width * .08,
                                 child: RaisedButton(
                                   elevation:
-                                      (selectedSlot != null) ? 12.0 : 0.0,
+                                      (selectedSlot != null) ? 10.0 : 0.0,
                                   color: (selectedSlot != null)
                                       ? highlightColor
                                       : disabledColor,
@@ -531,7 +533,6 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
       String slotTiming = selectedSlot.dateTime.hour.toString() +
           ':' +
           selectedSlot.dateTime.minute.toString();
-      _state.bookings.add(value);
 
       showTokenAlert(context, _token, _storeName, slotTiming).then((value) {
         _returnValues(value);
