@@ -201,7 +201,7 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
               SizedBox(
-                height: MediaQuery.of(context).size.width * .5,
+                height: MediaQuery.of(context).size.height * .5,
               ),
               Text(
                 txtMsg,

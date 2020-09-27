@@ -2122,7 +2122,9 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
                   padding: const EdgeInsets.all(5.0),
                   children: <Widget>[
                     Container(
-                      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
+                      margin: EdgeInsets.all(0),
+                      padding: EdgeInsets.all(0),
+                      // padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
                       decoration: BoxDecoration(
                           border: Border.all(color: containerColor),
                           color: Colors.grey[50],
@@ -2130,200 +2132,204 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
                           borderRadius: BorderRadius.all(Radius.circular(5.0))),
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
+                        mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
                           Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            mainAxisSize: MainAxisSize.min,
                             children: <Widget>[
-                              Row(
+                              Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
                                 children: <Widget>[
-                                  Row(
-                                    children: <Widget>[
-                                      Text('Public'),
-                                      SizedBox(
-                                        width:
-                                            MediaQuery.of(context).size.width *
+                                  FlatButton(
+                                      padding: EdgeInsets.all(0),
+                                      child: Row(
+                                        children: <Widget>[
+                                          Text('Public',
+                                              style: TextStyle(fontSize: 13)),
+                                          SizedBox(
+                                            width: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
                                                 .05,
-                                        height:
-                                            MediaQuery.of(context).size.width *
+                                            height: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
                                                 .05,
-                                        child: IconButton(
-                                            padding: EdgeInsets.all(0),
-                                            icon: Icon(
+                                            child: Icon(
                                               Icons.info,
                                               color: Colors.blueGrey[600],
+                                              size: 15,
                                             ),
-                                            iconSize: 17,
-                                            onPressed: () {
-                                              if (!_isExpanded) {
-                                                setState(() {
-                                                  _publicExpandClick = true;
-                                                  _isExpanded = true;
-                                                  _margin = EdgeInsets.fromLTRB(
-                                                      0, 0, 0, 8);
-                                                  _width =
-                                                      MediaQuery.of(context)
-                                                              .size
-                                                              .width *
-                                                          .9;
-                                                  _text = Text(
-                                                    publicInfo,
-                                                    textAlign: TextAlign.center,
-                                                  );
-
-                                                  _height = 30;
-                                                });
-                                              } else {
-                                                //if bookable info is being shown
-                                                if (_publicExpandClick) {
-                                                  setState(() {
-                                                    _width = 0;
-                                                    _height = 0;
-                                                    _isExpanded = false;
-                                                    _publicExpandClick = false;
-                                                  });
-                                                } else {
-                                                  setState(() {
-                                                    _publicExpandClick = true;
-                                                    _activeExpandClick = false;
-                                                    _bookExpandClick = false;
-                                                    _isExpanded = true;
-                                                    _margin =
-                                                        EdgeInsets.fromLTRB(
-                                                            0, 0, 0, 8);
-                                                    _width =
-                                                        MediaQuery.of(context)
-                                                                .size
-                                                                .width *
-                                                            .9;
-                                                    _text = Text(
-                                                      publicInfo,
-                                                      textAlign:
-                                                          TextAlign.center,
-                                                    );
-
-                                                    _height = 30;
-                                                  });
-                                                }
-                                              }
-                                            }),
+                                          ),
+                                        ],
                                       ),
-                                    ],
-                                  ),
-                                  Container(
+                                      onPressed: () {
+                                        if (!_isExpanded) {
+                                          setState(() {
+                                            _publicExpandClick = true;
+                                            _isExpanded = true;
+                                            _margin =
+                                                EdgeInsets.fromLTRB(0, 0, 0, 8);
+                                            _width = MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                .9;
+                                            _text = Text(
+                                              publicInfo,
+                                              textAlign: TextAlign.center,
+                                            );
+
+                                            _height = 30;
+                                          });
+                                        } else {
+                                          //if bookable info is being shown
+                                          if (_publicExpandClick) {
+                                            setState(() {
+                                              _width = 0;
+                                              _height = 0;
+                                              _isExpanded = false;
+                                              _publicExpandClick = false;
+                                            });
+                                          } else {
+                                            setState(() {
+                                              _publicExpandClick = true;
+                                              _activeExpandClick = false;
+                                              _bookExpandClick = false;
+                                              _isExpanded = true;
+                                              _margin = EdgeInsets.fromLTRB(
+                                                  0, 0, 0, 8);
+                                              _width = MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                  .9;
+                                              _text = Text(
+                                                publicInfo,
+                                                textAlign: TextAlign.center,
+                                              );
+
+                                              _height = 30;
+                                            });
+                                          }
+                                        }
+                                      }),
+                                  SizedBox(
+                                    height:
+                                        MediaQuery.of(context).size.width * .15,
                                     width:
-                                        MediaQuery.of(context).size.width * .13,
-                                    child: Switch(
-                                      value: isPublic,
-                                      onChanged: (value) {
-                                        setState(() {
-                                          if (value) {
-                                            validateField = true;
-                                            _autoValidate = true;
-                                            bool retVal = validateAllFields();
-                                            if (!retVal) {
-                                              //Show flushbar with info that fields has invalid data
-                                              Utils.showMyFlushbar(
-                                                  context,
-                                                  Icons.info_outline,
-                                                  Duration(
-                                                    seconds: 6,
-                                                  ),
-                                                  "Missing Information!! ",
-                                                  "Making premises PUBLIC requires basic details. Please fill and try again !!");
+                                        MediaQuery.of(context).size.width * .15,
+                                    child: Transform.scale(
+                                      scale: 0.7,
+                                      alignment: Alignment.centerLeft,
+                                      child: Switch(
+                                        value: isPublic,
+                                        onChanged: (value) {
+                                          setState(() {
+                                            if (value) {
+                                              validateField = true;
+                                              _autoValidate = true;
+                                              bool retVal = validateAllFields();
+                                              if (!retVal) {
+                                                //Show flushbar with info that fields has invalid data
+                                                Utils.showMyFlushbar(
+                                                    context,
+                                                    Icons.info_outline,
+                                                    Duration(
+                                                      seconds: 6,
+                                                    ),
+                                                    "Missing Information!! ",
+                                                    "Making premises PUBLIC requires basic details. Please fill and try again !!");
+                                              } else {
+                                                validateField = false;
+                                                isPublic = value;
+                                                entity.isPublic = value;
+                                                print(isPublic);
+                                              }
                                             } else {
-                                              validateField = false;
                                               isPublic = value;
                                               entity.isPublic = value;
                                               print(isPublic);
                                             }
-                                          } else {
-                                            isPublic = value;
-                                            entity.isPublic = value;
-                                            print(isPublic);
-                                          }
-                                        });
-                                      },
-                                      // activeTrackColor: Colors.green,
-                                      activeColor: highlightColor,
+                                          });
+                                        },
+                                        // activeTrackColor: Colors.green,
+                                        activeColor: highlightColor,
+                                        inactiveThumbColor: Colors.grey[300],
+                                      ),
                                     ),
                                   ),
                                 ],
                               ),
-                              Row(
+                              Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
                                 children: <Widget>[
-                                  Row(
-                                    children: <Widget>[
-                                      Text('Bookable'),
-                                      SizedBox(
-                                        width:
-                                            MediaQuery.of(context).size.width *
-                                                .05,
-                                        height:
-                                            MediaQuery.of(context).size.width *
-                                                .05,
-                                        child: IconButton(
-                                            padding: EdgeInsets.all(0),
-                                            icon: Icon(
-                                              Icons.info,
+                                  FlatButton(
+                                      padding: EdgeInsets.all(0),
+                                      child: Row(children: <Widget>[
+                                        Text('Bookable'),
+                                        SizedBox(
+                                          width: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                              .05,
+                                          height: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                              .05,
+                                          child: Icon(Icons.info,
                                               color: Colors.blueGrey[600],
-                                            ),
-                                            iconSize: 17,
-                                            onPressed: () {
-                                              if (!_isExpanded) {
-                                                setState(() {
-                                                  _bookExpandClick = true;
-                                                  _isExpanded = true;
-                                                  _margin = EdgeInsets.fromLTRB(
-                                                      0, 0, 0, 8);
-                                                  _width =
-                                                      MediaQuery.of(context)
-                                                              .size
-                                                              .width *
-                                                          .9;
-                                                  _text = Text(
-                                                    bookableInfo,
-                                                    textAlign: TextAlign.center,
-                                                  );
+                                              size: 15),
+                                        ),
+                                      ]),
+                                      onPressed: () {
+                                        if (!_isExpanded) {
+                                          setState(() {
+                                            _bookExpandClick = true;
+                                            _isExpanded = true;
+                                            _margin =
+                                                EdgeInsets.fromLTRB(0, 0, 0, 8);
+                                            _width = MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                .9;
+                                            _text = Text(
+                                              bookableInfo,
+                                              textAlign: TextAlign.center,
+                                            );
 
-                                                  _height = 30;
-                                                });
-                                              } else {
-                                                //if bookable info is being shown
-                                                if (_bookExpandClick) {
-                                                  setState(() {
-                                                    _width = 0;
-                                                    _height = 0;
-                                                    _isExpanded = false;
-                                                    _bookExpandClick = false;
-                                                  });
-                                                } else {
-                                                  setState(() {
-                                                    _publicExpandClick = false;
-                                                    _activeExpandClick = false;
-                                                    _bookExpandClick = true;
-                                                    _isExpanded = true;
-                                                    _margin =
-                                                        EdgeInsets.fromLTRB(
-                                                            0, 0, 0, 8);
-                                                    _width =
-                                                        MediaQuery.of(context)
-                                                                .size
-                                                                .width *
-                                                            .9;
-                                                    _text = Text(
-                                                      bookableInfo,
-                                                      textAlign:
-                                                          TextAlign.center,
-                                                    );
+                                            _height = 30;
+                                          });
+                                        } else {
+                                          //if bookable info is being shown
+                                          if (_bookExpandClick) {
+                                            setState(() {
+                                              _width = 0;
+                                              _height = 0;
+                                              _isExpanded = false;
+                                              _bookExpandClick = false;
+                                            });
+                                          } else {
+                                            setState(() {
+                                              _publicExpandClick = false;
+                                              _activeExpandClick = false;
+                                              _bookExpandClick = true;
+                                              _isExpanded = true;
+                                              _margin = EdgeInsets.fromLTRB(
+                                                  0, 0, 0, 8);
+                                              _width = MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                  .9;
+                                              _text = Text(
+                                                bookableInfo,
+                                                textAlign: TextAlign.center,
+                                              );
 
-                                                    _height = 30;
-                                                  });
-                                                }
-                                              }
-                                            }),
-                                      ),
-                                    ],
-                                  ),
+                                              _height = 30;
+                                            });
+                                          }
+                                        }
+                                      }),
                                   Container(
                                     padding: EdgeInsets.all(0),
                                     margin: EdgeInsets.all(0),
@@ -2349,139 +2355,144 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
                                         },
                                         // activeTrackColor: Colors.green,
                                         activeColor: highlightColor,
+                                        inactiveThumbColor: Colors.grey[300],
                                       ),
                                     ),
                                   ),
                                 ],
                               ),
-                              Row(
+                              Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
                                 children: <Widget>[
-                                  Row(
-                                    children: <Widget>[
-                                      Text('Active'),
-                                      SizedBox(
-                                        width:
-                                            MediaQuery.of(context).size.width *
-                                                .05,
-                                        height:
-                                            MediaQuery.of(context).size.width *
-                                                .05,
-                                        child: IconButton(
-                                            padding: EdgeInsets.all(0),
-                                            icon: Icon(
-                                              Icons.info,
+                                  FlatButton(
+                                    padding: EdgeInsets.all(0),
+                                    child: Row(
+                                      children: <Widget>[
+                                        Text('Active'),
+                                        SizedBox(
+                                          width: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                              .05,
+                                          height: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                              .05,
+                                          child: Icon(Icons.info,
                                               color: Colors.blueGrey[600],
-                                            ),
-                                            iconSize: 17,
-                                            onPressed: () {
-                                              if (!_isExpanded) {
-                                                setState(() {
-                                                  _activeExpandClick = true;
-                                                  _isExpanded = true;
-                                                  _margin = EdgeInsets.fromLTRB(
-                                                      0, 0, 0, 8);
-                                                  _width =
-                                                      MediaQuery.of(context)
-                                                              .size
-                                                              .width *
-                                                          .9;
-                                                  _text = Text(
-                                                    activeInfo,
-                                                    textAlign: TextAlign.center,
-                                                  );
+                                              size: 15),
+                                        ),
+                                      ],
+                                    ),
+                                    onPressed: () {
+                                      if (!_isExpanded) {
+                                        setState(() {
+                                          _activeExpandClick = true;
+                                          _isExpanded = true;
+                                          _margin =
+                                              EdgeInsets.fromLTRB(0, 0, 0, 8);
+                                          _width = MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                              .9;
+                                          _text = Text(
+                                            activeInfo,
+                                            textAlign: TextAlign.center,
+                                          );
 
-                                                  _height = 30;
-                                                });
-                                              } else {
-                                                //if bookable info is being shown
-                                                if (_activeExpandClick) {
-                                                  setState(() {
-                                                    _width = 0;
-                                                    _height = 0;
-                                                    _isExpanded = false;
-                                                    _activeExpandClick = false;
-                                                  });
-                                                } else {
-                                                  setState(() {
-                                                    _publicExpandClick = false;
-                                                    _activeExpandClick = true;
-                                                    _bookExpandClick = false;
-                                                    _isExpanded = true;
-                                                    _margin =
-                                                        EdgeInsets.fromLTRB(
-                                                            0, 0, 0, 8);
-                                                    _width =
-                                                        MediaQuery.of(context)
-                                                                .size
-                                                                .width *
-                                                            .9;
-                                                    _text = Text(
-                                                      activeInfo,
-                                                      textAlign:
-                                                          TextAlign.center,
-                                                    );
+                                          _height = 30;
+                                        });
+                                      } else {
+                                        //if bookable info is being shown
+                                        if (_activeExpandClick) {
+                                          setState(() {
+                                            _width = 0;
+                                            _height = 0;
+                                            _isExpanded = false;
+                                            _activeExpandClick = false;
+                                          });
+                                        } else {
+                                          setState(() {
+                                            _publicExpandClick = false;
+                                            _activeExpandClick = true;
+                                            _bookExpandClick = false;
+                                            _isExpanded = true;
+                                            _margin =
+                                                EdgeInsets.fromLTRB(0, 0, 0, 8);
+                                            _width = MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                .9;
+                                            _text = Text(
+                                              activeInfo,
+                                              textAlign: TextAlign.center,
+                                            );
 
-                                                    _height = 30;
-                                                  });
-                                                }
-                                              }
-                                            }),
-                                      ),
-                                    ],
+                                            _height = 30;
+                                          });
+                                        }
+                                      }
+                                    },
                                   ),
                                   Container(
+                                    padding: EdgeInsets.all(0),
+                                    margin: EdgeInsets.all(0),
                                     width:
-                                        MediaQuery.of(context).size.width * .13,
-                                    child: Switch(
-                                      value: isActive,
-                                      onChanged: (value) {
-                                        setState(() {
-                                          if (value) {
-                                            validateField = true;
-                                            _autoValidate = true;
-                                            bool retVal = false;
-                                            bool locValid = false;
-                                            if (validateAllFields())
-                                              retVal = true;
-                                            if (validateLatLon())
-                                              locValid = true;
+                                        MediaQuery.of(context).size.width * .15,
+                                    child: Transform.scale(
+                                      scale: 0.7,
+                                      child: Switch(
+                                        value: isActive,
+                                        onChanged: (value) {
+                                          setState(() {
+                                            if (value) {
+                                              validateField = true;
+                                              _autoValidate = true;
+                                              bool retVal = false;
+                                              bool locValid = false;
+                                              if (validateAllFields())
+                                                retVal = true;
+                                              if (validateLatLon())
+                                                locValid = true;
 
-                                            if (!locValid || !retVal) {
-                                              if (!locValid) {
-                                                Utils.showMyFlushbar(
-                                                    context,
-                                                    Icons.info_outline,
-                                                    Duration(
-                                                      seconds: 6,
-                                                    ),
-                                                    "Current location is must for your entity to be searchable by users!! ",
-                                                    "USE CURRENT LOCATION in Location Details section which auto-populates your current location using the device.");
-                                              } else if (!retVal) {
-                                                //Show flushbar with info that fields has invalid data
-                                                Utils.showMyFlushbar(
-                                                    context,
-                                                    Icons.info_outline,
-                                                    Duration(
-                                                      seconds: 6,
-                                                    ),
-                                                    "Missing Information!! ",
-                                                    "Making premises ACTIVE requires basic details. Please fill and try again !!");
+                                              if (!locValid || !retVal) {
+                                                if (!locValid) {
+                                                  Utils.showMyFlushbar(
+                                                      context,
+                                                      Icons.info_outline,
+                                                      Duration(
+                                                        seconds: 6,
+                                                      ),
+                                                      "Current location is must for your entity to be searchable by users!! ",
+                                                      "USE CURRENT LOCATION in Location Details section which auto-populates your current location using the device.");
+                                                } else if (!retVal) {
+                                                  //Show flushbar with info that fields has invalid data
+                                                  Utils.showMyFlushbar(
+                                                      context,
+                                                      Icons.info_outline,
+                                                      Duration(
+                                                        seconds: 6,
+                                                      ),
+                                                      "Missing Information!! ",
+                                                      "Making premises ACTIVE requires basic details. Please fill and try again !!");
+                                                }
+                                              } else {
+                                                validateField = false;
+                                                isActive = value;
+                                                entity.isActive = value;
+                                                print(isActive);
                                               }
                                             } else {
-                                              validateField = false;
                                               isActive = value;
                                               entity.isActive = value;
                                               print(isActive);
                                             }
-                                          } else {
-                                            isActive = value;
-                                            entity.isActive = value;
-                                            print(isActive);
-                                          }
-                                        });
-                                      },
-                                      // activeTrackColor: Colors.green,
-                                      activeColor: highlightColor,
+                                          });
+                                        },
+                                        // activeTrackColor: Colors.green,
+                                        activeColor: highlightColor,
+                                        inactiveThumbColor: Colors.grey[300],
+                                      ),
                                     ),
                                   ),
                                 ],
