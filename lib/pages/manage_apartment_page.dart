@@ -2135,18 +2135,19 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
                           Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            //mainAxisAlignment: MainAxisAlignment.center,
                             mainAxisSize: MainAxisSize.min,
                             children: <Widget>[
-                              Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                mainAxisSize: MainAxisSize.min,
                                 children: <Widget>[
                                   FlatButton(
                                       padding: EdgeInsets.all(0),
                                       child: Row(
                                         children: <Widget>[
                                           Text('Public',
-                                              style: TextStyle(fontSize: 13)),
+                                              style: TextStyle(fontSize: 12)),
                                           SizedBox(
                                             width: MediaQuery.of(context)
                                                     .size
@@ -2154,8 +2155,8 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
                                                 .05,
                                             height: MediaQuery.of(context)
                                                     .size
-                                                    .width *
-                                                .05,
+                                                    .height *
+                                                .02,
                                             child: Icon(
                                               Icons.info,
                                               color: Colors.blueGrey[600],
@@ -2260,13 +2261,15 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
                                   ),
                                 ],
                               ),
-                              Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                mainAxisSize: MainAxisSize.min,
                                 children: <Widget>[
                                   FlatButton(
                                       padding: EdgeInsets.all(0),
                                       child: Row(children: <Widget>[
-                                        Text('Bookable'),
+                                        Text('Bookable',
+                                            style: TextStyle(fontSize: 12)),
                                         SizedBox(
                                           width: MediaQuery.of(context)
                                                   .size
@@ -2274,8 +2277,8 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
                                               .05,
                                           height: MediaQuery.of(context)
                                                   .size
-                                                  .width *
-                                              .05,
+                                                  .height *
+                                              .02,
                                           child: Icon(Icons.info,
                                               color: Colors.blueGrey[600],
                                               size: 15),
@@ -2361,14 +2364,16 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
                                   ),
                                 ],
                               ),
-                              Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                mainAxisSize: MainAxisSize.min,
                                 children: <Widget>[
                                   FlatButton(
                                     padding: EdgeInsets.all(0),
                                     child: Row(
                                       children: <Widget>[
-                                        Text('Active'),
+                                        Text('Active',
+                                            style: TextStyle(fontSize: 12)),
                                         SizedBox(
                                           width: MediaQuery.of(context)
                                                   .size
@@ -2376,8 +2381,8 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
                                               .05,
                                           height: MediaQuery.of(context)
                                                   .size
-                                                  .width *
-                                              .05,
+                                                  .height *
+                                              .02,
                                           child: Icon(Icons.info,
                                               color: Colors.blueGrey[600],
                                               size: 15),
