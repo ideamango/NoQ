@@ -160,7 +160,7 @@ class _FavsListPageState extends State<FavsListPage> {
     String adr = (address.address != null ? (address.address + ', ') : "") +
         (address.locality != null ? (address.locality + ', ') : "") +
         (address.landmark != null ? (address.landmark + ', ') : "") +
-        (address.city != null ? (address.city + ', ') : "");
+        (address.city != null ? (address.city) : "");
     return adr;
   }
 

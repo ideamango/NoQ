@@ -130,7 +130,7 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
     _dateList.clear();
     _dateList.add(dateTime);
     DateTime dt = DateTime.now();
-    for (int i = 1; i <= 4; i++) {
+    for (int i = 1; i <= 6; i++) {
       print(i);
       _dateList.add(dt.add(Duration(days: i)));
       print('dateLIst is $_dateList');
@@ -182,14 +182,13 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
     String adr = (address.address != null ? (address.address + ', ') : "") +
         (address.locality != null ? (address.locality + ', ') : "") +
         (address.landmark != null ? (address.landmark + ', ') : "") +
-        (address.city != null ? (address.city + ', ') : "");
+        (address.city != null ? (address.city) : "");
     return adr;
   }
 
   Widget _emptySearchPage() {
-    String defaultMsg = 'No matching results.Try again!! ';
-    String defaultSubMsg =
-        'Add places to favourites, and quickly browse through later. ';
+    String defaultMsg = 'No places found!! ';
+    String defaultSubMsg = 'Try again with different Name or Category.  ';
     String txtMsg = (messageTitle != null) ? messageTitle : defaultMsg;
     String txtSubMsg =
         (messageSubTitle != null) ? messageSubTitle : defaultSubMsg;
