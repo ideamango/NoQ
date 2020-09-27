@@ -101,7 +101,7 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
   TextEditingController _countryController = TextEditingController();
   TextEditingController _pinController = TextEditingController();
   // List<String> _addressList = new List<String>();
-  TextEditingController _ctPhn1controller = TextEditingController();
+  //TextEditingController _ctPhn1controller = TextEditingController();
 
   TextEditingController _adminItemController = new TextEditingController();
   String _item;
@@ -149,16 +149,31 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
   bool setActive = false;
   //final Geolocator geolocator = Geolocator()..forceAndroidLocationManager;
 
+  ///from contact page
+  bool _isValid = false;
+  Employee contact;
+  TextEditingController _ctNameController = TextEditingController();
+  TextEditingController _ctEmpIdController = TextEditingController();
+  TextEditingController _ctPhn1controller = TextEditingController();
+  TextEditingController _ctPhn2controller = TextEditingController();
+  TextEditingController _ctAvlFromTimeController = TextEditingController();
+  TextEditingController _ctAvlTillTimeController = TextEditingController();
+
+  final GlobalKey<FormFieldState> phn1Key = new GlobalKey<FormFieldState>();
+  final GlobalKey<FormFieldState> phn2Key = new GlobalKey<FormFieldState>();
+
+  List<String> _ctDaysOff;
+
+  List<days> _ctClosedOnDays;
+  Entity _entity;
+  List<Employee> _list;
+
+  ///end of fields from contact page
+
   @override
   void initState() {
     _scrollController = ScrollController();
     super.initState();
-
-    // Utils.getCurrLocation(context).then((value) {
-    //   pos = value;
-    //   _getAddressFromLatLng(pos);
-    // });
-
     entity = this.widget.entity;
     getGlobalState().whenComplete(() {
       initializeEntity().whenComplete(() {
@@ -168,6 +183,363 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
       });
     });
   }
+
+  ///from contact page
+  void initializeContactDetails() {
+    if (contact != null) {
+      _ctNameController.text = contact.name;
+      _ctEmpIdController.text = contact.employeeId;
+      _ctPhn1controller.text =
+          contact.ph != null ? contact.ph.substring(3) : "";
+      _ctPhn2controller.text =
+          contact.altPhone != null ? contact.altPhone.substring(3) : "";
+      if (contact.shiftStartHour != null && contact.shiftStartMinute != null)
+        _ctAvlFromTimeController.text =
+            Utils.formatTime(contact.shiftStartHour.toString()) +
+                ':' +
+                Utils.formatTime(contact.shiftStartMinute.toString());
+      if (contact.shiftEndHour != null && contact.shiftEndMinute != null)
+        _ctAvlTillTimeController.text =
+            Utils.formatTime(contact.shiftEndHour.toString()) +
+                ':' +
+                Utils.formatTime(contact.shiftEndMinute.toString());
+      _ctDaysOff = (contact.daysOff) ?? new List<String>();
+    }
+    if (_daysOff.length == 0) {
+      _ctDaysOff.add('days.sunday');
+    }
+    _ctClosedOnDays = List<days>();
+    _ctClosedOnDays = Utils.convertStringsToDays(_ctDaysOff);
+
+    contact.isManager = true;
+  }
+
+  Widget buildContactItem(Employee contact) {
+    final ctNameField = TextFormField(
+      obscureText: false,
+      maxLines: 1,
+      minLines: 1,
+      style: textInputTextStyle,
+      keyboardType: TextInputType.text,
+      controller: _ctNameController,
+      decoration:
+          CommonStyle.textFieldStyle(labelTextStr: "Name", hintTextStr: ""),
+      validator: validateText,
+      onChanged: (String value) {
+        contact.name = value;
+      },
+      onSaved: (String value) {
+        contact.name = value;
+      },
+    );
+    final ctEmpIdField = TextFormField(
+      obscureText: false,
+      maxLines: 1,
+      minLines: 1,
+      style: textInputTextStyle,
+      keyboardType: TextInputType.text,
+      controller: _ctEmpIdController,
+      decoration: CommonStyle.textFieldStyle(
+          labelTextStr: "Employee Id", hintTextStr: ""),
+      validator: validateText,
+      onChanged: (String value) {
+        contact.employeeId = value;
+      },
+      onSaved: (String value) {
+        contact.employeeId = value;
+      },
+    );
+    final ctPhn1Field = TextFormField(
+      obscureText: false,
+      key: phn1Key,
+      maxLines: 1,
+      minLines: 1,
+      style: textInputTextStyle,
+      keyboardType: TextInputType.phone,
+      controller: _ctPhn1controller,
+      decoration: CommonStyle.textFieldStyle(
+          prefixText: '+91', labelTextStr: "Primary Phone", hintTextStr: ""),
+      validator: Utils.validateMobileField,
+      onChanged: (String value) {
+        phn1Key.currentState.validate();
+        contact.ph = "+91" + value;
+      },
+      onSaved: (value) {
+        contact.ph = "+91" + value;
+      },
+    );
+    final ctPhn2Field = TextFormField(
+      obscureText: false,
+      key: phn2Key,
+      maxLines: 1,
+      minLines: 1,
+      style: textInputTextStyle,
+      keyboardType: TextInputType.phone,
+      controller: _ctPhn2controller,
+      decoration: CommonStyle.textFieldStyle(
+          prefixText: '+91', labelTextStr: "Alternate Phone", hintTextStr: ""),
+      validator: Utils.validateMobileField,
+      onChanged: (String value) {
+        phn2Key.currentState.validate();
+        contact.altPhone = "+91" + value;
+      },
+      onSaved: (value) {
+        contact.altPhone = "+91" + value;
+      },
+    );
+    final ctAvlFromTimeField = TextFormField(
+      obscureText: false,
+      maxLines: 1,
+      readOnly: true,
+      minLines: 1,
+      style: textInputTextStyle,
+      controller: _ctAvlFromTimeController,
+      keyboardType: TextInputType.text,
+      onTap: () {
+        DatePicker.showTimePicker(context,
+            showTitleActions: true,
+            showSecondsColumn: false, onChanged: (date) {
+          print('change $date in time zone ' +
+              date.timeZoneOffset.inHours.toString());
+        }, onConfirm: (date) {
+          print('confirm $date');
+          //  String time = "${date.hour}:${date.minute} ${date.";
+
+          String time = DateFormat.Hm().format(date);
+          print(time);
+
+          _ctAvlFromTimeController.text = time.toLowerCase();
+          if (_ctAvlFromTimeController.text != "") {
+            List<String> time = _ctAvlFromTimeController.text.split(':');
+            contact.shiftStartHour = int.parse(time[0]);
+            contact.shiftStartMinute = int.parse(time[1]);
+          }
+        }, currentTime: DateTime.now());
+      },
+      decoration: InputDecoration(
+          // suffixIcon: IconButton(
+          //   icon: Icon(Icons.schedule),
+          //   onPressed: () {
+          //     DatePicker.showTime12hPicker(context, showTitleActions: true,
+          //         onChanged: (date) {
+          //       print('change $date in time zone ' +
+          //           date.timeZoneOffset.inHours.toString());
+          //     }, onConfirm: (date) {
+          //       print('confirm $date');
+          //       //  String time = "${date.hour}:${date.minute} ${date.";
+
+          //       String time = DateFormat.jm().format(date);
+          //       print(time);
+
+          //       _openTimeController.text = time.toLowerCase();
+          //     }, currentTime: DateTime.now());
+          //   },
+          // ),
+          labelText: "Available from",
+          hintText: "hh:mm 24 hour time format",
+          enabledBorder:
+              UnderlineInputBorder(borderSide: BorderSide(color: Colors.grey)),
+          focusedBorder: UnderlineInputBorder(
+              borderSide: BorderSide(color: Colors.orange))),
+      validator: validateTime,
+      onChanged: (String value) {
+        //TODO: test the values
+        List<String> time = value.split(':');
+        contact.shiftStartHour = int.parse(time[0]);
+        contact.shiftStartMinute = int.parse(time[1]);
+      },
+      onSaved: (String value) {
+        //TODO: test the values
+        List<String> time = value.split(':');
+        contact.shiftStartHour = int.parse(time[0]);
+        contact.shiftStartMinute = int.parse(time[1]);
+      },
+    );
+    final ctAvlTillTimeField = TextFormField(
+      enabled: true,
+      obscureText: false,
+      readOnly: true,
+      maxLines: 1,
+      minLines: 1,
+      controller: _ctAvlTillTimeController,
+      style: textInputTextStyle,
+      onTap: () {
+        DatePicker.showTimePicker(context,
+            showTitleActions: true,
+            showSecondsColumn: false, onChanged: (date) {
+          print('change $date in time zone ' +
+              date.timeZoneOffset.inHours.toString());
+        }, onConfirm: (date) {
+          print('confirm $date');
+          //  String time = "${date.hour}:${date.minute} ${date.";
+
+          String time = DateFormat.Hm().format(date);
+          print(time);
+
+          _ctAvlTillTimeController.text = time.toLowerCase();
+          if (_ctAvlTillTimeController.text != "") {
+            List<String> time = _ctAvlTillTimeController.text.split(':');
+            contact.shiftEndHour = int.parse(time[0]);
+            contact.shiftEndMinute = int.parse(time[1]);
+          }
+        }, currentTime: DateTime.now());
+      },
+      decoration: InputDecoration(
+          labelText: "Available till",
+          hintText: "hr:mm 24 hour time format",
+          enabledBorder:
+              UnderlineInputBorder(borderSide: BorderSide(color: Colors.grey)),
+          focusedBorder: UnderlineInputBorder(
+              borderSide: BorderSide(color: Colors.orange))),
+      validator: validateTime,
+      onChanged: (String value) {
+        //TODO: test the values
+        List<String> time = value.split(':');
+        contact.shiftEndHour = int.parse(time[0]);
+        contact.shiftEndMinute = int.parse(time[1]);
+      },
+      onSaved: (String value) {},
+    );
+    final ctDaysOffField = Padding(
+      padding: EdgeInsets.only(top: 12, bottom: 8),
+      child: Row(
+        children: <Widget>[
+          Text(
+            'Days off: ',
+            style: TextStyle(
+              color: Colors.grey[600],
+              // fontWeight: FontWeight.w800,
+              fontFamily: 'Monsterrat',
+              letterSpacing: 0.5,
+              fontSize: 15.0,
+              //height: 2,
+            ),
+            textAlign: TextAlign.left,
+          ),
+          SizedBox(width: 5),
+          new WeekDaySelectorFormField(
+            displayDays: [
+              days.monday,
+              days.tuesday,
+              days.wednesday,
+              days.thursday,
+              days.friday,
+              days.saturday,
+              days.sunday
+            ],
+            initialValue: _ctClosedOnDays,
+            borderRadius: 20,
+            elevation: 10,
+            textStyle: buttonXSmlTextStyle,
+            fillColor: Colors.blueGrey[400],
+            selectedFillColor: highlightColor,
+            boxConstraints: BoxConstraints(
+                minHeight: 25, minWidth: 25, maxHeight: 28, maxWidth: 28),
+            borderSide: BorderSide(color: Colors.white, width: 0),
+            language: lang.en,
+            onChange: (days) {
+              print("Days off: " + days.toString());
+              _ctDaysOff.clear();
+              days.forEach((element) {
+                var day = element.toString().substring(5);
+                _ctDaysOff.add(day);
+              });
+              contact.daysOff = _ctDaysOff;
+              print(_ctDaysOff.length);
+              print(_ctDaysOff.toString());
+            },
+          ),
+        ],
+      ),
+    );
+
+    return Card(
+      child: Theme(
+        data: ThemeData(
+          unselectedWidgetColor: Colors.black,
+          accentColor: highlightColor,
+        ),
+        child: ExpansionTile(
+          //key: PageStorageKey(this.widget.headerTitle),
+          initiallyExpanded: false,
+          title: Text(
+            (contact.name != null && contact.name != "")
+                ? contact.name
+                : "Manager",
+            style: TextStyle(color: Colors.blueGrey[700], fontSize: 17),
+          ),
+
+          backgroundColor: Colors.white,
+          leading: IconButton(
+              icon: Icon(Icons.person, color: Colors.blueGrey[300], size: 20),
+              onPressed: () {
+                // contact.isManager = false;
+              }),
+          children: <Widget>[
+            Container(
+              color: Colors.cyan[50],
+              padding: EdgeInsets.only(left: 2.0, right: 2),
+              // decoration: BoxDecoration(
+              //     // border: Border.all(color: containerColor),
+              //     color: Colors.white,
+              //     shape: BoxShape.rectangle,
+              //     borderRadius: BorderRadius.all(Radius.circular(5.0))),
+              // padding: EdgeInsets.all(5.0),
+
+              child: new Form(
+                //  autovalidate: _autoValidate,
+                child: ListTile(
+                  title: Column(
+                    children: <Widget>[
+                      ctNameField,
+                      ctEmpIdField,
+                      ctPhn1Field,
+                      ctPhn2Field,
+                      ctDaysOffField,
+                      Divider(
+                        thickness: .7,
+                        color: Colors.grey[600],
+                      ),
+                      ctAvlFromTimeField,
+                      ctAvlTillTimeField,
+                      RaisedButton(
+                          color: btnColor,
+                          child: Text(
+                            "Remove",
+                            style: buttonMedTextStyle,
+                          ),
+                          onPressed: () {
+                            String removeThisId;
+                            for (int i = 0; i <= _entity.managers.length; i++) {
+                              if (_entity.managers[i].id == contact.id) {
+                                removeThisId = contact.id;
+                                print(_entity.managers[i].id);
+                                break;
+                              }
+                            }
+                            if (removeThisId != null) {
+                              setState(() {
+                                contact = null;
+                                _entity.managers.removeWhere(
+                                    (element) => element.id == removeThisId);
+                                _list.removeWhere(
+                                    (element) => element.id == removeThisId);
+                              });
+                            }
+                          })
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  ///end from contact page
+  ///
 
   Future<void> getGlobalState() async {
     _gState = await GlobalState.getGlobalState();
@@ -353,7 +725,7 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
       contactRowWidgets.add(new ContactRow(
         contact: contact,
         entity: entity,
-        list: contactRowWidgets,
+        list: contactList,
       ));
       //   mgrList: contactList,
       // ));
@@ -1310,7 +1682,6 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
               Colors.white,
               true);
 
-          print("Saved formmmmmmm");
           _entityDetailsFormKey.currentState.save();
           upsertEntity(entity, _regNumController.text).then((value) {
             if (value) {
@@ -1380,7 +1751,7 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
       }
 
       processSaveWithTimer() async {
-        var duration = new Duration(seconds: 2);
+        var duration = new Duration(seconds: 0);
         return new Timer(duration, saveRoute);
       }
 
@@ -1437,7 +1808,8 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
                         splashColor: highlightColor.withOpacity(.8),
                         textColor: Colors.orange,
                         shape: RoundedRectangleBorder(
-                            side: BorderSide(color: Colors.orange)),
+                          side: BorderSide(color: Colors.orange),
+                        ),
                         child: Text('Yes'),
                         onPressed: () {
                           Navigator.of(_).pop(true);
@@ -1783,9 +2155,38 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
                                             iconSize: 17,
                                             onPressed: () {
                                               if (!_isExpanded) {
-                                                if (!_publicExpandClick) {
+                                                setState(() {
+                                                  _publicExpandClick = true;
+                                                  _isExpanded = true;
+                                                  _margin = EdgeInsets.fromLTRB(
+                                                      0, 0, 0, 8);
+                                                  _width =
+                                                      MediaQuery.of(context)
+                                                              .size
+                                                              .width *
+                                                          .9;
+                                                  _text = Text(
+                                                    publicInfo,
+                                                    textAlign: TextAlign.center,
+                                                  );
+
+                                                  _height = 30;
+                                                });
+                                              } else {
+                                                //if bookable info is being shown
+                                                if (_publicExpandClick) {
+                                                  setState(() {
+                                                    _width = 0;
+                                                    _height = 0;
+                                                    _isExpanded = false;
+                                                    _publicExpandClick = false;
+                                                  });
+                                                } else {
                                                   setState(() {
                                                     _publicExpandClick = true;
+                                                    _activeExpandClick = false;
+                                                    _bookExpandClick = false;
+                                                    _isExpanded = true;
                                                     _margin =
                                                         EdgeInsets.fromLTRB(
                                                             0, 0, 0, 8);
@@ -1795,20 +2196,14 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
                                                                 .width *
                                                             .9;
                                                     _text = Text(
-                                                      "Select this if your premise is public. Default is private, means ....",
+                                                      publicInfo,
                                                       textAlign:
                                                           TextAlign.center,
                                                     );
+
                                                     _height = 30;
                                                   });
                                                 }
-                                              } else if (_publicExpandClick) {
-                                                setState(() {
-                                                  _publicExpandClick = false;
-                                                  _isExpanded = false;
-                                                  _width = 0;
-                                                  _height = 0;
-                                                });
                                               }
                                             }),
                                       ),
@@ -1874,13 +2269,9 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
                                             ),
                                             iconSize: 17,
                                             onPressed: () {
-                                              if (_isExpanded) {
+                                              if (!_isExpanded) {
                                                 setState(() {
-                                                  _isExpanded = false;
-                                                  _width = 0;
-                                                  _height = 0;
-                                                });
-                                                setState(() {
+                                                  _bookExpandClick = true;
                                                   _isExpanded = true;
                                                   _margin = EdgeInsets.fromLTRB(
                                                       0, 0, 0, 8);
@@ -1890,53 +2281,75 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
                                                               .width *
                                                           .9;
                                                   _text = Text(
-                                                    "Bookable premise",
+                                                    bookableInfo,
                                                     textAlign: TextAlign.center,
                                                   );
 
                                                   _height = 30;
                                                 });
                                               } else {
-                                                setState(() {
-                                                  _isExpanded = true;
-                                                  _margin = EdgeInsets.fromLTRB(
-                                                      0, 0, 0, 8);
-                                                  _width =
-                                                      MediaQuery.of(context)
-                                                              .size
-                                                              .width *
-                                                          .9;
-                                                  _text = Text(
-                                                    "Bookable premise",
-                                                    textAlign: TextAlign.center,
-                                                  );
+                                                //if bookable info is being shown
+                                                if (_bookExpandClick) {
+                                                  setState(() {
+                                                    _width = 0;
+                                                    _height = 0;
+                                                    _isExpanded = false;
+                                                    _bookExpandClick = false;
+                                                  });
+                                                } else {
+                                                  setState(() {
+                                                    _publicExpandClick = false;
+                                                    _activeExpandClick = false;
+                                                    _bookExpandClick = true;
+                                                    _isExpanded = true;
+                                                    _margin =
+                                                        EdgeInsets.fromLTRB(
+                                                            0, 0, 0, 8);
+                                                    _width =
+                                                        MediaQuery.of(context)
+                                                                .size
+                                                                .width *
+                                                            .9;
+                                                    _text = Text(
+                                                      bookableInfo,
+                                                      textAlign:
+                                                          TextAlign.center,
+                                                    );
 
-                                                  _height = 30;
-                                                });
+                                                    _height = 30;
+                                                  });
+                                                }
                                               }
                                             }),
                                       ),
                                     ],
                                   ),
                                   Container(
+                                    padding: EdgeInsets.all(0),
+                                    margin: EdgeInsets.all(0),
                                     width:
-                                        MediaQuery.of(context).size.width * .13,
-                                    child: Switch(
-                                      value: isBookable,
-                                      onChanged: (value) {
-                                        setState(() {
-                                          isBookable = value;
-                                          entity.isBookable = value;
+                                        MediaQuery.of(context).size.width * .15,
+                                    child: Transform.scale(
+                                      scale: 0.7,
+                                      child: Switch(
+                                        materialTapTargetSize:
+                                            MaterialTapTargetSize.shrinkWrap,
+                                        value: isBookable,
+                                        onChanged: (value) {
+                                          setState(() {
+                                            isBookable = value;
+                                            entity.isBookable = value;
 
-                                          if (value) {
-                                            showConfirmationDialog();
-                                            //TODO: SMita - show msg with info, yes/no
-                                          }
-                                          print(isBookable);
-                                        });
-                                      },
-                                      // activeTrackColor: Colors.green,
-                                      activeColor: highlightColor,
+                                            if (value) {
+                                              showConfirmationDialog();
+                                              //TODO: SMita - show msg with info, yes/no
+                                            }
+                                            print(isBookable);
+                                          });
+                                        },
+                                        // activeTrackColor: Colors.green,
+                                        activeColor: highlightColor,
+                                      ),
                                     ),
                                   ),
                                 ],
@@ -1961,14 +2374,9 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
                                             ),
                                             iconSize: 17,
                                             onPressed: () {
-                                              if (_isExpanded) {
+                                              if (!_isExpanded) {
                                                 setState(() {
-                                                  _isExpanded = false;
-                                                  _width = 0;
-                                                  _height = 0;
-                                                });
-
-                                                setState(() {
+                                                  _activeExpandClick = true;
                                                   _isExpanded = true;
                                                   _margin = EdgeInsets.fromLTRB(
                                                       0, 0, 0, 8);
@@ -1978,29 +2386,44 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
                                                               .width *
                                                           .9;
                                                   _text = Text(
-                                                    "Active: Premises would be searchable",
+                                                    activeInfo,
                                                     textAlign: TextAlign.center,
                                                   );
 
                                                   _height = 30;
                                                 });
                                               } else {
-                                                setState(() {
-                                                  _isExpanded = true;
-                                                  _margin = EdgeInsets.fromLTRB(
-                                                      0, 0, 0, 8);
-                                                  _width =
-                                                      MediaQuery.of(context)
-                                                              .size
-                                                              .width *
-                                                          .9;
-                                                  _text = Text(
-                                                    "Active: Premises would be searchable",
-                                                    textAlign: TextAlign.center,
-                                                  );
+                                                //if bookable info is being shown
+                                                if (_activeExpandClick) {
+                                                  setState(() {
+                                                    _width = 0;
+                                                    _height = 0;
+                                                    _isExpanded = false;
+                                                    _activeExpandClick = false;
+                                                  });
+                                                } else {
+                                                  setState(() {
+                                                    _publicExpandClick = false;
+                                                    _activeExpandClick = true;
+                                                    _bookExpandClick = false;
+                                                    _isExpanded = true;
+                                                    _margin =
+                                                        EdgeInsets.fromLTRB(
+                                                            0, 0, 0, 8);
+                                                    _width =
+                                                        MediaQuery.of(context)
+                                                                .size
+                                                                .width *
+                                                            .9;
+                                                    _text = Text(
+                                                      activeInfo,
+                                                      textAlign:
+                                                          TextAlign.center,
+                                                    );
 
-                                                  _height = 30;
-                                                });
+                                                    _height = 30;
+                                                  });
+                                                }
                                               }
                                             }),
                                       ),
@@ -2700,22 +3123,21 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
                                       style: errorTextStyle,
                                     )
                                   : Container(),
-                              if (!Utils.isNullOrEmpty(contactList))
-                                Column(children: contactRowWidgets),
-                              // ListView.builder(
-                              //   // controller: _childScrollController,
-                              //   reverse: true,
-                              //   shrinkWrap: true,
-                              //   itemExtent: itemSize,
-                              //   //scrollDirection: Axis.vertical,
-                              //   itemBuilder:
-                              //       (BuildContext context, int index) {
-                              //     return Container(
-                              //       child: ContactRow(
-                              //           contact: contactList[index]),
-                              //     );
-                              //   },
-                              //   itemCount: contactList.length,
+                              // if (!Utils.isNullOrEmpty(contactList))
+                              //   Column(children: contactRowWidgets),
+                              // Expanded(
+                              //   child: ListView.builder(
+                              //       itemCount: contactList.length,
+                              //       itemBuilder:
+                              //           (BuildContext context, int index) {
+                              //         return Container(
+                              //           child: new Column(
+                              //               children: contactList
+                              //                   .map(buildContactItem)
+                              //                   .toList()),
+                              //           //children: <Widget>[firstRow, secondRow],
+                              //         );
+                              //       }),
                               // ),
                             ],
                           ),

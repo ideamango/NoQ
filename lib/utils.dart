@@ -104,13 +104,19 @@ class Utils {
       progressIndicatorBackgroundColor: highlightColor,
       progressIndicatorValueColor: animationColor,
       routeBlur: 1.0,
-      titleText: Text(
-        title,
-        style: TextStyle(
-            //fontWeight: FontWeight.bold,
-            fontSize: 15.0,
-            color: Colors.white,
-            fontFamily: "Roboto"),
+      titleText: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          verticalSpacer,
+          Text(
+            title,
+            style: TextStyle(
+                //fontWeight: FontWeight.bold,
+                fontSize: 15.0,
+                color: Colors.white,
+                fontFamily: "Roboto"),
+          ),
+        ],
       ),
       messageText: Text(
         msg,

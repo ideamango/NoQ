@@ -420,7 +420,7 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
     for (int i = 0; i < _state.bookings.length; i++) {
       if (_state.bookings[i].entityId == entityId &&
           _state.bookings[i].dateTime == dateTime) {
-        return true;
+        if (_state.bookings[i].number != -1) return true;
       }
     }
     return false;

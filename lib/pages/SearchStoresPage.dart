@@ -17,6 +17,7 @@ import 'package:noq/utils.dart';
 import 'package:noq/widget/appbar.dart';
 import 'package:noq/widget/bottom_nav_bar.dart';
 import 'package:noq/widget/widgets.dart';
+import 'package:share/share.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../userHomePage.dart';
 
@@ -64,6 +65,7 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
   bool stateInitFinished = false;
   String messageTitle;
   String messageSubTitle;
+  String _dynamicLink;
 
   List<String> searchTypes;
 
@@ -163,6 +165,17 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
         _state.addFavourite(en);
       });
     }
+  }
+
+  generateLinkAndShareWithParams(String entityId) async {
+    var dynamicLink =
+        await Utils.createDynamicLinkWithParams(entityId: entityId);
+    print("Dynamic Link: $dynamicLink");
+
+    _dynamicLink =
+        Uri.https(dynamicLink.authority, dynamicLink.path).toString();
+    // dynamicLink has been generated. share it with others to use it accordingly.
+    Share.share(_dynamicLink.toString());
   }
 
   String getFormattedAddress(Address address) {
@@ -565,7 +578,11 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
               context,
               MaterialPageRoute(
                   builder: (context) => SearchChildrenPage(
-                      childList: str.childEntities, parentName: str.name)));
+                        pageName: "Search",
+                        childList: str.childEntities,
+                        parentName: str.name,
+                        parentId: str.entityId,
+                      )));
         }
 
         // if (child.length != 0) {
@@ -649,174 +666,31 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
                     child: Padding(
                       padding: const EdgeInsets.fromLTRB(0, 5, 0, 3),
                       child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        //mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         // crossAxisAlignment: CrossAxisAlignment.center,
                         children: <Widget>[
-                          Row(
-                            children: <Widget>[
-                              Text(
-                                (str.name) ?? str.name.toString(),
-                              ),
-                              IconButton(
-                                padding: EdgeInsets.fromLTRB(1, 1, 1, 1),
-                                constraints:
-                                    BoxConstraints(maxHeight: 14, maxWidth: 12),
-                                icon: Icon(
-                                  Icons.lock,
-                                  color: primaryIcon,
-                                  size: 12,
-                                ),
-                                onPressed: () {
-                                  Utils.showMyFlushbar(
-                                      context,
-                                      Icons.info,
-                                      Duration(seconds: 5),
-                                      "Access to this place is restricted to its residents or employees.",
-                                      "");
-                                },
-                              ),
-                            ],
+                          Text(
+                            (str.name) ?? str.name.toString(),
+                            style: TextStyle(fontSize: 18),
                           ),
-                          Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              // crossAxisAlignment: CrossAxisAlignment.start,
-                              children: <Widget>[
-                                Container(
-                                  padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
-                                  margin: EdgeInsets.fromLTRB(0, 0, 0, 0),
-                                  height: 25.0,
-                                  width: 28.0,
-                                  child: IconButton(
-                                    padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
-                                    alignment: Alignment.center,
-                                    highlightColor: Colors.orange[300],
-                                    icon: ImageIcon(
-                                      AssetImage('assets/whatsapp.png'),
-                                      size: 20,
-                                      color: primaryIcon,
-                                    ),
-                                    onPressed: () {
-                                      if (str.whatsapp != null &&
-                                          str.whatsapp != "") {
-                                        try {
-                                          launchWhatsApp(
-                                              message: whatsappMessage,
-                                              phone: str.whatsapp);
-                                        } catch (error) {
-                                          Utils.showMyFlushbar(
-                                              context,
-                                              Icons.error,
-                                              Duration(seconds: 5),
-                                              "Could not connect to the Whatsapp number ${str.whatsapp} !!",
-                                              "Try again later");
-                                        }
-                                      } else {
-                                        Utils.showMyFlushbar(
-                                            context,
-                                            Icons.info,
-                                            Duration(seconds: 5),
-                                            "Whatsapp contact information not found!!",
-                                            "");
-                                      }
-                                      // callPhone('+919611009823');
-                                      //callPhone(str.);
-                                    },
-                                  ),
-                                ),
-                                Container(
-                                  padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
-                                  margin: EdgeInsets.fromLTRB(0, 0, 0, 0),
-                                  height: 25.0,
-                                  width: 28.0,
-                                  child: IconButton(
-                                    padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
-                                    alignment: Alignment.center,
-                                    highlightColor: Colors.orange[300],
-                                    icon: Icon(
-                                      Icons.phone,
-                                      color: primaryIcon,
-                                      size: 20,
-                                    ),
-                                    onPressed: () {
-                                      // callPhone('+919611009823');
-                                      if (str.phone != null) {
-                                        try {
-                                          callPhone(str.phone);
-                                        } catch (error) {
-                                          Utils.showMyFlushbar(
-                                              context,
-                                              Icons.error,
-                                              Duration(seconds: 5),
-                                              "Could not connect call to the number ${str.phone} !!",
-                                              "Try again later.");
-                                        }
-                                      } else {
-                                        Utils.showMyFlushbar(
-                                            context,
-                                            Icons.info,
-                                            Duration(seconds: 5),
-                                            "Contact information not found!!",
-                                            "");
-                                      }
-                                    },
-                                  ),
-                                ),
-                                Container(
-                                  padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
-                                  margin: EdgeInsets.fromLTRB(0, 0, 0, 0),
-                                  height: 25.0,
-                                  width: 28.0,
-                                  child: IconButton(
-                                      padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
-                                      alignment: Alignment.center,
-                                      highlightColor: Colors.orange[300],
-                                      icon: Icon(
-                                        Icons.location_on,
-                                        color: primaryIcon,
-                                        size: 20,
-                                      ),
-                                      onPressed: () {
-                                        try {
-                                          launchURL(
-                                              str.name,
-                                              getFormattedAddress(str.address),
-                                              str.coordinates.geopoint.latitude,
-                                              str.coordinates.geopoint
-                                                  .longitude);
-                                        } catch (error) {
-                                          Utils.showMyFlushbar(
-                                              context,
-                                              Icons.error,
-                                              Duration(seconds: 5),
-                                              "Could not open Maps!!",
-                                              "Try again later.");
-                                        }
-                                      }),
-                                ),
-                                Container(
-                                  padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
-                                  margin: EdgeInsets.fromLTRB(0, 0, 0, 0),
-                                  height: 25,
-                                  width: 25,
-                                  child: IconButton(
-                                    padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
-                                    alignment: Alignment.center,
-                                    onPressed: () => toggleFavorite(str),
-                                    highlightColor: Colors.orange[300],
-                                    iconSize: 20,
-                                    icon: isFavourite(str.getMetaEntity())
-                                        ? Icon(
-                                            Icons.favorite,
-                                            color: Colors.red[800],
-                                          )
-                                        : Icon(
-                                            Icons.favorite_border,
-                                            color: primaryIcon,
-                                          ),
-                                  ),
-                                ),
-                              ])
+                          IconButton(
+                            padding: EdgeInsets.fromLTRB(1, 1, 1, 1),
+                            constraints:
+                                BoxConstraints(maxHeight: 14, maxWidth: 12),
+                            icon: Icon(
+                              Icons.lock,
+                              color: primaryIcon,
+                              size: 12,
+                            ),
+                            onPressed: () {
+                              Utils.showMyFlushbar(
+                                  context,
+                                  Icons.info,
+                                  Duration(seconds: 5),
+                                  "Access to this place is restricted to its residents or employees.",
+                                  "");
+                            },
+                          ),
                         ],
                       ),
                     ),
@@ -866,6 +740,7 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
                           children: [
                             //Icon(Icons.play_circle_filled, color: Colors.blueGrey[300]),
                             Text('Opens at:', style: labelTextStyle),
+                            SizedBox(width: 4),
                             Text(
                                 Utils.formatTime(str.startTimeHour.toString()) +
                                     ':' +
@@ -881,6 +756,7 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
                           children: [
                             //Icon(Icons.pause_circle_filled, color: Colors.blueGrey[300]),
                             Text('Closes at:', style: labelTextStyle),
+                            SizedBox(width: 4),
                             Text(
                                 Utils.formatTime(str.endTimeHour.toString()) +
                                     ':' +
@@ -890,53 +766,247 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
                           ],
                         ),
                       ]),
-                  if (!str.isBookable && str.isActive)
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
+                  Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.center,
                       children: <Widget>[
-                        RaisedButton(
-                          color: btnColor,
-                          onPressed: () {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => SearchChildrenPage(
-                                        childList: str.childEntities,
-                                        parentName: str.name,
-                                        parentId: str.entityId)));
-                          },
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: <Widget>[
-                              Text(
-                                'Explore amenities   ',
-                                style: TextStyle(color: Colors.white),
-                              ),
-                              Container(
-                                transform:
-                                    Matrix4.translationValues(28.0, 0, 0),
-                                child: Icon(
-                                  Icons.arrow_forward_ios,
-                                  color: Colors.white38,
-                                ),
-                              ),
-                              Container(
-                                transform:
-                                    Matrix4.translationValues(14.0, 0, 0),
-                                child: Icon(
-                                  Icons.arrow_forward_ios,
-                                  color: Colors.white70,
-                                ),
-                              ),
-                              Icon(
-                                Icons.arrow_forward_ios,
-                                color: Colors.white,
-                              )
-                            ],
+                        SizedBox(width: 5),
+                        Container(
+                          //   padding: EdgeInsets.all(3),
+                          //  margin: EdgeInsets.fromLTRB(2, 0, 2, 0),
+                          height: 35.0,
+                          width: 35.0,
+                          child: IconButton(
+                            padding: EdgeInsets.all(3),
+                            alignment: Alignment.center,
+                            highlightColor: Colors.orange[300],
+                            icon: ImageIcon(
+                              AssetImage('assets/whatsapp.png'),
+                              size: 35,
+                              color: primaryDarkColor,
+                            ),
+                            onPressed: () {
+                              if (str.whatsapp != null && str.whatsapp != "") {
+                                try {
+                                  launchWhatsApp(
+                                      message: whatsappMessage,
+                                      phone: str.whatsapp);
+                                } catch (error) {
+                                  Utils.showMyFlushbar(
+                                      context,
+                                      Icons.error,
+                                      Duration(seconds: 5),
+                                      "Could not connect to the Whatsapp number ${str.whatsapp} !!",
+                                      "Try again later");
+                                }
+                              } else {
+                                Utils.showMyFlushbar(
+                                    context,
+                                    Icons.info,
+                                    Duration(seconds: 5),
+                                    "Whatsapp contact information not found!!",
+                                    "");
+                              }
+                              // callPhone('+919611009823');
+                              //callPhone(str.);
+                            },
                           ),
-                        )
-                      ],
-                    )
+                        ),
+                        SizedBox(width: 5),
+                        Container(
+                          //  padding: EdgeInsets.all(2),
+                          //  margin: EdgeInsets.all(5),
+                          height: 30.0,
+                          width: 30.0,
+                          child: IconButton(
+                            padding: EdgeInsets.all(3),
+                            alignment: Alignment.center,
+                            highlightColor: Colors.orange[300],
+                            icon: Icon(
+                              Icons.phone,
+                              color: primaryDarkColor,
+                              size: 30,
+                            ),
+                            onPressed: () {
+                              // callPhone('+919611009823');
+                              //TODO: Change this phone number later
+
+                              if (str.phone != null) {
+                                try {
+                                  callPhone(str.phone);
+                                } catch (error) {
+                                  Utils.showMyFlushbar(
+                                      context,
+                                      Icons.error,
+                                      Duration(seconds: 5),
+                                      "Could not connect call to the number ${str.phone} !!",
+                                      "Try again later.");
+                                }
+                              } else {
+                                Utils.showMyFlushbar(
+                                    context,
+                                    Icons.info,
+                                    Duration(seconds: 5),
+                                    "Contact information not found!!",
+                                    "");
+                              }
+                            },
+                          ),
+                        ),
+                        SizedBox(width: 5),
+                        Container(
+                          // padding: EdgeInsets.fromLTRB(0, 0, 0, 5),
+                          margin: EdgeInsets.fromLTRB(0, 0, 0, 5),
+                          height: 25.0,
+                          width: 28.0,
+                          child: IconButton(
+                              padding: EdgeInsets.all(3),
+                              alignment: Alignment.center,
+                              highlightColor: Colors.orange[300],
+                              icon: Icon(
+                                Icons.location_on,
+                                color: primaryDarkColor,
+                                size: 30,
+                              ),
+                              onPressed: () {
+                                try {
+                                  launchURL(
+                                      str.name,
+                                      getFormattedAddress(str.address),
+                                      str.coordinates.geopoint.latitude,
+                                      str.coordinates.geopoint.longitude);
+                                } catch (error) {
+                                  Utils.showMyFlushbar(
+                                      context,
+                                      Icons.error,
+                                      Duration(seconds: 5),
+                                      "Could not open Maps!!",
+                                      "Try again later.");
+                                }
+                              }),
+                        ),
+                        SizedBox(width: 5),
+                        Container(
+                            //  padding: EdgeInsets.all(5),
+                            // margin: EdgeInsets.all(5),
+                            height: 30.0,
+                            width: 30.0,
+                            child: IconButton(
+                              padding: EdgeInsets.all(3),
+                              alignment: Alignment.center,
+                              highlightColor: Colors.orange[300],
+                              icon: Icon(
+                                Icons.share,
+                                color: primaryDarkColor,
+                              ),
+                              iconSize: 30,
+                              onPressed: () {
+                                generateLinkAndShareWithParams(str.entityId);
+                              },
+                            )),
+                        SizedBox(width: 5),
+                        Container(
+                          //  padding: EdgeInsets.all(5),
+                          // margin: EdgeInsets.all(5),
+                          height: 30,
+                          width: 30,
+                          alignment: Alignment.bottomCenter,
+                          child: IconButton(
+                            padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
+                            alignment: Alignment.center,
+                            onPressed: () => toggleFavorite(str),
+                            highlightColor: Colors.orange[300],
+                            iconSize: 30,
+                            icon: isFavourite(str.getMetaEntity())
+                                ? Icon(
+                                    Icons.favorite,
+                                    color: Colors.red[800],
+                                  )
+                                : Icon(
+                                    Icons.favorite_border,
+                                    color: primaryIcon,
+                                  ),
+                          ),
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          mainAxisSize: MainAxisSize.min,
+                          children: <Widget>[
+                            if (!str.isBookable && str.isActive)
+                              Container(
+                                padding: EdgeInsets.all(0),
+                                margin: EdgeInsets.all(0),
+                                width: 50,
+                                height: 40,
+                                child: FlatButton(
+                                  padding: EdgeInsets.all(0),
+                                  color: Colors.white,
+                                  splashColor: highlightColor.withOpacity(.8),
+                                  // shape: RoundedRectangleBorder(
+                                  //     side: BorderSide(
+                                  //         color: Colors.blueGrey[200]),
+                                  //     borderRadius: BorderRadius.all(
+                                  //         Radius.circular(2.0))),
+                                  onPressed: () {
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                SearchChildrenPage(
+                                                    pageName: "Search",
+                                                    childList:
+                                                        str.childEntities,
+                                                    parentName: str.name)));
+                                  },
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: <Widget>[
+                                      Container(
+                                        padding:
+                                            EdgeInsets.fromLTRB(0, 0, 0, 0),
+                                        transform: Matrix4.translationValues(
+                                            8.0, 0, 0),
+                                        child: Icon(
+                                          Icons.arrow_forward_ios,
+                                          color: Colors.cyan[400],
+                                          size: 25,
+                                          // color: Colors.white38,
+                                        ),
+                                      ),
+                                      // Container(
+                                      //   transform: Matrix4.translationValues(
+                                      //       5.0, 0, 0),
+                                      //   child: Icon(
+                                      //     Icons.arrow_forward_ios,
+                                      //     color: Colors.cyan[600],
+                                      //     size: 10,
+                                      //     // color: Colors.white70,
+                                      //   ),
+                                      // ),
+                                      Container(
+                                        padding:
+                                            EdgeInsets.fromLTRB(0, 0, 0, 0),
+                                        transform: Matrix4.translationValues(
+                                            -8.0, 0, 0),
+                                        child: Icon(
+                                          Icons.arrow_forward_ios,
+                                          color: primaryDarkColor,
+                                          size: 25,
+                                          // color: Colors.white,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            if (str.isBookable)
+                              Container(
+                                width: 50,
+                                height: 40,
+                              ),
+                          ],
+                        ),
+                      ]),
                 ],
               ),
             ),
@@ -969,7 +1039,16 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
 
     var dateWidgets = List<Widget>();
     for (var date in _dateList) {
-      isClosed = (daysClosed.contains(date.weekday.toString())) ? true : false;
+      print("Check:${DateFormat('EEEE').format(date)}");
+      daysClosed.forEach((element) {
+        isClosed = (element.toLowerCase() ==
+                DateFormat('EEEE').format(date).toLowerCase())
+            ? true
+            : false;
+      });
+      // isClosed =
+      //     (daysClosed.contains(DateFormat('EEEE').format(date))) ? true : false;
+      print(isClosed);
       dayOfWeek = Utils.getDayOfWeek(date);
       dateWidgets
           .add(buildDateItem(store, sid, sname, isClosed, date, dayOfWeek));
@@ -988,7 +1067,7 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
                   .format(dt)
                   .compareTo(compareDateFormat.format(obj.dateTime)) ==
               0) &&
-          (obj.entityId == sid)) {
+          (obj.entityId == sid && obj.number != -1)) {
         dateBooked = true;
       }
     }
@@ -1007,7 +1086,13 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
               splashColor: isClosed ? null : highlightColor, // splash color
               onTap: () {
                 if (isClosed) {
-                  return null;
+                  Utils.showMyFlushbar(
+                    context,
+                    Icons.info,
+                    Duration(seconds: 5),
+                    "This premise is closed on this day.",
+                    "Select a different date.",
+                  );
                 } else {
                   print("tapped");
 

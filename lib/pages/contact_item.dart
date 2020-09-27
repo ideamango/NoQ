@@ -11,7 +11,7 @@ import 'package:noq/widget/weekday_selector.dart';
 class ContactRow extends StatefulWidget {
   final Entity entity;
   final Employee contact;
-  final List<Widget> list;
+  final List<Employee> list;
   ContactRow(
       {Key key, @required this.contact, @required this.entity, this.list})
       : super(key: key);
@@ -36,7 +36,7 @@ class ContactRowState extends State<ContactRow> {
   bool _initCompleted = false;
   List<days> _closedOnDays;
   Entity _entity;
-  List<Widget> _list;
+  List<Employee> _list;
 
   @override
   void initState() {
@@ -398,10 +398,22 @@ class ContactRowState extends State<ContactRow> {
                           style: buttonMedTextStyle,
                         ),
                         onPressed: () {
+                          String removeThisId;
                           for (int i = 0; i <= _entity.managers.length; i++) {
                             if (_entity.managers[i].id == contact.id) {
-                              _entity.managers.remove(_entity.managers[i]);
+                              removeThisId = contact.id;
+                              print(_entity.managers[i].id);
+                              break;
                             }
+                          }
+                          if (removeThisId != null) {
+                            setState(() {
+                              contact = null;
+                              _entity.managers.removeWhere(
+                                  (element) => element.id == removeThisId);
+                              _list.removeWhere(
+                                  (element) => element.id == removeThisId);
+                            });
                           }
                         })
                   ],
@@ -411,31 +423,6 @@ class ContactRowState extends State<ContactRow> {
           ),
         ],
       ),
-
-      // ListTile(
-      //   title: Column(
-      //     children: <Widget>[
-      //       Text(
-      //         contact.role.toString(),
-      //         //  "Swimming Pool",
-      //         style: TextStyle(color: Colors.blueGrey[700], fontSize: 17),
-      //       ),
-      //       if (contact.perName != null)
-      //         Text(
-      //           contact.perName,
-      //           style: labelTextStyle,
-      //         ),
-      //     ],
-      //   ),
-      //   // backgroundColor: Colors.white,
-      //   leading: Icon(
-      //     Icons.slow_motion_video,
-      //     color: lightIcon,
-      //   ),
-      //   trailing: IconButton(icon: Icon(Icons.arrow_forward), onPressed: () {}
-      //       //showServiceForm
-      //       ),
-      // ),
     );
   }
 }
