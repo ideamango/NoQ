@@ -2135,68 +2135,44 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
                           Row(
-                            //mainAxisAlignment: MainAxisAlignment.center,
-                            mainAxisSize: MainAxisSize.min,
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            //mainAxisSize: MainAxisSize.min,
                             children: <Widget>[
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 mainAxisSize: MainAxisSize.min,
                                 children: <Widget>[
-                                  FlatButton(
-                                      padding: EdgeInsets.all(0),
-                                      child: Row(
-                                        children: <Widget>[
-                                          Text('Public',
-                                              style: TextStyle(fontSize: 12)),
-                                          SizedBox(
-                                            width: MediaQuery.of(context)
-                                                    .size
-                                                    .width *
-                                                .05,
-                                            height: MediaQuery.of(context)
-                                                    .size
-                                                    .height *
-                                                .02,
-                                            child: Icon(
-                                              Icons.info,
-                                              color: Colors.blueGrey[600],
-                                              size: 15,
+                                  Container(
+                                    width:
+                                        MediaQuery.of(context).size.width * .14,
+                                    child: FlatButton(
+                                        visualDensity: VisualDensity.compact,
+                                        padding: EdgeInsets.all(0),
+                                        child: Row(
+                                          children: <Widget>[
+                                            Text('Public',
+                                                style: TextStyle(fontSize: 12)),
+                                            SizedBox(
+                                              width: MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                  .05,
+                                              height: MediaQuery.of(context)
+                                                      .size
+                                                      .height *
+                                                  .02,
+                                              child: Icon(
+                                                Icons.info,
+                                                color: Colors.blueGrey[600],
+                                                size: 15,
+                                              ),
                                             ),
-                                          ),
-                                        ],
-                                      ),
-                                      onPressed: () {
-                                        if (!_isExpanded) {
-                                          setState(() {
-                                            _publicExpandClick = true;
-                                            _isExpanded = true;
-                                            _margin =
-                                                EdgeInsets.fromLTRB(0, 0, 0, 8);
-                                            _width = MediaQuery.of(context)
-                                                    .size
-                                                    .width *
-                                                .9;
-                                            _text = Text(
-                                              publicInfo,
-                                              textAlign: TextAlign.center,
-                                            );
-
-                                            _height = 30;
-                                          });
-                                        } else {
-                                          //if bookable info is being shown
-                                          if (_publicExpandClick) {
-                                            setState(() {
-                                              _width = 0;
-                                              _height = 0;
-                                              _isExpanded = false;
-                                              _publicExpandClick = false;
-                                            });
-                                          } else {
+                                          ],
+                                        ),
+                                        onPressed: () {
+                                          if (!_isExpanded) {
                                             setState(() {
                                               _publicExpandClick = true;
-                                              _activeExpandClick = false;
-                                              _bookExpandClick = false;
                                               _isExpanded = true;
                                               _margin = EdgeInsets.fromLTRB(
                                                   0, 0, 0, 8);
@@ -2211,18 +2187,49 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
 
                                               _height = 30;
                                             });
+                                          } else {
+                                            //if bookable info is being shown
+                                            if (_publicExpandClick) {
+                                              setState(() {
+                                                _width = 0;
+                                                _height = 0;
+                                                _isExpanded = false;
+                                                _publicExpandClick = false;
+                                              });
+                                            } else {
+                                              setState(() {
+                                                _publicExpandClick = true;
+                                                _activeExpandClick = false;
+                                                _bookExpandClick = false;
+                                                _isExpanded = true;
+                                                _margin = EdgeInsets.fromLTRB(
+                                                    0, 0, 0, 8);
+                                                _width = MediaQuery.of(context)
+                                                        .size
+                                                        .width *
+                                                    .9;
+                                                _text = Text(
+                                                  publicInfo,
+                                                  textAlign: TextAlign.center,
+                                                );
+
+                                                _height = 30;
+                                              });
+                                            }
                                           }
-                                        }
-                                      }),
+                                        }),
+                                  ),
                                   SizedBox(
-                                    height:
-                                        MediaQuery.of(context).size.width * .15,
+                                    height: MediaQuery.of(context).size.height *
+                                        .08,
                                     width:
-                                        MediaQuery.of(context).size.width * .15,
+                                        MediaQuery.of(context).size.width * .13,
                                     child: Transform.scale(
                                       scale: 0.7,
                                       alignment: Alignment.centerLeft,
                                       child: Switch(
+                                        materialTapTargetSize:
+                                            MaterialTapTargetSize.shrinkWrap,
                                         value: isPublic,
                                         onChanged: (value) {
                                           setState(() {
@@ -2266,6 +2273,7 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
                                 mainAxisSize: MainAxisSize.min,
                                 children: <Widget>[
                                   FlatButton(
+                                      visualDensity: VisualDensity.compact,
                                       padding: EdgeInsets.all(0),
                                       child: Row(children: <Widget>[
                                         Text('Bookable',
@@ -2333,13 +2341,14 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
                                           }
                                         }
                                       }),
-                                  Container(
-                                    padding: EdgeInsets.all(0),
-                                    margin: EdgeInsets.all(0),
+                                  SizedBox(
+                                    height: MediaQuery.of(context).size.height *
+                                        .08,
                                     width:
-                                        MediaQuery.of(context).size.width * .15,
+                                        MediaQuery.of(context).size.width * .13,
                                     child: Transform.scale(
                                       scale: 0.7,
+                                      alignment: Alignment.centerLeft,
                                       child: Switch(
                                         materialTapTargetSize:
                                             MaterialTapTargetSize.shrinkWrap,
@@ -2368,10 +2377,13 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 mainAxisSize: MainAxisSize.min,
                                 children: <Widget>[
-                                  FlatButton(
-                                    padding: EdgeInsets.all(0),
-                                    child: Row(
-                                      children: <Widget>[
+                                  Container(
+                                    width:
+                                        MediaQuery.of(context).size.width * .14,
+                                    child: FlatButton(
+                                      visualDensity: VisualDensity.compact,
+                                      padding: EdgeInsets.all(0),
+                                      child: Row(children: <Widget>[
                                         Text('Active',
                                             style: TextStyle(fontSize: 12)),
                                         SizedBox(
@@ -2387,40 +2399,11 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
                                               color: Colors.blueGrey[600],
                                               size: 15),
                                         ),
-                                      ],
-                                    ),
-                                    onPressed: () {
-                                      if (!_isExpanded) {
-                                        setState(() {
-                                          _activeExpandClick = true;
-                                          _isExpanded = true;
-                                          _margin =
-                                              EdgeInsets.fromLTRB(0, 0, 0, 8);
-                                          _width = MediaQuery.of(context)
-                                                  .size
-                                                  .width *
-                                              .9;
-                                          _text = Text(
-                                            activeInfo,
-                                            textAlign: TextAlign.center,
-                                          );
-
-                                          _height = 30;
-                                        });
-                                      } else {
-                                        //if bookable info is being shown
-                                        if (_activeExpandClick) {
+                                      ]),
+                                      onPressed: () {
+                                        if (!_isExpanded) {
                                           setState(() {
-                                            _width = 0;
-                                            _height = 0;
-                                            _isExpanded = false;
-                                            _activeExpandClick = false;
-                                          });
-                                        } else {
-                                          setState(() {
-                                            _publicExpandClick = false;
                                             _activeExpandClick = true;
-                                            _bookExpandClick = false;
                                             _isExpanded = true;
                                             _margin =
                                                 EdgeInsets.fromLTRB(0, 0, 0, 8);
@@ -2435,18 +2418,50 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
 
                                             _height = 30;
                                           });
+                                        } else {
+                                          //if bookable info is being shown
+                                          if (_activeExpandClick) {
+                                            setState(() {
+                                              _width = 0;
+                                              _height = 0;
+                                              _isExpanded = false;
+                                              _activeExpandClick = false;
+                                            });
+                                          } else {
+                                            setState(() {
+                                              _publicExpandClick = false;
+                                              _activeExpandClick = true;
+                                              _bookExpandClick = false;
+                                              _isExpanded = true;
+                                              _margin = EdgeInsets.fromLTRB(
+                                                  0, 0, 0, 8);
+                                              _width = MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                  .9;
+                                              _text = Text(
+                                                activeInfo,
+                                                textAlign: TextAlign.center,
+                                              );
+
+                                              _height = 30;
+                                            });
+                                          }
                                         }
-                                      }
-                                    },
+                                      },
+                                    ),
                                   ),
-                                  Container(
-                                    padding: EdgeInsets.all(0),
-                                    margin: EdgeInsets.all(0),
+                                  SizedBox(
+                                    height: MediaQuery.of(context).size.height *
+                                        .08,
                                     width:
-                                        MediaQuery.of(context).size.width * .15,
+                                        MediaQuery.of(context).size.width * .13,
                                     child: Transform.scale(
                                       scale: 0.7,
+                                      alignment: Alignment.centerLeft,
                                       child: Switch(
+                                        materialTapTargetSize:
+                                            MaterialTapTargetSize.shrinkWrap,
                                         value: isActive,
                                         onChanged: (value) {
                                           setState(() {
