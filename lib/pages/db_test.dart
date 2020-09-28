@@ -768,7 +768,9 @@ class DBTest {
         isBookable: false,
         isActive: true,
         coordinates: geoPoint,
-        phone: "+919611009823");
+        phone: "+919611009823",
+        whatsapp: "+919611009823",
+        verificationStatus: "Verified");
 
     try {
       await EntityService()
