@@ -98,7 +98,7 @@ class _SearchChildrenPageState extends State<SearchChildrenPage> {
     String adr = (address.address != null ? (address.address + ', ') : "") +
         (address.locality != null ? (address.locality + ', ') : "") +
         (address.landmark != null ? (address.landmark + ', ') : "") +
-        (address.city != null ? (address.city + ', ') : "");
+        (address.city != null ? (address.city) : "");
     return adr;
   }
 
@@ -156,7 +156,7 @@ class _SearchChildrenPageState extends State<SearchChildrenPage> {
     _dateList.clear();
     _dateList.add(dateTime);
     DateTime dt = DateTime.now();
-    for (int i = 1; i <= 4; i++) {
+    for (int i = 1; i <= 6; i++) {
       print(i);
       _dateList.add(dt.add(Duration(days: i)));
       print('dateLIst is $_dateList');
@@ -567,413 +567,455 @@ class _SearchChildrenPageState extends State<SearchChildrenPage> {
       },
       child: Card(
         elevation: 10,
-        child: new Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        child: Column(
           children: <Widget>[
-            Container(
-              width: MediaQuery.of(context).size.width * .1,
-              child: Column(
-                children: <Widget>[
-                  new Container(
-                    margin: EdgeInsets.fromLTRB(
-                        MediaQuery.of(context).size.width * .01,
-                        MediaQuery.of(context).size.width * .01,
-                        MediaQuery.of(context).size.width * .005,
-                        MediaQuery.of(context).size.width * .005),
-                    padding:
-                        EdgeInsets.all(MediaQuery.of(context).size.width * .01),
-                    alignment: Alignment.topCenter,
-                    decoration: ShapeDecoration(
-                      shape: CircleBorder(),
-                      color: primaryIcon,
-                    ),
-                    child: Icon(
-                      Icons.shopping_cart,
-                      color: Colors.white,
-                      size: 20,
-                    ),
-                  )
-                ],
-              ),
-            ),
-            Container(
-              width: MediaQuery.of(context).size.width * .8,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  Container(
-                    width: MediaQuery.of(context).size.width * .8,
-                    // padding: EdgeInsets.fromLTRB(0, 5, 5, 5),
-                    child: Padding(
-                      padding: const EdgeInsets.fromLTRB(0, 5, 0, 3),
-                      child: Row(
-                        // mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        // crossAxisAlignment: CrossAxisAlignment.center,
-                        children: <Widget>[
-                          Text(
-                            (str.name) ?? str.name.toString(),
-                          ),
-                          IconButton(
-                            padding: EdgeInsets.fromLTRB(1, 1, 1, 1),
-                            constraints:
-                                BoxConstraints(maxHeight: 14, maxWidth: 12),
-                            icon: Icon(
-                              Icons.lock,
-                              color: primaryIcon,
-                              size: 12,
-                            ),
-                            onPressed: () {
-                              Utils.showMyFlushbar(
-                                  context,
-                                  Icons.info,
-                                  Duration(seconds: 5),
-                                  "Access to this place is restricted to its residents or employees.",
-                                  "");
-                            },
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  // SizedBox(
-                  //   width: MediaQuery.of(context).size.width * .4,
-                  //   child: Divider(
-                  //     thickness: 1.0,
-                  //     color: Colors.teal,
-                  //     height: 5,
-                  //   ),
-                  // ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.center,
+            new Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                Container(
+                  width: MediaQuery.of(context).size.width * .1,
+                  child: Column(
                     children: <Widget>[
-                      Container(
-                        width: MediaQuery.of(context).size.width * .67,
-                        child: Text(
-                          (str.address != null)
-                              ? getFormattedAddress(str.address)
-                              : "Address",
-                          overflow: TextOverflow.ellipsis,
-                          style: textInputTextStyle,
+                      new Container(
+                        margin: EdgeInsets.fromLTRB(
+                            MediaQuery.of(context).size.width * .01,
+                            MediaQuery.of(context).size.width * .01,
+                            MediaQuery.of(context).size.width * .005,
+                            MediaQuery.of(context).size.width * .005),
+                        padding: EdgeInsets.all(
+                            MediaQuery.of(context).size.width * .01),
+                        alignment: Alignment.topCenter,
+                        decoration: ShapeDecoration(
+                          shape: CircleBorder(),
+                          color: primaryIcon,
                         ),
-                      ),
+                        child: Icon(
+                          Icons.shopping_cart,
+                          color: Colors.white,
+                          size: 20,
+                        ),
+                      )
                     ],
                   ),
-                  Container(
-                      width: MediaQuery.of(context).size.width * .68,
-                      //padding: EdgeInsets.fromLTRB(0, 5, 5, 5),
-                      child: Row(
+                ),
+                Container(
+                  width: MediaQuery.of(context).size.width * .8,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: <Widget>[
-                          if (str.childEntities.length == 0)
-                            Row(
-                              children: _buildDateGridItems(
-                                  str, str.entityId, str.name, str.closedOn),
-                            ),
-                        ],
-                      )),
-                  Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: [
-                        Row(
-                          //mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            //Icon(Icons.play_circle_filled, color: Colors.blueGrey[300]),
-                            Text('Opens at:', style: labelTextStyle),
-                            Text(
-                                Utils.formatTime(str.startTimeHour.toString()) +
-                                    ':' +
-                                    Utils.formatTime(
-                                        str.startTimeMinute.toString()),
-                                style: labelSmlTextStyle),
-                          ],
-                        ),
-                        Container(
-                            width: MediaQuery.of(context).size.width * .02,
-                            child: Text('')),
-                        Row(
-                          children: [
-                            //Icon(Icons.pause_circle_filled, color: Colors.blueGrey[300]),
-                            Text('Closes at:', style: labelTextStyle),
-                            Text(
-                                Utils.formatTime(str.endTimeHour.toString()) +
-                                    ':' +
-                                    Utils.formatTime(
-                                        str.endTimeMinute.toString()),
-                                style: labelSmlTextStyle),
-                          ],
-                        ),
-                      ]),
-                  SizedBox(height: 3),
-                  new Divider(
-                    color: Colors.blueGrey[500],
-                    height: 2,
-                    indent: 0,
-                    endIndent: 10,
-                  ),
-                  Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: <Widget>[
-                        SizedBox(width: 5),
-                        Container(
-                          //   padding: EdgeInsets.all(3),
-                          margin: EdgeInsets.all(1),
-                          height: 35.0,
-                          width: 35.0,
-                          child: RaisedButton(
-                            padding: EdgeInsets.all(5),
-                            // alignment: Alignment.center,
-                            shape: RoundedRectangleBorder(
-                                side: BorderSide(color: Colors.blueGrey[200]),
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(5.0))),
-                            color: Colors.white,
-                            splashColor: highlightColor,
-                            child: ImageIcon(
-                              AssetImage('assets/whatsapp.png'),
-                              size: 35,
-                              color: primaryDarkColor,
-                            ),
-                            onPressed: () {
-                              if (str.whatsapp != null && str.whatsapp != "") {
-                                try {
-                                  launchWhatsApp(
-                                      message: whatsappMessage,
-                                      phone: str.whatsapp);
-                                } catch (error) {
-                                  Utils.showMyFlushbar(
-                                      context,
-                                      Icons.error,
-                                      Duration(seconds: 5),
-                                      "Could not connect to the Whatsapp number ${str.whatsapp} !!",
-                                      "Try again later");
-                                }
-                              } else {
-                                Utils.showMyFlushbar(
-                                    context,
-                                    Icons.info,
-                                    Duration(seconds: 5),
-                                    "Whatsapp contact information not found!!",
-                                    "");
-                              }
-                              // callPhone('+919611009823');
-                              //callPhone(str.);
-                            },
-                          ),
-                        ),
-                        // SizedBox(width: 1),
-                        Container(
-                          margin: EdgeInsets.all(1),
-                          height: 35.0,
-                          width: 35.0,
-                          child: RaisedButton(
-                            padding: EdgeInsets.fromLTRB(2, 3, 2, 3),
-                            shape: RoundedRectangleBorder(
-                                side: BorderSide(color: Colors.blueGrey[200]),
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(5.0))),
-                            color: Colors.white,
-                            splashColor: highlightColor,
-                            child: Icon(
-                              Icons.phone,
-                              color: primaryDarkColor,
-                              size: 28,
-                            ),
-                            onPressed: () {
-                              // callPhone('+919611009823');
-                              //TODO: Change this phone number later
-
-                              if (str.phone != null) {
-                                try {
-                                  callPhone(str.phone);
-                                } catch (error) {
-                                  Utils.showMyFlushbar(
-                                      context,
-                                      Icons.error,
-                                      Duration(seconds: 5),
-                                      "Could not connect call to the number ${str.phone} !!",
-                                      "Try again later.");
-                                }
-                              } else {
-                                Utils.showMyFlushbar(
-                                    context,
-                                    Icons.info,
-                                    Duration(seconds: 5),
-                                    "Contact information not found!!",
-                                    "");
-                              }
-                            },
-                          ),
-                        ),
-
-                        Container(
-                          // padding: EdgeInsets.fromLTRB(0, 0, 0, 5),
-                          margin: EdgeInsets.all(1),
-                          height: 35.0,
-                          width: 35.0,
-                          child: RaisedButton(
-                              padding: EdgeInsets.fromLTRB(2, 3, 2, 3),
-                              shape: RoundedRectangleBorder(
-                                  side: BorderSide(color: Colors.blueGrey[200]),
-                                  borderRadius:
-                                      BorderRadius.all(Radius.circular(5.0))),
-                              color: Colors.white,
-                              splashColor: highlightColor,
-                              child: Icon(
-                                Icons.location_on,
-                                color: primaryDarkColor,
-                                size: 30,
+                          Row(
+                            // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            // crossAxisAlignment: CrossAxisAlignment.center,
+                            children: <Widget>[
+                              Text(
+                                (str.name) ?? str.name.toString(),
+                                style: TextStyle(fontSize: 17),
                               ),
-                              onPressed: () {
-                                try {
-                                  launchURL(
-                                      str.name,
-                                      getFormattedAddress(str.address),
-                                      str.coordinates.geopoint.latitude,
-                                      str.coordinates.geopoint.longitude);
-                                } catch (error) {
-                                  Utils.showMyFlushbar(
-                                      context,
-                                      Icons.error,
-                                      Duration(seconds: 5),
-                                      "Could not open Maps!!",
-                                      "Try again later.");
-                                }
-                              }),
-                        ),
-
-                        Container(
-                            margin: EdgeInsets.all(1),
-                            height: 35.0,
-                            width: 35.0,
-                            child: RaisedButton(
-                              padding: EdgeInsets.fromLTRB(2, 3, 2, 3),
-                              shape: RoundedRectangleBorder(
-                                  side: BorderSide(color: Colors.blueGrey[200]),
-                                  borderRadius:
-                                      BorderRadius.all(Radius.circular(5.0))),
-                              color: Colors.white,
-                              splashColor: highlightColor,
-                              child: Icon(
-                                Icons.share,
-                                color: primaryDarkColor,
-                                size: 30,
-                              ),
-                              onPressed: () {
-                                generateLinkAndShareWithParams(str.entityId);
-                              },
-                            )),
-                        Container(
-                          //  padding: EdgeInsets.all(5),
-                          // margin: EdgeInsets.all(5),
-                          margin: EdgeInsets.all(1),
-                          height: 35.0,
-                          width: 35.0,
-                          child: RaisedButton(
-                            padding: EdgeInsets.fromLTRB(2, 3, 2, 3),
-                            shape: RoundedRectangleBorder(
-                                side: BorderSide(color: Colors.blueGrey[200]),
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(5.0))),
-                            color: Colors.white,
-                            splashColor: highlightColor,
-                            onPressed: () => toggleFavorite(str),
-                            highlightColor: Colors.orange[300],
-                            child: isFavourite(str.getMetaEntity())
-                                ? Icon(
-                                    Icons.favorite,
-                                    color: Colors.red[800],
-                                  )
-                                : Icon(
-                                    Icons.favorite_border,
-                                    color: primaryIcon,
-                                  ),
-                          ),
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          mainAxisSize: MainAxisSize.min,
-                          children: <Widget>[
-                            if (!str.isBookable && str.isActive)
                               Container(
-                                padding: EdgeInsets.all(0),
-                                margin: EdgeInsets.all(0),
-                                width: 50,
-                                height: 40,
-                                child: FlatButton(
-                                  padding: EdgeInsets.all(0),
-                                  color: Colors.white,
-                                  splashColor: highlightColor.withOpacity(.8),
-                                  // shape: RoundedRectangleBorder(
-                                  //     side: BorderSide(
-                                  //         color: Colors.blueGrey[200]),
-                                  //     borderRadius: BorderRadius.all(
-                                  //         Radius.circular(2.0))),
-                                  onPressed: () {
-                                    Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) =>
-                                                SearchChildrenPage(
-                                                    pageName: "Favs",
-                                                    childList:
-                                                        str.childEntities,
-                                                    parentName: str.name)));
-                                  },
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: <Widget>[
-                                      Container(
-                                        padding:
-                                            EdgeInsets.fromLTRB(0, 0, 0, 0),
-                                        transform: Matrix4.translationValues(
-                                            8.0, 0, 0),
-                                        child: Icon(
-                                          Icons.arrow_forward_ios,
-                                          color: Colors.cyan[400],
-                                          size: 25,
-                                          // color: Colors.white38,
-                                        ),
-                                      ),
-                                      // Container(
-                                      //   transform: Matrix4.translationValues(
-                                      //       5.0, 0, 0),
-                                      //   child: Icon(
-                                      //     Icons.arrow_forward_ios,
-                                      //     color: Colors.cyan[600],
-                                      //     size: 10,
-                                      //     // color: Colors.white70,
-                                      //   ),
-                                      // ),
-                                      Container(
-                                        padding:
-                                            EdgeInsets.fromLTRB(0, 0, 0, 0),
-                                        transform: Matrix4.translationValues(
-                                            -8.0, 0, 0),
-                                        child: Icon(
-                                          Icons.arrow_forward_ios,
-                                          color: primaryDarkColor,
-                                          size: 25,
-                                          // color: Colors.white,
-                                        ),
-                                      ),
-                                    ],
+                                width: MediaQuery.of(context).size.width * .06,
+                                height:
+                                    MediaQuery.of(context).size.height * .03,
+                                child: IconButton(
+                                  padding: EdgeInsets.fromLTRB(1, 1, 1, 2),
+                                  icon: Icon(
+                                    Icons.lock,
+                                    color: primaryIcon,
+                                    size: 15,
                                   ),
+                                  onPressed: () {
+                                    Utils.showMyFlushbar(
+                                        context,
+                                        Icons.info,
+                                        Duration(seconds: 5),
+                                        "Access to this place is restricted to its residents or employees.",
+                                        "");
+                                  },
                                 ),
                               ),
-                            if (str.isBookable)
-                              Container(
-                                width: 50,
-                                height: 40,
-                              ),
-                          ],
+                            ],
+                          ),
+                          Row(
+                            children: <Widget>[
+                              Text(
+                                  Utils.formatTime(
+                                          str.startTimeHour.toString()) +
+                                      ':' +
+                                      Utils.formatTime(
+                                          str.startTimeMinute.toString()),
+                                  style: TextStyle(
+                                      color: Colors.green[600],
+                                      fontFamily: 'Monsterrat',
+                                      letterSpacing: 0.5,
+                                      fontSize: 13.0)),
+                              Text(' - '),
+                              Text(
+                                  Utils.formatTime(str.endTimeHour.toString()) +
+                                      ':' +
+                                      Utils.formatTime(
+                                          str.endTimeMinute.toString()),
+                                  style: TextStyle(
+                                      color: Colors.red[900],
+                                      fontFamily: 'Monsterrat',
+                                      letterSpacing: 0.5,
+                                      fontSize: 13.0)),
+                            ],
+                          ),
+                        ],
+                      ),
+
+                      // SizedBox(
+                      //   width: MediaQuery.of(context).size.width * .4,
+                      //   child: Divider(
+                      //     thickness: 1.0,
+                      //     color: Colors.teal,
+                      //     height: 5,
+                      //   ),
+                      // ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: <Widget>[
+                          Container(
+                            width: MediaQuery.of(context).size.width * .67,
+                            child: Text(
+                              (str.address != null)
+                                  ? getFormattedAddress(str.address)
+                                  : "Address",
+                              overflow: TextOverflow.ellipsis,
+                              style: labelSmlTextStyle,
+                            ),
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: 5),
+                      Container(
+                          width: MediaQuery.of(context).size.width * .68,
+                          //padding: EdgeInsets.fromLTRB(0, 5, 5, 5),
+                          child: Row(
+                            children: <Widget>[
+                              if (str.childEntities.length == 0)
+                                Row(
+                                  children: _buildDateGridItems(str,
+                                      str.entityId, str.name, str.closedOn),
+                                ),
+                            ],
+                          )),
+                      SizedBox(height: 5),
+                      // Row(
+                      //     mainAxisAlignment: MainAxisAlignment.start,
+                      //     crossAxisAlignment: CrossAxisAlignment.end,
+                      //     children: [
+                      //       Row(
+                      //         //mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      //         children: [
+                      //           //Icon(Icons.play_circle_filled, color: Colors.blueGrey[300]),
+                      //           Text('Opens at:', style: labelTextStyle),
+                      //           Text(
+                      //               Utils.formatTime(
+                      //                       str.startTimeHour.toString()) +
+                      //                   ':' +
+                      //                   Utils.formatTime(
+                      //                       str.startTimeMinute.toString()),
+                      //               style: labelSmlTextStyle),
+                      //         ],
+                      //       ),
+                      //       // Container(
+                      //       //     width: MediaQuery.of(context).size.width * .02,
+                      //       //     child: Text('')),
+                      //       // Row(
+                      //       //   children: [
+                      //       //     //Icon(Icons.pause_circle_filled, color: Colors.blueGrey[300]),
+                      //       //     Text('Closes at:', style: labelTextStyle),
+                      //       //     Text(
+                      //       //         Utils.formatTime(
+                      //       //                 str.endTimeHour.toString()) +
+                      //       //             ':' +
+                      //       //             Utils.formatTime(
+                      //       //                 str.endTimeMinute.toString()),
+                      //       //         style: labelSmlTextStyle),
+                      //       //   ],
+                      //       // ),
+                      //     ]),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            SizedBox(height: 3),
+            new Divider(
+              color: Colors.blueGrey[500],
+              height: 2,
+              indent: 0,
+              endIndent: 0,
+            ),
+            Container(
+              padding: EdgeInsets.all(3),
+              //color: Colors.grey[200],
+              child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: <Widget>[
+                    SizedBox(width: 5),
+                    Container(
+                      padding: EdgeInsets.all(0),
+                      margin: EdgeInsets.all(0),
+                      height: 35.0,
+                      width: 45.0,
+                      child: RaisedButton(
+                        elevation: 5,
+                        padding: EdgeInsets.all(5),
+                        // alignment: Alignment.center,
+                        shape: RoundedRectangleBorder(
+                            side: BorderSide(color: Colors.blueGrey[200]),
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(5.0))),
+                        color: Colors.white,
+                        splashColor: highlightColor,
+                        child: ImageIcon(
+                          AssetImage('assets/whatsapp.png'),
+                          size: 30,
+                          color: primaryDarkColor,
                         ),
-                      ]),
-                ],
-              ),
+                        onPressed: () {
+                          if (str.whatsapp != null && str.whatsapp != "") {
+                            try {
+                              launchWhatsApp(
+                                  message: whatsappMessage,
+                                  phone: str.whatsapp);
+                            } catch (error) {
+                              Utils.showMyFlushbar(
+                                  context,
+                                  Icons.error,
+                                  Duration(seconds: 5),
+                                  "Could not connect to the Whatsapp number ${str.whatsapp} !!",
+                                  "Try again later");
+                            }
+                          } else {
+                            Utils.showMyFlushbar(
+                                context,
+                                Icons.info,
+                                Duration(seconds: 5),
+                                "Whatsapp contact information not found!!",
+                                "");
+                          }
+                          // callPhone('+919611009823');
+                          //callPhone(str.);
+                        },
+                      ),
+                    ),
+                    // SizedBox(width: 1),
+                    Container(
+                      padding: EdgeInsets.all(0),
+                      margin: EdgeInsets.all(0),
+                      height: 35.0,
+                      width: 45.0,
+                      child: RaisedButton(
+                        elevation: 5,
+                        padding: EdgeInsets.fromLTRB(2, 3, 2, 3),
+                        shape: RoundedRectangleBorder(
+                            side: BorderSide(color: Colors.blueGrey[200]),
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(5.0))),
+                        color: Colors.white,
+                        splashColor: highlightColor,
+                        child: Icon(
+                          Icons.phone,
+                          color: primaryDarkColor,
+                          size: 25,
+                        ),
+                        onPressed: () {
+                          // callPhone('+919611009823');
+                          //TODO: Change this phone number later
+
+                          if (str.phone != null) {
+                            try {
+                              callPhone(str.phone);
+                            } catch (error) {
+                              Utils.showMyFlushbar(
+                                  context,
+                                  Icons.error,
+                                  Duration(seconds: 5),
+                                  "Could not connect call to the number ${str.phone} !!",
+                                  "Try again later.");
+                            }
+                          } else {
+                            Utils.showMyFlushbar(
+                                context,
+                                Icons.info,
+                                Duration(seconds: 5),
+                                "Contact information not found!!",
+                                "");
+                          }
+                        },
+                      ),
+                    ),
+
+                    Container(
+                      padding: EdgeInsets.all(0),
+                      margin: EdgeInsets.all(0),
+                      height: 35.0,
+                      width: 45.0,
+                      child: RaisedButton(
+                          elevation: 5,
+                          padding: EdgeInsets.fromLTRB(2, 3, 2, 3),
+                          shape: RoundedRectangleBorder(
+                              side: BorderSide(color: Colors.blueGrey[200]),
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(5.0))),
+                          color: Colors.white,
+                          splashColor: highlightColor,
+                          child: Icon(
+                            Icons.location_on,
+                            color: primaryDarkColor,
+                            size: 25,
+                          ),
+                          onPressed: () {
+                            try {
+                              launchURL(
+                                  str.name,
+                                  getFormattedAddress(str.address),
+                                  str.coordinates.geopoint.latitude,
+                                  str.coordinates.geopoint.longitude);
+                            } catch (error) {
+                              Utils.showMyFlushbar(
+                                  context,
+                                  Icons.error,
+                                  Duration(seconds: 5),
+                                  "Could not open Maps!!",
+                                  "Try again later.");
+                            }
+                          }),
+                    ),
+
+                    Container(
+                        padding: EdgeInsets.all(0),
+                        margin: EdgeInsets.all(0),
+                        height: 35.0,
+                        width: 45.0,
+                        child: RaisedButton(
+                          elevation: 5,
+                          padding: EdgeInsets.fromLTRB(2, 3, 2, 3),
+                          shape: RoundedRectangleBorder(
+                              side: BorderSide(color: Colors.blueGrey[200]),
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(5.0))),
+                          color: Colors.white,
+                          splashColor: highlightColor,
+                          child: Icon(
+                            Icons.share,
+                            color: primaryDarkColor,
+                            size: 25,
+                          ),
+                          onPressed: () {
+                            generateLinkAndShareWithParams(str.entityId);
+                          },
+                        )),
+                    Container(
+                      padding: EdgeInsets.all(0),
+                      margin: EdgeInsets.all(0),
+                      height: 35.0,
+                      width: 45.0,
+                      child: RaisedButton(
+                        elevation: 5,
+                        padding: EdgeInsets.fromLTRB(2, 3, 2, 3),
+                        shape: RoundedRectangleBorder(
+                            side: BorderSide(color: Colors.blueGrey[200]),
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(5.0))),
+                        color: Colors.white,
+                        splashColor: highlightColor,
+                        onPressed: () => toggleFavorite(str),
+                        highlightColor: Colors.orange[300],
+                        child: isFavourite(str.getMetaEntity())
+                            ? Icon(Icons.favorite,
+                                color: Colors.red[800], size: 25)
+                            : Icon(
+                                Icons.favorite_border,
+                                color: primaryIcon,
+                              ),
+                      ),
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
+                      children: <Widget>[
+                        if (!str.isBookable && str.isActive)
+                          Container(
+                            padding: EdgeInsets.all(0),
+                            margin: EdgeInsets.all(0),
+                            width: 50,
+                            height: 40,
+                            child: FlatButton(
+                              padding: EdgeInsets.all(0),
+                              color: Colors.white,
+                              splashColor: highlightColor.withOpacity(.8),
+                              // shape: RoundedRectangleBorder(
+                              //     side: BorderSide(
+                              //         color: Colors.blueGrey[200]),
+                              //     borderRadius: BorderRadius.all(
+                              //         Radius.circular(2.0))),
+                              onPressed: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            SearchChildrenPage(
+                                                pageName: "Favs",
+                                                childList: str.childEntities,
+                                                parentName: str.name)));
+                              },
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: <Widget>[
+                                  Container(
+                                    padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
+                                    transform:
+                                        Matrix4.translationValues(8.0, 0, 0),
+                                    child: Icon(
+                                      Icons.arrow_forward_ios,
+                                      color: Colors.cyan[400],
+                                      size: 25,
+                                      // color: Colors.white38,
+                                    ),
+                                  ),
+                                  // Container(
+                                  //   transform: Matrix4.translationValues(
+                                  //       5.0, 0, 0),
+                                  //   child: Icon(
+                                  //     Icons.arrow_forward_ios,
+                                  //     color: Colors.cyan[600],
+                                  //     size: 10,
+                                  //     // color: Colors.white70,
+                                  //   ),
+                                  // ),
+                                  Container(
+                                    padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
+                                    transform:
+                                        Matrix4.translationValues(-8.0, 0, 0),
+                                    child: Icon(
+                                      Icons.arrow_forward_ios,
+                                      color: primaryDarkColor,
+                                      size: 25,
+                                      // color: Colors.white,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        if (str.isBookable)
+                          Container(
+                            width: 50,
+                            height: 40,
+                          ),
+                      ],
+                    ),
+                  ]),
             ),
           ],
         ),
