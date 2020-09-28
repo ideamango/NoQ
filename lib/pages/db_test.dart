@@ -203,7 +203,7 @@ class DBTest {
         name: "Habinaro",
         address: adrs,
         advanceDays: 3,
-        isPublic: true,
+        isPublic: false,
         //geo: geoPoint,
         maxAllowed: 3,
         slotDuration: 60,
@@ -220,7 +220,8 @@ class DBTest {
         type: "Store",
         isBookable: false,
         isActive: true,
-        coordinates: geoPoint);
+        coordinates: geoPoint,
+        verificationStatus: "Verified");
 
     // Employee manager1 = new Employee(name: "Rakesh", ph: "+91888888888", employeeId: "empyId", shiftStartHour: );
 
