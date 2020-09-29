@@ -660,17 +660,23 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
   }
 
   void _addNewContactRow() {
-    setState(() {
-      Employee contact = new Employee();
-      var uuid = new Uuid();
-      contact.id = uuid.v1();
-      contactList.add(contact);
-      contactRowWidgets.insert(
-          0,
-          new ContactRow(
-              contact: contact, entity: serviceEntity, list: contactList));
-      serviceEntity.managers = contactList;
+    Employee contact = new Employee();
+    var uuid = new Uuid();
+    contact.id = uuid.v1();
+    contactList.add(contact);
 
+    List<Widget> newList = new List<Widget>();
+    for (int i = 0; i < contactList.length; i++) {
+      newList.add(new ContactRow(
+        contact: contactList[i],
+        entity: serviceEntity,
+        list: contactList,
+      ));
+    }
+    setState(() {
+      contactRowWidgets.clear();
+      contactRowWidgets.addAll(newList);
+      serviceEntity.managers = contactList;
       _contactCount = _contactCount + 1;
     });
   }
