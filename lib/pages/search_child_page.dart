@@ -576,6 +576,7 @@ class _SearchChildrenPageState extends State<SearchChildrenPage> {
                 Container(
                   width: MediaQuery.of(context).size.width * .1,
                   child: Column(
+                    mainAxisSize: MainAxisSize.min,
                     children: <Widget>[
                       new Container(
                         margin: EdgeInsets.fromLTRB(
@@ -595,13 +596,16 @@ class _SearchChildrenPageState extends State<SearchChildrenPage> {
                           color: Colors.white,
                           size: 20,
                         ),
-                      )
+                      ),
+                      verticalSpacer,
                     ],
                   ),
                 ),
                 Container(
                   width: MediaQuery.of(context).size.width * .8,
+                  padding: EdgeInsets.all(4),
                   child: Column(
+                    mainAxisSize: MainAxisSize.min,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
@@ -615,28 +619,60 @@ class _SearchChildrenPageState extends State<SearchChildrenPage> {
                               Text(
                                 (str.name) ?? str.name.toString(),
                                 style: TextStyle(fontSize: 17),
+                                overflow: TextOverflow.ellipsis,
                               ),
-                              Container(
-                                width: MediaQuery.of(context).size.width * .06,
-                                height:
-                                    MediaQuery.of(context).size.height * .03,
-                                child: IconButton(
-                                  padding: EdgeInsets.fromLTRB(1, 1, 1, 2),
-                                  icon: Icon(
-                                    Icons.lock,
-                                    color: primaryIcon,
-                                    size: 15,
-                                  ),
-                                  onPressed: () {
-                                    Utils.showMyFlushbar(
-                                        context,
-                                        Icons.info,
-                                        Duration(seconds: 5),
-                                        "Access to this place is restricted to its residents or employees.",
-                                        "");
-                                  },
-                                ),
-                              ),
+                              (str.verificationStatus == "Verified")
+                                  ? new Container(
+                                      width: MediaQuery.of(context).size.width *
+                                          .06,
+                                      height:
+                                          MediaQuery.of(context).size.height *
+                                              .03,
+                                      child: IconButton(
+                                        padding:
+                                            EdgeInsets.fromLTRB(1, 1, 0, 2),
+                                        icon: Icon(
+                                          Icons.verified_user,
+                                          color: Colors.green,
+                                          size: 15,
+                                        ),
+                                        onPressed: () {
+                                          Utils.showMyFlushbar(
+                                              context,
+                                              Icons.info,
+                                              Duration(seconds: 5),
+                                              "Verified",
+                                              "");
+                                        },
+                                      ),
+                                    )
+                                  : Container(),
+                              (str.isPublic != true)
+                                  ? Container(
+                                      width: MediaQuery.of(context).size.width *
+                                          .06,
+                                      height:
+                                          MediaQuery.of(context).size.height *
+                                              .03,
+                                      child: IconButton(
+                                        padding:
+                                            EdgeInsets.fromLTRB(1, 1, 1, 2),
+                                        icon: Icon(
+                                          Icons.lock,
+                                          color: primaryIcon,
+                                          size: 15,
+                                        ),
+                                        onPressed: () {
+                                          Utils.showMyFlushbar(
+                                              context,
+                                              Icons.info,
+                                              Duration(seconds: 5),
+                                              "Access to this place is restricted to its residents or employees.",
+                                              "");
+                                        },
+                                      ),
+                                    )
+                                  : Container(),
                             ],
                           ),
                           Row(
@@ -667,21 +703,12 @@ class _SearchChildrenPageState extends State<SearchChildrenPage> {
                           ),
                         ],
                       ),
-
-                      // SizedBox(
-                      //   width: MediaQuery.of(context).size.width * .4,
-                      //   child: Divider(
-                      //     thickness: 1.0,
-                      //     color: Colors.teal,
-                      //     height: 5,
-                      //   ),
-                      // ),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.start,
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: <Widget>[
                           Container(
-                            width: MediaQuery.of(context).size.width * .67,
+                            width: MediaQuery.of(context).size.width * .78,
                             child: Text(
                               (str.address != null)
                                   ? getFormattedAddress(str.address)
@@ -693,54 +720,18 @@ class _SearchChildrenPageState extends State<SearchChildrenPage> {
                         ],
                       ),
                       SizedBox(height: 5),
-                      Container(
-                          width: MediaQuery.of(context).size.width * .68,
-                          //padding: EdgeInsets.fromLTRB(0, 5, 5, 5),
-                          child: Row(
-                            children: <Widget>[
-                              if (str.childEntities.length == 0)
+                      if (str.isBookable && str.isActive)
+                        Container(
+                            width: MediaQuery.of(context).size.width * .78,
+                            //padding: EdgeInsets.fromLTRB(0, 5, 5, 5),
+                            child: Row(
+                              children: <Widget>[
                                 Row(
                                   children: _buildDateGridItems(str,
                                       str.entityId, str.name, str.closedOn),
                                 ),
-                            ],
-                          )),
-                      SizedBox(height: 5),
-                      // Row(
-                      //     mainAxisAlignment: MainAxisAlignment.start,
-                      //     crossAxisAlignment: CrossAxisAlignment.end,
-                      //     children: [
-                      //       Row(
-                      //         //mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      //         children: [
-                      //           //Icon(Icons.play_circle_filled, color: Colors.blueGrey[300]),
-                      //           Text('Opens at:', style: labelTextStyle),
-                      //           Text(
-                      //               Utils.formatTime(
-                      //                       str.startTimeHour.toString()) +
-                      //                   ':' +
-                      //                   Utils.formatTime(
-                      //                       str.startTimeMinute.toString()),
-                      //               style: labelSmlTextStyle),
-                      //         ],
-                      //       ),
-                      //       // Container(
-                      //       //     width: MediaQuery.of(context).size.width * .02,
-                      //       //     child: Text('')),
-                      //       // Row(
-                      //       //   children: [
-                      //       //     //Icon(Icons.pause_circle_filled, color: Colors.blueGrey[300]),
-                      //       //     Text('Closes at:', style: labelTextStyle),
-                      //       //     Text(
-                      //       //         Utils.formatTime(
-                      //       //                 str.endTimeHour.toString()) +
-                      //       //             ':' +
-                      //       //             Utils.formatTime(
-                      //       //                 str.endTimeMinute.toString()),
-                      //       //         style: labelSmlTextStyle),
-                      //       //   ],
-                      //       // ),
-                      //     ]),
+                              ],
+                            )),
                     ],
                   ),
                 ),
@@ -754,7 +745,7 @@ class _SearchChildrenPageState extends State<SearchChildrenPage> {
               endIndent: 0,
             ),
             Container(
-              padding: EdgeInsets.all(3),
+              padding: EdgeInsets.all(4),
               //color: Colors.grey[200],
               child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -944,7 +935,7 @@ class _SearchChildrenPageState extends State<SearchChildrenPage> {
                       mainAxisAlignment: MainAxisAlignment.start,
                       mainAxisSize: MainAxisSize.min,
                       children: <Widget>[
-                        if (!str.isBookable && str.isActive)
+                        if (str.childEntities.length != 0)
                           Container(
                             padding: EdgeInsets.all(0),
                             margin: EdgeInsets.all(0),
@@ -954,11 +945,6 @@ class _SearchChildrenPageState extends State<SearchChildrenPage> {
                               padding: EdgeInsets.all(0),
                               color: Colors.white,
                               splashColor: highlightColor.withOpacity(.8),
-                              // shape: RoundedRectangleBorder(
-                              //     side: BorderSide(
-                              //         color: Colors.blueGrey[200]),
-                              //     borderRadius: BorderRadius.all(
-                              //         Radius.circular(2.0))),
                               onPressed: () {
                                 Navigator.push(
                                     context,
@@ -1008,9 +994,9 @@ class _SearchChildrenPageState extends State<SearchChildrenPage> {
                               ),
                             ),
                           ),
-                        if (str.isBookable)
+                        if (str.childEntities.length == 0)
                           Container(
-                            width: 50,
+                            width: 40,
                             height: 40,
                           ),
                       ],
