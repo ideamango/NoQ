@@ -2191,7 +2191,7 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
                                           child: Icon(
                                             Icons.info,
                                             color: Colors.blueGrey[600],
-                                            size: 15,
+                                            size: 14,
                                           ),
                                         ),
                                       ],
@@ -3419,6 +3419,8 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
                                               if (_delEnabled) {
                                                 deleteEntity(entity.entityId)
                                                     .whenComplete(() {
+                                                  _gState.removeEntity(
+                                                      entity.entityId);
                                                   Navigator.pop(context);
                                                   Navigator.push(
                                                       context,

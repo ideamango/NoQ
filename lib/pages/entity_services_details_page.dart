@@ -15,12 +15,15 @@ import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:noq/constants.dart';
 import 'package:noq/db/db_service/user_service.dart';
+import 'package:noq/events.dart';
 import 'package:noq/global_state.dart';
+import 'package:noq/observable/EventBus.dart';
 import 'package:noq/pages/contact_item.dart';
 import 'package:noq/pages/entity_services_list_page.dart';
 import 'package:noq/pages/manage_apartment_list_page.dart';
 import 'package:noq/repository/StoreRepository.dart';
 import 'package:noq/repository/local_db_repository.dart';
+import 'package:noq/services/circular_progress.dart';
 import 'package:noq/style.dart';
 import 'package:noq/utils.dart';
 import 'package:noq/widget/bottom_nav_bar.dart';
@@ -166,6 +169,38 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
         });
       });
     });
+    EventBus.registerEvent(MANAGER_REMOVED_EVENT, null, refreshOnManagerRemove);
+  }
+
+  void refreshOnManagerRemove(event, args) {
+    setState(() {
+      //  contactRowWidgets.removeWhere((element) => element)
+      print("Inside remove Manage");
+      contactRowWidgets.clear();
+      contactRowWidgets.add(showCircularProgress());
+    });
+    processRefreshContactsWithTimer();
+  }
+
+  processRefreshContactsWithTimer() async {
+    var duration = new Duration(seconds: 1);
+    return new Timer(duration, refreshContacts);
+  }
+
+  refreshContacts() {
+    List<Widget> newList = new List<Widget>();
+    for (int i = 0; i < contactList.length; i++) {
+      newList.add(new ContactRow(
+        contact: contactList[i],
+        entity: serviceEntity,
+        list: contactList,
+      ));
+    }
+    setState(() {
+      contactRowWidgets.clear();
+      contactRowWidgets.addAll(newList);
+    });
+    serviceEntity.managers = contactList;
   }
 
   Future<void> getGlobalState() async {
@@ -259,7 +294,12 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
         contactList = serviceEntity.managers;
         contactList.forEach((element) {
           contactRowWidgets.insert(
-              0, new ContactRow(contact: element, entity: serviceEntity));
+              0,
+              new ContactRow(
+                contact: element,
+                entity: serviceEntity,
+                list: contactList,
+              ));
         });
       }
       User currUser = await UserService().getCurrentUser();
@@ -624,17 +664,13 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
       Employee contact = new Employee();
       var uuid = new Uuid();
       contact.id = uuid.v1();
+      contactList.add(contact);
       contactRowWidgets.insert(
           0,
           new ContactRow(
               contact: contact, entity: serviceEntity, list: contactList));
-
-      contactList.add(contact);
-      //TODO Smita check the logic for contactList
-
       serviceEntity.managers = contactList;
-      // saveEntityDetails(en);
-      //saveEntityDetails();
+
       _contactCount = _contactCount + 1;
     });
   }
@@ -1777,261 +1813,21 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
                         shape: BoxShape.rectangle,
                         borderRadius: BorderRadius.all(Radius.circular(5.0))),
                     child: Column(
-                      mainAxisSize: MainAxisSize.min,
+                      mainAxisSize: MainAxisSize.max,
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          mainAxisSize: MainAxisSize.min,
                           children: <Widget>[
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              mainAxisSize: MainAxisSize.min,
-                              children: <Widget>[
-                                Container(
-                                  width:
-                                      MediaQuery.of(context).size.width * .15,
-                                  child: FlatButton(
-                                      visualDensity: VisualDensity.compact,
-                                      padding: EdgeInsets.all(0),
-                                      child: Row(
-                                        children: <Widget>[
-                                          Text('Public',
-                                              style: TextStyle(fontSize: 12)),
-                                          SizedBox(
-                                            width: MediaQuery.of(context)
-                                                    .size
-                                                    .width *
-                                                .05,
-                                            height: MediaQuery.of(context)
-                                                    .size
-                                                    .height *
-                                                .02,
-                                            child: Icon(
-                                              Icons.info,
-                                              color: Colors.blueGrey[600],
-                                              size: 15,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                      onPressed: () {
-                                        if (!_isExpanded) {
-                                          setState(() {
-                                            _publicExpandClick = true;
-                                            _isExpanded = true;
-                                            _margin =
-                                                EdgeInsets.fromLTRB(0, 0, 0, 8);
-                                            _width = MediaQuery.of(context)
-                                                    .size
-                                                    .width *
-                                                .9;
-                                            _text = Text(
-                                              publicInfo,
-                                              textAlign: TextAlign.center,
-                                            );
-
-                                            _height = 30;
-                                          });
-                                        } else {
-                                          //if bookable info is being shown
-                                          if (_publicExpandClick) {
-                                            setState(() {
-                                              _width = 0;
-                                              _height = 0;
-                                              _isExpanded = false;
-                                              _publicExpandClick = false;
-                                            });
-                                          } else {
-                                            setState(() {
-                                              _publicExpandClick = true;
-                                              _activeExpandClick = false;
-                                              _bookExpandClick = false;
-                                              _isExpanded = true;
-                                              _margin = EdgeInsets.fromLTRB(
-                                                  0, 0, 0, 8);
-                                              _width = MediaQuery.of(context)
-                                                      .size
-                                                      .width *
-                                                  .9;
-                                              _text = Text(
-                                                publicInfo,
-                                                textAlign: TextAlign.center,
-                                              );
-
-                                              _height = 30;
-                                            });
-                                          }
-                                        }
-                                      }),
-                                ),
-                                SizedBox(
-                                  height:
-                                      MediaQuery.of(context).size.height * .08,
-                                  width:
-                                      MediaQuery.of(context).size.width * .15,
-                                  child: Transform.scale(
-                                    scale: 0.7,
-                                    alignment: Alignment.centerLeft,
-                                    child: Switch(
-                                      materialTapTargetSize:
-                                          MaterialTapTargetSize.shrinkWrap,
-                                      value: isPublic,
-                                      onChanged: (value) {
-                                        setState(() {
-                                          if (value) {
-                                            validateField = true;
-                                            _autoValidate = true;
-                                            bool retVal = validateAllFields();
-                                            if (!retVal) {
-                                              //Show flushbar with info that fields has invalid data
-                                              Utils.showMyFlushbar(
-                                                  context,
-                                                  Icons.info_outline,
-                                                  Duration(
-                                                    seconds: 6,
-                                                  ),
-                                                  "Missing Information!! ",
-                                                  "Making premises PUBLIC requires basic details. Please fill and try again !!");
-                                            } else {
-                                              validateField = false;
-                                              isPublic = value;
-                                              serviceEntity.isPublic = value;
-                                              print(isPublic);
-                                            }
-                                          } else {
-                                            isPublic = value;
-                                            serviceEntity.isPublic = value;
-                                            print(isPublic);
-                                          }
-                                        });
-                                      },
-                                      // activeTrackColor: Colors.green,
-                                      activeColor: highlightColor,
-                                      inactiveThumbColor: Colors.grey[300],
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              mainAxisSize: MainAxisSize.min,
-                              children: <Widget>[
-                                Container(
-                                  width: MediaQuery.of(context).size.width * .2,
-                                  child: FlatButton(
-                                      visualDensity: VisualDensity.compact,
-                                      padding: EdgeInsets.all(0),
-                                      child: Row(children: <Widget>[
-                                        Text('Bookable',
-                                            style: TextStyle(fontSize: 12)),
-                                        SizedBox(
-                                          width: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
-                                              .05,
-                                          height: MediaQuery.of(context)
-                                                  .size
-                                                  .height *
-                                              .02,
-                                          child: Icon(Icons.info,
-                                              color: Colors.blueGrey[600],
-                                              size: 15),
-                                        ),
-                                      ]),
-                                      onPressed: () {
-                                        if (!_isExpanded) {
-                                          setState(() {
-                                            _bookExpandClick = true;
-                                            _isExpanded = true;
-                                            _margin =
-                                                EdgeInsets.fromLTRB(0, 0, 0, 8);
-                                            _width = MediaQuery.of(context)
-                                                    .size
-                                                    .width *
-                                                .9;
-                                            _text = Text(
-                                              bookableInfo,
-                                              textAlign: TextAlign.center,
-                                            );
-
-                                            _height = 30;
-                                          });
-                                        } else {
-                                          //if bookable info is being shown
-                                          if (_bookExpandClick) {
-                                            setState(() {
-                                              _width = 0;
-                                              _height = 0;
-                                              _isExpanded = false;
-                                              _bookExpandClick = false;
-                                            });
-                                          } else {
-                                            setState(() {
-                                              _publicExpandClick = false;
-                                              _activeExpandClick = false;
-                                              _bookExpandClick = true;
-                                              _isExpanded = true;
-                                              _margin = EdgeInsets.fromLTRB(
-                                                  0, 0, 0, 8);
-                                              _width = MediaQuery.of(context)
-                                                      .size
-                                                      .width *
-                                                  .9;
-                                              _text = Text(
-                                                bookableInfo,
-                                                textAlign: TextAlign.center,
-                                              );
-
-                                              _height = 30;
-                                            });
-                                          }
-                                        }
-                                      }),
-                                ),
-                                SizedBox(
-                                  height:
-                                      MediaQuery.of(context).size.height * .08,
-                                  width:
-                                      MediaQuery.of(context).size.width * .15,
-                                  child: Transform.scale(
-                                    scale: 0.7,
-                                    alignment: Alignment.centerLeft,
-                                    child: Switch(
-                                      materialTapTargetSize:
-                                          MaterialTapTargetSize.shrinkWrap,
-                                      value: isBookable,
-                                      onChanged: (value) {
-                                        setState(() {
-                                          isBookable = value;
-                                          serviceEntity.isBookable = value;
-
-                                          if (value) {
-                                            showConfirmationDialog();
-                                            //TODO: SMita - show msg with info, yes/no
-                                          }
-                                          print(isBookable);
-                                        });
-                                      },
-                                      // activeTrackColor: Colors.green,
-                                      activeColor: highlightColor,
-                                      inactiveThumbColor: Colors.grey[300],
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              mainAxisSize: MainAxisSize.min,
-                              children: <Widget>[
-                                Container(
-                                  width:
-                                      MediaQuery.of(context).size.width * .15,
-                                  child: FlatButton(
-                                    visualDensity: VisualDensity.compact,
-                                    padding: EdgeInsets.all(0),
-                                    child: Row(children: <Widget>[
-                                      Text('Active',
+                            Container(
+                              width: MediaQuery.of(context).size.width * .14,
+                              child: FlatButton(
+                                  visualDensity: VisualDensity.compact,
+                                  padding: EdgeInsets.all(0),
+                                  child: Row(
+                                    children: <Widget>[
+                                      Text('Public',
                                           style: TextStyle(fontSize: 12)),
                                       SizedBox(
                                         width:
@@ -2040,15 +1836,45 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
                                         height:
                                             MediaQuery.of(context).size.height *
                                                 .02,
-                                        child: Icon(Icons.info,
-                                            color: Colors.blueGrey[600],
-                                            size: 15),
+                                        child: Icon(
+                                          Icons.info,
+                                          color: Colors.blueGrey[600],
+                                          size: 15,
+                                        ),
                                       ),
-                                    ]),
-                                    onPressed: () {
-                                      if (!_isExpanded) {
+                                    ],
+                                  ),
+                                  onPressed: () {
+                                    if (!_isExpanded) {
+                                      setState(() {
+                                        _publicExpandClick = true;
+                                        _isExpanded = true;
+                                        _margin =
+                                            EdgeInsets.fromLTRB(0, 0, 0, 8);
+                                        _width =
+                                            MediaQuery.of(context).size.width *
+                                                .9;
+                                        _text = Text(
+                                          publicInfo,
+                                          textAlign: TextAlign.center,
+                                        );
+
+                                        _height = 30;
+                                      });
+                                    } else {
+                                      //if bookable info is being shown
+                                      if (_publicExpandClick) {
                                         setState(() {
-                                          _activeExpandClick = true;
+                                          _width = 0;
+                                          _height = 0;
+                                          _isExpanded = false;
+                                          _publicExpandClick = false;
+                                        });
+                                      } else {
+                                        setState(() {
+                                          _publicExpandClick = true;
+                                          _activeExpandClick = false;
+                                          _bookExpandClick = false;
                                           _isExpanded = true;
                                           _margin =
                                               EdgeInsets.fromLTRB(0, 0, 0, 8);
@@ -2057,110 +1883,281 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
                                                   .width *
                                               .9;
                                           _text = Text(
-                                            activeInfo,
+                                            publicInfo,
                                             textAlign: TextAlign.center,
                                           );
 
                                           _height = 30;
                                         });
-                                      } else {
-                                        //if bookable info is being shown
-                                        if (_activeExpandClick) {
-                                          setState(() {
-                                            _width = 0;
-                                            _height = 0;
-                                            _isExpanded = false;
-                                            _activeExpandClick = false;
-                                          });
-                                        } else {
-                                          setState(() {
-                                            _publicExpandClick = false;
-                                            _activeExpandClick = true;
-                                            _bookExpandClick = false;
-                                            _isExpanded = true;
-                                            _margin =
-                                                EdgeInsets.fromLTRB(0, 0, 0, 8);
-                                            _width = MediaQuery.of(context)
-                                                    .size
-                                                    .width *
-                                                .9;
-                                            _text = Text(
-                                              activeInfo,
-                                              textAlign: TextAlign.center,
-                                            );
-
-                                            _height = 30;
-                                          });
-                                        }
                                       }
-                                    },
-                                  ),
+                                    }
+                                  }),
+                            ),
+                            SizedBox(
+                              height: MediaQuery.of(context).size.height * .08,
+                              width: MediaQuery.of(context).size.width * .14,
+                              child: Transform.scale(
+                                scale: 0.6,
+                                alignment: Alignment.centerLeft,
+                                child: Switch(
+                                  materialTapTargetSize:
+                                      MaterialTapTargetSize.shrinkWrap,
+                                  value: isPublic,
+                                  onChanged: (value) {
+                                    setState(() {
+                                      if (value) {
+                                        validateField = true;
+                                        _autoValidate = true;
+                                        bool retVal = validateAllFields();
+                                        if (!retVal) {
+                                          //Show flushbar with info that fields has invalid data
+                                          Utils.showMyFlushbar(
+                                              context,
+                                              Icons.info_outline,
+                                              Duration(
+                                                seconds: 6,
+                                              ),
+                                              "Missing Information!! ",
+                                              "Making premises PUBLIC requires basic details. Please fill and try again !!");
+                                        } else {
+                                          validateField = false;
+                                          isPublic = value;
+                                          serviceEntity.isPublic = value;
+                                          print(isPublic);
+                                        }
+                                      } else {
+                                        isPublic = value;
+                                        serviceEntity.isPublic = value;
+                                        print(isPublic);
+                                      }
+                                    });
+                                  },
+                                  // activeTrackColor: Colors.green,
+                                  activeColor: highlightColor,
+                                  inactiveThumbColor: Colors.grey[300],
                                 ),
-                                SizedBox(
-                                  height:
-                                      MediaQuery.of(context).size.height * .08,
-                                  width:
-                                      MediaQuery.of(context).size.width * .15,
-                                  child: Transform.scale(
-                                    scale: 0.7,
-                                    alignment: Alignment.centerLeft,
-                                    child: Switch(
-                                      materialTapTargetSize:
-                                          MaterialTapTargetSize.shrinkWrap,
-                                      value: isActive,
-                                      onChanged: (value) {
-                                        setState(() {
-                                          if (value) {
-                                            validateField = true;
-                                            _autoValidate = true;
-                                            bool retVal = false;
-                                            bool locValid = false;
-                                            if (validateAllFields())
-                                              retVal = true;
-                                            if (validateLatLon())
-                                              locValid = true;
-
-                                            if (!locValid || !retVal) {
-                                              if (!locValid) {
-                                                Utils.showMyFlushbar(
-                                                    context,
-                                                    Icons.info_outline,
-                                                    Duration(
-                                                      seconds: 6,
-                                                    ),
-                                                    "Current location is must for your entity to be searchable by users!! ",
-                                                    "USE CURRENT LOCATION in Location Details section which auto-populates your current location using the device.");
-                                              } else if (!retVal) {
-                                                //Show flushbar with info that fields has invalid data
-                                                Utils.showMyFlushbar(
-                                                    context,
-                                                    Icons.info_outline,
-                                                    Duration(
-                                                      seconds: 6,
-                                                    ),
-                                                    "Missing Information!! ",
-                                                    "Making premises ACTIVE requires basic details. Please fill and try again !!");
-                                              }
-                                            } else {
-                                              validateField = false;
-                                              isActive = value;
-                                              serviceEntity.isActive = value;
-                                              print(isActive);
-                                            }
-                                          } else {
-                                            isActive = value;
-                                            serviceEntity.isActive = value;
-                                            print(isActive);
-                                          }
-                                        });
-                                      },
-                                      // activeTrackColor: Colors.green,
-                                      activeColor: highlightColor,
-                                      inactiveThumbColor: Colors.grey[300],
+                              ),
+                            ),
+                            Container(
+                              width: MediaQuery.of(context).size.width * .2,
+                              child: FlatButton(
+                                  visualDensity: VisualDensity.compact,
+                                  padding: EdgeInsets.all(0),
+                                  child: Row(children: <Widget>[
+                                    Text('Bookable',
+                                        style: TextStyle(fontSize: 12)),
+                                    SizedBox(
+                                      width: MediaQuery.of(context).size.width *
+                                          .05,
+                                      height:
+                                          MediaQuery.of(context).size.height *
+                                              .02,
+                                      child: Icon(Icons.info,
+                                          color: Colors.blueGrey[600],
+                                          size: 14),
                                     ),
-                                  ),
+                                  ]),
+                                  onPressed: () {
+                                    if (!_isExpanded) {
+                                      setState(() {
+                                        _bookExpandClick = true;
+                                        _isExpanded = true;
+                                        _margin =
+                                            EdgeInsets.fromLTRB(0, 0, 0, 8);
+                                        _width =
+                                            MediaQuery.of(context).size.width *
+                                                .9;
+                                        _text = Text(
+                                          bookableInfo,
+                                          textAlign: TextAlign.center,
+                                        );
+
+                                        _height = 30;
+                                      });
+                                    } else {
+                                      //if bookable info is being shown
+                                      if (_bookExpandClick) {
+                                        setState(() {
+                                          _width = 0;
+                                          _height = 0;
+                                          _isExpanded = false;
+                                          _bookExpandClick = false;
+                                        });
+                                      } else {
+                                        setState(() {
+                                          _publicExpandClick = false;
+                                          _activeExpandClick = false;
+                                          _bookExpandClick = true;
+                                          _isExpanded = true;
+                                          _margin =
+                                              EdgeInsets.fromLTRB(0, 0, 0, 8);
+                                          _width = MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                              .9;
+                                          _text = Text(
+                                            bookableInfo,
+                                            textAlign: TextAlign.center,
+                                          );
+
+                                          _height = 30;
+                                        });
+                                      }
+                                    }
+                                  }),
+                            ),
+                            SizedBox(
+                              height: MediaQuery.of(context).size.height * .08,
+                              width: MediaQuery.of(context).size.width * .14,
+                              child: Transform.scale(
+                                scale: 0.7,
+                                alignment: Alignment.centerLeft,
+                                child: Switch(
+                                  materialTapTargetSize:
+                                      MaterialTapTargetSize.shrinkWrap,
+                                  value: isBookable,
+                                  onChanged: (value) {
+                                    setState(() {
+                                      isBookable = value;
+                                      serviceEntity.isBookable = value;
+
+                                      if (value) {
+                                        showConfirmationDialog();
+                                        //TODO: SMita - show msg with info, yes/no
+                                      }
+                                      print(isBookable);
+                                    });
+                                  },
+                                  // activeTrackColor: Colors.green,
+                                  activeColor: highlightColor,
+                                  inactiveThumbColor: Colors.grey[300],
                                 ),
-                              ],
+                              ),
+                            ),
+                            Container(
+                              width: MediaQuery.of(context).size.width * .14,
+                              child: FlatButton(
+                                visualDensity: VisualDensity.compact,
+                                padding: EdgeInsets.all(0),
+                                child: Row(children: <Widget>[
+                                  Text('Active',
+                                      style: TextStyle(fontSize: 12)),
+                                  SizedBox(
+                                    width:
+                                        MediaQuery.of(context).size.width * .05,
+                                    height: MediaQuery.of(context).size.height *
+                                        .02,
+                                    child: Icon(Icons.info,
+                                        color: Colors.blueGrey[600], size: 14),
+                                  ),
+                                ]),
+                                onPressed: () {
+                                  if (!_isExpanded) {
+                                    setState(() {
+                                      _activeExpandClick = true;
+                                      _isExpanded = true;
+                                      _margin = EdgeInsets.fromLTRB(0, 0, 0, 8);
+                                      _width =
+                                          MediaQuery.of(context).size.width *
+                                              .9;
+                                      _text = Text(
+                                        activeInfo,
+                                        textAlign: TextAlign.center,
+                                      );
+
+                                      _height = 30;
+                                    });
+                                  } else {
+                                    //if bookable info is being shown
+                                    if (_activeExpandClick) {
+                                      setState(() {
+                                        _width = 0;
+                                        _height = 0;
+                                        _isExpanded = false;
+                                        _activeExpandClick = false;
+                                      });
+                                    } else {
+                                      setState(() {
+                                        _publicExpandClick = false;
+                                        _activeExpandClick = true;
+                                        _bookExpandClick = false;
+                                        _isExpanded = true;
+                                        _margin =
+                                            EdgeInsets.fromLTRB(0, 0, 0, 8);
+                                        _width =
+                                            MediaQuery.of(context).size.width *
+                                                .9;
+                                        _text = Text(
+                                          activeInfo,
+                                          textAlign: TextAlign.center,
+                                        );
+
+                                        _height = 30;
+                                      });
+                                    }
+                                  }
+                                },
+                              ),
+                            ),
+                            SizedBox(
+                              height: MediaQuery.of(context).size.height * .08,
+                              width: MediaQuery.of(context).size.width * .14,
+                              child: Transform.scale(
+                                scale: 0.6,
+                                alignment: Alignment.centerLeft,
+                                child: Switch(
+                                  materialTapTargetSize:
+                                      MaterialTapTargetSize.shrinkWrap,
+                                  value: isActive,
+                                  onChanged: (value) {
+                                    setState(() {
+                                      if (value) {
+                                        validateField = true;
+                                        _autoValidate = true;
+                                        bool retVal = false;
+                                        bool locValid = false;
+                                        if (validateAllFields()) retVal = true;
+                                        if (validateLatLon()) locValid = true;
+
+                                        if (!locValid || !retVal) {
+                                          if (!locValid) {
+                                            Utils.showMyFlushbar(
+                                                context,
+                                                Icons.info_outline,
+                                                Duration(
+                                                  seconds: 6,
+                                                ),
+                                                "Current location is must for your entity to be searchable by users!! ",
+                                                "USE CURRENT LOCATION in Location Details section which auto-populates your current location using the device.");
+                                          } else if (!retVal) {
+                                            //Show flushbar with info that fields has invalid data
+                                            Utils.showMyFlushbar(
+                                                context,
+                                                Icons.info_outline,
+                                                Duration(
+                                                  seconds: 6,
+                                                ),
+                                                "Missing Information!! ",
+                                                "Making premises ACTIVE requires basic details. Please fill and try again !!");
+                                          }
+                                        } else {
+                                          validateField = false;
+                                          isActive = value;
+                                          serviceEntity.isActive = value;
+                                          print(isActive);
+                                        }
+                                      } else {
+                                        isActive = value;
+                                        serviceEntity.isActive = value;
+                                        print(isActive);
+                                      }
+                                    });
+                                  },
+                                  // activeTrackColor: Colors.green,
+                                  activeColor: highlightColor,
+                                  inactiveThumbColor: Colors.grey[300],
+                                ),
+                              ),
                             )
                           ],
                         ),
@@ -3060,20 +3057,22 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
 //TODO: Problem in this method, not deleting entity from list
                                             deleteEntity(serviceEntity.entityId)
                                                 .whenComplete(() {
-                                              Navigator.pop(context);
-                                              //TDOD: Uncomment getEntity method below.
-
                                               EntityService()
                                                   .getEntity(parentEntityId)
                                                   .then((value) =>
                                                       {parentEntity = value})
-                                                  .whenComplete(() => Navigator.push(
-                                                      context,
-                                                      MaterialPageRoute(
-                                                          builder: (context) =>
-                                                              ChildEntitiesListPage(
-                                                                  entity:
-                                                                      parentEntity))));
+                                                  .whenComplete(() {
+                                                _gState.removeEntity(
+                                                    serviceEntity.entityId);
+                                                Navigator.pop(context);
+                                                Navigator.push(
+                                                    context,
+                                                    MaterialPageRoute(
+                                                        builder: (context) =>
+                                                            ChildEntitiesListPage(
+                                                                entity:
+                                                                    parentEntity)));
+                                              });
                                             });
                                           }
                                         },
