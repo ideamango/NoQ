@@ -227,7 +227,7 @@ class EntityRowState extends State<EntityRow> {
                 width: MediaQuery.of(context).size.width * .45,
                 height: 30,
                 child: RaisedButton(
-                  elevation: 10,
+                  elevation: 7,
                   color: Colors.white,
                   splashColor: highlightColor.withOpacity(.8),
                   shape: RoundedRectangleBorder(
@@ -248,7 +248,7 @@ class EntityRowState extends State<EntityRow> {
                 height: 30,
                 width: MediaQuery.of(context).size.width * .45,
                 child: RaisedButton(
-                  elevation: 10,
+                  elevation: 7,
                   color: btnColor,
                   textColor: Colors.white,
                   shape: RoundedRectangleBorder(
