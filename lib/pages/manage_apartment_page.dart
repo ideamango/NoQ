@@ -2134,7 +2134,7 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
                         children: <Widget>[
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            //mainAxisSize: MainAxisSize.min,
+                            mainAxisSize: MainAxisSize.min,
                             children: <Widget>[
                               Container(
                                 width: MediaQuery.of(context).size.width * .14,
@@ -2430,7 +2430,7 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
                                     MediaQuery.of(context).size.height * .08,
                                 width: MediaQuery.of(context).size.width * .14,
                                 child: Transform.scale(
-                                  scale: 0.7,
+                                  scale: 0.6,
                                   alignment: Alignment.centerLeft,
                                   child: Switch(
                                     materialTapTargetSize:
