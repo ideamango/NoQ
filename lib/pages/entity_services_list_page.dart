@@ -92,16 +92,19 @@ class _ChildEntitiesListPageState extends State<ChildEntitiesListPage> {
     en.type = _subEntityType;
     en.entityId = serviceId;
     en.parentId = parentEntity.entityId;
+    MetaEntity meta;
     setState(() {
       _entityMap[en.entityId] = en;
-      MetaEntity meta = en.getMetaEntity();
+      meta = en.getMetaEntity();
       servicesList.add(meta);
       _count = _count + 1;
     });
-
+    _state.addEntity(meta);
     if (_childScrollController.hasClients)
-      _childScrollController.animateTo(_childScrollController.offset + itemSize,
-          curve: Curves.easeInToLinear, duration: Duration(milliseconds: 200));
+      _childScrollController.animateTo(
+          _childScrollController.position.maxScrollExtent + itemSize,
+          curve: Curves.easeInToLinear,
+          duration: Duration(milliseconds: 200));
   }
 
   // Widget _buildServiceItem(MetaEntity childEntity) {

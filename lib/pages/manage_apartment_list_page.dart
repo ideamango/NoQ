@@ -97,11 +97,14 @@ class _ManageApartmentsListPageState extends State<ManageApartmentsListPage> {
     setState(() {
       metaEntitiesList.add(metaEn);
     });
+    _state.addEntity(metaEn);
 
     _parentEntityMap[metaEn.entityId] = entity;
     if (_scrollController.hasClients)
-      _scrollController.animateTo(_scrollController.offset + itemSize,
-          curve: Curves.easeInToLinear, duration: Duration(milliseconds: 200));
+      _scrollController.animateTo(
+          _scrollController.position.maxScrollExtent + itemSize,
+          curve: Curves.easeInToLinear,
+          duration: Duration(milliseconds: 200));
   }
 
   @override

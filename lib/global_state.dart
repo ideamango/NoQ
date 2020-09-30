@@ -70,6 +70,19 @@ class GlobalState {
     return true;
   }
 
+  Future<bool> addEntity(MetaEntity me) async {
+    _gs.currentUser.entities.add(me);
+    // saveGlobalState();
+    return true;
+  }
+
+  Future<bool> removeEntity(String entityId) async {
+    _gs.currentUser.entities
+        .removeWhere((element) => element.entityId == entityId);
+    //  saveGlobalState();
+    return true;
+  }
+
   Future<bool> updateSearchResults(List<Entity> list) async {
     _gs.pastSearches = list;
     return true;

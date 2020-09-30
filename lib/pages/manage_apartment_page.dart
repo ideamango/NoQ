@@ -12,7 +12,9 @@ import 'package:noq/db/db_model/meta_entity.dart';
 import 'package:noq/db/db_model/my_geo_fire_point.dart';
 import 'package:noq/db/db_model/user.dart';
 import 'package:noq/db/db_service/user_service.dart';
+import 'package:noq/events.dart';
 import 'package:noq/global_state.dart';
+import 'package:noq/observable/EventBus.dart';
 import 'package:noq/pages/contact_item.dart';
 import 'package:noq/pages/manage_apartment_list_page.dart';
 import 'package:noq/repository/StoreRepository.dart';
@@ -182,6 +184,39 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
         });
       });
     });
+
+    EventBus.registerEvent(MANAGER_REMOVED_EVENT, null, refreshOnManagerRemove);
+  }
+
+  void refreshOnManagerRemove(event, args) {
+    setState(() {
+      //  contactRowWidgets.removeWhere((element) => element)
+      print("Inside remove Manage");
+      contactRowWidgets.clear();
+      contactRowWidgets.add(showCircularProgress());
+    });
+    processRefreshContactsWithTimer();
+  }
+
+  processRefreshContactsWithTimer() async {
+    var duration = new Duration(seconds: 1);
+    return new Timer(duration, refreshContacts);
+  }
+
+  refreshContacts() {
+    List<Widget> newList = new List<Widget>();
+    for (int i = 0; i < contactList.length; i++) {
+      newList.add(new ContactRow(
+        contact: contactList[i],
+        entity: entity,
+        list: contactList,
+      ));
+    }
+    setState(() {
+      contactRowWidgets.clear();
+      contactRowWidgets.addAll(newList);
+    });
+    entity.managers = contactList;
   }
 
   ///from contact page
@@ -622,9 +657,7 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
           contactRowWidgets.insert(
               0,
               new ContactRow(
-                contact: element,
-                entity: entity,
-              ));
+                  contact: element, entity: entity, list: contactList));
         });
       }
       User currUser = await UserService().getCurrentUser();
@@ -723,6 +756,7 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
       var uuid = new Uuid();
       contact.id = uuid.v1();
       contactList.add(contact);
+
       contactRowWidgets.add(new ContactRow(
         contact: contact,
         entity: entity,
@@ -2129,12 +2163,12 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
                           shape: BoxShape.rectangle,
                           borderRadius: BorderRadius.all(Radius.circular(5.0))),
                       child: Column(
-                        mainAxisSize: MainAxisSize.min,
+                        mainAxisSize: MainAxisSize.max,
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            //mainAxisSize: MainAxisSize.min,
+                            mainAxisSize: MainAxisSize.min,
                             children: <Widget>[
                               Container(
                                 width: MediaQuery.of(context).size.width * .14,
@@ -2157,7 +2191,7 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
                                           child: Icon(
                                             Icons.info,
                                             color: Colors.blueGrey[600],
-                                            size: 15,
+                                            size: 14,
                                           ),
                                         ),
                                       ],
@@ -2430,7 +2464,7 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
                                     MediaQuery.of(context).size.height * .08,
                                 width: MediaQuery.of(context).size.width * .14,
                                 child: Transform.scale(
-                                  scale: 0.7,
+                                  scale: 0.6,
                                   alignment: Alignment.centerLeft,
                                   child: Switch(
                                     materialTapTargetSize:
@@ -3131,15 +3165,35 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
                               //       itemCount: contactList.length,
                               //       itemBuilder:
                               //           (BuildContext context, int index) {
-                              //         return Container(
-                              //           child: new Column(
-                              //               children: contactList
-                              //                   .map(buildContactItem)
-                              //                   .toList()),
-                              //           //children: <Widget>[firstRow, secondRow],
-                              //         );
+                              //         return Column(
+                              //             children: contactList
+                              //                 .map(buildContactItem)
+                              //                 .toList());
                               //       }),
                               // ),
+                              // Column(
+                              //   children: <Widget>[
+                              //     new Expanded(
+                              //       child: ListView.builder(
+                              //         //  controller: _childScrollController,
+                              //         reverse: true,
+                              //         shrinkWrap: true,
+                              //         // itemExtent: itemSize,
+                              //         //scrollDirection: Axis.vertical,
+                              //         itemBuilder:
+                              //             (BuildContext context, int index) {
+                              //           return ContactRow(
+                              //             contact: contactList[index],
+                              //             entity: entity,
+                              //             list: contactList,
+                              //           );
+                              //         },
+                              //         itemCount: contactList.length,
+                              //       ),
+                              //     ),
+                              //   ],
+                              // ),
+                              //
                             ],
                           ),
                         ],
@@ -3365,6 +3419,8 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
                                               if (_delEnabled) {
                                                 deleteEntity(entity.entityId)
                                                     .whenComplete(() {
+                                                  _gState.removeEntity(
+                                                      entity.entityId);
                                                   Navigator.pop(context);
                                                   Navigator.push(
                                                       context,

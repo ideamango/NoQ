@@ -194,14 +194,16 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
         (messageSubTitle != null) ? messageSubTitle : defaultSubMsg;
     return Center(
       child: Container(
+        height: MediaQuery.of(context).size.height * .6,
+        alignment: Alignment.center,
         child: SingleChildScrollView(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
-              SizedBox(
-                height: MediaQuery.of(context).size.height * .3,
-              ),
+              // SizedBox(
+              //   height: MediaQuery.of(context).size.height * .25,
+              // ),
               Text(
                 txtMsg,
                 style: highlightTextStyle,
@@ -1269,7 +1271,7 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
     //   return _stores.map(_buildItem).toList();
     //   //return _stores.map((contact) => new ChildItem(contact.name)).toList();
     // } else {
-    await getSearchEntitiesList().then((value) {
+    getSearchEntitiesList().then((value) {
       if (value == null) {
         _stores.clear();
         setState(() {
@@ -1298,13 +1300,6 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
         _isSearching = "done";
       });
     });
-
-    // for (int i = 0; i < _stores.length; i++) {
-    //   String name = _stores.elementAt(i).name;
-    //   if (name.toLowerCase().contains(_searchText.toLowerCase())) {
-    //     _searchList.add(_stores.elementAt(i));
-    //   }
-    // }
   }
 
   void addFilterCriteria() {}

@@ -3,6 +3,8 @@ import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:noq/db/db_model/employee.dart';
 import 'package:noq/db/db_model/entity.dart';
+import 'package:noq/events.dart';
+import 'package:noq/observable/EventBus.dart';
 import 'package:noq/style.dart';
 import 'package:flutter/foundation.dart';
 import 'package:noq/utils.dart';
@@ -413,6 +415,8 @@ class ContactRowState extends State<ContactRow> {
                                   (element) => element.id == removeThisId);
                               _list.removeWhere(
                                   (element) => element.id == removeThisId);
+                              EventBus.fireEvent(
+                                  MANAGER_REMOVED_EVENT, null, _entity);
                             });
                           }
                         })
