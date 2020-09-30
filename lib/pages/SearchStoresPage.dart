@@ -636,105 +636,124 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
                 ),
                 Container(
                   width: MediaQuery.of(context).size.width * .8,
-                  padding: EdgeInsets.all(4),
+                  padding: EdgeInsets.all(2),
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: <Widget>[
-                          Row(
-                            // mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            // crossAxisAlignment: CrossAxisAlignment.center,
-                            children: <Widget>[
-                              Text(
-                                (str.name) ?? str.name.toString(),
-                                style: TextStyle(fontSize: 17),
-                                overflow: TextOverflow.ellipsis,
+                      Container(
+                        width: MediaQuery.of(context).size.width * .78,
+                        padding: EdgeInsets.all(0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: <Widget>[
+                            Container(
+                              width: MediaQuery.of(context).size.width * .5,
+                              padding: EdgeInsets.all(0),
+                              child: Row(
+                                // mainAxisAlignment: Mai1nAxisAlignment.spaceBetween,
+                                // crossAxisAlignment: CrossAxisAlignment.center,
+                                children: <Widget>[
+                                  Text(
+                                    (str.name) ?? str.name.toString(),
+                                    style: TextStyle(fontSize: 17),
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                  (str.verificationStatus == "Verified")
+                                      ? new Container(
+                                          width: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                              .06,
+                                          height: MediaQuery.of(context)
+                                                  .size
+                                                  .height *
+                                              .03,
+                                          child: IconButton(
+                                            padding:
+                                                EdgeInsets.fromLTRB(1, 1, 0, 2),
+                                            icon: Icon(
+                                              Icons.verified_user,
+                                              color: Colors.green,
+                                              size: 15,
+                                            ),
+                                            onPressed: () {
+                                              Utils.showMyFlushbar(
+                                                  context,
+                                                  Icons.info,
+                                                  Duration(seconds: 5),
+                                                  "Verified",
+                                                  "");
+                                            },
+                                          ),
+                                        )
+                                      : Container(),
+                                  (str.isPublic != true)
+                                      ? Container(
+                                          width: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                              .06,
+                                          height: MediaQuery.of(context)
+                                                  .size
+                                                  .height *
+                                              .03,
+                                          child: IconButton(
+                                            padding:
+                                                EdgeInsets.fromLTRB(1, 1, 1, 2),
+                                            icon: Icon(
+                                              Icons.lock,
+                                              color: primaryIcon,
+                                              size: 15,
+                                            ),
+                                            onPressed: () {
+                                              Utils.showMyFlushbar(
+                                                  context,
+                                                  Icons.info,
+                                                  Duration(seconds: 5),
+                                                  "Access to this place is restricted to its residents or employees.",
+                                                  "");
+                                            },
+                                          ),
+                                        )
+                                      : Container(),
+                                ],
                               ),
-                              (str.verificationStatus == "Verified")
-                                  ? new Container(
-                                      width: MediaQuery.of(context).size.width *
-                                          .06,
-                                      height:
-                                          MediaQuery.of(context).size.height *
-                                              .03,
-                                      child: IconButton(
-                                        padding:
-                                            EdgeInsets.fromLTRB(1, 1, 0, 2),
-                                        icon: Icon(
-                                          Icons.verified_user,
-                                          color: Colors.green,
-                                          size: 15,
-                                        ),
-                                        onPressed: () {
-                                          Utils.showMyFlushbar(
-                                              context,
-                                              Icons.info,
-                                              Duration(seconds: 5),
-                                              "Verified",
-                                              "");
-                                        },
-                                      ),
-                                    )
-                                  : Container(),
-                              (str.isPublic != true)
-                                  ? Container(
-                                      width: MediaQuery.of(context).size.width *
-                                          .06,
-                                      height:
-                                          MediaQuery.of(context).size.height *
-                                              .03,
-                                      child: IconButton(
-                                        padding:
-                                            EdgeInsets.fromLTRB(1, 1, 1, 2),
-                                        icon: Icon(
-                                          Icons.lock,
-                                          color: primaryIcon,
-                                          size: 15,
-                                        ),
-                                        onPressed: () {
-                                          Utils.showMyFlushbar(
-                                              context,
-                                              Icons.info,
-                                              Duration(seconds: 5),
-                                              "Access to this place is restricted to its residents or employees.",
-                                              "");
-                                        },
-                                      ),
-                                    )
-                                  : Container(),
-                            ],
-                          ),
-                          Row(
-                            children: <Widget>[
-                              Text(
-                                  Utils.formatTime(
-                                          str.startTimeHour.toString()) +
-                                      ':' +
+                            ),
+                            Container(
+                              width: MediaQuery.of(context).size.width * .2,
+                              padding: EdgeInsets.all(0),
+                              child: Row(
+                                children: <Widget>[
+                                  Text(
                                       Utils.formatTime(
-                                          str.startTimeMinute.toString()),
-                                  style: TextStyle(
-                                      color: Colors.green[600],
-                                      fontFamily: 'Monsterrat',
-                                      letterSpacing: 0.5,
-                                      fontSize: 13.0)),
-                              Text(' - '),
-                              Text(
-                                  Utils.formatTime(str.endTimeHour.toString()) +
-                                      ':' +
+                                              str.startTimeHour.toString()) +
+                                          ':' +
+                                          Utils.formatTime(
+                                              str.startTimeMinute.toString()),
+                                      style: TextStyle(
+                                          color: Colors.green[600],
+                                          fontFamily: 'Monsterrat',
+                                          letterSpacing: 0.5,
+                                          fontSize: 13.0)),
+                                  Text(' - '),
+                                  Text(
                                       Utils.formatTime(
-                                          str.endTimeMinute.toString()),
-                                  style: TextStyle(
-                                      color: Colors.red[900],
-                                      fontFamily: 'Monsterrat',
-                                      letterSpacing: 0.5,
-                                      fontSize: 13.0)),
-                            ],
-                          ),
-                        ],
+                                              str.endTimeHour.toString()) +
+                                          ':' +
+                                          Utils.formatTime(
+                                              str.endTimeMinute.toString()),
+                                      style: TextStyle(
+                                          color: Colors.red[900],
+                                          fontFamily: 'Monsterrat',
+                                          letterSpacing: 0.5,
+                                          fontSize: 13.0)),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.start,

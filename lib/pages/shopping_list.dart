@@ -266,9 +266,11 @@ class _ShoppingListState extends State<ShoppingList> {
                       //   'Shopping List from Sukoon',
                       //   style: TextStyle(decoration: TextDecoration.underline),
                       // );
-                      concatenate.writeln('------------Sukoon------------');
-                      concatenate.writeln('Token: ' + token.getDisplayName());
-                      concatenate.writeln('------------------------------');
+                      concatenate.writeln("Sukoon");
+                      // concatenate.writeln('-----------------------------');
+                      // concatenate.writeln('S---------Sukoon------------');
+                      concatenate.writeln('Token - ' + token.getDisplayName());
+                      // concatenate.writeln('------------------------------');
                       //concatenate.writeln(heading);
                       int count = 1;
                       for (int i = 0; i < listOfShoppingItems.length; i++) {
@@ -278,21 +280,39 @@ class _ShoppingListState extends State<ShoppingList> {
                         concatenate.writeln(count.toString() +
                             ") " +
                             listOfShoppingItems[i].itemName +
-                            (listOfShoppingItems[i].quantity != null
+                            ((listOfShoppingItems[i].quantity != null &&
+                                    listOfShoppingItems[i].quantity != "")
                                 ? (' - ' + listOfShoppingItems[i].quantity)
                                 : ""));
 
                         count++;
                       }
 
-                      concatenate.writeln('------------------------------');
+                      // concatenate.writeln('------------------------------');
                       print(concatenate);
 
                       String phoneNo = token.entityWhatsApp;
 
-                      if (phoneNo != null)
-                        launchWhatsApp(
-                            message: concatenate.toString(), phone: phoneNo);
+                      if (phoneNo != null) {
+                        try {
+                          launchWhatsApp(
+                              message: concatenate.toString(), phone: phoneNo);
+                        } catch (error) {
+                          Utils.showMyFlushbar(
+                              context,
+                              Icons.error,
+                              Duration(seconds: 5),
+                              "Could not connect to the Whatsapp number $phoneNo !!",
+                              "Try again later");
+                        }
+                      } else {
+                        Utils.showMyFlushbar(
+                            context,
+                            Icons.info,
+                            Duration(seconds: 5),
+                            "Whatsapp contact information not found!!",
+                            "");
+                      }
                     } else {
                       print("Nothing to share, add items to list first. ");
                       setState(() {

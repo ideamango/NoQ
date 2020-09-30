@@ -179,7 +179,8 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
       contactRowWidgets.clear();
       contactRowWidgets.add(showCircularProgress());
     });
-    processRefreshContactsWithTimer();
+    refreshContacts();
+    //processRefreshContactsWithTimer();
     print("printing event.eventData");
     print("In parent page" + event.eventData);
     print(event.eventData);

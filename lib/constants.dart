@@ -9,7 +9,8 @@ var loginMainTxt = "";
 String dateDisplayFormat = 'EEE, MMM d';
 String homeScreenMsgTxt =
     "Add the amenities in Apartment or Workplace to your 'favourites' and book a slot anytime.";
-String whatsappMessage = "Hello on whatsapp";
+String whatsappMessage =
+    "Hey!! Did you book your peace of mind, while going out? Are you worried about long waiting in queues? Quick Solution- SUKOON. It helps you book your space when visiting any place. Less crowded space, More SAFE.";
 String contactUsMailId = "care@sukoon.mobi";
 String contactUsPageHeadline =
     'We would be happy to help you. Just drop a message to us and we will try our best to address that at earliest.';
