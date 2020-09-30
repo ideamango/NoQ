@@ -266,25 +266,30 @@ class _ShoppingListState extends State<ShoppingList> {
                       //   'Shopping List from Sukoon',
                       //   style: TextStyle(decoration: TextDecoration.underline),
                       // );
-                      concatenate.writeln('Shopping List from Sukoon');
-                      concatenate.writeln('-----------------------------');
+                      concatenate.writeln('------------Sukoon------------');
+                      concatenate.writeln('Token: ' + token.getDisplayName());
+                      concatenate.writeln('------------------------------');
                       //concatenate.writeln(heading);
+                      int count = 1;
                       for (int i = 0; i < listOfShoppingItems.length; i++) {
-                        print('i----' +
-                            listOfShoppingItems[i].itemName +
-                            ' - ' +
-                            listOfShoppingItems[i].quantity);
                         if (listOfShoppingItems[i].itemName == null ||
                             listOfShoppingItems[i].itemName.isEmpty) return;
-                        concatenate.writeln(listOfShoppingItems[i].itemName +
-                            ' - ' +
-                            listOfShoppingItems[i].quantity);
+
+                        concatenate.writeln(count.toString() +
+                            ") " +
+                            listOfShoppingItems[i].itemName +
+                            (listOfShoppingItems[i].quantity != null
+                                ? (' - ' + listOfShoppingItems[i].quantity)
+                                : ""));
+
+                        count++;
                       }
+
+                      concatenate.writeln('------------------------------');
                       print(concatenate);
 
                       String phoneNo = token.entityWhatsApp;
-                      //TODO Smita - remove once whatsapp number gets populated.
-                      phoneNo = '+919611009823';
+
                       if (phoneNo != null)
                         launchWhatsApp(
                             message: concatenate.toString(), phone: phoneNo);
