@@ -387,33 +387,36 @@ class _LoginPageState extends State<LoginPage> {
               elevation: 10.0,
               contentTextStyle: TextStyle(color: primaryDarkColor),
               content: Container(
-                height: MediaQuery.of(context).size.height * .2,
+                //height: MediaQuery.of(context).size.height * .25,
                 width: MediaQuery.of(context).size.width * .85,
                 child: Column(
-                  mainAxisSize: MainAxisSize.max,
+                  mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
-                    Row(
-                      mainAxisSize: MainAxisSize.max,
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: <Widget>[
-                        Container(
-                          height: MediaQuery.of(context).size.width * .09,
-                          transform: Matrix4.translationValues(12.0, -10, 0),
-                          child: IconButton(
-                            icon: Icon(
-                              Icons.cancel,
-                              color: Colors.grey[600],
+                    Container(
+                      height: MediaQuery.of(context).size.height * .05,
+                      child: Row(
+                        // mainAxisSize: MainAxisSize.max,
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: <Widget>[
+                          Container(
+                            height: MediaQuery.of(context).size.height * .06,
+                            transform: Matrix4.translationValues(12.0, -10, 0),
+                            child: IconButton(
+                              icon: Icon(
+                                Icons.cancel,
+                                color: Colors.grey[600],
+                              ),
+                              onPressed: () {
+                                codeSent = false;
+                                Navigator.of(context).pop();
+                              },
                             ),
-                            onPressed: () {
-                              codeSent = false;
-                              Navigator.of(context).pop();
-                            },
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
-                    verticalSpacer,
+                    // verticalSpacer,
                     RichText(
                       text: TextSpan(
                           style: highlightSubTextStyle,
@@ -438,9 +441,10 @@ class _LoginPageState extends State<LoginPage> {
                       height: 10,
                     ),
                     Container(
+                      //     height: MediaQuery.of(context).size.height * .09,
                       //color: Colors.black,
                       //margin: EdgeInsets.all(5),
-                      // padding: EdgeInsets.all(0),
+                      padding: EdgeInsets.all(0),
                       child: PinPut(
                         fieldsCount: 6,
                         onSubmit: (String pin) {
