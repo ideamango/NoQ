@@ -220,8 +220,7 @@ class DBTest {
         type: "Store",
         isBookable: false,
         isActive: true,
-        coordinates: geoPoint,
-        verificationStatus: "Verified");
+        coordinates: geoPoint);
 
     // Employee manager1 = new Employee(name: "Rakesh", ph: "+91888888888", employeeId: "empyId", shiftStartHour: );
 
@@ -770,8 +769,7 @@ class DBTest {
         isActive: true,
         coordinates: geoPoint,
         phone: "+919611009823",
-        whatsapp: "+919611009823",
-        verificationStatus: "Verified");
+        whatsapp: "+919611009823");
 
     try {
       await EntityService()
