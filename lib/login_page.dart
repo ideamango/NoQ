@@ -581,10 +581,10 @@ class _LoginPageState extends State<LoginPage> {
                   height: 30,
                   alignment: Alignment.center,
                   child: FlatButton(
-                    color: Colors.transparent,
-                    textColor: btnColor,
+                    color: disabledColor,
+                    textColor: Colors.white,
                     shape: RoundedRectangleBorder(
-                        side: BorderSide(color: btnColor),
+                        // side: BorderSide(color: btnColor),
                         borderRadius: BorderRadius.all(Radius.circular(3.0))),
                     child: Text(
                       'Resend OTP',
@@ -592,7 +592,7 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                     onPressed: () {
                       //TODO SMITA add code for resend
-                      verifyPhone(_mobile);
+                      //verifyPhone(_mobile);
                       // resendVerificationCode(_phoneNo, verId);
                     },
                   ),
