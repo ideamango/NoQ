@@ -410,13 +410,14 @@ class ContactRowState extends State<ContactRow> {
                           }
                           if (removeThisId != null) {
                             setState(() {
-                              contact = null;
-                              _entity.managers.removeWhere(
-                                  (element) => element.id == removeThisId);
+                              // contact = null;
+                              // _entity.managers.removeWhere(
+                              //     (element) => element.id == removeThisId);
                               _list.removeWhere(
                                   (element) => element.id == removeThisId);
+                              print("From contact page" + contact.id);
                               EventBus.fireEvent(
-                                  MANAGER_REMOVED_EVENT, null, _entity);
+                                  MANAGER_REMOVED_EVENT, null, contact.id);
                             });
                           }
                         })

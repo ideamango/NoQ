@@ -196,6 +196,9 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
       contactRowWidgets.add(showCircularProgress());
     });
     processRefreshContactsWithTimer();
+    print("printing event.eventData");
+    print("In parent page" + event.eventData);
+    print(event.eventData);
   }
 
   processRefreshContactsWithTimer() async {
@@ -654,10 +657,8 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
       if (!(Utils.isNullOrEmpty(entity.managers))) {
         contactList = entity.managers;
         contactList.forEach((element) {
-          contactRowWidgets.insert(
-              0,
-              new ContactRow(
-                  contact: element, entity: entity, list: contactList));
+          contactRowWidgets.add(new ContactRow(
+              contact: element, entity: entity, list: contactList));
         });
       }
       User currUser = await UserService().getCurrentUser();
@@ -739,36 +740,25 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
     }
   }
 
-  getEntityDetails() {
-    // if (entity == null) {
-    //   //if new entity then generate guid and assign.
-    //   entity = new Entity();
-    //   var uuid = new Uuid();
-    //   entity.entityId = uuid.v1();
-    // } else
-    //   //if already existing entity load details from server
-    //   getEntity(entity.entityId).then((en) => entity = en);
-  }
-
   void _addNewContactRow() {
-    setState(() {
-      Employee contact = new Employee();
-      var uuid = new Uuid();
-      contact.id = uuid.v1();
-      contactList.add(contact);
+    Employee contact = new Employee();
+    var uuid = new Uuid();
+    contact.id = uuid.v1();
+    contactList.add(contact);
 
-      contactRowWidgets.add(new ContactRow(
-        contact: contact,
+    List<Widget> newList = new List<Widget>();
+    for (int i = 0; i < contactList.length; i++) {
+      newList.add(new ContactRow(
+        contact: contactList[i],
         entity: entity,
         list: contactList,
       ));
-
+    }
+    setState(() {
+      contactRowWidgets.clear();
+      contactRowWidgets.addAll(newList);
       entity.managers = contactList;
-
-      // if (_scrollController.hasClients)
-      //   _scrollController.animateTo(_scrollController.offset + itemSize,
-      //       curve: Curves.easeInToLinear,
-      //       duration: Duration(milliseconds: 200));
+      // _contactCount = _contactCount + 1;
     });
   }
 

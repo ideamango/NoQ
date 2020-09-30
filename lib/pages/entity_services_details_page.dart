@@ -154,12 +154,11 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
   bool _initCompleted = false;
   GlobalState _gState;
   String _phCountryCode;
-  ScrollController _scrollController;
+
   final itemSize = 80.0;
 
   @override
   void initState() {
-    _scrollController = ScrollController();
     super.initState();
     serviceEntity = widget.childEntity;
     getGlobalState().whenComplete(() {
@@ -173,6 +172,7 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
   }
 
   void refreshOnManagerRemove(event, args) {
+    //print(args[0]);
     setState(() {
       //  contactRowWidgets.removeWhere((element) => element)
       print("Inside remove Manage");
@@ -180,6 +180,9 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
       contactRowWidgets.add(showCircularProgress());
     });
     processRefreshContactsWithTimer();
+    print("printing event.eventData");
+    print("In parent page" + event.eventData);
+    print(event.eventData);
   }
 
   processRefreshContactsWithTimer() async {
@@ -293,13 +296,11 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
       if (!(Utils.isNullOrEmpty(serviceEntity.managers))) {
         contactList = serviceEntity.managers;
         contactList.forEach((element) {
-          contactRowWidgets.insert(
-              0,
-              new ContactRow(
-                contact: element,
-                entity: serviceEntity,
-                list: contactList,
-              ));
+          contactRowWidgets.add(new ContactRow(
+            contact: element,
+            entity: serviceEntity,
+            list: contactList,
+          ));
         });
       }
       User currUser = await UserService().getCurrentUser();
@@ -679,6 +680,9 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
       serviceEntity.managers = contactList;
       _contactCount = _contactCount + 1;
     });
+    // if (_contactScroll.hasClients)
+    //   _contactScroll.animateTo(_contactScroll.position.maxScrollExtent,
+    //       curve: Curves.easeInToLinear, duration: Duration(milliseconds: 200));
   }
 
   @override
@@ -2700,16 +2704,7 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
                                       icon: Icon(Icons.person_add,
                                           color: highlightColor, size: 40),
                                       onPressed: () {
-                                        // if (_roleType != null) {
-                                        //   setState(() {
-                                        //     _msg = null;
-                                        //   });
                                         _addNewContactRow();
-                                        // } else {
-                                        //   setState(() {
-                                        //     _msg = "Select role type";
-                                        //   });
-                                        // }
                                       },
                                     ),
                                   ),
