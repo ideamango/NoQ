@@ -29,6 +29,7 @@ import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:flushbar/flushbar.dart';
 import 'package:noq/widget/widgets.dart';
 import 'package:uuid/uuid.dart';
+import 'package:eventify/eventify.dart' as Eventify;
 
 class ManageApartmentPage extends StatefulWidget {
   final Entity entity;
@@ -169,6 +170,7 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
   List<days> _ctClosedOnDays;
   Entity _entity;
   List<Employee> _list;
+  Eventify.Listener removeManagerListener;
 
   ///end of fields from contact page
 
@@ -185,7 +187,15 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
       });
     });
 
-    EventBus.registerEvent(MANAGER_REMOVED_EVENT, null, refreshOnManagerRemove);
+    removeManagerListener = EventBus.registerEvent(
+        MANAGER_REMOVED_EVENT, null, this.refreshOnManagerRemove);
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    print("dispose called for child entity");
+    EventBus.unregisterEvent(removeManagerListener);
   }
 
   void refreshOnManagerRemove(event, args) {
@@ -195,8 +205,8 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
       contactRowWidgets.clear();
       contactRowWidgets.add(showCircularProgress());
     });
-    refreshContacts();
-    //processRefreshContactsWithTimer();
+    //refreshContacts();
+    processRefreshContactsWithTimer();
     print("printing event.eventData");
     print("In parent page" + event.eventData);
     print(event.eventData);
@@ -549,7 +559,7 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
                           ),
                           onPressed: () {
                             String removeThisId;
-                            for (int i = 0; i <= _entity.managers.length; i++) {
+                            for (int i = 0; i < _entity.managers.length; i++) {
                               if (_entity.managers[i].id == contact.id) {
                                 removeThisId = contact.id;
                                 print(_entity.managers[i].id);

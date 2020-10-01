@@ -401,7 +401,7 @@ class ContactRowState extends State<ContactRow> {
                         ),
                         onPressed: () {
                           String removeThisId;
-                          for (int i = 0; i <= _entity.managers.length; i++) {
+                          for (int i = 0; i < _entity.managers.length; i++) {
                             if (_entity.managers[i].id == contact.id) {
                               removeThisId = contact.id;
                               print(_entity.managers[i].id);
@@ -410,14 +410,13 @@ class ContactRowState extends State<ContactRow> {
                           }
                           if (removeThisId != null) {
                             setState(() {
-                              // contact = null;
-                              // _entity.managers.removeWhere(
-                              //     (element) => element.id == removeThisId);
+                              contact = null;
+                              _entity.managers.removeWhere(
+                                  (element) => element.id == removeThisId);
                               _list.removeWhere(
                                   (element) => element.id == removeThisId);
-                              print("From contact page" + contact.id);
                               EventBus.fireEvent(
-                                  MANAGER_REMOVED_EVENT, null, contact.id);
+                                  MANAGER_REMOVED_EVENT, null, removeThisId);
                             });
                           }
                         })

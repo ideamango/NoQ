@@ -14,8 +14,12 @@ class EventBus extends EventEmitter {
     EventBus.getInstance().emit(eventName, sender, eventArgs);
   }
 
-  static void registerEvent(
+  static Listener registerEvent(
       String eventName, Object context, void Function(Event, Object) callback) {
-    EventBus.getInstance().on(eventName, context, callback);
+    return EventBus.getInstance().on(eventName, context, callback);
+  }
+
+  static void unregisterEvent(Listener l) {
+    EventBus.getInstance().off(l);
   }
 }

@@ -36,6 +36,7 @@ import 'package:noq/widget/widgets.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uuid/uuid.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:eventify/eventify.dart' as Eventify;
 
 class ServiceEntityDetailsPage extends StatefulWidget {
   final Entity childEntity;
@@ -157,8 +158,11 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
 
   final itemSize = 80.0;
 
+  Eventify.Listener removeManagerListener;
+
   @override
   void initState() {
+    print("CHILD INIT");
     super.initState();
     serviceEntity = widget.childEntity;
     getGlobalState().whenComplete(() {
@@ -168,22 +172,25 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
         });
       });
     });
-    EventBus.registerEvent(MANAGER_REMOVED_EVENT, null, refreshOnManagerRemove);
+    removeManagerListener = EventBus.registerEvent(
+        MANAGER_REMOVED_EVENT, null, this.refreshOnManagerRemove);
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    print("dispose called for child entity");
+    EventBus.unregisterEvent(removeManagerListener);
   }
 
   void refreshOnManagerRemove(event, args) {
-    //print(args[0]);
     setState(() {
       //  contactRowWidgets.removeWhere((element) => element)
       print("Inside remove Manage");
       contactRowWidgets.clear();
       contactRowWidgets.add(showCircularProgress());
     });
-    refreshContacts();
-    //processRefreshContactsWithTimer();
-    print("printing event.eventData");
-    print("In parent page" + event.eventData);
-    print(event.eventData);
+    processRefreshContactsWithTimer();
   }
 
   processRefreshContactsWithTimer() async {

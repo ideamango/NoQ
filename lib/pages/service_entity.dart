@@ -91,7 +91,7 @@ class ChildEntityRowState extends State<ChildEntityRow> {
             height: 30,
             width: MediaQuery.of(context).size.width * .4,
             child: RaisedButton(
-              elevation: 10,
+              elevation: 7,
               color: Colors.white,
               splashColor: highlightColor.withOpacity(.8),
               shape: RoundedRectangleBorder(

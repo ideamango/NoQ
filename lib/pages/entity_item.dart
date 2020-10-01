@@ -41,12 +41,20 @@ class EntityRowState extends State<EntityRow> {
         if (_parentEntityMap.containsKey(entityId))
           entity = _parentEntityMap[entityId];
         else {
-          entity = await EntityService().getEntity(entityId);
+          try {
+            entity = await EntityService().getEntity(entityId);
+          } catch (e) {
+            print(e);
+          }
         }
       }
     }
     if (entity == null) {
-      entity = await EntityService().getEntity(entityId);
+      try {
+        entity = await EntityService().getEntity(entityId);
+      } catch (e) {
+        print(e);
+      }
     }
   }
 
@@ -54,10 +62,15 @@ class EntityRowState extends State<EntityRow> {
   Widget build(BuildContext context) {
     showServiceForm() {
       getEntity(_metaEntity.entityId).then((value) {
-        Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => ManageApartmentPage(entity: entity)));
+        if (entity == null) {
+          Utils.showMyFlushbar(context, Icons.info, Duration(seconds: 2),
+              "Couldnt fetch details of this entity. Try again later.", "");
+        } else {
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => ManageApartmentPage(entity: entity)));
+        }
       });
     }
 
