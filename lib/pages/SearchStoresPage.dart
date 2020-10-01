@@ -183,14 +183,6 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
     Share.share(_dynamicLink.toString());
   }
 
-  String getFormattedAddress(Address address) {
-    String adr = (address.address != null ? (address.address + ', ') : "") +
-        (address.locality != null ? (address.locality + ', ') : "") +
-        (address.landmark != null ? (address.landmark + ', ') : "") +
-        (address.city != null ? (address.city) : "");
-    return adr;
-  }
-
   Widget _emptySearchPage() {
     String defaultMsg = 'No places found!! ';
     String defaultSubMsg = 'Try again with different Name or Category.  ';
@@ -767,7 +759,7 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
                             width: MediaQuery.of(context).size.width * .78,
                             child: Text(
                               (str.address != null)
-                                  ? getFormattedAddress(str.address)
+                                  ? Utils.getFormattedAddress(str.address)
                                   : "Address",
                               overflow: TextOverflow.ellipsis,
                               style: labelSmlTextStyle,
@@ -783,8 +775,12 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
                             child: Row(
                               children: <Widget>[
                                 Row(
-                                  children: _buildDateGridItems(str,
-                                      str.entityId, str.name, str.closedOn),
+                                  children: _buildDateGridItems(
+                                      str,
+                                      str.entityId,
+                                      str.name,
+                                      str.closedOn,
+                                      str.advanceDays),
                                 ),
                               ],
                             )),
@@ -920,11 +916,20 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
                         ),
                         onPressed: () {
                           try {
-                            launchURL(
-                                str.name,
-                                getFormattedAddress(str.address),
-                                str.coordinates.geopoint.latitude,
-                                str.coordinates.geopoint.longitude);
+                            if (str.coordinates.geopoint.latitude != null)
+                              launchURL(
+                                  str.name,
+                                  Utils.getFormattedAddress(str.address),
+                                  str.coordinates.geopoint.latitude,
+                                  str.coordinates.geopoint.longitude);
+                            else {
+                              Utils.showMyFlushbar(
+                                  context,
+                                  Icons.error,
+                                  Duration(seconds: 5),
+                                  "Oops..No GPS location found for this premise!!",
+                                  "");
+                            }
                           } catch (error) {
                             Utils.showMyFlushbar(
                                 context,
@@ -1082,13 +1087,20 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
     // });
   }
 
-  List<Widget> _buildDateGridItems(
-      Entity store, String sid, String sname, List<String> daysClosed) {
+  List<Widget> _buildDateGridItems(Entity store, String sid, String sname,
+      List<String> daysClosed, int advanceDays) {
     bool isClosed = false;
+    bool isBookingAllowed = false;
     String dayOfWeek;
-
+    int daysCounter = 0;
     var dateWidgets = List<Widget>();
     for (var date in _dateList) {
+      daysCounter++;
+      if (daysCounter <= advanceDays) {
+        isBookingAllowed = true;
+      } else
+        isBookingAllowed = false;
+      print("booking not allowed beyond $advanceDays");
       print("Check:${DateFormat('EEEE').format(date)}");
       daysClosed.forEach((element) {
         isClosed = (element.toLowerCase() ==
@@ -1096,21 +1108,18 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
             ? true
             : false;
       });
-      // isClosed =
-      //     (daysClosed.contains(DateFormat('EEEE').format(date))) ? true : false;
       print(isClosed);
       dayOfWeek = Utils.getDayOfWeek(date);
-      dateWidgets
-          .add(buildDateItem(store, sid, sname, isClosed, date, dayOfWeek));
+      dateWidgets.add(buildDateItem(store, sid, sname, isClosed,
+          isBookingAllowed, advanceDays, date, dayOfWeek));
       print('Widget build from datelist  called');
     }
     return dateWidgets;
   }
 
   Widget buildDateItem(Entity store, String sid, String sname, bool isClosed,
-      DateTime dt, String dayOfWeek) {
+      bool isBookingAllowed, int advanceDays, DateTime dt, String dayOfWeek) {
     bool dateBooked = false;
-    // UserAppData user = _userProfile;
 
     for (UserToken obj in (_state.bookings)) {
       if ((compareDateFormat
@@ -1129,9 +1138,11 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
           child: Material(
             color: isClosed
                 ? Colors.grey
-                : (dateBooked
-                    ? highlightColor
-                    : primaryDarkColor), // button color
+                : (!isBookingAllowed
+                    ? Colors.grey
+                    : (dateBooked
+                        ? highlightColor
+                        : primaryDarkColor)), // button color
             child: InkWell(
               splashColor: isClosed ? null : highlightColor, // splash color
               onTap: () {
@@ -1141,6 +1152,14 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
                     Icons.info,
                     Duration(seconds: 5),
                     "This premise is closed on this day.",
+                    "Select a different date.",
+                  );
+                } else if (!isBookingAllowed) {
+                  Utils.showMyFlushbar(
+                    context,
+                    Icons.info,
+                    Duration(seconds: 5),
+                    "This premise allows advance booking for upto $advanceDays days ",
                     "Select a different date.",
                   );
                 } else {
@@ -1155,10 +1174,21 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
                   Text(dtFormat.format(dt),
-                      style: TextStyle(fontSize: 15, color: Colors.white)),
+                      style: TextStyle(
+                          fontSize: 15,
+                          color: (isClosed
+                              ? Colors.red
+                              : (!isBookingAllowed
+                                  ? Colors.grey[200]
+                                  : Colors.white)))),
                   Text(dayOfWeek,
-                      style:
-                          TextStyle(fontSize: 8, color: Colors.white)), // text
+                      style: TextStyle(
+                          fontSize: 8,
+                          color: (isClosed
+                              ? Colors.red
+                              : (!isBookingAllowed
+                                  ? Colors.grey[200]
+                                  : Colors.white)))), // text
                 ],
               ),
             ),

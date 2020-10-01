@@ -156,14 +156,6 @@ class _FavsListPageState extends State<FavsListPage> {
     }
   }
 
-  String getFormattedAddress(Address address) {
-    String adr = (address.address != null ? (address.address + ', ') : "") +
-        (address.locality != null ? (address.locality + ', ') : "") +
-        (address.landmark != null ? (address.landmark + ', ') : "") +
-        (address.city != null ? (address.city) : "");
-    return adr;
-  }
-
   generateLinkAndShareWithParams(String entityId) async {
     var dynamicLink =
         await Utils.createDynamicLinkWithParams(entityId: entityId);
@@ -447,7 +439,7 @@ class _FavsListPageState extends State<FavsListPage> {
                             width: MediaQuery.of(context).size.width * .78,
                             child: Text(
                               (str.address != null)
-                                  ? getFormattedAddress(str.address)
+                                  ? Utils.getFormattedAddress(str.address)
                                   : "Address",
                               overflow: TextOverflow.ellipsis,
                               style: labelSmlTextStyle,
@@ -463,8 +455,12 @@ class _FavsListPageState extends State<FavsListPage> {
                             child: Row(
                               children: <Widget>[
                                 Row(
-                                  children: _buildDateGridItems(str,
-                                      str.entityId, str.name, str.closedOn),
+                                  children: _buildDateGridItems(
+                                      str,
+                                      str.entityId,
+                                      str.name,
+                                      str.closedOn,
+                                      str.advanceDays),
                                 ),
                               ],
                             )),
@@ -601,11 +597,20 @@ class _FavsListPageState extends State<FavsListPage> {
                           ),
                           onPressed: () {
                             try {
-                              launchURL(
-                                  str.name,
-                                  getFormattedAddress(str.address),
-                                  str.coordinates.geopoint.latitude,
-                                  str.coordinates.geopoint.longitude);
+                              if (str.coordinates.geopoint.latitude != null)
+                                launchURL(
+                                    str.name,
+                                    Utils.getFormattedAddress(str.address),
+                                    str.coordinates.geopoint.latitude,
+                                    str.coordinates.geopoint.longitude);
+                              else {
+                                Utils.showMyFlushbar(
+                                    context,
+                                    Icons.error,
+                                    Duration(seconds: 5),
+                                    "Oops..No GPS location found for this premise!!",
+                                    "");
+                              }
                             } catch (error) {
                               Utils.showMyFlushbar(
                                   context,
@@ -749,24 +754,38 @@ class _FavsListPageState extends State<FavsListPage> {
                 )));
   }
 
-  List<Widget> _buildDateGridItems(
-      Entity store, String sid, String sname, List<String> daysClosed) {
+  List<Widget> _buildDateGridItems(Entity store, String sid, String sname,
+      List<String> daysClosed, int advanceDays) {
     bool isClosed = false;
+    bool isBookingAllowed = false;
     String dayOfWeek;
+    int daysCounter = 0;
 
     var dateWidgets = List<Widget>();
     for (var date in _dateList) {
-      isClosed = (daysClosed.contains(date.weekday.toString())) ? true : false;
+      daysCounter++;
+      if (daysCounter <= advanceDays) {
+        isBookingAllowed = true;
+      } else
+        isBookingAllowed = false;
+      print("booking not allowed beyond $advanceDays");
+      print("Check:${DateFormat('EEEE').format(date)}");
+      daysClosed.forEach((element) {
+        isClosed = (element.toLowerCase() ==
+                DateFormat('EEEE').format(date).toLowerCase())
+            ? true
+            : false;
+      });
       dayOfWeek = Utils.getDayOfWeek(date);
-      dateWidgets
-          .add(buildDateItem(store, sid, sname, isClosed, date, dayOfWeek));
+      dateWidgets.add(buildDateItem(store, sid, sname, isClosed,
+          isBookingAllowed, advanceDays, date, dayOfWeek));
       print('Widget build from datelist  called');
     }
     return dateWidgets;
   }
 
   Widget buildDateItem(Entity store, String sid, String sname, bool isClosed,
-      DateTime dt, String dayOfWeek) {
+      bool isBookingAllowed, int advanceDays, DateTime dt, String dayOfWeek) {
     bool dateBooked = false;
     // UserAppData user = _userProfile;
 
@@ -787,14 +806,30 @@ class _FavsListPageState extends State<FavsListPage> {
           child: Material(
             color: isClosed
                 ? Colors.grey
-                : (dateBooked
-                    ? highlightColor
-                    : primaryDarkColor), // button color
+                : (!isBookingAllowed
+                    ? Colors.grey
+                    : (dateBooked
+                        ? highlightColor
+                        : primaryDarkColor)), // button color
             child: InkWell(
               splashColor: isClosed ? null : highlightColor, // splash color
               onTap: () {
                 if (isClosed) {
-                  return null;
+                  Utils.showMyFlushbar(
+                    context,
+                    Icons.info,
+                    Duration(seconds: 5),
+                    "This premise is closed on this day.",
+                    "Select a different date.",
+                  );
+                } else if (!isBookingAllowed) {
+                  Utils.showMyFlushbar(
+                    context,
+                    Icons.info,
+                    Duration(seconds: 5),
+                    "This premise allows advance booking for upto $advanceDays days ",
+                    "Select a different date.",
+                  );
                 } else {
                   print("tapped");
 
@@ -807,10 +842,21 @@ class _FavsListPageState extends State<FavsListPage> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
                   Text(dtFormat.format(dt),
-                      style: TextStyle(fontSize: 15, color: Colors.white)),
+                      style: TextStyle(
+                          fontSize: 15,
+                          color: (isClosed
+                              ? Colors.red
+                              : (!isBookingAllowed
+                                  ? Colors.grey[200]
+                                  : Colors.white)))),
                   Text(dayOfWeek,
-                      style:
-                          TextStyle(fontSize: 8, color: Colors.white)), // text
+                      style: TextStyle(
+                          fontSize: 8,
+                          color: (isClosed
+                              ? Colors.red
+                              : (!isBookingAllowed
+                                  ? Colors.grey[200]
+                                  : Colors.white)))), // text
                 ],
               ),
             ),

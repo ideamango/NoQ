@@ -429,8 +429,8 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
   Widget _buildGridItem(BuildContext context, int index) {
     //TODO: Check what information coming from server, then process and use it.
     Slot sl = _slotList[index];
-    String hrs = sl.dateTime.hour.toString();
-    String mnts = sl.dateTime.minute.toString();
+    String hrs = Utils.formatTime(sl.dateTime.hour.toString());
+    String mnts = Utils.formatTime(sl.dateTime.minute.toString());
 
     return Column(
       children: <Widget>[
@@ -530,9 +530,9 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
       }
       _token = value.getDisplayName();
 
-      String slotTiming = selectedSlot.dateTime.hour.toString() +
+      String slotTiming = Utils.formatTime(selectedSlot.dateTime.hour.toString()) +
           ':' +
-          selectedSlot.dateTime.minute.toString();
+          Utils.formatTime(selectedSlot.dateTime.minute.toString());
 
       showTokenAlert(context, _token, _storeName, slotTiming).then((value) {
         _returnValues(value);

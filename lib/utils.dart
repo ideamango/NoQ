@@ -4,6 +4,7 @@ import 'package:flushbar/flushbar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:noq/db/db_model/address.dart';
 import 'package:noq/style.dart';
 import 'package:noq/widget/weekday_selector.dart';
 import 'package:noq/widget/widgets.dart';
@@ -44,6 +45,30 @@ class Utils {
     if (list.length == 0) return true;
 
     return false;
+  }
+
+  static bool isNotNullOrEmpty(String str) {
+    if (str == null) return false;
+    if (str == "") return false;
+    if (str.isEmpty) return false;
+
+    return true;
+  }
+
+  static String getFormattedAddress(Address address) {
+    String adr = (Utils.isNotNullOrEmpty(address.address)
+            ? (address.address + ', ')
+            : "") +
+        (Utils.isNotNullOrEmpty(address.locality)
+            ? (address.locality + ', ')
+            : "") +
+        (Utils.isNotNullOrEmpty(address.landmark)
+            ? (address.landmark + ', ')
+            : "") +
+        (Utils.isNotNullOrEmpty(address.city)
+            ? (address.city)
+            : "No address specified");
+    return adr;
   }
 
   static String validateMobile(String value) {
