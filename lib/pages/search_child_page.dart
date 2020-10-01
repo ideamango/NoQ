@@ -94,6 +94,11 @@ class _SearchChildrenPageState extends State<SearchChildrenPage> {
     });
   }
 
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
   String getFormattedAddress(Address address) {
     String adr = (address.address != null ? (address.address + ', ') : "") +
         (address.locality != null ? (address.locality + ', ') : "") +
@@ -324,12 +329,11 @@ class _SearchChildrenPageState extends State<SearchChildrenPage> {
         ),
         alignment: Alignment.center,
         child: new TextField(
-          // autofocus: true,
+          autofocus: true,
           controller: _searchTextController,
           cursorColor: Colors.blueGrey[500],
           cursorWidth: 1,
           textAlignVertical: TextAlignVertical.center,
-
           style: new TextStyle(fontSize: 12, color: Colors.blueGrey[700]),
           decoration: new InputDecoration(
               contentPadding: EdgeInsets.all(2),

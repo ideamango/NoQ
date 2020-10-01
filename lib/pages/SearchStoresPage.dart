@@ -85,6 +85,11 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
     });
   }
 
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
   void fetchPastSearchesList() {
     //Load details from local files
     // if (initCompleted) {
@@ -337,12 +342,11 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
         ),
         alignment: Alignment.center,
         child: new TextField(
-          // autofocus: true,
+          autofocus: true,
           controller: _searchTextController,
           cursorColor: Colors.blueGrey[500],
           cursorWidth: 1,
           textAlignVertical: TextAlignVertical.center,
-
           style: new TextStyle(fontSize: 12, color: Colors.blueGrey[700]),
           decoration: new InputDecoration(
               contentPadding: EdgeInsets.all(2),
