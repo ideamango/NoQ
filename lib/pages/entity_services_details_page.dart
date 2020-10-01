@@ -1400,29 +1400,29 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
     saveRoute() {
       print("saving ");
 
-      String addressStr1;
+      // String addressStr1;
 
-      addressStr1 =
-          (_localityController.text != null) ? _localityController.text : "";
-      String addressStr2 =
-          (_cityController.text != null) ? _cityController.text : "";
+      // addressStr1 =
+      //     (_localityController.text != null) ? _localityController.text : "";
+      // String addressStr2 =
+      //     (_cityController.text != null) ? _cityController.text : "";
 
-      String addressStr3 =
-          _stateController.text != null ? _stateController.text : "";
-      String addressStr4 =
-          _countryController.text != null ? _countryController.text : "";
-      String finalAddressStr;
-      if (addressStr2 != "" && addressStr3 != "" && addressStr4 != "")
-        finalAddressStr = addressStr1 +
-            ", " +
-            addressStr2 +
-            ", " +
-            addressStr3 +
-            ", " +
-            addressStr4;
+      // String addressStr3 =
+      //     _stateController.text != null ? _stateController.text : "";
+      // String addressStr4 =
+      //     _countryController.text != null ? _countryController.text : "";
+      // String finalAddressStr;
+      // if (addressStr2 != "" && addressStr3 != "" && addressStr4 != "")
+      //   finalAddressStr = addressStr1 +
+      //       ", " +
+      //       addressStr2 +
+      //       ", " +
+      //       addressStr3 +
+      //       ", " +
+      //       addressStr4;
       //List<Placemark> placemark;
-      double lat;
-      double long;
+      // double lat;
+      // double long;
       // Geolocator().placemarkFromAddress(finalAddressStr).then((value) {
       //   placemark = value;
       //   lat = placemark[0].position.latitude;
@@ -1495,6 +1495,7 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
                     "Please verify the details and try again.",
                     Colors.red);
               } else {
+                _gState.updateMetaEntity(serviceEntity.getMetaEntity());
                 Utils.showMyFlushbar(
                     context,
                     Icons.check,
@@ -1874,6 +1875,7 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
                                                 .9;
                                         _text = Text(
                                           publicInfo,
+                                          style: whiteBoldTextStyle1,
                                           textAlign: TextAlign.center,
                                         );
 
@@ -1902,6 +1904,7 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
                                               .9;
                                           _text = Text(
                                             publicInfo,
+                                            style: whiteBoldTextStyle1,
                                             textAlign: TextAlign.center,
                                           );
 
@@ -1987,6 +1990,7 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
                                                 .9;
                                         _text = Text(
                                           bookableInfo,
+                                          style: whiteBoldTextStyle1,
                                           textAlign: TextAlign.center,
                                         );
 
@@ -2015,6 +2019,7 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
                                               .9;
                                           _text = Text(
                                             bookableInfo,
+                                            style: whiteBoldTextStyle1,
                                             textAlign: TextAlign.center,
                                           );
 
@@ -2080,6 +2085,7 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
                                               .9;
                                       _text = Text(
                                         activeInfo,
+                                        style: whiteBoldTextStyle1,
                                         textAlign: TextAlign.center,
                                       );
 
@@ -2107,6 +2113,7 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
                                                 .9;
                                         _text = Text(
                                           activeInfo,
+                                          style: whiteBoldTextStyle1,
                                           textAlign: TextAlign.center,
                                         );
 
@@ -2186,8 +2193,8 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
                           height: _height,
                           alignment: Alignment.center,
                           decoration: BoxDecoration(
-                            color: Colors.cyan[50],
-                            border: Border.all(color: primaryIcon),
+                            color: Colors.blueGrey[500],
+                            border: Border.all(color: primaryAccentColor),
                             borderRadius: BorderRadius.circular(5),
                           ),
                           // Define how long the animation should take.

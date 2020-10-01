@@ -83,6 +83,15 @@ class GlobalState {
     return true;
   }
 
+  Future<bool> updateMetaEntity(MetaEntity metaEntity) async {
+    for (int i = 0; i < _gs.currentUser.entities.length; i++) {
+      if (_gs.currentUser.entities[i].entityId == metaEntity.entityId) {
+        _gs.currentUser.entities[i] = metaEntity;
+      }
+    }
+    return true;
+  }
+
   Future<bool> updateSearchResults(List<Entity> list) async {
     _gs.pastSearches = list;
     return true;

@@ -36,9 +36,9 @@ String drawerHeaderTxt32 = 'Rush ';
 String drawerHeaderTxt33 = 'hours !!  ';
 String drawerHeaderTxt41 = 'Save ';
 String drawerHeaderTxt42 = 'time !!';
-String publicInfo = "PUBLIC:";
-String activeInfo = "ACTIVE:";
-String bookableInfo = "BOOKABLE:";
+String publicInfo = "Public:";
+String activeInfo = "Active:";
+String bookableInfo = "Bookable:";
 String addressInfoStr =
     'The address is using the current location, and same will be used by customers when searching your location.';
 String locationInfoStr = 'Current location details.';

@@ -1642,40 +1642,15 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
       saveRoute() {
         print("saving ");
 
-        String addressStr1;
-
-        addressStr1 =
-            (_localityController.text != null) ? _localityController.text : "";
-        String addressStr2 =
-            (_cityController.text != null) ? _cityController.text : "";
-
-        String addressStr3 =
-            _stateController.text != null ? _stateController.text : "";
-        String addressStr4 =
-            _countryController.text != null ? _countryController.text : "";
-        String finalAddressStr;
-        if (addressStr2 != "" && addressStr3 != "" && addressStr4 != "")
-          finalAddressStr = addressStr1 +
-              ", " +
-              addressStr2 +
-              ", " +
-              addressStr3 +
-              ", " +
-              addressStr4;
-        // List<Placemark> placemark;
-        // double lat;
-        // double long;
-        // Geolocator().placemarkFromAddress(finalAddressStr).then((value) {
-        //   placemark = value;
-        //   lat = placemark[0].position.latitude;
-        //   print(lat);
-        //   long = placemark[0].position.longitude;
-        //   print(long);
-        //   MyGeoFirePoint geoPoint = new MyGeoFirePoint(lat, long);
-        //   entity.coordinates = geoPoint;
-        // });
-
-        // print(placemark);
+        // String addressStr1;
+        // addressStr1 =
+        //     (_localityController.text != null) ? _localityController.text : "";
+        // String addressStr2 =
+        //     (_cityController.text != null) ? _cityController.text : "";
+        // String addressStr3 =
+        //     _stateController.text != null ? _stateController.text : "";
+        // String addressStr4 =
+        //     _countryController.text != null ? _countryController.text : "";
 
         String validationPh1;
         String validationPh2;
@@ -1731,6 +1706,9 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
                       "Please verify the details and try again.",
                       Colors.red);
                 } else {
+                  //Update gs
+                  _gState.updateMetaEntity(entity.getMetaEntity());
+
                   Utils.showMyFlushbar(
                       context,
                       Icons.check,
@@ -2210,6 +2188,7 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
                                               .9;
                                           _text = Text(
                                             publicInfo,
+                                            style: whiteBoldTextStyle1,
                                             textAlign: TextAlign.center,
                                           );
 
@@ -2238,6 +2217,7 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
                                                 .9;
                                             _text = Text(
                                               publicInfo,
+                                              style: whiteBoldTextStyle1,
                                               textAlign: TextAlign.center,
                                             );
 
@@ -2260,31 +2240,31 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
                                     value: isPublic,
                                     onChanged: (value) {
                                       setState(() {
-                                        if (value) {
-                                          validateField = true;
-                                          _autoValidate = true;
-                                          bool retVal = validateAllFields();
-                                          if (!retVal) {
-                                            //Show flushbar with info that fields has invalid data
-                                            Utils.showMyFlushbar(
-                                                context,
-                                                Icons.info_outline,
-                                                Duration(
-                                                  seconds: 6,
-                                                ),
-                                                "Missing Information!! ",
-                                                "Making premises PUBLIC requires basic details. Please fill and try again !!");
-                                          } else {
-                                            validateField = false;
-                                            isPublic = value;
-                                            entity.isPublic = value;
-                                            print(isPublic);
-                                          }
-                                        } else {
-                                          isPublic = value;
-                                          entity.isPublic = value;
-                                          print(isPublic);
-                                        }
+                                        // if (value) {
+                                        //   validateField = true;
+                                        //   _autoValidate = true;
+                                        //   //bool retVal = validateAllFields();
+                                        //   if (!retVal) {
+                                        //     //Show flushbar with info that fields has invalid data
+                                        //     Utils.showMyFlushbar(
+                                        //         context,
+                                        //         Icons.info_outline,
+                                        //         Duration(
+                                        //           seconds: 6,
+                                        //         ),
+                                        //         "Missing Information!! ",
+                                        //         "Making premises PUBLIC requires basic details. Please fill and try again !!");
+                                        //   } else {
+                                        //     validateField = false;
+                                        //     isPublic = value;
+                                        //     entity.isPublic = value;
+                                        //     print(isPublic);
+                                        //   }
+                                        // } else {
+                                        isPublic = value;
+                                        entity.isPublic = value;
+                                        print(isPublic);
+                                        //}
                                       });
                                     },
                                     // activeTrackColor: Colors.green,
@@ -2325,6 +2305,7 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
                                               .9;
                                           _text = Text(
                                             bookableInfo,
+                                            style: whiteBoldTextStyle1,
                                             textAlign: TextAlign.center,
                                           );
 
@@ -2353,6 +2334,7 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
                                                 .9;
                                             _text = Text(
                                               bookableInfo,
+                                              style: whiteBoldTextStyle1,
                                               textAlign: TextAlign.center,
                                             );
 
@@ -2422,6 +2404,7 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
                                                 .9;
                                         _text = Text(
                                           activeInfo,
+                                          style: whiteBoldTextStyle1,
                                           textAlign: TextAlign.center,
                                         );
 
@@ -2450,6 +2433,7 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
                                               .9;
                                           _text = Text(
                                             activeInfo,
+                                            style: whiteBoldTextStyle1,
                                             textAlign: TextAlign.center,
                                           );
 
@@ -2531,8 +2515,8 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
                             height: _height,
                             alignment: Alignment.center,
                             decoration: BoxDecoration(
-                              color: Colors.cyan[50],
-                              border: Border.all(color: primaryIcon),
+                              color: Colors.blueGrey[500],
+                              border: Border.all(color: primaryAccentColor),
                               borderRadius: _borderRadius,
                             ),
                             // Define how long the animation should take.
@@ -3220,90 +3204,6 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
                             ),
                           ),
                           onPressed: () {
-                            // final snackBar = SnackBar(
-                            //   elevation: 20,
-                            //   // behavior: SnackBarBehavior.floating,
-                            //   // shape: Border.all(
-                            //   //   color: lightIcon,
-                            //   //   width: 2,
-                            //   // ),
-                            //   //  backgroundColor: Colors.white,
-                            //   content: Container(
-                            //     padding: EdgeInsets.all(0),
-                            //     // decoration: BoxDecoration(
-                            //     //   border: Border.all(color: Colors.indigo),
-                            //     // color: Colors.white,
-                            //     // shape: BoxShape.rectangle,
-                            //     // borderRadius:
-                            //     //     BorderRadius.all(Radius.circular(5.0))),
-                            //     alignment: Alignment.center,
-                            //     height: MediaQuery.of(context).size.width * .1,
-                            //     child: Text("Saving details..",
-                            //         style: TextStyle(color: Colors.white)),
-                            //     // Column(
-                            //     //   children: <Widget>[
-                            //     //     RichText(
-                            //     //       text: TextSpan(
-                            //     //           style: highlightBoldTextStyle,
-                            //     //           children: <TextSpan>[
-                            //     //             TextSpan(
-                            //     //               text: "Saving details ... ",
-                            //     //             ),
-                            //     //           ]),
-                            //     //     ),
-                            //     //   ],
-                            //     // ),
-                            //   ),
-                            //   duration: Duration(seconds: 2),
-                            // );
-
-                            // Scaffold.of(context).showSnackBar(snackBar);
-                            // processSaveWithTimer();
-
-                            // Flushbar(
-                            //   //padding: EdgeInsets.zero,
-                            //   margin: EdgeInsets.zero,
-                            //   flushbarPosition: FlushbarPosition.BOTTOM,
-                            //   flushbarStyle: FlushbarStyle.GROUNDED,
-                            //   reverseAnimationCurve: Curves.decelerate,
-                            //   forwardAnimationCurve: Curves.easeInToLinear,
-                            //   backgroundColor: headerBarColor,
-                            //   boxShadows: [
-                            //     BoxShadow(
-                            //         color: primaryAccentColor,
-                            //         offset: Offset(0.0, 2.0),
-                            //         blurRadius: 3.0)
-                            //   ],
-                            //   isDismissible: false,
-                            //   duration: Duration(seconds: 4),
-                            //   icon: Icon(
-                            //     Icons.save,
-                            //     color: Colors.orangeAccent[400],
-                            //   ),
-                            //   showProgressIndicator: true,
-                            //   progressIndicatorBackgroundColor:
-                            //       Colors.blueGrey[800],
-                            //   routeBlur: 10.0,
-                            //   titleText: Text(
-                            //     "Saving Details",
-                            //     style: TextStyle(
-                            //         fontWeight: FontWeight.bold,
-                            //         fontSize: 16.0,
-                            //         color: primaryAccentColor,
-                            //         fontFamily: "ShadowsIntoLightTwo"),
-                            //   ),
-                            //   messageText: Text(
-                            //     "This will take just a moment !!",
-                            //     style: TextStyle(
-                            //         fontSize: 12.0,
-                            //         color: Colors.blueGrey[50],
-                            //         fontFamily: "ShadowsIntoLightTwo"),
-                            //   ),
-                            // )
-                            //   ..onStatusChanged = (FlushbarStatus status) {
-                            //     print("FlushbarStatus-------$status");
-                            //   }
-                            //   ..show(context);
                             print("FlushbarStatus-------");
                             processSaveWithTimer();
                           }),
