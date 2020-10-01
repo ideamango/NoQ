@@ -56,18 +56,15 @@ class Utils {
   }
 
   static String getFormattedAddress(Address address) {
-    String adr = (Utils.isNotNullOrEmpty(address.address)
-            ? (address.address + ', ')
-            : "") +
-        (Utils.isNotNullOrEmpty(address.locality)
-            ? (address.locality + ', ')
-            : "") +
-        (Utils.isNotNullOrEmpty(address.landmark)
-            ? (address.landmark + ', ')
-            : "") +
-        (Utils.isNotNullOrEmpty(address.city)
-            ? (address.city)
-            : "No address specified");
+    String adr =
+        (Utils.isNotNullOrEmpty(address.address) ? (address.address) : "") +
+            (Utils.isNotNullOrEmpty(address.locality)
+                ? (', ' + address.locality)
+                : "") +
+            (Utils.isNotNullOrEmpty(address.landmark)
+                ? (', ' + address.landmark)
+                : "") +
+            (Utils.isNotNullOrEmpty(address.city) ? (', ' + address.city) : "");
     return adr;
   }
 

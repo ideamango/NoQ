@@ -1103,6 +1103,8 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
       print("booking not allowed beyond $advanceDays");
       print("Check:${DateFormat('EEEE').format(date)}");
       daysClosed.forEach((element) {
+        print(DateFormat('EEEE').format(date).toLowerCase());
+        print(element.toLowerCase());
         isClosed = (element.toLowerCase() ==
                 DateFormat('EEEE').format(date).toLowerCase())
             ? true
