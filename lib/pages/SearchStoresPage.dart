@@ -631,7 +631,7 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
                   ),
                 ),
                 Container(
-                  width: MediaQuery.of(context).size.width * .8,
+                  width: MediaQuery.of(context).size.width * .82,
                   padding: EdgeInsets.all(2),
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
@@ -718,7 +718,7 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
                               ),
                             ),
                             Container(
-                              width: MediaQuery.of(context).size.width * .2,
+                              width: MediaQuery.of(context).size.width * .18,
                               padding: EdgeInsets.all(0),
                               child: Row(
                                 children: <Widget>[
@@ -732,7 +732,7 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
                                           color: Colors.green[600],
                                           fontFamily: 'Monsterrat',
                                           letterSpacing: 0.5,
-                                          fontSize: 13.0)),
+                                          fontSize: 10.0)),
                                   Text(' - '),
                                   Text(
                                       Utils.formatTime(
@@ -744,7 +744,7 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
                                           color: Colors.red[900],
                                           fontFamily: 'Monsterrat',
                                           letterSpacing: 0.5,
-                                          fontSize: 13.0)),
+                                          fontSize: 10.0)),
                                 ],
                               ),
                             ),
