@@ -1048,12 +1048,15 @@ class _SearchChildrenPageState extends State<SearchChildrenPage> {
         isBookingAllowed = false;
       print("booking not allowed beyond $advanceDays");
       print("Check:${DateFormat('EEEE').format(date)}");
-      daysClosed.forEach((element) {
-        isClosed = (element.toLowerCase() ==
-                DateFormat('EEEE').format(date).toLowerCase())
-            ? true
-            : false;
-      });
+      for (String str in daysClosed) {
+        if (str.toLowerCase() ==
+            DateFormat('EEEE').format(date).toLowerCase()) {
+          isClosed = true;
+          break;
+        } else {
+          isClosed = false;
+        }
+      }
       dayOfWeek = Utils.getDayOfWeek(date);
       dateWidgets.add(buildDateItem(store, sid, sname, isClosed,
           isBookingAllowed, advanceDays, date, dayOfWeek));

@@ -1100,21 +1100,26 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
         isBookingAllowed = true;
       } else
         isBookingAllowed = false;
-      print("booking not allowed beyond $advanceDays");
-      print("Check:${DateFormat('EEEE').format(date)}");
-      daysClosed.forEach((element) {
-        print(DateFormat('EEEE').format(date).toLowerCase());
-        print(element.toLowerCase());
-        isClosed = (element.toLowerCase() ==
-                DateFormat('EEEE').format(date).toLowerCase())
-            ? true
-            : false;
-      });
-      print(isClosed);
+
+      for (String str in daysClosed) {
+        if (str.toLowerCase() ==
+            DateFormat('EEEE').format(date).toLowerCase()) {
+          isClosed = true;
+          break;
+        } else {
+          isClosed = false;
+        }
+      }
+      // daysClosed.forEach((element) {
+      //   isClosed = (element.toLowerCase() ==
+      //           DateFormat('EEEE').format(date).toLowerCase())
+      //       ? true
+      //       : false;
+      // });
+
       dayOfWeek = Utils.getDayOfWeek(date);
       dateWidgets.add(buildDateItem(store, sid, sname, isClosed,
           isBookingAllowed, advanceDays, date, dayOfWeek));
-      print('Widget build from datelist  called');
     }
     return dateWidgets;
   }
