@@ -682,7 +682,7 @@ class _SearchChildrenPageState extends State<SearchChildrenPage> {
                                       color: Colors.green[600],
                                       fontFamily: 'Monsterrat',
                                       letterSpacing: 0.5,
-                                      fontSize: 13.0)),
+                                      fontSize: 10.0)),
                               Text(' - '),
                               Text(
                                   Utils.formatTime(str.endTimeHour.toString()) +
