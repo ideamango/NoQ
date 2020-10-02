@@ -718,7 +718,7 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
                               ),
                             ),
                             Container(
-                              width: MediaQuery.of(context).size.width * .18,
+                              width: MediaQuery.of(context).size.width * .2,
                               padding: EdgeInsets.all(0),
                               child: Row(
                                 children: <Widget>[
