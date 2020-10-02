@@ -710,7 +710,7 @@ class _SearchChildrenPageState extends State<SearchChildrenPage> {
                                           color: Colors.red[900],
                                           fontFamily: 'Monsterrat',
                                           letterSpacing: 0.5,
-                                          fontSize: 13.0)),
+                                          fontSize: 10.0)),
                                 ],
                               ),
                             ),
