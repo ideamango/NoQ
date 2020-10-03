@@ -2133,6 +2133,7 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
                   padding: const EdgeInsets.all(5.0),
                   children: <Widget>[
                     Container(
+                      width: MediaQuery.of(context).size.width * .9,
                       margin: EdgeInsets.all(0),
                       padding: EdgeInsets.all(0),
                       // padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
@@ -2147,7 +2148,7 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
                         children: <Widget>[
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            mainAxisSize: MainAxisSize.min,
+                            mainAxisSize: MainAxisSize.max,
                             children: <Widget>[
                               Container(
                                 width: MediaQuery.of(context).size.width * .14,
@@ -2155,6 +2156,7 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
                                     visualDensity: VisualDensity.compact,
                                     padding: EdgeInsets.all(0),
                                     child: Row(
+                                      mainAxisSize: MainAxisSize.min,
                                       children: <Widget>[
                                         Text('Public',
                                             style: TextStyle(fontSize: 12)),
@@ -2274,24 +2276,29 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
                                 ),
                               ),
                               Container(
+                                width: MediaQuery.of(context).size.width * .2,
                                 child: FlatButton(
                                     visualDensity: VisualDensity.compact,
                                     padding: EdgeInsets.all(0),
-                                    child: Row(children: <Widget>[
-                                      Text('Bookable',
-                                          style: TextStyle(fontSize: 12)),
-                                      SizedBox(
-                                        width:
-                                            MediaQuery.of(context).size.width *
+                                    child: Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: <Widget>[
+                                          Text('Bookable',
+                                              style: TextStyle(fontSize: 12)),
+                                          SizedBox(
+                                            width: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
                                                 .05,
-                                        height:
-                                            MediaQuery.of(context).size.height *
+                                            height: MediaQuery.of(context)
+                                                    .size
+                                                    .height *
                                                 .02,
-                                        child: Icon(Icons.info,
-                                            color: Colors.blueGrey[600],
-                                            size: 14),
-                                      ),
-                                    ]),
+                                            child: Icon(Icons.info,
+                                                color: Colors.blueGrey[600],
+                                                size: 14),
+                                          ),
+                                        ]),
                                     onPressed: () {
                                       if (!_isExpanded) {
                                         setState(() {
@@ -2378,20 +2385,25 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
                                 child: FlatButton(
                                   visualDensity: VisualDensity.compact,
                                   padding: EdgeInsets.all(0),
-                                  child: Row(children: <Widget>[
-                                    Text('Active',
-                                        style: TextStyle(fontSize: 12)),
-                                    SizedBox(
-                                      width: MediaQuery.of(context).size.width *
-                                          .05,
-                                      height:
-                                          MediaQuery.of(context).size.height *
+                                  child: Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: <Widget>[
+                                        Text('Active',
+                                            style: TextStyle(fontSize: 12)),
+                                        SizedBox(
+                                          width: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                              .05,
+                                          height: MediaQuery.of(context)
+                                                  .size
+                                                  .height *
                                               .02,
-                                      child: Icon(Icons.info,
-                                          color: Colors.blueGrey[600],
-                                          size: 15),
-                                    ),
-                                  ]),
+                                          child: Icon(Icons.info,
+                                              color: Colors.blueGrey[600],
+                                              size: 15),
+                                        ),
+                                      ]),
                                   onPressed: () {
                                     if (!_isExpanded) {
                                       setState(() {
