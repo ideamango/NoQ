@@ -2151,7 +2151,7 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
                             mainAxisSize: MainAxisSize.max,
                             children: <Widget>[
                               Container(
-                                width: MediaQuery.of(context).size.width * .14,
+                                width: MediaQuery.of(context).size.width * .15,
                                 child: FlatButton(
                                     visualDensity: VisualDensity.compact,
                                     padding: EdgeInsets.all(0),
