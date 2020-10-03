@@ -60,65 +60,71 @@ class ChildEntityRowState extends State<ChildEntityRow> {
       });
     }
 
-    return Container(
-      margin: EdgeInsets.all(5),
-      padding: EdgeInsets.all(8),
-      decoration: BoxDecoration(
-          border: Border.all(color: borderColor),
-          color: Colors.white,
-          shape: BoxShape.rectangle,
-          borderRadius: BorderRadius.all(Radius.circular(5.0))),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: <Widget>[
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Text(
-                _metaEntity.type,
-                //  "Swimming Pool",
-                style: TextStyle(color: Colors.blueGrey[700], fontSize: 17),
-              ),
-              if (_metaEntity.name != null)
+    return GestureDetector(
+      onTap: () {
+        print("Opening child details on container click");
+        showServiceForm();
+      },
+      child: Container(
+        margin: EdgeInsets.all(5),
+        padding: EdgeInsets.all(8),
+        decoration: BoxDecoration(
+            border: Border.all(color: borderColor),
+            color: Colors.white,
+            shape: BoxShape.rectangle,
+            borderRadius: BorderRadius.all(Radius.circular(5.0))),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: <Widget>[
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
                 Text(
-                  _metaEntity.name,
-                  style: labelTextStyle,
+                  _metaEntity.type,
+                  //  "Swimming Pool",
+                  style: TextStyle(color: Colors.blueGrey[700], fontSize: 17),
                 ),
-            ],
-          ),
-          horizontalSpacer,
-          Container(
-            height: 30,
-            width: MediaQuery.of(context).size.width * .4,
-            child: RaisedButton(
-              elevation: 7,
-              color: Colors.white,
-              splashColor: highlightColor.withOpacity(.8),
-              shape: RoundedRectangleBorder(
-                  side: BorderSide(color: Colors.blueGrey[500]),
-                  borderRadius: BorderRadius.all(Radius.circular(5.0))),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: <Widget>[
+                if (_metaEntity.name != null)
                   Text(
-                    'Manage details',
-                    style: TextStyle(color: primaryDarkColor, fontSize: 13),
+                    _metaEntity.name,
+                    style: labelTextStyle,
                   ),
-                  Icon(
-                    Icons.arrow_forward_ios,
-                    color: primaryDarkColor,
-                    size: 15,
-                  )
-                ],
-              ),
-              onPressed: () {
-                print("To Add details page");
-                showServiceForm();
-              },
+              ],
             ),
-          )
-          // backgroundColor: Colors.white,
-        ],
+            horizontalSpacer,
+            Container(
+              height: 30,
+              width: MediaQuery.of(context).size.width * .4,
+              child: RaisedButton(
+                elevation: 7,
+                color: Colors.white,
+                splashColor: highlightColor.withOpacity(.8),
+                shape: RoundedRectangleBorder(
+                    side: BorderSide(color: Colors.blueGrey[500]),
+                    borderRadius: BorderRadius.all(Radius.circular(5.0))),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    Text(
+                      'Manage details',
+                      style: TextStyle(color: primaryDarkColor, fontSize: 13),
+                    ),
+                    Icon(
+                      Icons.arrow_forward_ios,
+                      color: primaryDarkColor,
+                      size: 15,
+                    )
+                  ],
+                ),
+                onPressed: () {
+                  print("To Add details page");
+                  showServiceForm();
+                },
+              ),
+            )
+            // backgroundColor: Colors.white,
+          ],
+        ),
       ),
     );
   }

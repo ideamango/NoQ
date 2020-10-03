@@ -1740,8 +1740,8 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
               ),
               ((errContactPhone == null) ? "" : (errContactPhone + "\n")) +
                   ((errTimeFields == null) ? "" : (errTimeFields + "\n")) +
-                  "Some fields are empty or have invalid details.",
-              "Please verify all the information provided and try again.",
+                  missingInfoStr,
+              missingInfoSubStr,
               Colors.red);
           setState(() {
             _autoValidate = true;
@@ -3121,16 +3121,7 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
                                         icon: Icon(Icons.person_add,
                                             color: highlightColor, size: 40),
                                         onPressed: () {
-                                          // if (_roleType != null) {
-                                          //   setState(() {
-                                          //     _msg = null;
-                                          //   });
                                           _addNewContactRow();
-                                          // } else {
-                                          //   setState(() {
-                                          //     _msg = "Select role type";
-                                          //   });
-                                          // }
                                         },
                                       ),
                                     ),

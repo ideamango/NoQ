@@ -233,24 +233,28 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
       // _regNumController.text = serviceEntity.regNum;
       if (serviceEntity.startTimeHour != null &&
           serviceEntity.startTimeMinute != null)
-        _openTimeController.text = serviceEntity.startTimeHour.toString() +
-            ':' +
-            serviceEntity.startTimeMinute.toString();
+        _openTimeController.text =
+            Utils.formatTime(serviceEntity.startTimeHour.toString()) +
+                ':' +
+                Utils.formatTime(serviceEntity.startTimeMinute.toString());
       if (serviceEntity.endTimeHour != null &&
           serviceEntity.endTimeMinute != null)
-        _closeTimeController.text = serviceEntity.endTimeHour.toString() +
-            ':' +
-            serviceEntity.endTimeMinute.toString();
+        _closeTimeController.text =
+            Utils.formatTime(serviceEntity.endTimeHour.toString()) +
+                ':' +
+                Utils.formatTime(serviceEntity.endTimeMinute.toString());
       if (serviceEntity.breakStartHour != null &&
           serviceEntity.breakStartMinute != null)
-        _breakStartController.text = serviceEntity.breakStartHour.toString() +
-            ':' +
-            serviceEntity.breakStartMinute.toString();
+        _breakStartController.text =
+            Utils.formatTime(serviceEntity.breakStartHour.toString()) +
+                ':' +
+                Utils.formatTime(serviceEntity.breakStartMinute.toString());
       if (serviceEntity.breakEndHour != null &&
           serviceEntity.breakEndMinute != null)
-        _breakEndController.text = serviceEntity.breakEndHour.toString() +
-            ':' +
-            serviceEntity.breakEndMinute.toString();
+        _breakEndController.text =
+            Utils.formatTime(serviceEntity.breakEndHour.toString()) +
+                ':' +
+                Utils.formatTime(serviceEntity.breakEndMinute.toString());
 
       if (serviceEntity.closedOn != null) {
         if (serviceEntity.closedOn.length != 0)
@@ -465,9 +469,20 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
   }
 
   void clearLocation() {
-    _latController.text = "";
-    _lonController.text = "";
-    serviceEntity.coordinates = null;
+    if (serviceEntity.isActive) {
+      Utils.showMyFlushbar(
+          context,
+          Icons.info_outline,
+          Duration(
+            seconds: 6,
+          ),
+          "CURRENT LOCATION is must if entity is ACTIVE.",
+          "If you really want to clear location, deselect ACTIVE on top of the page.");
+    } else {
+      _latController.text = "";
+      _lonController.text = "";
+      serviceEntity.coordinates = null;
+    }
   }
 
   _getAddressFromLatLng(Position position) async {
@@ -1389,6 +1404,9 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
             UnderlineInputBorder(borderSide: BorderSide(color: Colors.orange)),
       ),
       validator: validateText,
+      onChanged: (String value) {
+        serviceEntity.address.zipcode = value;
+      },
       onSaved: (String value) {
         serviceEntity.address.zipcode = value;
       },
@@ -1527,8 +1545,8 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
             ),
             ((errContactPhone == null) ? "" : (errContactPhone + "\n")) +
                 ((errTimeFields == null) ? "" : (errTimeFields + "\n")) +
-                "Some fields are empty or have invalid details.",
-            "Please verify all the information provided and try again.",
+                missingInfoStr,
+            missingInfoSubStr,
             Colors.red);
         setState(() {
           _autoValidate = true;
@@ -1926,31 +1944,9 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
                                   value: isPublic,
                                   onChanged: (value) {
                                     setState(() {
-                                      if (value) {
-                                        validateField = true;
-                                        _autoValidate = true;
-                                        bool retVal = validateAllFields();
-                                        if (!retVal) {
-                                          //Show flushbar with info that fields has invalid data
-                                          Utils.showMyFlushbar(
-                                              context,
-                                              Icons.info_outline,
-                                              Duration(
-                                                seconds: 6,
-                                              ),
-                                              "Missing Information!! ",
-                                              "Making premises PUBLIC requires basic details. Please fill and try again !!");
-                                        } else {
-                                          validateField = false;
-                                          isPublic = value;
-                                          serviceEntity.isPublic = value;
-                                          print(isPublic);
-                                        }
-                                      } else {
-                                        isPublic = value;
-                                        serviceEntity.isPublic = value;
-                                        print(isPublic);
-                                      }
+                                      isPublic = value;
+                                      serviceEntity.isPublic = value;
+                                      print(isPublic);
                                     });
                                   },
                                   // activeTrackColor: Colors.green,
@@ -2386,6 +2382,126 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
                                   title: Row(
                                     children: <Widget>[
                                       Text(
+                                        "Current Location Details",
+                                        style: TextStyle(
+                                            color: Colors.white, fontSize: 15),
+                                      ),
+                                      SizedBox(width: 5),
+                                    ],
+                                  ),
+                                  backgroundColor: Colors.blueGrey[500],
+
+                                  children: <Widget>[
+                                    new Container(
+                                      width: MediaQuery.of(context).size.width *
+                                          .94,
+                                      decoration: darkContainer,
+                                      padding: EdgeInsets.all(2.0),
+                                      child: Row(
+                                        children: <Widget>[
+                                          Expanded(
+                                            child: Text(locationInfoStr,
+                                                style: buttonXSmlTextStyle),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        Container(
+                          padding: EdgeInsets.only(left: 5.0, right: 5),
+                          child: Column(
+                            children: <Widget>[
+                              Column(children: <Widget>[
+                                Container(
+                                  padding: EdgeInsets.all(4),
+                                  width:
+                                      MediaQuery.of(context).size.width * .95,
+                                  child: RichText(
+                                      text: TextSpan(
+                                          style: highlightSubTextStyle,
+                                          children: <TextSpan>[
+                                        TextSpan(
+                                            text:
+                                                'Press USE CURRENT LOCATION to get the current GPS coordinates.'),
+                                        TextSpan(
+                                            text:
+                                                'This will help in locating your premises and lists it in search results by user.'),
+                                      ])),
+                                ),
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceAround,
+                                  children: <Widget>[
+                                    latField,
+                                    lonField,
+                                  ],
+                                ),
+                                verticalSpacer,
+                              ]),
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceAround,
+                                children: <Widget>[
+                                  clearBtn,
+                                  Container(
+                                    width:
+                                        MediaQuery.of(context).size.width * .6,
+                                    child: RaisedButton(
+                                      elevation: 10,
+                                      color: btnColor,
+                                      splashColor: highlightColor,
+                                      textColor: Colors.white,
+                                      shape: RoundedRectangleBorder(
+                                          side: BorderSide(color: btnColor)),
+                                      child: Text(
+                                        'Use Current Location',
+                                        textAlign: TextAlign.center,
+                                      ),
+                                      onPressed: useCurrLocation,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  SizedBox(
+                    height: 7,
+                  ),
+                  Container(
+                    decoration: BoxDecoration(
+                        border: Border.all(color: containerColor),
+                        color: Colors.grey[50],
+                        shape: BoxShape.rectangle,
+                        borderRadius: BorderRadius.all(Radius.circular(5.0))),
+                    //padding: EdgeInsets.all(5.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Column(
+                          children: <Widget>[
+                            Container(
+                              //padding: EdgeInsets.only(left: 5),
+                              decoration: darkContainer,
+                              child: Theme(
+                                data: ThemeData(
+                                  unselectedWidgetColor: Colors.white,
+                                  accentColor: Colors.grey[50],
+                                ),
+                                child: CustomExpansionTile(
+                                  //key: PageStorageKey(this.widget.headerTitle),
+                                  initiallyExpanded: false,
+                                  title: Row(
+                                    children: <Widget>[
+                                      Text(
                                         "Address",
                                         style: TextStyle(
                                             color: Colors.white, fontSize: 15),
@@ -2416,51 +2532,6 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
                           padding: EdgeInsets.only(left: 5.0, right: 5),
                           child: Column(
                             children: <Widget>[
-                              Row(children: <Widget>[
-                                Container(
-                                  padding: EdgeInsets.all(6),
-                                  width:
-                                      MediaQuery.of(context).size.width * .55,
-                                  child: RichText(
-                                      text: TextSpan(
-                                          style: highlightSubTextStyle,
-                                          children: <TextSpan>[
-                                        TextSpan(
-                                            text:
-                                                'Press USE CURRENT LOCATION to get the current GPS coordinates.'),
-                                        TextSpan(
-                                            text:
-                                                'This will help in locating your premises and gives better search results.'),
-                                      ])),
-                                ),
-                                SizedBox(
-                                  width:
-                                      MediaQuery.of(context).size.width * .05,
-                                ),
-                                Container(
-                                  width: MediaQuery.of(context).size.width * .3,
-                                  child: RaisedButton(
-                                    elevation: 10,
-                                    color: btnColor,
-                                    splashColor: highlightColor,
-                                    textColor: Colors.white,
-                                    shape: RoundedRectangleBorder(
-                                        side: BorderSide(color: btnColor)),
-                                    child: Text(
-                                      'Use current location',
-                                      textAlign: TextAlign.center,
-                                    ),
-                                    onPressed: useCurrLocation,
-                                  ),
-                                ),
-                              ]),
-                              Row(
-                                children: <Widget>[
-                                  latField,
-                                  lonField,
-                                  clearBtn
-                                ],
-                              ),
                               adrsField1,
                               landmarkField2,
                               localityField,
@@ -2706,7 +2777,8 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
                                 ),
                               ),
                             ),
-                            Padding(
+                            Container(
+                              color: Colors.grey[100],
                               padding: const EdgeInsets.fromLTRB(8.0, 0, 8, 0),
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.end,
@@ -2863,77 +2935,7 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
                           ),
                         ),
                         onPressed: () {
-                          // flush = Flushbar(
-                          //   //padding: EdgeInsets.zero,
-                          //   margin: EdgeInsets.zero,
-                          //   flushbarPosition: FlushbarPosition.BOTTOM,
-                          //   flushbarStyle: FlushbarStyle.GROUNDED,
-                          //   reverseAnimationCurve: Curves.decelerate,
-                          //   forwardAnimationCurve: Curves.easeInToLinear,
-                          //   backgroundColor: headerBarColor,
-                          //   boxShadows: [
-                          //     BoxShadow(
-                          //         color: primaryAccentColor,
-                          //         offset: Offset(0.0, 2.0),
-                          //         blurRadius: 3.0)
-                          //   ],
-                          //   isDismissible: false,
-                          //   //duration: Duration(seconds: 4),
-                          //   icon: Icon(
-                          //     Icons.cancel,
-                          //     color: Colors.orangeAccent[400],
-                          //   ),
-                          //   showProgressIndicator: true,
-                          //   progressIndicatorBackgroundColor:
-                          //       Colors.blueGrey[800],
-                          //   routeBlur: 10.0,
-                          //   titleText: Text(
-                          //     "Saving Details",
-                          //     style: TextStyle(
-                          //         fontWeight: FontWeight.bold,
-                          //         fontSize: 16.0,
-                          //         color: primaryAccentColor,
-                          //         fontFamily: "ShadowsIntoLightTwo"),
-                          //   ),
-                          //   messageText: Text(
-                          //     "This will take just a moment !!",
-                          //     style: TextStyle(
-                          //         fontSize: 12.0,
-                          //         color: Colors.blueGrey[50],
-                          //         fontFamily: "ShadowsIntoLightTwo"),
-                          //   ),
-                          //   duration: Duration(seconds: 4),
 
-                          //   // mainButton: Column(
-                          //   //   children: <Widget>[
-                          //   //     FlatButton(
-                          //   //       padding: EdgeInsets.all(0),
-                          //   //       onPressed: () {
-                          //   //         flush.dismiss(true); // result = true
-                          //   //       },
-                          //   //       child: Text(
-                          //   //         "Yes",
-                          //   //         style: TextStyle(color: highlightColor),
-                          //   //       ),
-                          //   //     ),
-                          //   //     FlatButton(
-                          //   //       padding: EdgeInsets.all(0),
-                          //   //       onPressed: () {
-                          //   //         flush.dismiss(false); // result = true
-                          //   //       },
-                          //   //       child: Text(
-                          //   //         "No",
-                          //   //         style: TextStyle(color: highlightColor),
-                          //   //       ),
-                          //   //     ),
-                          //   //   ],
-                          //   // ),
-                          // )
-                          //   ..onStatusChanged = (FlushbarStatus status) {
-                          //     print("FlushbarStatus-------$status");
-                          //   }
-                          //   ..show(context);
-                          // print("FlushbarStatus-------");
 
                           processSaveWithTimer();
 

@@ -44,6 +44,9 @@ String addressInfoStr =
 String locationInfoStr = 'Current location details.';
 String paymentInfoStr = 'Payments details.';
 
+String missingInfoStr = "Some fields are either empty or have invalid details.";
+String missingInfoSubStr =
+    "Please verify all the information provided and try again.";
 String basicInfoStr =
     'These are important details of the establishment, Same will be shown to customer while search.';
 

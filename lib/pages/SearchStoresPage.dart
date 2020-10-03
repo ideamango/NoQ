@@ -758,9 +758,9 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
                           Container(
                             width: MediaQuery.of(context).size.width * .78,
                             child: Text(
-                              (str.address != null)
+                              (Utils.getFormattedAddress(str.address) != "")
                                   ? Utils.getFormattedAddress(str.address)
-                                  : "Address",
+                                  : "No Address found",
                               overflow: TextOverflow.ellipsis,
                               style: labelSmlTextStyle,
                             ),

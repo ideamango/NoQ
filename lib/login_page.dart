@@ -577,26 +577,26 @@ class _LoginPageState extends State<LoginPage> {
                     },
                   ),
                 ),
-                Container(
-                  height: 30,
-                  alignment: Alignment.center,
-                  child: FlatButton(
-                    color: disabledColor,
-                    textColor: Colors.white,
-                    shape: RoundedRectangleBorder(
-                        // side: BorderSide(color: btnColor),
-                        borderRadius: BorderRadius.all(Radius.circular(3.0))),
-                    child: Text(
-                      'Resend OTP',
-                      style: TextStyle(fontSize: 11),
-                    ),
-                    onPressed: () {
-                      //TODO SMITA add code for resend
-                      //verifyPhone(_mobile);
-                      // resendVerificationCode(_phoneNo, verId);
-                    },
-                  ),
-                ),
+                // Container(
+                //   height: 30,
+                //   alignment: Alignment.center,
+                //   child: FlatButton(
+                //     color: disabledColor,
+                //     textColor: Colors.white,
+                //     shape: RoundedRectangleBorder(
+                //         // side: BorderSide(color: btnColor),
+                //         borderRadius: BorderRadius.all(Radius.circular(3.0))),
+                //     child: Text(
+                //       'Resend OTP',
+                //       style: TextStyle(fontSize: 11),
+                //     ),
+                //     onPressed: () {
+                //       //TODO SMITA add code for resend
+                //       //verifyPhone(_mobile);
+                //       // resendVerificationCode(_phoneNo, verId);
+                //     },
+                //   ),
+                // ),
                 SizedBox(
                   height: 30,
                   child: RaisedButton(
