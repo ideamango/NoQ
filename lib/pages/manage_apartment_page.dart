@@ -58,7 +58,7 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
   double _width = 0;
   double _height = 0;
   EdgeInsets _margin = EdgeInsets.fromLTRB(0, 0, 0, 0);
-  Text _text = Text("Information block");
+  Widget _text;
   bool _isExpanded = false;
   bool _publicExpandClick = false;
   bool _activeExpandClick = false;
@@ -2188,13 +2188,16 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
                                                   .size
                                                   .width *
                                               .9;
-                                          _text = Text(
-                                            publicInfo,
-                                            style: whiteBoldTextStyle1,
-                                            textAlign: TextAlign.center,
-                                          );
+                                          _text = RichText(
+                                              text: TextSpan(
+                                                  style: subHeadingTextStyle,
+                                                  children: <TextSpan>[
+                                                TextSpan(
+                                                    text: publicInfo,
+                                                    style: buttonXSmlTextStyle)
+                                              ]));
 
-                                          _height = 30;
+                                          _height = 60;
                                         });
                                       } else {
                                         //if bookable info is being shown
@@ -2217,13 +2220,17 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
                                                     .size
                                                     .width *
                                                 .9;
-                                            _text = Text(
-                                              publicInfo,
-                                              style: whiteBoldTextStyle1,
-                                              textAlign: TextAlign.center,
-                                            );
+                                            _text = RichText(
+                                                text: TextSpan(
+                                                    style: subHeadingTextStyle,
+                                                    children: <TextSpan>[
+                                                  TextSpan(
+                                                      text: publicInfo,
+                                                      style:
+                                                          buttonXSmlTextStyle)
+                                                ]));
 
-                                            _height = 30;
+                                            _height = 60;
                                           });
                                         }
                                       }
@@ -2310,13 +2317,15 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
                                                   .size
                                                   .width *
                                               .9;
-                                          _text = Text(
-                                            bookableInfo,
-                                            style: whiteBoldTextStyle1,
-                                            textAlign: TextAlign.center,
-                                          );
-
-                                          _height = 30;
+                                          _text = RichText(
+                                              text: TextSpan(
+                                                  style: subHeadingTextStyle,
+                                                  children: <TextSpan>[
+                                                TextSpan(
+                                                    text: bookableInfo,
+                                                    style: buttonXSmlTextStyle)
+                                              ]));
+                                          _height = 60;
                                         });
                                       } else {
                                         //if bookable info is being shown
@@ -2339,13 +2348,17 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
                                                     .size
                                                     .width *
                                                 .9;
-                                            _text = Text(
-                                              bookableInfo,
-                                              style: whiteBoldTextStyle1,
-                                              textAlign: TextAlign.center,
-                                            );
+                                            _text = RichText(
+                                                text: TextSpan(
+                                                    style: subHeadingTextStyle,
+                                                    children: <TextSpan>[
+                                                  TextSpan(
+                                                      text: bookableInfo,
+                                                      style:
+                                                          buttonXSmlTextStyle)
+                                                ]));
 
-                                            _height = 30;
+                                            _height = 60;
                                           });
                                         }
                                       }
@@ -2414,13 +2427,16 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
                                         _width =
                                             MediaQuery.of(context).size.width *
                                                 .9;
-                                        _text = Text(
-                                          activeInfo,
-                                          style: whiteBoldTextStyle1,
-                                          textAlign: TextAlign.center,
-                                        );
+                                        _text = RichText(
+                                            text: TextSpan(
+                                                style: subHeadingTextStyle,
+                                                children: <TextSpan>[
+                                              TextSpan(
+                                                  text: activeInfo,
+                                                  style: buttonXSmlTextStyle)
+                                            ]));
 
-                                        _height = 30;
+                                        _height = 60;
                                       });
                                     } else {
                                       //if bookable info is being shown
@@ -2443,13 +2459,16 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
                                                   .size
                                                   .width *
                                               .9;
-                                          _text = Text(
-                                            activeInfo,
-                                            style: whiteBoldTextStyle1,
-                                            textAlign: TextAlign.center,
-                                          );
+                                          _text = RichText(
+                                              text: TextSpan(
+                                                  style: subHeadingTextStyle,
+                                                  children: <TextSpan>[
+                                                TextSpan(
+                                                    text: activeInfo,
+                                                    style: buttonXSmlTextStyle)
+                                              ]));
 
-                                          _height = 30;
+                                          _height = 60;
                                         });
                                       }
                                     }
@@ -2521,6 +2540,7 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
                             ],
                           ),
                           AnimatedContainer(
+                            padding: EdgeInsets.all(2),
                             margin: _margin,
                             // Use the properties stored in the State class.
                             width: _width,
