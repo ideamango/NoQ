@@ -1855,14 +1855,15 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
                       children: <Widget>[
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          mainAxisSize: MainAxisSize.min,
+                          mainAxisSize: MainAxisSize.max,
                           children: <Widget>[
                             Container(
-                              width: MediaQuery.of(context).size.width * .14,
+                              width: MediaQuery.of(context).size.width * .15,
                               child: FlatButton(
                                   visualDensity: VisualDensity.compact,
                                   padding: EdgeInsets.all(0),
                                   child: Row(
+                                    mainAxisSize: MainAxisSize.min,
                                     children: <Widget>[
                                       Text('Public',
                                           style: TextStyle(fontSize: 12)),
@@ -1960,20 +1961,25 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
                               child: FlatButton(
                                   visualDensity: VisualDensity.compact,
                                   padding: EdgeInsets.all(0),
-                                  child: Row(children: <Widget>[
-                                    Text('Bookable',
-                                        style: TextStyle(fontSize: 12)),
-                                    SizedBox(
-                                      width: MediaQuery.of(context).size.width *
-                                          .05,
-                                      height:
-                                          MediaQuery.of(context).size.height *
+                                  child: Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: <Widget>[
+                                        Text('Bookable',
+                                            style: TextStyle(fontSize: 12)),
+                                        SizedBox(
+                                          width: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                              .05,
+                                          height: MediaQuery.of(context)
+                                                  .size
+                                                  .height *
                                               .02,
-                                      child: Icon(Icons.info,
-                                          color: Colors.blueGrey[600],
-                                          size: 14),
-                                    ),
-                                  ]),
+                                          child: Icon(Icons.info,
+                                              color: Colors.blueGrey[600],
+                                              size: 14),
+                                        ),
+                                      ]),
                                   onPressed: () {
                                     if (!_isExpanded) {
                                       setState(() {
@@ -2054,22 +2060,27 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
                               ),
                             ),
                             Container(
-                              width: MediaQuery.of(context).size.width * .14,
+                              width: MediaQuery.of(context).size.width * .15,
                               child: FlatButton(
                                 visualDensity: VisualDensity.compact,
                                 padding: EdgeInsets.all(0),
-                                child: Row(children: <Widget>[
-                                  Text('Active',
-                                      style: TextStyle(fontSize: 12)),
-                                  SizedBox(
-                                    width:
-                                        MediaQuery.of(context).size.width * .05,
-                                    height: MediaQuery.of(context).size.height *
-                                        .02,
-                                    child: Icon(Icons.info,
-                                        color: Colors.blueGrey[600], size: 14),
-                                  ),
-                                ]),
+                                child: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: <Widget>[
+                                      Text('Active',
+                                          style: TextStyle(fontSize: 12)),
+                                      SizedBox(
+                                        width:
+                                            MediaQuery.of(context).size.width *
+                                                .05,
+                                        height:
+                                            MediaQuery.of(context).size.height *
+                                                .02,
+                                        child: Icon(Icons.info,
+                                            color: Colors.blueGrey[600],
+                                            size: 14),
+                                      ),
+                                    ]),
                                 onPressed: () {
                                   if (!_isExpanded) {
                                     setState(() {
@@ -2935,8 +2946,6 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
                           ),
                         ),
                         onPressed: () {
-
-
                           processSaveWithTimer();
 
                           //processSaveWithTimer();
