@@ -313,12 +313,6 @@ class _UserHomePageState extends State<UserHomePage> {
                                 maxHeight:
                                     MediaQuery.of(context).size.height * .4,
                               ),
-
-                              // decoration: BoxDecoration(
-                              //     shape: BoxShape.rectangle,
-                              //     borderRadius: BorderRadius.all(Radius.circular(8.0))),
-                              // height: MediaQuery.of(context).size.height * .6,
-                              // margin: EdgeInsets.fromLTRB(10, 10, 10, 10),
                               child: Scrollbar(
                                 child: ListView.builder(
                                   shrinkWrap: true,
@@ -342,57 +336,6 @@ class _UserHomePageState extends State<UserHomePage> {
                                 "Book now to save time later!! "),
                           if (_upcomingBkgStatus == 'Loading')
                             showCircularProgress(),
-                        ],
-                      ),
-                    ),
-                  ),
-                  Card(
-                    elevation: 20,
-                    child: Theme(
-                      data: ThemeData(
-                        unselectedWidgetColor: Colors.grey[600],
-                        accentColor: Colors.teal,
-                      ),
-                      child: ExpansionTile(
-                        title: Text(
-                          "Past Bookings",
-                          style: TextStyle(
-                              color: Colors.blueGrey[700], fontSize: 17),
-                        ),
-                        backgroundColor: Colors.white,
-                        leading: Icon(
-                          Icons.access_time,
-                          color: primaryIcon,
-                        ),
-                        children: <Widget>[
-                          Column(
-                            children: <Widget>[
-                              if (_pastBkgStatus == "Success")
-                                Container(
-                                  //height: MediaQuery.of(context).size.width * .5,
-                                  child: ListView.builder(
-                                    shrinkWrap: true,
-                                    scrollDirection: Axis.vertical,
-                                    itemBuilder:
-                                        (BuildContext context, int index) {
-                                      return Container(
-                                        child: new Column(
-                                            children: _pastBookingsList
-                                                .map(_buildItem)
-                                                .toList()),
-                                        //children: <Widget>[firstRow, secondRow],
-                                      );
-                                    },
-                                    itemCount: 1,
-                                  ),
-                                ),
-                              if (_pastBkgStatus == 'NoBookings')
-                                _emptyStorePage("No bookings in past..",
-                                    "Book now to save time later!! "),
-                              if (_pastBkgStatus == 'Loading')
-                                showCircularProgress(),
-                            ],
-                          )
                         ],
                       ),
                     ),
