@@ -454,7 +454,7 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
       child: Row(
         children: <Widget>[
           Text(
-            'Days off: ',
+            'Days off ',
             style: TextStyle(
               color: Colors.grey[600],
               // fontWeight: FontWeight.w800,
@@ -1998,7 +1998,7 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
             // contentPadding: EdgeInsets.all(0),
             focusedBorder: InputBorder.none,
             enabledBorder: InputBorder.none,
-            hintText: "Enter Admin's Contact number & Click (+)",
+            hintText: "Enter Admin's Contact number & press (+)",
             hintStyle:
                 new TextStyle(fontSize: 12, color: Colors.blueGrey[500])),
         validator: Utils.validateMobileField,
@@ -2067,7 +2067,7 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
                           fontFamily: "ShadowsIntoLightTwo"),
                     ),
                     messageText: Text(
-                      "The changes you made might be lost.",
+                      "The changes you made might be lost, if not saved.",
                       style: TextStyle(
                           fontSize: 10.0,
                           color: Colors.blueGrey[50],

@@ -1129,7 +1129,7 @@ class _SearchChildrenPageState extends State<SearchChildrenPage> {
                     Icons.info,
                     Duration(seconds: 5),
                     "This premise allows advance booking for upto $advanceDays days ",
-                    "Select a different date.",
+                    "Please select an earlier date.",
                   );
                 } else {
                   print("tapped");
