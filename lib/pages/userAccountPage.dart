@@ -173,7 +173,7 @@ class _UserAccountPageState extends State<UserAccountPage> {
   Widget _buildItem(UserToken booking) {
     String address = getEntityAddress(booking.entityId);
     return Container(
-        width: MediaQuery.of(context).size.width * .9,
+        width: MediaQuery.of(context).size.width * .95,
         height: MediaQuery.of(context).size.width * .7 / 2.7,
         decoration: BoxDecoration(
           image: DecorationImage(
@@ -818,22 +818,29 @@ class _UserAccountPageState extends State<UserAccountPage> {
                                 Column(
                                   children: <Widget>[
                                     if (_pastBkgStatus == "Success")
-                                      Container(
-                                        //height: MediaQuery.of(context).size.width * .5,
-                                        child: ListView.builder(
-                                          shrinkWrap: true,
-                                          scrollDirection: Axis.vertical,
-                                          itemBuilder: (BuildContext context,
-                                              int index) {
-                                            return Container(
-                                              child: new Column(
-                                                  children: _pastBookingsList
-                                                      .map(_buildItem)
-                                                      .toList()),
-                                              //children: <Widget>[firstRow, secondRow],
-                                            );
-                                          },
-                                          itemCount: 1,
+                                      ConstrainedBox(
+                                        constraints: new BoxConstraints(
+                                          maxHeight: MediaQuery.of(context)
+                                                  .size
+                                                  .height *
+                                              .4,
+                                        ),
+                                        child: Scrollbar(
+                                          child: ListView.builder(
+                                            shrinkWrap: true,
+                                            scrollDirection: Axis.vertical,
+                                            itemBuilder: (BuildContext context,
+                                                int index) {
+                                              return Container(
+                                                child: new Column(
+                                                    children: _pastBookingsList
+                                                        .map(_buildItem)
+                                                        .toList()),
+                                                //children: <Widget>[firstRow, secondRow],
+                                              );
+                                            },
+                                            itemCount: 1,
+                                          ),
                                         ),
                                       ),
                                     if (_pastBkgStatus == 'NoBookings')

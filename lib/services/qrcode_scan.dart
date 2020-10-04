@@ -48,6 +48,8 @@ class QrCodeScanner {
       }
 
       scanResult = result;
+      print("PRINTING scan result");
+      print(scanResult);
     }
   }
 }
