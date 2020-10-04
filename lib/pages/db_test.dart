@@ -10,7 +10,7 @@ import 'package:noq/db/db_model/meta_entity.dart';
 import 'package:noq/db/db_model/my_geo_fire_point.dart';
 import 'package:noq/db/db_model/offer.dart';
 import 'package:noq/db/db_model/slot.dart';
-import 'package:noq/db/db_model/user.dart';
+import 'package:noq/db/db_model/app_user.dart';
 import 'package:noq/db/db_model/user_token.dart';
 import 'package:noq/db/db_service/configurations_service.dart';
 import 'package:noq/db/db_service/entity_service.dart';
@@ -260,7 +260,7 @@ class DBTest {
   }
 
   Future<void> securityPermissionTests() async {
-    await updateEntity("Inorbit_AdminCheck");
+    updateEntity("Inorbit_AdminCheck");
     await EntityService().assignAdmin('Child101-1', "+913611009823");
     await EntityService().assignAdmin('Entity102', "+913611009823");
     await EntityService().removeAdmin('Entity102', "+913611009823");
@@ -268,15 +268,15 @@ class DBTest {
   }
 
   void tests() async {
-    final FirebaseUser fireUser = await FirebaseAuth.instance.currentUser();
-    Firestore fStore = Firestore.instance;
+    final User fireUser = await FirebaseAuth.instance.currentUser;
+    FirebaseFirestore fStore = FirebaseFirestore.instance;
 
     print(
         "<==================================TESTING STARTED==========================================>");
 
     Configurations conf = await ConfigurationService().getConfigurations();
 
-    User u = await UserService().getCurrentUser();
+    AppUser u = await UserService().getCurrentUser();
 
     try {
       await createChildEntityAndAddToParent(
@@ -348,13 +348,13 @@ class DBTest {
     //   }
     // }
 
-    final DocumentReference entityPrivateRef = fStore
-        .document('entities/' + child1.entityId + '/private_data/private');
+    final DocumentReference entityPrivateRef =
+        fStore.doc('entities/' + child1.entityId + '/private_data/private');
     DocumentSnapshot doc = await entityPrivateRef.get();
 
     EntityPrivate ePrivate;
     if (doc.exists) {
-      Map<String, dynamic> map = doc.data;
+      Map<String, dynamic> map = doc.data();
       ePrivate = EntityPrivate.fromJson(map);
       if (ePrivate.roles['+913611009823'] == "admin") {
         isAdminAssignedOnEntity = true;
@@ -367,12 +367,12 @@ class DBTest {
       print("EntityService.assignAdmin -----------------------> FAILURE");
     }
 
-    final DocumentReference userRef = fStore.document('users/+913611009823');
+    final DocumentReference userRef = fStore.doc('users/+913611009823');
     DocumentSnapshot doc1 = await userRef.get();
-    User newAdmin;
+    AppUser newAdmin;
     if (doc1.exists) {
-      Map<String, dynamic> map = doc1.data;
-      newAdmin = User.fromJson(map);
+      Map<String, dynamic> map = doc1.data();
+      newAdmin = AppUser.fromJson(map);
     }
 
     bool isEntityAddedToAdmin = false;
@@ -495,7 +495,7 @@ class DBTest {
     }
 
     if (entitiesByTypeAndNameNull != null &&
-        entitiesByTypeAndNameNull.length == 2) {
+        entitiesByTypeAndNameNull.length >= 2) {
       print("EntityService.search --> SUCCESS");
     } else {
       print("EntityService.search -----------------------> FAILURE");
@@ -577,13 +577,13 @@ class DBTest {
     //   }
     // }
 
-    final DocumentReference child101PrivateRef = fStore
-        .document('entities/' + child1.entityId + '/private_data/private');
+    final DocumentReference child101PrivateRef =
+        fStore.doc('entities/' + child1.entityId + '/private_data/private');
     DocumentSnapshot docChild101 = await child101PrivateRef.get();
 
     EntityPrivate ePrivateChild101;
     if (doc.exists) {
-      Map<String, dynamic> map = docChild101.data;
+      Map<String, dynamic> map = docChild101.data();
       ePrivateChild101 = EntityPrivate.fromJson(map);
       if (ePrivateChild101.roles['+913611009823'] == "admin") {
         isAdminAssignedOnEntity = false;
@@ -597,10 +597,10 @@ class DBTest {
     }
 
     DocumentSnapshot removedAdminDoc = await userRef.get();
-    User removedAdmin;
+    AppUser removedAdmin;
     if (doc.exists) {
-      Map<String, dynamic> map = removedAdminDoc.data;
-      removedAdmin = User.fromJson(map);
+      Map<String, dynamic> map = removedAdminDoc.data();
+      removedAdmin = AppUser.fromJson(map);
     }
 
     bool isEntityRemovedFromAdmin = true;
@@ -626,7 +626,7 @@ class DBTest {
 
     await EntityService().addEntityToUserFavourite(child101.getMetaEntity());
 
-    User curUser = await UserService().getCurrentUser();
+    AppUser curUser = await UserService().getCurrentUser();
 
     bool isEntityAddedToCurrentUser = false;
 
@@ -692,7 +692,7 @@ class DBTest {
           "EntityService.upsertChildEntityToParent (metaEntity updated in the Parent) --> Failure");
     }
 
-    User user = await UserService().getCurrentUser();
+    AppUser user = await UserService().getCurrentUser();
 
     bool metaNameChangedInAdminUser = false;
 

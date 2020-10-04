@@ -5,8 +5,9 @@ import 'package:noq/utils.dart';
 
 import 'my_geo_fire_point.dart';
 
-class User {
-  User({this.id, this.name, this.loc, this.ph, this.entities, this.favourites});
+class AppUser {
+  AppUser(
+      {this.id, this.name, this.loc, this.ph, this.entities, this.favourites});
 
   //just need an id which is unique even if later phone or firebase id changes
   String id;
@@ -33,9 +34,9 @@ class User {
         'favourites': metaEntitiesToJson(favourites)
       };
 
-  static User fromJson(Map<String, dynamic> json) {
+  static AppUser fromJson(Map<String, dynamic> json) {
     if (json == null) return null;
-    return new User(
+    return new AppUser(
         id: json['id'],
         name: json['name'],
         loc: MyGeoFirePoint.fromJson(json['loc']),

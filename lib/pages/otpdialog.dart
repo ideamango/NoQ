@@ -46,7 +46,7 @@ class _OTPDialogState extends State<OTPDialog> {
     };
 
     final PhoneVerificationFailed verificationFailed =
-        (AuthException authException) {};
+        (FirebaseAuthException authException) {};
 
     final PhoneCodeSent otpSent = (String verId, [int forceResend]) {
       this.verId = verId;
@@ -70,35 +70,34 @@ class _OTPDialogState extends State<OTPDialog> {
     _pin = pin;
     print(_pin);
     try {
-      FirebaseAuth.instance.currentUser().then((user) {
-        if (user != null) {
-          Navigator.of(context).pop();
-          Navigator.of(context).pushReplacementNamed('/dashboard');
+      User user = FirebaseAuth.instance.currentUser;
+      if (user != null) {
+        Navigator.of(context).pop();
+        Navigator.of(context).pushReplacementNamed('/dashboard');
+      } else {
+        if (_pin == null || _pin == "") {
+          setState(() {
+            _errorMessage = "Enter 6 digit otp sent on your phone.";
+          });
         } else {
-          if (_pin == null || _pin == "") {
-            setState(() {
-              _errorMessage = "Enter 6 digit otp sent on your phone.";
-            });
-          } else {
-            AuthCredential authCreds = PhoneAuthProvider.getCredential(
-                verificationId: verId, smsCode: _pin);
-            FirebaseAuth.instance
-                .signInWithCredential(authCreds)
-                .then((AuthResult authResult) {
-              // AuthService()
-              //     .signInWithOTP(_pin, verificationId, context)
-              // .then(() {
-              print("inside then");
-              Navigator.of(context).pop();
-              Navigator.of(context).pushReplacementNamed('/dashboard');
-            }).catchError((onError) {
-              print("printing Errorrrrrrrrrr");
-              // print(onError.toString());
-              handleError(onError);
-            });
-          }
+          AuthCredential authCreds = PhoneAuthProvider.credential(
+              verificationId: verId, smsCode: _pin);
+          FirebaseAuth.instance
+              .signInWithCredential(authCreds)
+              .then((UserCredential authResult) {
+            // AuthService()
+            //     .signInWithOTP(_pin, verificationId, context)
+            // .then(() {
+            print("inside then");
+            Navigator.of(context).pop();
+            Navigator.of(context).pushReplacementNamed('/dashboard');
+          }).catchError((onError) {
+            print("printing Errorrrrrrrrrr");
+            // print(onError.toString());
+            handleError(onError);
+          });
         }
-      });
+      }
     } catch (err) {
       print("$err.toString()");
       _errorMessage = err.toString();

@@ -1,42 +1,42 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:noq/db/db_model/user.dart';
+import 'package:noq/db/db_model/app_user.dart';
 
 class UserService {
-  Future<User> getCurrentUser() async {
-    final FirebaseUser fireUser = await FirebaseAuth.instance.currentUser();
-    Firestore fStore = Firestore.instance;
+  Future<AppUser> getCurrentUser() async {
+    final User fireUser = FirebaseAuth.instance.currentUser;
+    FirebaseFirestore fStore = FirebaseFirestore.instance;
 
     final DocumentReference userRef =
-        fStore.document('users/' + fireUser.phoneNumber);
+        fStore.doc('users/' + fireUser.phoneNumber);
 
-    User u;
+    AppUser u;
 
     DocumentSnapshot doc = await userRef.get();
 
     if (doc.exists) {
-      Map<String, dynamic> map = doc.data;
+      Map<String, dynamic> map = doc.data();
 
-      u = User.fromJson(map);
+      u = AppUser.fromJson(map);
     } else {
-      u = new User(
+      u = new AppUser(
           id: fireUser.uid,
           ph: fireUser.phoneNumber,
           name: fireUser.displayName);
 
-      userRef.setData(u.toJson());
+      userRef.set(u.toJson());
     }
 
     return u;
   }
 
   Future<bool> deleteCurrentUser() async {
-    final FirebaseUser fireUser = await FirebaseAuth.instance.currentUser();
-    Firestore fStore = Firestore.instance;
+    final User fireUser = FirebaseAuth.instance.currentUser;
+    FirebaseFirestore fStore = FirebaseFirestore.instance;
     try {
       final DocumentReference userRef =
-          fStore.document('users/' + fireUser.phoneNumber);
-      await userRef.delete();
+          fStore.doc('users/' + fireUser.phoneNumber);
+      userRef.delete();
     } catch (e) {
       return false;
     }

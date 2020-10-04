@@ -22,10 +22,10 @@ String helpPageMainMsg = "We are working on getting best help..";
 
 String noFavMsg = 'No favourites yet!!';
 
-String tokenHeading = 'Yay!! Your booking is confirmed. Please be on time.';
+String tokenHeading = 'Yay!! Your booking is confirmed.';
 String tokenTextH1 =
     "Booked your peace of mind. No more long waiting in queues!";
-String tokenTextH2 = "Maintain social distance while at ";
+String tokenTextH2 = "Please be on time and maintain social distance while at ";
 String tokenTextH3 = "Be Safe !! Save Time !!";
 
 String drawerHeaderTxt11 = 'Stay ';

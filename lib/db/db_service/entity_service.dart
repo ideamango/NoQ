@@ -1,11 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart' as fAuth;
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:geoflutterfire/geoflutterfire.dart';
+import 'package:noq/db/db_model/app_user.dart';
 import 'package:noq/db/db_model/entity.dart';
 import 'package:noq/db/db_model/entity_private.dart';
 import 'package:noq/db/db_model/meta_entity.dart';
-import 'package:noq/db/db_model/meta_user.dart';
-import 'package:noq/db/db_model/user.dart';
 import 'package:noq/db/db_service/access_denied_exception.dart';
 import 'package:noq/db/db_service/entity_does_not_exists_exception.dart';
 
@@ -14,19 +14,19 @@ import 'user_does_not_exists_exception.dart';
 
 class EntityService {
   Future<bool> upsertEntity(Entity entity, String regNum) async {
-    final FirebaseUser fireUser = await FirebaseAuth.instance.currentUser();
+    final fAuth.User fireUser = FirebaseAuth.instance.currentUser;
 
     Exception ex;
 
-    Firestore fStore = Firestore.instance;
+    FirebaseFirestore fStore = FirebaseFirestore.instance;
     final DocumentReference entityRef =
-        fStore.document('entities/' + entity.entityId);
+        fStore.doc('entities/' + entity.entityId);
 
-    final DocumentReference entityPrivateRef = fStore
-        .document('entities/' + entity.entityId + '/private_data/private');
+    final DocumentReference entityPrivateRef =
+        fStore.doc('entities/' + entity.entityId + '/private_data/private');
 
     final DocumentReference userRef =
-        fStore.document('users/' + fireUser.phoneNumber);
+        fStore.doc('users/' + fireUser.phoneNumber);
 
     bool isSuccess = false;
 
@@ -38,15 +38,15 @@ class EntityService {
 
         DocumentSnapshot ePrivateDoc = await tx.get(entityPrivateRef);
 
-        User currentUser;
+        AppUser currentUser;
         if (!usrDoc.exists) {
-          currentUser = new User(
+          currentUser = new AppUser(
               id: fireUser.uid,
               ph: fireUser.phoneNumber,
               name: fireUser.displayName,
               loc: null);
         } else {
-          currentUser = User.fromJson(usrDoc.data);
+          currentUser = AppUser.fromJson(usrDoc.data());
         }
 
         Entity existingEntity;
@@ -54,9 +54,9 @@ class EntityService {
 
         if (entityDoc.exists) {
           //check if the current user is admin else it is not allowed
-          Map<String, dynamic> map = entityDoc.data;
+          Map<String, dynamic> map = entityDoc.data();
           existingEntity = Entity.fromJson(map);
-          ePrivate = EntityPrivate.fromJson(ePrivateDoc.data);
+          ePrivate = EntityPrivate.fromJson(ePrivateDoc.data());
 
           //if (existingEntity.isAdmin(fireUser.uid) == -1) {
           if (ePrivate.roles[fireUser.phoneNumber] != ADMIN) {
@@ -88,9 +88,9 @@ class EntityService {
             currentUser.entities[index] = entity.getMetaEntity();
           }
         }
-        await tx.set(userRef, currentUser.toJson());
+        tx.set(userRef, currentUser.toJson());
         //TODO: Update the meta in other Admin objects too
-        await tx.set(entityPrivateRef, ePrivate.toJson());
+        tx.set(entityPrivateRef, ePrivate.toJson());
 
         if (entity.createdAt != null) {
           entity.modifiedAt = DateTime.now();
@@ -99,7 +99,7 @@ class EntityService {
           entity.modifiedAt = DateTime.now();
         }
 
-        await tx.set(entityRef, entity.toJson());
+        tx.set(entityRef, entity.toJson());
 
         isSuccess = true;
       } catch (e) {
@@ -112,15 +112,15 @@ class EntityService {
   }
 
   Future<Entity> getEntity(String entityId) async {
-    Firestore fStore = Firestore.instance;
+    FirebaseFirestore fStore = FirebaseFirestore.instance;
     Entity entity;
 
-    final DocumentReference entityRef = fStore.document('entities/' + entityId);
+    final DocumentReference entityRef = fStore.doc('entities/' + entityId);
 
     DocumentSnapshot doc = await entityRef.get();
 
     if (doc.exists) {
-      Map<String, dynamic> map = doc.data;
+      Map<String, dynamic> map = doc.data();
       entity = Entity.fromJson(map);
     }
 
@@ -128,16 +128,16 @@ class EntityService {
   }
 
   Future<EntityPrivate> getEntityPrivate(String entityId) async {
-    Firestore fStore = Firestore.instance;
+    FirebaseFirestore fStore = FirebaseFirestore.instance;
     EntityPrivate entityPrivate;
 
     final DocumentReference entityPrivateRef =
-        fStore.document('entities/' + entityId + '/private_data/private');
+        fStore.doc('entities/' + entityId + '/private_data/private');
 
     DocumentSnapshot doc = await entityPrivateRef.get();
 
     if (doc.exists) {
-      Map<String, dynamic> map = doc.data;
+      Map<String, dynamic> map = doc.data();
       entityPrivate = EntityPrivate.fromJson(map);
     }
 
@@ -145,8 +145,8 @@ class EntityService {
   }
 
   Future<bool> deleteEntity(String entityId) async {
-    final FirebaseUser fireUser = await FirebaseAuth.instance.currentUser();
-    Firestore fStore = Firestore.instance;
+    final fAuth.User fireUser = FirebaseAuth.instance.currentUser;
+    FirebaseFirestore fStore = FirebaseFirestore.instance;
     bool isSuccess = false;
 
     //STEPS:
@@ -156,9 +156,9 @@ class EntityService {
     //4. delete the current entity
     // Known limitation - Admins of the child entities wil not be cleaned up and will see ref to the deleted objects
 
-    DocumentReference entityRef = fStore.document('entities/' + entityId);
+    DocumentReference entityRef = fStore.doc('entities/' + entityId);
     final DocumentReference entityPrivateRef =
-        fStore.document('entities/' + entityId + '/private_data/private');
+        fStore.doc('entities/' + entityId + '/private_data/private');
     DocumentReference parentEntityRef;
     List<DocumentReference> childEntityRefs = new List<DocumentReference>();
     List<DocumentReference> childEntityPrivateRefs =
@@ -173,9 +173,9 @@ class EntityService {
               "Given entity does not exist");
         }
 
-        Entity ent = Entity.fromJson(entityDoc.data);
+        Entity ent = Entity.fromJson(entityDoc.data());
         DocumentSnapshot ePrivateDoc = await tx.get(entityPrivateRef);
-        EntityPrivate ePrivate = EntityPrivate.fromJson(ePrivateDoc.data);
+        EntityPrivate ePrivate = EntityPrivate.fromJson(ePrivateDoc.data());
 
         //if (ent.isAdmin(fireUser.uid) == -1) {
         if (ePrivate.roles[fireUser.phoneNumber] != ADMIN) {
@@ -186,10 +186,9 @@ class EntityService {
         //Step1: first delete all the child entities
         for (MetaEntity meta in ent.childEntities) {
           print(meta.entityId);
-          DocumentReference childRef =
-              fStore.document('entities/' + meta.entityId);
-          DocumentReference childPrivateRef = fStore
-              .document('entities/' + meta.entityId + '/private_data/private');
+          DocumentReference childRef = fStore.doc('entities/' + meta.entityId);
+          DocumentReference childPrivateRef =
+              fStore.doc('entities/' + meta.entityId + '/private_data/private');
           childEntityPrivateRefs.add(childPrivateRef);
           childEntityRefs.add(childRef);
         }
@@ -198,10 +197,10 @@ class EntityService {
 
         if (ent.parentId != null) {
           //remove the childEntity from the parentEntity
-          parentEntityRef = fStore.document('entities/' + ent.parentId);
+          parentEntityRef = fStore.doc('entities/' + ent.parentId);
           DocumentSnapshot parentEntityDoc = await tx.get(parentEntityRef);
 
-          parentEnt = Entity.fromJson(parentEntityDoc.data);
+          parentEnt = Entity.fromJson(parentEntityDoc.data());
           int index = -1;
           for (MetaEntity childMeta in parentEnt.childEntities) {
             index++;
@@ -214,15 +213,15 @@ class EntityService {
           }
         }
 
-        List<User> adminUsers = new List<User>();
+        List<AppUser> adminUsers = new List<AppUser>();
 
         //for (MetaUser usr in ent.admins) {
         for (String adminPhone in ePrivate.roles.keys) {
-          DocumentReference userRef = fStore.document('users/' + adminPhone);
+          DocumentReference userRef = fStore.doc('users/' + adminPhone);
           DocumentSnapshot userDoc = await tx.get(userRef);
 
           if (userDoc.exists) {
-            User u = User.fromJson(userDoc.data);
+            AppUser u = AppUser.fromJson(userDoc.data());
 
             int index = u.isEntityAdmin(entityId);
             if (index != -1) {
@@ -234,25 +233,25 @@ class EntityService {
 
         //step2: Update the parent if exists
         if (parentEntityRef != null) {
-          await tx.set(parentEntityRef, parentEnt.toJson());
+          tx.set(parentEntityRef, parentEnt.toJson());
         }
 
         //step3: update admin users
-        for (User u in adminUsers) {
-          DocumentReference userRef = fStore.document('users/' + u.ph);
-          await tx.set(userRef, u.toJson());
+        for (AppUser u in adminUsers) {
+          DocumentReference userRef = fStore.doc('users/' + u.ph);
+          tx.set(userRef, u.toJson());
         }
 
         //Step4: now delete the child entities and the entity
         int count = 0;
         for (DocumentReference childRef in childEntityRefs) {
-          await tx.delete(childRef);
-          await tx.delete(childEntityPrivateRefs[count]);
+          tx.delete(childRef);
+          tx.delete(childEntityPrivateRefs[count]);
 
           count++;
         }
-        await tx.delete(entityRef);
-        await tx.delete(entityPrivateRef);
+        tx.delete(entityRef);
+        tx.delete(entityPrivateRef);
 
         isSuccess = true;
       } catch (e) {
@@ -266,16 +265,16 @@ class EntityService {
   }
 
   Future<bool> assignAdmin(String entityId, String phone) async {
-    final FirebaseUser fireUser = await FirebaseAuth.instance.currentUser();
-    Firestore fStore = Firestore.instance;
+    final User fireUser = FirebaseAuth.instance.currentUser;
+    FirebaseFirestore fStore = FirebaseFirestore.instance;
 
-    User u;
+    AppUser u;
     bool isSuccess = true;
 
-    final DocumentReference userRef = fStore.document('users/' + phone);
-    final DocumentReference entityRef = fStore.document('entities/' + entityId);
+    final DocumentReference userRef = fStore.doc('users/' + phone);
+    final DocumentReference entityRef = fStore.doc('entities/' + entityId);
     final DocumentReference entityPrivateRef =
-        fStore.document('entities/' + entityId + '/private_data/private');
+        fStore.doc('entities/' + entityId + '/private_data/private');
 
     await fStore.runTransaction((Transaction tx) async {
       try {
@@ -288,9 +287,9 @@ class EntityService {
         print("Entity initialized..");
 
         DocumentSnapshot ePrivateDoc = await tx.get(entityPrivateRef);
-        EntityPrivate ePrivate = EntityPrivate.fromJson(ePrivateDoc.data);
+        EntityPrivate ePrivate = EntityPrivate.fromJson(ePrivateDoc.data());
 
-        Entity ent = Entity.fromJson(entityDoc.data);
+        Entity ent = Entity.fromJson(entityDoc.data());
         //if (ent.isAdmin(fireUser.uid) == -1) {
         if (ePrivate.roles[fireUser.phoneNumber] != ADMIN) {
           //current logged in user should be admin of the entity then only he should be allowed to add another user as admin
@@ -302,7 +301,7 @@ class EntityService {
 
         if (usrDoc.exists) {
           //either the user is registered or added by another admin to an entity as an entity
-          u = User.fromJson(usrDoc.data);
+          u = AppUser.fromJson(usrDoc.data());
           if (u.entities == null) {
             u.entities = new List<MetaEntity>();
           }
@@ -320,7 +319,7 @@ class EntityService {
           }
         } else {
           // a new user will be added in the user table for that phone number
-          u = new User(id: null, ph: phone, name: null);
+          u = new AppUser(id: null, ph: phone, name: null);
           u.entities = new List<MetaEntity>();
           u.entities.add(ent.getMetaEntity());
         }
@@ -329,9 +328,9 @@ class EntityService {
           ePrivate.roles[phone] = ADMIN;
         }
 
-        await tx.set(userRef, u.toJson());
-        await tx.set(entityPrivateRef, ePrivate.toJson());
-        await tx.set(entityRef, ent.toJson());
+        tx.set(userRef, u.toJson());
+        tx.set(entityPrivateRef, ePrivate.toJson());
+        tx.set(entityRef, ent.toJson());
       } catch (e) {
         print("Transactio Error: While making admin - " + e.toString());
         isSuccess = false;
@@ -353,22 +352,22 @@ class EntityService {
     //ChildEntity might already exists or can be new
     //ChildEntity Meta should be added in the parentEntity
     //ChildEntity should have parentEntityId set on the parentId attribute
-    Firestore fStore = Firestore.instance;
-    final FirebaseUser fireUser = await FirebaseAuth.instance.currentUser();
+    FirebaseFirestore fStore = FirebaseFirestore.instance;
+    final User fireUser = FirebaseAuth.instance.currentUser;
     final DocumentReference entityRef =
-        fStore.document('entities/' + parentEntityId);
+        fStore.doc('entities/' + parentEntityId);
 
     final DocumentReference childRef =
-        fStore.document('entities/' + childEntity.entityId);
+        fStore.doc('entities/' + childEntity.entityId);
 
     final DocumentReference userRef =
-        fStore.document('users/' + fireUser.phoneNumber);
+        fStore.doc('users/' + fireUser.phoneNumber);
 
     final DocumentReference parentEntityPrivateRef =
-        fStore.document('entities/' + parentEntityId + '/private_data/private');
+        fStore.doc('entities/' + parentEntityId + '/private_data/private');
 
     final DocumentReference childEntityPrivateRef = fStore
-        .document('entities/' + childEntity.entityId + '/private_data/private');
+        .doc('entities/' + childEntity.entityId + '/private_data/private');
 
     Entity parentEntity;
     EntityPrivate parentEntityPrivate;
@@ -383,14 +382,14 @@ class EntityService {
 
         if (parentEntityDoc.exists) {
           //check if the current user is admin
-          Map<String, dynamic> map = parentEntityDoc.data;
+          Map<String, dynamic> map = parentEntityDoc.data();
           parentEntity = Entity.fromJson(map);
 
           DocumentSnapshot parentEntityPrivateDoc =
               await tx.get(parentEntityPrivateRef);
 
           parentEntityPrivate =
-              EntityPrivate.fromJson(parentEntityPrivateDoc.data);
+              EntityPrivate.fromJson(parentEntityPrivateDoc.data());
 
           //if (parentEntity.isAdmin(fireUser.uid) == -1) {
           if (parentEntityPrivate.roles[fireUser.phoneNumber] != ADMIN) {
@@ -424,7 +423,7 @@ class EntityService {
                 await tx.get(childEntityPrivateRef);
 
             childEntityPrivate =
-                EntityPrivate.fromJson(childEntityPrivateDoc.data);
+                EntityPrivate.fromJson(childEntityPrivateDoc.data());
 
             //int userIndex = existingChildEntity.isAdmin(fireUser.uid);
             //if (userIndex == -1) {
@@ -443,9 +442,9 @@ class EntityService {
           childEntity.parentId = parentEntityId;
 
           DocumentSnapshot userDoc = await tx.get(userRef);
-          User usr;
+          AppUser usr;
           if (userDoc.exists) {
-            usr = User.fromJson(userDoc.data);
+            usr = AppUser.fromJson(userDoc.data());
           } else {
             //user should exist, as this user is the admin of the parent entity
             throw new UserDoesNotExistsException("User does not exist");
@@ -459,13 +458,13 @@ class EntityService {
             usr.entities[childEntityIndex] = childEntity.getMetaEntity();
           }
 
-          await tx.set(userRef, usr.toJson());
+          tx.set(userRef, usr.toJson());
 
-          await tx.set(entityRef, parentEntity.toJson());
+          tx.set(entityRef, parentEntity.toJson());
 
-          await tx.set(parentEntityPrivateRef, parentEntityPrivate.toJson());
+          tx.set(parentEntityPrivateRef, parentEntityPrivate.toJson());
 
-          await tx.set(childEntityPrivateRef, childEntityPrivate.toJson());
+          tx.set(childEntityPrivateRef, childEntityPrivate.toJson());
 
           if (childEntity.createdAt != null) {
             childEntity.modifiedAt = DateTime.now();
@@ -474,7 +473,7 @@ class EntityService {
             childEntity.modifiedAt = DateTime.now();
           }
 
-          await tx.set(childRef, childEntity.toJson());
+          tx.set(childRef, childEntity.toJson());
 
           isSuccess = true;
         } else {
@@ -497,16 +496,16 @@ class EntityService {
     //check of the current user is admin
     //remove from the user.entities collection
     //remove from the entity.admin collection
-    final FirebaseUser fireUser = await FirebaseAuth.instance.currentUser();
-    Firestore fStore = Firestore.instance;
+    final User fireUser = FirebaseAuth.instance.currentUser;
+    FirebaseFirestore fStore = FirebaseFirestore.instance;
 
-    User u;
+    AppUser u;
     bool isSuccess = true;
 
-    final DocumentReference userRef = fStore.document('users/' + phone);
+    final DocumentReference userRef = fStore.doc('users/' + phone);
     //final DocumentReference entityRef = fStore.document('entities/' + entityId);
     final DocumentReference entityPrivateRef =
-        fStore.document('entities/' + entityId + '/private_data/private');
+        fStore.doc('entities/' + entityId + '/private_data/private');
 
     await fStore.runTransaction((Transaction tx) async {
       try {
@@ -520,7 +519,7 @@ class EntityService {
               "Admin can't be added for the entity which does not exist");
         }
 
-        EntityPrivate ePrivate = EntityPrivate.fromJson(ePrivateDoc.data);
+        EntityPrivate ePrivate = EntityPrivate.fromJson(ePrivateDoc.data());
 
         //if (ent.isAdmin(fireUser.uid) == -1) {
         if (ePrivate.roles[fireUser.phoneNumber] != ADMIN) {
@@ -535,7 +534,7 @@ class EntityService {
 
         if (usrDoc.exists) {
           //either the user is registered or added by another admin to an entity as an entity
-          u = User.fromJson(usrDoc.data);
+          u = AppUser.fromJson(usrDoc.data());
           if (u.entities == null) {
             u.entities = new List<MetaEntity>();
           }
@@ -570,14 +569,14 @@ class EntityService {
   }
 
   Future<bool> addEntityToUserFavourite(MetaEntity me) async {
-    final FirebaseUser fireUser = await FirebaseAuth.instance.currentUser();
-    Firestore fStore = Firestore.instance;
+    final User fireUser = FirebaseAuth.instance.currentUser;
+    FirebaseFirestore fStore = FirebaseFirestore.instance;
 
-    User u;
+    AppUser u;
     bool isSuccess = true;
 
     final DocumentReference userRef =
-        fStore.document('users/' + fireUser.phoneNumber);
+        fStore.doc('users/' + fireUser.phoneNumber);
 
     await fStore.runTransaction((Transaction tx) async {
       try {
@@ -585,7 +584,7 @@ class EntityService {
 
         if (usrDoc.exists) {
           //either the user is registered or added by another admin to an entity as an entity
-          u = User.fromJson(usrDoc.data);
+          u = AppUser.fromJson(usrDoc.data());
           if (u.favourites == null) {
             u.favourites = new List<MetaEntity>();
           }
@@ -615,14 +614,14 @@ class EntityService {
   }
 
   Future<bool> removeEntityFromUserFavourite(String entityId) async {
-    final FirebaseUser fireUser = await FirebaseAuth.instance.currentUser();
-    Firestore fStore = Firestore.instance;
+    final User fireUser = FirebaseAuth.instance.currentUser;
+    FirebaseFirestore fStore = FirebaseFirestore.instance;
 
-    User u;
+    AppUser u;
     bool isSuccess = true;
 
     final DocumentReference userRef =
-        fStore.document('users/' + fireUser.phoneNumber);
+        fStore.doc('users/' + fireUser.phoneNumber);
 
     await fStore.runTransaction((Transaction tx) async {
       try {
@@ -630,7 +629,7 @@ class EntityService {
 
         if (usrDoc.exists) {
           //either the user is registered or added by another admin to an entity as an entity
-          u = User.fromJson(usrDoc.data);
+          u = AppUser.fromJson(usrDoc.data());
           if (u.favourites == null) {
             u.favourites = new List<MetaEntity>();
           }
@@ -662,7 +661,7 @@ class EntityService {
   Future<List<Entity>> search(String name, String type, double lat, double lon,
       double radius, int pageNumber, int pageSize) async {
     List<Entity> entities = new List<Entity>();
-    Firestore fStore = Firestore.instance;
+    FirebaseFirestore fStore = FirebaseFirestore.instance;
     Geoflutterfire geo = Geoflutterfire();
     GeoFirePoint center = geo.point(latitude: lat, longitude: lon);
 
@@ -700,7 +699,7 @@ class EntityService {
 
     try {
       for (DocumentSnapshot ds in await stream.first) {
-        Entity me = Entity.fromJson(ds.data);
+        Entity me = Entity.fromJson(ds.data());
         me.distance = center.distance(
             lat: me.coordinates.geopoint.latitude,
             lng: me.coordinates.geopoint.longitude);

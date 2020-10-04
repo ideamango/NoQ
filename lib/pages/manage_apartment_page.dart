@@ -10,7 +10,7 @@ import 'package:noq/db/db_model/entity.dart';
 import 'package:noq/db/db_model/entity_private.dart';
 import 'package:noq/db/db_model/meta_entity.dart';
 import 'package:noq/db/db_model/my_geo_fire_point.dart';
-import 'package:noq/db/db_model/user.dart';
+import 'package:noq/db/db_model/app_user.dart';
 import 'package:noq/db/db_service/user_service.dart';
 import 'package:noq/events.dart';
 import 'package:noq/global_state.dart';
@@ -672,7 +672,7 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
               contact: element, entity: entity, list: contactList));
         });
       }
-      User currUser = await UserService().getCurrentUser();
+      AppUser currUser = await UserService().getCurrentUser();
       Map<String, String> adminMap = Map<String, String>();
       EntityPrivate entityPrivateList;
       entityPrivateList = await fetchAdmins(entity.entityId);
