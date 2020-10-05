@@ -127,38 +127,45 @@ class DynamicLinkService {
           print("there are query params");
           //check if user authenticated
           if (await FirebaseAuth.instance.currentUser() != null) {
-            // signed in
             print("current user already logged in");
-            GlobalState gs = await GlobalState.getGlobalState();
-            String entityId = deepLink.queryParameters['entityId'];
-            Entity entity =
-                await getEntity(deepLink.queryParameters['entityId']);
-            //get global state
-            // add entity to favuorites and show favs list.
-            bool entityContains = false;
-            for (int i = 0; i < gs.currentUser.favourites.length; i++) {
-              if (gs.currentUser.favourites[i].entityId == entityId) {
-                entityContains = true;
-                break;
-              } else
-                continue;
-            }
-            if (!entityContains) {
-              Utils.showMyFlushbar(context, Icons.info, Duration(seconds: 3),
-                  "Processing...", "");
-              EntityService()
-                  .addEntityToUserFavourite(entity.getMetaEntity())
-                  .then((value) => value
-                      ? gs.currentUser.favourites.add(entity.getMetaEntity())
-                      : print("Entity can't be added to favorite"))
-                  .catchError((onError) {
-                Utils.showMyFlushbar(context, Icons.info, Duration(seconds: 3),
-                    "Oops error...", "");
-              });
-            }
+            // Call method to add entity to favs list, if not already present,
+            // else just load favs page.
 
-            Navigator.pushReplacement(context,
-                MaterialPageRoute(builder: (context) => FavsListPage()));
+            // GlobalState gs = await GlobalState.getGlobalState();
+            String entityId = deepLink.queryParameters['entityId'];
+            // Entity entity =
+            //     await getEntity(deepLink.queryParameters['entityId']);
+            // //get global state
+            // // add entity to favuorites and show favs list.
+            // bool entityContains = false;
+            // for (int i = 0; i < gs.currentUser.favourites.length; i++) {
+            //   if (gs.currentUser.favourites[i].entityId == entityId) {
+            //     entityContains = true;
+            //     break;
+            //   } else
+            //     continue;
+            // }
+            // if (!entityContains) {
+            //   Utils.showMyFlushbar(context, Icons.info, Duration(seconds: 3),
+            //       "Processing...", "");
+            //   EntityService()
+            //       .addEntityToUserFavourite(entity.getMetaEntity())
+            //       .then((value) {
+            //     if (value) {
+            //       gs.currentUser.favourites.add(entity.getMetaEntity());
+            //     } else
+            //       print("Entity can't be added to Favorites");
+            //   }).catchError((onError) {
+            //     Utils.showMyFlushbar(context, Icons.info, Duration(seconds: 3),
+            //         "Oops error...", "");
+            //   });
+            // } else {
+            //   Utils.showMyFlushbar(context, Icons.info, Duration(seconds: 3),
+            //       "Entity is already present in your Favourites!!", "");
+            // }
+            // Navigator.pushReplacement(context,
+            //     MaterialPageRoute(builder: (context) => FavsListPage()));
+            addEntityToFavs(context, entityId);
           }
         } else
           Navigator.pushReplacement(
@@ -169,5 +176,39 @@ class DynamicLinkService {
       print(e.toString());
       print(e.message);
     }
+  }
+
+  void addEntityToFavs(BuildContext context, String id) async {
+    Entity entity = await getEntity(id);
+    GlobalState gs = await GlobalState.getGlobalState();
+
+    bool entityContains = false;
+    for (int i = 0; i < gs.currentUser.favourites.length; i++) {
+      if (gs.currentUser.favourites[i].entityId == id) {
+        entityContains = true;
+        break;
+      } else
+        continue;
+    }
+    if (!entityContains) {
+      Utils.showMyFlushbar(
+          context, Icons.info, Duration(seconds: 3), "Processing...", "");
+      EntityService()
+          .addEntityToUserFavourite(entity.getMetaEntity())
+          .then((value) {
+        if (value) {
+          gs.currentUser.favourites.add(entity.getMetaEntity());
+        } else
+          print("Entity can't be added to Favorites");
+      }).catchError((onError) {
+        Utils.showMyFlushbar(
+            context, Icons.info, Duration(seconds: 3), "Oops error...", "");
+      });
+    } else {
+      Utils.showMyFlushbar(context, Icons.info, Duration(seconds: 3),
+          "Entity is already present in your Favourites!!", "");
+    }
+    Navigator.pushReplacement(
+        context, MaterialPageRoute(builder: (context) => FavsListPage()));
   }
 }
