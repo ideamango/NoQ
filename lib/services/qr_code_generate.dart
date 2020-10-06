@@ -119,8 +119,8 @@ class GenerateScreenState extends State<GenerateScreen> {
       // channel.invokeMethod('shareFile', 'qrcodeForShare.png');
       final RenderBox box = context.findRenderObject();
       Share.shareFiles(['${tempDir.path}/qrcodeForShare.png'],
-          subject: whatsappMessage,
-          text: 'Check it out!!',
+          subject: 'SUKOON ~ Book your peace of mind!!',
+          text: qrCodeShareMessage,
           sharePositionOrigin: box.localToGlobal(Offset.zero) & box.size);
     } catch (e) {
       print(e.toString());
@@ -158,6 +158,7 @@ class GenerateScreenState extends State<GenerateScreen> {
               titleTxt: "QR Code", backRoute: ManageApartmentsListPage()),
           body: Center(
             child: Container(
+              color: Colors.white,
               width: MediaQuery.of(context).size.width * .8,
               height: MediaQuery.of(context).size.width * .9,
               child: Column(
@@ -180,19 +181,22 @@ class GenerateScreenState extends State<GenerateScreen> {
                     child: Center(
                       child: RepaintBoundary(
                         key: globalKey,
-                        child: QrImage(
-                          data: _dataString,
-                          size: MediaQuery.of(context).size.width * .9,
-                          errorStateBuilder: (cxt, err) {
-                            return Container(
-                              child: Center(
-                                child: Text(
-                                  "Uh oh! Something went wrong!! May be the text is too long. Try again.",
-                                  textAlign: TextAlign.center,
+                        child: Container(
+                          color: Colors.white,
+                          child: QrImage(
+                            data: _dataString,
+                            size: MediaQuery.of(context).size.width * .9,
+                            errorStateBuilder: (cxt, err) {
+                              return Container(
+                                child: Center(
+                                  child: Text(
+                                    "Uh oh! Something went wrong!! May be the text is too long. Try again.",
+                                    textAlign: TextAlign.center,
+                                  ),
                                 ),
-                              ),
-                            );
-                          },
+                              );
+                            },
+                          ),
                         ),
                       ),
                     ),
