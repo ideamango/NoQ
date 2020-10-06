@@ -1663,7 +1663,10 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
         String errTimeFields;
         String errContactPhone;
 
-        validateField = false;
+        if (isActive)
+          validateField = true;
+        else
+          validateField = false;
 
         for (int i = 0; i < contactList.length; i++) {
           validationPh1 = (contactList[i].ph != null)
