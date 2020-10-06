@@ -7,6 +7,7 @@ import 'package:noq/db/db_service/entity_service.dart';
 import 'package:noq/global_state.dart';
 import 'package:noq/pages/favs_list_page.dart';
 import 'package:noq/repository/StoreRepository.dart';
+import 'package:noq/services/mapService.dart';
 
 import 'package:noq/style.dart';
 
@@ -20,6 +21,16 @@ class QrCodeScanner {
       scanResult = await BarcodeScanner.scan();
       print("PRINTING scan result");
       print(scanResult.rawContent);
+      launchUri(scanResult.rawContent);
+
+      final UriData uriDatalink = UriData.fromString(scanResult.rawContent);
+      print(uriDatalink.parameters);
+      print("Deep link path ");
+      print(uriDatalink.parameters.containsKey("entityId"));
+      //   print(deepLink.path);
+      // if (deepLink.queryParameters.containsKey("entityId")) {
+      //   print("QueryParams ${deepLink.queryParameters}");
+      // }
       List<String> url = scanResult.rawContent.split('/');
       String entityId = url[3];
       addEntityToFavs(context, entityId);

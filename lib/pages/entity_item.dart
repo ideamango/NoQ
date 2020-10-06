@@ -199,24 +199,24 @@ class EntityRowState extends State<EntityRow> {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: <Widget>[
-                        Container(
-                          padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
-                          margin: EdgeInsets.fromLTRB(0, 0, 0, 0),
-                          height: 25.0,
-                          width: 28.0,
-                          child: IconButton(
-                              padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
-                              alignment: Alignment.center,
-                              highlightColor: Colors.orange[300],
-                              icon: ImageIcon(
-                                AssetImage('assets/qrcode.png'),
-                                size: 20,
-                                //color: primaryIcon,
-                              ),
-                              onPressed: () {
-                                shareQr();
-                              }),
-                        ),
+                        // Container(
+                        //   padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
+                        //   margin: EdgeInsets.fromLTRB(0, 0, 0, 0),
+                        //   height: 25.0,
+                        //   width: 28.0,
+                        //   child: IconButton(
+                        //       padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
+                        //       alignment: Alignment.center,
+                        //       highlightColor: Colors.orange[300],
+                        //       icon: ImageIcon(
+                        //         AssetImage('assets/qrcode.png'),
+                        //         size: 20,
+                        //         //color: primaryIcon,
+                        //       ),
+                        //       onPressed: () {
+                        //         shareQr();
+                        //       }),
+                        // ),
                         horizontalSpacer,
                         Container(
                             padding: EdgeInsets.fromLTRB(0, 0, 0, 0),

@@ -1,7 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:noq/constants.dart';
-import 'package:noq/db/db_model/user.dart';
+import 'package:noq/db/db_model/app_user.dart';
 import 'package:noq/global_state.dart';
 import 'package:noq/login_page.dart';
 import 'package:noq/style.dart';
@@ -15,7 +15,7 @@ class TermsOfUsePage extends StatefulWidget {
 
 class _TermsOfUsePageState extends State<TermsOfUsePage> {
   Future<bool> userAlreadyLoggedIn() async {
-    final FirebaseUser fireUser = await FirebaseAuth.instance.currentUser();
+    final User fireUser = FirebaseAuth.instance.currentUser;
     if (fireUser == null) {
       return false;
     } else
@@ -40,17 +40,16 @@ class _TermsOfUsePageState extends State<TermsOfUsePage> {
             color: Colors.white,
             onPressed: () {
               print("going back");
-              FirebaseAuth.instance.currentUser().then((value) {
-                if (value == null) {
-                  print("No user");
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => LoginPage()));
-                } else {
-                  print("Go to dashboard");
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => UserHomePage()));
-                }
-              });
+              User value = FirebaseAuth.instance.currentUser;
+              if (value == null) {
+                print("No user");
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => LoginPage()));
+              } else {
+                print("Go to dashboard");
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => UserHomePage()));
+              }
             },
           ),
           title: Text(

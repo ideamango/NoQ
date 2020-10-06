@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -30,6 +31,7 @@ void main() {
 class MyHome extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    Firebase.initializeApp();
     return MaterialApp(home: MyApp());
   }
 }
@@ -75,7 +77,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       routes: <String, WidgetBuilder>{
-        '/landingPage': (BuildContext context) => UserHomePage(),
+        '/dashboard': (BuildContext context) => UserHomePage(),
         '/loginpage': (BuildContext context) => LoginPage(),
       },
       theme: ThemeData(
@@ -126,7 +128,8 @@ class DynamicLinkService {
         if (deepLink.queryParameters.containsKey("entityId")) {
           print("there are query params");
           //check if user authenticated
-          if (await FirebaseAuth.instance.currentUser() != null) {
+          if (FirebaseAuth.instance.currentUser != null) {
+            // signed in
             print("current user already logged in");
             // Call method to add entity to favs list, if not already present,
             // else just load favs page.

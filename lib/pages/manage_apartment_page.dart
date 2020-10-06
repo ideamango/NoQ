@@ -10,7 +10,7 @@ import 'package:noq/db/db_model/entity.dart';
 import 'package:noq/db/db_model/entity_private.dart';
 import 'package:noq/db/db_model/meta_entity.dart';
 import 'package:noq/db/db_model/my_geo_fire_point.dart';
-import 'package:noq/db/db_model/user.dart';
+import 'package:noq/db/db_model/app_user.dart';
 import 'package:noq/db/db_service/user_service.dart';
 import 'package:noq/events.dart';
 import 'package:noq/global_state.dart';
@@ -454,7 +454,7 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
       child: Row(
         children: <Widget>[
           Text(
-            'Days off: ',
+            'Days off ',
             style: TextStyle(
               color: Colors.grey[600],
               // fontWeight: FontWeight.w800,
@@ -600,6 +600,10 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
       isPublic = (entity.isPublic) ?? false;
       isBookable = (entity.isBookable) ?? false;
       isActive = (entity.isActive) ?? false;
+      if (isActive) {
+        validateField = true;
+        _autoValidate = true;
+      }
       _nameController.text = entity.name;
       _descController.text = (entity.description);
 
@@ -672,7 +676,7 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
               contact: element, entity: entity, list: contactList));
         });
       }
-      User currUser = await UserService().getCurrentUser();
+      AppUser currUser = await UserService().getCurrentUser();
       Map<String, String> adminMap = Map<String, String>();
       EntityPrivate entityPrivateList;
       entityPrivateList = await fetchAdmins(entity.entityId);
@@ -1659,6 +1663,8 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
         String errTimeFields;
         String errContactPhone;
 
+        validateField = false;
+
         for (int i = 0; i < contactList.length; i++) {
           validationPh1 = (contactList[i].ph != null)
               ? Utils.validateMobileField(contactList[i].ph.substring(3))
@@ -1726,8 +1732,8 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
                   Duration(
                     seconds: 5,
                   ),
-                  "Seems like you have entered some incorrect details, Please verify!! ",
-                  "Check your internet connection and try again.",
+                  entityUpsertErrStr,
+                  entityUpsertErrSubStr,
                   Colors.red);
             }
           });
@@ -1998,7 +2004,7 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
             // contentPadding: EdgeInsets.all(0),
             focusedBorder: InputBorder.none,
             enabledBorder: InputBorder.none,
-            hintText: "Enter Admin's Contact number & Click (+)",
+            hintText: "Enter Admin's Contact number & press (+)",
             hintStyle:
                 new TextStyle(fontSize: 12, color: Colors.blueGrey[500])),
         validator: Utils.validateMobileField,
@@ -2067,7 +2073,7 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
                           fontFamily: "ShadowsIntoLightTwo"),
                     ),
                     messageText: Text(
-                      "The changes you made might be lost.",
+                      "The changes you made might be lost, if not saved.",
                       style: TextStyle(
                           fontSize: 10.0,
                           color: Colors.blueGrey[50],
@@ -2526,6 +2532,8 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
                                           }
                                         } else {
                                           isActive = value;
+                                          validateField = false;
+                                          _autoValidate = false;
                                           entity.isActive = value;
                                           print(isActive);
                                         }

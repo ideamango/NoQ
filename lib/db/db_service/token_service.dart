@@ -11,7 +11,7 @@ import 'package:noq/db/db_service/token_not_exist_exception.dart';
 
 class TokenService {
   Future<EntitySlots> getEntitySlots(String entityId, DateTime date) async {
-    Firestore fStore = Firestore.instance;
+    FirebaseFirestore fStore = FirebaseFirestore.instance;
 
     EntitySlots es;
 
@@ -24,12 +24,12 @@ class TokenService {
         date.day.toString();
 
     final DocumentReference entitySlotsRef =
-        fStore.document('slots/' + entitySlotsDocId);
+        fStore.doc('slots/' + entitySlotsDocId);
 
     DocumentSnapshot doc = await entitySlotsRef.get();
 
     if (doc.exists) {
-      Map<String, dynamic> map = doc.data;
+      Map<String, dynamic> map = doc.data();
 
       es = EntitySlots.fromJson(map);
     }
@@ -39,8 +39,8 @@ class TokenService {
 
   Future<UserToken> generateToken(
       MetaEntity metaEntity, DateTime dateTime) async {
-    final FirebaseUser user = await FirebaseAuth.instance.currentUser();
-    Firestore fStore = Firestore.instance;
+    final User user = await FirebaseAuth.instance.currentUser;
+    FirebaseFirestore fStore = FirebaseFirestore.instance;
     String userPhone = user.phoneNumber;
     Exception exception;
     SlotFullException slotFullException;
@@ -83,7 +83,7 @@ class TokenService {
           }
 
           //atleast one token is issued for the given entity for that day
-          es = EntitySlots.fromJson(entitySlotsSnapshot.data);
+          es = EntitySlots.fromJson(entitySlotsSnapshot.data());
           int maxAllowed = es.maxAllowed;
 
           int slotCount = -1;
@@ -126,7 +126,7 @@ class TokenService {
           }
 
           // Save the EntitySlots using set method
-          await tx.set(entitySlotsRef, es.toJson());
+          tx.set(entitySlotsRef, es.toJson());
 
           Map<String, dynamic> tokenJson = <String, dynamic>{
             'slotId': slotId,
@@ -147,7 +147,7 @@ class TokenService {
             'phone': metaEntity.phone
           };
           //create token
-          await tx.set(tokRef, tokenJson);
+          tx.set(tokRef, tokenJson);
 
           token = UserToken.fromJson(tokenJson);
         } else {
@@ -209,10 +209,10 @@ class TokenService {
           };
 
           //create EntitySlots with one slot in it
-          await tx.set(entitySlotsRef, es.toJson());
+          tx.set(entitySlotsRef, es.toJson());
           //create Token
 
-          await tx.set(tokRef, tokenJson);
+          tx.set(tokRef, tokenJson);
 
           token = UserToken.fromJson(tokenJson);
         }
@@ -249,39 +249,39 @@ class TokenService {
     //get the slot from the token
     //increase the slot maxallowed by one
 
-    final FirebaseUser user = await FirebaseAuth.instance.currentUser();
-    Firestore fStore = Firestore.instance;
+    final User user = await FirebaseAuth.instance.currentUser;
+    FirebaseFirestore fStore = FirebaseFirestore.instance;
     String userPhone = user.phoneNumber;
 
     bool isCancelled = false;
 
-    final DocumentReference tokRef = fStore.document('tokens/' + tokenId);
+    final DocumentReference tokRef = fStore.doc('tokens/' + tokenId);
 
     await fStore.runTransaction((Transaction tx) async {
       try {
         DocumentSnapshot tokenSnapshot = await tx.get(tokRef);
         if (tokenSnapshot.exists) {
-          if (tokenSnapshot.data['userId'] != userPhone) {
+          if (tokenSnapshot.data()['userId'] != userPhone) {
             throw new TokenNotExistsException(
                 "Token does not belong to the requested user");
           }
 
-          int currentNum = tokenSnapshot.data['number'];
+          int currentNum = tokenSnapshot.data()['number'];
           if (currentNum == -1) {
             throw new Exception("Token is already cancelled");
           }
 
-          String slotId = tokenSnapshot.data['slotId'];
+          String slotId = tokenSnapshot.data()['slotId'];
           List<String> parts = slotId.split("#");
 
           String entitySlotsDocId = parts[0] + "#" + parts[1];
 
           final DocumentReference entitySlotsRef =
-              fStore.document('slots/' + entitySlotsDocId);
+              fStore.doc('slots/' + entitySlotsDocId);
 
           DocumentSnapshot doc = await entitySlotsRef.get();
 
-          Map<String, dynamic> map = doc.data;
+          Map<String, dynamic> map = doc.data();
 
           EntitySlots es = EntitySlots.fromJson(map);
           for (Slot sl in es.slots) {
@@ -293,10 +293,10 @@ class TokenService {
           }
 
           //update the token with number as -1
-          await tx.update(tokRef, <String, dynamic>{'number': -1});
+          tx.update(tokRef, <String, dynamic>{'number': -1});
 
           //change the max allowed by 1, if a token is cancelled
-          await tx.set(entitySlotsRef, es.toJson());
+          tx.set(entitySlotsRef, es.toJson());
 
           isCancelled = true;
         } else {
@@ -315,8 +315,8 @@ class TokenService {
   Future<List<UserToken>> getAllTokensForCurrentUser(
       DateTime from, DateTime to) async {
     List<UserToken> tokens = new List<UserToken>();
-    FirebaseUser user = await FirebaseAuth.instance.currentUser();
-    Firestore fStore = Firestore.instance;
+    User user = FirebaseAuth.instance.currentUser;
+    FirebaseFirestore fStore = FirebaseFirestore.instance;
 
     QuerySnapshot qs;
 
@@ -328,18 +328,18 @@ class TokenService {
                 isGreaterThanOrEqualTo: from.millisecondsSinceEpoch)
             .where("dateTime", isLessThanOrEqualTo: to.millisecondsSinceEpoch)
             .where("userId", isEqualTo: user.phoneNumber)
-            .getDocuments();
+            .get();
       } else if (from != null && to == null) {
         qs = await fStore
             .collection('tokens')
             .where("dateTime",
                 isGreaterThanOrEqualTo: from.millisecondsSinceEpoch)
             .where("userId", isEqualTo: user.phoneNumber)
-            .getDocuments();
+            .get();
       }
 
-      for (DocumentSnapshot ds in qs.documents) {
-        UserToken tok = UserToken.fromJson(ds.data);
+      for (DocumentSnapshot ds in qs.docs) {
+        UserToken tok = UserToken.fromJson(ds.data());
         tokens.add(tok);
       }
     } catch (e) {
@@ -352,8 +352,8 @@ class TokenService {
   Future<List<UserToken>> getTokensForEntityBookedByCurrentUser(
       String entityId, DateTime date) async {
     List<UserToken> tokens = new List<UserToken>();
-    FirebaseUser user = await FirebaseAuth.instance.currentUser();
-    Firestore fStore = Firestore.instance;
+    User user = FirebaseAuth.instance.currentUser;
+    FirebaseFirestore fStore = FirebaseFirestore.instance;
     DateTime inputDate = new DateTime(date.year, date.month, date.day);
     DateTime nextDay = inputDate.add(new Duration(days: 1));
 
@@ -365,10 +365,10 @@ class TokenService {
           .where("dateTime", isLessThan: nextDay.millisecondsSinceEpoch)
           .where("userId", isEqualTo: user.phoneNumber)
           .where("entityId", isEqualTo: entityId)
-          .getDocuments();
+          .get();
 
-      for (DocumentSnapshot ds in qs.documents) {
-        UserToken tok = UserToken.fromJson(ds.data);
+      for (DocumentSnapshot ds in qs.docs) {
+        UserToken tok = UserToken.fromJson(ds.data());
         tokens.add(tok);
       }
     } catch (e) {
@@ -380,9 +380,9 @@ class TokenService {
 
   Future<bool> deleteSlot(String slotId) async {
     //this should be restricted on Server, only to be used for testcases
-    Firestore fStore = Firestore.instance;
+    FirebaseFirestore fStore = FirebaseFirestore.instance;
 
-    DocumentReference slotRef = fStore.document('slots/' + slotId);
+    DocumentReference slotRef = fStore.doc('slots/' + slotId);
 
     try {
       await slotRef.delete();
@@ -396,9 +396,9 @@ class TokenService {
 
   Future<bool> deleteToken(String tokenId) async {
     //this should be restricted on Server, only to be used for testcases
-    Firestore fStore = Firestore.instance;
+    FirebaseFirestore fStore = FirebaseFirestore.instance;
 
-    DocumentReference tokRef = fStore.document('tokens/' + tokenId);
+    DocumentReference tokRef = fStore.doc('tokens/' + tokenId);
 
     try {
       await tokRef.delete();
@@ -412,15 +412,15 @@ class TokenService {
 
   Future<bool> updateToken(UserToken token) async {
     //this should be restricted on Server, only to be used for testcases
-    final FirebaseUser user = await FirebaseAuth.instance.currentUser();
-    Firestore fStore = Firestore.instance;
+    final User user = FirebaseAuth.instance.currentUser;
+    FirebaseFirestore fStore = FirebaseFirestore.instance;
 
-    DocumentReference tokRef = fStore.document('tokens/' + token.getTokenId());
+    DocumentReference tokRef = fStore.doc('tokens/' + token.getTokenId());
 
     try {
       DocumentSnapshot doc = await tokRef.get();
       if (doc.exists) {
-        await tokRef.updateData(token.toJson());
+        await tokRef.update(token.toJson());
         return true;
       }
     } catch (e) {

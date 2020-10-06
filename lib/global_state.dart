@@ -2,7 +2,7 @@ import 'package:json_annotation/json_annotation.dart';
 import 'package:noq/db/db_model/configurations.dart';
 import 'package:noq/db/db_model/entity.dart';
 import 'package:noq/db/db_model/meta_entity.dart';
-import 'package:noq/db/db_model/user.dart';
+import 'package:noq/db/db_model/app_user.dart';
 import 'package:noq/db/db_model/user_token.dart';
 import 'package:noq/db/db_service/configurations_service.dart';
 import 'package:noq/db/db_service/token_service.dart';
@@ -11,7 +11,7 @@ import 'package:noq/utils.dart';
 import 'db/db_service/user_service.dart';
 
 class GlobalState {
-  User currentUser;
+  AppUser currentUser;
   Configurations conf;
   List<UserToken> bookings;
   List<Entity> pastSearches;
@@ -124,7 +124,7 @@ class GlobalState {
     if (json == null) return null;
 
     return new GlobalState.withValues(
-      currentUser: User.fromJson(json['currentUser']),
+      currentUser: AppUser.fromJson(json['currentUser']),
       conf: Configurations.fromJson(json['conf']),
       bookings: convertToBookingsFromJson(json['bookings']),
       pastSearches: convertToSearchListFromJson(json['pastSearches']),

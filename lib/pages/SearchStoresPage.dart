@@ -1167,7 +1167,7 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
                     Icons.info,
                     Duration(seconds: 5),
                     "This premise allows advance booking for upto $advanceDays days ",
-                    "Select a different date.",
+                    "Please select an earlier date.",
                   );
                 } else {
                   print("tapped");
@@ -1229,7 +1229,7 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
                   Text(
-                    'To find nearby places we need access to your current location. Open settings and give permission to access your location.',
+                    'To find nearby places we need access to your current location. \r\n Open settings and give permission to access your location.',
                     style: TextStyle(
                       fontSize: 15,
                       color: Colors.blueGrey[600],

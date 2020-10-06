@@ -41,7 +41,7 @@ import 'db/db_model/entity_slots.dart';
 import 'db/db_model/meta_entity.dart';
 import 'db/db_model/meta_user.dart';
 import 'db/db_model/slot.dart';
-import 'db/db_model/user.dart';
+import 'db/db_model/app_user.dart';
 import 'db/db_model/user_token.dart';
 import 'db/db_service/configurations_service.dart';
 import 'package:carousel_slider/carousel_slider.dart';

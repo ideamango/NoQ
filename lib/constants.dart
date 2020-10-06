@@ -22,9 +22,10 @@ String helpPageMainMsg = "We are working on getting best help..";
 
 String noFavMsg = 'No favourites yet!!';
 
-String tokenHeading = 'Yay!! Your booking is confirmed';
-String tokenTextH1 = "Booked peace of mind. No more long waiting in queues!";
-String tokenTextH2 = "Maintain social distance while at ";
+String tokenHeading = 'Yay!! Your booking is confirmed.';
+String tokenTextH1 =
+    "Booked your peace of mind. No more long waiting in queues!";
+String tokenTextH2 = "Please be on time and maintain social distance while at ";
 String tokenTextH3 = "Be Safe !! Save Time !!";
 
 String drawerHeaderTxt11 = 'Stay ';
@@ -36,9 +37,12 @@ String drawerHeaderTxt32 = 'Rush ';
 String drawerHeaderTxt33 = 'hours !!  ';
 String drawerHeaderTxt41 = 'Save ';
 String drawerHeaderTxt42 = 'time !!';
-String publicInfo = "Public:";
-String activeInfo = "Active:";
-String bookableInfo = "Bookable:";
+String publicInfo =
+    "Public: If this is off - it means your service/facility is restricted to only either your employees or residents.";
+String activeInfo =
+    "Active: If this is on - it means your service/facility is active and can be searched by other users. You MUST fill all the required details before making it ACTIVE.";
+String bookableInfo =
+    "Bookable: If your slot for your service/facility can be booked by the user and token can be issued then enable it. For example: Shop or Tennis-court is bookable but Mall or Apartment complex can't be booked.";
 String addressInfoStr =
     'The address is using the current location, and same will be used by customers when searching your location.';
 String locationInfoStr = 'Current location details.';
@@ -47,12 +51,15 @@ String paymentInfoStr = 'Payments details.';
 String missingInfoStr = "Some fields are either empty or have invalid details.";
 String missingInfoSubStr =
     "Please verify all the information provided and try again.";
-String basicInfoStr =
-    'These are important details of the establishment, Same will be shown to customer while search.';
+String entityUpsertErrStr = "Coold not Save the details!!";
+String entityUpsertErrSubStr = "Check your internet connection and try again.";
 
-String adminInfoStr = 'The perosn who manages the premises.';
+String basicInfoStr =
+    'These are important details of the establishment, Same will be shown to customer when they search.';
+
+String adminInfoStr = 'The person who manages the premises.';
 String contactInfoStr =
-    'The perosn who can be contacted for any queries regarding your services.';
+    'The perosn who can be contacted for any queries regarding your s ervices/facitlity.';
 
 enum Role { Manager, Admin, ContactPerson, Employee }
 List<String> roleTypes = ['Admin', 'Manager'];
@@ -111,7 +118,7 @@ I am a Technologist turned Entrepreneur, who likes to solve problems in the real
 
 Would love to hear back from you for any feedback/suggestion or even for a simple cheer which will help me know that I am moving in the right direction. ''';
 
-String agreement = '''Welcome to mfine mobile application.
+String agreement = '''Welcome to Sukoon mobile application.
 
 Please carefully read the Terms of Use of the Application (here) and Privacy Policy (here)
 

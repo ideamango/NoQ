@@ -8,7 +8,7 @@ import 'package:noq/db/db_model/entity.dart';
 import 'package:noq/db/db_model/entity_private.dart';
 import 'package:noq/db/db_model/meta_entity.dart';
 import 'package:noq/db/db_model/my_geo_fire_point.dart';
-import 'package:noq/db/db_model/user.dart';
+import 'package:noq/db/db_model/app_user.dart';
 import 'package:noq/db/db_service/entity_service.dart';
 import 'dart:async';
 import 'package:flutter/services.dart';
@@ -315,7 +315,7 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
           ));
         });
       }
-      User currUser = await UserService().getCurrentUser();
+      AppUser currUser = await UserService().getCurrentUser();
       Map<String, String> adminMap = Map<String, String>();
       EntityPrivate entityPrivateList;
       entityPrivateList = await fetchAdmins(serviceEntity.entityId);
@@ -2438,10 +2438,10 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
                                           children: <TextSpan>[
                                         TextSpan(
                                             text:
-                                                'Press USE CURRENT LOCATION to get the current GPS coordinates.'),
+                                                'Press "Use Current Location" button only when you are at the location of the facility.\r\n'),
                                         TextSpan(
                                             text:
-                                                'This will help in locating your premises and lists it in search results by user.'),
+                                                'Note: Users will be able to search/discover your Facility/Establishment based on this location, so ensure that this is correctly saved before you make it "Active"'),
                                       ])),
                                 ),
                                 Row(

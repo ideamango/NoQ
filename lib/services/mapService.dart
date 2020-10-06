@@ -100,3 +100,11 @@ void launchWhatsApp({
     throw 'Could not launch ${url()}';
   }
 }
+
+void launchUri(String url) async {
+  if (await UrlLauncher.canLaunch(url)) {
+    await UrlLauncher.launch(url);
+  } else {
+    throw 'Could not launch $url';
+  }
+}

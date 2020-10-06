@@ -7,7 +7,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:noq/db/db_model/user.dart';
+import 'package:noq/db/db_model/app_user.dart';
 import 'package:noq/db/db_service/user_service.dart';
 
 import 'package:noq/main.dart';
@@ -15,7 +15,7 @@ import 'package:noq/main.dart';
 void main() {
   testWidgets('Counter increments smoke test', (WidgetTester tester) async {
     // Build our app and trigger a frame.
-    User u = await UserService().getCurrentUser();
+    AppUser u = await UserService().getCurrentUser();
 
     // Verify that our counter starts at 0.
     expect(u, null);

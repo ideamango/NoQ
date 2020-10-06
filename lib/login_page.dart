@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:noq/pages/otpdialog.dart';
 import 'package:noq/pages/terms_of_use.dart';
+import 'package:noq/userHomePage.dart';
 import 'package:noq/utils.dart';
 import 'package:noq/widget/widgets.dart';
 import 'package:pinput/pin_put/pin_put.dart';
@@ -225,7 +226,7 @@ class _LoginPageState extends State<LoginPage> {
       };
 
       final PhoneVerificationFailed verificationFailed =
-          (AuthException authException) {
+          (FirebaseAuthException authException) {
         setState(() {
           _errorMsg = '${authException.message}';
 
@@ -302,7 +303,7 @@ class _LoginPageState extends State<LoginPage> {
     };
 
     final PhoneVerificationFailed verificationFailed =
-        (AuthException authException) {
+        (FirebaseAuthException authException) {
       print("Resend - verification failed");
     };
 
@@ -453,64 +454,68 @@ class _LoginPageState extends State<LoginPage> {
                           //   _pin = pin;
                           print(pin);
                           try {
-                            FirebaseAuth.instance.currentUser().then((user) {
-                              if (user != null) {
-                                Navigator.of(context).pop();
-                                Navigator.of(context)
-                                    .pushReplacementNamed('/dashboard');
+                            User user = FirebaseAuth.instance.currentUser;
+                            if (user != null) {
+                              Navigator.of(context).pop();
+                              Navigator.pushReplacement(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => UserHomePage()));
+                            } else {
+                              if (pin == null || pin == "") {
+                                setState(() {
+                                  _errorMessage =
+                                      "Enter 6 digit otp sent on your phone.";
+                                });
                               } else {
-                                if (pin == null || pin == "") {
-                                  setState(() {
-                                    _errorMessage =
-                                        "Enter 6 digit otp sent on your phone.";
-                                  });
-                                } else {
-                                  AuthCredential authCreds =
-                                      PhoneAuthProvider.getCredential(
-                                          verificationId: verificationId,
-                                          smsCode: pin);
-                                  FirebaseAuth.instance
-                                      .signInWithCredential(authCreds)
-                                      .then((AuthResult authResult) {
-                                    // AuthService()
-                                    //     .signInWithOTP(_pin, verificationId, context)
-                                    // .then(() {
-                                    print("inside then");
-                                    Navigator.of(context).pop();
-                                    Navigator.of(context)
-                                        .pushReplacementNamed('/dashboard');
-                                  }).catchError((onError) {
-                                    print("printing Errorrrrrrrrrr");
-                                    // print(onError.toString());
-                                    //handleError(onError);
-                                    switch (onError.code) {
-                                      case 'ERROR_INVALID_VERIFICATION_CODE':
-                                        // FocusScope.of(context).requestFocus(new FocusNode());
-                                        setState(() {
-                                          _errorMessage =
-                                              'Please enter a valid OTP code.';
-                                        });
-
-                                        print(_errorMessage);
-
-                                        break;
-                                      case 'firebaseAuth':
+                                AuthCredential authCreds =
+                                    PhoneAuthProvider.credential(
+                                        verificationId: verificationId,
+                                        smsCode: pin);
+                                FirebaseAuth.instance
+                                    .signInWithCredential(authCreds)
+                                    .then((UserCredential authResult) {
+                                  // AuthService()
+                                  //     .signInWithOTP(_pin, verificationId, context)
+                                  // .then(() {
+                                  print("inside then");
+                                  Navigator.of(context).pop();
+                                  Navigator.pushReplacement(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              UserHomePage()));
+                                }).catchError((onError) {
+                                  print("printing Errorrrrrrrrr in Login");
+                                  // print(onError.toString());
+                                  //handleError(onError);
+                                  switch (onError.code) {
+                                    case 'ERROR_INVALID_VERIFICATION_CODE':
+                                      // FocusScope.of(context).requestFocus(new FocusNode());
+                                      setState(() {
                                         _errorMessage =
-                                            'Please enter a valid Phone number.';
-                                        print(_errorMessage);
+                                            'Please enter a valid OTP code.';
+                                      });
 
-                                        break;
-                                      default:
-                                        _errorMessage =
-                                            'Oops, something went wrong. Try again.';
-                                        print(_errorMessage);
+                                      print(_errorMessage);
 
-                                        break;
-                                    }
-                                  });
-                                }
+                                      break;
+                                    case 'firebaseAuth':
+                                      _errorMessage =
+                                          'Please enter a valid Phone number.';
+                                      print(_errorMessage);
+
+                                      break;
+                                    default:
+                                      _errorMessage =
+                                          'Oops, something went wrong. Try again.';
+                                      print(_errorMessage);
+
+                                      break;
+                                  }
+                                });
                               }
-                            });
+                            }
                           } catch (err) {
                             print("$err.toString()");
                             setState(() {
@@ -611,70 +616,74 @@ class _LoginPageState extends State<LoginPage> {
                       _pin = _pinPutController.text;
 
                       try {
-                        FirebaseAuth.instance.currentUser().then((user) {
-                          if (user != null) {
-                            Navigator.of(context).pop();
-                            Navigator.of(context)
-                                .pushReplacementNamed('/dashboard');
+                        User user = FirebaseAuth.instance.currentUser;
+
+                        if (user != null) {
+                          Navigator.of(context).pop();
+                          Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => UserHomePage()));
+                        } else {
+                          if (_pin == null || _pin == "") {
+                            setState(() {
+                              _errorMessage =
+                                  "Please enter 6 digit OTP sent on your phone.";
+                            });
                           } else {
-                            if (_pin == null || _pin == "") {
-                              setState(() {
-                                _errorMessage =
-                                    "Please enter 6 digit OTP sent on your phone.";
-                              });
-                            } else {
-                              AuthCredential authCreds =
-                                  PhoneAuthProvider.getCredential(
-                                      verificationId: verificationId,
-                                      smsCode: _pin);
-                              FirebaseAuth.instance
-                                  .signInWithCredential(authCreds)
-                                  .then((AuthResult authResult) {
-                                // AuthService()
-                                //     .signInWithOTP(_pin, verificationId, context)
-                                // .then(() {
-                                print("inside then");
-                                Navigator.of(context).pop();
-                                Navigator.of(context)
-                                    .pushReplacementNamed('/dashboard');
-                              }).catchError((onError) {
-                                // print("printing Errorrrrrrrrrr");
-                                // // print(onError.toString());
-                                // handleError(onError);
-                                switch (onError.code) {
-                                  case 'ERROR_INVALID_VERIFICATION_CODE':
-                                    // FocusScope.of(context).requestFocus(new FocusNode());
-                                    setState(() {
-                                      _errorMessage =
-                                          'OTP is invalid, Please try again.';
-                                    });
-
-                                    print(_errorMessage);
-
-                                    break;
-                                  case 'firebaseAuth':
+                            AuthCredential authCreds =
+                                PhoneAuthProvider.credential(
+                                    verificationId: verificationId,
+                                    smsCode: _pin);
+                            FirebaseAuth.instance
+                                .signInWithCredential(authCreds)
+                                .then((UserCredential authResult) {
+                              // AuthService()
+                              //     .signInWithOTP(_pin, verificationId, context)
+                              // .then(() {
+                              print("inside then");
+                              Navigator.of(context).pop();
+                              Navigator.pushReplacement(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => UserHomePage()));
+                            }).catchError((onError) {
+                              // print("printing Errorrrrrrrrrr");
+                              // // print(onError.toString());
+                              // handleError(onError);
+                              switch (onError.code) {
+                                case 'ERROR_INVALID_VERIFICATION_CODE':
+                                  // FocusScope.of(context).requestFocus(new FocusNode());
+                                  setState(() {
                                     _errorMessage =
-                                        'Phone number is invalid, Please enter a valid Phone number.';
-                                    print(_errorMessage);
+                                        'OTP is invalid, Please try again.';
+                                  });
 
-                                    break;
-                                  case 'ERROR_USER_DISABLED':
-                                    setState(() {
-                                      _errorMessage = 'User has been disabled.';
-                                    });
-                                    break;
+                                  print(_errorMessage);
 
-                                  default:
-                                    _errorMessage =
-                                        'Oops, something went wrong. Check your internet connection and try again.';
-                                    print(_errorMessage);
+                                  break;
+                                case 'firebaseAuth':
+                                  _errorMessage =
+                                      'Phone number is invalid, Please enter a valid Phone number.';
+                                  print(_errorMessage);
 
-                                    break;
-                                }
-                              });
-                            }
+                                  break;
+                                case 'ERROR_USER_DISABLED':
+                                  setState(() {
+                                    _errorMessage = 'User has been disabled.';
+                                  });
+                                  break;
+
+                                default:
+                                  _errorMessage =
+                                      'Oops, something went wrong. Check your internet connection and try again.';
+                                  print(_errorMessage);
+
+                                  break;
+                              }
+                            });
                           }
-                        });
+                        }
                       } catch (err) {
                         print("$err.toString()");
                         setState(() {
@@ -691,7 +700,7 @@ class _LoginPageState extends State<LoginPage> {
         });
   }
 
-  handleError(AuthException error) {
+  handleError(FirebaseAuthException error) {
     print(error);
     switch (error.code) {
       case 'ERROR_INVALID_VERIFICATION_CODE':

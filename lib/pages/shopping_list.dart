@@ -266,10 +266,12 @@ class _ShoppingListState extends State<ShoppingList> {
                       //   'Shopping List from Sukoon',
                       //   style: TextStyle(decoration: TextDecoration.underline),
                       // );
-                      concatenate.writeln("Sukoon");
-                      // concatenate.writeln('-----------------------------');
-                      // concatenate.writeln('S---------Sukoon------------');
-                      concatenate.writeln('Token - ' + token.getDisplayName());
+
+                      concatenate.writeln("x~x~x~x~ SUKOON ~x~x~x~x");
+                      concatenate.writeln("Token ~ " + token.getDisplayName());
+                      concatenate.writeln("x~x~x~x~x~x~x~x~x~x~x~x~x");
+                      //concatenate.writeln("Token: " + token.getDisplayName());
+                      //concatenate.writeln('~~~~~~~~~~~~~~~~~~~~~~~~~~');
                       // concatenate.writeln('------------------------------');
                       //concatenate.writeln(heading);
                       int count = 1;
@@ -288,8 +290,8 @@ class _ShoppingListState extends State<ShoppingList> {
                         count++;
                       }
 
-                      // concatenate.writeln('------------------------------');
-                      print(concatenate);
+                      //concatenate.writeln("**************************");
+                      concatenate.writeln("x~x~x~x~x~x~x~x~x~x~x~x~x");
 
                       String phoneNo = token.entityWhatsApp;
 
