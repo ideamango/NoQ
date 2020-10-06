@@ -54,6 +54,9 @@ String missingInfoSubStr =
 String entityUpsertErrStr = "Coold not Save the details!!";
 String entityUpsertErrSubStr = "Check your internet connection and try again.";
 
+String missingInfoForShareStr =
+    "Important details are missing in entity, Please fill those first.";
+String missingInfoForShareSubStr = "Save Entity and then Share!!";
 String basicInfoStr =
     'These are important details of the establishment, Same will be shown to customer when they search.';
 

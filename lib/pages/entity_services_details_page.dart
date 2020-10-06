@@ -225,6 +225,10 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
       isPublic = (serviceEntity.isPublic) ?? false;
       isBookable = (serviceEntity.isBookable) ?? false;
       isActive = (serviceEntity.isActive) ?? false;
+      if (isActive) {
+        validateField = true;
+        _autoValidate = true;
+      }
 
       _nameController.text = (serviceEntity.name);
       _descController.text = (serviceEntity.description);
@@ -1460,6 +1464,11 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
       String errTimeFields;
       String errContactPhone;
 
+      if (isActive)
+        validateField = true;
+      else
+        validateField = false;
+
       for (int i = 0; i < contactList.length; i++) {
         validationPh1 = (contactList[i].ph != null)
             ? Utils.validateMobileField(contactList[i].ph.substring(3))
@@ -1531,8 +1540,8 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
                 Duration(
                   seconds: 5,
                 ),
-                "Seems like you have entered some incorrect details, Please verify!! ",
-                "Check your internet connection and try again.",
+                entityUpsertErrStr,
+                entityUpsertErrSubStr,
                 Colors.red);
           }
         });
@@ -2174,6 +2183,7 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
                                           }
                                         } else {
                                           validateField = false;
+                                          _autoValidate = false;
                                           isActive = value;
                                           serviceEntity.isActive = value;
                                           print(isActive);

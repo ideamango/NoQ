@@ -119,8 +119,8 @@ class GenerateScreenState extends State<GenerateScreen> {
       // channel.invokeMethod('shareFile', 'qrcodeForShare.png');
       final RenderBox box = context.findRenderObject();
       Share.shareFiles(['${tempDir.path}/qrcodeForShare.png'],
-          subject: 'Screenshot + Share',
-          text: 'Hey, check it out the sharefiles repo!',
+          subject: whatsappMessage,
+          text: 'Check it out!!',
           sharePositionOrigin: box.localToGlobal(Offset.zero) & box.size);
     } catch (e) {
       print(e.toString());
@@ -128,12 +128,12 @@ class GenerateScreenState extends State<GenerateScreen> {
   }
 
   _shareContent() {
-    String message = 'Hey,' +
-        appName +
-        ' app is simple and fast way that\n'
-            'I use to book appointment for the\n'
-            'places I wish to go. It helps to \n'
-            'avoid waiting. Check it out yourself.';
+    // String message = 'Hey,' +
+    //     appName +
+    //     ' app is simple and fast way that\n'
+    //         'I use to book appointment for the\n'
+    //         'places I wish to go. It helps to \n'
+    //         'avoid waiting. Check it out yourself.';
     _loadImage().then((value) {
       //String link = "www.playstore.com";
       //  Share.share(message + link);
