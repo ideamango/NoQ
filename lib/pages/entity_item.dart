@@ -196,7 +196,7 @@ class EntityRowState extends State<EntityRow> {
                   padding: EdgeInsets.zero,
                   margin: EdgeInsets.zero,
                   width: MediaQuery.of(context).size.width * .4,
-                  height: MediaQuery.of(context).size.width * .08,
+                  // height: MediaQuery.of(context).size.width * .08,
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: <Widget>[

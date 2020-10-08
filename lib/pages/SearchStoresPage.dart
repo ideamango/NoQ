@@ -104,24 +104,24 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
     //  _list = _stores;
   }
 
-  _SearchStoresPageState() {
-    _searchTextController.addListener(() {
-      if (_searchTextController.text.isEmpty && _entityType == null) {
-        setState(() {
-          _isSearching = "initial";
-          _searchText = "";
-        });
-      } else {
-        if (_searchTextController.text.length >= 3) {
-          setState(() {
-            _isSearching = "searching";
-            _searchText = _searchTextController.text;
-          });
-          _buildSearchList();
-        }
-      }
-    });
-  }
+  // _SearchStoresPageState() {
+  //   _searchTextController.addListener(() {
+  //     if (_searchTextController.text.isEmpty && _entityType == null) {
+  //       setState(() {
+  //         _isSearching = "initial";
+  //         _searchText = "";
+  //       });
+  //     } else {
+  //       if (_searchTextController.text.length >= 3) {
+  //         setState(() {
+  //           _isSearching = "searching";
+  //           _searchText = _searchTextController.text;
+  //         });
+  //         _buildSearchList();
+  //       }
+  //     }
+  //   });
+  // }
 
   Future<void> getGlobalState() async {
     _state = await GlobalState.getGlobalState();
@@ -411,13 +411,13 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
                 _buildSearchList();
               }
             } else {
-              // if (_searchTextController.text.length >= 3) {
-              //   setState(() {
-              //     _isSearching = "searching";
-              //     _searchText = _searchTextController.text;
-              //   });
-              //   _buildSearchList();
-              // }
+              if (_searchTextController.text.length >= 3) {
+                setState(() {
+                  _isSearching = "searching";
+                  _searchText = _searchTextController.text;
+                  _buildSearchList();
+                });
+              }
             }
           },
         ),
@@ -1308,7 +1308,9 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
     } catch (e) {
       showLocationAccessDialog();
     }
-
+    if (pos == null) {
+      throw new Exception("UserLocationOff");
+    }
     lat = pos.latitude;
     lon = pos.longitude;
     //TODO: comment - only for testing
@@ -1327,6 +1329,7 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
         radiusOfSearch,
         pageNumber,
         pageSize);
+
     return searchEntityList;
   }
 
@@ -1363,6 +1366,16 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
         //searchDone = true;
         _isSearching = "done";
       });
+    }).catchError((ex) {
+      if (ex.message.toString().contains("UserLocationOff")) {
+        _stores.clear();
+        setState(() {
+          _isSearching = "done";
+          messageTitle = "Oops.. Can't Search!!";
+          messageSubTitle =
+              "Open location settings and give permissions to access current location.";
+        });
+      }
     });
   }
 
