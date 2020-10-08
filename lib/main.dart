@@ -194,24 +194,28 @@ class DynamicLinkService {
         continue;
     }
     if (!entityContains) {
-      Utils.showMyFlushbar(
-          context, Icons.info, Duration(seconds: 3), "Processing...", "");
-      EntityService()
-          .addEntityToUserFavourite(entity.getMetaEntity())
-          .then((value) {
-        if (value) {
-          gs.currentUser.favourites.add(entity.getMetaEntity());
-        } else
-          print("Entity can't be added to Favorites");
-      }).catchError((onError) {
+      Utils.showMyFlushbar(context, Icons.info, Duration(seconds: 3),
+          "Processing...", "Hold on.");
+      bool result = await EntityService()
+          .addEntityToUserFavourite(entity.getMetaEntity());
+
+      if (result) {
+        gs.currentUser.favourites.add(entity.getMetaEntity());
+        Navigator.pushReplacement(
+            context, MaterialPageRoute(builder: (context) => FavsListPage()));
+      } else {
+        print("Oops.. Entity can't be added to Favorites");
+
         Utils.showMyFlushbar(
-            context, Icons.info, Duration(seconds: 3), "Oops error...", "");
-      });
+            context,
+            Icons.info,
+            Duration(seconds: 3),
+            "Oops!! Error in adding this entity to your favorites!!",
+            "Try again later.");
+      }
     } else {
       Utils.showMyFlushbar(context, Icons.info, Duration(seconds: 3),
           "Entity is already present in your Favourites!!", "");
     }
-    Navigator.pushReplacement(
-        context, MaterialPageRoute(builder: (context) => FavsListPage()));
   }
 }

@@ -734,22 +734,23 @@ class _SearchChildrenPageState extends State<SearchChildrenPage> {
                         ],
                       ),
                       SizedBox(height: 5),
-                      if (str.isBookable && str.isActive)
-                        Container(
-                            width: MediaQuery.of(context).size.width * .78,
-                            //padding: EdgeInsets.fromLTRB(0, 5, 5, 5),
-                            child: Row(
-                              children: <Widget>[
-                                Row(
-                                  children: _buildDateGridItems(
-                                      str,
-                                      str.entityId,
-                                      str.name,
-                                      str.closedOn,
-                                      str.advanceDays),
-                                ),
-                              ],
-                            )),
+                      if (str.isBookable != null && str.isActive != null)
+                        if (str.isBookable && str.isActive)
+                          Container(
+                              width: MediaQuery.of(context).size.width * .78,
+                              //padding: EdgeInsets.fromLTRB(0, 5, 5, 5),
+                              child: Row(
+                                children: <Widget>[
+                                  Row(
+                                    children: _buildDateGridItems(
+                                        str,
+                                        str.entityId,
+                                        str.name,
+                                        str.closedOn,
+                                        str.advanceDays),
+                                  ),
+                                ],
+                              )),
                     ],
                   ),
                 ),

@@ -334,7 +334,7 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
         ),
         alignment: Alignment.center,
         child: new TextField(
-          autofocus: true,
+          //autofocus: true,
           controller: _searchTextController,
           cursorColor: Colors.blueGrey[500],
           cursorWidth: 1,
@@ -411,13 +411,13 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
                 _buildSearchList();
               }
             } else {
-              if (_searchTextController.text.length >= 3) {
-                setState(() {
-                  _isSearching = "searching";
-                  _searchText = _searchTextController.text;
-                });
-                _buildSearchList();
-              }
+              // if (_searchTextController.text.length >= 3) {
+              //   setState(() {
+              //     _isSearching = "searching";
+              //     _searchText = _searchTextController.text;
+              //   });
+              //   _buildSearchList();
+              // }
             }
           },
         ),
@@ -768,22 +768,23 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
                         ],
                       ),
                       SizedBox(height: 5),
-                      if (str.isBookable && str.isActive)
-                        Container(
-                            width: MediaQuery.of(context).size.width * .78,
-                            //padding: EdgeInsets.fromLTRB(0, 5, 5, 5),
-                            child: Row(
-                              children: <Widget>[
-                                Row(
-                                  children: _buildDateGridItems(
-                                      str,
-                                      str.entityId,
-                                      str.name,
-                                      str.closedOn,
-                                      str.advanceDays),
-                                ),
-                              ],
-                            )),
+                      if (str.isBookable != null && str.isActive != null)
+                        if (str.isBookable && str.isActive)
+                          Container(
+                              width: MediaQuery.of(context).size.width * .78,
+                              //padding: EdgeInsets.fromLTRB(0, 5, 5, 5),
+                              child: Row(
+                                children: <Widget>[
+                                  Row(
+                                    children: _buildDateGridItems(
+                                        str,
+                                        str.entityId,
+                                        str.name,
+                                        str.closedOn,
+                                        str.advanceDays),
+                                  ),
+                                ],
+                              )),
                     ],
                   ),
                 ),
@@ -1217,6 +1218,7 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
   }
 
   Future<void> showLocationAccessDialog() async {
+    print("SHOW Dialog called");
     bool returnVal = await showDialog(
         barrierDismissible: false,
         context: context,
@@ -1229,7 +1231,7 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
                   Text(
-                    'To find nearby places we need access to your current location. \r\n Open settings and give permission to access your location.',
+                    locationPermissionMsg,
                     style: TextStyle(
                       fontSize: 15,
                       color: Colors.blueGrey[600],
@@ -1251,23 +1253,7 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
                 SizedBox(
                   height: 24,
                   child: RaisedButton(
-                    elevation: 0,
-                    color: Colors.transparent,
-                    splashColor: highlightColor.withOpacity(.8),
-                    textColor: Colors.orange,
-                    shape: RoundedRectangleBorder(
-                        side: BorderSide(color: Colors.orange)),
-                    child: Text('Yes'),
-                    onPressed: () {
-                      Navigator.of(_).pop(true);
-                    },
-                  ),
-                ),
-                SizedBox(
-                  height: 24,
-                  child: RaisedButton(
-                    elevation: 20,
-                    autofocus: true,
+                    elevation: 5,
                     focusColor: highlightColor,
                     splashColor: highlightColor,
                     color: Colors.white,
@@ -1280,6 +1266,21 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
                     },
                   ),
                 ),
+                SizedBox(
+                  height: 24,
+                  child: RaisedButton(
+                    elevation: 10,
+                    color: btnColor,
+                    splashColor: highlightColor.withOpacity(.8),
+                    textColor: Colors.white,
+                    shape: RoundedRectangleBorder(
+                        side: BorderSide(color: Colors.orange)),
+                    child: Text('Yes'),
+                    onPressed: () {
+                      Navigator.of(_).pop(true);
+                    },
+                  ),
+                ),
               ],
             ));
 
@@ -1288,6 +1289,8 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
       Utils.openAppSettings();
     } else {
       print("nothing to do, user denied location access");
+      Utils.showMyFlushbar(context, Icons.info, Duration(seconds: 3),
+          locationAccessDeniedStr, locationAccessDeniedSubStr);
       print(returnVal);
     }
   }
@@ -1299,10 +1302,11 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
     int pageNumber = 0;
     int pageSize = 0;
 
-    Position pos = await Utils.getCurrLocation();
-    if (pos == null) {
+    Position pos;
+    try {
+      pos = await Utils.getCurrLocation();
+    } catch (e) {
       showLocationAccessDialog();
-      return null;
     }
 
     lat = pos.latitude;

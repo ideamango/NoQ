@@ -392,7 +392,7 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
                   Text(
-                    'To find nearby places we need access to your current location. Open settings and give permission to access your location.',
+                    locationPermissionMsg,
                     style: TextStyle(
                       fontSize: 15,
                       color: Colors.blueGrey[600],

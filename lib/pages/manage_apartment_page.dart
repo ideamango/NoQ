@@ -1793,21 +1793,14 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
                       Text(
-                        'To find nearby places we need access to your current location. Open settings and give permission to access your location.',
+                        locationPermissionMsg,
                         style: TextStyle(
                           fontSize: 15,
                           color: Colors.blueGrey[600],
                         ),
                       ),
                       verticalSpacer,
-                      Text(
-                        'Are you sure you make this premise bookable?',
-                        style: TextStyle(
-                          fontSize: 15,
-                          color: Colors.blueGrey[600],
-                        ),
-                      ),
-                      verticalSpacer,
+
                       // myDivider,
                     ],
                   ),
@@ -1823,23 +1816,7 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
                     SizedBox(
                       height: 24,
                       child: RaisedButton(
-                        elevation: 0,
-                        color: Colors.transparent,
-                        splashColor: highlightColor.withOpacity(.8),
-                        textColor: Colors.orange,
-                        shape: RoundedRectangleBorder(
-                          side: BorderSide(color: Colors.orange),
-                        ),
-                        child: Text('Yes'),
-                        onPressed: () {
-                          Navigator.of(_).pop(true);
-                        },
-                      ),
-                    ),
-                    SizedBox(
-                      height: 24,
-                      child: RaisedButton(
-                        elevation: 20,
+                        elevation: 5,
                         autofocus: true,
                         focusColor: highlightColor,
                         splashColor: highlightColor,
@@ -1849,7 +1826,29 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
                             side: BorderSide(color: Colors.orange)),
                         child: Text('No'),
                         onPressed: () {
+                          Utils.showMyFlushbar(
+                              context,
+                              Icons.info,
+                              Duration(seconds: 3),
+                              locationAccessDeniedStr,
+                              locationAccessDeniedSubStr);
                           Navigator.of(_).pop(false);
+                        },
+                      ),
+                    ),
+                    SizedBox(
+                      height: 24,
+                      child: RaisedButton(
+                        elevation: 10,
+                        color: btnColor,
+                        splashColor: highlightColor.withOpacity(.8),
+                        textColor: Colors.white,
+                        shape: RoundedRectangleBorder(
+                          side: BorderSide(color: Colors.orange),
+                        ),
+                        child: Text('Yes'),
+                        onPressed: () {
+                          Navigator.of(_).pop(true);
                         },
                       ),
                     ),

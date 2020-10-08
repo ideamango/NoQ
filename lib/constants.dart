@@ -13,6 +13,12 @@ String whatsappMessage =
     "Hey!! Did you book your peace of mind, while going out? Are you worried about long waiting in queues?\nQuick Solution - SUKOON. It helps you book your space when visiting any place.\nLess crowded space, More SAFE.";
 String qrCodeShareMessage =
     "Hey!! Did you book your peace of mind, while going out? Are you worried about long waiting in queues?\nQuick Solution - SUKOON. It helps you book your space when visiting any place. \nLess crowded space, More SAFE. Just scan QR code and Voila!!";
+String locationPermissionMsg =
+    'To find nearby places we need access to your current location. Open settings and give permission to access your location.';
+String locationAccessDeniedStr = "Sorry, couldn't access current location!!";
+String locationAccessDeniedSubStr =
+    "Goto location settings in your device and ALLOW Location access";
+
 String contactUsMailId = "care@sukoon.mobi";
 String contactUsPageHeadline =
     'We would be happy to help you. Just drop a message to us and we will try our best to address that at earliest.';

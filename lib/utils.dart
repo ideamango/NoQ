@@ -221,7 +221,7 @@ class Utils {
     LocationPermission permission = await checkPermission();
 
     if (permission == LocationPermission.deniedForever) {
-      return null;
+      throw Exception("LocAccessDeniedForever");
     }
 
     // if (permission == LocationPermission.denied) {
