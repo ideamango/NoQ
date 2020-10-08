@@ -448,11 +448,11 @@ class _SearchChildrenPageState extends State<SearchChildrenPage> {
                             context,
                             MaterialPageRoute(
                                 builder: (context) => SearchStoresPage()));
-                      else if (_fromPage == "ShowSlots")
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => SearchStoresPage()));
+                      // else if (_fromPage == "ShowSlots")
+                      //   Navigator.push(
+                      //       context,
+                      //       MaterialPageRoute(
+                      //           builder: (context) => SearchStoresPage()));
                     }),
                 title: Text(
                   title,
@@ -1039,15 +1039,24 @@ class _SearchChildrenPageState extends State<SearchChildrenPage> {
 
   void showSlots(Entity store, DateTime dateTime) {
     //_prefs = await SharedPreferences.getInstance();
-
-    Navigator.push(
-        context,
-        MaterialPageRoute(
-            builder: (context) => ShowSlotsPage(
-                  entity: store,
-                  dateTime: dateTime,
-                  forPage: 'ChildSearch',
-                )));
+    if (_fromPage == 'Favs')
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => ShowSlotsPage(
+                    entity: store,
+                    dateTime: dateTime,
+                    forPage: 'FavChild',
+                  )));
+    else if (_fromPage == 'Search')
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => ShowSlotsPage(
+                    entity: store,
+                    dateTime: dateTime,
+                    forPage: 'ChildSearch',
+                  )));
 
     print('After showDialog:');
     // });
@@ -1111,7 +1120,7 @@ class _SearchChildrenPageState extends State<SearchChildrenPage> {
                 : (!isBookingAllowed
                     ? Colors.grey
                     : (dateBooked
-                        ? highlightColor
+                        ? primaryAccentColor
                         : primaryDarkColor)), // button color
             child: InkWell(
               splashColor: isClosed ? null : highlightColor, // splash color

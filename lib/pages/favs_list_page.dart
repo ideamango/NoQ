@@ -832,7 +832,7 @@ class _FavsListPageState extends State<FavsListPage> {
                 : (!isBookingAllowed
                     ? Colors.grey
                     : (dateBooked
-                        ? highlightColor
+                        ? primaryAccentColor
                         : primaryDarkColor)), // button color
             child: InkWell(
               splashColor: isClosed ? null : highlightColor, // splash color

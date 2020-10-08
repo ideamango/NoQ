@@ -184,8 +184,9 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
   }
 
   Widget _emptySearchPage() {
-    String defaultMsg = 'No places found!! ';
-    String defaultSubMsg = 'Try again with different Name or Category.  ';
+    String defaultMsg = 'Search places by Category or Name!!';
+    String defaultSubMsg =
+        'Add places to favourites, and quickly browse through later!!  ';
     String txtMsg = (messageTitle != null) ? messageTitle : defaultMsg;
     String txtSubMsg =
         (messageSubTitle != null) ? messageSubTitle : defaultSubMsg;
