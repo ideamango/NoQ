@@ -153,15 +153,17 @@ class _ShoppingListState extends State<ShoppingList> {
                     ),
                 // horizontalSpacer,
                 Container(
-                    width: MediaQuery.of(context).size.width * .2,
-                    height: 40,
-                    child: TextField(
+                    width: MediaQuery.of(context).size.width * .25,
+                    height: 20,
+                    child: TextFormField(
                       cursorColor: highlightColor,
-                      inputFormatters: [
-                        LengthLimitingTextInputFormatter(12),
-                      ],
-                      style: TextStyle(fontSize: 14, color: primaryDarkColor),
-                      controller: itemQtyController,
+                      maxLines: 1,
+                      maxLength: 8,
+                      // inputFormatters: [
+                      //   LengthLimitingTextInputFormatter(15),
+                      // ],
+                      style: TextStyle(fontSize: 10, color: primaryDarkColor),
+                      //  controller: itemQtyController,
                       decoration: InputDecoration(
                         //contentPadding: EdgeInsets.all(12),
                         // labelText: labelTextStr,
@@ -171,7 +173,7 @@ class _ShoppingListState extends State<ShoppingList> {
                         focusedBorder: InputBorder.none,
                       ),
                       onChanged: (value) {
-                        if (value.length < 8) newItem.quantity = value;
+                        newItem.quantity = value;
                       },
                     )),
 
