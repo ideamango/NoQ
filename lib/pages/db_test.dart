@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:noq/db/db_model/address.dart';
 import 'package:noq/db/db_model/configurations.dart';
 import 'package:noq/db/db_model/employee.dart';
@@ -232,6 +233,7 @@ class DBTest {
   }
 
   void clearAll() async {
+    FirebaseCrashlytics.instance.crash();
     try {
       await TokenService().deleteSlot("Child101-1#2020~7~6");
       await TokenService().deleteSlot("Child101-1#2020~7~7");
