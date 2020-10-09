@@ -327,15 +327,16 @@ class _ShoppingListState extends State<ShoppingList> {
                   },
                 ),
               ),
-              Container(
-                padding: EdgeInsets.fromLTRB(0, 0, 10, 0),
-                child: IconButton(
-                  icon: Icon(Icons.payment, size: 28),
-                  onPressed: () {
-                    launchGPay();
-                  },
-                ),
-              ),
+              //ToDo Smita - PHASE2
+              // Container(
+              //   padding: EdgeInsets.fromLTRB(0, 0, 10, 0),
+              //   child: IconButton(
+              //     icon: Icon(Icons.payment, size: 28),
+              //     onPressed: () {
+              //       launchGPay();
+              //     },
+              //   ),
+              // ),
             ],
             flexibleSpace: Container(
               decoration: gradientBackground,

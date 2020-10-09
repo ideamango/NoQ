@@ -296,36 +296,37 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
-  void resendVerificationCode(String phoneNumber, var token) {
-    final PhoneVerificationCompleted phoneVerified =
-        (AuthCredential authResult) {
-      AuthService().signIn(authResult, context);
-    };
+//ToDo Smita - PHASE2
+  // void resendVerificationCode(String phoneNumber, var token) {
+  //   final PhoneVerificationCompleted phoneVerified =
+  //       (AuthCredential authResult) {
+  //     AuthService().signIn(authResult, context);
+  //   };
 
-    final PhoneVerificationFailed verificationFailed =
-        (FirebaseAuthException authException) {
-      print("Resend - verification failed");
-    };
+  //   final PhoneVerificationFailed verificationFailed =
+  //       (FirebaseAuthException authException) {
+  //     print("Resend - verification failed");
+  //   };
 
-    final PhoneCodeSent otpSent = (String verId, [int forceResend]) {
-      this.verificationId = verId;
-      print("Resend - code sent");
-    };
+  //   final PhoneCodeSent otpSent = (String verId, [int forceResend]) {
+  //     this.verificationId = verId;
+  //     print("Resend - code sent");
+  //   };
 
-    final PhoneCodeAutoRetrievalTimeout autoTimeout = (String verId) {
-      this.verificationId = verId;
-      print("Resend - time out");
-    };
+  //   final PhoneCodeAutoRetrievalTimeout autoTimeout = (String verId) {
+  //     this.verificationId = verId;
+  //     print("Resend - time out");
+  //   };
 
-    FirebaseAuth.instance.verifyPhoneNumber(
-        phoneNumber: _mobile,
-        timeout: const Duration(seconds: 60),
-        verificationCompleted: phoneVerified,
-        verificationFailed: verificationFailed,
-        codeSent: otpSent,
-        codeAutoRetrievalTimeout: autoTimeout,
-        forceResendingToken: token);
-  }
+  //   FirebaseAuth.instance.verifyPhoneNumber(
+  //       phoneNumber: _mobile,
+  //       timeout: const Duration(seconds: 60),
+  //       verificationCompleted: phoneVerified,
+  //       verificationFailed: verificationFailed,
+  //       codeSent: otpSent,
+  //       codeAutoRetrievalTimeout: autoTimeout,
+  //       forceResendingToken: token);
+  // }
 
   // void _submitPin(String pin, BuildContext context) {
   //   _pin = pin;
