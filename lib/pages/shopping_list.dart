@@ -155,18 +155,19 @@ class _ShoppingListState extends State<ShoppingList> {
                 Container(
                     width: MediaQuery.of(context).size.width * .25,
                     height: 20,
-                    child: TextFormField(
+                    child: TextField(
                       cursorColor: highlightColor,
-                      maxLines: 1,
-                      maxLength: 8,
+                      //maxLines: 1,
+                      maxLength: 10,
                       // inputFormatters: [
                       //   LengthLimitingTextInputFormatter(15),
                       // ],
-                      style: TextStyle(fontSize: 10, color: primaryDarkColor),
+                      style: TextStyle(fontSize: 14, color: primaryDarkColor),
                       //  controller: itemQtyController,
                       decoration: InputDecoration(
-                        //contentPadding: EdgeInsets.all(12),
+                        //contentPadding: EdgeInsets.all(2),
                         // labelText: labelTextStr,
+                        counterText: "",
                         hintText: 'Quantity',
                         hintStyle: TextStyle(fontSize: 12, color: Colors.grey),
                         enabledBorder: InputBorder.none,
