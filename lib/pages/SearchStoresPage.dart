@@ -104,24 +104,24 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
     //  _list = _stores;
   }
 
-  _SearchStoresPageState() {
-    _searchTextController.addListener(() {
-      if (_searchTextController.text.isEmpty && _entityType == null) {
-        setState(() {
-          _isSearching = "initial";
-          _searchText = "";
-        });
-      } else {
-        if (_searchTextController.text.length >= 3) {
-          setState(() {
-            _isSearching = "searching";
-            _searchText = _searchTextController.text;
-          });
-          _buildSearchList();
-        }
-      }
-    });
-  }
+  // _SearchStoresPageState() {
+  //   _searchTextController.addListener(() {
+  //     if (_searchTextController.text.isEmpty && _entityType == null) {
+  //       setState(() {
+  //         _isSearching = "initial";
+  //         _searchText = "";
+  //       });
+  //     } else {
+  //       if (_searchTextController.text.length >= 3) {
+  //         setState(() {
+  //           _isSearching = "searching";
+  //           _searchText = _searchTextController.text;
+  //         });
+  //         _buildSearchList();
+  //       }
+  //     }
+  //   });
+  // }
 
   Future<void> getGlobalState() async {
     _state = await GlobalState.getGlobalState();
@@ -184,8 +184,9 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
   }
 
   Widget _emptySearchPage() {
-    String defaultMsg = 'No places found!! ';
-    String defaultSubMsg = 'Try again with different Name or Category.  ';
+    String defaultMsg = 'Search places by Category or Name!!';
+    String defaultSubMsg =
+        'Add places to favourites, and quickly browse through later!!  ';
     String txtMsg = (messageTitle != null) ? messageTitle : defaultMsg;
     String txtSubMsg =
         (messageSubTitle != null) ? messageSubTitle : defaultSubMsg;
@@ -334,7 +335,7 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
         ),
         alignment: Alignment.center,
         child: new TextField(
-          autofocus: true,
+          //autofocus: true,
           controller: _searchTextController,
           cursorColor: Colors.blueGrey[500],
           cursorWidth: 1,
@@ -415,8 +416,8 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
                 setState(() {
                   _isSearching = "searching";
                   _searchText = _searchTextController.text;
+                  _buildSearchList();
                 });
-                _buildSearchList();
               }
             }
           },
@@ -768,22 +769,23 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
                         ],
                       ),
                       SizedBox(height: 5),
-                      if (str.isBookable && str.isActive)
-                        Container(
-                            width: MediaQuery.of(context).size.width * .78,
-                            //padding: EdgeInsets.fromLTRB(0, 5, 5, 5),
-                            child: Row(
-                              children: <Widget>[
-                                Row(
-                                  children: _buildDateGridItems(
-                                      str,
-                                      str.entityId,
-                                      str.name,
-                                      str.closedOn,
-                                      str.advanceDays),
-                                ),
-                              ],
-                            )),
+                      if (str.isBookable != null && str.isActive != null)
+                        if (str.isBookable && str.isActive)
+                          Container(
+                              width: MediaQuery.of(context).size.width * .78,
+                              //padding: EdgeInsets.fromLTRB(0, 5, 5, 5),
+                              child: Row(
+                                children: <Widget>[
+                                  Row(
+                                    children: _buildDateGridItems(
+                                        str,
+                                        str.entityId,
+                                        str.name,
+                                        str.closedOn,
+                                        str.advanceDays),
+                                  ),
+                                ],
+                              )),
                     ],
                   ),
                 ),
@@ -1217,6 +1219,7 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
   }
 
   Future<void> showLocationAccessDialog() async {
+    print("SHOW Dialog called");
     bool returnVal = await showDialog(
         barrierDismissible: false,
         context: context,
@@ -1229,7 +1232,7 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
                   Text(
-                    'To find nearby places we need access to your current location. \r\n Open settings and give permission to access your location.',
+                    locationPermissionMsg,
                     style: TextStyle(
                       fontSize: 15,
                       color: Colors.blueGrey[600],
@@ -1251,23 +1254,7 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
                 SizedBox(
                   height: 24,
                   child: RaisedButton(
-                    elevation: 0,
-                    color: Colors.transparent,
-                    splashColor: highlightColor.withOpacity(.8),
-                    textColor: Colors.orange,
-                    shape: RoundedRectangleBorder(
-                        side: BorderSide(color: Colors.orange)),
-                    child: Text('Yes'),
-                    onPressed: () {
-                      Navigator.of(_).pop(true);
-                    },
-                  ),
-                ),
-                SizedBox(
-                  height: 24,
-                  child: RaisedButton(
-                    elevation: 20,
-                    autofocus: true,
+                    elevation: 5,
                     focusColor: highlightColor,
                     splashColor: highlightColor,
                     color: Colors.white,
@@ -1280,6 +1267,21 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
                     },
                   ),
                 ),
+                SizedBox(
+                  height: 24,
+                  child: RaisedButton(
+                    elevation: 10,
+                    color: btnColor,
+                    splashColor: highlightColor.withOpacity(.8),
+                    textColor: Colors.white,
+                    shape: RoundedRectangleBorder(
+                        side: BorderSide(color: Colors.orange)),
+                    child: Text('Yes'),
+                    onPressed: () {
+                      Navigator.of(_).pop(true);
+                    },
+                  ),
+                ),
               ],
             ));
 
@@ -1288,6 +1290,8 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
       Utils.openAppSettings();
     } else {
       print("nothing to do, user denied location access");
+      Utils.showMyFlushbar(context, Icons.info, Duration(seconds: 3),
+          locationAccessDeniedStr, locationAccessDeniedSubStr);
       print(returnVal);
     }
   }
@@ -1299,12 +1303,15 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
     int pageNumber = 0;
     int pageSize = 0;
 
-    Position pos = await Utils.getCurrLocation();
-    if (pos == null) {
+    Position pos;
+    try {
+      pos = await Utils.getCurrLocation();
+    } catch (e) {
       showLocationAccessDialog();
-      return null;
     }
-
+    if (pos == null) {
+      throw new Exception("UserLocationOff");
+    }
     lat = pos.latitude;
     lon = pos.longitude;
     //TODO: comment - only for testing
@@ -1323,6 +1330,7 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
         radiusOfSearch,
         pageNumber,
         pageSize);
+
     return searchEntityList;
   }
 
@@ -1359,6 +1367,16 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
         //searchDone = true;
         _isSearching = "done";
       });
+    }).catchError((ex) {
+      if (ex.message.toString().contains("UserLocationOff")) {
+        _stores.clear();
+        setState(() {
+          _isSearching = "done";
+          messageTitle = "Oops.. Can't Search!!";
+          messageSubTitle =
+              "Open location settings and give permissions to access current location.";
+        });
+      }
     });
   }
 

@@ -23,17 +23,17 @@ class QrCodeScanner {
       print(scanResult.rawContent);
       launchUri(scanResult.rawContent);
 
-      final UriData uriDatalink = UriData.fromString(scanResult.rawContent);
-      print(uriDatalink.parameters);
-      print("Deep link path ");
-      print(uriDatalink.parameters.containsKey("entityId"));
+      // final UriData uriDatalink = UriData.fromString(scanResult.rawContent);
+      // print(uriDatalink.parameters);
+      // print("Deep link path ");
+      // print(uriDatalink.parameters.containsKey("entityId"));
       //   print(deepLink.path);
       // if (deepLink.queryParameters.containsKey("entityId")) {
       //   print("QueryParams ${deepLink.queryParameters}");
       // }
-      List<String> url = scanResult.rawContent.split('/');
-      String entityId = url[3];
-      addEntityToFavs(context, entityId);
+      // List<String> url = scanResult.rawContent.split('/');
+      // String entityId = url[3];
+      // addEntityToFavs(context, entityId);
     } on PlatformException catch (e) {
       var result = ScanResult(
         type: ResultType.Error,

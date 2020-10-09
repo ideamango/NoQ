@@ -156,11 +156,19 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
         if (widget.forPage == 'MainSearch') backRoute = SearchStoresPage();
         if (widget.forPage == 'ChildSearch')
           backRoute = SearchChildrenPage(
+            pageName: "Search",
             parentName: parentEntity.name,
             childList: parentEntity.childEntities,
             parentId: parentEntity.entityId,
           );
         if (widget.forPage == 'FavSearch') backRoute = FavsListPage();
+        if (widget.forPage == 'FavChild')
+          backRoute = SearchChildrenPage(
+            pageName: "Favs",
+            parentName: parentEntity.name,
+            childList: parentEntity.childEntities,
+            parentId: parentEntity.entityId,
+          );
 
         return MaterialApp(
           theme: ThemeData.light().copyWith(),
@@ -530,9 +538,10 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
       }
       _token = value.getDisplayName();
 
-      String slotTiming = Utils.formatTime(selectedSlot.dateTime.hour.toString()) +
-          ':' +
-          Utils.formatTime(selectedSlot.dateTime.minute.toString());
+      String slotTiming =
+          Utils.formatTime(selectedSlot.dateTime.hour.toString()) +
+              ':' +
+              Utils.formatTime(selectedSlot.dateTime.minute.toString());
 
       showTokenAlert(context, _token, _storeName, slotTiming).then((value) {
         _returnValues(value);
