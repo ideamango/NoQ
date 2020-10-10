@@ -56,6 +56,7 @@ dependencies:
   firebase_dynamic_links: ^0.5.0+6
   eventify: ^0.1.4
   firebase_analytics: ^6.0.2
+  rate_my_app: ^0.7.2
   
 
 dev_dependencies:

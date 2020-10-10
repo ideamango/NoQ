@@ -39,6 +39,7 @@
 			<string>googlechromes</string>
 			<string>comgooglemaps</string>
 			<string>iosamap</string>
+			<string>itms</string>
 		</array>
 		<key>LSRequiresIPhoneOS</key>
 		<true />

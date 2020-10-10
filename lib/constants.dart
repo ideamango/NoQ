@@ -9,6 +9,7 @@ var loginMainTxt = "";
 String dateDisplayFormat = 'EEE, MMM d';
 String homeScreenMsgTxt =
     "Add the amenities in Apartment or Workplace to your 'favourites' and book a slot anytime.";
+String whatsappContactUsMsg = "Hey!!";
 String whatsappMessage =
     "Hey!! Did you book your peace of mind, while going out? Are you worried about long waiting in queues?\nQuick Solution - SUKOON. It helps you book your space when visiting any place.\nLess crowded space, More SAFE.";
 String qrCodeShareMessage =

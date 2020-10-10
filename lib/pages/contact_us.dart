@@ -317,8 +317,13 @@ class _ContactUsPageState extends State<ContactUsPage> {
                       ),
                       verticalSpacer,
                       new RaisedButton(
+                        elevation: 5,
                         color: btnColor,
                         textColor: Colors.white,
+                        shape: RoundedRectangleBorder(
+                            side: BorderSide(color: Colors.blueGrey[200]),
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(5.0))),
                         splashColor: highlightColor,
                         onPressed: () {
                           setState(() {
@@ -348,6 +353,7 @@ class _ContactUsPageState extends State<ContactUsPage> {
                         height: 35.0,
                         width: 45.0,
                         child: RaisedButton(
+                          textColor: btnColor,
                           elevation: 5,
                           padding: EdgeInsets.all(5),
                           // alignment: Alignment.center,
@@ -357,17 +363,26 @@ class _ContactUsPageState extends State<ContactUsPage> {
                                   BorderRadius.all(Radius.circular(5.0))),
                           color: Colors.white,
                           splashColor: highlightColor,
-                          child: ImageIcon(
-                            AssetImage('assets/whatsapp.png'),
-                            size: 30,
-                            color: primaryDarkColor,
+                          child: Container(
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: <Widget>[
+                                Text("Say 'Hi' to us on "),
+                                ImageIcon(
+                                  AssetImage('assets/whatsapp.png'),
+                                  size: 30,
+                                  color: Colors.greenAccent[700],
+                                ),
+                              ],
+                            ),
                           ),
+
                           onPressed: () {
                             if (_state.conf.whatsappPhone != null &&
                                 _state.conf.whatsappPhone != "") {
                               try {
                                 launchWhatsApp(
-                                    message: whatsappMessage,
+                                    message: whatsappContactUsMsg,
                                     phone: _state.conf.whatsappPhone);
                               } catch (error) {
                                 Utils.showMyFlushbar(
