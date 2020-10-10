@@ -42,7 +42,7 @@ final drawerdefaultTextStyle = TextStyle(
 final highlightBoldTextStyle = TextStyle(
   color: highlightColor,
   fontWeight: FontWeight.w800,
-  fontFamily: 'Montserrat',
+  fontFamily: 'Roboto',
   letterSpacing: 0.5,
   fontSize: 25,
   //height: 2,
