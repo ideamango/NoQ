@@ -8,17 +8,61 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:166667469482:android:2ffec4e8ca3f6023e9c6d3",
+        "mobilesdk_app_id": "1:166667469482:android:c728c3a29720a5afe9c6d3",
         "android_client_info": {
           "package_name": "com.example.noq"
         }
       },
       "oauth_client": [
         {
-          "client_id": "166667469482-3a0umk46v123i2ohepqps1dsit42ssma.apps.googleusercontent.com",
+          "client_id": "166667469482-92s9esbf3pclug328j8lsnopb67alssj.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.example.noq",
+            "certificate_hash": "0cfabab6757d56d9ceff0e7047fd00cc9725c2d8"
+          }
+        },
+        {
+          "client_id": "166667469482-300mgive3o8b5msd4urru1425vhbhi1i.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBvRdM2jfG54VzciJ3sfef4xq_TalMmOAM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "166667469482-300mgive3o8b5msd4urru1425vhbhi1i.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "166667469482-33b55aepe4s026tadg0ap7rtoug8gdh0.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "mobi.sukoon"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:166667469482:android:341050a0fa6f3f46e9c6d3",
+        "android_client_info": {
+          "package_name": "mobi.sukoon"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "166667469482-4p3ktm6kotdhsl9dc81qn108dpnvsbsp.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "mobi.sukoon",
             "certificate_hash": "873c1be027566f20bf722110a2ce49c884065dd3"
           }
         },
@@ -38,6 +82,13 @@
             {
               "client_id": "166667469482-300mgive3o8b5msd4urru1425vhbhi1i.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "166667469482-33b55aepe4s026tadg0ap7rtoug8gdh0.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "mobi.sukoon"
+              }
             }
           ]
         }

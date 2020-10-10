@@ -21,7 +21,7 @@ dependencies:
     sdk: flutter
   map_launcher: ^0.4.4
   #Added http for accessing APIs for data
-  #firebase_core: ^0.5.0
+  firebase_core: ^0.5.0+1
   pinput: ^0.2.3
   path_provider: ^0.4.1
   shared_preferences: ^0.5.7
@@ -55,7 +55,7 @@ dependencies:
   carousel_slider: ^1.4.1
   firebase_dynamic_links: ^0.5.0+6
   eventify: ^0.1.4
- 
+  firebase_analytics: ^6.0.2
   
 
 dev_dependencies:

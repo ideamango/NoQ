@@ -7,6 +7,7 @@ class Configurations {
       this.keyMessage,
       this.contactEmail,
       this.contactPhone,
+      this.whatsappPhone,
       this.supportReasons,
       this.enableDonation,
       this.phCountryCode});
@@ -16,6 +17,7 @@ class Configurations {
   String keyMessage;
   String contactEmail;
   String contactPhone;
+  String whatsappPhone;
   List<String> supportReasons;
   bool enableDonation;
   String phCountryCode;
@@ -26,6 +28,7 @@ class Configurations {
         'keyMessage': keyMessage,
         'contactEmail': contactEmail,
         'contactPhone': contactPhone,
+        'whatsappPhone': whatsappPhone,
         'supportReasons': supportReasons,
         'enableDonation': enableDonation,
         'phCountryCode': phCountryCode
@@ -39,6 +42,7 @@ class Configurations {
         keyMessage: json['keyMessage'],
         contactEmail: json['contactEmail'],
         contactPhone: json['contactPhone'],
+        whatsappPhone: json['whatsappPhone'],
         supportReasons: convertToStringsArrayFromJson(json['supportReasons']),
         enableDonation: json['enableDonation'],
         phCountryCode: json['phCountryCode']);
