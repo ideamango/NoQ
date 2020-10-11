@@ -566,15 +566,8 @@ class _UserAccountPageState extends State<UserAccountPage> {
   openPlayStoreAndRate() async {
     PackageInfo info = await PackageInfo.fromPlatform();
     String packageName = info.packageName;
-    String urlStr = "market://details?id=$packageName";
-    try {
-      launch(urlStr);
-    } on PlatformException catch (e) {
-      print(e.message);
-      launch("https://play.google.com/store/apps/details?id=" + packageName);
-    } finally {
-      launch("https://play.google.com/store/apps/details?id=" + packageName);
-    }
+
+    launchPlayStore(packageName: packageName);
 
     // launch("https://play.google.com/store/apps/details?id=" + packageName);
     Utils.showMyFlushbar(

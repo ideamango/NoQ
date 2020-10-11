@@ -101,6 +101,24 @@ void launchWhatsApp({
   }
 }
 
+void launchPlayStore({
+  @required String packageName,
+}) async {
+  String url() {
+    if (Platform.isIOS) {
+      return "market://details?id=" + packageName;
+    } else {
+      return "https://play.google.com/store/apps/details?id=" + packageName;
+    }
+  }
+
+  if (await canLaunch(url())) {
+    await launch(url());
+  } else {
+    throw 'Could not launch ${url()}';
+  }
+}
+
 void launchUri(String url) async {
   if (await UrlLauncher.canLaunch(url)) {
     await UrlLauncher.launch(url);
