@@ -24,6 +24,8 @@ import 'package:noq/widget/custom_expansion_tile.dart';
 import 'package:noq/widget/header.dart';
 import 'package:noq/widget/widgets.dart';
 import 'package:share/share.dart';
+import 'package:package_info/package_info.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class UserAccountPage extends StatefulWidget {
   @override
@@ -562,13 +564,25 @@ class _UserAccountPageState extends State<UserAccountPage> {
   }
 
   openPlayStoreAndRate() async {
-    print("To be done next....hold on!!!");
+    PackageInfo info = await PackageInfo.fromPlatform();
+    String packageName = info.packageName;
+    String urlStr = "market://details?id=$packageName";
+    try {
+      launch(urlStr);
+    } on PlatformException catch (e) {
+      print(e.message);
+      launch("https://play.google.com/store/apps/details?id=" + packageName);
+    } finally {
+      launch("https://play.google.com/store/apps/details?id=" + packageName);
+    }
+
+    // launch("https://play.google.com/store/apps/details?id=" + packageName);
     Utils.showMyFlushbar(
         context,
         Icons.help_outline,
         Duration(seconds: 3),
-        "It seems you might have to wait a little longer!!",
-        "...work in progress");
+        "Opening play store!!",
+        "It will really help us and shouldn't take more than a minute.");
   }
 
   openFeedbackPage() async {
