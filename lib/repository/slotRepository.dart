@@ -106,36 +106,55 @@ Future<UserToken> bookSlotForStore(MetaEntity meta, Slot slot) async {
     throw e;
   }
 
-  LocalNotificationData dataForAnHour = new LocalNotificationData(
-      dateTime:
-          token.dateTime.add(new Duration(hours: 1)), //this should be 1 hour
-      // dateTime: DateTime.now().add(new Duration(seconds: 10)),
-      title: "Appointment in an hour at " + token.entityName,
-      message: "This is a reminder for your token number " +
-          token.getDisplayName() +
-          " at " +
-          token.entityName +
-          ". Please be on time and maintain safe distance.");
-  EventBus.fireEvent(LOCAL_NOTIFICATION_CREATED_EVENT, null, dataForAnHour);
+  DateTime dt1Hour = token.dateTime.add(new Duration(hours: 1));
+  DateTime dt15Minutes = token.dateTime.add(new Duration(minutes: 15));
 
-  LocalNotificationData dataFor15Minutes = new LocalNotificationData(
-      dateTime:
-          token.dateTime.add(new Duration(minutes: 15)), //this should be 1 hour
-      // dateTime: DateTime.now().add(new Duration(seconds: 10)),
-      title: "Appointment in 15 minutes at " + token.entityName,
-      message: "Gentle reminder for your token number " +
-          token.getDisplayName() +
-          " at " +
-          token.entityName +
-          ". Please be on time and follow social distancing norms.");
-  EventBus.fireEvent(LOCAL_NOTIFICATION_CREATED_EVENT, null, dataFor15Minutes);
+  if (dt1Hour.millisecondsSinceEpoch > DateTime.now().millisecondsSinceEpoch) {
+    LocalNotificationData dataForAnHour = new LocalNotificationData(
+        id: (token.getTokenId() + "60").hashCode,
+        dateTime: dt1Hour,
+        title: "Appointment in an hour at " + token.entityName,
+        message: "Your token number " +
+            token.getDisplayName() +
+            " at " +
+            token.entityName +
+            ". Please be on time and maintain safe distance.");
+
+    EventBus.fireEvent(LOCAL_NOTIFICATION_CREATED_EVENT, null, dataForAnHour);
+  }
+
+  if (dt15Minutes.millisecondsSinceEpoch >
+      DateTime.now().millisecondsSinceEpoch) {
+    LocalNotificationData dataFor15Minutes = new LocalNotificationData(
+        id: (token.getTokenId() + "15").hashCode,
+        dateTime: dt15Minutes,
+        title: "Appointment in 15 minutes at " + token.entityName,
+        message: "Your token number " +
+            token.getDisplayName() +
+            " at " +
+            token.entityName +
+            ". Please be on time and follow social distancing norms.");
+
+    EventBus.fireEvent(
+        LOCAL_NOTIFICATION_CREATED_EVENT, null, dataFor15Minutes);
+  }
 
   return token;
 }
 
 Future<bool> cancelToken(String tokenId) async {
   bool returnVal = await TokenService().cancelToken(tokenId);
-  //TODO: Unregister LocalNotification event
+
+  LocalNotificationData dataFor15Minutes =
+      new LocalNotificationData(id: (tokenId + "15").hashCode);
+
+  LocalNotificationData dataForAnHour =
+      new LocalNotificationData(id: (tokenId + "60").hashCode);
+
+  EventBus.fireEvent(LOCAL_NOTIFICATION_REMOVED_EVENT, null, dataFor15Minutes);
+
+  EventBus.fireEvent(LOCAL_NOTIFICATION_REMOVED_EVENT, null, dataForAnHour);
+
   return returnVal;
 }
 
