@@ -17,6 +17,9 @@ import 'package:noq/db/db_service/configurations_service.dart';
 import 'package:noq/db/db_service/entity_service.dart';
 import 'package:noq/db/db_service/token_service.dart';
 import 'package:noq/db/db_service/user_service.dart';
+import 'package:noq/events/event_bus.dart';
+import 'package:noq/events/events.dart';
+import 'package:noq/events/local_notification_data.dart';
 
 class DBTest {
   void createEntity() async {
@@ -232,8 +235,26 @@ class DBTest {
     }
   }
 
+  fireLocalNotificationEvent() {
+    LocalNotificationData dataFor10Sec = new LocalNotificationData(
+        dateTime: DateTime.now().add(new Duration(seconds: 10)),
+        title: "Appointment",
+        message: "Token ");
+    EventBus.fireEvent(LOCAL_NOTIFICATION_CREATED_EVENT, null, dataFor10Sec);
+
+    // LocalNotificationData dataFor20Sec = new LocalNotificationData(
+    //     dateTime: DateTime.now().add(new Duration(seconds: 20)),
+    //     title: "Appointment in 20 minutes at " + "Habinaro",
+    //     message: "Gentle reminder for your token number " +
+    //         "HAB-201012-0530-1" +
+    //         " at " +
+    //         "Habinaro" +
+    //         ". Please be on time and follow social distancing norms.");
+    // EventBus.fireEvent(LOCAL_NOTIFICATION_CREATED_EVENT, null, dataFor20Sec);
+  }
+
   void clearAll() async {
-    FirebaseCrashlytics.instance.crash();
+    //FirebaseCrashlytics.instance.crash();
     try {
       await TokenService().deleteSlot("Child101-1#2020~7~6");
       await TokenService().deleteSlot("Child101-1#2020~7~7");
@@ -256,6 +277,9 @@ class DBTest {
   }
 
   void dbCall1() async {
+    fireLocalNotificationEvent();
+    return;
+
     await clearAll();
     //await securityPermissionTests();
     await tests();
