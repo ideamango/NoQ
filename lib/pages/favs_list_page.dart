@@ -835,7 +835,9 @@ class _FavsListPageState extends State<FavsListPage> {
                         ? primaryAccentColor
                         : primaryDarkColor)), // button color
             child: InkWell(
-              splashColor: isClosed ? null : highlightColor, // splash color
+              splashColor: (isClosed || !isBookingAllowed)
+                  ? null
+                  : highlightColor, // splash color
               onTap: () {
                 if (isClosed) {
                   Utils.showMyFlushbar(
@@ -870,7 +872,7 @@ class _FavsListPageState extends State<FavsListPage> {
                           color: (isClosed
                               ? Colors.red
                               : (!isBookingAllowed
-                                  ? Colors.grey[200]
+                                  ? Colors.grey[500]
                                   : Colors.white)))),
                   Text(dayOfWeek,
                       style: TextStyle(
@@ -878,7 +880,7 @@ class _FavsListPageState extends State<FavsListPage> {
                           color: (isClosed
                               ? Colors.red
                               : (!isBookingAllowed
-                                  ? Colors.grey[200]
+                                  ? Colors.grey[500]
                                   : Colors.white)))), // text
                 ],
               ),

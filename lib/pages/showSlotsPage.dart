@@ -63,6 +63,7 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
   MetaEntity metaEn;
   Entity entity;
   Entity parentEntity;
+  DateTime currDateTime = DateTime.now();
 
   @override
   void initState() {
@@ -70,6 +71,7 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
     _date = widget.dateTime;
     _storeId = entity.entityId;
     _storeName = entity.name;
+
     super.initState();
     if (entity.parentId != null) {
       getEntityDetails(entity.parentId).then((value) => parentEntity = value);
@@ -281,16 +283,20 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
                                 child: RaisedButton(
                                   elevation:
                                       (selectedSlot != null) ? 10.0 : 0.0,
-                                  color: (selectedSlot != null)
-                                      ? highlightColor
-                                      : disabledColor,
+                                  color: highlightColor,
                                   textColor: Colors.white,
                                   child: Text('Book Slot'),
                                   onPressed: () {
                                     if (selectedSlot != null)
                                       bookSlot();
-                                    else
-                                      return null;
+                                    else {
+                                      Utils.showMyFlushbar(
+                                          context,
+                                          Icons.error,
+                                          Duration(seconds: 4),
+                                          "Oops.. You forgot to select a time slot!!",
+                                          "");
+                                    }
                                   },
                                 ),
                               ),
@@ -434,6 +440,11 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
     return false;
   }
 
+  bool isDisabled(DateTime dateTime) {
+    bool isDisabled = dateTime.isBefore(currDateTime);
+    return isDisabled;
+  }
+
   Widget _buildGridItem(BuildContext context, int index) {
     //TODO: Check what information coming from server, then process and use it.
     Slot sl = _slotList[index];
@@ -443,23 +454,32 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
     return Column(
       children: <Widget>[
         RaisedButton(
-          elevation: (isSelected(sl.dateTime) == true) ? 0.0 : 10.0,
+          elevation: (isDisabled(sl.dateTime))
+              ? 0
+              : ((isSelected(sl.dateTime) == true) ? 0.0 : 10.0),
           padding: EdgeInsets.all(2),
           child: Text(
             hrs + ':' + mnts,
-            style: TextStyle(fontSize: 12, color: Colors.white),
-            // textDirection: TextDirection.ltr,
-            // textAlign: TextAlign.center,
+            style: TextStyle(
+              fontSize: 12,
+              color: isDisabled(sl.dateTime) ? Colors.grey[500] : Colors.white,
+              // textDirection: TextDirection.ltr,
+              // textAlign: TextAlign.center,
+            ),
           ),
 
           autofocus: false,
-          color: (isBooked(sl.dateTime, entity.entityId) == true)
-              ? Colors.cyan[300]
-              : ((sl.isFull != true && isSelected(sl.dateTime) == true)
-                  ? highlightColor
-                  : (sl.isFull == false) ? btnDisabledolor : btnColor),
+          color: (isDisabled(sl.dateTime))
+              ? disabledColor
+              : ((isBooked(sl.dateTime, entity.entityId) == true)
+                  ? Colors.cyan[300]
+                  : ((sl.isFull != true && isSelected(sl.dateTime) == true)
+                      ? highlightColor
+                      : (sl.isFull == false)
+                          ? primaryDarkColor
+                          : btnDisabledolor)),
 
-          disabledColor: Colors.grey[400],
+          disabledColor: Colors.grey[200],
           //textTheme: ButtonTextTheme.normal,
           //highlightColor: Colors.green,
           // highlightElevation: 10.0,
@@ -474,21 +494,24 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
                   // side: BorderSide(color: Colors.white),
                 ),
           onPressed: () {
-            if (isBooked(sl.dateTime, entity.entityId)) {
-              print("Slot already booked");
-              Utils.showMyFlushbar(
-                  context,
-                  Icons.info_outline,
-                  Duration(seconds: 6),
-                  "You already have an active booking for same time.",
-                  "If you wish to book for another time, cancel this one from your bookings in Home Page");
-              return null;
-            }
-            if (sl.isFull == false) {
-              setState(() {
-                //unselect previously selected slot
-                selectedSlot = sl;
-              });
+            if (!isDisabled(sl.dateTime)) {
+              if (isBooked(sl.dateTime, entity.entityId)) {
+                print("Slot already booked");
+                Utils.showMyFlushbar(
+                    context,
+                    Icons.info_outline,
+                    Duration(seconds: 6),
+                    "You already have an active booking for same time.",
+                    "If you wish to book for another time, cancel this one from your bookings in Home Page");
+                return null;
+              }
+              if (sl.isFull == false) {
+                setState(() {
+                  //unselect previously selected slot
+                  selectedSlot = sl;
+                });
+              } else
+                return null;
             } else
               return null;
           },
