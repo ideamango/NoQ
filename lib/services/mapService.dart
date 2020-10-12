@@ -107,7 +107,7 @@ void launchPlayStore({
   String url() {
     packageName = "com.bigbasket.mobileapp";
     if (Platform.isIOS) {
-      return "market://details?id=" + packageName;
+      return "https://itunes.apple.com/us/app/appName/id$packageName?mt=8&action=write-review";
     } else {
       return "https://play.google.com/store/apps/details?id=" + packageName;
     }

@@ -1,4 +1,5 @@
 import 'package:barcode_scan/barcode_scan.dart';
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -578,15 +579,15 @@ class _UserAccountPageState extends State<UserAccountPage> {
         "It will really help us and shouldn't take more than a minute.");
   }
 
-  openFeedbackPage() async {
-    print("To be done next....hold on!!!");
-    Utils.showMyFlushbar(
-        context,
-        Icons.help_outline,
-        Duration(seconds: 3),
-        "It seems you might have to wait a little longer!!",
-        "...work in progress");
-  }
+  // openFeedbackPage() async {
+  //   print("To be done next....hold on!!!");
+  //   Utils.showMyFlushbar(
+  //       context,
+  //       Icons.help_outline,
+  //       Duration(seconds: 3),
+  //       "It seems you might have to wait a little longer!!",
+  //       "...work in progress");
+  // }
 
   generateLinkAndShare() async {
     var dynamicLink = await Utils.createDynamicLink();
@@ -677,7 +678,7 @@ class _UserAccountPageState extends State<UserAccountPage> {
                                       textColor: Colors.white,
                                       splashColor: highlightColor,
                                       onPressed: () {
-                                        openFeedbackPage();
+                                        // openFeedbackPage();
                                       },
                                       child: const Text(
                                         'Give Feedback',
@@ -862,6 +863,62 @@ class _UserAccountPageState extends State<UserAccountPage> {
                           ),
                         ),
                       ]),
+                ),
+                verticalSpacer,
+                Container(
+                  color: primaryDarkColor,
+                  child: Column(
+                    children: <Widget>[
+                      CarouselSlider(
+                        height: MediaQuery.of(context).size.height * .9,
+                        autoPlay: true,
+                        autoPlayInterval: Duration(seconds: 3),
+                        autoPlayAnimationDuration: Duration(milliseconds: 800),
+                        autoPlayCurve: Curves.easeInCubic,
+                        pauseAutoPlayOnTouch: Duration(seconds: 10),
+                        aspectRatio: 2.0,
+                        onPageChanged: (index) {
+                          setState(() {
+                            _currentIndex = index;
+                          });
+                        },
+                        items: cardList.map((card) {
+                          return Builder(builder: (BuildContext context) {
+                            return Container(
+                              height: MediaQuery.of(context).size.height * 0.40,
+                              width: MediaQuery.of(context).size.width,
+                              child: Card(
+                                color: primaryDarkColor,
+                                child: card,
+                              ),
+                            );
+                          });
+                        }).toList(),
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: map<Widget>(cardList, (index, url) {
+                              return Container(
+                                width: 7.0,
+                                height: 7.0,
+                                margin: EdgeInsets.symmetric(
+                                    vertical: 2.0, horizontal: 2.0),
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  color: _currentIndex == index
+                                      ? highlightColor
+                                      : Colors.grey,
+                                ),
+                              );
+                            }),
+                          ),
+                        ],
+                      )
+                    ],
+                  ),
                 ),
                 verticalSpacer,
                 //This is start of boxed container.
