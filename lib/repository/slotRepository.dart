@@ -10,6 +10,9 @@ import 'package:noq/db/db_model/user_token.dart';
 import 'package:noq/db/db_service/entity_service.dart';
 import 'package:noq/db/db_service/slot_full_exception.dart';
 import 'package:noq/db/db_service/token_service.dart';
+import 'package:noq/events/event_bus.dart';
+import 'package:noq/events/events.dart';
+import 'package:noq/events/local_notification_data.dart';
 
 Future<List<Slot>> getSlotsListForStore(
     Entity entity, DateTime dateTime) async {
@@ -102,11 +105,37 @@ Future<UserToken> bookSlotForStore(MetaEntity meta, Slot slot) async {
   } catch (e) {
     throw e;
   }
+
+  LocalNotificationData dataForAnHour = new LocalNotificationData(
+      dateTime:
+          token.dateTime.add(new Duration(hours: 1)), //this should be 1 hour
+      // dateTime: DateTime.now().add(new Duration(seconds: 10)),
+      title: "Appointment in an hour at " + token.entityName,
+      message: "This is a reminder for your token number " +
+          token.getDisplayName() +
+          " at " +
+          token.entityName +
+          ". Please be on time and maintain safe distance.");
+  EventBus.fireEvent(LOCAL_NOTIFICATION_CREATED_EVENT, null, dataForAnHour);
+
+  LocalNotificationData dataFor15Minutes = new LocalNotificationData(
+      dateTime:
+          token.dateTime.add(new Duration(minutes: 15)), //this should be 1 hour
+      // dateTime: DateTime.now().add(new Duration(seconds: 10)),
+      title: "Appointment in 15 minutes at " + token.entityName,
+      message: "Gentle reminder for your token number " +
+          token.getDisplayName() +
+          " at " +
+          token.entityName +
+          ". Please be on time and follow social distancing norms.");
+  EventBus.fireEvent(LOCAL_NOTIFICATION_CREATED_EVENT, null, dataFor15Minutes);
+
   return token;
 }
 
 Future<bool> cancelToken(String tokenId) async {
   bool returnVal = await TokenService().cancelToken(tokenId);
+  //TODO: Unregister LocalNotification event
   return returnVal;
 }
 

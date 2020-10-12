@@ -105,7 +105,7 @@ void launchPlayStore({
   @required String packageName,
 }) async {
   String url() {
-    packageName = "com.bigbasket.mobileapp";
+    //packageName = "com.bigbasket.mobileapp";
     if (Platform.isIOS) {
       return "market://details?id=" + packageName;
     } else {

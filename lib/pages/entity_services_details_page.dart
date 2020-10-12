@@ -15,9 +15,11 @@ import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:noq/constants.dart';
 import 'package:noq/db/db_service/user_service.dart';
-import 'package:noq/events.dart';
+import 'package:noq/events/event_bus.dart';
+import 'package:noq/events/events.dart';
+
 import 'package:noq/global_state.dart';
-import 'package:noq/observable/EventBus.dart';
+
 import 'package:noq/pages/contact_item.dart';
 import 'package:noq/pages/entity_services_list_page.dart';
 import 'package:noq/pages/manage_apartment_list_page.dart';
