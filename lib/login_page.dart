@@ -217,11 +217,12 @@ class _LoginPageState extends State<LoginPage> {
 
   Future<void> verifyPhone(phoneNo) async {
     int _forceResendingToken;
+
     try {
       final PhoneVerificationCompleted phoneVerified =
           (AuthCredential authResult) {
         print("Main - verification completed");
-        showDialogForOtp(verificationId, authResult);
+        //showDialogForOtp(verificationId, authResult);
         AuthService().signIn(authResult, context);
       };
 
@@ -248,8 +249,9 @@ class _LoginPageState extends State<LoginPage> {
       final PhoneCodeSent otpSent = (String verId, [int forceResend]) {
         print("Main - code sent");
         this.verificationId = verId;
+        print(verId);
         print("before dialog callhbksdjfhskjfyhewroiuytfewqorhy");
-        showDialogForOtp(verId, null);
+        if (!verificationDone) showDialogForOtp(verId, null);
         _forceResendingToken = forceResend;
         //smsOTPDialog(context, verificationId).then((value) {
         //print('sign in');

@@ -1146,14 +1146,16 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
         child: ClipOval(
           child: Material(
             color: isClosed
-                ? Colors.grey
+                ? disabledColor
                 : (!isBookingAllowed
-                    ? Colors.grey
+                    ? disabledColor
                     : (dateBooked
-                        ? highlightColor
+                        ? primaryAccentColor
                         : primaryDarkColor)), // button color
             child: InkWell(
-              splashColor: isClosed ? null : highlightColor, // splash color
+              splashColor: (isClosed || !isBookingAllowed)
+                  ? null
+                  : highlightColor, // splash color
               onTap: () {
                 if (isClosed) {
                   Utils.showMyFlushbar(
@@ -1188,7 +1190,7 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
                           color: (isClosed
                               ? Colors.red
                               : (!isBookingAllowed
-                                  ? Colors.grey[200]
+                                  ? Colors.grey[500]
                                   : Colors.white)))),
                   Text(dayOfWeek,
                       style: TextStyle(
@@ -1196,7 +1198,7 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
                           color: (isClosed
                               ? Colors.red
                               : (!isBookingAllowed
-                                  ? Colors.grey[200]
+                                  ? Colors.grey[500]
                                   : Colors.white)))), // text
                 ],
               ),

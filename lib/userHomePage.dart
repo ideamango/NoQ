@@ -639,9 +639,10 @@ class _UserHomePageState extends State<UserHomePage> {
                       children: <Widget>[
                         // Text('Time: ', style: tokenHeadingTextStyle),
                         Text(
-                          booking.dateTime.hour.toString() +
+                          Utils.formatTime(booking.dateTime.hour.toString()) +
                               ':' +
-                              booking.dateTime.minute.toString(),
+                              Utils.formatTime(
+                                  booking.dateTime.minute.toString()),
                           style: tokenDateTextStyle,
                         ),
                       ],

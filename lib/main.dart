@@ -72,8 +72,23 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
     localNotification.initialize(initializationSettings);
     _configureLocalTimeZone();
     registerForLocalNotificationCreatedEvent();
+    registerForLocalNotificationCancelledEvent();
 
     WidgetsBinding.instance.addObserver(this);
+  }
+
+  void registerForLocalNotificationCancelledEvent() {
+    EventBus.registerEvent(LOCAL_NOTIFICATION_REMOVED_EVENT, context,
+        (event, arg) {
+      if (event == null) {
+        return;
+      }
+
+      LocalNotificationData data = event.eventData;
+      if (data != null && data.id != null) {
+        localNotification.cancel(data.id);
+      }
+    });
   }
 
   void registerForLocalNotificationCreatedEvent() {
@@ -96,8 +111,8 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
 
       var tzDateTime = tz.TZDateTime.from(data.dateTime, tz.local);
 
-      localNotification.zonedSchedule(
-          1, data.title, data.message, tzDateTime, generalNotificationDetails,
+      localNotification.zonedSchedule(data.id, data.title, data.message,
+          tzDateTime, generalNotificationDetails,
           uiLocalNotificationDateInterpretation:
               UILocalNotificationDateInterpretation.wallClockTime,
           androidAllowWhileIdle: true);
