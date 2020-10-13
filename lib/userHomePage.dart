@@ -115,30 +115,26 @@ class _UserHomePageState extends State<UserHomePage> {
         List<UserToken> newBookings = new List<UserToken>();
         List<UserToken> pastBookings = new List<UserToken>();
 
-        setState(() {
-          for (UserToken bk in bookings) {
-            if (bk.dateTime.isBefore(now))
-              pastBookings.add(bk);
-            else
-              newBookings.add(bk);
-          }
-          _pastBookingsList = pastBookings;
-          _newBookingsList = newBookings;
-          if (_pastBookingsList.length != 0) {
-            _pastBkgStatus = 'Success';
-          } else
-            _pastBkgStatus = 'NoBookings';
-          if (_newBookingsList.length != 0) {
-            _upcomingBkgStatus = 'Success';
-          } else
-            _upcomingBkgStatus = 'NoBookings';
-        });
+        for (UserToken bk in bookings) {
+          if (bk.dateTime.isBefore(now))
+            pastBookings.add(bk);
+          else
+            newBookings.add(bk);
+        }
+        _pastBookingsList = pastBookings;
+        _newBookingsList = newBookings;
+        if (_pastBookingsList.length != 0) {
+          _pastBkgStatus = 'Success';
+        } else
+          _pastBkgStatus = 'NoBookings';
+        if (_newBookingsList.length != 0) {
+          _upcomingBkgStatus = 'Success';
+        } else
+          _upcomingBkgStatus = 'NoBookings';
       }
     } else {
-      setState(() {
-        _upcomingBkgStatus = 'NoBookings';
-        _pastBkgStatus = 'NoBookings';
-      });
+      _upcomingBkgStatus = 'NoBookings';
+      _pastBkgStatus = 'NoBookings';
     }
   }
 
