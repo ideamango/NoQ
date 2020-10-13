@@ -64,11 +64,12 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   @override
   void initState() {
     super.initState();
+    localNotification = new FlutterLocalNotificationsPlugin();
     var androidInitialize = new AndroidInitializationSettings("icon");
     var iOSInitialize = new IOSInitializationSettings();
     var initializationSettings = new InitializationSettings(
         android: androidInitialize, iOS: iOSInitialize);
-    localNotification = new FlutterLocalNotificationsPlugin();
+
     localNotification.initialize(initializationSettings);
     _configureLocalTimeZone();
     registerForLocalNotificationCreatedEvent();

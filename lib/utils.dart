@@ -252,11 +252,11 @@ class Utils {
       // This can be whatever you want for the uri, https://yourapp.com/groupinvite?username=$userName
       link: Uri.parse('https://sukoontest2.page.link/?entityId=$entityId'),
       androidParameters: AndroidParameters(
-        packageName: 'com.example.noq',
+        packageName: 'mobi.sukoon',
         minimumVersion: 1,
       ),
       iosParameters: IosParameters(
-        bundleId: 'com.example.noq',
+        bundleId: 'mobi.sukoon',
         minimumVersion: '1',
         appStoreId: '',
       ),
@@ -277,11 +277,11 @@ class Utils {
       // This can be whatever you want for the uri, https://yourapp.com/groupinvite?username=$userName
       link: Uri.parse('https://sukoontest2.page.link'),
       androidParameters: AndroidParameters(
-        packageName: 'com.example.noq',
+        packageName: 'mobi.sukoon',
         minimumVersion: 1,
       ),
       iosParameters: IosParameters(
-        bundleId: 'com.example.noq',
+        bundleId: 'mobi.sukoon',
         minimumVersion: '1',
         appStoreId: '',
       ),

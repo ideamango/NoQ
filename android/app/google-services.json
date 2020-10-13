@@ -10,7 +10,7 @@
       "client_info": {
         "mobilesdk_app_id": "1:166667469482:android:c728c3a29720a5afe9c6d3",
         "android_client_info": {
-          "package_name": "com.example.noq"
+          "package_name": "mobi.sukoon"
         }
       },
       "oauth_client": [
@@ -18,7 +18,7 @@
           "client_id": "166667469482-92s9esbf3pclug328j8lsnopb67alssj.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "com.example.noq",
+            "package_name": "mobi.sukoon",
             "certificate_hash": "0cfabab6757d56d9ceff0e7047fd00cc9725c2d8"
           }
         },

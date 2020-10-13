@@ -342,7 +342,11 @@ class _UserHomePageState extends State<UserHomePage> {
                   ),
                   RaisedButton(
                     color: Colors.blue,
-                    onPressed: DBTest().dbCall1,
+                    onPressed: () {
+                      print("testing");
+                      DBTest().dbCall();
+                      print("testing updated");
+                    },
                     child: Icon(Icons.add),
                   ),
                 ],

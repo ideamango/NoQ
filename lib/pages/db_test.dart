@@ -235,7 +235,7 @@ class DBTest {
     }
   }
 
-  fireLocalNotificationEvent() {
+  void fireLocalNotificationEvent() {
     LocalNotificationData dataFor10Sec = new LocalNotificationData(
         dateTime: DateTime.now().add(new Duration(seconds: 10)),
         title: "Appointment",
@@ -276,13 +276,13 @@ class DBTest {
     } catch (e) {}
   }
 
-  void dbCall1() async {
+  void dbCall() async {
     fireLocalNotificationEvent();
-    return;
+    print("Test Called Updated..");
 
-    await clearAll();
+    //await clearAll();
     //await securityPermissionTests();
-    await tests();
+    //await tests();
   }
 
   Future<void> securityPermissionTests() async {

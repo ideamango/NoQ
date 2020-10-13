@@ -3,11 +3,11 @@
 <plist version="1.0">
 <dict>
 	<key>CLIENT_ID</key>
-	<string>166667469482-n19bksepmt9mth27g4diq7o963ia1622.apps.googleusercontent.com</string>
+	<string>166667469482-33b55aepe4s026tadg0ap7rtoug8gdh0.apps.googleusercontent.com</string>
 	<key>REVERSED_CLIENT_ID</key>
-	<string>com.googleusercontent.apps.166667469482-n19bksepmt9mth27g4diq7o963ia1622</string>
+	<string>com.googleusercontent.apps.166667469482-33b55aepe4s026tadg0ap7rtoug8gdh0</string>
 	<key>ANDROID_CLIENT_ID</key>
-	<string>166667469482-92s9esbf3pclug328j8lsnopb67alssj.apps.googleusercontent.com</string>
+	<string>166667469482-4p3ktm6kotdhsl9dc81qn108dpnvsbsp.apps.googleusercontent.com</string>
 	<key>API_KEY</key>
 	<string>AIzaSyCPpwlp3gnK1uGSFS55vtj_ln89Nk4f6jg</string>
 	<key>GCM_SENDER_ID</key>
@@ -15,7 +15,7 @@
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
-	<string>com.example.noq</string>
+	<string>mobi.sukoon</string>
 	<key>PROJECT_ID</key>
 	<string>awesomenoq</string>
 	<key>STORAGE_BUCKET</key>
@@ -31,7 +31,7 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:166667469482:ios:2ce022f0094a2bc2e9c6d3</string>
+	<string>1:166667469482:ios:24ca8919d84da0eee9c6d3</string>
 	<key>DATABASE_URL</key>
 	<string>https://awesomenoq.firebaseio.com</string>
 </dict>

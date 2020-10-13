@@ -1,4 +1,4 @@
-package com.example.noq
+package mobi.sukoon
 
 import androidx.annotation.NonNull;
 import io.flutter.embedding.android.FlutterActivity

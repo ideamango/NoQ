@@ -251,7 +251,7 @@ class _LoginPageState extends State<LoginPage> {
         this.verificationId = verId;
         print(verId);
         print("before dialog callhbksdjfhskjfyhewroiuytfewqorhy");
-        if (!verificationDone) showDialogForOtp(verId, null);
+        showDialogForOtp(verId, null);
         _forceResendingToken = forceResend;
         //smsOTPDialog(context, verificationId).then((value) {
         //print('sign in');
