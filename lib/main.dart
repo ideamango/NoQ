@@ -70,12 +70,26 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
     var initializationSettings = new InitializationSettings(
         android: androidInitialize, iOS: iOSInitialize);
 
-    localNotification.initialize(initializationSettings);
-    _configureLocalTimeZone();
+    localNotification.initialize(initializationSettings,
+        onSelectNotification: onSelectNotification);
+
+    // _configureLocalTimeZone();
     registerForLocalNotificationCreatedEvent();
     registerForLocalNotificationCancelledEvent();
 
     WidgetsBinding.instance.addObserver(this);
+  }
+
+  Future onSelectNotification(String payload) async {
+    showDialog(
+      context: context,
+      builder: (_) {
+        return new AlertDialog(
+          title: Text("PayLoad"),
+          content: Text("Payload : $payload"),
+        );
+      },
+    );
   }
 
   void registerForLocalNotificationCancelledEvent() {
@@ -122,8 +136,8 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
 
   Future<void> _configureLocalTimeZone() async {
     tz.initializeTimeZones();
-    final String timeZoneName = await platform.invokeMethod('getTimeZoneName');
-    tz.setLocalLocation(tz.getLocation(timeZoneName));
+    // final String timeZoneName = await platform.invokeMethod('getTimeZoneName');
+    // tz.setLocalLocation(tz.getLocation(timeZoneName));
   }
 
   @override

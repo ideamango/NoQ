@@ -258,7 +258,7 @@ class Utils {
       iosParameters: IosParameters(
         bundleId: 'mobi.sukoon',
         minimumVersion: '1',
-        appStoreId: '',
+        appStoreId: '962194608',
       ),
       socialMetaTagParameters: SocialMetaTagParameters(
         title: 'Check out this amazing app',
@@ -283,7 +283,7 @@ class Utils {
       iosParameters: IosParameters(
         bundleId: 'mobi.sukoon',
         minimumVersion: '1',
-        appStoreId: '',
+        appStoreId: '962194608',
       ),
       socialMetaTagParameters: SocialMetaTagParameters(
         title: 'Check out this amazing app',

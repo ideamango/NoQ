@@ -3,8 +3,8 @@ const VERIFICATION_PENDING = "Verification Pending";
 const VERIFIED = "Verified";
 const VERIFICATION_REJECTED = "Rejected";
 
-String appName = 'NoQ';
-var loginSubTxt = "Peace of mind";
+String appName = 'Sukoon';
+var loginSubTxt = "Peace of Mind";
 var loginMainTxt = "";
 String dateDisplayFormat = 'EEE, MMM d';
 String homeScreenMsgTxt =
