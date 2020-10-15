@@ -106,8 +106,8 @@ Future<UserToken> bookSlotForStore(MetaEntity meta, Slot slot) async {
     throw e;
   }
 
-  DateTime dt1Hour = token.dateTime.add(new Duration(hours: 1));
-  DateTime dt15Minutes = token.dateTime.add(new Duration(minutes: 15));
+  DateTime dt1Hour = token.dateTime.subtract(new Duration(hours: 1));
+  DateTime dt15Minutes = token.dateTime.subtract(new Duration(minutes: 15));
 
   if (dt1Hour.millisecondsSinceEpoch > DateTime.now().millisecondsSinceEpoch) {
     LocalNotificationData dataForAnHour = new LocalNotificationData(

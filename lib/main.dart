@@ -22,6 +22,7 @@ import 'package:noq/userHomePage.dart';
 import 'package:noq/utils.dart';
 import 'package:timezone/data/latest.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
+import 'package:flutter_native_timezone/flutter_native_timezone.dart';
 
 import 'events/events.dart';
 
@@ -64,6 +65,9 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   @override
   void initState() {
     super.initState();
+
+    _configureLocalTimeZone();
+
     localNotification = new FlutterLocalNotificationsPlugin();
     var androidInitialize = new AndroidInitializationSettings("icon");
     var iOSInitialize = new IOSInitializationSettings();
@@ -73,7 +77,6 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
     localNotification.initialize(initializationSettings,
         onSelectNotification: onSelectNotification);
 
-    // _configureLocalTimeZone();
     registerForLocalNotificationCreatedEvent();
     registerForLocalNotificationCancelledEvent();
 
@@ -135,9 +138,31 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   }
 
   Future<void> _configureLocalTimeZone() async {
-    tz.initializeTimeZones();
-    // final String timeZoneName = await platform.invokeMethod('getTimeZoneName');
-    // tz.setLocalLocation(tz.getLocation(timeZoneName));
+    try {
+      tz.initializeTimeZones();
+    } catch (e) {
+      print("Initializing of Timezone DB failed: " + e.toString());
+    }
+
+    String timeZoneName = "";
+
+    try {
+      timeZoneName = await FlutterNativeTimezone.getLocalTimezone();
+
+      if (timeZoneName == "Asia/Calcutta") {
+        timeZoneName = "Asia/Kolkota";
+      }
+    } catch (e) {
+      print("Reading of Local Timezone failed: " + e.toString());
+      timeZoneName = "UTC"; //default value
+    }
+
+    try {
+      tz.Location l = tz.getLocation(timeZoneName);
+      tz.setLocalLocation(l);
+    } catch (e) {
+      print("Setting up location failed: " + e.toString());
+    }
   }
 
   @override

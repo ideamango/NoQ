@@ -238,19 +238,21 @@ class DBTest {
   void fireLocalNotificationEvent() {
     LocalNotificationData dataFor10Sec = new LocalNotificationData(
         dateTime: DateTime.now().add(new Duration(seconds: 10)),
+        id: 1,
         title: "Appointment",
         message: "Token ");
     EventBus.fireEvent(LOCAL_NOTIFICATION_CREATED_EVENT, null, dataFor10Sec);
 
-    // LocalNotificationData dataFor20Sec = new LocalNotificationData(
-    //     dateTime: DateTime.now().add(new Duration(seconds: 20)),
-    //     title: "Appointment in 20 minutes at " + "Habinaro",
-    //     message: "Gentle reminder for your token number " +
-    //         "HAB-201012-0530-1" +
-    //         " at " +
-    //         "Habinaro" +
-    //         ". Please be on time and follow social distancing norms.");
-    // EventBus.fireEvent(LOCAL_NOTIFICATION_CREATED_EVENT, null, dataFor20Sec);
+    LocalNotificationData dataFor20Sec = new LocalNotificationData(
+        dateTime: DateTime.now().add(new Duration(seconds: 20)),
+        id: 2,
+        title: "Appointment in 15 minutes at " + "Habinaro",
+        message: "Gentle reminder for your token number " +
+            "HAB-201012-0530-1" +
+            " at " +
+            "Habinaro" +
+            ". Please be on time and follow social distancing norms.");
+    EventBus.fireEvent(LOCAL_NOTIFICATION_CREATED_EVENT, null, dataFor20Sec);
   }
 
   void clearAll() async {
