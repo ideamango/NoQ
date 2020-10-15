@@ -1116,14 +1116,15 @@ class _SearchChildrenPageState extends State<SearchChildrenPage> {
         child: ClipOval(
           child: Material(
             color: isClosed
-                ? Colors.grey
+                ? disabledColor
                 : (!isBookingAllowed
-                    ? Colors.grey
+                    ? disabledColor
                     : (dateBooked
                         ? primaryAccentColor
                         : primaryDarkColor)), // button color
             child: InkWell(
-              splashColor: isClosed ? null : highlightColor, // splash color
+              splashColor:
+                  (isClosed || !isBookingAllowed) ? null : highlightColor,
               onTap: () {
                 if (isClosed) {
                   Utils.showMyFlushbar(

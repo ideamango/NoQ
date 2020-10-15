@@ -828,9 +828,9 @@ class _FavsListPageState extends State<FavsListPage> {
         child: ClipOval(
           child: Material(
             color: isClosed
-                ? Colors.grey
+                ? disabledColor
                 : (!isBookingAllowed
-                    ? Colors.grey
+                    ? disabledColor
                     : (dateBooked
                         ? primaryAccentColor
                         : primaryDarkColor)), // button color
