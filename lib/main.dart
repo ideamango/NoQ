@@ -144,7 +144,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
       print("Initializing of Timezone DB failed: " + e.toString());
     }
 
-    String timeZoneName = "";
+    String timeZoneName = "UTC";
 
     try {
       timeZoneName = await FlutterNativeTimezone.getLocalTimezone();
@@ -154,7 +154,6 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
       }
     } catch (e) {
       print("Reading of Local Timezone failed: " + e.toString());
-      timeZoneName = "UTC"; //default value
     }
 
     try {

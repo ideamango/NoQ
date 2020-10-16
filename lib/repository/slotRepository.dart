@@ -111,7 +111,7 @@ Future<UserToken> bookSlotForStore(MetaEntity meta, Slot slot) async {
 
   if (dt1Hour.millisecondsSinceEpoch > DateTime.now().millisecondsSinceEpoch) {
     LocalNotificationData dataForAnHour = new LocalNotificationData(
-        id: (token.getTokenId() + "60").hashCode,
+        id: token.rNum - 60,
         dateTime: dt1Hour,
         title: "Appointment in an hour at " + token.entityName,
         message: "Your token number " +
@@ -126,14 +126,14 @@ Future<UserToken> bookSlotForStore(MetaEntity meta, Slot slot) async {
   if (dt15Minutes.millisecondsSinceEpoch >
       DateTime.now().millisecondsSinceEpoch) {
     LocalNotificationData dataFor15Minutes = new LocalNotificationData(
-        id: (token.getTokenId() + "15").hashCode,
+        id: token.rNum - 15,
         dateTime: dt15Minutes,
         title: "Appointment in 15 minutes at " + token.entityName,
-        message: "Your token number " +
+        message: "Your Token number is " +
             token.getDisplayName() +
             " at " +
             token.entityName +
-            ". Please be on time and follow social distancing norms.");
+            ". Please be On-Time and maintain Social Distancing norms.");
 
     EventBus.fireEvent(
         LOCAL_NOTIFICATION_CREATED_EVENT, null, dataFor15Minutes);
@@ -142,18 +142,26 @@ Future<UserToken> bookSlotForStore(MetaEntity meta, Slot slot) async {
   return token;
 }
 
-Future<bool> cancelToken(String tokenId) async {
-  bool returnVal = await TokenService().cancelToken(tokenId);
+Future<bool> cancelToken(UserToken token) async {
+  bool returnVal = await TokenService().cancelToken(token.getTokenId());
 
-  LocalNotificationData dataFor15Minutes =
-      new LocalNotificationData(id: (tokenId + "15").hashCode);
+  DateTime dt1Hour = token.dateTime.subtract(new Duration(hours: 1));
 
-  LocalNotificationData dataForAnHour =
-      new LocalNotificationData(id: (tokenId + "60").hashCode);
+  if (dt1Hour.millisecondsSinceEpoch > DateTime.now().millisecondsSinceEpoch) {
+    LocalNotificationData dataForAnHour =
+        new LocalNotificationData(id: token.rNum - 60);
+    EventBus.fireEvent(LOCAL_NOTIFICATION_REMOVED_EVENT, null, dataForAnHour);
+  }
 
-  EventBus.fireEvent(LOCAL_NOTIFICATION_REMOVED_EVENT, null, dataFor15Minutes);
+  DateTime dt15Minutes = token.dateTime.subtract(new Duration(minutes: 15));
+  if (dt15Minutes.millisecondsSinceEpoch >
+      DateTime.now().millisecondsSinceEpoch) {
+    LocalNotificationData dataFor15Minutes =
+        new LocalNotificationData(id: token.rNum - 15);
 
-  EventBus.fireEvent(LOCAL_NOTIFICATION_REMOVED_EVENT, null, dataForAnHour);
+    EventBus.fireEvent(
+        LOCAL_NOTIFICATION_REMOVED_EVENT, null, dataFor15Minutes);
+  }
 
   return returnVal;
 }

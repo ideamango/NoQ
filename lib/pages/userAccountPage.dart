@@ -487,7 +487,7 @@ class _UserAccountPageState extends State<UserAccountPage> {
                     onPressed: () {
                       print("Cancel booking");
                       bool cancelDone = false;
-                      cancelToken(booking.getTokenId()).then((value) {
+                      cancelToken(booking).then((value) {
                         setState(() {
                           booking.number = -1;
                         });

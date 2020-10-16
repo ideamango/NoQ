@@ -2,6 +2,7 @@ import 'package:intl/intl.dart';
 import 'package:noq/db/db_model/list_item.dart';
 import 'package:noq/db/db_model/order.dart';
 import 'package:noq/utils.dart';
+import 'dart:math';
 
 class UserToken {
   UserToken(
@@ -20,7 +21,8 @@ class UserToken {
       this.gpay,
       this.paytm,
       this.applepay,
-      this.phone});
+      this.phone,
+      this.rNum});
 
   String slotId; //entityID#20~06~01#9~30
   String entityId;
@@ -38,6 +40,7 @@ class UserToken {
   String paytm;
   String applepay;
   String phone;
+  int rNum = (Random().nextInt(5000) + 100);
 
   //TokenDocumentId is SlotId#UserId it is not auto-generated, will help in not duplicating the record
 
@@ -57,7 +60,8 @@ class UserToken {
         'gpay': gpay,
         'paytm': paytm,
         'applepay': applepay,
-        'phone': phone
+        'phone': phone,
+        'rNum': rNum
       };
 
   static UserToken fromJson(Map<String, dynamic> json) {
@@ -80,7 +84,8 @@ class UserToken {
         gpay: json['gpay'],
         paytm: json['paytm'],
         applepay: json['applepay'],
-        phone: json['phone']);
+        phone: json['phone'],
+        rNum: json['rNum']);
   }
 
   String getTokenId() {
