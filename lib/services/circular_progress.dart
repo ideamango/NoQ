@@ -7,6 +7,7 @@ Widget showCircularProgress() {
     child: Padding(
       padding: EdgeInsets.only(top: 10.0, bottom: 10),
       child: Column(
+        mainAxisSize: MainAxisSize.min,
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
           //Padding(padding: EdgeInsets.only(top: 20.0)),

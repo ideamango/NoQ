@@ -109,6 +109,7 @@ class _LoginPageState extends State<LoginPage> {
     return Scaffold(
       backgroundColor: Colors.grey[850],
       body: Container(
+        height: double.infinity,
         decoration: BoxDecoration(
             image: DecorationImage(
                 image: AssetImage("assets/background.png"), fit: BoxFit.cover)),
@@ -122,18 +123,29 @@ class _LoginPageState extends State<LoginPage> {
               child: new Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
+                  SizedBox(height: MediaQuery.of(context).size.height * .2),
                   SizedBox(
-                    height: 250.0,
-                    child: Image.asset(
-                      "assets/logo.png",
-                      fit: BoxFit.contain,
+                    height: MediaQuery.of(context).size.height * .17,
+                    child: Text(
+                      "Sukoon",
+                      style: TextStyle(
+                          fontFamily: "AnandaNamaste",
+                          fontSize: 90,
+                          color: primaryAccentColor),
                     ),
                   ),
-                  // Column(
-                  //     //mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  //     crossAxisAlignment: CrossAxisAlignment.start,
-                  //     children: <Widget>[headingText, subHeadingText]),
-                  verticalSpacer,
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      SizedBox(
+                          height: MediaQuery.of(context).size.height * .06,
+                          width: MediaQuery.of(context).size.width * .6,
+                          child: Image.asset(
+                            "assets/login_subheading.png",
+                            fit: BoxFit.contain,
+                          )),
+                    ],
+                  ),
                   verticalSpacer,
                   phNumField,
                   verticalSpacer,

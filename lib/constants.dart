@@ -28,7 +28,9 @@ String homeScreenMsgTxt2 = "Avoid rush hours";
 String homeScreenMsgTxt3 = "Be Safe | Save time.";
 
 String helpPageMainMsg = "We are working on getting best help..";
-
+String defaultSearchMsg = 'Search places by Category or Name!!';
+String defaultSearchSubMsg =
+    'Add places to favourites, and quickly browse through later!!  ';
 String noFavMsg = 'No favourites yet!!';
 
 String tokenHeading = 'Yay!! Your booking is confirmed.';

@@ -27,7 +27,7 @@ class SplashState extends State<SplashScreen> {
   }
 
   startTime() async {
-    var duration = new Duration(seconds: 3);
+    var duration = new Duration(seconds: 7);
     return new Timer(duration, route);
   }
 
@@ -52,9 +52,9 @@ class SplashState extends State<SplashScreen> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
                 Container(
-                  height: MediaQuery.of(context).size.width,
+                  height: MediaQuery.of(context).size.height * .6,
                   child: Image.asset(
-                    "assets/logo.png",
+                    "assets/logo_new.png",
                     fit: BoxFit.fitWidth,
                   ),
                 ),

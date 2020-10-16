@@ -184,16 +184,13 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
   }
 
   Widget _emptySearchPage() {
-    String defaultMsg = 'Search places by Category or Name!!';
-    String defaultSubMsg =
-        'Add places to favourites, and quickly browse through later!!  ';
-    String txtMsg = (messageTitle != null) ? messageTitle : defaultMsg;
+    String txtMsg = (messageTitle != null) ? messageTitle : defaultSearchMsg;
     String txtSubMsg =
-        (messageSubTitle != null) ? messageSubTitle : defaultSubMsg;
+        (messageSubTitle != null) ? messageSubTitle : defaultSearchSubMsg;
     return Center(
       child: Container(
-        height: MediaQuery.of(context).size.height * .6,
-        alignment: Alignment.center,
+        height: MediaQuery.of(context).size.height * .35,
+        alignment: Alignment.bottomCenter,
         child: SingleChildScrollView(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -220,9 +217,7 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
   }
 
   Widget _listSearchResults() {
-    if (_stores.length == 0)
-      return _emptySearchPage();
-    else {
+    if (_stores.length != 0) {
       //Add search results to past searches.
       _state.pastSearches = _stores;
       return Center(
@@ -526,32 +521,30 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
                     style: TextStyle(color: Colors.white, fontSize: 16),
                     overflow: TextOverflow.ellipsis,
                   )),
-              body: Center(
-                child: Column(
-                  children: <Widget>[
-                    filterBar,
-                    Expanded(
-                      child: (_isSearching == "done")
-                          ? _listSearchResults()
-                          //Else could be one when isSearching is 'searching', show circular progress.
-                          : Center(
-                              child: Container(
-                                margin: EdgeInsets.fromLTRB(
-                                    10,
-                                    MediaQuery.of(context).size.width * .45,
-                                    10,
-                                    MediaQuery.of(context).size.width * .45),
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: <Widget>[
-                                    showCircularProgress(),
-                                  ],
-                                ),
+              body: Column(
+                children: <Widget>[
+                  filterBar,
+                  (_isSearching == "done")
+                      ? ((_stores.length == 0)
+                          ? _emptySearchPage()
+                          : Expanded(child: _listSearchResults()))
+                      //Else could be one when isSearching is 'searching', show circular progress.
+                      : Center(
+                          child: Container(
+                            height: MediaQuery.of(context).size.height * .35,
+                            alignment: Alignment.bottomCenter,
+                            child: SingleChildScrollView(
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                mainAxisSize: MainAxisSize.min,
+                                children: <Widget>[
+                                  showCircularProgress(),
+                                ],
                               ),
                             ),
-                    ),
-                  ],
-                ),
+                          ),
+                        )
+                ],
               ),
               // drawer: CustomDrawer(),
               bottomNavigationBar: CustomBottomBar(barIndex: 1)
