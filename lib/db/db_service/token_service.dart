@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:noq/db/db_model/entity_slots.dart';
@@ -39,7 +41,7 @@ class TokenService {
 
   Future<UserToken> generateToken(
       MetaEntity metaEntity, DateTime dateTime) async {
-    final User user = await FirebaseAuth.instance.currentUser;
+    final User user = FirebaseAuth.instance.currentUser;
     FirebaseFirestore fStore = FirebaseFirestore.instance;
     String userPhone = user.phoneNumber;
     Exception exception;
@@ -63,10 +65,10 @@ class TokenService {
         dateTime.minute.toString();
 
     final DocumentReference entitySlotsRef =
-        fStore.document('slots/' + entitySlotsDocId);
+        fStore.doc('slots/' + entitySlotsDocId);
 
     final DocumentReference tokRef =
-        fStore.document('tokens/' + slotId + "#" + userPhone);
+        fStore.doc('tokens/' + slotId + "#" + userPhone);
 
     UserToken token;
 
@@ -128,28 +130,47 @@ class TokenService {
           // Save the EntitySlots using set method
           tx.set(entitySlotsRef, es.toJson());
 
-          Map<String, dynamic> tokenJson = <String, dynamic>{
-            'slotId': slotId,
-            'entityId': metaEntity.entityId,
-            'userId': userPhone,
-            'number': newNumber,
-            'dateTime': dateTime.millisecondsSinceEpoch,
-            'maxAllowed': maxAllowed,
-            'slotDuration': metaEntity.slotDuration,
-            'entityName': metaEntity.name,
-            'lat': metaEntity.lat,
-            'lon': metaEntity.lon,
-            'entityWhatsApp': metaEntity.whatsapp,
-            'gpay': metaEntity.gpay,
-            'paytm': metaEntity.paytm,
-            'applepay': metaEntity.applepay,
-            'order': null,
-            'phone': metaEntity.phone
-          };
-          //create token
-          tx.set(tokRef, tokenJson);
+          // Map<String, dynamic> tokenJson = <String, dynamic>{
+          //   'slotId': slotId,
+          //   'entityId': metaEntity.entityId,
+          //   'userId': userPhone,
+          //   'number': newNumber,
+          //   'dateTime': dateTime.millisecondsSinceEpoch,
+          //   'maxAllowed': maxAllowed,
+          //   'slotDuration': metaEntity.slotDuration,
+          //   'entityName': metaEntity.name,
+          //   'lat': metaEntity.lat,
+          //   'lon': metaEntity.lon,
+          //   'entityWhatsApp': metaEntity.whatsapp,
+          //   'gpay': metaEntity.gpay,
+          //   'paytm': metaEntity.paytm,
+          //   'applepay': metaEntity.applepay,
+          //   'order': null,
+          //   'phone': metaEntity.phone
+          // };
 
-          token = UserToken.fromJson(tokenJson);
+          UserToken tok = new UserToken(
+              slotId: slotId,
+              entityId: metaEntity.entityId,
+              userId: userPhone,
+              number: newNumber,
+              dateTime: dateTime,
+              maxAllowed: maxAllowed,
+              slotDuration: metaEntity.slotDuration,
+              entityName: metaEntity.name,
+              lat: metaEntity.lat,
+              lon: metaEntity.lon,
+              entityWhatsApp: metaEntity.whatsapp,
+              gpay: metaEntity.gpay,
+              paytm: metaEntity.paytm,
+              applepay: metaEntity.applepay,
+              order: null,
+              phone: metaEntity.phone,
+              rNum: (Random().nextInt(5000) + 100));
+          //create token
+          tx.set(tokRef, tok.toJson());
+
+          token = tok;
         } else {
           //This is the first token for the entity for the given day
           int maxAllowed = metaEntity.maxAllowed;
@@ -189,32 +210,51 @@ class TokenService {
               isFull: false);
           es.slots.add(sl);
 
-          Map<String, dynamic> tokenJson = <String, dynamic>{
-            'slotId': slotId,
-            'entityId': metaEntity.entityId,
-            'userId': userPhone,
-            'number': 1,
-            'dateTime': dateTime.millisecondsSinceEpoch,
-            'maxAllowed': maxAllowed,
-            'slotDuration': slotDuration,
-            'entityName': metaEntity.name,
-            'lat': metaEntity.lat,
-            'lon': metaEntity.lon,
-            'entityWhatsApp': metaEntity.whatsapp,
-            'gpay': metaEntity.gpay,
-            'paytm': metaEntity.paytm,
-            'applepay': metaEntity.applepay,
-            'order': null,
-            'phone': metaEntity.phone
-          };
+          // Map<String, dynamic> tokenJson = <String, dynamic>{
+          //   'slotId': slotId,
+          //   'entityId': metaEntity.entityId,
+          //   'userId': userPhone,
+          //   'number': 1,
+          //   'dateTime': dateTime.millisecondsSinceEpoch,
+          //   'maxAllowed': maxAllowed,
+          //   'slotDuration': slotDuration,
+          //   'entityName': metaEntity.name,
+          //   'lat': metaEntity.lat,
+          //   'lon': metaEntity.lon,
+          //   'entityWhatsApp': metaEntity.whatsapp,
+          //   'gpay': metaEntity.gpay,
+          //   'paytm': metaEntity.paytm,
+          //   'applepay': metaEntity.applepay,
+          //   'order': null,
+          //   'phone': metaEntity.phone
+          // };
+
+          UserToken tok = new UserToken(
+              slotId: slotId,
+              entityId: metaEntity.entityId,
+              userId: userPhone,
+              number: 1,
+              dateTime: dateTime,
+              maxAllowed: maxAllowed,
+              slotDuration: slotDuration,
+              entityName: metaEntity.name,
+              lat: metaEntity.lat,
+              lon: metaEntity.lon,
+              entityWhatsApp: metaEntity.whatsapp,
+              gpay: metaEntity.gpay,
+              paytm: metaEntity.paytm,
+              applepay: metaEntity.applepay,
+              order: null,
+              phone: metaEntity.phone,
+              rNum: (Random().nextInt(5000) + 100));
 
           //create EntitySlots with one slot in it
           tx.set(entitySlotsRef, es.toJson());
           //create Token
 
-          tx.set(tokRef, tokenJson);
+          tx.set(tokRef, tok.toJson());
 
-          token = UserToken.fromJson(tokenJson);
+          token = tok;
         }
       } catch (e) {
         print("Error while generting token -> Transaction Error: " +

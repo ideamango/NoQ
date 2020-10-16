@@ -40,7 +40,7 @@ class UserToken {
   String paytm;
   String applepay;
   String phone;
-  int rNum = (Random().nextInt(5000) + 100);
+  int rNum;
 
   //TokenDocumentId is SlotId#UserId it is not auto-generated, will help in not duplicating the record
 
