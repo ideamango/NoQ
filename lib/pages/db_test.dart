@@ -256,7 +256,6 @@ class DBTest {
   }
 
   void clearAll() async {
-    //FirebaseCrashlytics.instance.crash();
     try {
       await TokenService().deleteSlot("Child101-1#2020~7~6");
       await TokenService().deleteSlot("Child101-1#2020~7~7");
@@ -279,8 +278,10 @@ class DBTest {
   }
 
   void dbCall() async {
-    fireLocalNotificationEvent();
-    print("Test Called Updated..");
+    FirebaseCrashlytics.instance.crash();
+
+    // fireLocalNotificationEvent();
+    // print("Test Called Updated..");
 
     //await clearAll();
     //await securityPermissionTests();
@@ -296,7 +297,7 @@ class DBTest {
   }
 
   void tests() async {
-    final User fireUser = await FirebaseAuth.instance.currentUser;
+    final User fireUser = FirebaseAuth.instance.currentUser;
     FirebaseFirestore fStore = FirebaseFirestore.instance;
 
     print(
@@ -307,27 +308,27 @@ class DBTest {
     AppUser u = await UserService().getCurrentUser();
 
     try {
-      await createChildEntityAndAddToParent(
+      createChildEntityAndAddToParent(
           'Child101-1', "Bata", true); //should fail as entity does not exists
     } catch (EntityDoesNotExistsException) {
       print(
           "EntityService.upsertChildEntityToParent (expected exception thrown) --> SUCCESS");
     }
-    await createEntity();
+    createEntity();
 
-    await createEntity2();
+    createEntity2();
 
-    await createChildEntityAndAddToParent('Child101-1', "Bata", true);
+    createChildEntityAndAddToParent('Child101-1', "Bata", true);
 
     await EntityService().assignAdmin('Child101-1', "+913611009823");
 
-    await createChildEntityAndAddToParent('Child101-2', "Habinaro", true);
+    createChildEntityAndAddToParent('Child101-2', "Habinaro", true);
 
-    await updateEntity("Inorbit_Modified");
+    updateEntity("Inorbit_Modified");
 
-    await createChildEntityAndAddToParent('Child101-3', "Raymonds", false);
+    createChildEntityAndAddToParent('Child101-3', "Raymonds", false);
 
-    await updateEntity("Inorbit_Modified_Again");
+    updateEntity("Inorbit_Modified_Again");
 
     Entity ent = await EntityService().getEntity('Entity101');
 
@@ -739,7 +740,7 @@ class DBTest {
           "EntityService.upsertChildEntityToParent (metaEntity updated in the Admin) ---------------------> Failure");
     }
 
-    await updateChildEntityBataWithOfferAndManager();
+    updateChildEntityBataWithOfferAndManager();
 
     Entity bata = await EntityService().getEntity('Child101-1');
 
