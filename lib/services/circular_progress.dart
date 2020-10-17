@@ -19,7 +19,7 @@ Widget showCircularProgress() {
           //Padding(padding: EdgeInsets.only(top: 20.0)),
           CircularProgressIndicator(
             backgroundColor: primaryAccentColor,
-            valueColor: AlwaysStoppedAnimation<Color>(Colors.amber),
+            valueColor: AlwaysStoppedAnimation<Color>(highlightColor),
             strokeWidth: 3,
           )
         ],

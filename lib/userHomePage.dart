@@ -234,7 +234,7 @@ class _UserHomePageState extends State<UserHomePage> {
                             ],
                           ),
                           Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            mainAxisAlignment: MainAxisAlignment.center,
                             children: <Widget>[
                               Column(
                                 children: <Widget>[
@@ -245,28 +245,7 @@ class _UserHomePageState extends State<UserHomePage> {
                                   ),
                                 ],
                               ),
-                              QrCodeScanner().build(context),
-
-                              //GenerateScreen(),
-                              // RaisedButton(
-                              //   padding: EdgeInsets.all(1),
-                              //   autofocus: false,
-                              //   clipBehavior: Clip.none,
-                              //   elevation: 20,
-                              //   color: highlightColor,
-                              //   child: Row(
-                              //     children: <Widget>[
-                              //       Text('Scan QR', style: buttonSmlTextStyle),
-                              //       SizedBox(width: 5),
-                              //       Icon(
-                              //         Icons.camera,
-                              //         color: tealIcon,
-                              //         size: 26,
-                              //       ),
-                              //     ],
-                              //   ),
-                              //   onPressed: scan,
-                              // )
+                              // QrCodeScanner().build(context),
                             ],
                           )
                         ],
@@ -328,19 +307,40 @@ class _UserHomePageState extends State<UserHomePage> {
                       ),
                     ),
                   ),
-                  RaisedButton(
-                    color: Colors.blue,
-                    onPressed: () {
-                      print("testing");
-                      DBTest().dbCall();
-                      print("testing updated");
-                    },
-                    child: Icon(Icons.add),
+                  Container(
+                    height: 30,
+                    width: 60,
+                    child: RaisedButton(
+                      color: btnColor,
+                      onPressed: () {
+                        print("testing");
+                        DBTest().dbCall();
+                        print("testing updated");
+                      },
+                      child: Text("Run test"),
+                    ),
                   ),
                 ],
               ),
             ),
           ),
+          floatingActionButton: SizedBox(
+            height: 50,
+            child: new FloatingActionButton(
+                splashColor: highlightColor,
+                elevation: 30.0,
+                child: ImageIcon(
+                  AssetImage('assets/qrcode.png'),
+                  size: 25,
+                  color: primaryIcon,
+                ),
+                backgroundColor: primaryAccentColor,
+                onPressed: () {
+                  QrCodeScanner.scan(context);
+                }),
+          ),
+          floatingActionButtonLocation:
+              FloatingActionButtonLocation.centerDocked,
           drawer: CustomDrawer(),
           bottomNavigationBar: CustomBottomBar(
             barIndex: 0,
