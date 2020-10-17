@@ -127,12 +127,6 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
 
   @override
   Widget build(BuildContext context) {
-    // pr = new ProgressDialog(context);
-    // pr.style(
-    //   message: 'Please wait...',
-    //   backgroundColor: Colors.amber[50],
-    //   elevation: 10.0,
-    // );
     if (_initCompleted) {
       if (Utils.isNullOrEmpty(_slotList))
         return _noSlotsPage();
@@ -414,7 +408,7 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
                   Padding(padding: EdgeInsets.only(top: 20.0)),
                   CircularProgressIndicator(
                     backgroundColor: primaryAccentColor,
-                    valueColor: AlwaysStoppedAnimation<Color>(Colors.amber),
+                    valueColor: AlwaysStoppedAnimation<Color>(highlightColor),
                     strokeWidth: 3,
                   )
                 ],

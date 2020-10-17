@@ -16,7 +16,6 @@ class SplashState extends State<SplashScreen> {
   void initState() {
     // TODO: implement initState
     super.initState();
-
     startTime();
   }
 

@@ -177,20 +177,24 @@ final headingTextStyle = TextStyle(
     fontFamily: 'Montserrat',
     fontSize: 15.0);
 final Color primaryIcon = Colors.blueGrey[800];
-final Color borderColor = Colors.blueGrey[800];
-final Color primaryAccentColor = Colors.cyanAccent[400];
+final Color lightIcon = Colors.white;
 
+final Color btnColor = Colors.cyan[600];
+
+final Color borderColor = Colors.blueGrey[800];
+
+final Color primaryAccentColor = Colors.cyanAccent[400];
 final Color primaryDarkColor = Colors.cyan[800];
+
+final Color gradientDarkColor = Colors.blueGrey[600];
+
 final Color headerBarColor = Colors.blueGrey[400];
 
 final Color highlightColor = Colors.orangeAccent;
 final Color unselectedColor = Colors.blueGrey[700];
 final Color disabledColor = Colors.grey[400];
-
-final Color btnColor = Colors.cyan[600];
 final Color btnDisabledolor = Colors.blueGrey[200];
 
-final Color lightIcon = Colors.white;
 final Color highlightText = Colors.blueGrey[800];
 final highlightSubTextStyle = TextStyle(
     color: Colors.blueGrey[800], fontFamily: 'Montserrat', fontSize: 12.0);
@@ -255,8 +259,8 @@ final BoxDecoration rectLightContainer = new BoxDecoration(
 final gradientBackground = new BoxDecoration(
   gradient: new LinearGradient(
       colors: [
-        Colors.cyanAccent,
-        Colors.blueGrey[600],
+        primaryAccentColor,
+        gradientDarkColor,
       ],
       begin: const FractionalOffset(0.0, 0.0),
       end: const FractionalOffset(1.0, 0.0),

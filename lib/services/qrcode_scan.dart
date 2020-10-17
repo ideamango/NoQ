@@ -16,7 +16,8 @@ import 'package:noq/utils.dart';
 
 class QrCodeScanner {
   ScanResult scanResult;
-  Future scan(BuildContext context) async {
+  static Future scan(BuildContext context) async {
+    ScanResult scanResult;
     try {
       scanResult = await BarcodeScanner.scan();
       print("PRINTING scan result");
@@ -86,24 +87,13 @@ class QrCodeScanner {
   }
 
   Widget build(BuildContext context) {
-    return RaisedButton(
-      padding: EdgeInsets.all(1),
-      autofocus: false,
-      clipBehavior: Clip.none,
-      elevation: 20,
-      color: highlightColor,
-      child: Row(
-        children: <Widget>[
-          Text('Scan QR', style: buttonSmlTextStyle),
-          SizedBox(width: 5),
-          Icon(
-            Icons.camera,
-            color: primaryIcon,
-            size: 26,
-          ),
-        ],
+    return GestureDetector(
+      child: ImageIcon(
+        AssetImage('assets/qrcode.png'),
+        size: 25,
+        color: primaryIcon,
       ),
-      onPressed: () {
+      onTap: () {
         scan(context);
       },
     );
