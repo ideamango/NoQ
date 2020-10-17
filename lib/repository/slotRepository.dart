@@ -113,12 +113,10 @@ Future<UserToken> bookSlotForStore(MetaEntity meta, Slot slot) async {
     LocalNotificationData dataForAnHour = new LocalNotificationData(
         id: token.rNum - 60,
         dateTime: dt1Hour,
-        title: "Appointment in an hour at " + token.entityName,
-        message: "Your token number " +
+        title: "Appointment in 1 Hour at " + token.entityName,
+        message: "Your token number is " +
             token.getDisplayName() +
-            " at " +
-            token.entityName +
-            ". Please be on time and maintain safe distance.");
+            ". Please be on-time and maintain Safe Distance.");
 
     EventBus.fireEvent(LOCAL_NOTIFICATION_CREATED_EVENT, null, dataForAnHour);
   }
@@ -128,12 +126,10 @@ Future<UserToken> bookSlotForStore(MetaEntity meta, Slot slot) async {
     LocalNotificationData dataFor15Minutes = new LocalNotificationData(
         id: token.rNum - 15,
         dateTime: dt15Minutes,
-        title: "Appointment in 15 minutes at " + token.entityName,
+        title: "Appointment in 15 Minutes at " + token.entityName,
         message: "Your Token number is " +
             token.getDisplayName() +
-            " at " +
-            token.entityName +
-            ". Please be On-Time and maintain Social Distancing norms.");
+            ". Follow Social Distancing norms and Stay Safe!!");
 
     EventBus.fireEvent(
         LOCAL_NOTIFICATION_CREATED_EVENT, null, dataFor15Minutes);
