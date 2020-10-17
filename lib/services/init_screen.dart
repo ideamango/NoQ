@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:noq/global_state.dart';
 import 'package:noq/services/authService.dart';
+import 'package:noq/services/circular_progress.dart';
 import 'package:noq/style.dart';
 import 'package:noq/widget/widgets.dart';
 
@@ -27,7 +28,7 @@ class SplashState extends State<SplashScreen> {
   }
 
   startTime() async {
-    var duration = new Duration(seconds: 7);
+    var duration = new Duration(seconds: 1);
     return new Timer(duration, route);
   }
 
@@ -51,22 +52,40 @@ class SplashState extends State<SplashScreen> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                Container(
-                  height: MediaQuery.of(context).size.height * .6,
-                  child: Image.asset(
-                    "assets/logo_new.png",
-                    fit: BoxFit.fitWidth,
+                SizedBox(height: MediaQuery.of(context).size.height * .1),
+                SizedBox(
+                  height: MediaQuery.of(context).size.height * .15,
+                  child: Text(
+                    "Sukoon",
+                    style: TextStyle(
+                        fontFamily: "AnandaNamaste",
+                        fontSize: 90,
+                        color: primaryAccentColor),
                   ),
                 ),
-                Text(
-                  "Loading",
-                  style: TextStyle(fontSize: 20.0, color: Colors.blueGrey[50]),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    SizedBox(
+                        height: MediaQuery.of(context).size.height * .07,
+                        width: MediaQuery.of(context).size.width * .7,
+                        child: Image.asset(
+                          "assets/login_subheading.png",
+                          fit: BoxFit.contain,
+                        )),
+                  ],
                 ),
-                verticalSpacer,
+                SizedBox(height: MediaQuery.of(context).size.height * .1),
+                //showCircularProgress(),
+                // Text(
+                //   "Loading",
+                //   style: TextStyle(fontSize: 20.0, color: Colors.blueGrey[50]),
+                // ),
+                // verticalSpacer,
                 CircularProgressIndicator(
                   backgroundColor: primaryAccentColor,
-                  valueColor: AlwaysStoppedAnimation<Color>(highlightColor),
-                  strokeWidth: 3,
+                  valueColor: AlwaysStoppedAnimation<Color>(borderColor),
+                  strokeWidth: 2,
                 )
               ],
             ),

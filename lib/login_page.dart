@@ -123,9 +123,9 @@ class _LoginPageState extends State<LoginPage> {
               child: new Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
-                  SizedBox(height: MediaQuery.of(context).size.height * .2),
+                  SizedBox(height: MediaQuery.of(context).size.height * .1),
                   SizedBox(
-                    height: MediaQuery.of(context).size.height * .17,
+                    height: MediaQuery.of(context).size.height * .15,
                     child: Text(
                       "Sukoon",
                       style: TextStyle(
@@ -138,14 +138,15 @@ class _LoginPageState extends State<LoginPage> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
                       SizedBox(
-                          height: MediaQuery.of(context).size.height * .06,
-                          width: MediaQuery.of(context).size.width * .6,
+                          height: MediaQuery.of(context).size.height * .07,
+                          width: MediaQuery.of(context).size.width * .7,
                           child: Image.asset(
                             "assets/login_subheading.png",
                             fit: BoxFit.contain,
                           )),
                     ],
                   ),
+                  SizedBox(height: MediaQuery.of(context).size.height * .1),
                   verticalSpacer,
                   phNumField,
                   verticalSpacer,

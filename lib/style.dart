@@ -17,7 +17,7 @@ final transBtnColor = Colors.transparent;
 final buttonTextStyle = TextStyle(
   color: Colors.white,
   //fontWeight: FontWeight.w800,
-  fontFamily: 'Montserrat-Regular',
+  fontFamily: 'Montserrat',
   letterSpacing: 0.5,
   fontSize: 20,
   //height: 2,
@@ -28,8 +28,8 @@ final whiteBoldTextStyle1 = TextStyle(
   fontFamily: 'Roboto',
   letterSpacing: 0.5,
   fontSize: 20,
-  //height: 2,
 );
+
 final drawerdefaultTextStyle = TextStyle(
   color: Colors.grey[100],
   //fontWeight: FontWeight.w800,

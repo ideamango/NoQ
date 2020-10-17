@@ -76,16 +76,7 @@ class GenerateScreenState extends State<GenerateScreen> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
                 // Padding(padding: EdgeInsets.only(top: 20.0)),
-                Text(
-                  "Loading..",
-                  style: TextStyle(fontSize: 20.0, color: borderColor),
-                ),
-                Padding(padding: EdgeInsets.only(top: 20.0)),
-                CircularProgressIndicator(
-                  backgroundColor: primaryAccentColor,
-                  valueColor: AlwaysStoppedAnimation<Color>(Colors.amber),
-                  strokeWidth: 3,
-                )
+                showCircularProgress()
               ],
             ),
           ),

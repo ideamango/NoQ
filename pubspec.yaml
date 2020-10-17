@@ -82,6 +82,7 @@ flutter:
   assets:
     - logo.png
     - logo_new.png
+    - logo_icon.png
     - login_subheading.png
     - background.png   
     - ticket.jpg
