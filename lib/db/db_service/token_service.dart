@@ -289,7 +289,7 @@ class TokenService {
     //get the slot from the token
     //increase the slot maxallowed by one
 
-    final User user = await FirebaseAuth.instance.currentUser;
+    final User user = FirebaseAuth.instance.currentUser;
     FirebaseFirestore fStore = FirebaseFirestore.instance;
     String userPhone = user.phoneNumber;
 

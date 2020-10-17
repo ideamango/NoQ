@@ -57,6 +57,33 @@ class GlobalState {
     return _gs;
   }
 
+  List<UserToken> getPastBookings() {
+    List<UserToken> pastBookings = new List<UserToken>();
+    DateTime now = DateTime.now();
+    for (UserToken bk in bookings) {
+      if (bk.dateTime.isBefore(now)) pastBookings.add(bk);
+    }
+
+    pastBookings.sort((a, b) =>
+        (a.dateTime.millisecondsSinceEpoch > b.dateTime.millisecondsSinceEpoch)
+            ? -1
+            : 1);
+    return pastBookings;
+  }
+
+  List<UserToken> getUpcomingBookings() {
+    List<UserToken> newBookings = new List<UserToken>();
+    DateTime now = DateTime.now();
+    for (UserToken bk in bookings) {
+      if (!bk.dateTime.isBefore(now)) newBookings.add(bk);
+    }
+    newBookings.sort((a, b) =>
+        (a.dateTime.millisecondsSinceEpoch > b.dateTime.millisecondsSinceEpoch)
+            ? 1
+            : -1);
+    return newBookings;
+  }
+
   Future<bool> addFavourite(MetaEntity me) async {
     _gs.currentUser.favourites.add(me);
     // saveGlobalState();
