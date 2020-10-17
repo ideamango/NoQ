@@ -111,18 +111,10 @@ class _UserHomePageState extends State<UserHomePage> {
   void fetchDataFromGlobalState() {
     if (!Utils.isNullOrEmpty(_state.bookings)) {
       if (_state.bookings.length != 0) {
-        List<UserToken> bookings = _state.bookings;
-        List<UserToken> newBookings = new List<UserToken>();
-        List<UserToken> pastBookings = new List<UserToken>();
+        _pastBookingsList = _state.getPastBookings();
 
-        for (UserToken bk in bookings) {
-          if (bk.dateTime.isBefore(now))
-            pastBookings.add(bk);
-          else
-            newBookings.add(bk);
-        }
-        _pastBookingsList = pastBookings;
-        _newBookingsList = newBookings;
+        _newBookingsList = _state.getUpcomingBookings();
+
         if (_pastBookingsList.length != 0) {
           _pastBkgStatus = 'Success';
         } else
