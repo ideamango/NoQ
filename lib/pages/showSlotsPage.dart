@@ -21,7 +21,6 @@ import 'package:noq/widget/header.dart';
 import 'package:noq/widget/widgets.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:intl/intl.dart';
-
 import '../constants.dart';
 
 class ShowSlotsPage extends StatefulWidget {
@@ -278,14 +277,18 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: <Widget>[
                               SizedBox(
-                                width: MediaQuery.of(context).size.width * .5,
-                                height: MediaQuery.of(context).size.width * .08,
+                                width: MediaQuery.of(context).size.width * .8,
+                                height:
+                                    MediaQuery.of(context).size.height * .05,
                                 child: RaisedButton(
-                                  elevation:
-                                      (selectedSlot != null) ? 10.0 : 0.0,
+                                  elevation: 10.0,
                                   color: highlightColor,
+                                  splashColor: Colors.orangeAccent[700],
                                   textColor: Colors.white,
-                                  child: Text('Book Slot'),
+                                  child: Text(
+                                    'Book Slot',
+                                    style: TextStyle(fontSize: 20),
+                                  ),
                                   onPressed: () {
                                     if (selectedSlot != null)
                                       bookSlot();

@@ -28,7 +28,7 @@ class SplashState extends State<SplashScreen> {
   }
 
   startTime() async {
-    var duration = new Duration(seconds: 1);
+    var duration = new Duration(seconds: 0);
     return new Timer(duration, route);
   }
 
@@ -45,6 +45,7 @@ class SplashState extends State<SplashScreen> {
       body: Center(
         child: Container(
           decoration: BoxDecoration(
+              color: Colors.grey[800],
               image: DecorationImage(
                   image: AssetImage("assets/background.png"),
                   fit: BoxFit.cover)),

@@ -84,15 +84,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   }
 
   Future onSelectNotification(String payload) async {
-    showDialog(
-      context: context,
-      builder: (_) {
-        return new AlertDialog(
-          title: Text("PayLoad"),
-          content: Text("Payload : $payload"),
-        );
-      },
-    );
+    print(" onSelectNotification clicked");
   }
 
   void registerForLocalNotificationCancelledEvent() {
