@@ -179,19 +179,22 @@ class _UserHomePageState extends State<UserHomePage> {
                           Column(
                             children: <Widget>[
                               CarouselSlider(
-                                height: 150.0,
-                                autoPlay: true,
-                                autoPlayInterval: Duration(seconds: 3),
-                                autoPlayAnimationDuration:
-                                    Duration(milliseconds: 800),
-                                autoPlayCurve: Curves.easeInCubic,
-                                pauseAutoPlayOnTouch: Duration(seconds: 10),
-                                aspectRatio: 2.0,
-                                onPageChanged: (index) {
-                                  setState(() {
-                                    _currentIndex = index;
-                                  });
-                                },
+                                options: CarouselOptions(
+                                  height: 150.0,
+                                  autoPlay: true,
+                                  autoPlayInterval: Duration(seconds: 3),
+                                  autoPlayAnimationDuration:
+                                      Duration(milliseconds: 800),
+                                  autoPlayCurve: Curves.easeInCubic,
+                                  pauseAutoPlayOnTouch: true,
+                                  aspectRatio: 2.0,
+                                  onPageChanged:
+                                      (index, carouselPageChangedReason) {
+                                    setState(() {
+                                      _currentIndex = index;
+                                    });
+                                  },
+                                ),
                                 items: cardList.map((card) {
                                   return Builder(
                                       builder: (BuildContext context) {

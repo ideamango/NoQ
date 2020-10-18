@@ -5,6 +5,8 @@ import 'package:flutter/services.dart';
 import 'package:noq/events/auto_verification_completed_data.dart';
 import 'package:noq/events/event_bus.dart';
 import 'package:noq/events/events.dart';
+import 'package:noq/pages/SearchStoresPage.dart';
+import 'package:noq/pages/explore_page.dart';
 import 'package:noq/pages/otpdialog.dart';
 import 'package:noq/pages/terms_of_use.dart';
 import 'package:noq/userHomePage.dart';
@@ -185,6 +187,57 @@ class _LoginPageState extends State<LoginPage> {
                   verticalSpacer,
                   loginButon,
                   verticalSpacer,
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    //mainAxisSize: MainAxisSize.min,
+                    children: <Widget>[
+                      Container(
+                        padding: EdgeInsets.all(0),
+                        margin: EdgeInsets.all(0),
+                        child: FlatButton(
+                          padding: EdgeInsets.all(0),
+                          color: Colors.transparent,
+                          splashColor: highlightColor.withOpacity(.8),
+                          onPressed: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => ExplorePage()));
+                          },
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: <Widget>[
+                              Text(
+                                "Explore now",
+                                style: subHeadingTextStyle,
+                              ),
+                              Container(
+                                padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
+                                transform: Matrix4.translationValues(5.0, 0, 0),
+                                child: Icon(
+                                  Icons.arrow_forward_ios,
+                                  color: Colors.cyan[400],
+                                  size: 18,
+                                  // color: Colors.white38,
+                                ),
+                              ),
+                              Container(
+                                padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
+                                transform:
+                                    Matrix4.translationValues(-8.0, 0, 0),
+                                child: Icon(
+                                  Icons.arrow_forward_ios,
+                                  color: primaryDarkColor,
+                                  size: 20,
+                                  // color: Colors.white,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                   (_errorMsg != null
                       ? Text('$_errorMsg', style: errorTextStyle)
                       : Container()),
