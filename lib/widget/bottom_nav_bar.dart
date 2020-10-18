@@ -62,41 +62,40 @@ class _CustomBottomBarState extends State<CustomBottomBar> {
       setState(() {
         _botBarIndex = index;
       });
+    }
+    Navigator.pop(context);
+    switch (index) {
+      case 0:
+        {
+          Navigator.push(
+              context, MaterialPageRoute(builder: (context) => UserHomePage()));
+        }
+        break;
+      case 1:
+        {
+          Navigator.push(context,
+              MaterialPageRoute(builder: (context) => SearchStoresPage()));
+        }
+        break;
+      case 2:
+        {
+          Navigator.push(
+              context, MaterialPageRoute(builder: (context) => FavsListPage()));
+        }
+        break;
+      case 3:
+        {
+          Navigator.push(context,
+              MaterialPageRoute(builder: (context) => UserAccountPage()));
+        }
+        break;
 
-      Navigator.pop(context);
-      switch (index) {
-        case 0:
-          {
-            Navigator.push(context,
-                MaterialPageRoute(builder: (context) => UserHomePage()));
-          }
-          break;
-        case 1:
-          {
-            Navigator.push(context,
-                MaterialPageRoute(builder: (context) => SearchStoresPage()));
-          }
-          break;
-        case 2:
-          {
-            Navigator.push(context,
-                MaterialPageRoute(builder: (context) => FavsListPage()));
-          }
-          break;
-        case 3:
-          {
-            Navigator.push(context,
-                MaterialPageRoute(builder: (context) => UserAccountPage()));
-          }
-          break;
-
-        default:
-          {
-            Navigator.push(context,
-                MaterialPageRoute(builder: (context) => UserHomePage()));
-          }
-          break;
-      }
+      default:
+        {
+          Navigator.push(
+              context, MaterialPageRoute(builder: (context) => UserHomePage()));
+        }
+        break;
     }
   }
 }

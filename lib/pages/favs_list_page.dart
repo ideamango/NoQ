@@ -280,18 +280,6 @@ class _FavsListPageState extends State<FavsListPage> {
                       childList: str.childEntities,
                       parentName: str.name)));
         }
-
-        // if (child.length != 0) {
-        //   Navigator.push(
-        //       context,
-        //       MaterialPageRoute(
-        //           builder: (context) => SearchStoresPage(forPage: "Child")));
-
-        //   // Navigator.push(
-        //   //     context,
-        //   //     MaterialPageRoute(
-        //   //         builder: (context) => EntityServicesListPage(entity: str)));
-        // }
       },
       child: Card(
         elevation: 10,

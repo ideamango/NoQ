@@ -52,7 +52,16 @@ class UserHomePage extends StatefulWidget {
   _UserHomePageState createState() => _UserHomePageState();
 }
 
-class _UserHomePageState extends State<UserHomePage> {
+class _UserHomePageState extends State<UserHomePage>
+    with SingleTickerProviderStateMixin {
+  bool isOpened = false;
+  AnimationController _animationController;
+  Animation<Color> _buttonColor;
+  Animation<double> _animateIcon;
+  Animation<double> _translateButton;
+  Curve _curve = Curves.easeOut;
+  double _fabHeight;
+
   int i;
   List<UserToken> _pastBookingsList;
   List<UserToken> _newBookingsList;
@@ -66,23 +75,117 @@ class _UserHomePageState extends State<UserHomePage> {
 //Qr code scan result
   ScanResult scanResult;
   GlobalState _state;
-  bool _initCompleted = false;
 
   @override
   void initState() {
+    _animationController =
+        AnimationController(vsync: this, duration: Duration(milliseconds: 500))
+          ..addListener(() {
+            setState(() {});
+          });
+    _animateIcon =
+        Tween<double>(begin: 0.0, end: 1.0).animate(_animationController);
+    _buttonColor = ColorTween(
+      begin: primaryAccentColor,
+      end: highlightColor,
+    ).animate(CurvedAnimation(
+      parent: _animationController,
+      curve: Interval(
+        0.00,
+        1.00,
+        curve: Curves.linear,
+      ),
+    ));
+    _translateButton = Tween<double>(
+      begin: 42,
+      end: -10,
+    ).animate(CurvedAnimation(
+      parent: _animationController,
+      curve: Interval(
+        0.0,
+        0.75,
+        curve: _curve,
+      ),
+    ));
     super.initState();
     setState(() {
       _upcomingBkgStatus = 'Loading';
       _pastBkgStatus = 'Loading';
     });
-    getGlobalState().whenComplete(() {
-      setState(() {
-        _initCompleted = true;
-      });
-      _loadBookings();
-    });
+    getGlobalState().whenComplete(() => _loadBookings());
 
     //  this.initDynamicLinks();
+  }
+
+  @override
+  dispose() {
+    _animationController.dispose();
+    super.dispose();
+  }
+
+  animate() {
+    if (!isOpened) {
+      _animationController.forward();
+    } else {
+      _animationController.reverse();
+    }
+    isOpened = !isOpened;
+  }
+
+  // Widget add() {
+  //   return SizedBox(
+  //     height: MediaQuery.of(context).size.height * .07,
+  //     width: MediaQuery.of(context).size.height * .15,
+  //     child: FloatingActionButton(
+  //       shape: RoundedRectangleBorder(
+  //           side: BorderSide(color: Colors.blueGrey[200]),
+  //           borderRadius: BorderRadius.all(Radius.circular(5.0))),
+  //       onPressed: null,
+  //       tooltip: 'Add',
+  //       child: Icon(Icons.add),
+  //     ),
+  //   );
+  // }
+
+  Widget search() {
+    return SizedBox(
+      height: MediaQuery.of(context).size.height * .07,
+      width: MediaQuery.of(context).size.height * .15,
+      child: FloatingActionButton(
+        backgroundColor: _buttonColor.value,
+        shape: RoundedRectangleBorder(
+            side: BorderSide(color: Colors.blueGrey[200]),
+            borderRadius: BorderRadius.all(Radius.circular(5.0))),
+        onPressed: () {
+          Navigator.push(context,
+              MaterialPageRoute(builder: (context) => SearchStoresPage()));
+        },
+        tooltip: 'Image',
+        child: Icon(Icons.search),
+      ),
+    );
+  }
+
+  Widget qrCode() {
+    return SizedBox(
+      height: MediaQuery.of(context).size.height * .07,
+      width: MediaQuery.of(context).size.height * .15,
+      child: FloatingActionButton(
+        backgroundColor: _buttonColor.value,
+        shape: RoundedRectangleBorder(
+            side: BorderSide(color: Colors.blueGrey[200]),
+            borderRadius: BorderRadius.all(Radius.circular(5.0))),
+        onPressed: () {
+          QrCodeScanner.scan(context);
+        },
+        tooltip: 'Inbox',
+        child: ImageIcon(
+          AssetImage('assets/qrcode.png'),
+          size: 25,
+          color: primaryIcon,
+        ),
+      ),
+    );
   }
 
   Future<void> getGlobalState() async {
@@ -163,234 +266,245 @@ class _UserHomePageState extends State<UserHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    if (_initCompleted) {
-      String title = "Home Page";
-      return MaterialApp(
-          theme: ThemeData.light().copyWith(),
-          home: Scaffold(
-            appBar: CustomAppBar(
-              titleTxt: title,
-            ),
-            body: Scrollbar(
-              child: SingleChildScrollView(
-                child: Column(
-                  children: <Widget>[
-                    Card(
-                      elevation: 20,
-                      child: Container(
-                        padding: EdgeInsets.all(5),
-                        child: Column(
-                          children: <Widget>[
-                            Column(
-                              children: <Widget>[
-                                CarouselSlider(
-                                  options: CarouselOptions(
-                                    height: 150.0,
-                                    autoPlay: true,
-                                    autoPlayInterval: Duration(seconds: 3),
-                                    autoPlayAnimationDuration:
-                                        Duration(milliseconds: 800),
-                                    autoPlayCurve: Curves.easeInCubic,
-                                    pauseAutoPlayOnTouch: true,
-                                    aspectRatio: 2.0,
-                                    onPageChanged:
-                                        (index, carouselPageChangedReason) {
-                                      setState(() {
-                                        _currentIndex = index;
-                                      });
-                                    },
-                                  ),
-                                  items: cardList.map((card) {
-                                    return Builder(
-                                        builder: (BuildContext context) {
-                                      return Container(
-                                        height:
-                                            MediaQuery.of(context).size.height *
-                                                0.40,
-                                        width:
-                                            MediaQuery.of(context).size.width,
-                                        child: Card(
-                                          color: primaryAccentColor,
-                                          child: card,
-                                        ),
-                                      );
-                                    });
-                                  }).toList(),
-                                ),
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: <Widget>[
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children:
-                                          map<Widget>(cardList, (index, url) {
-                                        return Container(
-                                          width: 7.0,
-                                          height: 7.0,
-                                          margin: EdgeInsets.symmetric(
-                                              vertical: 2.0, horizontal: 2.0),
-                                          decoration: BoxDecoration(
-                                            shape: BoxShape.circle,
-                                            color: _currentIndex == index
-                                                ? highlightColor
-                                                : Colors.grey,
-                                          ),
-                                        );
-                                      }),
-                                    ),
-                                  ],
-                                )
-                              ],
-                            ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: <Widget>[
-                                Column(
-                                  children: <Widget>[
-                                    Text(homeScreenMsgTxt2,
-                                        style: homeMsgStyle2),
-                                    Text(
-                                      homeScreenMsgTxt3,
-                                      style: homeMsgStyle3,
-                                    ),
-                                  ],
-                                ),
-                                // QrCodeScanner().build(context),
-                              ],
-                            )
-                          ],
-                        ),
-                      ),
-                      //child: Image.asset('assets/noq_home.png'),
-                    ),
-                    Card(
-                      elevation: 20,
-                      child: Theme(
-                        data: ThemeData(
-                          unselectedWidgetColor: Colors.grey[600],
-                          accentColor: Colors.teal,
-                        ),
-                        child: ExpansionTile(
-                          //key: PageStorageKey(this.widget.headerTitle),
-                          initiallyExpanded: true,
-                          title: Text(
-                            "Upcoming Bookings",
-                            style: TextStyle(
-                                color: Colors.blueGrey[700], fontSize: 17),
-                          ),
-                          backgroundColor: Colors.white,
-                          leading: Icon(
-                            Icons.date_range,
-                            color: primaryIcon,
-                          ),
-                          children: <Widget>[
-                            if (_upcomingBkgStatus == 'Success')
-                              ConstrainedBox(
-                                constraints: new BoxConstraints(
-                                  maxHeight:
-                                      MediaQuery.of(context).size.height * .4,
-                                ),
-                                child: Scrollbar(
-                                  child: ListView.builder(
-                                    shrinkWrap: true,
-                                    //scrollDirection: Axis.vertical,
-                                    itemBuilder:
-                                        (BuildContext context, int index) {
-                                      return Container(
-                                        padding: EdgeInsets.symmetric(
-                                          horizontal: 8,
-                                        ),
-                                        child: new Column(
-                                            children: _newBookingsList
-                                                .map(_buildItem)
-                                                .toList()),
-                                        //children: <Widget>[firstRow, secondRow],
-                                      );
-                                    },
-                                    itemCount: 1,
-                                  ),
-                                ),
-                              ),
-                            if (_upcomingBkgStatus == 'NoBookings')
-                              _emptyStorePage("No bookings yet.. ",
-                                  "Book now to save time later!! "),
-                            if (_upcomingBkgStatus == 'Loading')
-                              showCircularProgress(),
-                          ],
-                        ),
-                      ),
-                    ),
-                    if (_state.currentUser.ph == '+919999999999')
-                      Container(
-                        height: 30,
-                        width: 60,
-                        child: RaisedButton(
-                          color: btnColor,
-                          onPressed: () {
-                            print("testing");
-                            DBTest().dbCall();
-                            print("testing updated");
-                          },
-                          child: Text("Run test"),
-                        ),
-                      ),
-                  ],
-                ),
-              ),
-            ),
-            floatingActionButton: SizedBox(
-              height: 45,
-              child: new FloatingActionButton(
-                  splashColor: highlightColor,
-                  elevation: 30.0,
-                  child: ImageIcon(
-                    AssetImage('assets/qrcode.png'),
-                    size: 25,
-                    color: primaryIcon,
-                  ),
-                  backgroundColor: primaryAccentColor,
-                  onPressed: () {
-                    QrCodeScanner.scan(context);
-                  }),
-            ),
-            floatingActionButtonLocation:
-                FloatingActionButtonLocation.centerDocked,
-            drawer: CustomDrawer(),
-            bottomNavigationBar: CustomBottomBar(
-              barIndex: 0,
-            ),
-          ),
-          routes: <String, WidgetBuilder>{
-            '/DLink': (BuildContext context) => new SearchStoresPage(),
-          });
-    } else {
-      return MaterialApp(
+    //if (_upcomingBkgStatus == 'Success') {
+    String title = "Home Page";
+    return MaterialApp(
         theme: ThemeData.light().copyWith(),
         home: Scaffold(
-            appBar: CustomAppBar(
-              titleTxt: "Home Page",
-            ),
-            body: Center(
-              child: Container(
-                margin: EdgeInsets.fromLTRB(
-                    10,
-                    MediaQuery.of(context).size.width * .5,
-                    10,
-                    MediaQuery.of(context).size.width * .5),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    showCircularProgress(),
-                  ],
-                ),
+          appBar: CustomAppBar(
+            titleTxt: title,
+          ),
+          body: Scrollbar(
+            child: SingleChildScrollView(
+              child: Column(
+                children: <Widget>[
+                  Card(
+                    elevation: 20,
+                    child: Container(
+                      padding: EdgeInsets.all(5),
+                      child: Column(
+                        children: <Widget>[
+                          // Container(
+                          //   color: Colors.teal,
+                          //   padding: EdgeInsets.all(3),
+                          //   child: Image.asset(
+                          //     'assets/noq_home_bookPremises.png',
+                          //     width: MediaQuery.of(context).size.width * .95,
+                          //   ),
+                          // ),
+                          // Text(homeScreenMsgTxt, style: homeMsgStyle),
+                          Column(
+                            children: <Widget>[
+                              CarouselSlider(
+                                options: CarouselOptions(
+                                  height: 150.0,
+                                  autoPlay: true,
+                                  autoPlayInterval: Duration(seconds: 3),
+                                  autoPlayAnimationDuration:
+                                      Duration(milliseconds: 800),
+                                  autoPlayCurve: Curves.easeInCubic,
+                                  pauseAutoPlayOnTouch: true,
+                                  aspectRatio: 2.0,
+                                  onPageChanged:
+                                      (index, carouselPageChangedReason) {
+                                    setState(() {
+                                      _currentIndex = index;
+                                    });
+                                  },
+                                ),
+                                items: cardList.map((card) {
+                                  return Builder(
+                                      builder: (BuildContext context) {
+                                    return Container(
+                                      height:
+                                          MediaQuery.of(context).size.height *
+                                              0.40,
+                                      width: MediaQuery.of(context).size.width,
+                                      child: Card(
+                                        color: primaryAccentColor,
+                                        child: card,
+                                      ),
+                                    );
+                                  });
+                                }).toList(),
+                              ),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: <Widget>[
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children:
+                                        map<Widget>(cardList, (index, url) {
+                                      return Container(
+                                        width: 7.0,
+                                        height: 7.0,
+                                        margin: EdgeInsets.symmetric(
+                                            vertical: 2.0, horizontal: 2.0),
+                                        decoration: BoxDecoration(
+                                          shape: BoxShape.circle,
+                                          color: _currentIndex == index
+                                              ? highlightColor
+                                              : Colors.grey,
+                                        ),
+                                      );
+                                    }),
+                                  ),
+                                ],
+                              )
+                            ],
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: <Widget>[
+                              Column(
+                                children: <Widget>[
+                                  Text(homeScreenMsgTxt2, style: homeMsgStyle2),
+                                  Text(
+                                    homeScreenMsgTxt3,
+                                    style: homeMsgStyle3,
+                                  ),
+                                ],
+                              ),
+                              // QrCodeScanner().build(context),
+                            ],
+                          )
+                        ],
+                      ),
+                    ),
+                    //child: Image.asset('assets/noq_home.png'),
+                  ),
+                  Card(
+                    elevation: 20,
+                    child: Theme(
+                      data: ThemeData(
+                        unselectedWidgetColor: Colors.grey[600],
+                        accentColor: Colors.teal,
+                      ),
+                      child: ExpansionTile(
+                        //key: PageStorageKey(this.widget.headerTitle),
+                        initiallyExpanded: true,
+                        title: Text(
+                          "Upcoming Bookings",
+                          style: TextStyle(
+                              color: Colors.blueGrey[700], fontSize: 17),
+                        ),
+                        backgroundColor: Colors.white,
+                        leading: Icon(
+                          Icons.date_range,
+                          color: primaryIcon,
+                        ),
+                        children: <Widget>[
+                          if (_upcomingBkgStatus == 'Success')
+                            ConstrainedBox(
+                              constraints: new BoxConstraints(
+                                maxHeight:
+                                    MediaQuery.of(context).size.height * .4,
+                              ),
+                              child: Scrollbar(
+                                child: ListView.builder(
+                                  shrinkWrap: true,
+                                  //scrollDirection: Axis.vertical,
+                                  itemBuilder:
+                                      (BuildContext context, int index) {
+                                    return Container(
+                                      padding: EdgeInsets.symmetric(
+                                        horizontal: 8,
+                                      ),
+                                      child: new Column(
+                                          children: _newBookingsList
+                                              .map(_buildItem)
+                                              .toList()),
+                                      //children: <Widget>[firstRow, secondRow],
+                                    );
+                                  },
+                                  itemCount: 1,
+                                ),
+                              ),
+                            ),
+                          if (_upcomingBkgStatus == 'NoBookings')
+                            _emptyStorePage("No bookings yet.. ",
+                                "Book now to save time later!! "),
+                          if (_upcomingBkgStatus == 'Loading')
+                            showCircularProgress(),
+                        ],
+                      ),
+                    ),
+                  ),
+                  //if (_state.currentUser.ph == '+919999999999')
+                  Container(
+                    height: 30,
+                    width: 60,
+                    child: RaisedButton(
+                      color: btnColor,
+                      onPressed: () {
+                        print("testing");
+                        DBTest().dbCall();
+                        print("testing updated");
+                      },
+                      child: Text("Run test"),
+                    ),
+                  ),
+                ],
               ),
             ),
-
-            //drawer: CustomDrawer(),
-            bottomNavigationBar: CustomBottomBar(barIndex: 1)),
-      );
-    }
+          ),
+          floatingActionButton: Column(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: <Widget>[
+              // Transform(
+              //   transform: Matrix4.translationValues(
+              //     0.0,
+              //     _translateButton.value * 3.0,
+              //     0.0,
+              //   ),
+              //   child: add(),
+              // ),
+              Transform(
+                transform: Matrix4.translationValues(
+                  0.0,
+                  _translateButton.value * 2.0,
+                  0.0,
+                ),
+                child: search(),
+              ),
+              Transform(
+                transform: Matrix4.translationValues(
+                  0.0,
+                  _translateButton.value,
+                  0.0,
+                ),
+                child: qrCode(),
+              ),
+              SizedBox(
+                height: MediaQuery.of(context).size.height * .07,
+                width: MediaQuery.of(context).size.height * .15,
+                child: new FloatingActionButton(
+                  backgroundColor: _buttonColor.value,
+                  shape: RoundedRectangleBorder(
+                      side: BorderSide(color: Colors.blueGrey[200]),
+                      borderRadius: BorderRadius.all(Radius.circular(5.0))),
+                  splashColor: highlightColor,
+                  onPressed: animate,
+                  tooltip: 'Jump Start',
+                  child: Text('Jump Start'),
+                  //  AnimatedIcon(
+                  //   icon: AnimatedIcons.menu_close,
+                  //   progress: _animateIcon,
+                  // ),
+                ),
+              ),
+            ],
+          ),
+          floatingActionButtonLocation:
+              FloatingActionButtonLocation.centerDocked,
+          drawer: CustomDrawer(),
+          bottomNavigationBar: CustomBottomBar(
+            barIndex: 0,
+          ),
+        ),
+        routes: <String, WidgetBuilder>{
+          '/DLink': (BuildContext context) => new SearchStoresPage(),
+        });
   }
 
   String getEntityAddress(String entityId) {
@@ -426,8 +540,9 @@ class _UserHomePageState extends State<UserHomePage> {
   Widget _buildItem(UserToken booking) {
     String address = getEntityAddress(booking.entityId);
     return Container(
+        //padding: EdgeInsets.fromLTRB(2, 8, 2, 8),
         width: MediaQuery.of(context).size.width,
-        height: MediaQuery.of(context).size.width * .7 / 2.7,
+        height: MediaQuery.of(context).size.width * .8 / 2.5,
         decoration: BoxDecoration(
           image: DecorationImage(
             image: AssetImage('assets/ticket.jpg'),
@@ -453,11 +568,15 @@ class _UserHomePageState extends State<UserHomePage> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
+                          // Text(
+                          //   'TOKEN No. -',
+                          //   style: tokenTextStyle,
+                          //   textAlign: TextAlign.left,
+                          // ),
                           Text(
                             booking.getDisplayName(),
                             style: tokenTextStyle,
                             textAlign: TextAlign.left,
-                            overflow: TextOverflow.ellipsis,
                           ),
                         ],
                       ),
@@ -474,7 +593,6 @@ class _UserHomePageState extends State<UserHomePage> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
                         Container(
-                          margin: EdgeInsets.fromLTRB(5, 0, 0, 0),
                           padding: EdgeInsets.fromLTRB(5, 0, 0, 0),
                           child: Text(
                             booking.entityName + ', ' + address,
@@ -646,7 +764,7 @@ class _UserHomePageState extends State<UserHomePage> {
                 color: Colors.blueGrey[300],
               ),
               Container(
-                width: MediaQuery.of(context).size.width * .2,
+                width: MediaQuery.of(context).size.width * .25,
                 // padding: EdgeInsets.fromLTRB(5, 5, 0, 0),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,

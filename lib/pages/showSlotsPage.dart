@@ -254,7 +254,7 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
                       ),
                     ),
                     Container(
-                      height: MediaQuery.of(context).size.width * .19,
+                      height: MediaQuery.of(context).size.width * .22,
                       padding: EdgeInsets.all(4),
                       // decoration: new BoxDecoration(
                       //   border: Border.all(color: Colors.teal[200]),
@@ -273,7 +273,7 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
                               SizedBox(
                                 width: MediaQuery.of(context).size.width * .8,
                                 height:
-                                    MediaQuery.of(context).size.height * .05,
+                                    MediaQuery.of(context).size.height * .06,
                                 child: RaisedButton(
                                   elevation: 10.0,
                                   color: highlightColor,

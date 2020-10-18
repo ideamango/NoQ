@@ -207,13 +207,13 @@ final tokenTextStyle = TextStyle(
     fontFamily: 'Montserrat',
     letterSpacing: 3,
     // decoration: TextDecoration.underline,
-    fontSize: 17.0);
+    fontSize: 15.0);
 
 final tokenDataTextStyle = TextStyle(
     color: primaryAccentColor,
     //fontWeight: FontWeight.w500,
     fontFamily: 'Montserrat',
-    fontSize: 15.0);
+    fontSize: 12.0);
 final tokenDateTextStyle = TextStyle(
     color: Colors.white,
     // fontWeight: FontWeight.w500,
@@ -259,7 +259,7 @@ final BoxDecoration rectLightContainer = new BoxDecoration(
 final gradientBackground = new BoxDecoration(
   gradient: new LinearGradient(
       colors: [
-        primaryAccentColor,
+        Colors.cyanAccent,
         gradientDarkColor,
       ],
       begin: const FractionalOffset(0.0, 0.0),

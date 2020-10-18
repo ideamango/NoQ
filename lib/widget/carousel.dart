@@ -128,3 +128,22 @@ class Item6 extends StatelessWidget {
     );
   }
 }
+
+class Item7 extends StatelessWidget {
+  const Item7({Key key}) : super(key: key);
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          Image.asset(
+            'assets/7.jpg',
+            height: 140.0,
+            fit: BoxFit.fitHeight,
+          )
+        ],
+      ),
+    );
+  }
+}
