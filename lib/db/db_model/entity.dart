@@ -266,24 +266,11 @@ class Entity {
         paytm: paytm,
         applepay: applepay,
         offer: offer,
-        phone: phone);
+        phone: phone,
+        hasChildren: childEntities.length > 0 ? true : false);
 
     return meta;
   }
-
-  // int isAdmin(String userId) {
-  //   int count = -1;
-  //   if (admins == null) return count;
-
-  //   for (MetaUser usr in admins) {
-  //     count++;
-  //     if (usr.id == userId) {
-  //       return count;
-  //     }
-  //   }
-
-  //   return -1;
-  // }
 
   List<String> constructQueriableList(String string) {
     if (string == null) return new List<String>();

@@ -38,7 +38,8 @@ class MetaEntity {
       this.paytm,
       this.applepay,
       this.offer,
-      this.phone});
+      this.phone,
+      this.hasChildren});
   MetaEntity.withValues({this.entityId, this.type});
 
   //SlotDocumentId is entityID#20~06~01 it is not auto-generated, will help in not duplicating the record
@@ -70,6 +71,7 @@ class MetaEntity {
   String applepay;
   Offer offer;
   String phone;
+  bool hasChildren;
 
   static MetaEntity fromJson(Map<String, dynamic> json) {
     if (json == null) return null;
@@ -97,7 +99,8 @@ class MetaEntity {
         paytm: json['paytm'],
         applepay: json['applepay'],
         offer: Offer.fromJson(json['offer']),
-        phone: json['phone']);
+        phone: json['phone'],
+        hasChildren: json['hasChildren']);
   }
 
   static List<String> convertToClosedOnArrayFromJson(List<dynamic> daysJson) {
@@ -132,7 +135,8 @@ class MetaEntity {
         'paytm': paytm,
         'applepay': applepay,
         'offer': offer != null ? offer.toJson() : null,
-        'phone': phone
+        'phone': phone,
+        'hasChildren': hasChildren
       };
 
   bool isEqual(MetaEntity metaEnt) {

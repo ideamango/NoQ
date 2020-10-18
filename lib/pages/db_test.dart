@@ -278,14 +278,14 @@ class DBTest {
   }
 
   void dbCall() async {
-    FirebaseCrashlytics.instance.crash();
+    //FirebaseCrashlytics.instance.crash();
 
     // fireLocalNotificationEvent();
-    // print("Test Called Updated..");
+    print("Automated DB testcases invoked..");
 
-    //await clearAll();
-    //await securityPermissionTests();
-    //await tests();
+    clearAll();
+    await securityPermissionTests();
+    tests();
   }
 
   Future<void> securityPermissionTests() async {
