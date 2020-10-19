@@ -395,6 +395,7 @@ class _UserHomePageState extends State<UserHomePage> {
 
   String getEntityAddress(String entityId) {
     //TODO SMITA Add implementation
+
     return 'Gachibowli, Hyderabad';
   }
 
@@ -424,6 +425,7 @@ class _UserHomePageState extends State<UserHomePage> {
   }
 
   Widget _buildItem(UserToken booking) {
+    // String address = Utils.getFormattedAddress(booking.address);
     String address = getEntityAddress(booking.entityId);
     return Container(
         width: MediaQuery.of(context).size.width,
