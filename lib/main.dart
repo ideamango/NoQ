@@ -30,10 +30,13 @@ import 'events/events.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  Firebase.initializeApp();
-
-  FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(true);
-  FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterError;
+  Firebase.initializeApp().then((value) {
+    FirebaseCrashlytics.instance
+        .setCrashlyticsCollectionEnabled(true)
+        .then((value) {
+      FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterError;
+    });
+  });
 
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp])
       .then((_) {
