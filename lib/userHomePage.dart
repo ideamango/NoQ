@@ -190,7 +190,7 @@ class _UserHomePageState extends State<UserHomePage> {
                                     autoPlayInterval: Duration(seconds: 3),
                                     autoPlayAnimationDuration:
                                         Duration(milliseconds: 800),
-                                    autoPlayCurve: Curves.easeInCubic,
+                                    autoPlayCurve: Curves.easeIn,
                                     pauseAutoPlayOnTouch: true,
                                     aspectRatio: 2.0,
                                     onPageChanged:
@@ -388,7 +388,7 @@ class _UserHomePageState extends State<UserHomePage> {
             ),
 
             //drawer: CustomDrawer(),
-            bottomNavigationBar: CustomBottomBar(barIndex: 1)),
+            bottomNavigationBar: CustomBottomBar(barIndex: 0)),
       );
     }
   }
@@ -427,7 +427,7 @@ class _UserHomePageState extends State<UserHomePage> {
     String address = getEntityAddress(booking.entityId);
     return Container(
         width: MediaQuery.of(context).size.width,
-        height: MediaQuery.of(context).size.width * .7 / 2.7,
+        height: MediaQuery.of(context).size.width * .7 / 2.6,
         decoration: BoxDecoration(
           image: DecorationImage(
             image: AssetImage('assets/ticket.jpg'),
@@ -447,7 +447,8 @@ class _UserHomePageState extends State<UserHomePage> {
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: <Widget>[
                     Container(
-                      padding: EdgeInsets.fromLTRB(5, 0, 0, 0),
+                      padding: EdgeInsets.fromLTRB(
+                          MediaQuery.of(context).size.height * .008, 0, 0, 0),
                       alignment: Alignment.centerLeft,
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -463,7 +464,7 @@ class _UserHomePageState extends State<UserHomePage> {
                       ),
                     ),
                     Divider(
-                      indent: 5,
+                      indent: MediaQuery.of(context).size.height * .008,
 
                       // thickness: 1,
                       height: 1,
@@ -474,8 +475,16 @@ class _UserHomePageState extends State<UserHomePage> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
                         Container(
-                          margin: EdgeInsets.fromLTRB(5, 0, 0, 0),
-                          padding: EdgeInsets.fromLTRB(5, 0, 0, 0),
+                          margin: EdgeInsets.fromLTRB(
+                              MediaQuery.of(context).size.height * .008,
+                              0,
+                              0,
+                              0),
+                          padding: EdgeInsets.fromLTRB(
+                              MediaQuery.of(context).size.height * .008,
+                              0,
+                              0,
+                              0),
                           child: Text(
                             booking.entityName + ', ' + address,
                             overflow: TextOverflow.ellipsis,
@@ -483,7 +492,7 @@ class _UserHomePageState extends State<UserHomePage> {
                           ),
                         ),
                         SizedBox(
-                          height: 2,
+                          height: MediaQuery.of(context).size.height * .008,
                         ),
                         Container(
                           // alignment: Alignment.centerLeft,
