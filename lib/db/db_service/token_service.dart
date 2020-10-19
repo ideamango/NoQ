@@ -166,7 +166,8 @@ class TokenService {
               applepay: metaEntity.applepay,
               order: null,
               phone: metaEntity.phone,
-              rNum: (Random().nextInt(5000) + 100));
+              rNum: (Random().nextInt(5000) + 100),
+              address: metaEntity.address);
           //create token
           tx.set(tokRef, tok.toJson());
 
@@ -210,25 +211,6 @@ class TokenService {
               isFull: false);
           es.slots.add(sl);
 
-          // Map<String, dynamic> tokenJson = <String, dynamic>{
-          //   'slotId': slotId,
-          //   'entityId': metaEntity.entityId,
-          //   'userId': userPhone,
-          //   'number': 1,
-          //   'dateTime': dateTime.millisecondsSinceEpoch,
-          //   'maxAllowed': maxAllowed,
-          //   'slotDuration': slotDuration,
-          //   'entityName': metaEntity.name,
-          //   'lat': metaEntity.lat,
-          //   'lon': metaEntity.lon,
-          //   'entityWhatsApp': metaEntity.whatsapp,
-          //   'gpay': metaEntity.gpay,
-          //   'paytm': metaEntity.paytm,
-          //   'applepay': metaEntity.applepay,
-          //   'order': null,
-          //   'phone': metaEntity.phone
-          // };
-
           UserToken tok = new UserToken(
               slotId: slotId,
               entityId: metaEntity.entityId,
@@ -246,7 +228,8 @@ class TokenService {
               applepay: metaEntity.applepay,
               order: null,
               phone: metaEntity.phone,
-              rNum: (Random().nextInt(5000) + 100));
+              rNum: (Random().nextInt(5000) + 100),
+              address: metaEntity.address);
 
           //create EntitySlots with one slot in it
           tx.set(entitySlotsRef, es.toJson());
