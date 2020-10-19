@@ -89,11 +89,11 @@ class _CustomBottomBarState extends State<CustomBottomBar> {
           }
           break;
 
-        default:
-          {
-            Navigator.push(context,
-                MaterialPageRoute(builder: (context) => UserHomePage()));
-          }
+          // default:
+          //   {
+          //     Navigator.push(context,
+          //         MaterialPageRoute(builder: (context) => UserHomePage()));
+          //   }
           break;
       }
     }

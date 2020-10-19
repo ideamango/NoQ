@@ -127,9 +127,9 @@ class _AboutUsPageState extends State<AboutUsPage> {
             ],
           ),
         )),
-        bottomNavigationBar: CustomBottomBar(
-          barIndex: 3,
-        ),
+        // bottomNavigationBar: CustomBottomBar(
+        //   barIndex: 3,
+        // ),
       ),
     );
   }

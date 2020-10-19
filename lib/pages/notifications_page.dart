@@ -76,9 +76,9 @@ class _UserNotificationsPageState extends State<UserNotificationsPage> {
                 ],
               )),
         ),
-        bottomNavigationBar: CustomBottomBar(
-          barIndex: 0,
-        ),
+        // bottomNavigationBar: CustomBottomBar(
+        //   barIndex: 0,
+        // ),
       ),
     );
   }
@@ -106,9 +106,9 @@ class _UserNotificationsPageState extends State<UserNotificationsPage> {
                 }),
           ),
         ),
-        bottomNavigationBar: CustomBottomBar(
-          barIndex: 3,
-        ),
+        // bottomNavigationBar: CustomBottomBar(
+        //   barIndex: 3,
+        // ),
       ),
     );
   }

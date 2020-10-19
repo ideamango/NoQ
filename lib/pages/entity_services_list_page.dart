@@ -330,7 +330,7 @@ class _ChildEntitiesListPageState extends State<ChildEntitiesListPage> {
             ),
           ),
           //drawer: CustomDrawer(),
-          bottomNavigationBar: CustomBottomBar(barIndex: 0),
+          // bottomNavigationBar: CustomBottomBar(barIndex: 0),
         ),
       );
     }

@@ -135,9 +135,9 @@ class _ShareAppPageState extends State<ShareAppPage> {
                     )
                   ],
                 ))),
-        bottomNavigationBar: CustomBottomBar(
-          barIndex: 3,
-        ),
+        // bottomNavigationBar: CustomBottomBar(
+        //   barIndex: 3,
+        // ),
       ),
     );
   }

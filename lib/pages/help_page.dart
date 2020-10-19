@@ -392,9 +392,9 @@ class _HelpPageState extends State<HelpPage> {
                 ],
               ),
             ])),
-        bottomNavigationBar: CustomBottomBar(
-          barIndex: 0,
-        ),
+        // bottomNavigationBar: CustomBottomBar(
+        //   barIndex: 0,
+        // ),
       ),
     );
   }

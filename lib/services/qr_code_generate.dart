@@ -81,7 +81,7 @@ class GenerateScreenState extends State<GenerateScreen> {
             ),
           ),
           //drawer: CustomDrawer(),
-          bottomNavigationBar: CustomBottomBar(barIndex: 1),
+          // bottomNavigationBar: CustomBottomBar(barIndex: 1),
         ),
       );
   }

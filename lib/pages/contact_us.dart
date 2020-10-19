@@ -100,7 +100,7 @@ class _ContactUsPageState extends State<ContactUsPage> {
             ),
           ),
           //drawer: CustomDrawer(),
-          bottomNavigationBar: CustomBottomBar(barIndex: 0),
+          //bottomNavigationBar: CustomBottomBar(barIndex: 0),
         ),
       );
     } else {
@@ -408,9 +408,9 @@ class _ContactUsPageState extends State<ContactUsPage> {
                       ),
                     ],
                   ))),
-          bottomNavigationBar: CustomBottomBar(
-            barIndex: 0,
-          ),
+          // bottomNavigationBar: CustomBottomBar(
+          //   barIndex: 0,
+          // ),
         ),
       );
     }

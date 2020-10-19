@@ -271,9 +271,9 @@ class _ManageApartmentsListPageState extends State<ManageApartmentsListPage> {
               // bottomNavigationBar: buildBottomItems()
             ),
           ),
-          bottomNavigationBar: CustomBottomBar(
-            barIndex: 0,
-          ),
+          // bottomNavigationBar: CustomBottomBar(
+          //   barIndex: 0,
+          // ),
         ),
       );
     } else {
@@ -294,7 +294,7 @@ class _ManageApartmentsListPageState extends State<ManageApartmentsListPage> {
             ),
           ),
           //drawer: CustomDrawer(),
-          bottomNavigationBar: CustomBottomBar(barIndex: 0),
+          // bottomNavigationBar: CustomBottomBar(barIndex: 0),
         ),
       );
     }

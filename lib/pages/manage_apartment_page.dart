@@ -3393,7 +3393,7 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
               ),
             ),
           ),
-          bottomNavigationBar: CustomBottomBar(barIndex: 0),
+         // bottomNavigationBar: CustomBottomBar(barIndex: 0),
         ),
       );
     } else
@@ -3428,7 +3428,7 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
             ),
           ),
           //drawer: CustomDrawer(),
-          bottomNavigationBar: CustomBottomBar(barIndex: 0),
+          //bottomNavigationBar: CustomBottomBar(barIndex: 0),
         ),
       );
   }

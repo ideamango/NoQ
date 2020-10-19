@@ -112,9 +112,9 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
           margin: EdgeInsets.fromLTRB(10, 10, 10, 10),
           child: Text('All slots booked for this date!!'),
         ))),
-        bottomNavigationBar: CustomBottomBar(
-          barIndex: 3,
-        ),
+        // bottomNavigationBar: CustomBottomBar(
+        //   barIndex: 3,
+        // ),
       ),
     );
   }
@@ -383,9 +383,9 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
             //   ],
             // )
 
-            bottomNavigationBar: CustomBottomBar(
-              barIndex: 3,
-            ),
+            // bottomNavigationBar: CustomBottomBar(
+            //   barIndex: 3,
+            // ),
           ),
         );
       }
@@ -393,29 +393,30 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
       return MaterialApp(
         theme: ThemeData.light().copyWith(),
         home: Scaffold(
-            appBar: CustomAppBar(
-              titleTxt: "Search",
+          appBar: CustomAppBar(
+            titleTxt: "Search",
+          ),
+          body: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                // Padding(padding: EdgeInsets.only(top: 20.0)),
+                Text(
+                  "Loading..",
+                  style: TextStyle(fontSize: 20.0, color: borderColor),
+                ),
+                Padding(padding: EdgeInsets.only(top: 20.0)),
+                CircularProgressIndicator(
+                  backgroundColor: primaryAccentColor,
+                  valueColor: AlwaysStoppedAnimation<Color>(highlightColor),
+                  strokeWidth: 3,
+                )
+              ],
             ),
-            body: Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  // Padding(padding: EdgeInsets.only(top: 20.0)),
-                  Text(
-                    "Loading..",
-                    style: TextStyle(fontSize: 20.0, color: borderColor),
-                  ),
-                  Padding(padding: EdgeInsets.only(top: 20.0)),
-                  CircularProgressIndicator(
-                    backgroundColor: primaryAccentColor,
-                    valueColor: AlwaysStoppedAnimation<Color>(highlightColor),
-                    strokeWidth: 3,
-                  )
-                ],
-              ),
-            ),
-            //drawer: CustomDrawer(),
-            bottomNavigationBar: CustomBottomBar(barIndex: 1)),
+          ),
+          //drawer: CustomDrawer(),
+          //  bottomNavigationBar: CustomBottomBar(barIndex: 1)
+        ),
       );
     }
   }

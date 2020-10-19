@@ -3207,9 +3207,9 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
             ),
           ),
         ),
-        bottomNavigationBar: CustomBottomBar(
-          barIndex: 0,
-        ),
+        // bottomNavigationBar: CustomBottomBar(
+        //   barIndex: 0,
+        // ),
       ),
     );
   }
