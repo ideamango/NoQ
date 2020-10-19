@@ -1,3 +1,5 @@
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:noq/db/db_model/configurations.dart';
 import 'package:noq/db/db_model/entity.dart';
@@ -6,9 +8,13 @@ import 'package:noq/db/db_model/app_user.dart';
 import 'package:noq/db/db_model/user_token.dart';
 import 'package:noq/db/db_service/configurations_service.dart';
 import 'package:noq/db/db_service/token_service.dart';
+import 'package:noq/events/local_notification_data.dart';
 import 'package:noq/repository/local_db_repository.dart';
 import 'package:noq/utils.dart';
 import 'db/db_service/user_service.dart';
+import 'events/event_bus.dart';
+import 'events/events.dart';
+import 'package:timezone/timezone.dart' as tz;
 
 class GlobalState {
   AppUser currentUser;
@@ -198,5 +204,81 @@ class GlobalState {
       }
     }
     return bookings;
+  }
+
+  bool _isNotificationInitialized = false;
+  FlutterLocalNotificationsPlugin localNotification;
+
+  bool isNotificationInitialized() {
+    return _isNotificationInitialized;
+  }
+
+  void initializeNotification() {
+    try {
+      if (!_isNotificationInitialized) {
+        //_configureLocalTimeZone();
+
+        localNotification = new FlutterLocalNotificationsPlugin();
+        var androidInitialize = new AndroidInitializationSettings("icon");
+        var iOSInitialize = new IOSInitializationSettings();
+        var initializationSettings = new InitializationSettings(
+            android: androidInitialize, iOS: iOSInitialize);
+
+        localNotification.initialize(initializationSettings,
+            onSelectNotification: onSelectNotification);
+
+        registerForLocalNotificationCreatedEvent();
+        registerForLocalNotificationCancelledEvent();
+        _isNotificationInitialized = true;
+      }
+    } catch (e) {
+      print("Notification init failed: " + e.toString());
+    }
+  }
+
+  Future onSelectNotification(String payload) async {
+    print(" onSelectNotification clicked");
+  }
+
+  void registerForLocalNotificationCancelledEvent() {
+    EventBus.registerEvent(LOCAL_NOTIFICATION_REMOVED_EVENT, null,
+        (event, arg) {
+      if (event == null) {
+        return;
+      }
+
+      LocalNotificationData data = event.eventData;
+      if (data != null && data.id != null) {
+        localNotification.cancel(data.id);
+      }
+    });
+  }
+
+  void registerForLocalNotificationCreatedEvent() {
+    EventBus.registerEvent(LOCAL_NOTIFICATION_CREATED_EVENT, null,
+        (event, arg) {
+      var androidDetails = new AndroidNotificationDetails(
+          "channelId", "channelName", "channelDescription",
+          importance: Importance.max, priority: Priority.high);
+
+      var iOSDetails = new IOSNotificationDetails();
+
+      var generalNotificationDetails =
+          new NotificationDetails(android: androidDetails, iOS: iOSDetails);
+
+      if (event == null) {
+        return;
+      }
+
+      LocalNotificationData data = event.eventData;
+
+      var tzDateTime = tz.TZDateTime.from(data.dateTime, tz.local);
+
+      localNotification.zonedSchedule(data.id, data.title, data.message,
+          tzDateTime, generalNotificationDetails,
+          uiLocalNotificationDateInterpretation:
+              UILocalNotificationDateInterpretation.wallClockTime,
+          androidAllowWhileIdle: true);
+    });
   }
 }

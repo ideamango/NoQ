@@ -20,6 +20,7 @@ import 'package:noq/db/db_service/user_service.dart';
 import 'package:noq/events/event_bus.dart';
 import 'package:noq/events/events.dart';
 import 'package:noq/events/local_notification_data.dart';
+import 'package:noq/global_state.dart';
 
 class DBTest {
   void createEntity() async {
@@ -279,13 +280,14 @@ class DBTest {
 
   void dbCall() async {
     //FirebaseCrashlytics.instance.crash();
+    GlobalState gs = await GlobalState.getGlobalState();
+    gs.initializeNotification();
+    fireLocalNotificationEvent();
+    // print("Automated DB testcases invoked..");
 
-    // fireLocalNotificationEvent();
-    print("Automated DB testcases invoked..");
-
-    clearAll();
-    await securityPermissionTests();
-    tests();
+    // clearAll();
+    // await securityPermissionTests();
+    // tests();
   }
 
   Future<void> securityPermissionTests() async {

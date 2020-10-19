@@ -527,6 +527,8 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
   }
 
   void bookSlot() {
+    _state.initializeNotification();
+
     Utils.showMyFlushbar(
         context,
         Icons.info_outline,
@@ -540,11 +542,7 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
     if (isBooked(selectedSlot.dateTime, entity.entityId)) {
       print("alreaddyyyyyyy booked, go back");
     }
-    //pr.show();
 
-    // Future.delayed(Duration(seconds: 1)).then((value) {
-    //   pr.hide().whenComplete(() {
-//Test - Smita
     MetaEntity meta = entity.getMetaEntity();
 
     bookSlotForStore(meta, selectedSlot).then((value) {
@@ -570,6 +568,9 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
           bookedSlot = selectedSlot;
           selectedSlot = null;
         });
+        //Ask user if he wants to receive the notifications
+
+        //End of notification permission
 
 //Update local file with new booking.
 
