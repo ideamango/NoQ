@@ -4,6 +4,7 @@ import 'package:noq/db/db_model/meta_entity.dart';
 import 'package:noq/db/db_model/meta_user.dart';
 import 'package:noq/db/db_model/my_geo_fire_point.dart';
 import 'package:noq/db/db_model/offer.dart';
+import 'package:noq/utils.dart';
 
 class Entity {
   Entity(
@@ -267,6 +268,7 @@ class Entity {
         applepay: applepay,
         offer: offer,
         phone: phone,
+        address: Utils.getFormattedAddress(address),
         hasChildren: childEntities.length > 0 ? true : false);
 
     return meta;
