@@ -589,12 +589,6 @@ class _UserAccountPageState extends State<UserAccountPage> {
     launchPlayStore(packageName: packageName);
 
     // launch("https://play.google.com/store/apps/details?id=" + packageName);
-    Utils.showMyFlushbar(
-        context,
-        Icons.help_outline,
-        Duration(seconds: 3),
-        "Opening play store!!",
-        "It will really help us and shouldn't take more than a minute.");
   }
 
   // openFeedbackPage() async {
@@ -685,6 +679,12 @@ class _UserAccountPageState extends State<UserAccountPage> {
                                       splashColor: highlightColor,
                                       onPressed: () {
                                         openPlayStoreAndRate();
+                                        Utils.showMyFlushbar(
+                                            context,
+                                            Icons.help_outline,
+                                            Duration(seconds: 3),
+                                            "Thanks!!",
+                                            ratingMsg);
                                       },
                                       child: const Text(
                                         'Rate the app',

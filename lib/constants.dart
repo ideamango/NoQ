@@ -74,7 +74,8 @@ String basicInfoStr =
 String adminInfoStr = 'The person who manages the premises.';
 String contactInfoStr =
     'The perosn who can be contacted for any queries regarding your s ervices/facitlity.';
-
+String ratingMsg =
+    "We appreciate the time you took out to provide your review.";
 enum Role { Manager, Admin, ContactPerson, Employee }
 List<String> roleTypes = ['Admin', 'Manager'];
 List<String> entityTypes = [

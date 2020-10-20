@@ -150,6 +150,8 @@ Future<String> openRateReviewForIos(String appId) async {
   launch('https://$reviewUrl');
   return 'Launched App Store: $reviewUrl';
 
+//return "https://itunes.apple.com/app/id$appId";
+  //return "https://itunes.apple.com/us/app/appName/id$packageName?mt=8&action=write-review";
   // try {
   //   return _channel.invokeMethod<String>('requestReview');
   // } finally {}
@@ -182,9 +184,7 @@ void launchPlayStore({
   //TODO  End
   // final appId =  getIosAppId() ?? '';
   if (Platform.isIOS) {
-    openRateReviewForIos(packageName);
-    //return "https://itunes.apple.com/app/id$appId";
-    //return "https://itunes.apple.com/us/app/appName/id$packageName?mt=8&action=write-review";
+    openRateReviewForIos(appId);
   } else {
     openGooglePlay(packageName);
     // return "https://play.google.com/store/apps/details?id=" + packageName;
