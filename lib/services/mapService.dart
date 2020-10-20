@@ -184,24 +184,22 @@ Future<String> openGooglePlay({String fallbackUrl}) async {
 void launchPlayStore({
   @required String packageName,
 }) async {
-  String url() {
-    packageName = "com.bigbasket.mobileapp";
-    // final appId =  getIosAppId() ?? '';
-    if (Platform.isIOS) {
-      openRateReviewForIos();
-      //return "https://itunes.apple.com/app/id$appId";
-      //return "https://itunes.apple.com/us/app/appName/id$packageName?mt=8&action=write-review";
-    } else {
-      openGooglePlay();
-      // return "https://play.google.com/store/apps/details?id=" + packageName;
-    }
+  packageName = "com.bigbasket.mobileapp";
+  // final appId =  getIosAppId() ?? '';
+  if (Platform.isIOS) {
+    openRateReviewForIos();
+    //return "https://itunes.apple.com/app/id$appId";
+    //return "https://itunes.apple.com/us/app/appName/id$packageName?mt=8&action=write-review";
+  } else {
+    openGooglePlay();
+    // return "https://play.google.com/store/apps/details?id=" + packageName;
   }
 
-  if (await canLaunch(url())) {
-    await launch(url());
-  } else {
-    throw 'Could not launch ${url()}';
-  }
+  // if (await canLaunch(url())) {
+  //   await launch(url());
+  // } else {
+  //   throw 'Could not launch ${url()}';
+  // }
 }
 
 void launchUri(String url) async {
