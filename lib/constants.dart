@@ -38,7 +38,7 @@ String tokenTextH1 =
     "Booked your peace of mind. No more long waiting in queues!";
 String tokenTextH2 = "Please be on time and maintain social distance while at ";
 String tokenTextH3 = "Be Safe !! Save Time !!";
-
+String drawerHeaderTxt = "You have logged in with Phone number - ";
 String drawerHeaderTxt11 = 'Stay ';
 String drawerHeaderTxt12 = 'Safe!!  ';
 String drawerHeaderTxt21 = 'Maintain ';

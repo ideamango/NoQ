@@ -41,7 +41,10 @@ class _ShareAppPageState extends State<ShareAppPage> {
     return MaterialApp(
       theme: ThemeData.light().copyWith(),
       home: Scaffold(
-        drawer: CustomDrawer(),
+        drawer: CustomDrawer(
+          //TODO: provide phone of user here
+          phone: null,
+        ),
         appBar: CustomAppBar(
           titleTxt: title,
         ),

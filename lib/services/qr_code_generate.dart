@@ -47,10 +47,11 @@ class GenerateScreenState extends State<GenerateScreen> {
   void generateQrCode() {
     //dataString needs to be set, using this the Qr code is generated.
 
-    Utils.createDynamicLinkWithParams(entityId: widget.entityId).then((value) {
+    Utils.createDynamicLinkFullWithParams(entityId: widget.entityId)
+        .then((value) {
       uriLink = value;
-      var _dynamicLink = Uri.https(uriLink.authority, uriLink.path).toString();
-
+      // var _dynamicLink = Uri.https(uriLink.authority, uriLink.path).toString();
+      var _dynamicLink = uriLink;
       _dataString = _dynamicLink.toString();
       _inputErrorText = null;
       _saveImage();

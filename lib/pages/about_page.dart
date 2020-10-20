@@ -29,7 +29,11 @@ class _AboutUsPageState extends State<AboutUsPage> {
     return MaterialApp(
       theme: ThemeData.light().copyWith(),
       home: Scaffold(
-        drawer: CustomDrawer(),
+        drawer: CustomDrawer(
+          //TODO phone  here
+          //phone: _state.currentUser.ph,
+          phone: null,
+        ),
         appBar: CustomAppBar(
           titleTxt: title,
         ),

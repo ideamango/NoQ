@@ -58,6 +58,7 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
+  //final NavigationService _navigationService = locator<NavigationService>();
   final DynamicLinkService _dynamicLinkService = DynamicLinkService();
   Timer _timerLink;
   //FlutterLocalNotificationsPlugin localNotification;
@@ -65,69 +66,9 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   @override
   void initState() {
     super.initState();
-
     _configureLocalTimeZone();
-
-    // localNotification = new FlutterLocalNotificationsPlugin();
-    // var androidInitialize = new AndroidInitializationSettings("icon");
-    // var iOSInitialize = new IOSInitializationSettings();
-    // var initializationSettings = new InitializationSettings(
-    //     android: androidInitialize, iOS: iOSInitialize);
-
-    // localNotification.initialize(initializationSettings,
-    //     onSelectNotification: onSelectNotification);
-
-    // registerForLocalNotificationCreatedEvent();
-    // registerForLocalNotificationCancelledEvent();
-
     WidgetsBinding.instance.addObserver(this);
   }
-
-  // Future onSelectNotification(String payload) async {
-  //   print(" onSelectNotification clicked");
-  // }
-
-  // void registerForLocalNotificationCancelledEvent() {
-  //   EventBus.registerEvent(LOCAL_NOTIFICATION_REMOVED_EVENT, context,
-  //       (event, arg) {
-  //     if (event == null) {
-  //       return;
-  //     }
-
-  //     LocalNotificationData data = event.eventData;
-  //     if (data != null && data.id != null) {
-  //       localNotification.cancel(data.id);
-  //     }
-  //   });
-  // }
-
-  // void registerForLocalNotificationCreatedEvent() {
-  //   EventBus.registerEvent(LOCAL_NOTIFICATION_CREATED_EVENT, context,
-  //       (event, arg) {
-  //     var androidDetails = new AndroidNotificationDetails(
-  //         "channelId", "channelName", "channelDescription",
-  //         importance: Importance.max, priority: Priority.high);
-
-  //     var iOSDetails = new IOSNotificationDetails();
-
-  //     var generalNotificationDetails =
-  //         new NotificationDetails(android: androidDetails, iOS: iOSDetails);
-
-  //     if (event == null) {
-  //       return;
-  //     }
-
-  //     LocalNotificationData data = event.eventData;
-
-  //     var tzDateTime = tz.TZDateTime.from(data.dateTime, tz.local);
-
-  //     localNotification.zonedSchedule(data.id, data.title, data.message,
-  //         tzDateTime, generalNotificationDetails,
-  //         uiLocalNotificationDateInterpretation:
-  //             UILocalNotificationDateInterpretation.wallClockTime,
-  //         androidAllowWhileIdle: true);
-  //   });
-  // }
 
   Future<void> _configureLocalTimeZone() async {
     try {
@@ -160,7 +101,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.resumed) {
       _timerLink = new Timer(
-        const Duration(milliseconds: 1000),
+        const Duration(milliseconds: 800),
         () {
           _dynamicLinkService.retrieveDynamicLink(context);
         },
@@ -221,8 +162,9 @@ class DynamicLinkService {
 
       if (deepLink != null) {
         print(deepLink.queryParameters);
-        Navigator.push(
-            context, MaterialPageRoute(builder: (context) => FavsListPage()));
+        //  Navigator.pushNamed(context, deepLink.path);
+        // Navigator.push(
+        //     context, MaterialPageRoute(builder: (context) => FavsListPage()));
       }
 
       FirebaseDynamicLinks.instance.onLink(onSuccess: (dynamicLink) async {

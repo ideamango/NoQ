@@ -58,7 +58,9 @@ class _UserNotificationsPageState extends State<UserNotificationsPage> {
     return MaterialApp(
       theme: ThemeData.light().copyWith(),
       home: Scaffold(
-        drawer: CustomDrawer(),
+        drawer: CustomDrawer(
+          phone: _state.currentUser.ph,
+        ),
         appBar: CustomAppBar(
           titleTxt: title,
         ),
@@ -88,7 +90,9 @@ class _UserNotificationsPageState extends State<UserNotificationsPage> {
     return MaterialApp(
       theme: ThemeData.light().copyWith(),
       home: Scaffold(
-        drawer: CustomDrawer(),
+        drawer: CustomDrawer(
+          phone: _state.currentUser.ph,
+        ),
         appBar: CustomAppBar(
           titleTxt: title,
         ),

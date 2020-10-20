@@ -164,7 +164,7 @@ class _FavsListPageState extends State<FavsListPage> {
     _dynamicLink =
         Uri.https(dynamicLink.authority, dynamicLink.path).toString();
     // dynamicLink has been generated. share it with others to use it accordingly.
-    Share.share(_dynamicLink.toString());
+    Share.share(dynamicLink.toString());
   }
 
   Widget _emptyFavsPage() {

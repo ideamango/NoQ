@@ -12,6 +12,9 @@ import 'package:noq/style.dart';
 import 'package:intl/intl.dart';
 
 class CustomDrawer extends StatefulWidget {
+  final String phone;
+  CustomDrawer({Key key, @required this.phone}) : super(key: key);
+
   @override
   _CustomDrawerState createState() => _CustomDrawerState();
 }
@@ -19,7 +22,7 @@ class CustomDrawer extends StatefulWidget {
 class _CustomDrawerState extends State<CustomDrawer> {
   PageController _pageController;
   int _page = 0;
-
+  String _phone;
   List drawerItems = [
     {
       "icon": Icons.account_circle,
@@ -73,6 +76,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
   @override
   void initState() {
     super.initState();
+    _phone = widget.phone;
     _pageController = PageController(initialPage: 8);
     // _initializeUserProfile();
   }
@@ -104,31 +108,39 @@ class _CustomDrawerState extends State<CustomDrawer> {
                   children: <Widget>[
                     RichText(
                       text: TextSpan(
-                          style: whiteBoldTextStyle1,
+                          style: TextStyle(color: Colors.white, fontSize: 18),
                           children: <TextSpan>[
-                            TextSpan(text: drawerHeaderTxt11),
+                            TextSpan(text: drawerHeaderTxt),
                             TextSpan(
-                              text: drawerHeaderTxt12,
-                            ),
-                            TextSpan(text: drawerHeaderTxt21),
-                            TextSpan(
-                              text: drawerHeaderTxt22,
-                            ),
-                            TextSpan(
-                              text: drawerHeaderTxt31,
-                            ),
-                            TextSpan(
-                              text: drawerHeaderTxt32,
-                            ),
-                            TextSpan(
-                              text: drawerHeaderTxt33,
-                            ),
-                            TextSpan(
-                              text: drawerHeaderTxt41,
-                            ),
-                            TextSpan(
-                              text: drawerHeaderTxt42,
-                            ),
+                                text: _phone,
+                                style: TextStyle(
+                                    color: primaryDarkColor,
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold)),
+                            // TextSpan(text: '\n'),
+
+                            // TextSpan(
+                            //   text: drawerHeaderTxt12,
+                            // ),
+                            // TextSpan(text: drawerHeaderTxt21),
+                            // TextSpan(
+                            //   text: drawerHeaderTxt22,
+                            // ),
+                            // TextSpan(
+                            //   text: drawerHeaderTxt31,
+                            // ),
+                            // TextSpan(
+                            //   text: drawerHeaderTxt32,
+                            // ),
+                            // TextSpan(
+                            //   text: drawerHeaderTxt33,
+                            // ),
+                            // TextSpan(
+                            //   text: drawerHeaderTxt41,
+                            // ),
+                            // TextSpan(
+                            //   text: drawerHeaderTxt42,
+                            // ),
                           ]),
                     ),
                   ],

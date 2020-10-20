@@ -31,7 +31,10 @@ class _HelpPageState extends State<HelpPage> {
     return MaterialApp(
       theme: ThemeData.light().copyWith(),
       home: Scaffold(
-        drawer: CustomDrawer(),
+        drawer: CustomDrawer(
+            //TODO provide phone number
+            //phone: _state.currentUser.ph,
+            phone: null),
         appBar: CustomAppBar(
           titleTxt: title,
         ),
