@@ -100,16 +100,100 @@ void launchWhatsApp({
     throw 'Could not launch ${url()}';
   }
 }
+// static Future<String> getIosAppId({
+//     String countryCode,
+//     String bundleId,
+//   }) async {
+//     // If bundle name is not provided
+//     // then fetch and return the app ID from cache (if available)
+//     if (bundleId == null) {
+//       _appId ??= await getIosAppId(
+//         bundleId: await getBundleName(),
+//         countryCode: countryCode,
+//       );
+
+//       return _appId;
+//     }
+
+//     // Else fetch from AppStore
+//     final String id = bundleId ?? (await getBundleName());
+//     final String country = countryCode ?? _appCountry ?? '';
+//     String appId;
+
+//     if (id.isNotEmpty) {
+//       try {
+//         final result = await http
+//             .get('http://itunes.apple.com/$country/lookup?bundleId=$id')
+//             .timeout(const Duration(seconds: 5));
+//         final Map json = jsonDecode(result.body ?? '');
+//         appId = json['results'][0]['trackId']?.toString();
+//       } finally {
+//         if (appId?.isNotEmpty == true) {
+//           print('Track ID: $appId');
+//         } else {
+//           print('Application with bundle $id is not found on App Store');
+//         }
+//       }
+//     }
+
+//     return appId ?? '';
+//   }
+Future<String> openRateReviewForIos({
+  String appId,
+  bool compose = false,
+}) async {
+  // final id = appId ?? (await getIosAppId()) ?? '';
+  //TODO change bundle /app id
+  final appId = '962194608';
+  final reviewUrl = 'itunes.apple.com/app/id$appId?mt=8&action=write-review';
+
+  if (await canLaunch('itms-apps://$reviewUrl')) {
+    print('launching store page');
+    launch('itms-apps://$reviewUrl');
+    return 'Launched App Store Directly: $reviewUrl';
+  }
+
+  launch('https://$reviewUrl');
+  return 'Launched App Store: $reviewUrl';
+
+  // try {
+  //   return _channel.invokeMethod<String>('requestReview');
+  // } finally {}
+}
+
+Future<String> openGooglePlay({String fallbackUrl}) async {
+  //TODO change bundle /app id
+  final bundle = 'com.bigbasket.mobileapp';
+  final markerUrl = 'market://details?id=$bundle';
+
+  if (await canLaunch(markerUrl)) {
+    print('launching store page');
+    launch(markerUrl);
+    return 'Launched Google Play Directly: $bundle';
+  }
+
+  if (fallbackUrl != null) {
+    launch(fallbackUrl);
+    return 'Launched Google Play via $fallbackUrl';
+  }
+
+  launch('https://play.google.com/store/apps/details?id=$bundle');
+  return 'Launched Google Play: $bundle';
+}
 
 void launchPlayStore({
   @required String packageName,
 }) async {
   String url() {
-    //packageName = "com.bigbasket.mobileapp";
+    packageName = "com.bigbasket.mobileapp";
+    // final appId =  getIosAppId() ?? '';
     if (Platform.isIOS) {
-      return "https://itunes.apple.com/us/app/appName/id$packageName?mt=8&action=write-review";
+      openRateReviewForIos();
+      //return "https://itunes.apple.com/app/id$appId";
+      //return "https://itunes.apple.com/us/app/appName/id$packageName?mt=8&action=write-review";
     } else {
-      return "https://play.google.com/store/apps/details?id=" + packageName;
+      openGooglePlay();
+      // return "https://play.google.com/store/apps/details?id=" + packageName;
     }
   }
 

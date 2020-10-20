@@ -1,32 +1,29 @@
 import 'package:barcode_scan/barcode_scan.dart';
 import 'package:carousel_slider/carousel_slider.dart';
-import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:noq/constants.dart';
 import 'package:noq/db/db_model/user_token.dart';
 import 'package:noq/global_state.dart';
-import 'package:noq/pages/dynamic_links.dart';
 import 'package:noq/pages/notifications_page.dart';
 import 'package:noq/pages/shopping_list.dart';
 import 'package:noq/repository/slotRepository.dart';
 import 'package:noq/services/circular_progress.dart';
 import 'package:noq/services/mapService.dart';
-import 'package:noq/services/qr_code_generate.dart';
 import 'package:noq/style.dart';
-
-import 'package:noq/userHomePage.dart';
 import 'package:noq/utils.dart';
 import 'package:noq/widget/appbar.dart';
 import 'package:noq/widget/bottom_nav_bar.dart';
 import 'package:noq/widget/carousel.dart';
-import 'package:noq/widget/custom_expansion_tile.dart';
 import 'package:noq/widget/header.dart';
 import 'package:noq/widget/widgets.dart';
 import 'package:share/share.dart';
 import 'package:package_info/package_info.dart';
-import 'package:url_launcher/url_launcher.dart';
+
+import 'dart:io' show Platform;
+import 'package:flutter/foundation.dart';
+import 'package:app_review/app_review.dart';
 
 class UserAccountPage extends StatefulWidget {
   @override
@@ -50,16 +47,37 @@ class _UserAccountPageState extends State<UserAccountPage> {
   ScanResult scanResult;
   GlobalState _state;
   String _dynamicLink;
+  String appID = "";
+  String output = "";
 
   @override
   void initState() {
     super.initState();
+    if (!kIsWeb) _setTargetPlatformForDesktop();
     _pageController = PageController(initialPage: 8);
     setState(() {
       _upcomingBkgStatus = 'Loading';
       _pastBkgStatus = 'Loading';
     });
     getGlobalState().whenComplete(() => _loadBookings());
+    AppReview.getAppID.then((onValue) {
+      setState(() {
+        appID = onValue;
+      });
+      print("App ID" + appID);
+    });
+  }
+
+  void _setTargetPlatformForDesktop() {
+    TargetPlatform targetPlatform;
+    if (Platform.isMacOS) {
+      targetPlatform = TargetPlatform.iOS;
+    } else if (Platform.isLinux || Platform.isWindows) {
+      targetPlatform = TargetPlatform.android;
+    }
+    if (targetPlatform != null) {
+      debugDefaultTargetPlatformOverride = targetPlatform;
+    }
   }
 
   Future<void> getGlobalState() async {
@@ -560,6 +578,14 @@ class _UserAccountPageState extends State<UserAccountPage> {
     PackageInfo info = await PackageInfo.fromPlatform();
     String packageName = info.packageName;
 
+    // AppReview.writeReview.then((onValue) {
+    //   setState(() {
+    //     output = onValue;
+    //   });
+    //   print(onValue);
+    // });
+
+    // openRateReviewForIos();
     launchPlayStore(packageName: packageName);
 
     // launch("https://play.google.com/store/apps/details?id=" + packageName);
