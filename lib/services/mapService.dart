@@ -144,7 +144,7 @@ Future<String> openRateReviewForIos({
 }) async {
   // final id = appId ?? (await getIosAppId()) ?? '';
   //TODO change bundle /app id
-  final appId = '962194608';
+  final appId = 'com.bigbasket.mobileapp';
   final reviewUrl = 'itunes.apple.com/app/id$appId?mt=8&action=write-review';
 
   if (await canLaunch('itms-apps://$reviewUrl')) {
@@ -164,6 +164,7 @@ Future<String> openRateReviewForIos({
 Future<String> openGooglePlay({String fallbackUrl}) async {
   //TODO change bundle /app id
   final bundle = 'com.bigbasket.mobileapp';
+  //TODO  End
   final markerUrl = 'market://details?id=$bundle';
 
   if (await canLaunch(markerUrl)) {
@@ -184,7 +185,9 @@ Future<String> openGooglePlay({String fallbackUrl}) async {
 void launchPlayStore({
   @required String packageName,
 }) async {
+  //TODO change bundle /app id
   packageName = "com.bigbasket.mobileapp";
+  //TODO  End
   // final appId =  getIosAppId() ?? '';
   if (Platform.isIOS) {
     openRateReviewForIos();

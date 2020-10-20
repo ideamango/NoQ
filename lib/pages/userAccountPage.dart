@@ -578,15 +578,15 @@ class _UserAccountPageState extends State<UserAccountPage> {
     PackageInfo info = await PackageInfo.fromPlatform();
     String packageName = info.packageName;
 
-    // AppReview.writeReview.then((onValue) {
-    //   setState(() {
-    //     output = onValue;
-    //   });
-    //   print(onValue);
-    // });
+    AppReview.writeReview.then((onValue) {
+      setState(() {
+        output = onValue;
+      });
+      print(onValue);
+    });
 
-    // openRateReviewForIos();
-    launchPlayStore(packageName: packageName);
+     openRateReviewForIos();
+    // launchPlayStore(packageName: packageName);
 
     // launch("https://play.google.com/store/apps/details?id=" + packageName);
     Utils.showMyFlushbar(
