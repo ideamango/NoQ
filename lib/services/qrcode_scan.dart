@@ -28,7 +28,11 @@ class QrCodeScanner {
 
         addEntityToFavs(context, entityId.substring(3));
       }
-      Utils.showMyFlushbar(context, Icons.info, Duration(seconds: 3), "What !!",
+      Utils.showMyFlushbar(
+          context,
+          Icons.info,
+          Duration(seconds: 3),
+          "Hard to figure out what is to be done !!",
           "Seems like nothing to process.");
 
       // launchUri(scanResult.rawContent);
@@ -82,6 +86,8 @@ class QrCodeScanner {
             .then((value) {
           if (value) {
             gs.currentUser.favourites.add(entity.getMetaEntity());
+            Navigator.pushReplacement(context,
+                MaterialPageRoute(builder: (context) => FavsListPage()));
           } else
             print("Entity can't be added to Favorites");
         }).catchError((onError) {
@@ -92,8 +98,6 @@ class QrCodeScanner {
         Utils.showMyFlushbar(context, Icons.info, Duration(seconds: 3),
             "Entity is already present in your Favourites!!", "");
       }
-      Navigator.pushReplacement(
-          context, MaterialPageRoute(builder: (context) => FavsListPage()));
     } else {
       Utils.showMyFlushbar(
           context, Icons.info, Duration(seconds: 3), "Oops error...", "");

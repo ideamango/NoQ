@@ -1,10 +1,13 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:map_launcher/map_launcher.dart';
 import 'package:noq/utils.dart';
+import 'package:package_info/package_info.dart';
 import 'package:url_launcher/url_launcher.dart' as UrlLauncher;
 import 'package:url_launcher/url_launcher.dart';
+import 'package:http/http.dart' as http;
 
 launchURL(String tit, String addr, double lat, double long) async {
   final title = tit;
@@ -157,6 +160,49 @@ Future<String> openRateReviewForIos(String appId) async {
   // } finally {}
 }
 
+PackageInfo _packageInfo;
+String _appCountry;
+String _appBundle;
+String _appId;
+Future<String> getIosAppId({
+  String countryCode,
+  String bundleId,
+}) async {
+  // If bundle name is not provided
+  // then fetch and return the app ID from cache (if available)
+  if (bundleId == null) {
+    _appId ??= await getIosAppId(
+      bundleId: await getBundleName(),
+      countryCode: countryCode,
+    );
+
+    return _appId;
+  }
+
+  // Else fetch from AppStore
+  final String id = bundleId ?? (await getBundleName());
+  final String country = countryCode ?? _appCountry ?? '';
+  String appId;
+
+  if (id.isNotEmpty) {
+    try {
+      final result = await http
+          .get('http://itunes.apple.com/$country/lookup?bundleId=$id')
+          .timeout(const Duration(seconds: 5));
+      final Map json = jsonDecode(result.body ?? '');
+      appId = json['results'][0]['trackId']?.toString();
+    } finally {
+      if (appId?.isNotEmpty == true) {
+        print('Track ID: $appId');
+      } else {
+        print('Application with bundle $id is not found on App Store');
+      }
+    }
+  }
+
+  return appId ?? '';
+}
+
 Future<String> openGooglePlay(String bundle) async {
   final markerUrl = 'market://details?id=$bundle';
   if (await canLaunch(markerUrl)) {
@@ -195,6 +241,24 @@ void launchPlayStore({
   // } else {
   //   throw 'Could not launch ${url()}';
   // }
+}
+
+Future<PackageInfo> getPackageInfo() async {
+  _packageInfo ??= await PackageInfo.fromPlatform();
+
+  print('App Name: ${_packageInfo.appName}\n'
+      'Package Name: ${_packageInfo.packageName}\n'
+      'Version: ${_packageInfo.version}\n'
+      'Build Number: ${_packageInfo.buildNumber}');
+
+  return _packageInfo;
+}
+
+/// Get app bundle name
+
+Future<String> getBundleName() async {
+  _appBundle ??= (await getPackageInfo())?.packageName ?? '';
+  return _appBundle;
 }
 
 void launchUri(String url) async {

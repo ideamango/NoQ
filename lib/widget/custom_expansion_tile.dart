@@ -143,7 +143,7 @@ class _CustomExpansionTileState extends State<CustomExpansionTile>
           IconTheme.merge(
             data: IconThemeData(color: _iconColor.evaluate(_easeInAnimation)),
             child: Container(
-              padding: EdgeInsets.fromLTRB(8, 4, 0, 0),
+              padding: EdgeInsets.fromLTRB(6, 4, 0, 0),
               height: 30,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,

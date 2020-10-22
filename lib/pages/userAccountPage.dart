@@ -885,129 +885,129 @@ class _UserAccountPageState extends State<UserAccountPage> {
                       ]),
                 ),
                 verticalSpacer,
-                Container(
-                  color: primaryDarkColor,
-                  child: Column(
-                    children: <Widget>[
-                      CarouselSlider(
-                        options: CarouselOptions(
-                          height: MediaQuery.of(context).size.height * .9,
-                          autoPlay: true,
-                          autoPlayInterval: Duration(seconds: 3),
-                          autoPlayAnimationDuration:
-                              Duration(milliseconds: 800),
-                          autoPlayCurve: Curves.easeInCubic,
-                          pauseAutoPlayOnTouch: true,
-                          aspectRatio: 2.0,
-                          onPageChanged: (index, carouselPageChangedReason) {
-                            setState(() {
-                              _currentIndex = index;
-                            });
-                          },
-                        ),
-                        items: cardList.map((card) {
-                          return Builder(builder: (BuildContext context) {
-                            return Container(
-                              height: MediaQuery.of(context).size.height * 0.40,
-                              width: MediaQuery.of(context).size.width,
-                              child: Card(
-                                color: primaryDarkColor,
-                                child: card,
-                              ),
-                            );
-                          });
-                        }).toList(),
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: map<Widget>(cardList, (index, url) {
-                              return Container(
-                                width: 7.0,
-                                height: 7.0,
-                                margin: EdgeInsets.symmetric(
-                                    vertical: 2.0, horizontal: 2.0),
-                                decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  color: _currentIndex == index
-                                      ? highlightColor
-                                      : Colors.grey,
-                                ),
-                              );
-                            }),
-                          ),
-                        ],
-                      )
-                    ],
-                  ),
-                ),
-                verticalSpacer,
+                // Container(
+                //   color: primaryDarkColor,
+                //   child: Column(
+                //     children: <Widget>[
+                //       CarouselSlider(
+                //         options: CarouselOptions(
+                //           height: MediaQuery.of(context).size.height * .9,
+                //           autoPlay: true,
+                //           autoPlayInterval: Duration(seconds: 3),
+                //           autoPlayAnimationDuration:
+                //               Duration(milliseconds: 800),
+                //           autoPlayCurve: Curves.easeInCubic,
+                //           pauseAutoPlayOnTouch: true,
+                //           aspectRatio: 2.0,
+                //           onPageChanged: (index, carouselPageChangedReason) {
+                //             setState(() {
+                //               _currentIndex = index;
+                //             });
+                //           },
+                //         ),
+                //         items: cardList.map((card) {
+                //           return Builder(builder: (BuildContext context) {
+                //             return Container(
+                //               height: MediaQuery.of(context).size.height * 0.40,
+                //               width: MediaQuery.of(context).size.width,
+                //               child: Card(
+                //                 color: primaryDarkColor,
+                //                 child: card,
+                //               ),
+                //             );
+                //           });
+                //         }).toList(),
+                //       ),
+                //       Row(
+                //         mainAxisAlignment: MainAxisAlignment.center,
+                //         children: <Widget>[
+                //           Row(
+                //             mainAxisAlignment: MainAxisAlignment.center,
+                //             children: map<Widget>(cardList, (index, url) {
+                //               return Container(
+                //                 width: 7.0,
+                //                 height: 7.0,
+                //                 margin: EdgeInsets.symmetric(
+                //                     vertical: 2.0, horizontal: 2.0),
+                //                 decoration: BoxDecoration(
+                //                   shape: BoxShape.circle,
+                //                   color: _currentIndex == index
+                //                       ? highlightColor
+                //                       : Colors.grey,
+                //                 ),
+                //               );
+                //             }),
+                //           ),
+                //         ],
+                //       )
+                //     ],
+                //   ),
+                // ),
+                // verticalSpacer,
                 //This is start of boxed container.
-                Container(
-                  decoration: BoxDecoration(
-                      border: Border.all(color: containerColor),
-                      color: Colors.grey[50],
-                      shape: BoxShape.rectangle,
-                      borderRadius: BorderRadius.all(Radius.circular(5.0))),
-                  child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        Container(
-                          decoration: darkContainer,
-                          padding: EdgeInsets.all(3),
-                          child: Row(
-                              mainAxisSize: MainAxisSize.max,
-                              children: <Widget>[
-                                Text(
-                                  " Notifications",
-                                  style: TextStyle(
-                                      color: Colors.white, fontSize: 15),
-                                ),
-                              ]),
-                        ),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: <Widget>[
-                            Text("Add more actions here.."),
-                          ],
-                        )
-                      ]),
-                ),
-                //This is end of boxed container.
-                verticalSpacer,
-                //This is start of boxed container.
-                Container(
-                  decoration: BoxDecoration(
-                      border: Border.all(color: containerColor),
-                      color: Colors.grey[50],
-                      shape: BoxShape.rectangle,
-                      borderRadius: BorderRadius.all(Radius.circular(5.0))),
-                  child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        Container(
-                          decoration: darkContainer,
-                          padding: EdgeInsets.all(3),
-                          child: Row(
-                              mainAxisSize: MainAxisSize.max,
-                              children: <Widget>[
-                                Text(
-                                  " Settings",
-                                  style: TextStyle(
-                                      color: Colors.white, fontSize: 15),
-                                ),
-                              ]),
-                        ),
-                        Column(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: <Widget>[
-                              Text("Need a change.. Right at your service!!"),
-                            ]),
-                      ]),
-                ),
-                //This is end of boxed container.
+                // Container(
+                //   decoration: BoxDecoration(
+                //       border: Border.all(color: containerColor),
+                //       color: Colors.grey[50],
+                //       shape: BoxShape.rectangle,
+                //       borderRadius: BorderRadius.all(Radius.circular(5.0))),
+                //   child: Column(
+                //       crossAxisAlignment: CrossAxisAlignment.start,
+                //       children: <Widget>[
+                //         Container(
+                //           decoration: darkContainer,
+                //           padding: EdgeInsets.all(3),
+                //           child: Row(
+                //               mainAxisSize: MainAxisSize.max,
+                //               children: <Widget>[
+                //                 Text(
+                //                   " Notifications",
+                //                   style: TextStyle(
+                //                       color: Colors.white, fontSize: 15),
+                //                 ),
+                //               ]),
+                //         ),
+                //         Column(
+                //           crossAxisAlignment: CrossAxisAlignment.center,
+                //           children: <Widget>[
+                //             Text("Add more actions here.."),
+                //           ],
+                //         )
+                //       ]),
+                // ),
+                // //This is end of boxed container.
+                // verticalSpacer,
+                // //This is start of boxed container.
+                // Container(
+                //   decoration: BoxDecoration(
+                //       border: Border.all(color: containerColor),
+                //       color: Colors.grey[50],
+                //       shape: BoxShape.rectangle,
+                //       borderRadius: BorderRadius.all(Radius.circular(5.0))),
+                //   child: Column(
+                //       crossAxisAlignment: CrossAxisAlignment.start,
+                //       children: <Widget>[
+                //         Container(
+                //           decoration: darkContainer,
+                //           padding: EdgeInsets.all(3),
+                //           child: Row(
+                //               mainAxisSize: MainAxisSize.max,
+                //               children: <Widget>[
+                //                 Text(
+                //                   " Settings",
+                //                   style: TextStyle(
+                //                       color: Colors.white, fontSize: 15),
+                //                 ),
+                //               ]),
+                //         ),
+                //         Column(
+                //             crossAxisAlignment: CrossAxisAlignment.center,
+                //             children: <Widget>[
+                //               Text("Need a change.. Right at your service!!"),
+                //             ]),
+                //       ]),
+                // ),
+                // //This is end of boxed container.
               ],
             ),
           ),

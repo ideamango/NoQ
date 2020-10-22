@@ -23,48 +23,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
   PageController _pageController;
   int _page = 0;
   String _phone;
-  List drawerItems = [
-    {
-      "icon": Icons.account_circle,
-      "name": "My Account",
-      "pageRoute": UserAccountPage(),
-    },
-    {
-      "icon": Icons.store,
-      "name": "Manage Premises",
-      "pageRoute": ManageApartmentsListPage(),
-    },
-    // {
-    //   "icon": Icons.notifications,
-    //   "name": "Notifications",
-    //   "pageRoute": UserNotificationsPage(),
-    // },
-    {
-      "icon": Icons.help_outline,
-      "name": "FAQs",
-      "pageRoute": HelpPage(),
-    },
-    {
-      "icon": Icons.share,
-      "name": "Rate & Share",
-      "pageRoute": ShareAppPage(),
-    },
-    {
-      "icon": Icons.contact_mail,
-      "name": "Contact Us",
-      "pageRoute": ContactUsPage(),
-    },
-    {
-      "icon": Icons.description,
-      "name": "Privacy Policy/Terms of Use",
-      "pageRoute": TermsOfUsePage(),
-    },
-    {
-      "icon": Icons.info,
-      "name": "About Us",
-      "pageRoute": AboutUsPage(),
-    },
-  ];
+  List drawerItems;
   //Getting dummy list of stores from store class and storing in local variable
   //List<StoreAppData> _stores = getLocalStoreList();
   int i;
@@ -78,6 +37,49 @@ class _CustomDrawerState extends State<CustomDrawer> {
     super.initState();
     _phone = widget.phone;
     _pageController = PageController(initialPage: 8);
+    drawerItems = [
+      {
+        "icon": Icons.account_circle,
+        "name": "My Account",
+        "pageRoute": UserAccountPage(),
+      },
+      {
+        "icon": Icons.store,
+        "name": "Manage Premises",
+        "pageRoute": ManageApartmentsListPage(),
+      },
+      // {
+      //   "icon": Icons.notifications,
+      //   "name": "Notifications",
+      //   "pageRoute": UserNotificationsPage(),
+      // },
+      {
+        "icon": Icons.help_outline,
+        "name": "FAQs",
+        "pageRoute": HelpPage(phone: _phone),
+      },
+      {
+        "icon": Icons.contact_mail,
+        "name": "Contact Us",
+        "pageRoute": ContactUsPage(),
+      },
+      {
+        "icon": Icons.share,
+        "name": "Share",
+        "pageRoute": ShareAppPage(),
+      },
+
+      {
+        "icon": Icons.description,
+        "name": "Privacy Policy/Terms of Use",
+        "pageRoute": TermsOfUsePage(),
+      },
+      {
+        "icon": Icons.info,
+        "name": "About Us",
+        "pageRoute": AboutUsPage(),
+      },
+    ];
     // _initializeUserProfile();
   }
 

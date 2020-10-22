@@ -55,6 +55,12 @@ final highlightMedBoldTextStyle = TextStyle(
   fontSize: 18,
   //height: 2,
 );
+
+final faqTabTextStyle = TextStyle(
+  color: Colors.grey[100],
+  fontFamily: 'Roboto',
+  fontSize: 16,
+);
 final buttonMedTextStyle = TextStyle(
   color: Colors.white,
   fontWeight: FontWeight.w700,
@@ -200,6 +206,8 @@ final highlightSubTextStyle = TextStyle(
     color: Colors.blueGrey[800], fontFamily: 'Montserrat', fontSize: 12.0);
 final lightTextStyle =
     TextStyle(color: Colors.white, fontFamily: 'Montserrat', fontSize: 12.0);
+final linkTextStyle = TextStyle(
+    color: primaryAccentColor, fontFamily: 'Montserrat', fontSize: 12.0);
 
 final tokenTextStyle = TextStyle(
     color: highlightColor,

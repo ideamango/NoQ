@@ -266,9 +266,9 @@ class Utils {
       ),
     );
     final link = await parameters.buildUrl();
-    final ShortDynamicLink shortenedLink = await parameters.buildShortLink();
-    print("short url");
-    print(shortenedLink);
+    // final ShortDynamicLink shortenedLink = await parameters.buildShortLink();
+    // print("short url");
+    // print(shortenedLink);
     //return shortenedLink.shortUrl;
     return link;
   }
@@ -304,26 +304,27 @@ class Utils {
 
   static Future<Uri> createDynamicLink() async {
     final DynamicLinkParameters parameters = DynamicLinkParameters(
-      // This should match firebase but without the username query param
-      uriPrefix: 'https://sukoontest2.page.link',
-      // This can be whatever you want for the uri, https://yourapp.com/groupinvite?username=$userName
-      link: Uri.parse('https://sukoontest2.page.link'),
-      androidParameters: AndroidParameters(
-        packageName: 'mobi.sukoon',
-        minimumVersion: 1,
-      ),
-      iosParameters: IosParameters(
-        bundleId: 'mobi.sukoon',
-        minimumVersion: '1',
-        appStoreId: '962194608',
-      ),
-      socialMetaTagParameters: SocialMetaTagParameters(
-        title: 'Check out this amazing app',
-        description: 'It saves time and keeps you at safe-distance!',
-      ),
-    );
+        // This should match firebase but without the username query param
+        uriPrefix: 'https://sukoontest2.page.link',
+        // This can be whatever you want for the uri, https://yourapp.com/groupinvite?username=$userName
+        link: Uri.parse('https://sukoontest2.page.link'),
+        androidParameters: AndroidParameters(
+          packageName: 'mobi.sukoon',
+          minimumVersion: 1,
+        ),
+        iosParameters: IosParameters(
+          bundleId: 'mobi.sukoon',
+          minimumVersion: '1',
+          appStoreId: '962194608',
+        ),
+        socialMetaTagParameters: SocialMetaTagParameters(
+          title: 'Check out this amazing app',
+          description: 'It saves time and keeps you at safe-distance!',
+        ));
     final link = await parameters.buildUrl();
     final ShortDynamicLink shortenedLink = await parameters.buildShortLink();
-    return link;
+    print(shortenedLink.shortUrl);
+    print(link.authority);
+    return shortenedLink.shortUrl;
   }
 }

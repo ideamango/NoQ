@@ -1,23 +1,30 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:noq/constants.dart';
+import 'package:noq/global_state.dart';
+import 'package:noq/pages/contact_us.dart';
 import 'package:noq/pages/manage_apartment_list_page.dart';
 import 'package:noq/style.dart';
 import 'package:noq/widget/appbar.dart';
 import 'package:noq/widget/bottom_nav_bar.dart';
+import 'package:noq/widget/custom_expansion_tile.dart';
 import 'package:noq/widget/header.dart';
 import 'package:noq/widget/widgets.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class HelpPage extends StatefulWidget {
+  final String phone;
+  HelpPage({Key key, @required this.phone}) : super(key: key);
   @override
   _HelpPageState createState() => _HelpPageState();
 }
 
 class _HelpPageState extends State<HelpPage> {
+  String _phone;
   @override
   void initState() {
     super.initState();
+    _phone = widget.phone;
   }
 
   @override
@@ -27,14 +34,14 @@ class _HelpPageState extends State<HelpPage> {
 
   @override
   Widget build(BuildContext context) {
-    String title = "Help";
+    String title = "How can we help you?";
     return MaterialApp(
       theme: ThemeData.light().copyWith(),
       home: Scaffold(
         drawer: CustomDrawer(
             //TODO provide phone number
             //phone: _state.currentUser.ph,
-            phone: null),
+            phone: _phone),
         appBar: CustomAppBar(
           titleTxt: title,
         ),
@@ -46,71 +53,148 @@ class _HelpPageState extends State<HelpPage> {
                 //mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
                   Card(
-                      color: btnColor,
+                    elevation: 20,
+                    child: Container(
+                        height: MediaQuery.of(context).size.height * .3,
+                        child: Image.asset('assets/faq.png')),
+                  ),
+                  Card(
                       elevation: 20,
                       child: Padding(
                         padding: EdgeInsets.all(0),
                         child: Column(
                           children: <Widget>[
-                            Container(
-                                height: MediaQuery.of(context).size.width * .08,
-                                width: MediaQuery.of(context).size.width,
-                                padding: EdgeInsets.fromLTRB(6, 0, 0, 0),
-                                decoration: btnColorContainer,
-                                alignment: Alignment.center,
-                                child: Text(
-                                  "FAQ's",
-                                  style: whiteBoldTextStyle1,
-                                )),
-                            Container(
-                              child: myLightDivider,
-                              color: btnColor,
-                            ),
                             verticalSpacer,
                             Container(
-                              padding: EdgeInsets.fromLTRB(6, 0, 0, 0),
-                              decoration: rectLightContainer,
+                              padding: EdgeInsets.all(5),
+                              //  decoration: rectLightContainer,
                               child: RichText(
                                   text: TextSpan(
-                                      style: lightTextStyle,
+                                      style: highlightSubTextStyle,
                                       children: <TextSpan>[
                                     TextSpan(
                                         text:
-                                            'Kindly check the FAQs below if you are using '),
+                                            'Below you will find all the help to use SUKOON like a pro. Still if you didn\'t find the answer you are looking for, feel free to drop a message to us at '),
                                     TextSpan(
-                                        text:
-                                            'this app for first time and have any queries regarding the working of this app. '),
-                                    TextSpan(
-                                        text:
-                                            'If you have any query which is not covered in FAQs, you can drop a message to us at ...@mail.com. We will try our best to address that at earliest.'),
+                                      text: 'care@sukoon.mobi',
+                                      style: TextStyle(color: Colors.blue),
+                                      recognizer: new TapGestureRecognizer()
+                                        ..onTap = () => Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    ContactUsPage())),
+                                    ),
+                                    // TextSpan(
+                                    //     text:
+                                    //         ' We will try our best to address that at earliest.'),
                                   ])),
                             ),
                             verticalSpacer
                           ],
                         ),
                       )),
-                  Card(
-                    elevation: 20,
-                    shadowColor: highlightColor,
-                    child: Container(
-                      alignment: Alignment.center,
-                      width: MediaQuery.of(context).size.width,
-                      child: RichText(
-                        text: TextSpan(
-                          style: highlightMedBoldTextStyle,
-                          children: <TextSpan>[
-                            TextSpan(text: 'Avoid Rush '),
-                            TextSpan(
-                                text: '| Be Safe |',
-                                style: highlightBoldTextStyle),
-                            TextSpan(
-                              text: '  Save Time.',
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
+                  // Container(
+                  //   //padding: EdgeInsets.only(left: 5),
+                  //   //decoration: darkContainer,
+                  //   child: Theme(
+                  //     data: ThemeData(
+                  //       unselectedWidgetColor: Colors.white,
+                  //       accentColor: Colors.grey[50],
+                  //     ),
+                  //     child: CustomExpansionTile(
+                  //       //key: PageStorageKey(this.widget.headerTitle),
+                  //       initiallyExpanded: true,
+
+                  //       title: Row(
+                  //         children: <Widget>[
+                  //           Container(
+                  //             height: MediaQuery.of(context).size.width * .1,
+                  //             width: MediaQuery.of(context).size.width * .8,
+                  //             child: Text(
+                  //               "How Sukoon helps bring Sukoon to your life?",
+                  //               softWrap: true,
+                  //               style: TextStyle(
+                  //                   color: primaryDarkColor, fontSize: 15),
+                  //             ),
+                  //           ),
+                  //           SizedBox(width: 5),
+                  //         ],
+                  //       ),
+                  //       // backgroundColor: Colors.blueGrey[500],
+
+                  //       children: <Widget>[
+                  //         new Container(
+                  //           width: MediaQuery.of(context).size.width * .94,
+                  //           decoration: darkContainer,
+                  //           padding: EdgeInsets.all(2.0),
+                  //           child: Row(
+                  //             children: <Widget>[
+                  //               Expanded(
+                  //                 child: Column(
+                  //                   crossAxisAlignment:
+                  //                       CrossAxisAlignment.start,
+                  //                   children: <Widget>[
+                  //                     Text('Lets look at the problems first..',
+                  //                         style: textLabelTextStyle),
+                  //                     verticalSpacer,
+                  //                     RichText(
+                  //                         text: TextSpan(
+                  //                             style: highlightSubTextStyle,
+                  //                             children: <TextSpan>[
+                  //                           TextSpan(
+                  //                               text:
+                  //                                   'There is not just one, but numerous reasons how this helps you. Here is how - '),
+                  //                           TextSpan(
+                  //                               text:
+                  //                                   'Maintaing social distance is need of the hour. Sometimes just unavoidable when you visit your '),
+                  //                           TextSpan(
+                  //                               text:
+                  //                                   'favourite grocery store for example, you see people standing in queue and wait-time could be anything from 10 mins to an hour.'),
+                  //                           TextSpan(
+                  //                               text:
+                  //                                   'Another problem is, Shopping at place this crowded is not at all advisable.'),
+                  //                           TextSpan(
+                  //                               text:
+                  //                                   'So, Not just you waste your precious time in waiting but also expose yourself to virus(Covid-19).'),
+                  //                         ])),
+                  //                     verticalSpacer,
+                  //                     myDivider,
+                  //                     verticalSpacer,
+                  //                     Text('How this app helps me?',
+                  //                         style: textLabelTextStyle),
+                  //                     verticalSpacer,
+                  //                     RichText(
+                  //                         text: TextSpan(
+                  //                             style: highlightSubTextStyle,
+                  //                             children: <TextSpan>[
+                  //                           TextSpan(
+                  //                               text:
+                  //                                   'The idea to is plan your visits well ahead so that shopping doesnt become unsafe for you.'),
+                  //                           TextSpan(
+                  //                               text:
+                  //                                   'Now, How do we do this. We lists different premises like Shopping Marts, Gaming Zones, Offices, Apartments, Medical Stores etc'),
+                  //                           TextSpan(
+                  //                               text:
+                  //                                   ' where you might visit frequently. Dates and available time slots will be shown, you can select time and date as per your convenience.  '),
+                  //                           TextSpan(
+                  //                               text:
+                  //                                   ' So, Now when you visit at your pre-booked time, you dont have to wait and second as limited people would be allowed in a given time slot, it '),
+                  //                           TextSpan(
+                  //                               text:
+                  //                                   ' much easier to maintain distance and be safe.'),
+                  //                         ])),
+                  //                     verticalSpacer,
+                  //                   ],
+                  //                 ),
+                  //               ),
+                  //             ],
+                  //           ),
+                  //         ),
+                  //       ],
+                  //     ),
+                  //   ),
+                  // ),
                   Card(
                       elevation: 20,
                       child: Container(
@@ -123,8 +207,8 @@ class _HelpPageState extends State<HelpPage> {
                                 padding: EdgeInsets.fromLTRB(6, 0, 0, 0),
                                 decoration: btnColorContainer,
                                 child: Text(
-                                  "Why should I use this app?",
-                                  style: whiteBoldTextStyle1,
+                                  "How Sukoon helps bring Sukoon to your life?",
+                                  style: faqTabTextStyle,
                                 )),
                             Padding(
                               padding: const EdgeInsets.all(8.0),
