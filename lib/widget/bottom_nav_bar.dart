@@ -62,7 +62,7 @@ class _CustomBottomBarState extends State<CustomBottomBar> {
       setState(() {
         _botBarIndex = index;
       });
-      Navigator.pop(context);
+      //Navigator.pop(context);
       switch (index) {
         case 0:
           {
