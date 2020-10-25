@@ -184,12 +184,15 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
   }
 
   Widget _emptySearchPage() {
-    String txtMsg = (messageTitle != null) ? messageTitle : defaultSearchMsg;
-    String txtSubMsg =
-        (messageSubTitle != null) ? messageSubTitle : defaultSearchSubMsg;
+    String txtMsg = (Utils.isNotNullOrEmpty(messageTitle)
+        ? messageTitle
+        : defaultSearchMsg);
+    String txtSubMsg = (Utils.isNotNullOrEmpty(messageSubTitle)
+        ? messageSubTitle
+        : defaultSearchSubMsg);
     return Center(
       child: Container(
-        height: MediaQuery.of(context).size.height * .35,
+        // height: MediaQuery.of(context).size.height * .35,
         alignment: Alignment.bottomCenter,
         child: SingleChildScrollView(
           child: Column(
@@ -199,16 +202,42 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
               // SizedBox(
               //   height: MediaQuery.of(context).size.height * .25,
               // ),
-              Text(
-                txtMsg,
-                style: highlightTextStyle,
-                textAlign: TextAlign.center,
-              ),
-              Text(
-                txtSubMsg,
-                style: highlightSubTextStyle,
-                textAlign: TextAlign.center,
-              ),
+              if (messageTitle == "NotFound")
+                Column(
+                  children: <Widget>[
+                    SizedBox(height: MediaQuery.of(context).size.height * .1),
+                    Container(
+                      height: MediaQuery.of(context).size.height * .4,
+                      decoration: BoxDecoration(
+                        image: DecorationImage(
+                            image: AssetImage("assets/notFound.jpg"),
+                            fit: BoxFit.cover),
+                      ),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.all(5),
+                      child: Text(
+                        txtSubMsg,
+                        style: highlightBoldTextStyle,
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                  ],
+                ),
+              if (messageTitle != "NotFound")
+                Column(children: <Widget>[
+                  SizedBox(height: MediaQuery.of(context).size.height * .32),
+                  Text(
+                    txtMsg,
+                    style: highlightTextStyle,
+                    textAlign: TextAlign.center,
+                  ),
+                  Text(
+                    txtSubMsg,
+                    style: highlightSubTextStyle,
+                    textAlign: TextAlign.center,
+                  ),
+                ]),
             ],
           ),
         ),
@@ -377,6 +406,7 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
                     _searchTextController.clear();
                     _searchText = "";
                     setState(() {
+                      messageTitle = "";
                       _isSearching = "searching";
                     });
                     _buildSearchList();
@@ -409,6 +439,7 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
             } else {
               if (_searchTextController.text.length >= 3) {
                 setState(() {
+                  messageTitle = "";
                   _isSearching = "searching";
                   _searchText = _searchTextController.text;
                   _buildSearchList();
@@ -498,6 +529,7 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
           },
           theme: ThemeData.light().copyWith(),
           home: Scaffold(
+              resizeToAvoidBottomInset: false,
               appBar: AppBar(
                   actions: <Widget>[],
                   flexibleSpace: Container(
@@ -1335,6 +1367,7 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
     //   //return _stores.map((contact) => new ChildItem(contact.name)).toList();
     // } else {
     getSearchEntitiesList().then((value) {
+      //Case 1 - Cant search as location not accessible
       if (value == null) {
         _stores.clear();
         setState(() {
@@ -1345,13 +1378,29 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
         });
         return;
       }
+      //Case 2 - Zero matching search results.
       if (value.length == 0) {
+        if (Utils.isNotNullOrEmpty(_entityType) ||
+            Utils.isNotNullOrEmpty(_searchText)) {
+          setState(() {
+            messageTitle = "NotFound";
+            messageSubTitle = notFoundMsg;
+          });
+        } else {
+          setState(() {
+            messageTitle = "";
+            messageSubTitle = "";
+          });
+        }
+
         _stores.clear();
       } else {
+        //Case 3- Show search results.
+
+        _stores.clear();
         //Scrutinize the list returned froms server.
         //1. entities that are bookable, public and active only should be listed
         //2. Parent entities
-        _stores.clear();
         for (int i = 0; i < value.length; i++) {
           if (value[i].isActive) _stores.add(value[i]);
         }

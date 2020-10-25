@@ -31,6 +31,8 @@ String helpPageMainMsg = "We are working on getting best help..";
 String defaultSearchMsg = 'Search places by Category or Name!!';
 String defaultSearchSubMsg =
     'Add places to favourites, and quickly browse through later!!  ';
+String notFoundMsg =
+    "No worries.. In One click, Contact us, we will onboard your favorite place!";
 String noFavMsg = 'No favourites yet!!';
 
 String tokenHeading = 'Yay!! Your booking is confirmed.';

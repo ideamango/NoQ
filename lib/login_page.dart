@@ -343,7 +343,7 @@ class _LoginPageState extends State<LoginPage> {
 
       await FirebaseAuth.instance.verifyPhoneNumber(
           phoneNumber: phoneNo,
-          timeout: Duration(seconds: 8),
+          timeout: Duration(seconds: 30),
           verificationCompleted: phoneVerified,
           verificationFailed: verificationFailed,
           forceResendingToken: _forceResendingToken,
