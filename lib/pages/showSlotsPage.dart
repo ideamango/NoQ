@@ -295,7 +295,7 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
                                           context,
                                           Icons.error,
                                           Duration(seconds: 4),
-                                          "Oops.. You forgot to select a time slot!!",
+                                          forgotTimeSlot,
                                           "");
                                     }
                                   },

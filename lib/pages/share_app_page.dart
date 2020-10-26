@@ -75,15 +75,13 @@ class _ShareAppPageState extends State<ShareAppPage> {
                           Padding(
                             padding: EdgeInsets.symmetric(
                                 vertical: 8.0, horizontal: 16.0),
-                            child: Text(
-                                "Share with your friends and help people to build safety net.",
+                            child: Text(shareWithFriends,
                                 style: highlightSubTextStyle),
                           ),
                           Padding(
                             padding: EdgeInsets.symmetric(
                                 vertical: 8.0, horizontal: 16.0),
-                            child: Text(
-                                "Share with people who owns a business or runs pop-shops, can also manage their bookings.",
+                            child: Text(shareWithOwners,
                                 style: highlightSubTextStyle),
                           ),
                           Padding(
@@ -134,48 +132,6 @@ class _ShareAppPageState extends State<ShareAppPage> {
                         ],
                       ),
                     )
-
-                    // Text("Rate our app!!", style: highlightTextStyle),
-                    // Text('Saved Time | Safety one step closer.',
-                    //     style: highlightSubTextStyle),
-                    // Padding(
-                    //   padding:
-                    //       EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
-                    //   child: RaisedButton(
-                    //       color: primaryAccentColor,
-                    //       textColor: Colors.white,
-                    //       splashColor: highlightColor,
-                    //       onPressed: inviteText.isEmpty
-                    //           ? null
-                    //           : () {
-                    //               // A builder is used to retrieve the context immediately
-                    //               // surrounding the RaisedButton.
-                    //               //
-                    //               // The context's `findRenderObject` returns the first
-                    //               // RenderObject in its descendent tree when it's not
-                    //               // a RenderObjectWidget. The RaisedButton's RenderObject
-                    //               // has its position and size after it's built.
-                    //               final RenderBox box =
-                    //                   context.findRenderObject();
-                    //               try {
-                    //                 Share.share(inviteText,
-                    //                     subject: inviteSubject,
-                    //                     sharePositionOrigin:
-                    //                         box.localToGlobal(Offset.zero) &
-                    //                             box.size);
-                    //               } on PlatformException catch (e) {
-                    //                 print('${e.message}');
-                    //               }
-                    //             },
-                    //       child: Row(
-                    //         children: <Widget>[
-                    //           new Icon(Icons.star, color: Colors.white),
-                    //           horizontalSpacer,
-                    //           horizontalSpacer,
-                    //           Text('Rate it now '),
-                    //         ],
-                    //       )),
-                    // )
                   ],
                 ))),
         // bottomNavigationBar: CustomBottomBar(

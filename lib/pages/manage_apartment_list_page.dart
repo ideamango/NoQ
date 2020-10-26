@@ -115,11 +115,11 @@ class _ManageApartmentsListPageState extends State<ManageApartmentsListPage> {
           decoration: InputDecoration(
             enabledBorder: InputBorder.none,
             focusedBorder: InputBorder.none,
-            labelText: 'Type of Premise',
+            labelText: 'Type of Place',
           ),
           child: new DropdownButtonHideUnderline(
             child: new DropdownButton(
-              hint: new Text("Select Type of Premise"),
+              hint: new Text("Select Type of Place"),
               value: _entityType,
               isDense: true,
               onChanged: (newValue) {
@@ -151,7 +151,7 @@ class _ManageApartmentsListPageState extends State<ManageApartmentsListPage> {
         //   saveEntityDetails(entity);
       },
     );
-    String title = "Manage Premises";
+    String title = "Manage your Places";
     if (_initCompleted) {
       return MaterialApp(
         theme: ThemeData.light().copyWith(),
@@ -189,7 +189,7 @@ class _ManageApartmentsListPageState extends State<ManageApartmentsListPage> {
                                 ),
                                 SizedBox(width: 12),
                                 Text(
-                                  "Add Premises to manage",
+                                  "Add Places to manage",
                                   style: TextStyle(
                                       color: Colors.white, fontSize: 15),
                                 ),

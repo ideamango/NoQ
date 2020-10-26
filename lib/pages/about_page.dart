@@ -108,7 +108,7 @@ class _AboutUsPageState extends State<AboutUsPage> {
                               text: TextSpan(
                                   style: highlightSubTextStyle,
                                   children: <TextSpan>[
-                                TextSpan(text: privacy_policy),
+                                TextSpan(text: privacyPolicy),
                               ])),
                         ),
                       ),

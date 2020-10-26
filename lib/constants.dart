@@ -11,18 +11,30 @@ String homeScreenMsgTxt =
     "Add the amenities in Apartment or Workplace to your 'favourites' and book a slot anytime.";
 String whatsappContactUsMsg = "Hey!!";
 String whatsappMessage =
-    "Hey!! Did you book your peace of mind, while going out? Are you worried about long waiting in queues?\nQuick Solution - SUKOON. It helps you book your space when visiting any place.\nLess crowded space, More SAFE.";
+    "Hey!! Are you worried about safety or long waiting in queues? \nNo worries, booK your piece of mind with SUKOON mobile app. \nBook your slot when it's Less crowded and Stay SAFE.";
 String qrCodeShareMessage =
-    "Hey!! Did you book your peace of mind, while going out? Are you worried about long waiting in queues?\nQuick Solution - SUKOON. It helps you book your space when visiting any place. \nLess crowded space, More SAFE. Just scan QR code and Voila!!";
+    "Hey!! Are you worried about safety or long waiting in queues? \nNo worries, booK your piece of mind with SUKOON mobile app. \nBook your slot when it's Less crowded and Stay SAFE. \nJust scan QR code and Voila!!";
 String locationPermissionMsg =
-    'To find nearby places we need access to your current location. Open settings and give permission to access your location.';
-String locationAccessDeniedStr = "Sorry, couldn't access current location!!";
+    'To find nearby places we need access to your current location. Open Settings and give permission to "Sukoon" to access your location.';
+String locationAccessDeniedStr =
+    "Sorry, couldn't access your current location!!";
 String locationAccessDeniedSubStr =
     "Goto location settings in your device and ALLOW Location access";
+String activeInfo =
+    'Marking a Place as "ACTIVE" requires all mandatory details. Please fill and Save again.';
+String pressUseCurrentLocation =
+    'Press "Use Current Location" button when you are at your Place and Save the details.';
+String shouldSetLocation =
+    "You should set Location for your Place, else Users can't find it!";
+String whyLocationIsRequired =
+    'This will be help users/customer find your Place.';
 
-String contactUsMailId = "care@sukoon.mobi";
+String userCurrentLoc = 'Use Current Location';
+
+String locationMarkingActiveInfo =
+    'Note: Users will be able to search/discover your Facility/Establishment based on this location, so ensure that this is correctly saved before you make it "Active"';
 String contactUsPageHeadline =
-    'We would be happy to help you. Just drop a message to us and we will try our best to address that at earliest.';
+    'We would be happy to help you. Just drop a message to us and we will try our best to address that at the earliest.';
 
 String homeScreenMsgTxt2 = "Avoid rush hours";
 String homeScreenMsgTxt3 = "Be Safe | Save time.";
@@ -30,17 +42,18 @@ String homeScreenMsgTxt3 = "Be Safe | Save time.";
 String helpPageMainMsg = "We are working on getting best help..";
 String defaultSearchMsg = 'Search places by Category or Name!!';
 String defaultSearchSubMsg =
-    'Add places to favourites, and quickly browse through later!!  ';
-String notFoundMsg =
-    "No worries.. In One click, Contact us, we will onboard your favorite place!";
+    'Add places to favourites, and quickly browse through later!!';
+
+String notFoundMsg = "No worries.. Ask the place owner to Register for free!!";
 String noFavMsg = 'No favourites yet!!';
 
 String tokenHeading = 'Yay!! Your booking is confirmed.';
 String tokenTextH1 =
     "Booked your peace of mind. No more long waiting in queues!";
-String tokenTextH2 = "Please be on time and maintain social distance while at ";
+String tokenTextH2 =
+    "Please be on time and maintain social distancing norms while at ";
 String tokenTextH3 = "Be Safe !! Save Time !!";
-String drawerHeaderTxt = "You have logged in with Phone number - ";
+String drawerHeaderTxt = "You are logged in with ";
 String drawerHeaderTxt11 = 'Stay ';
 String drawerHeaderTxt12 = 'Safe!!  ';
 String drawerHeaderTxt21 = 'Maintain ';
@@ -51,9 +64,9 @@ String drawerHeaderTxt33 = 'hours !!  ';
 String drawerHeaderTxt41 = 'Save ';
 String drawerHeaderTxt42 = 'time !!';
 String publicInfo =
-    "Public: If this is off - it means your service/facility is restricted to only either your employees or residents.";
-String activeInfo =
-    "Active: If this is on - it means your service/facility is active and can be searched by other users. You MUST fill all the required details before making it ACTIVE.";
+    "Public: If this is off - it means your service/facility is restricted to only either your employees or residents. Example: Office or Apartment.";
+String activeDef =
+    'Active: If this is on - it means your place is Active and can be searched by other users. You MUST fill all the required details before making it "ACTIVE".';
 String bookableInfo =
     "Bookable: If your slot for your service/facility can be booked by the user and token can be issued then enable it. For example: Shop or Tennis-court is bookable but Mall or Apartment complex can't be booked.";
 String addressInfoStr =
@@ -73,11 +86,40 @@ String missingInfoForShareSubStr = "Save Entity and then Share!!";
 String basicInfoStr =
     'These are important details of the establishment, Same will be shown to customer when they search.';
 
-String adminInfoStr = 'The person who manages the premises.';
+String bookable =
+    '"Bookable" means that time-slots can be booked by the users. For example, places like Mall & Apartment are not bookable but Shop, Solon, Gym, etc. can be booked.';
+
+String adminInfoStr = 'The person who manages the Place.';
 String contactInfoStr =
-    'The perosn who can be contacted for any queries regarding your s ervices/facitlity.';
+    'The person who can be contacted for any queries regarding your place.';
 String ratingMsg =
-    "We appreciate the time you took out to provide your review.";
+    "We really appreciate the time you took out to provide your review.";
+
+String locationNotFound = "Oops.. No location found for this place!";
+
+String forgotTimeSlot = "Oops.. You forgot to select a time slot!";
+
+String tryLater = "Please try again later.";
+
+String cantOpenMaps = "Could not open Maps!";
+
+String cantSearch = "Oops.. Can't Search!";
+
+String selectEarlierDate = "Please select an earlier date.";
+
+String closedOnDay = "This place is closed on this day.";
+
+String selectDifferentDate = "This place is closed on this day.";
+
+String giveLocationPermission =
+    "Open location settings and give permissions to access current location.";
+
+String shareWithFriends =
+    "Share with your Friends & Family to bring them into Safety net.";
+
+String shareWithOwners =
+    "You can also Share with people who manage Businesses such as Pop-Shop, Shops, Sport Centers, etc.";
+
 enum Role { Manager, Admin, ContactPerson, Employee }
 List<String> roleTypes = ['Admin', 'Manager'];
 List<String> entityTypes = [
@@ -147,7 +189,7 @@ Further, by clicking on the ‘I Accept & Sign up’ button, you hereby consent 
 
 If you are accessing the mFine mobile application, then there may be additional terms (such as the terms imposed by application stores) which may also govern the use of the mobile application. By clicking on the ‘I Accept’ button at the end of this page or
  accessing or using the mobile application, you agree to be bound by the aforementioned additional terms as may be amended from time to time as well.''';
-String privacy_policy =
+String privacyPolicy =
     '''We value the trust You (defined below) place in Us (defined below). That’s why We (defined below) insist upon the highest standards for secure transactions and customer information privacy. Please read the following statement to learn about Our (defined below) information gathering and dissemination practices.
 
 Novocura Tech Health Services Private Limited (“NTHS”, which also include its affiliates), having its registered office address at Salarpuria Sattva Supreme, 2nd Floor, West Wing, Sarjapur Outer Ring Road, Marathahalli, Bengaluru 560037.

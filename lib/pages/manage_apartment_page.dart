@@ -1724,8 +1724,8 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
                       Duration(
                         seconds: 5,
                       ),
-                      "Premise details saved!!",
-                      "Be found, by marking it ACTIVE.");
+                      "Place details saved!",
+                      'Be found by the customers, by marking it "ACTIVE".');
                 }
               });
             } else {
@@ -1886,7 +1886,7 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
                       Text(
-                        'Bookable premise means that time-slots can be booked, for eg. Shopping store, Salon. Premises that are not bookable are Apartments, Malls etc.',
+                        bookable,
                         style: TextStyle(
                           fontSize: 15,
                           color: Colors.blueGrey[600],
@@ -1894,7 +1894,7 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
                       ),
                       verticalSpacer,
                       Text(
-                        'Are you sure you make this premise bookable?',
+                        'Are you sure you make the Place "Bookable"?',
                         style: TextStyle(
                           fontSize: 15,
                           color: Colors.blueGrey[600],
@@ -2257,27 +2257,6 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
                                     value: isPublic,
                                     onChanged: (value) {
                                       setState(() {
-                                        // if (value) {
-                                        //   validateField = true;
-                                        //   _autoValidate = true;
-                                        //   //bool retVal = validateAllFields();
-                                        //   if (!retVal) {
-                                        //     //Show flushbar with info that fields has invalid data
-                                        //     Utils.showMyFlushbar(
-                                        //         context,
-                                        //         Icons.info_outline,
-                                        //         Duration(
-                                        //           seconds: 6,
-                                        //         ),
-                                        //         "Missing Information!! ",
-                                        //         "Making premises PUBLIC requires basic details. Please fill and try again !!");
-                                        //   } else {
-                                        //     validateField = false;
-                                        //     isPublic = value;
-                                        //     entity.isPublic = value;
-                                        //     print(isPublic);
-                                        //   }
-                                        // } else {
                                         isPublic = value;
                                         entity.isPublic = value;
                                         print(isPublic);
@@ -2440,7 +2419,7 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
                                                 style: subHeadingTextStyle,
                                                 children: <TextSpan>[
                                               TextSpan(
-                                                  text: activeInfo,
+                                                  text: activeDef,
                                                   style: buttonXSmlTextStyle)
                                             ]));
 
@@ -2472,7 +2451,7 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
                                                   style: subHeadingTextStyle,
                                                   children: <TextSpan>[
                                                 TextSpan(
-                                                    text: activeInfo,
+                                                    text: activeDef,
                                                     style: buttonXSmlTextStyle)
                                               ]));
 
@@ -2513,8 +2492,8 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
                                                   Duration(
                                                     seconds: 6,
                                                   ),
-                                                  "Current location is must for your entity to be searchable by users!! ",
-                                                  "USE CURRENT LOCATION in Location Details section which auto-populates your current location using the device.");
+                                                  shouldSetLocation,
+                                                  pressUseCurrentLocation);
                                             } else if (!retVal) {
                                               //Show flushbar with info that fields has invalid data
                                               Utils.showMyFlushbar(
@@ -2523,8 +2502,8 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
                                                   Duration(
                                                     seconds: 6,
                                                   ),
-                                                  "Missing Information!! ",
-                                                  "Making premises ACTIVE requires basic details. Please fill and try again !!");
+                                                  "Missing Information!!",
+                                                  'Making a place "ACTIVE" requires all mandatory information to be filled in. Please provide the details and Save.');
                                             }
                                           } else {
                                             validateField = false;
@@ -2803,11 +2782,8 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
                                             style: highlightSubTextStyle,
                                             children: <TextSpan>[
                                           TextSpan(
-                                              text:
-                                                  'Press USE CURRENT LOCATION to get the current GPS coordinates.'),
-                                          TextSpan(
-                                              text:
-                                                  'This will help in locating your premises and lists it in search results by user.'),
+                                              text: pressUseCurrentLocation),
+                                          TextSpan(text: whyLocationIsRequired),
                                         ])),
                                   ),
                                   Row(
@@ -2836,7 +2812,7 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
                                         shape: RoundedRectangleBorder(
                                             side: BorderSide(color: btnColor)),
                                         child: Text(
-                                          'Use Current Location',
+                                          userCurrentLoc,
                                           textAlign: TextAlign.center,
                                         ),
                                         onPressed: useCurrLocation,
@@ -3393,7 +3369,7 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
               ),
             ),
           ),
-         // bottomNavigationBar: CustomBottomBar(barIndex: 0),
+          // bottomNavigationBar: CustomBottomBar(barIndex: 0),
         ),
       );
     } else
