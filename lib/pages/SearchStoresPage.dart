@@ -29,6 +29,8 @@ class SearchStoresPage extends StatefulWidget {
   _SearchStoresPageState createState() => _SearchStoresPageState();
 }
 
+String _entityType;
+
 class _SearchStoresPageState extends State<SearchStoresPage> {
   bool initCompleted = false;
   bool isFavourited = false;
@@ -39,7 +41,7 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
   List<Entity> _stores = new List<Entity>();
   List<Entity> _pastSearches = new List<Entity>();
   List<Entity> _searchResultstores = new List<Entity>();
-  String _entityType;
+
   String _searchInAll = 'Search in All';
   bool searchBoxClicked = false;
   bool fetchFromServer = false;
@@ -329,7 +331,10 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
               // icon: Icon(Icons.search),
               onChanged: (newValue) {
                 setState(() {
+                  print('entity type - old value');
+                  print(_entityType);
                   _entityType = newValue;
+                  print('entity type - new value - $_entityType');
                   _isSearching = "searching";
                   _buildSearchList();
                 });
@@ -1500,9 +1505,15 @@ class _MyFloatingActionButtonState extends State<MyFloatingActionButton> {
               onPressed: () {
                 var bottomSheetController = showBottomSheet(
                     context: context,
+                    elevation: 30,
+                    shape: RoundedRectangleBorder(
+                        side: BorderSide(color: Colors.blueGrey[200]),
+                        borderRadius: BorderRadius.only(
+                            topLeft: Radius.circular(20.0),
+                            topRight: Radius.circular(20.0))),
                     builder: (context) => Container(
-                          color: Colors.grey[200],
-                          height: 250,
+                          color: Colors.transparent,
+                          height: MediaQuery.of(context).size.height * .6,
                           child: GridView.count(
                             crossAxisCount: 4,
                             childAspectRatio: 1.0,
@@ -1510,25 +1521,243 @@ class _MyFloatingActionButtonState extends State<MyFloatingActionButton> {
                             mainAxisSpacing: 4.0,
                             crossAxisSpacing: 4.0,
                             children: <Widget>[
+                              GestureDetector(
+                                onTap: () {
+                                  _entityType = "School";
+                                  Navigator.of(context).pop();
+                                },
+                                child: Column(
+                                  children: <Widget>[
+                                    Image(
+                                      width: MediaQuery.of(context).size.width *
+                                          .15,
+                                      image: AssetImage("assets/a.png"),
+                                    ),
+                                    Text(
+                                      "School",
+                                      style: textBotSheetTextStyle,
+                                    ),
+                                  ],
+                                ),
+                              ),
                               Column(
                                 children: <Widget>[
                                   Image(
-                                    image: AssetImage("assets/school.png"),
+                                    width:
+                                        MediaQuery.of(context).size.width * .15,
+                                    image: AssetImage("assets/b.png"),
                                   ),
                                   Text(
-                                    "School",
-                                    style: textInputTextStyle,
+                                    "Sports Center",
+                                    style: textBotSheetTextStyle,
                                   ),
                                 ],
                               ),
                               Column(
                                 children: <Widget>[
                                   Image(
-                                    image: AssetImage("assets/restaurant.png"),
+                                    width:
+                                        MediaQuery.of(context).size.width * .15,
+                                    image: AssetImage("assets/c.png"),
+                                  ),
+                                  Text(
+                                    "Medical Store",
+                                    style: textBotSheetTextStyle,
+                                  ),
+                                ],
+                              ),
+                              Column(
+                                children: <Widget>[
+                                  Image(
+                                    width:
+                                        MediaQuery.of(context).size.width * .15,
+                                    image: AssetImage("assets/d.png"),
+                                  ),
+                                  Text(
+                                    "Gym",
+                                    style: textBotSheetTextStyle,
+                                  ),
+                                ],
+                              ),
+                              Column(
+                                children: <Widget>[
+                                  Image(
+                                    width:
+                                        MediaQuery.of(context).size.width * .15,
+                                    image: AssetImage("assets/e.png"),
+                                  ),
+                                  Text(
+                                    "Worship",
+                                    style: textBotSheetTextStyle,
+                                  ),
+                                ],
+                              ),
+                              Column(
+                                children: <Widget>[
+                                  Image(
+                                    width:
+                                        MediaQuery.of(context).size.width * .15,
+                                    image: AssetImage("assets/f.png"),
+                                  ),
+                                  Text(
+                                    "Salon & Spa",
+                                    style: textBotSheetTextStyle,
+                                  ),
+                                ],
+                              ),
+                              Column(
+                                children: <Widget>[
+                                  Image(
+                                    width:
+                                        MediaQuery.of(context).size.width * .15,
+                                    image: AssetImage("assets/g.png"),
+                                  ),
+                                  Text(
+                                    "Apartment",
+                                    style: textBotSheetTextStyle,
+                                  ),
+                                ],
+                              ),
+                              Column(
+                                children: <Widget>[
+                                  Image(
+                                    width:
+                                        MediaQuery.of(context).size.width * .15,
+                                    image: AssetImage("assets/h.png"),
                                   ),
                                   Text(
                                     "Restaurant",
-                                    style: textInputTextStyle,
+                                    style: textBotSheetTextStyle,
+                                  ),
+                                ],
+                              ),
+                              Column(
+                                children: <Widget>[
+                                  Image(
+                                    width:
+                                        MediaQuery.of(context).size.width * .15,
+                                    image: AssetImage("assets/i.png"),
+                                  ),
+                                  Text(
+                                    "Office",
+                                    style: textBotSheetTextStyle,
+                                  ),
+                                ],
+                              ),
+                              Column(
+                                children: <Widget>[
+                                  Image(
+                                    width:
+                                        MediaQuery.of(context).size.width * .15,
+                                    image: AssetImage("assets/a.png"),
+                                  ),
+                                  Text(
+                                    "School",
+                                    style: textBotSheetTextStyle,
+                                  ),
+                                ],
+                              ),
+                              Column(
+                                children: <Widget>[
+                                  Image(
+                                    width:
+                                        MediaQuery.of(context).size.width * .15,
+                                    image: AssetImage("assets/b.png"),
+                                  ),
+                                  Text(
+                                    "Sports Center",
+                                    style: textBotSheetTextStyle,
+                                  ),
+                                ],
+                              ),
+                              Column(
+                                children: <Widget>[
+                                  Image(
+                                    width:
+                                        MediaQuery.of(context).size.width * .15,
+                                    image: AssetImage("assets/c.png"),
+                                  ),
+                                  Text(
+                                    "Medical Store",
+                                    style: textBotSheetTextStyle,
+                                  ),
+                                ],
+                              ),
+                              Column(
+                                children: <Widget>[
+                                  Image(
+                                    width:
+                                        MediaQuery.of(context).size.width * .15,
+                                    image: AssetImage("assets/d.png"),
+                                  ),
+                                  Text(
+                                    "Gym",
+                                    style: textBotSheetTextStyle,
+                                  ),
+                                ],
+                              ),
+                              Column(
+                                children: <Widget>[
+                                  Image(
+                                    width:
+                                        MediaQuery.of(context).size.width * .15,
+                                    image: AssetImage("assets/e.png"),
+                                  ),
+                                  Text(
+                                    "Worship",
+                                    style: textBotSheetTextStyle,
+                                  ),
+                                ],
+                              ),
+                              Column(
+                                children: <Widget>[
+                                  Image(
+                                    width:
+                                        MediaQuery.of(context).size.width * .15,
+                                    image: AssetImage("assets/f.png"),
+                                  ),
+                                  Text(
+                                    "Salon & Spa",
+                                    style: textBotSheetTextStyle,
+                                  ),
+                                ],
+                              ),
+                              Column(
+                                children: <Widget>[
+                                  Image(
+                                    width:
+                                        MediaQuery.of(context).size.width * .15,
+                                    image: AssetImage("assets/g.png"),
+                                  ),
+                                  Text(
+                                    "Apartment",
+                                    style: textBotSheetTextStyle,
+                                  ),
+                                ],
+                              ),
+                              Column(
+                                children: <Widget>[
+                                  Image(
+                                    width:
+                                        MediaQuery.of(context).size.width * .15,
+                                    image: AssetImage("assets/h.png"),
+                                  ),
+                                  Text(
+                                    "Restaurant",
+                                    style: textBotSheetTextStyle,
+                                  ),
+                                ],
+                              ),
+                              Column(
+                                children: <Widget>[
+                                  Image(
+                                    width:
+                                        MediaQuery.of(context).size.width * .15,
+                                    image: AssetImage("assets/i.png"),
+                                  ),
+                                  Text(
+                                    "Office",
+                                    style: textBotSheetTextStyle,
                                   ),
                                 ],
                               ),

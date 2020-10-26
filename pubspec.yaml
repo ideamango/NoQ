@@ -108,8 +108,15 @@ flutter:
     - sales.jpg
     - notFound.jpg
     - regain.jpg
-    - restaurant.png
-    - school.png
+    - a.png
+    - b.png
+    - c.png
+    - d.png
+    - e.png
+    - f.png
+    - g.png
+    - h.png
+    - i.png
   #  - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see
