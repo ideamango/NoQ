@@ -920,20 +920,16 @@ class _ExplorePageState extends State<ExplorePage> {
                                   str.coordinates.geopoint.latitude,
                                   str.coordinates.geopoint.longitude);
                             else {
-                              Utils.showMyFlushbar(
-                                  context,
-                                  Icons.error,
-                                  Duration(seconds: 5),
-                                  "Oops..No GPS location found for this premise!!",
-                                  "");
+                              Utils.showMyFlushbar(context, Icons.error,
+                                  Duration(seconds: 5), locationNotFound, "");
                             }
                           } catch (error) {
                             Utils.showMyFlushbar(
                                 context,
                                 Icons.error,
                                 Duration(seconds: 5),
-                                "Could not open Maps!!",
-                                "Try again later.");
+                                "Could not open Maps!",
+                                'Please try again later and if the problem still persists, Report to us using "Contact Us"');
                           }
                         }),
                   ),
@@ -1157,15 +1153,15 @@ class _ExplorePageState extends State<ExplorePage> {
                     context,
                     Icons.info,
                     Duration(seconds: 5),
-                    "This premise is closed on this day.",
-                    "Select a different date.",
+                    "This place is Closed on the selected day.",
+                    "Please select a different day.",
                   );
                 } else if (!isBookingAllowed) {
                   Utils.showMyFlushbar(
                     context,
                     Icons.info,
                     Duration(seconds: 5),
-                    "This premise allows advance booking for upto $advanceDays days ",
+                    "This place only allows advance booking for upto $advanceDays days.",
                     "Please select an earlier date.",
                   );
                 } else {
@@ -1341,9 +1337,8 @@ class _ExplorePageState extends State<ExplorePage> {
         _stores.clear();
         setState(() {
           _isSearching = "done";
-          messageTitle = "Oops.. Can't Search!!";
-          messageSubTitle =
-              "Open location settings and give permissions to access current location.";
+          messageTitle = cantSearch;
+          messageSubTitle = giveLocationPermission;
         });
         return;
       }
@@ -1369,9 +1364,8 @@ class _ExplorePageState extends State<ExplorePage> {
         _stores.clear();
         setState(() {
           _isSearching = "done";
-          messageTitle = "Oops.. Can't Search!!";
-          messageSubTitle =
-              "Open location settings and give permissions to access current location.";
+          messageTitle = cantSearch;
+          messageSubTitle = giveLocationPermission;
         });
       }
     });

@@ -402,7 +402,7 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
                   ),
                   verticalSpacer,
                   Text(
-                    'Are you sure you make this premise bookable?',
+                    'Are you sure you make this Place Bookable?',
                     style: TextStyle(
                       fontSize: 15,
                       color: Colors.blueGrey[600],
@@ -1531,8 +1531,8 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
                     Duration(
                       seconds: 5,
                     ),
-                    "Premise details saved!!",
-                    "Be found, by marking it ACTIVE.");
+                    'Place details saved!',
+                    'Be found, by marking it "ACTIVE".');
               }
             });
           } else {
@@ -1603,7 +1603,7 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     Text(
-                      'Bookable premise means that time-slots can be booked, for eg. Shopping store, Salon. Premises that are not bookable are Apartments, Malls etc.',
+                      bookable,
                       style: TextStyle(
                         fontSize: 15,
                         color: Colors.blueGrey[600],
@@ -1611,7 +1611,7 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
                     ),
                     verticalSpacer,
                     Text(
-                      'Are you sure you make this premise bookable?',
+                      'Are you sure, you want to mark this place as "Bookable"?',
                       style: TextStyle(
                         fontSize: 15,
                         color: Colors.blueGrey[600],
@@ -2170,8 +2170,8 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
                                                 Duration(
                                                   seconds: 6,
                                                 ),
-                                                "Current location is must for your entity to be searchable by users!! ",
-                                                "USE CURRENT LOCATION in Location Details section which auto-populates your current location using the device.");
+                                                "Location is Required for your Place to be Found by the users!",
+                                                pressUseCurrentLocation);
                                           } else if (!retVal) {
                                             //Show flushbar with info that fields has invalid data
                                             Utils.showMyFlushbar(
@@ -2180,8 +2180,8 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
                                                 Duration(
                                                   seconds: 6,
                                                 ),
-                                                "Missing Information!! ",
-                                                "Making premises ACTIVE requires basic details. Please fill and try again !!");
+                                                "Missing Required Information!",
+                                                activeInfo);
                                           }
                                         } else {
                                           validateField = false;
@@ -2449,11 +2449,10 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
                                           style: highlightSubTextStyle,
                                           children: <TextSpan>[
                                         TextSpan(
-                                            text:
-                                                'Press "Use Current Location" button only when you are at the location of the facility.\r\n'),
+                                            text: pressUseCurrentLocation +
+                                                '\r\n'),
                                         TextSpan(
-                                            text:
-                                                'Note: Users will be able to search/discover your Facility/Establishment based on this location, so ensure that this is correctly saved before you make it "Active"'),
+                                            text: locationMarkingActiveInfo),
                                       ])),
                                 ),
                                 Row(
@@ -2482,7 +2481,7 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
                                       shape: RoundedRectangleBorder(
                                           side: BorderSide(color: btnColor)),
                                       child: Text(
-                                        'Use Current Location',
+                                        userCurrentLoc,
                                         textAlign: TextAlign.center,
                                       ),
                                       onPressed: useCurrLocation,

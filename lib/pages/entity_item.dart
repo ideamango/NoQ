@@ -105,8 +105,8 @@ class EntityRowState extends State<EntityRow> {
               Duration(
                 seconds: 6,
               ),
-              "Important premises details are missing, Click on 'Add details' to add now!",
-              "You need to add those before adding children.");
+              "Important details about your place is missing, Click on 'Add details' to add now!",
+              "You need to add those before adding child places.");
         }
       });
     }
@@ -254,7 +254,7 @@ class EntityRowState extends State<EntityRow> {
                       side: BorderSide(color: Colors.blueGrey[500]),
                       borderRadius: BorderRadius.all(Radius.circular(5.0))),
                   child: Text(
-                    'Child Premises',
+                    'Child Places',
                     style: TextStyle(color: primaryDarkColor, fontSize: 13),
                   ),
                   onPressed: () {

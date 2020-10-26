@@ -612,20 +612,12 @@ class _FavsListPageState extends State<FavsListPage> {
                                     str.coordinates.geopoint.latitude,
                                     str.coordinates.geopoint.longitude);
                               else {
-                                Utils.showMyFlushbar(
-                                    context,
-                                    Icons.error,
-                                    Duration(seconds: 5),
-                                    "Oops..No GPS location found for this premise!!",
-                                    "");
+                                Utils.showMyFlushbar(context, Icons.error,
+                                    Duration(seconds: 5), locationNotFound, "");
                               }
                             } catch (error) {
-                              Utils.showMyFlushbar(
-                                  context,
-                                  Icons.error,
-                                  Duration(seconds: 5),
-                                  "Could not open Maps!!",
-                                  "Try again later.");
+                              Utils.showMyFlushbar(context, Icons.error,
+                                  Duration(seconds: 5), cantOpenMaps, tryLater);
                             }
                           }),
                     ),
@@ -832,15 +824,15 @@ class _FavsListPageState extends State<FavsListPage> {
                     context,
                     Icons.info,
                     Duration(seconds: 5),
-                    "This premise is closed on this day.",
-                    "Select a different date.",
+                    "This place is closed on the selected day.",
+                    "Please Select a different day.",
                   );
                 } else if (!isBookingAllowed) {
                   Utils.showMyFlushbar(
                     context,
                     Icons.info,
                     Duration(seconds: 5),
-                    "This premise allows advance booking for upto $advanceDays days ",
+                    "This place only allows advance booking for upto $advanceDays days.",
                     "Please select an earlier date.",
                   );
                 } else {

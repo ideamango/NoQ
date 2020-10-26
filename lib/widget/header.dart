@@ -45,7 +45,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
       },
       {
         "icon": Icons.store,
-        "name": "Manage Premises",
+        "name": "Manage your Places",
         "pageRoute": ManageApartmentsListPage(),
       },
       // {

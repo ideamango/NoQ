@@ -120,11 +120,11 @@ class _ChildEntitiesListPageState extends State<ChildEntitiesListPage> {
             enabledBorder: InputBorder.none,
             focusedBorder: InputBorder.none,
             //  icon: const Icon(Icons.person),
-            labelText: 'Type of Premise/Amenity',
+            labelText: 'Type of Place',
           ),
           child: new DropdownButtonHideUnderline(
             child: new DropdownButton(
-              hint: new Text("Select type of premise/amenity"),
+              hint: new Text("Select type of Place"),
               value: _subEntityType,
               isDense: true,
               onChanged: (newValue) {
@@ -156,10 +156,10 @@ class _ChildEntitiesListPageState extends State<ChildEntitiesListPage> {
         //   saveEntityDetails(entity);
       },
     );
-    String title = "Manage child premises/amenities";
+    String title = "Manage child Places";
     if (_initCompleted) {
       return MaterialApp(
-        title: 'Add child premises/amenities',
+        title: 'Add a child Place',
         //theme: ThemeData.light().copyWith(),
         home: Scaffold(
           appBar: AppBar(
@@ -219,7 +219,7 @@ class _ChildEntitiesListPageState extends State<ChildEntitiesListPage> {
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: <Widget>[
                                       Text(
-                                        "Add child premises/amenities",
+                                        "Add a child Place",
                                         style: TextStyle(
                                             color: Colors.white, fontSize: 15),
                                       ),

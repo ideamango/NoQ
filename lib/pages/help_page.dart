@@ -253,7 +253,7 @@ class _HelpPageState extends State<HelpPage> {
                                                 'The idea to is plan your visits well ahead so that shopping doesnt become unsafe for you.'),
                                         TextSpan(
                                             text:
-                                                'Now, How do we do this. We lists different premises like Shopping Marts, Gaming Zones, Offices, Apartments, Medical Stores etc'),
+                                                'Now, How do we do this. We lists different places like Shopping Marts, Gaming Zones, Offices, Apartments, Medical Stores, etc'),
                                         TextSpan(
                                             text:
                                                 ' where you might visit frequently. Dates and available time slots will be shown, you can select time and date as per your convenience.  '),
@@ -398,7 +398,7 @@ class _HelpPageState extends State<HelpPage> {
                                   verticalSpacer,
                                   myDivider,
                                   verticalSpacer,
-                                  Text('How can we book ?',
+                                  Text('How to book a time-slot?',
                                       style: textLabelTextStyle),
                                   verticalSpacer,
                                   RichText(
@@ -418,7 +418,7 @@ class _HelpPageState extends State<HelpPage> {
                                   verticalSpacer,
                                   myDivider,
                                   verticalSpacer,
-                                  Text('How can I list my business/store here?',
+                                  Text('How can I list my business/place here?',
                                       style: textLabelTextStyle),
                                   verticalSpacer,
                                   RichText(
@@ -427,13 +427,13 @@ class _HelpPageState extends State<HelpPage> {
                                           children: <TextSpan>[
                                         TextSpan(
                                             text:
-                                                'Business can only be added by owner of that business. Using \'Managed Entities\' feature,'),
+                                                'Business can only be added by person who is either owner or authorized to manage the place. Using "Manage your Places" option, '),
                                         TextSpan(
                                             text:
-                                                ' you can add the business and all details like opening/closing time, people allowed during one slot to minimise crowd inside premises.'),
+                                                'you can add the business and all details like opening/closing time, location of the place, number of people allowed in a time-slot to minimise crowd inside place.'),
                                         TextSpan(
                                             text:
-                                                'Fill all other important details. If your business has whatsapp contact, on-call contact person, please provide that too, that would help people to enquire.'),
+                                                'Fill all other important details. If your business has whatsapp contact, on-call contact person, please provide that too, that would help customers to contact you.'),
                                         TextSpan(
                                           text:
                                               '\nClick here to register your business!!',
