@@ -168,6 +168,7 @@ class _UserHomePageState extends State<UserHomePage> {
       return MaterialApp(
           theme: ThemeData.light().copyWith(),
           home: Scaffold(
+            resizeToAvoidBottomInset: false,
             appBar: CustomAppBar(
               titleTxt: title,
             ),
@@ -335,6 +336,26 @@ class _UserHomePageState extends State<UserHomePage> {
                           child: Text("Run test"),
                         ),
                       ),
+                    Container(
+                      padding: EdgeInsets.all(5),
+                      child: Image(image: AssetImage('assets/6.jpg')),
+                    ),
+                    // Container(
+                    //   width: MediaQuery.of(context).size.width * .8,
+                    //   height: MediaQuery.of(context).size.height * .2,
+                    //   child: Row(children: <Widget>[
+                    //     RichText(
+                    //       text: TextSpan(
+                    //           style: highlightSubTextStyle,
+                    //           children: <TextSpan>[
+                    //             TextSpan(
+                    //                 text:
+                    //                     "Click here if you  own a business, See how this works!"),
+                    //           ]),
+                    //     ),
+                    //     BookingsSheetButton(),
+                    //   ]),
+                    // )
                   ],
                 ),
               ),
@@ -370,6 +391,7 @@ class _UserHomePageState extends State<UserHomePage> {
       return MaterialApp(
         theme: ThemeData.light().copyWith(),
         home: Scaffold(
+            resizeToAvoidBottomInset: false,
             appBar: CustomAppBar(
               titleTxt: "Home Page",
             ),

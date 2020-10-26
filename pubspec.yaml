@@ -107,6 +107,9 @@ flutter:
     - sharing.png
     - sales.jpg
     - notFound.jpg
+    - regain.jpg
+    - restaurant.png
+    - school.png
   #  - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see

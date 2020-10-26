@@ -515,6 +515,7 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
                 ],
               ),
               // drawer: CustomDrawer(),
+              floatingActionButton: MyFloatingActionButton(),
               bottomNavigationBar: CustomBottomBar(barIndex: 1)
 
               // drawer: CustomDrawer(),
@@ -579,6 +580,7 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
                 ],
               ),
               // drawer: CustomDrawer(),
+              floatingActionButton: MyFloatingActionButton(),
               bottomNavigationBar: CustomBottomBar(barIndex: 1)
 
               // drawer: CustomDrawer(),
@@ -1465,5 +1467,87 @@ class ChildItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return new ListTile(title: new Text(this.name));
+  }
+}
+
+class MyFloatingActionButton extends StatefulWidget {
+  @override
+  _MyFloatingActionButtonState createState() => _MyFloatingActionButtonState();
+}
+
+class _MyFloatingActionButtonState extends State<MyFloatingActionButton> {
+  bool showFab = true;
+  @override
+  Widget build(BuildContext context) {
+    return showFab
+        ? Container(
+            width: MediaQuery.of(context).size.width * .4,
+            height: MediaQuery.of(context).size.height * .1,
+            padding: EdgeInsets.all(5),
+            child: FloatingActionButton(
+              elevation: 30,
+              backgroundColor: btnColor,
+              shape: RoundedRectangleBorder(
+                  side: BorderSide(color: Colors.blueGrey[200]),
+                  borderRadius: BorderRadius.all(Radius.circular(45.0))),
+              child: Container(
+                child: Text(
+                  "Choose Category",
+                  style: TextStyle(color: Colors.white, fontSize: 16),
+                  textAlign: TextAlign.center,
+                ),
+              ),
+              onPressed: () {
+                var bottomSheetController = showBottomSheet(
+                    context: context,
+                    builder: (context) => Container(
+                          color: Colors.grey[200],
+                          height: 250,
+                          child: GridView.count(
+                            crossAxisCount: 4,
+                            childAspectRatio: 1.0,
+                            padding: const EdgeInsets.all(4.0),
+                            mainAxisSpacing: 4.0,
+                            crossAxisSpacing: 4.0,
+                            children: <Widget>[
+                              Column(
+                                children: <Widget>[
+                                  Image(
+                                    image: AssetImage("assets/school.png"),
+                                  ),
+                                  Text(
+                                    "School",
+                                    style: textInputTextStyle,
+                                  ),
+                                ],
+                              ),
+                              Column(
+                                children: <Widget>[
+                                  Image(
+                                    image: AssetImage("assets/restaurant.png"),
+                                  ),
+                                  Text(
+                                    "Restaurant",
+                                    style: textInputTextStyle,
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ));
+                showFoatingActionButton(false);
+                bottomSheetController.closed.then((value) {
+                  showFoatingActionButton(true);
+                });
+              },
+            ),
+          )
+        : Container();
+  }
+
+  void showFoatingActionButton(bool value) {
+    setState(() {
+      showFab = value;
+    });
   }
 }
