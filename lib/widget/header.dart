@@ -116,7 +116,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
                             TextSpan(
                                 text: _phone,
                                 style: TextStyle(
-                                    color: primaryDarkColor,
+                                    color: Colors.white,
                                     fontSize: 20,
                                     fontWeight: FontWeight.bold)),
                             // TextSpan(text: '\n'),

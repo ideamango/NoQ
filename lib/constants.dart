@@ -42,7 +42,7 @@ String homeScreenMsgTxt3 = "Be Safe | Save time.";
 String helpPageMainMsg = "We are working on getting best help..";
 String defaultSearchMsg = 'Search places by Category or Name!!';
 String defaultSearchSubMsg =
-    'Add places to favourites, and quickly browse through later!!';
+    'Add places to your favourites and quickly browse through later!!';
 
 String notFoundMsg = "No worries.. Ask the place owner to Register for free!!";
 String noFavMsg = 'No favourites yet!!';

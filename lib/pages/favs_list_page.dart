@@ -174,8 +174,7 @@ class _FavsListPageState extends State<FavsListPage> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
           Text(txtMsg, style: highlightTextStyle),
-          Text('Add places to favourites, and quickly browse through later. ',
-              style: highlightSubTextStyle),
+          Text(defaultSearchSubMsg, style: highlightSubTextStyle),
         ],
       ),
     );
@@ -395,7 +394,7 @@ class _FavsListPageState extends State<FavsListPage> {
                                                   context,
                                                   Icons.info,
                                                   Duration(seconds: 5),
-                                                  "Access to this place is restricted to its residents or employees.",
+                                                  accessRestricted,
                                                   "");
                                             },
                                           ),
