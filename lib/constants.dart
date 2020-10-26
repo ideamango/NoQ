@@ -120,6 +120,9 @@ String shareWithFriends =
 String shareWithOwners =
     "You can also Share with people who manage Businesses such as Pop-Shop, Shops, Sport Centers, etc.";
 
+String accessRestricted =
+    "Access to this place is restricted to its residents or employees.";
+
 enum Role { Manager, Admin, ContactPerson, Employee }
 List<String> roleTypes = ['Admin', 'Manager'];
 List<String> entityTypes = [
