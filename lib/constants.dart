@@ -189,7 +189,7 @@ Further, by clicking on the ‘I Accept & Sign up’ button, you hereby consent 
 
 If you are accessing the mFine mobile application, then there may be additional terms (such as the terms imposed by application stores) which may also govern the use of the mobile application. By clicking on the ‘I Accept’ button at the end of this page or
  accessing or using the mobile application, you agree to be bound by the aforementioned additional terms as may be amended from time to time as well.''';
-String privacy_policy =
+String privacyPolicy =
     '''We value the trust You (defined below) place in Us (defined below). That’s why We (defined below) insist upon the highest standards for secure transactions and customer information privacy. Please read the following statement to learn about Our (defined below) information gathering and dissemination practices.
 
 Novocura Tech Health Services Private Limited (“NTHS”, which also include its affiliates), having its registered office address at Salarpuria Sattva Supreme, 2nd Floor, West Wing, Sarjapur Outer Ring Road, Marathahalli, Bengaluru 560037.

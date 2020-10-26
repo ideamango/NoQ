@@ -1,8 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:noq/constants.dart';
-import 'package:noq/db/db_model/app_user.dart';
-import 'package:noq/global_state.dart';
 import 'package:noq/login_page.dart';
 import 'package:noq/style.dart';
 import 'package:noq/userHomePage.dart';
@@ -130,7 +128,7 @@ class _TermsOfUsePageState extends State<TermsOfUsePage> {
                                   style: highlightSubTextStyle,
                                   children: <TextSpan>[
                                 TextSpan(
-                                  text: privacy_policy,
+                                  text: privacyPolicy,
                                 ),
                               ])),
                         ),
