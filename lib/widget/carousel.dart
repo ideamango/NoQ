@@ -100,7 +100,7 @@ class Item5 extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
           Image.asset(
-            'assets/5.jpg',
+            'assets/regain.jpg',
             height: 140.0,
             fit: BoxFit.fitHeight,
           )
