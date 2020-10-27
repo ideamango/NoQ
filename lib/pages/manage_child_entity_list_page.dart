@@ -16,14 +16,15 @@ import 'package:noq/widget/appbar.dart';
 import 'package:noq/widget/bottom_nav_bar.dart';
 import 'package:uuid/uuid.dart';
 
-class ChildEntitiesListPage extends StatefulWidget {
+class ManageChildEntityListPage extends StatefulWidget {
   final Entity entity;
-  ChildEntitiesListPage({Key key, @required this.entity}) : super(key: key);
+  ManageChildEntityListPage({Key key, @required this.entity}) : super(key: key);
   @override
-  _ChildEntitiesListPageState createState() => _ChildEntitiesListPageState();
+  _ManageChildEntityListPageState createState() =>
+      _ManageChildEntityListPageState();
 }
 
-class _ChildEntitiesListPageState extends State<ChildEntitiesListPage> {
+class _ManageChildEntityListPageState extends State<ManageChildEntityListPage> {
   String _msg;
   final GlobalKey<FormState> _servicesListFormKey = new GlobalKey<FormState>();
   List<MetaEntity> servicesList = new List<MetaEntity>();

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:noq/constants.dart';
 import 'package:noq/db/db_model/entity.dart';
 import 'package:noq/db/db_model/meta_entity.dart';
 import 'package:noq/global_state.dart';
@@ -10,16 +9,14 @@ import 'package:noq/style.dart';
 import 'package:noq/userHomePage.dart';
 import 'package:noq/utils.dart';
 import 'package:noq/widget/appbar.dart';
-import 'package:noq/widget/bottom_nav_bar.dart';
 import 'package:uuid/uuid.dart';
 
-class ManageApartmentsListPage extends StatefulWidget {
+class ManageEntityListPage extends StatefulWidget {
   @override
-  _ManageApartmentsListPageState createState() =>
-      _ManageApartmentsListPageState();
+  _ManageEntityListPageState createState() => _ManageEntityListPageState();
 }
 
-class _ManageApartmentsListPageState extends State<ManageApartmentsListPage> {
+class _ManageEntityListPageState extends State<ManageEntityListPage> {
   String _msg;
   final GlobalKey<FormState> _entityListFormKey = new GlobalKey<FormState>();
   List<MetaEntity> metaEntitiesList;

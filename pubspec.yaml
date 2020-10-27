@@ -106,17 +106,22 @@ flutter:
     - faq.png
     - sharing.png
     - sales.jpg
-    - notFound.jpg
+    - notFound.png
     - regain.jpg
-    - a.png
-    - b.png
-    - c.png
-    - d.png
-    - e.png
-    - f.png
-    - g.png
-    - h.png
-    - i.png
+    - school.png
+    - mall.png
+    - medicalStore.png
+    - superMarket.png
+    - popShop.png
+    - salon.png
+    - apartment.png
+    - placeOfWorship.png
+    - restaurant.png
+    - sportsCenter.png
+    - gym.png
+    - office.png
+    - shop.png
+    - others.png
   #  - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see

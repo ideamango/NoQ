@@ -3,40 +3,6 @@ import 'package:noq/constants.dart';
 import 'package:noq/widget/widgets.dart';
 import 'package:noq/style.dart';
 
-// class ShowTokenAlert extends StatefulWidget {
-//   @override
-//   _ShowTokenAlertState createState() => _ShowTokenAlertState();
-// }
-
-// class _ShowTokenAlertState extends State<ShowTokenAlert> {
-//   @override
-//   Widget build(BuildContext context) {
-//     return new SimpleDialog(
-//       title: Text('Token',
-//           style: TextStyle(
-//             fontSize: 20,
-//             color: Colors.grey,
-//           )),
-//       backgroundColor: Colors.grey[200],
-//       elevation: 10.0,
-//       children: <Widget>[
-//         Container(
-//           child: Text("Token number"),
-//         ),
-//         FlatButton(
-//           color: Colors.orange,
-//           textColor: Colors.white,
-//           child: Text('Ok'),
-//           onPressed: () {
-//             Navigator.of(context).pop();
-//             //Navigator.of(context).pushReplacement(DashBoar());
-//           },
-//         ),
-//       ],
-//     );
-//   }
-// }
-
 Future<String> showTokenAlert(
     BuildContext context, String tokenNo, String storeName, String time) {
   return showDialog(

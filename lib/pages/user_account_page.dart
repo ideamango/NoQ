@@ -10,12 +10,13 @@ import 'package:noq/pages/notifications_page.dart';
 import 'package:noq/pages/shopping_list.dart';
 import 'package:noq/repository/slotRepository.dart';
 import 'package:noq/services/circular_progress.dart';
-import 'package:noq/services/mapService.dart';
+import 'package:noq/services/url_services.dart';
 import 'package:noq/style.dart';
+import 'package:noq/userHomePage.dart';
 import 'package:noq/utils.dart';
 import 'package:noq/widget/appbar.dart';
 import 'package:noq/widget/bottom_nav_bar.dart';
-import 'package:noq/widget/carousel.dart';
+import 'package:noq/widget/carousel_items.dart';
 import 'package:noq/widget/header.dart';
 import 'package:noq/widget/widgets.dart';
 import 'package:share/share.dart';
@@ -634,7 +635,8 @@ class _UserAccountPageState extends State<UserAccountPage> {
         drawer: CustomDrawer(
           phone: _state.currentUser.ph,
         ),
-        appBar: CustomAppBar(
+        appBar: CustomAppBarWithBackButton(
+          backRoute: UserHomePage(),
           titleTxt: title,
         ),
         body: Scrollbar(

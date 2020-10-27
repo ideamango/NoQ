@@ -21,8 +21,8 @@ import 'package:noq/events/events.dart';
 import 'package:noq/global_state.dart';
 
 import 'package:noq/pages/contact_item.dart';
-import 'package:noq/pages/entity_services_list_page.dart';
-import 'package:noq/pages/manage_apartment_list_page.dart';
+import 'package:noq/pages/manage_child_entity_list_page.dart';
+import 'package:noq/pages/manage_entity_list_page.dart';
 import 'package:noq/repository/StoreRepository.dart';
 import 'package:noq/repository/local_db_repository.dart';
 import 'package:noq/services/circular_progress.dart';
@@ -40,16 +40,16 @@ import 'package:uuid/uuid.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:eventify/eventify.dart' as Eventify;
 
-class ServiceEntityDetailsPage extends StatefulWidget {
+class ManageChildEntityDetailsPage extends StatefulWidget {
   final Entity childEntity;
-  ServiceEntityDetailsPage({Key key, @required this.childEntity})
+  ManageChildEntityDetailsPage({Key key, @required this.childEntity})
       : super(key: key);
   @override
-  _ServiceEntityDetailsPageState createState() =>
-      _ServiceEntityDetailsPageState();
+  _ManageChildEntityDetailsPageState createState() =>
+      _ManageChildEntityDetailsPageState();
 }
 
-class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
+class _ManageChildEntityDetailsPageState extends State<ManageChildEntityDetailsPage> {
   bool _autoValidate = false;
   final GlobalKey<FormState> _serviceDetailsFormKey =
       new GlobalKey<FormState>();
@@ -665,7 +665,7 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
               context,
               MaterialPageRoute(
                   builder: (context) =>
-                      ChildEntitiesListPage(entity: this.serviceEntity)));
+                      ManageChildEntityListPage(entity: this.serviceEntity)));
         }
       });
     } else {
@@ -3107,7 +3107,7 @@ class _ServiceEntityDetailsPageState extends State<ServiceEntityDetailsPage> {
                                                     context,
                                                     MaterialPageRoute(
                                                         builder: (context) =>
-                                                            ChildEntitiesListPage(
+                                                            ManageChildEntityListPage(
                                                                 entity:
                                                                     parentEntity)));
                                               });

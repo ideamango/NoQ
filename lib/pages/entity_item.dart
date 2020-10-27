@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:noq/db/db_model/entity.dart';
 import 'package:noq/db/db_model/meta_entity.dart';
 import 'package:noq/db/db_service/entity_service.dart';
-import 'package:noq/pages/entity_services_details_page.dart';
-import 'package:noq/pages/manage_apartment_page.dart';
+import 'package:noq/pages/manage_child_entity_details_page.dart';
+import 'package:noq/pages/manage_entity_details_page.dart';
 import 'package:noq/services/circular_progress.dart';
 import 'package:noq/services/qr_code_generate.dart';
 import 'package:noq/style.dart';
 import 'package:flutter/foundation.dart';
-import 'package:noq/pages/entity_services_list_page.dart';
+import 'package:noq/pages/manage_child_entity_list_page.dart';
 import 'package:noq/utils.dart';
 import 'package:noq/widget/widgets.dart';
 import 'package:share/share.dart';
@@ -69,7 +69,7 @@ class EntityRowState extends State<EntityRow> {
           Navigator.push(
               context,
               MaterialPageRoute(
-                  builder: (context) => ManageApartmentPage(entity: entity)));
+                  builder: (context) => ManageEntityDetailsPage(entity: entity)));
         }
       });
     }
@@ -95,7 +95,7 @@ class EntityRowState extends State<EntityRow> {
           Navigator.push(
               context,
               MaterialPageRoute(
-                  builder: (context) => ChildEntitiesListPage(entity: value)));
+                  builder: (context) => ManageChildEntityListPage(entity: value)));
         } else {
           //No entity created yet.. show msg to create entity first.
 

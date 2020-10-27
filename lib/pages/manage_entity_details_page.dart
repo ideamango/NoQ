@@ -16,7 +16,7 @@ import 'package:noq/events/event_bus.dart';
 import 'package:noq/events/events.dart';
 import 'package:noq/global_state.dart';
 import 'package:noq/pages/contact_item.dart';
-import 'package:noq/pages/manage_apartment_list_page.dart';
+import 'package:noq/pages/manage_entity_list_page.dart';
 import 'package:noq/repository/StoreRepository.dart';
 import 'package:noq/services/circular_progress.dart';
 import 'package:noq/style.dart';
@@ -31,14 +31,14 @@ import 'package:noq/widget/widgets.dart';
 import 'package:uuid/uuid.dart';
 import 'package:eventify/eventify.dart' as Eventify;
 
-class ManageApartmentPage extends StatefulWidget {
+class ManageEntityDetailsPage extends StatefulWidget {
   final Entity entity;
-  ManageApartmentPage({Key key, @required this.entity}) : super(key: key);
+  ManageEntityDetailsPage({Key key, @required this.entity}) : super(key: key);
   @override
-  _ManageApartmentPageState createState() => _ManageApartmentPageState();
+  _ManageEntityDetailsPageState createState() => _ManageEntityDetailsPageState();
 }
 
-class _ManageApartmentPageState extends State<ManageApartmentPage> {
+class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
   bool _autoValidate = false;
   final GlobalKey<FormState> _entityDetailsFormKey = new GlobalKey<FormState>();
   final GlobalKey<FormFieldState> adminPhoneKey =
@@ -1765,7 +1765,7 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
         Navigator.push(
             context,
             MaterialPageRoute(
-                builder: (context) => ManageApartmentsListPage()));
+                builder: (context) => ManageEntityListPage()));
         //                }
         // });
       }
@@ -3336,7 +3336,7 @@ class _ManageApartmentPageState extends State<ManageApartmentPage> {
                                                       context,
                                                       MaterialPageRoute(
                                                           builder: (context) =>
-                                                              ManageApartmentsListPage()));
+                                                              ManageEntityListPage()));
                                                 });
                                               } else {
                                                 setState(() {

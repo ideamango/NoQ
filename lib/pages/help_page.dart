@@ -3,8 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:noq/constants.dart';
 import 'package:noq/global_state.dart';
 import 'package:noq/pages/contact_us.dart';
-import 'package:noq/pages/manage_apartment_list_page.dart';
+import 'package:noq/pages/manage_entity_list_page.dart';
 import 'package:noq/style.dart';
+import 'package:noq/userHomePage.dart';
 import 'package:noq/widget/appbar.dart';
 import 'package:noq/widget/bottom_nav_bar.dart';
 import 'package:noq/widget/custom_expansion_tile.dart';
@@ -42,7 +43,8 @@ class _HelpPageState extends State<HelpPage> {
             //TODO provide phone number
             //phone: _state.currentUser.ph,
             phone: _phone),
-        appBar: CustomAppBar(
+        appBar: CustomAppBarWithBackButton(
+          backRoute: UserHomePage(),
           titleTxt: title,
         ),
         body: Container(
@@ -447,7 +449,7 @@ class _HelpPageState extends State<HelpPage> {
                                                   context,
                                                   MaterialPageRoute(
                                                       builder: (context) =>
-                                                          ManageApartmentsListPage()));
+                                                          ManageEntityListPage()));
                                             },
                                         ),
                                       ])),

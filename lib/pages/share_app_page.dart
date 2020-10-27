@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:noq/constants.dart';
 import 'package:noq/style.dart';
+import 'package:noq/userHomePage.dart';
 import 'package:noq/utils.dart';
 import 'package:noq/widget/appbar.dart';
 import 'package:noq/widget/bottom_nav_bar.dart';
@@ -53,7 +54,8 @@ class _ShareAppPageState extends State<ShareAppPage> {
           //TODO: provide phone of user here
           phone: null,
         ),
-        appBar: CustomAppBar(
+        appBar: CustomAppBarWithBackButton(
+          backRoute: UserHomePage(),
           titleTxt: title,
         ),
         body: Center(

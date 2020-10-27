@@ -3,7 +3,7 @@ import 'package:noq/constants.dart';
 import 'package:noq/db/db_model/entity.dart';
 import 'package:noq/db/db_model/meta_entity.dart';
 import 'package:noq/db/db_service/entity_service.dart';
-import 'package:noq/pages/entity_services_details_page.dart';
+import 'package:noq/pages/manage_child_entity_details_page.dart';
 import 'package:noq/services/qr_code_generate.dart';
 import 'package:noq/style.dart';
 import 'package:flutter/foundation.dart';
@@ -59,7 +59,7 @@ class ChildEntityRowState extends State<ChildEntityRow> {
             context,
             MaterialPageRoute(
                 builder: (context) =>
-                    ServiceEntityDetailsPage(childEntity: this.entity)));
+                    ManageChildEntityDetailsPage(childEntity: this.entity)));
       });
     }
 

@@ -104,6 +104,11 @@ String tryLater = "Please try again later.";
 String cantOpenMaps = "Could not open Maps!";
 
 String cantSearch = "Oops.. Can't Search!";
+String searchResultText1 = "Showing search results for places ";
+String searchResultText2 = "in ";
+String searchResultText3 = " category ";
+
+String searchResultText4 = "by name ";
 
 String selectEarlierDate = "Please select an earlier date.";
 
@@ -125,36 +130,28 @@ String accessRestricted =
 
 enum Role { Manager, Admin, ContactPerson, Employee }
 List<String> roleTypes = ['Admin', 'Manager'];
-List<String> entityTypes = [
-  'Grocery/ Super Market ',
-  'Apartment',
-  'Office',
-  'Mall',
-  'Salon',
-  'MedicalStore'
-];
-List<String> subEntityTypes = [
-  'Swimming Pool',
-  'Gym',
-  'Salon',
-  'Medical Store',
-  'Grocery Store',
-  'Library',
-  'Game Parlors',
-  'Commercial Space',
-  'Cafe',
-  'Restaurant',
-  'Others'
-];
-List<String> searchTypes = [
-  'Search in all categories',
-  'Grocery/ Super Market ',
-  'Apartment',
-  'Office',
-  'Mall',
-  'Salon',
-  'MedicalStore'
-];
+// List<String> entityTypes = [
+//   'Grocery/ Super Market ',
+//   'Apartment',
+//   'Office',
+//   'Mall',
+//   'Salon',
+//   'MedicalStore'
+// ];
+// List<String> subEntityTypes = [
+//   'Swimming Pool',
+//   'Gym',
+//   'Salon',
+//   'Medical Store',
+//   'Grocery Store',
+//   'Library',
+//   'Game Parlors',
+//   'Commercial Space',
+//   'Cafe',
+//   'Restaurant',
+//   'Others'
+// ];
+
 List<String> mailReasons = [
   'General Enquiry',
   'Special Request',

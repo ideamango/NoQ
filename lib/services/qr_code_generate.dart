@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:noq/constants.dart';
-import 'package:noq/pages/manage_apartment_list_page.dart';
-import 'package:noq/pages/manage_apartment_page.dart';
+import 'package:noq/pages/manage_entity_list_page.dart';
+import 'package:noq/pages/manage_entity_details_page.dart';
 import 'package:noq/services/circular_progress.dart';
 import 'package:noq/style.dart';
 import 'package:noq/utils.dart';
@@ -147,7 +147,7 @@ class GenerateScreenState extends State<GenerateScreen> {
         theme: ThemeData.light().copyWith(),
         home: Scaffold(
           appBar: CustomAppBarWithBackButton(
-              titleTxt: "QR Code", backRoute: ManageApartmentsListPage()),
+              titleTxt: "QR Code", backRoute: ManageEntityListPage()),
           body: Center(
             child: Container(
               color: Colors.white,

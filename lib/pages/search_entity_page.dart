@@ -7,11 +7,13 @@ import 'package:noq/db/db_model/entity.dart';
 import 'package:noq/db/db_model/meta_entity.dart';
 import 'package:noq/db/db_model/user_token.dart';
 import 'package:noq/db/db_service/entity_service.dart';
+import 'package:noq/events/event_bus.dart';
+import 'package:noq/events/events.dart';
 import 'package:noq/global_state.dart';
-import 'package:noq/pages/search_child_page.dart';
-import 'package:noq/pages/showSlotsPage.dart';
+import 'package:noq/pages/search_child_entity_page.dart';
+import 'package:noq/pages/show_slots_page.dart';
 import 'package:noq/services/circular_progress.dart';
-import 'package:noq/services/mapService.dart';
+import 'package:noq/services/url_services.dart';
 import 'package:noq/style.dart';
 import 'package:noq/utils.dart';
 import 'package:noq/widget/appbar.dart';
@@ -21,17 +23,15 @@ import 'package:share/share.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../userHomePage.dart';
 
-class SearchStoresPage extends StatefulWidget {
+class SearchEntityPage extends StatefulWidget {
   //final String forPage;
 
   //SearchStoresPage({Key key, @required this.forPage}) : super(key: key);
   @override
-  _SearchStoresPageState createState() => _SearchStoresPageState();
+  _SearchEntityPageState createState() => _SearchEntityPageState();
 }
 
-String _entityType;
-
-class _SearchStoresPageState extends State<SearchStoresPage> {
+class _SearchEntityPageState extends State<SearchEntityPage> {
   bool initCompleted = false;
   bool isFavourited = false;
   DateTime dateTime = DateTime.now();
@@ -41,7 +41,7 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
   List<Entity> _stores = new List<Entity>();
   List<Entity> _pastSearches = new List<Entity>();
   List<Entity> _searchResultstores = new List<Entity>();
-
+  String _entityType;
   String _searchInAll = 'Search in All';
   bool searchBoxClicked = false;
   bool fetchFromServer = false;
@@ -79,10 +79,26 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
       fetchPastSearchesList();
       searchTypes = _state.conf.entityTypes;
       //insert only if 'All' option not there
-      if (!searchTypes.contains(_searchInAll))
-        searchTypes.insert(0, _searchInAll);
+      // if (!searchTypes.contains(_searchInAll))
+      //   searchTypes.insert(0, _searchInAll);
       setState(() {
         initCompleted = true;
+      });
+    });
+    registerCategorySelectEvent();
+  }
+
+  void registerCategorySelectEvent() {
+    EventBus.registerEvent(SEARCH_CATEGORY_SELECTED, null, (event, arg) {
+      if (event == null) {
+        return;
+      }
+      String categoryType = event.eventData;
+      setState(() {
+        _entityType = categoryType;
+        _isSearching = "searching";
+        print("came in ");
+        _buildSearchList();
       });
     });
   }
@@ -212,7 +228,7 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
                       height: MediaQuery.of(context).size.height * .4,
                       decoration: BoxDecoration(
                         image: DecorationImage(
-                            image: AssetImage("assets/notFound.jpg"),
+                            image: AssetImage("assets/notFound.png"),
                             fit: BoxFit.cover),
                       ),
                     ),
@@ -220,7 +236,11 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
                       padding: EdgeInsets.all(5),
                       child: Text(
                         txtSubMsg,
-                        style: highlightBoldTextStyle,
+                        style: TextStyle(
+                          color: primaryDarkColor,
+                          fontFamily: 'Montserrat',
+                          fontSize: 18,
+                        ),
                         textAlign: TextAlign.center,
                       ),
                     ),
@@ -304,53 +324,54 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
             bottomNavigationBar: CustomBottomBar(barIndex: 1)),
       );
     } else {
-      Widget categoryDropDown = Container(
-          width: MediaQuery.of(context).size.width * .48,
-          height: MediaQuery.of(context).size.width * .1,
-          decoration: new BoxDecoration(
-            shape: BoxShape.rectangle,
-            color: Colors.white,
-            // color: Colors.white,
-            borderRadius: BorderRadius.all(Radius.circular(5.0)),
-            border: new Border.all(
-              color: Colors.blueGrey[400],
-              width: 0.5,
-            ),
-          ),
-          child: DropdownButtonHideUnderline(
-              child: ButtonTheme(
-            alignedDropdown: true,
-            child: new DropdownButton(
-              iconEnabledColor: Colors.blueGrey[500],
-              dropdownColor: Colors.white,
-              itemHeight: kMinInteractiveDimension,
-              hint: new Text("Select a category"),
-              style: TextStyle(fontSize: 12, color: Colors.blueGrey[500]),
-              value: _entityType,
-              isDense: true,
-              // icon: Icon(Icons.search),
-              onChanged: (newValue) {
-                setState(() {
-                  print('entity type - old value');
-                  print(_entityType);
-                  _entityType = newValue;
-                  print('entity type - new value - $_entityType');
-                  _isSearching = "searching";
-                  _buildSearchList();
-                });
-              },
-              items: searchTypes.map((type) {
-                return DropdownMenuItem(
-                  value: type,
-                  child: new Text(type.toString(),
-                      style:
-                          TextStyle(fontSize: 12, color: Colors.blueGrey[500])),
-                );
-              }).toList(),
-            ),
-          )));
+      // Widget categoryDropDown = Container(
+      //     width: MediaQuery.of(context).size.width * .48,
+      //     height: MediaQuery.of(context).size.width * .1,
+      //     decoration: new BoxDecoration(
+      //       shape: BoxShape.rectangle,
+      //       color: Colors.white,
+      //       // color: Colors.white,
+      //       borderRadius: BorderRadius.all(Radius.circular(5.0)),
+      //       border: new Border.all(
+      //         color: Colors.blueGrey[400],
+      //         width: 0.5,
+      //       ),
+      //     ),
+      //     child: DropdownButtonHideUnderline(
+      //         child: ButtonTheme(
+      //       alignedDropdown: true,
+      //       child: new DropdownButton(
+      //         iconEnabledColor: Colors.blueGrey[500],
+      //         dropdownColor: Colors.white,
+      //         itemHeight: kMinInteractiveDimension,
+      //         hint: new Text("Select a category"),
+      //         style: TextStyle(fontSize: 12, color: Colors.blueGrey[500]),
+      //         value: _entityType,
+      //         isDense: true,
+      //         // icon: Icon(Icons.search),
+      //         onChanged: (newValue) {
+      //           setState(() {
+      //             print('entity type - old value');
+      //             print(_entityType);
+      //             _entityType = newValue;
+      //             print('entity type - new value - $_entityType');
+      //             _isSearching = "searching";
+      //             _buildSearchList();
+      //           });
+      //         },
+      //         items: searchTypes.map((type) {
+      //           return DropdownMenuItem(
+      //             value: type,
+      //             child: new Text(type.toString(),
+      //                 style:
+      //                     TextStyle(fontSize: 12, color: Colors.blueGrey[500])),
+      //           );
+      //         }).toList(),
+      //       ),
+      //     )));
+
       Widget searchInputText = Container(
-        width: MediaQuery.of(context).size.width * .48,
+        width: MediaQuery.of(context).size.width * .95,
         height: MediaQuery.of(context).size.width * .1,
         decoration: new BoxDecoration(
           shape: BoxShape.rectangle,
@@ -454,13 +475,81 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
           },
         ),
       );
+      Widget searchResultText = Container(
+        width: MediaQuery.of(context).size.width * .85,
+        child: RichText(
+            overflow: TextOverflow.visible,
+            maxLines: 2,
+            text: TextSpan(
+                style: TextStyle(color: primaryDarkColor, fontSize: 12),
+                children: <TextSpan>[
+                  Utils.isNotNullOrEmpty(_entityType) ||
+                          Utils.isNotNullOrEmpty(_searchText)
+                      ? TextSpan(text: searchResultText1)
+                      : TextSpan(text: ""),
+                  Utils.isNotNullOrEmpty(_entityType)
+                      ? TextSpan(
+                          text: searchResultText2,
+                        )
+                      : TextSpan(text: ""),
+                  Utils.isNotNullOrEmpty(_entityType)
+                      ? TextSpan(
+                          text: _entityType,
+                          style: TextStyle(color: highlightColor, fontSize: 14))
+                      : TextSpan(text: ""),
+                  Utils.isNotNullOrEmpty(_entityType)
+                      ? TextSpan(
+                          text: searchResultText3,
+                        )
+                      : TextSpan(text: ""),
+                  Utils.isNotNullOrEmpty(_searchText)
+                      ? TextSpan(
+                          text: searchResultText4,
+                        )
+                      : TextSpan(text: ""),
+                  Utils.isNotNullOrEmpty(_searchText)
+                      ? TextSpan(
+                          text: _searchText,
+                          style: TextStyle(color: highlightColor, fontSize: 12))
+                      : TextSpan(text: ""),
+                ])),
+      );
       Widget filterBar = Container(
         margin: EdgeInsets.fromLTRB(0, 5, 0, 0),
         //  padding: EdgeInsets.fromLTRB(5, 0, 5, 0),
         //decoration: gradientBackground,
-        child: Row(
+        child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: <Widget>[categoryDropDown, searchInputText],
+          children: <Widget>[
+            // categoryDropDown,
+            searchInputText,
+            verticalSpacer,
+            Container(
+              width: MediaQuery.of(context).size.width * .95,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                  searchResultText,
+                  Container(
+                    width: MediaQuery.of(context).size.width * .09,
+                    child: InkWell(
+                      child: Text(
+                        "Clear",
+                        style: errorTextStyle,
+                      ),
+                      onTap: () {
+                        setState(() {
+                          _searchText = "";
+                          _entityType = null;
+                          _buildSearchList();
+                        });
+                      },
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
         ),
       );
       String title = "Search";
@@ -471,8 +560,8 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
           _entityType == null)
         return MaterialApp(
           routes: <String, WidgetBuilder>{
-            '/childSearch': (BuildContext context) => SearchChildrenPage(),
-            '/mainSearch': (BuildContext context) => SearchStoresPage(),
+            '/childSearch': (BuildContext context) => SearchChildEntityPage(),
+            '/mainSearch': (BuildContext context) => SearchEntityPage(),
           },
           theme: ThemeData.light().copyWith(),
           home: Scaffold(
@@ -530,8 +619,8 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
         print("Came in isSearching");
         return MaterialApp(
           routes: <String, WidgetBuilder>{
-            '/childSearch': (BuildContext context) => SearchChildrenPage(),
-            '/mainSearch': (BuildContext context) => SearchStoresPage(),
+            '/childSearch': (BuildContext context) => SearchChildEntityPage(),
+            '/mainSearch': (BuildContext context) => SearchEntityPage(),
           },
           theme: ThemeData.light().copyWith(),
           home: Scaffold(
@@ -607,7 +696,7 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
           Navigator.push(
               context,
               MaterialPageRoute(
-                  builder: (context) => SearchChildrenPage(
+                  builder: (context) => SearchChildEntityPage(
                         pageName: "Search",
                         childList: str.childEntities,
                         parentName: str.name,
@@ -1041,10 +1130,11 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
                               Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                      builder: (context) => SearchChildrenPage(
-                                          pageName: "Search",
-                                          childList: str.childEntities,
-                                          parentName: str.name)));
+                                      builder: (context) =>
+                                          SearchChildEntityPage(
+                                              pageName: "Search",
+                                              childList: str.childEntities,
+                                              parentName: str.name)));
                             },
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.center,
@@ -1451,28 +1541,6 @@ class _SearchStoresPageState extends State<SearchStoresPage> {
       ],
     );
   }
-
-  // void _handleSearchStart() {
-  //   setState(() {
-  //     _isSearching = true;
-  //   });
-  // }
-
-  // void _handleSearchEnd() {
-  //   setState(() {
-  //     _isSearching = false;
-  //     _searchQuery.clear();
-  //   });
-  // }
-}
-
-class ChildItem extends StatelessWidget {
-  final String name;
-  ChildItem(this.name);
-  @override
-  Widget build(BuildContext context) {
-    return new ListTile(title: new Text(this.name));
-  }
 }
 
 class MyFloatingActionButton extends StatefulWidget {
@@ -1482,6 +1550,61 @@ class MyFloatingActionButton extends StatefulWidget {
 
 class _MyFloatingActionButtonState extends State<MyFloatingActionButton> {
   bool showFab = true;
+  String categoryType;
+  Map<String, String> categoryList = new Map<String, String>();
+
+  List<String> searchTypes = new List<String>();
+  @override
+  void initState() {
+    super.initState();
+    GlobalState.getGlobalState().then((value) {
+      searchTypes = value.conf.entityTypes;
+      buildCategoryList();
+    });
+  }
+
+  void buildCategoryList() {
+    categoryList["Mall"] = "mall.png";
+    categoryList["Super Market"] = "superMarket.png";
+    categoryList["Apartment"] = "apartment.png";
+    categoryList["Medical Store"] = "medicalStore.png";
+    categoryList["Shop"] = "shop.png";
+    categoryList["Pop Shop"] = "popShop.png";
+    categoryList["Salon"] = "salon.png";
+    categoryList["School"] = "school.png";
+    categoryList["Place of Worship"] = "placeOfWorship.png";
+    categoryList["Restaurant"] = "restaurant.png";
+    categoryList["Sports Center"] = "sportsCenter.png";
+    categoryList["Gym"] = "gym.png";
+    categoryList["Office"] = "office.png";
+    categoryList["Others"] = "others.png";
+  }
+
+  Widget _buildCategoryItem(BuildContext context, int index) {
+    String name = searchTypes[index];
+    String value = categoryList[name];
+    print("Image path assets/$value");
+
+    return GestureDetector(
+        onTap: () {
+          categoryType = name;
+          Navigator.of(context).pop();
+          EventBus.fireEvent(SEARCH_CATEGORY_SELECTED, null, categoryType);
+        },
+        child: Column(
+          children: <Widget>[
+            Image(
+              width: MediaQuery.of(context).size.width * .15,
+              image: AssetImage("assets/$value"),
+            ),
+            Text(
+              name,
+              style: textBotSheetTextStyle,
+            ),
+          ],
+        ));
+  }
+
   @override
   Widget build(BuildContext context) {
     return showFab
@@ -1504,266 +1627,81 @@ class _MyFloatingActionButtonState extends State<MyFloatingActionButton> {
               ),
               onPressed: () {
                 var bottomSheetController = showBottomSheet(
-                    context: context,
-                    elevation: 30,
-                    shape: RoundedRectangleBorder(
-                        side: BorderSide(color: Colors.blueGrey[200]),
-                        borderRadius: BorderRadius.only(
-                            topLeft: Radius.circular(20.0),
-                            topRight: Radius.circular(20.0))),
-                    builder: (context) => Container(
-                          color: Colors.transparent,
-                          height: MediaQuery.of(context).size.height * .6,
-                          child: GridView.count(
-                            crossAxisCount: 4,
-                            childAspectRatio: 1.0,
-                            padding: const EdgeInsets.all(4.0),
-                            mainAxisSpacing: 4.0,
-                            crossAxisSpacing: 4.0,
-                            children: <Widget>[
-                              GestureDetector(
-                                onTap: () {
-                                  _entityType = "School";
-                                  Navigator.of(context).pop();
-                                },
-                                child: Column(
-                                  children: <Widget>[
-                                    Image(
-                                      width: MediaQuery.of(context).size.width *
-                                          .15,
-                                      image: AssetImage("assets/a.png"),
+                  context: context,
+                  elevation: 30,
+                  shape: RoundedRectangleBorder(
+                      side: BorderSide(color: Colors.blueGrey[200]),
+                      borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(20.0),
+                          topRight: Radius.circular(20.0))),
+                  builder: (context) => Container(
+                    color: Colors.transparent,
+                    height: MediaQuery.of(context).size.height * .6,
+                    child: Column(
+                      children: <Widget>[
+                        Row(
+                          children: <Widget>[
+                            Container(
+                              padding: EdgeInsets.all(0),
+                              width: MediaQuery.of(context).size.width * .1,
+                              height: MediaQuery.of(context).size.width * .1,
+                              child: IconButton(
+                                  padding: EdgeInsets.all(0),
+                                  icon: Icon(
+                                    Icons.cancel,
+                                    color: btnDisabledolor,
+                                  ),
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                  }),
+                            ),
+                            Container(
+                                alignment: Alignment.center,
+                                width: MediaQuery.of(context).size.width * .8,
+                                child: Text(
+                                  "Select Category",
+                                  style: textInputTextStyle,
+                                )),
+                          ],
+                        ),
+                        Divider(
+                          height: 1,
+                          color: primaryDarkColor,
+                        ),
+                        Expanded(
+                          child: Container(
+                            padding: EdgeInsets.all(0),
+                            child: new GridView.builder(
+                              padding: EdgeInsets.all(0),
+                              scrollDirection: Axis.vertical,
+                              shrinkWrap: true,
+                              itemCount: categoryList.length,
+                              gridDelegate:
+                                  SliverGridDelegateWithFixedCrossAxisCount(
+                                      crossAxisCount: 4,
+                                      crossAxisSpacing: 10.0,
+                                      mainAxisSpacing: 10),
+                              itemBuilder: (BuildContext context, int index) {
+                                return new GridTile(
+                                  child: Container(
+                                    height: MediaQuery.of(context).size.height *
+                                        .25,
+                                    padding: EdgeInsets.all(0),
+                                    // decoration:
+                                    //     BoxDecoration(border: Border.all(color: Colors.black, width: 0.5)),
+                                    child: Center(
+                                      child: _buildCategoryItem(context, index),
                                     ),
-                                    Text(
-                                      "School",
-                                      style: textBotSheetTextStyle,
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              Column(
-                                children: <Widget>[
-                                  Image(
-                                    width:
-                                        MediaQuery.of(context).size.width * .15,
-                                    image: AssetImage("assets/b.png"),
                                   ),
-                                  Text(
-                                    "Sports Center",
-                                    style: textBotSheetTextStyle,
-                                  ),
-                                ],
-                              ),
-                              Column(
-                                children: <Widget>[
-                                  Image(
-                                    width:
-                                        MediaQuery.of(context).size.width * .15,
-                                    image: AssetImage("assets/c.png"),
-                                  ),
-                                  Text(
-                                    "Medical Store",
-                                    style: textBotSheetTextStyle,
-                                  ),
-                                ],
-                              ),
-                              Column(
-                                children: <Widget>[
-                                  Image(
-                                    width:
-                                        MediaQuery.of(context).size.width * .15,
-                                    image: AssetImage("assets/d.png"),
-                                  ),
-                                  Text(
-                                    "Gym",
-                                    style: textBotSheetTextStyle,
-                                  ),
-                                ],
-                              ),
-                              Column(
-                                children: <Widget>[
-                                  Image(
-                                    width:
-                                        MediaQuery.of(context).size.width * .15,
-                                    image: AssetImage("assets/e.png"),
-                                  ),
-                                  Text(
-                                    "Worship",
-                                    style: textBotSheetTextStyle,
-                                  ),
-                                ],
-                              ),
-                              Column(
-                                children: <Widget>[
-                                  Image(
-                                    width:
-                                        MediaQuery.of(context).size.width * .15,
-                                    image: AssetImage("assets/f.png"),
-                                  ),
-                                  Text(
-                                    "Salon & Spa",
-                                    style: textBotSheetTextStyle,
-                                  ),
-                                ],
-                              ),
-                              Column(
-                                children: <Widget>[
-                                  Image(
-                                    width:
-                                        MediaQuery.of(context).size.width * .15,
-                                    image: AssetImage("assets/g.png"),
-                                  ),
-                                  Text(
-                                    "Apartment",
-                                    style: textBotSheetTextStyle,
-                                  ),
-                                ],
-                              ),
-                              Column(
-                                children: <Widget>[
-                                  Image(
-                                    width:
-                                        MediaQuery.of(context).size.width * .15,
-                                    image: AssetImage("assets/h.png"),
-                                  ),
-                                  Text(
-                                    "Restaurant",
-                                    style: textBotSheetTextStyle,
-                                  ),
-                                ],
-                              ),
-                              Column(
-                                children: <Widget>[
-                                  Image(
-                                    width:
-                                        MediaQuery.of(context).size.width * .15,
-                                    image: AssetImage("assets/i.png"),
-                                  ),
-                                  Text(
-                                    "Office",
-                                    style: textBotSheetTextStyle,
-                                  ),
-                                ],
-                              ),
-                              Column(
-                                children: <Widget>[
-                                  Image(
-                                    width:
-                                        MediaQuery.of(context).size.width * .15,
-                                    image: AssetImage("assets/a.png"),
-                                  ),
-                                  Text(
-                                    "School",
-                                    style: textBotSheetTextStyle,
-                                  ),
-                                ],
-                              ),
-                              Column(
-                                children: <Widget>[
-                                  Image(
-                                    width:
-                                        MediaQuery.of(context).size.width * .15,
-                                    image: AssetImage("assets/b.png"),
-                                  ),
-                                  Text(
-                                    "Sports Center",
-                                    style: textBotSheetTextStyle,
-                                  ),
-                                ],
-                              ),
-                              Column(
-                                children: <Widget>[
-                                  Image(
-                                    width:
-                                        MediaQuery.of(context).size.width * .15,
-                                    image: AssetImage("assets/c.png"),
-                                  ),
-                                  Text(
-                                    "Medical Store",
-                                    style: textBotSheetTextStyle,
-                                  ),
-                                ],
-                              ),
-                              Column(
-                                children: <Widget>[
-                                  Image(
-                                    width:
-                                        MediaQuery.of(context).size.width * .15,
-                                    image: AssetImage("assets/d.png"),
-                                  ),
-                                  Text(
-                                    "Gym",
-                                    style: textBotSheetTextStyle,
-                                  ),
-                                ],
-                              ),
-                              Column(
-                                children: <Widget>[
-                                  Image(
-                                    width:
-                                        MediaQuery.of(context).size.width * .15,
-                                    image: AssetImage("assets/e.png"),
-                                  ),
-                                  Text(
-                                    "Worship",
-                                    style: textBotSheetTextStyle,
-                                  ),
-                                ],
-                              ),
-                              Column(
-                                children: <Widget>[
-                                  Image(
-                                    width:
-                                        MediaQuery.of(context).size.width * .15,
-                                    image: AssetImage("assets/f.png"),
-                                  ),
-                                  Text(
-                                    "Salon & Spa",
-                                    style: textBotSheetTextStyle,
-                                  ),
-                                ],
-                              ),
-                              Column(
-                                children: <Widget>[
-                                  Image(
-                                    width:
-                                        MediaQuery.of(context).size.width * .15,
-                                    image: AssetImage("assets/g.png"),
-                                  ),
-                                  Text(
-                                    "Apartment",
-                                    style: textBotSheetTextStyle,
-                                  ),
-                                ],
-                              ),
-                              Column(
-                                children: <Widget>[
-                                  Image(
-                                    width:
-                                        MediaQuery.of(context).size.width * .15,
-                                    image: AssetImage("assets/h.png"),
-                                  ),
-                                  Text(
-                                    "Restaurant",
-                                    style: textBotSheetTextStyle,
-                                  ),
-                                ],
-                              ),
-                              Column(
-                                children: <Widget>[
-                                  Image(
-                                    width:
-                                        MediaQuery.of(context).size.width * .15,
-                                    image: AssetImage("assets/i.png"),
-                                  ),
-                                  Text(
-                                    "Office",
-                                    style: textBotSheetTextStyle,
-                                  ),
-                                ],
-                              ),
-                            ],
+                                );
+                              },
+                            ),
                           ),
-                        ));
+                        ),
+                      ],
+                    ),
+                  ),
+                );
                 showFoatingActionButton(false);
                 bottomSheetController.closed.then((value) {
                   showFoatingActionButton(true);

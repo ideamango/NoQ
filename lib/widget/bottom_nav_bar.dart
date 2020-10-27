@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:noq/dashboard.dart';
 import 'package:noq/db/db_model/entity.dart';
-import 'package:noq/pages/SearchStoresPage.dart';
+import 'package:noq/pages/search_entity_page.dart';
 import 'package:noq/pages/favs_list_page.dart';
-import 'package:noq/pages/userAccountPage.dart';
+import 'package:noq/pages/user_account_page.dart';
 import 'package:noq/style.dart';
 import 'package:noq/userHomePage.dart';
 
@@ -73,7 +72,7 @@ class _CustomBottomBarState extends State<CustomBottomBar> {
         case 1:
           {
             Navigator.push(context,
-                MaterialPageRoute(builder: (context) => SearchStoresPage()));
+                MaterialPageRoute(builder: (context) => SearchEntityPage()));
           }
           break;
         case 2:

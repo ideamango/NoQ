@@ -8,7 +8,7 @@ import 'package:noq/db/db_model/order.dart';
 import 'package:noq/db/db_model/user_token.dart';
 import 'package:noq/pages/service_entity.dart';
 import 'package:noq/repository/slotRepository.dart';
-import 'package:noq/services/mapService.dart';
+import 'package:noq/services/url_services.dart';
 import 'package:noq/style.dart';
 import 'package:flutter/foundation.dart';
 import 'package:noq/utils.dart';

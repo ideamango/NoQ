@@ -268,8 +268,10 @@ class Entity {
         applepay: applepay,
         offer: offer,
         phone: phone,
-        address: Utils.getFormattedAddress(address),
-        hasChildren: childEntities.length > 0 ? true : false);
+        address: (address != null) ? Utils.getFormattedAddress(address) : null,
+        hasChildren: (childEntities != null)
+            ? (childEntities.length > 0 ? true : false)
+            : false);
 
     return meta;
   }

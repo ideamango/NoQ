@@ -13,7 +13,7 @@ import 'package:noq/db/db_service/entity_service.dart';
 import 'package:noq/db/db_service/token_service.dart';
 import 'package:noq/db/db_service/user_service.dart';
 import 'package:noq/global_state.dart';
-import 'package:noq/pages/SearchStoresPage.dart';
+import 'package:noq/pages/search_entity_page.dart';
 import 'package:noq/pages/db_test.dart';
 import 'package:noq/pages/shopping_list.dart';
 import 'package:noq/repository/local_db_repository.dart';
@@ -158,7 +158,7 @@ class _UserHomePageState extends State<UserHomePage>
             borderRadius: BorderRadius.all(Radius.circular(5.0))),
         onPressed: () {
           Navigator.push(context,
-              MaterialPageRoute(builder: (context) => SearchStoresPage()));
+              MaterialPageRoute(builder: (context) => SearchEntityPage()));
         },
         tooltip: 'Image',
         child: Icon(Icons.search),
@@ -503,7 +503,7 @@ class _UserHomePageState extends State<UserHomePage>
           ),
         ),
         routes: <String, WidgetBuilder>{
-          '/DLink': (BuildContext context) => new SearchStoresPage(),
+          '/DLink': (BuildContext context) => new SearchEntityPage(),
         });
   }
 

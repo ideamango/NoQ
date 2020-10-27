@@ -8,10 +8,10 @@ import 'package:noq/db/db_model/meta_entity.dart';
 import 'package:noq/db/db_model/user_token.dart';
 import 'package:noq/db/db_service/entity_service.dart';
 import 'package:noq/global_state.dart';
-import 'package:noq/pages/search_child_page.dart';
-import 'package:noq/pages/showSlotsPage.dart';
+import 'package:noq/pages/search_child_entity_page.dart';
+import 'package:noq/pages/show_slots_page.dart';
 import 'package:noq/services/circular_progress.dart';
-import 'package:noq/services/mapService.dart';
+import 'package:noq/services/url_services.dart';
 import 'package:noq/style.dart';
 import 'package:noq/utils.dart';
 import 'package:noq/widget/appbar.dart';
@@ -20,7 +20,7 @@ import 'package:noq/widget/widgets.dart';
 import 'package:share/share.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../userHomePage.dart';
-import 'SearchStoresPage.dart';
+import 'search_entity_page.dart';
 
 class ExplorePage extends StatefulWidget {
   //final String forPage;
@@ -437,8 +437,8 @@ class _ExplorePageState extends State<ExplorePage> {
           _entityType == null)
         return MaterialApp(
           routes: <String, WidgetBuilder>{
-            '/childSearch': (BuildContext context) => SearchChildrenPage(),
-            '/mainSearch': (BuildContext context) => SearchStoresPage(),
+            '/childSearch': (BuildContext context) => SearchChildEntityPage(),
+            '/mainSearch': (BuildContext context) => SearchEntityPage(),
           },
           theme: ThemeData.light().copyWith(),
           home: Scaffold(
@@ -495,8 +495,8 @@ class _ExplorePageState extends State<ExplorePage> {
         print("Came in isSearching");
         return MaterialApp(
           routes: <String, WidgetBuilder>{
-            '/childSearch': (BuildContext context) => SearchChildrenPage(),
-            '/mainSearch': (BuildContext context) => SearchStoresPage(),
+            '/childSearch': (BuildContext context) => SearchChildEntityPage(),
+            '/mainSearch': (BuildContext context) => SearchEntityPage(),
           },
           theme: ThemeData.light().copyWith(),
           home: Scaffold(
@@ -570,7 +570,7 @@ class _ExplorePageState extends State<ExplorePage> {
           Navigator.push(
               context,
               MaterialPageRoute(
-                  builder: (context) => SearchChildrenPage(
+                  builder: (context) => SearchChildEntityPage(
                         pageName: "Search",
                         childList: str.childEntities,
                         parentName: str.name,
@@ -1004,7 +1004,7 @@ class _ExplorePageState extends State<ExplorePage> {
                               Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                      builder: (context) => SearchChildrenPage(
+                                      builder: (context) => SearchChildEntityPage(
                                           pageName: "Search",
                                           childList: str.childEntities,
                                           parentName: str.name)));

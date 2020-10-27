@@ -34,7 +34,8 @@ class _AboutUsPageState extends State<AboutUsPage> {
           //phone: _state.currentUser.ph,
           phone: null,
         ),
-        appBar: CustomAppBar(
+        appBar: CustomAppBarWithBackButton(
+          backRoute: UserHomePage(),
           titleTxt: title,
         ),
         body: Center(

@@ -13,21 +13,21 @@ import 'package:noq/db/db_service/entity_service.dart';
 import 'package:noq/db/db_service/token_service.dart';
 import 'package:noq/db/db_service/user_service.dart';
 import 'package:noq/global_state.dart';
-import 'package:noq/pages/SearchStoresPage.dart';
+import 'package:noq/pages/search_entity_page.dart';
 import 'package:noq/pages/db_test.dart';
 import 'package:noq/pages/shopping_list.dart';
 import 'package:noq/repository/local_db_repository.dart';
 import 'package:noq/repository/slotRepository.dart';
 import 'package:noq/services/circular_progress.dart';
-import 'package:noq/services/mapService.dart';
+import 'package:noq/services/url_services.dart';
 import 'package:noq/services/qr_code_generate.dart';
-import 'package:noq/services/qrcode_scan.dart';
+import 'package:noq/services/qr_code_scan.dart';
 import 'package:noq/style.dart';
 import 'package:intl/intl.dart';
 import 'package:noq/utils.dart';
 import 'package:noq/widget/appbar.dart';
 import 'package:noq/widget/bottom_nav_bar.dart';
-import 'package:noq/widget/carousel.dart';
+import 'package:noq/widget/carousel_items.dart';
 import 'package:noq/widget/header.dart';
 import 'package:noq/widget/widgets.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -385,7 +385,7 @@ class _UserHomePageState extends State<UserHomePage> {
             ),
           ),
           routes: <String, WidgetBuilder>{
-            '/DLink': (BuildContext context) => new SearchStoresPage(),
+            '/DLink': (BuildContext context) => new SearchEntityPage(),
           });
     } else {
       return MaterialApp(

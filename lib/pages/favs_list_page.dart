@@ -9,12 +9,12 @@ import 'package:noq/db/db_model/meta_entity.dart';
 import 'package:noq/db/db_model/user_token.dart';
 import 'package:noq/db/db_service/entity_service.dart';
 import 'package:noq/global_state.dart';
-import 'package:noq/pages/search_child_page.dart';
-import 'package:noq/pages/showSlotsPage.dart';
+import 'package:noq/pages/search_child_entity_page.dart';
+import 'package:noq/pages/show_slots_page.dart';
 import 'package:noq/repository/local_db_repository.dart';
 import 'package:noq/repository/slotRepository.dart';
 import 'package:noq/services/circular_progress.dart';
-import 'package:noq/services/mapService.dart';
+import 'package:noq/services/url_services.dart';
 import 'package:noq/style.dart';
 import 'package:noq/utils.dart';
 import 'package:noq/widget/appbar.dart';
@@ -274,7 +274,7 @@ class _FavsListPageState extends State<FavsListPage> {
           Navigator.push(
               context,
               MaterialPageRoute(
-                  builder: (context) => SearchChildrenPage(
+                  builder: (context) => SearchChildEntityPage(
                       pageName: "Favs",
                       childList: str.childEntities,
                       parentName: str.name)));
@@ -694,7 +694,7 @@ class _FavsListPageState extends State<FavsListPage> {
                                       context,
                                       MaterialPageRoute(
                                           builder: (context) =>
-                                              SearchChildrenPage(
+                                              SearchChildEntityPage(
                                                   pageName: "Favs",
                                                   childList: str.childEntities,
                                                   parentName: str.name)));
