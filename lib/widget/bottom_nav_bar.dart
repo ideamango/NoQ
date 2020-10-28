@@ -61,7 +61,7 @@ class _CustomBottomBarState extends State<CustomBottomBar> {
       setState(() {
         _botBarIndex = index;
       });
-      //Navigator.pop(context);
+      Navigator.pop(context);
       switch (index) {
         case 0:
           {
@@ -71,18 +71,24 @@ class _CustomBottomBarState extends State<CustomBottomBar> {
           break;
         case 1:
           {
+            // Navigator.push(context,
+            //  MaterialPageRoute(builder: (context) => UserHomePage()));
             Navigator.push(context,
                 MaterialPageRoute(builder: (context) => SearchEntityPage()));
           }
           break;
         case 2:
           {
+            //  Navigator.push(context,
+            //   MaterialPageRoute(builder: (context) => UserHomePage()));
             Navigator.push(context,
                 MaterialPageRoute(builder: (context) => FavsListPage()));
           }
           break;
         case 3:
           {
+            // Navigator.push(context,
+            //   MaterialPageRoute(builder: (context) => UserHomePage()));
             Navigator.push(context,
                 MaterialPageRoute(builder: (context) => UserAccountPage()));
           }

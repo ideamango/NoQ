@@ -300,28 +300,31 @@ class _SearchEntityPageState extends State<SearchEntityPage> {
     if (!initCompleted) {
       return MaterialApp(
         theme: ThemeData.light().copyWith(),
-        home: Scaffold(
-            appBar: CustomAppBar(
-              titleTxt: "Search",
-            ),
-            body: Center(
-              child: Container(
-                margin: EdgeInsets.fromLTRB(
-                    10,
-                    MediaQuery.of(context).size.width * .5,
-                    10,
-                    MediaQuery.of(context).size.width * .5),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    showCircularProgress(),
-                  ],
+        home: new WillPopScope(
+          child: Scaffold(
+              appBar: CustomAppBar(
+                titleTxt: "Search",
+              ),
+              body: Center(
+                child: Container(
+                  margin: EdgeInsets.fromLTRB(
+                      10,
+                      MediaQuery.of(context).size.width * .5,
+                      10,
+                      MediaQuery.of(context).size.width * .5),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      showCircularProgress(),
+                    ],
+                  ),
                 ),
               ),
-            ),
 
-            //drawer: CustomDrawer(),
-            bottomNavigationBar: CustomBottomBar(barIndex: 1)),
+              //drawer: CustomDrawer(),
+              bottomNavigationBar: CustomBottomBar(barIndex: 1)),
+          onWillPop: willPopCallback,
+        ),
       );
     } else {
       // Widget categoryDropDown = Container(
@@ -530,22 +533,28 @@ class _SearchEntityPageState extends State<SearchEntityPage> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
                   searchResultText,
-                  Container(
-                    width: MediaQuery.of(context).size.width * .09,
-                    child: InkWell(
-                      child: Text(
-                        "Clear",
-                        style: errorTextStyle,
-                      ),
-                      onTap: () {
-                        setState(() {
-                          _searchText = "";
-                          _entityType = null;
-                          _buildSearchList();
-                        });
-                      },
-                    ),
-                  ),
+                  (Utils.isNotNullOrEmpty(_searchText) ||
+                          Utils.isNotNullOrEmpty(_entityType))
+                      ? Container(
+                          width: MediaQuery.of(context).size.width * .09,
+                          child: InkWell(
+                            child: Text(
+                              "Clear",
+                              style: errorTextStyle,
+                            ),
+                            onTap: () {
+                              setState(() {
+                                _searchTextController.clear();
+                                messageTitle = "";
+                                _isSearching = "searching";
+                                _searchText = "";
+                                _entityType = null;
+                                _buildSearchList();
+                              });
+                            },
+                          ),
+                        )
+                      : Container(),
                 ],
               ),
             ),
@@ -564,56 +573,59 @@ class _SearchEntityPageState extends State<SearchEntityPage> {
             '/mainSearch': (BuildContext context) => SearchEntityPage(),
           },
           theme: ThemeData.light().copyWith(),
-          home: Scaffold(
-              resizeToAvoidBottomInset: false,
-              appBar: AppBar(
-                  actions: <Widget>[],
-                  flexibleSpace: Container(
-                    decoration: gradientBackground,
-                  ),
-                  leading: IconButton(
-                      padding: EdgeInsets.all(0),
-                      alignment: Alignment.center,
-                      highlightColor: Colors.orange[300],
-                      icon: Icon(Icons.arrow_back),
-                      color: Colors.white,
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => UserHomePage()));
-                      }),
-                  title: Text(
-                    title,
-                    style: TextStyle(color: Colors.white, fontSize: 16),
-                    overflow: TextOverflow.ellipsis,
-                  )),
-              body: Column(
-                children: <Widget>[
-                  filterBar,
-                  (!Utils.isNullOrEmpty(_pastSearches))
-                      ? Expanded(
-                          child: ListView.builder(
-                              itemCount: 1,
-                              itemBuilder: (BuildContext context, int index) {
-                                return Container(
-                                  margin: EdgeInsets.fromLTRB(10, 10, 10, 10),
-                                  child: new Column(
-                                    children: showPastSearches(),
-                                  ),
-                                );
-                              }),
-                        )
-                      : _emptySearchPage(),
-                ],
-              ),
-              // drawer: CustomDrawer(),
-              floatingActionButton: MyFloatingActionButton(),
-              bottomNavigationBar: CustomBottomBar(barIndex: 1)
+          home: new WillPopScope(
+            child: Scaffold(
+                resizeToAvoidBottomInset: false,
+                appBar: AppBar(
+                    actions: <Widget>[],
+                    flexibleSpace: Container(
+                      decoration: gradientBackground,
+                    ),
+                    leading: IconButton(
+                        padding: EdgeInsets.all(0),
+                        alignment: Alignment.center,
+                        highlightColor: Colors.orange[300],
+                        icon: Icon(Icons.arrow_back),
+                        color: Colors.white,
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => UserHomePage()));
+                        }),
+                    title: Text(
+                      title,
+                      style: TextStyle(color: Colors.white, fontSize: 16),
+                      overflow: TextOverflow.ellipsis,
+                    )),
+                body: Column(
+                  children: <Widget>[
+                    filterBar,
+                    (!Utils.isNullOrEmpty(_pastSearches))
+                        ? Expanded(
+                            child: ListView.builder(
+                                itemCount: 1,
+                                itemBuilder: (BuildContext context, int index) {
+                                  return Container(
+                                    margin: EdgeInsets.fromLTRB(10, 10, 10, 10),
+                                    child: new Column(
+                                      children: showPastSearches(),
+                                    ),
+                                  );
+                                }),
+                          )
+                        : _emptySearchPage(),
+                  ],
+                ),
+                // drawer: CustomDrawer(),
+                floatingActionButton: MyFloatingActionButton(),
+                bottomNavigationBar: CustomBottomBar(barIndex: 1)
 
-              // drawer: CustomDrawer(),
-              ),
+                // drawer: CustomDrawer(),
+                ),
+            onWillPop: willPopCallback,
+          ),
         );
       else {
         print("Came in isSearching");
@@ -623,65 +635,76 @@ class _SearchEntityPageState extends State<SearchEntityPage> {
             '/mainSearch': (BuildContext context) => SearchEntityPage(),
           },
           theme: ThemeData.light().copyWith(),
-          home: Scaffold(
-              resizeToAvoidBottomInset: false,
-              appBar: AppBar(
-                  actions: <Widget>[],
-                  flexibleSpace: Container(
-                    decoration: gradientBackground,
-                  ),
-                  leading: IconButton(
-                      padding: EdgeInsets.all(0),
-                      alignment: Alignment.center,
-                      highlightColor: Colors.orange[300],
-                      icon: Icon(Icons.arrow_back),
-                      color: Colors.white,
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => UserHomePage()));
-                      }),
-                  title: Text(
-                    title,
-                    style: TextStyle(color: Colors.white, fontSize: 16),
-                    overflow: TextOverflow.ellipsis,
-                  )),
-              body: Column(
-                children: <Widget>[
-                  filterBar,
-                  (_isSearching == "done")
-                      ? ((_stores.length == 0)
-                          ? _emptySearchPage()
-                          : Expanded(child: _listSearchResults()))
-                      //Else could be one when isSearching is 'searching', show circular progress.
-                      : Center(
-                          child: Container(
-                            height: MediaQuery.of(context).size.height * .35,
-                            alignment: Alignment.bottomCenter,
-                            child: SingleChildScrollView(
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                mainAxisSize: MainAxisSize.min,
-                                children: <Widget>[
-                                  showCircularProgress(),
-                                ],
+          home: new WillPopScope(
+            child: Scaffold(
+                key: key,
+                resizeToAvoidBottomInset: false,
+                appBar: AppBar(
+                    actions: <Widget>[],
+                    flexibleSpace: Container(
+                      decoration: gradientBackground,
+                    ),
+                    leading: IconButton(
+                        padding: EdgeInsets.all(0),
+                        alignment: Alignment.center,
+                        highlightColor: Colors.orange[300],
+                        icon: Icon(Icons.arrow_back),
+                        color: Colors.white,
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => UserHomePage()));
+                        }),
+                    title: Text(
+                      title,
+                      style: TextStyle(color: Colors.white, fontSize: 16),
+                      overflow: TextOverflow.ellipsis,
+                    )),
+                body: Column(
+                  children: <Widget>[
+                    filterBar,
+                    (_isSearching == "done")
+                        ? ((_stores.length == 0)
+                            ? _emptySearchPage()
+                            : Expanded(child: _listSearchResults()))
+                        //Else could be one when isSearching is 'searching', show circular progress.
+                        : Center(
+                            child: Container(
+                              height: MediaQuery.of(context).size.height * .35,
+                              alignment: Alignment.bottomCenter,
+                              child: SingleChildScrollView(
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: <Widget>[
+                                    showCircularProgress(),
+                                  ],
+                                ),
                               ),
                             ),
-                          ),
-                        )
-                ],
-              ),
-              // drawer: CustomDrawer(),
-              floatingActionButton: MyFloatingActionButton(),
-              bottomNavigationBar: CustomBottomBar(barIndex: 1)
+                          )
+                  ],
+                ),
+                // drawer: CustomDrawer(),
+                floatingActionButton: MyFloatingActionButton(),
+                bottomNavigationBar: CustomBottomBar(barIndex: 1)
 
-              // drawer: CustomDrawer(),
-              ),
+                // drawer: CustomDrawer(),
+                ),
+            onWillPop: willPopCallback,
+          ),
         );
       }
     }
+  }
+
+  Future<bool> willPopCallback() async {
+    Utils.showMyFlushbar(
+        context, Icons.info, Duration(seconds: 3), "dsfvsfg", "");
+key.currentState.showBottomSheet((context) => null)
+    return false;
   }
 
   Widget _buildItem(Entity str) {
@@ -691,7 +714,7 @@ class _SearchEntityPageState extends State<SearchEntityPage> {
     return GestureDetector(
       onTap: () {
         print("Container clicked");
-        //TODO: If entity has child then fecth them from server show in next screen
+        //TODO: If entity has child then fetch them from server show in next screen
         if (str.childEntities.length != 0) {
           Navigator.push(
               context,
