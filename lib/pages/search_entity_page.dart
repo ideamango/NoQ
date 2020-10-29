@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:intl/intl.dart';
 import 'package:noq/constants.dart';
@@ -31,7 +32,8 @@ class SearchEntityPage extends StatefulWidget {
   _SearchEntityPageState createState() => _SearchEntityPageState();
 }
 
-class _SearchEntityPageState extends State<SearchEntityPage> {
+class _SearchEntityPageState extends State<SearchEntityPage>
+    with SingleTickerProviderStateMixin {
   bool initCompleted = false;
   bool isFavourited = false;
   DateTime dateTime = DateTime.now();
@@ -126,6 +128,11 @@ class _SearchEntityPageState extends State<SearchEntityPage> {
   String messageSubTitle;
   String _dynamicLink;
 
+  ScrollController _selectCategoryBtnController;
+
+  AnimationController controller;
+  Animation<Offset> offset;
+
   //List<String> searchTypes;
   void showFoatingActionButton(bool value) {
     setState(() {
@@ -141,14 +148,42 @@ class _SearchEntityPageState extends State<SearchEntityPage> {
       fetchPastSearchesList();
       buildCategoryList();
       searchTypes = _state.conf.entityTypes;
-      //insert only if 'All' option not there
-      // if (!searchTypes.contains(_searchInAll))
-      //   searchTypes.insert(0, _searchInAll);
       setState(() {
         initCompleted = true;
       });
     });
+
     registerCategorySelectEvent();
+
+    controller =
+        AnimationController(vsync: this, duration: Duration(milliseconds: 600));
+
+    offset = Tween<Offset>(begin: Offset.zero, end: Offset(0.0, 10.0))
+        .animate(controller);
+
+    _selectCategoryBtnController = new ScrollController();
+    _selectCategoryBtnController.addListener(() {
+      if (_selectCategoryBtnController.position.userScrollDirection ==
+          ScrollDirection.reverse) {
+        if (_selectCategoryBtnController.position.atEdge) {
+          print(_selectCategoryBtnController.position.pixels);
+          if (_selectCategoryBtnController.position.pixels != 0) {
+            print("ITS AT LAST POSITIUON");
+            setState(() {
+              controller.forward();
+            });
+          }
+        }
+      } else {
+        if (_selectCategoryBtnController.position.userScrollDirection ==
+            ScrollDirection.forward) {
+          print("ITS Going up");
+          setState(() {
+            controller.reverse();
+          });
+        }
+      }
+    });
   }
 
   void registerCategorySelectEvent() {
@@ -169,40 +204,19 @@ class _SearchEntityPageState extends State<SearchEntityPage> {
   @override
   void dispose() {
     super.dispose();
+    _selectCategoryBtnController.dispose();
   }
 
   void fetchPastSearchesList() {
     //Load details from local files
-    // if (initCompleted) {
+
     if (!Utils.isNullOrEmpty(_state.pastSearches)) {
       setState(() {
         _pastSearches = _state.pastSearches;
       });
-
-      // }
     } else if (_state.pastSearches != null && _state.pastSearches.length == 0)
       messageTitle = "No previous searches!!";
-    //  _list = _stores;
   }
-
-  // _SearchStoresPageState() {
-  //   _searchTextController.addListener(() {
-  //     if (_searchTextController.text.isEmpty && _entityType == null) {
-  //       setState(() {
-  //         _isSearching = "initial";
-  //         _searchText = "";
-  //       });
-  //     } else {
-  //       if (_searchTextController.text.length >= 3) {
-  //         setState(() {
-  //           _isSearching = "searching";
-  //           _searchText = _searchTextController.text;
-  //         });
-  //         _buildSearchList();
-  //       }
-  //     }
-  //   });
-  // }
 
   Future<void> getGlobalState() async {
     _state = await GlobalState.getGlobalState();
@@ -339,6 +353,7 @@ class _SearchEntityPageState extends State<SearchEntityPage> {
           children: <Widget>[
             Expanded(
               child: ListView.builder(
+                  controller: _selectCategoryBtnController,
                   itemCount: 1,
                   itemBuilder: (BuildContext context, int index) {
                     return Container(
@@ -595,7 +610,10 @@ class _SearchEntityPageState extends State<SearchEntityPage> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
-                  searchResultText,
+                  (Utils.isNotNullOrEmpty(_searchText) ||
+                          Utils.isNotNullOrEmpty(_entityType))
+                      ? searchResultText
+                      : Container(),
                   (Utils.isNotNullOrEmpty(_searchText) ||
                           Utils.isNotNullOrEmpty(_entityType))
                       ? Container(
@@ -669,10 +687,11 @@ class _SearchEntityPageState extends State<SearchEntityPage> {
                     (!Utils.isNullOrEmpty(_pastSearches))
                         ? Expanded(
                             child: ListView.builder(
+                                controller: _selectCategoryBtnController,
                                 itemCount: 1,
                                 itemBuilder: (BuildContext context, int index) {
                                   return Container(
-                                    margin: EdgeInsets.fromLTRB(10, 10, 10, 10),
+                                    margin: EdgeInsets.fromLTRB(10, 0, 10, 0),
                                     child: new Column(
                                       children: showPastSearches(),
                                     ),
@@ -748,7 +767,7 @@ class _SearchEntityPageState extends State<SearchEntityPage> {
                                 ),
                               ),
                             ),
-                          )
+                          ),
                   ],
                 ),
                 // drawer: CustomDrawer(),
@@ -768,102 +787,108 @@ class _SearchEntityPageState extends State<SearchEntityPage> {
     return showFab
         ? Container(
             width: MediaQuery.of(context).size.width * .4,
-            height: MediaQuery.of(context).size.height * .1,
+            height: MediaQuery.of(context).size.height * .08,
             padding: EdgeInsets.all(5),
-            child: FloatingActionButton(
-              elevation: 30,
-              backgroundColor: btnColor,
-              shape: RoundedRectangleBorder(
-                  side: BorderSide(color: Colors.blueGrey[200]),
-                  borderRadius: BorderRadius.all(Radius.circular(45.0))),
-              child: Container(
-                child: Text(
-                  "Choose Category",
-                  style: TextStyle(color: Colors.white, fontSize: 16),
-                  textAlign: TextAlign.center,
+            child: SlideTransition(
+              position: offset,
+              child: FloatingActionButton(
+                elevation: 30,
+                backgroundColor: btnColor,
+                shape: RoundedRectangleBorder(
+                    side: BorderSide(color: Colors.blueGrey[200]),
+                    borderRadius: BorderRadius.all(Radius.circular(45.0))),
+                child: Container(
+                  child: Text(
+                    "Select Category",
+                    style: TextStyle(color: Colors.white, fontSize: 16),
+                    textAlign: TextAlign.center,
+                  ),
                 ),
-              ),
-              onPressed: () {
-                bottomSheetController = key.currentState.showBottomSheet<Null>(
-                  (context) => Container(
-                    color: Colors.transparent,
-                    height: MediaQuery.of(context).size.height * .6,
-                    child: Column(
-                      children: <Widget>[
-                        Row(
-                          children: <Widget>[
-                            Container(
-                              padding: EdgeInsets.all(0),
-                              width: MediaQuery.of(context).size.width * .1,
-                              height: MediaQuery.of(context).size.width * .1,
-                              child: IconButton(
-                                  padding: EdgeInsets.all(0),
-                                  icon: Icon(
-                                    Icons.cancel,
-                                    color: btnDisabledolor,
-                                  ),
-                                  onPressed: () {
-                                    Navigator.of(context).pop();
-                                  }),
-                            ),
-                            Container(
-                                alignment: Alignment.center,
-                                width: MediaQuery.of(context).size.width * .8,
-                                child: Text(
-                                  "Select Category",
-                                  style: textInputTextStyle,
-                                )),
-                          ],
-                        ),
-                        Divider(
-                          height: 1,
-                          color: primaryDarkColor,
-                        ),
-                        Expanded(
-                          child: Container(
-                            padding: EdgeInsets.all(0),
-                            child: new GridView.builder(
-                              padding: EdgeInsets.all(0),
-                              scrollDirection: Axis.vertical,
-                              shrinkWrap: true,
-                              itemCount: categoryList.length,
-                              gridDelegate:
-                                  SliverGridDelegateWithFixedCrossAxisCount(
-                                      crossAxisCount: 4,
-                                      crossAxisSpacing: 10.0,
-                                      mainAxisSpacing: 10),
-                              itemBuilder: (BuildContext context, int index) {
-                                return new GridTile(
-                                  child: Container(
-                                    height: MediaQuery.of(context).size.height *
-                                        .25,
+                onPressed: () {
+                  bottomSheetController =
+                      key.currentState.showBottomSheet<Null>(
+                    (context) => Container(
+                      color: Colors.transparent,
+                      height: MediaQuery.of(context).size.height * .6,
+                      child: Column(
+                        children: <Widget>[
+                          Row(
+                            children: <Widget>[
+                              Container(
+                                padding: EdgeInsets.all(0),
+                                width: MediaQuery.of(context).size.width * .1,
+                                height: MediaQuery.of(context).size.width * .1,
+                                child: IconButton(
                                     padding: EdgeInsets.all(0),
-                                    // decoration:
-                                    //     BoxDecoration(border: Border.all(color: Colors.black, width: 0.5)),
-                                    child: Center(
-                                      child: _buildCategoryItem(context, index),
+                                    icon: Icon(
+                                      Icons.cancel,
+                                      color: btnDisabledolor,
                                     ),
-                                  ),
-                                );
-                              },
+                                    onPressed: () {
+                                      Navigator.of(context).pop();
+                                    }),
+                              ),
+                              Container(
+                                  alignment: Alignment.center,
+                                  width: MediaQuery.of(context).size.width * .8,
+                                  child: Text(
+                                    "Select Category",
+                                    style: textInputTextStyle,
+                                  )),
+                            ],
+                          ),
+                          Divider(
+                            height: 1,
+                            color: primaryDarkColor,
+                          ),
+                          Expanded(
+                            child: Container(
+                              padding: EdgeInsets.all(0),
+                              child: new GridView.builder(
+                                padding: EdgeInsets.all(0),
+                                scrollDirection: Axis.vertical,
+                                shrinkWrap: true,
+                                itemCount: categoryList.length,
+                                gridDelegate:
+                                    SliverGridDelegateWithFixedCrossAxisCount(
+                                        crossAxisCount: 4,
+                                        crossAxisSpacing: 10.0,
+                                        mainAxisSpacing: 10),
+                                itemBuilder: (BuildContext context, int index) {
+                                  return new GridTile(
+                                    child: Container(
+                                      height:
+                                          MediaQuery.of(context).size.height *
+                                              .25,
+                                      padding: EdgeInsets.all(0),
+                                      // decoration:
+                                      //     BoxDecoration(border: Border.all(color: Colors.black, width: 0.5)),
+                                      child: Center(
+                                        child:
+                                            _buildCategoryItem(context, index),
+                                      ),
+                                    ),
+                                  );
+                                },
+                              ),
                             ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
-                  ),
-                  elevation: 30,
-                  shape: RoundedRectangleBorder(
-                      side: BorderSide(color: Colors.blueGrey[200]),
-                      borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(20.0),
-                          topRight: Radius.circular(20.0))),
-                );
-                showFoatingActionButton(false);
-                bottomSheetController.closed.then((value) {
-                  showFoatingActionButton(true);
-                });
-              },
+                    elevation: 30,
+                    shape: RoundedRectangleBorder(
+                        side: BorderSide(color: Colors.blueGrey[200]),
+                        borderRadius: BorderRadius.only(
+                            topLeft: Radius.circular(20.0),
+                            topRight: Radius.circular(20.0))),
+                  );
+                  showFoatingActionButton(false);
+                  bottomSheetController.closed.then((value) {
+                    showFoatingActionButton(true);
+                  });
+                },
+              ),
             ),
           )
         : Container();
