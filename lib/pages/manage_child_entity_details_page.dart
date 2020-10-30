@@ -49,7 +49,8 @@ class ManageChildEntityDetailsPage extends StatefulWidget {
       _ManageChildEntityDetailsPageState();
 }
 
-class _ManageChildEntityDetailsPageState extends State<ManageChildEntityDetailsPage> {
+class _ManageChildEntityDetailsPageState
+    extends State<ManageChildEntityDetailsPage> {
   bool _autoValidate = false;
   final GlobalKey<FormState> _serviceDetailsFormKey =
       new GlobalKey<FormState>();
@@ -1576,13 +1577,17 @@ class _ManageChildEntityDetailsPageState extends State<ManageChildEntityDetailsP
     Flushbar flush;
     //bool _wasButtonClicked;
     backRoute() {
-      // saveFormDetails();
-      // upsertEntity(entity).then((value) {
-      //   if (value) {
-      Navigator.of(context).pop();
-
-      //                }
-      // });
+      //Navigator.of(context).pop();
+      Entity parentEn;
+      EntityService().getEntity(serviceEntity.parentId).then((value) {
+        parentEn = value;
+        if (parentEn != null)
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) =>
+                      ManageChildEntityListPage(entity: parentEn)));
+      });
     }
 
     processGoBackWithTimer() async {

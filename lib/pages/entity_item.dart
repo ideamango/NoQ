@@ -69,7 +69,8 @@ class EntityRowState extends State<EntityRow> {
           Navigator.push(
               context,
               MaterialPageRoute(
-                  builder: (context) => ManageEntityDetailsPage(entity: entity)));
+                  builder: (context) =>
+                      ManageEntityDetailsPage(entity: entity)));
         }
       });
     }
@@ -95,7 +96,8 @@ class EntityRowState extends State<EntityRow> {
           Navigator.push(
               context,
               MaterialPageRoute(
-                  builder: (context) => ManageChildEntityListPage(entity: value)));
+                  builder: (context) =>
+                      ManageChildEntityListPage(entity: value)));
         } else {
           //No entity created yet.. show msg to create entity first.
 

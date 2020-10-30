@@ -55,6 +55,7 @@ class ChildEntityRowState extends State<ChildEntityRow> {
       // if Entity is inentityMap it means its a new entity and is not created yet,
       // else fetch from DB.
       getEntity(_metaEntity.entityId).then((value) {
+        Navigator.of(context).pop();
         Navigator.push(
             context,
             MaterialPageRoute(

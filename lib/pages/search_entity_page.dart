@@ -204,7 +204,7 @@ class _SearchEntityPageState extends State<SearchEntityPage>
   @override
   void dispose() {
     super.dispose();
-    _selectCategoryBtnController.dispose();
+    //_selectCategoryBtnController.dispose();
   }
 
   void fetchPastSearchesList() {
@@ -905,8 +905,38 @@ class _SearchEntityPageState extends State<SearchEntityPage>
       return true;
   }
 
+  String getEntityTypeIcon(String type) {
+    String entityImageName;
+    if (categoryList.keys.contains(type)) {
+      entityImageName = categoryList[type];
+    }
+    return entityImageName;
+  }
+
+  Widget entityImageIcon(String type) {
+    String imgName;
+    Widget imgWidget;
+
+    if (getEntityTypeIcon(type) != null) {
+      imgName = getEntityTypeIcon(type);
+      imgWidget = ImageIcon(
+        AssetImage('assets/$imgName'),
+        size: 30,
+        //color: primaryDarkColor,
+      );
+    } else {
+      imgWidget = Icon(
+        Icons.shopping_cart,
+        color: primaryDarkColor,
+        size: 20,
+      );
+    }
+    return imgWidget;
+  }
+
   Widget _buildItem(Entity str) {
     _prepareDateList();
+
     //_buildDateGridItems(str.id);
     print('after buildDateGrid called');
     return GestureDetector(
@@ -963,11 +993,7 @@ class _SearchEntityPageState extends State<SearchEntityPage>
                           shape: CircleBorder(),
                           color: primaryIcon,
                         ),
-                        child: Icon(
-                          Icons.shopping_cart,
-                          color: Colors.white,
-                          size: 20,
-                        ),
+                        child: entityImageIcon(str.type),
                       ),
                       verticalSpacer,
                     ],

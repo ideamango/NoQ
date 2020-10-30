@@ -9,7 +9,7 @@ import 'package:noq/db/db_model/meta_entity.dart';
 import 'package:noq/db/db_model/user_token.dart';
 import 'package:noq/db/db_service/entity_service.dart';
 import 'package:noq/global_state.dart';
-import 'package:noq/pages/search_child_entity_page.dart';
+import 'package:noq/pages/search_child_entity_page_old.dart';
 import 'package:noq/pages/show_slots_page.dart';
 import 'package:noq/repository/local_db_repository.dart';
 import 'package:noq/repository/slotRepository.dart';
@@ -274,7 +274,7 @@ class _FavsListPageState extends State<FavsListPage> {
           Navigator.push(
               context,
               MaterialPageRoute(
-                  builder: (context) => SearchChildEntityPage(
+                  builder: (context) => SearchChildEntityOldPage(
                       pageName: "Favs",
                       childList: str.childEntities,
                       parentName: str.name)));
@@ -694,7 +694,7 @@ class _FavsListPageState extends State<FavsListPage> {
                                       context,
                                       MaterialPageRoute(
                                           builder: (context) =>
-                                              SearchChildEntityPage(
+                                              SearchChildEntityOldPage(
                                                   pageName: "Favs",
                                                   childList: str.childEntities,
                                                   parentName: str.name)));

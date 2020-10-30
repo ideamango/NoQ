@@ -5,6 +5,7 @@ import 'package:noq/db/db_model/entity.dart';
 import 'package:noq/db/db_model/meta_entity.dart';
 import 'package:noq/db/db_service/entity_service.dart';
 import 'package:noq/global_state.dart';
+import 'package:noq/pages/manage_entity_list_page.dart';
 import 'package:noq/pages/service_entity.dart';
 import 'package:noq/repository/local_db_repository.dart';
 import 'package:noq/services/circular_progress.dart';
@@ -179,6 +180,10 @@ class _ManageChildEntityListPageState extends State<ManageChildEntityListPage> {
                     print("going back");
 
                     Navigator.of(context).pop();
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => UserHomePage()));
                   }),
               title: Text(
                 title,
@@ -271,7 +276,7 @@ class _ManageChildEntityListPageState extends State<ManageChildEntityListPage> {
                                           }
                                         } else {
                                           setState(() {
-                                            _msg = "Select Entity type";
+                                            _msg = "Select type of place";
                                           });
                                         }
                                       },
@@ -318,7 +323,7 @@ class _ManageChildEntityListPageState extends State<ManageChildEntityListPage> {
         theme: ThemeData.light().copyWith(),
         home: Scaffold(
           appBar: CustomAppBarWithBackButton(
-            backRoute: UserHomePage(),
+            backRoute: ManageEntityListPage(),
             titleTxt: title,
           ),
 

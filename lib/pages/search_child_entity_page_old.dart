@@ -8,8 +8,10 @@ import 'package:noq/db/db_model/meta_entity.dart';
 import 'package:noq/db/db_model/user_token.dart';
 import 'package:noq/db/db_service/entity_service.dart';
 import 'package:noq/global_state.dart';
-import 'package:noq/pages/search_child_entity_page_old.dart';
+import 'package:noq/pages/search_entity_page.dart';
+import 'package:noq/pages/favs_list_page.dart';
 import 'package:noq/pages/show_slots_page.dart';
+import 'package:noq/repository/StoreRepository.dart';
 import 'package:noq/services/circular_progress.dart';
 import 'package:noq/services/url_services.dart';
 import 'package:noq/style.dart';
@@ -20,17 +22,21 @@ import 'package:noq/widget/widgets.dart';
 import 'package:share/share.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../userHomePage.dart';
-import 'search_entity_page.dart';
 
-class ExplorePage extends StatefulWidget {
-  //final String forPage;
-
-  //SearchStoresPage({Key key, @required this.forPage}) : super(key: key);
+class SearchChildEntityOldPage extends StatefulWidget {
+  final String pageName;
+  final List<MetaEntity> childList;
+  final String parentName;
+  final String parentId;
+  SearchChildEntityOldPage(
+      {Key key, this.pageName, this.childList, this.parentName, this.parentId})
+      : super(key: key);
   @override
-  _ExplorePageState createState() => _ExplorePageState();
+  _SearchChildEntityOldPageState createState() =>
+      _SearchChildEntityOldPageState();
 }
 
-class _ExplorePageState extends State<ExplorePage> {
+class _SearchChildEntityOldPageState extends State<SearchChildEntityOldPage> {
   bool initCompleted = false;
   bool isFavourited = false;
   DateTime dateTime = DateTime.now();
@@ -40,15 +46,17 @@ class _ExplorePageState extends State<ExplorePage> {
   List<Entity> _stores = new List<Entity>();
   List<Entity> _pastSearches = new List<Entity>();
   List<Entity> _searchResultstores = new List<Entity>();
-  String _entityType;
-  String _searchInAll = 'Search in All';
+
+  String _fromPage;
+
+  String _searchAll;
   bool searchBoxClicked = false;
   bool fetchFromServer = false;
   // bool searchDone = false;
-
+  String title;
   final compareDateFormat = new DateFormat('YYYYMMDD');
   List<DateTime> _dateList = new List<DateTime>();
-
+  String _dynamicLink;
   Icon actionIcon = new Icon(
     Icons.search,
     color: Colors.white,
@@ -60,30 +68,31 @@ class _ExplorePageState extends State<ExplorePage> {
   //"initial, searching,done"
   String _isSearching = "initial";
   String _searchText = "";
+  String _entityType;
   String searchType = "";
   String pageName;
   GlobalState _state;
   bool stateInitFinished = false;
-  String messageTitle;
-  String messageSubTitle;
-  String _dynamicLink;
-
+  String emptyPageMsg;
   List<String> searchTypes;
+  String _searchInAll = 'Search in All';
 
   @override
   void initState() {
     super.initState();
+    _fromPage = widget.pageName;
     _isSearching = "initial";
-    // getGlobalState().whenComplete(() {
-    //   fetchPastSearchesList();
-    //   searchTypes = _state.conf.entityTypes;
-    //   //insert only if 'All' option not there
-    //   if (!searchTypes.contains(_searchInAll))
-    //     searchTypes.insert(0, _searchInAll);
-    //   setState(() {
-    //     initCompleted = true;
-    //   });
-    // });
+    title = "Places inside " + widget.parentName;
+    getGlobalState().whenComplete(() {
+      searchTypes = _state.conf.entityTypes;
+      if (!searchTypes.contains(_searchInAll))
+        searchTypes.insert(0, _searchInAll);
+      getEntitiesList().whenComplete(() {
+        setState(() {
+          initCompleted = true;
+        });
+      });
+    });
   }
 
   @override
@@ -91,45 +100,54 @@ class _ExplorePageState extends State<ExplorePage> {
     super.dispose();
   }
 
-  // void fetchPastSearchesList() {
-  //   //Load details from local files
-  //   // if (initCompleted) {
-  //   if (!Utils.isNullOrEmpty(_state.pastSearches)) {
-  //     setState(() {
-  //       _pastSearches = _state.pastSearches;
-  //     });
+  generateLinkAndShareWithParams(String entityId) async {
+    var dynamicLink =
+        await Utils.createDynamicLinkWithParams(entityId: entityId);
+    print("Dynamic Link: $dynamicLink");
 
-  //     // }
-  //   } else if (_state.pastSearches != null && _state.pastSearches.length == 0)
-  //     messageTitle = "No previous searches!!";
-  //   //  _list = _stores;
-  // }
+    _dynamicLink =
+        Uri.https(dynamicLink.authority, dynamicLink.path).toString();
+    // dynamicLink has been generated. share it with others to use it accordingly.
+    Share.share(dynamicLink.toString());
+  }
 
-  // _SearchStoresPageState() {
-  //   _searchTextController.addListener(() {
-  //     if (_searchTextController.text.isEmpty && _entityType == null) {
-  //       setState(() {
-  //         _isSearching = "initial";
-  //         _searchText = "";
-  //       });
-  //     } else {
-  //       if (_searchTextController.text.length >= 3) {
-  //         setState(() {
-  //           _isSearching = "searching";
-  //           _searchText = _searchTextController.text;
-  //         });
-  //         _buildSearchList();
-  //       }
-  //     }
-  //   });
-  // }
+  _SearchChildEntityOldPageState() {
+    _searchTextController.addListener(() {
+      if (_searchTextController.text.isEmpty && _entityType == null) {
+        setState(() {
+          _isSearching = "initial";
+          _searchText = "";
+        });
+      } else {
+        if (_searchTextController.text.length >= 3) {
+          setState(() {
+            _isSearching = "searching";
+            _searchText = _searchTextController.text;
+          });
+          _buildSearchList(_entityType, _searchText);
+        }
+      }
+    });
+  }
 
   Future<void> getGlobalState() async {
     _state = await GlobalState.getGlobalState();
   }
 
-  void getChildStoresList() async {
-    _list = _stores;
+  Future<void> getEntitiesList() async {
+    List<Entity> enList = new List<Entity>();
+    if (!Utils.isNullOrEmpty(widget.childList)) {
+      for (int i = 0; i < widget.childList.length; i++) {
+        Entity value = await getEntity(widget.childList[i].entityId);
+        if (value != null) {
+          enList.add(value);
+        }
+      }
+    }
+    setState(() {
+      _stores.addAll(enList);
+      _pastSearches.addAll(enList);
+    });
   }
 
   void _prepareDateList() {
@@ -173,74 +191,43 @@ class _ExplorePageState extends State<ExplorePage> {
     }
   }
 
-  generateLinkAndShareWithParams(String entityId) async {
-    var dynamicLink =
-        await Utils.createDynamicLinkWithParams(entityId: entityId);
-    print("Dynamic Link: $dynamicLink");
-
-    _dynamicLink =
-        Uri.https(dynamicLink.authority, dynamicLink.path).toString();
-    // dynamicLink has been generated. share it with others to use it accordingly.
-    Share.share(dynamicLink.toString());
-  }
-
   Widget _emptySearchPage() {
-    String txtMsg = (messageTitle != null) ? messageTitle : defaultSearchMsg;
-    String txtSubMsg =
-        (messageSubTitle != null) ? messageSubTitle : defaultSearchSubMsg;
-    return Center(
-      child: Container(
-        height: MediaQuery.of(context).size.height * .35,
-        alignment: Alignment.bottomCenter,
-        child: SingleChildScrollView(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              // SizedBox(
-              //   height: MediaQuery.of(context).size.height * .25,
-              // ),
-              Text(
-                txtMsg,
-                style: highlightTextStyle,
-                textAlign: TextAlign.center,
-              ),
-              Text(
-                txtSubMsg,
-                style: highlightSubTextStyle,
-                textAlign: TextAlign.center,
-              ),
-            ],
-          ),
-        ),
+    String defaultMsg = 'No places found!!';
+    String txtMsg = (emptyPageMsg != null) ? emptyPageMsg : defaultMsg;
+    return Expanded(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          Text(txtMsg, style: highlightTextStyle),
+          Text('Try again with different Name or Category. ',
+              style: highlightSubTextStyle),
+        ],
       ),
     );
   }
 
   Widget _listSearchResults() {
-    if (_stores.length != 0) {
-      //Add search results to past searches.
-      _state.pastSearches = _stores;
-      return Center(
-        child: Column(
-          children: <Widget>[
-            Expanded(
-              child: ListView.builder(
-                  itemCount: 1,
-                  itemBuilder: (BuildContext context, int index) {
-                    return Container(
-                      margin: EdgeInsets.fromLTRB(10, 10, 10, 10),
-                      child: new Column(
-                        children: showSearchResults(),
-                      ),
-                    );
-                  }),
-            ),
-          ],
-        ),
+    if (_stores.length == 0)
+      return _emptySearchPage();
+    else {
+      // _state.pastSearches = _stores;
+      return Column(
+        children: <Widget>[
+          Expanded(
+            child: ListView.builder(
+                itemCount: 1,
+                itemBuilder: (BuildContext context, int index) {
+                  return Container(
+                    margin: EdgeInsets.fromLTRB(10, 10, 10, 10),
+                    child: new Column(
+                      children: showSearchResults(),
+                    ),
+                  );
+                }),
+          ),
+        ],
       );
     }
-
     //}
   }
 
@@ -252,26 +239,28 @@ class _ExplorePageState extends State<ExplorePage> {
         theme: ThemeData.light().copyWith(),
         home: Scaffold(
           appBar: CustomAppBar(
-            titleTxt: "Search",
+            titleTxt: title,
           ),
           body: Center(
-            child: Container(
-              margin: EdgeInsets.fromLTRB(
-                  10,
-                  MediaQuery.of(context).size.width * .5,
-                  10,
-                  MediaQuery.of(context).size.width * .5),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  showCircularProgress(),
-                ],
-              ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                // Padding(padding: EdgeInsets.only(top: 20.0)),
+                Text(
+                  "Loading..",
+                  style: TextStyle(fontSize: 20.0, color: borderColor),
+                ),
+                Padding(padding: EdgeInsets.only(top: 20.0)),
+                CircularProgressIndicator(
+                  backgroundColor: primaryAccentColor,
+                  valueColor: AlwaysStoppedAnimation<Color>(highlightColor),
+                  strokeWidth: 3,
+                )
+              ],
             ),
           ),
-
           //drawer: CustomDrawer(),
-          // bottomNavigationBar: CustomBottomBar(barIndex: 1)
+          bottomNavigationBar: CustomBottomBar(barIndex: 1),
         ),
       );
     } else {
@@ -295,7 +284,7 @@ class _ExplorePageState extends State<ExplorePage> {
               iconEnabledColor: Colors.blueGrey[500],
               dropdownColor: Colors.white,
               itemHeight: kMinInteractiveDimension,
-              hint: new Text("Select a category"),
+              hint: new Text("Filter by Category"),
               style: TextStyle(fontSize: 12, color: Colors.blueGrey[500]),
               value: _entityType,
               isDense: true,
@@ -304,7 +293,7 @@ class _ExplorePageState extends State<ExplorePage> {
                 setState(() {
                   _entityType = newValue;
                   _isSearching = "searching";
-                  _buildSearchList();
+                  _buildSearchList(_entityType, _searchText);
                 });
               },
               items: searchTypes.map((type) {
@@ -332,7 +321,7 @@ class _ExplorePageState extends State<ExplorePage> {
         ),
         alignment: Alignment.center,
         child: new TextField(
-          //autofocus: true,
+          autofocus: true,
           controller: _searchTextController,
           cursorColor: Colors.blueGrey[500],
           cursorWidth: 1,
@@ -349,7 +338,6 @@ class _ExplorePageState extends State<ExplorePage> {
                 maxWidth: 25,
                 maxHeight: 22,
               ),
-
               //contentPadding: EdgeInsets.all(0),
               focusedBorder: UnderlineInputBorder(
                   borderSide: BorderSide(color: Colors.transparent)),
@@ -381,7 +369,7 @@ class _ExplorePageState extends State<ExplorePage> {
                     setState(() {
                       _isSearching = "searching";
                     });
-                    _buildSearchList();
+                    _buildSearchList(_entityType, _searchText);
                   }),
 
               // Container(
@@ -394,7 +382,7 @@ class _ExplorePageState extends State<ExplorePage> {
               //   maxWidth: 25,
               //   maxHeight: 22,
               // ),
-              hintText: "Search by Name",
+              hintText: "Filter by Name",
               hintStyle:
                   new TextStyle(fontSize: 12, color: Colors.blueGrey[500])),
           onChanged: (value) {
@@ -406,15 +394,15 @@ class _ExplorePageState extends State<ExplorePage> {
                 });
               else {
                 _searchText = _searchTextController.text;
-                _buildSearchList();
+                _buildSearchList(_entityType, _searchText);
               }
             } else {
               if (_searchTextController.text.length >= 3) {
                 setState(() {
                   _isSearching = "searching";
                   _searchText = _searchTextController.text;
-                  _buildSearchList();
                 });
+                _buildSearchList(_entityType, _searchText);
               }
             }
           },
@@ -429,20 +417,15 @@ class _ExplorePageState extends State<ExplorePage> {
           children: <Widget>[categoryDropDown, searchInputText],
         ),
       );
-      String title = "Search";
+
       print(_searchText);
       print(_entityType);
       if (_isSearching == "initial" &&
           _searchText.isEmpty &&
           _entityType == null)
         return MaterialApp(
-          routes: <String, WidgetBuilder>{
-            '/childSearch': (BuildContext context) => SearchChildEntityOldPage(),
-            '/mainSearch': (BuildContext context) => SearchEntityPage(),
-          },
           theme: ThemeData.light().copyWith(),
           home: Scaffold(
-            resizeToAvoidBottomInset: false,
             appBar: AppBar(
                 actions: <Widget>[],
                 flexibleSpace: Container(
@@ -456,48 +439,59 @@ class _ExplorePageState extends State<ExplorePage> {
                     color: Colors.white,
                     onPressed: () {
                       Navigator.of(context).pop();
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => UserHomePage()));
+                      if (_fromPage == "Favs")
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => FavsListPage()));
+                      else if (_fromPage == "Search")
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => SearchEntityPage()));
+                      // else if (_fromPage == "ShowSlots")
+                      //   Navigator.push(
+                      //       context,
+                      //       MaterialPageRoute(
+                      //           builder: (context) => SearchStoresPage()));
                     }),
                 title: Text(
                   title,
                   style: TextStyle(color: Colors.white, fontSize: 16),
                   overflow: TextOverflow.ellipsis,
                 )),
-            body: Column(
-              children: <Widget>[
-                filterBar,
-                (!Utils.isNullOrEmpty(_pastSearches))
-                    ? Expanded(
-                        child: ListView.builder(
-                            itemCount: 1,
-                            itemBuilder: (BuildContext context, int index) {
-                              return Container(
-                                margin: EdgeInsets.fromLTRB(10, 10, 10, 10),
-                                child: new Column(
-                                  children: showPastSearches(),
-                                ),
-                              );
-                            }),
-                      )
-                    : _emptySearchPage(),
-              ],
+            body: Center(
+              child: Container(
+                //
+                child: Column(
+                  children: <Widget>[
+                    filterBar,
+                    (!Utils.isNullOrEmpty(_pastSearches))
+                        ? Expanded(
+                            child: ListView.builder(
+                                itemCount: 1,
+                                itemBuilder: (BuildContext context, int index) {
+                                  return Container(
+                                    margin: EdgeInsets.fromLTRB(10, 10, 10, 10),
+                                    child: new Column(
+                                      children: showPastSearches(),
+                                    ),
+                                  );
+                                }),
+                          )
+                        : _emptySearchPage(),
+                  ],
+                ),
+              ),
             ),
             // drawer: CustomDrawer(),
-            // bottomNavigationBar: CustomBottomBar(barIndex: 1)
-
+            bottomNavigationBar: CustomBottomBar(barIndex: 1),
             // drawer: CustomDrawer(),
           ),
         );
       else {
         print("Came in isSearching");
         return MaterialApp(
-          routes: <String, WidgetBuilder>{
-            '/childSearch': (BuildContext context) => SearchChildEntityOldPage(),
-            '/mainSearch': (BuildContext context) => SearchEntityPage(),
-          },
           theme: ThemeData.light().copyWith(),
           home: Scaffold(
             appBar: AppBar(
@@ -516,40 +510,30 @@ class _ExplorePageState extends State<ExplorePage> {
                       Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => UserHomePage()));
+                              builder: (context) => SearchEntityPage()));
                     }),
                 title: Text(
                   title,
                   style: TextStyle(color: Colors.white, fontSize: 16),
                   overflow: TextOverflow.ellipsis,
                 )),
-            body: Column(
-              children: <Widget>[
-                filterBar,
-                (_isSearching == "done")
-                    ? ((_stores.length == 0)
-                        ? _emptySearchPage()
-                        : Expanded(child: _listSearchResults()))
-                    //Else could be one when isSearching is 'searching', show circular progress.
-                    : Center(
-                        child: Container(
-                          height: MediaQuery.of(context).size.height * .35,
-                          alignment: Alignment.bottomCenter,
-                          child: SingleChildScrollView(
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              mainAxisSize: MainAxisSize.min,
-                              children: <Widget>[
-                                showCircularProgress(),
-                              ],
-                            ),
-                          ),
-                        ),
-                      )
-              ],
+            body: Center(
+              child: Container(
+                //
+                child: Expanded(
+                  child: Column(
+                    children: <Widget>[
+                      filterBar,
+                      (_isSearching == "done")
+                          ? _listSearchResults()
+                          : showCircularProgress(),
+                    ],
+                  ),
+                ),
+              ),
             ),
             // drawer: CustomDrawer(),
-            // bottomNavigationBar: CustomBottomBar(barIndex: 1)
+            bottomNavigationBar: CustomBottomBar(barIndex: 1),
 
             // drawer: CustomDrawer(),
           ),
@@ -565,30 +549,17 @@ class _ExplorePageState extends State<ExplorePage> {
     return GestureDetector(
       onTap: () {
         print("Container clicked");
-        //TODO: If entity has child then fecth them from server show in next screen
         if (str.childEntities.length != 0) {
           Navigator.push(
               context,
               MaterialPageRoute(
                   builder: (context) => SearchChildEntityOldPage(
-                        pageName: "Search",
+                        pageName: "SearchChild",
                         childList: str.childEntities,
                         parentName: str.name,
                         parentId: str.entityId,
                       )));
         }
-
-        // if (child.length != 0) {
-        //   Navigator.push(
-        //       context,
-        //       MaterialPageRoute(
-        //           builder: (context) => SearchStoresPage(forPage: "Child")));
-
-        //   // Navigator.push(
-        //   //     context,
-        //   //     MaterialPageRoute(
-        //   //         builder: (context) => EntityServicesListPage(entity: str)));
-        // }
       },
       child: Card(
         elevation: 10,
@@ -644,7 +615,7 @@ class _ExplorePageState extends State<ExplorePage> {
                               width: MediaQuery.of(context).size.width * .5,
                               padding: EdgeInsets.all(0),
                               child: Row(
-                                // mainAxisAlignment: Mai1nAxisAlignment.spaceBetween,
+                                // mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 // crossAxisAlignment: CrossAxisAlignment.center,
                                 children: <Widget>[
                                   Text(
@@ -797,144 +768,59 @@ class _ExplorePageState extends State<ExplorePage> {
               padding: EdgeInsets.all(4),
               //color: Colors.grey[200],
               child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: <Widget>[
-                  SizedBox(width: 5),
-                  Container(
-                    padding: EdgeInsets.all(0),
-                    margin: EdgeInsets.all(0),
-                    height: 35.0,
-                    width: 45.0,
-                    child: RaisedButton(
-                      elevation: 5,
-                      padding: EdgeInsets.all(5),
-                      // alignment: Alignment.center,
-                      shape: RoundedRectangleBorder(
-                          side: BorderSide(color: Colors.blueGrey[200]),
-                          borderRadius: BorderRadius.all(Radius.circular(5.0))),
-                      color: Colors.white,
-                      splashColor: highlightColor,
-                      child: ImageIcon(
-                        AssetImage('assets/whatsapp.png'),
-                        size: 30,
-                        color: primaryDarkColor,
-                      ),
-                      onPressed: () {
-                        if (str.whatsapp != null && str.whatsapp != "") {
-                          try {
-                            launchWhatsApp(
-                                message: whatsappMessage, phone: str.whatsapp);
-                          } catch (error) {
-                            Utils.showMyFlushbar(
-                                context,
-                                Icons.error,
-                                Duration(seconds: 5),
-                                "Could not connect to the Whatsapp number ${str.whatsapp} !!",
-                                "Try again later");
-                          }
-                        } else {
-                          Utils.showMyFlushbar(
-                              context,
-                              Icons.info,
-                              Duration(seconds: 5),
-                              "Whatsapp contact information not found!!",
-                              "");
-                        }
-                        // callPhone('+919611009823');
-                        //callPhone(str.);
-                      },
-                    ),
-                  ),
-                  // SizedBox(width: 1),
-                  Container(
-                    padding: EdgeInsets.all(0),
-                    margin: EdgeInsets.all(0),
-                    height: 35.0,
-                    width: 45.0,
-                    child: RaisedButton(
-                      elevation: 5,
-                      padding: EdgeInsets.fromLTRB(2, 3, 2, 3),
-                      shape: RoundedRectangleBorder(
-                          side: BorderSide(color: Colors.blueGrey[200]),
-                          borderRadius: BorderRadius.all(Radius.circular(5.0))),
-                      color: Colors.white,
-                      splashColor: highlightColor,
-                      child: Icon(
-                        Icons.phone,
-                        color: primaryDarkColor,
-                        size: 25,
-                      ),
-                      onPressed: () {
-                        // callPhone('+919611009823');
-                        //TODO: Change this phone number later
-
-                        if (str.phone != null) {
-                          try {
-                            callPhone(str.phone);
-                          } catch (error) {
-                            Utils.showMyFlushbar(
-                                context,
-                                Icons.error,
-                                Duration(seconds: 5),
-                                "Could not connect call to the number ${str.phone} !!",
-                                "Try again later.");
-                          }
-                        } else {
-                          Utils.showMyFlushbar(
-                              context,
-                              Icons.info,
-                              Duration(seconds: 5),
-                              "Contact information not found!!",
-                              "");
-                        }
-                      },
-                    ),
-                  ),
-
-                  Container(
-                    padding: EdgeInsets.all(0),
-                    margin: EdgeInsets.all(0),
-                    height: 35.0,
-                    width: 45.0,
-                    child: RaisedButton(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: <Widget>[
+                    SizedBox(width: 5),
+                    Container(
+                      padding: EdgeInsets.all(0),
+                      margin: EdgeInsets.all(0),
+                      height: 35.0,
+                      width: 45.0,
+                      child: RaisedButton(
                         elevation: 5,
-                        padding: EdgeInsets.fromLTRB(2, 3, 2, 3),
+                        padding: EdgeInsets.all(5),
+                        // alignment: Alignment.center,
                         shape: RoundedRectangleBorder(
                             side: BorderSide(color: Colors.blueGrey[200]),
                             borderRadius:
                                 BorderRadius.all(Radius.circular(5.0))),
                         color: Colors.white,
                         splashColor: highlightColor,
-                        child: Icon(
-                          Icons.location_on,
+                        child: ImageIcon(
+                          AssetImage('assets/whatsapp.png'),
+                          size: 30,
                           color: primaryDarkColor,
-                          size: 25,
                         ),
                         onPressed: () {
-                          try {
-                            if (str.coordinates.geopoint.latitude != null)
-                              launchURL(
-                                  str.name,
-                                  Utils.getFormattedAddress(str.address),
-                                  str.coordinates.geopoint.latitude,
-                                  str.coordinates.geopoint.longitude);
-                            else {
-                              Utils.showMyFlushbar(context, Icons.error,
-                                  Duration(seconds: 5), locationNotFound, "");
+                          if (str.whatsapp != null && str.whatsapp != "") {
+                            try {
+                              launchWhatsApp(
+                                  message: whatsappMessage,
+                                  phone: str.whatsapp);
+                            } catch (error) {
+                              Utils.showMyFlushbar(
+                                  context,
+                                  Icons.error,
+                                  Duration(seconds: 5),
+                                  "Could not connect to the Whatsapp number ${str.whatsapp} !!",
+                                  "Try again later");
                             }
-                          } catch (error) {
+                          } else {
                             Utils.showMyFlushbar(
                                 context,
-                                Icons.error,
+                                Icons.info,
                                 Duration(seconds: 5),
-                                "Could not open Maps!",
-                                'Please try again later and if the problem still persists, Report to us using "Contact Us"');
+                                "Whatsapp contact information not found!!",
+                                "");
                           }
-                        }),
-                  ),
-
-                  Container(
+                          // callPhone('+919611009823');
+                          //callPhone(str.);
+                        },
+                      ),
+                    ),
+                    // SizedBox(width: 1),
+                    Container(
                       padding: EdgeInsets.all(0),
                       margin: EdgeInsets.all(0),
                       height: 35.0,
@@ -949,114 +835,194 @@ class _ExplorePageState extends State<ExplorePage> {
                         color: Colors.white,
                         splashColor: highlightColor,
                         child: Icon(
-                          Icons.share,
+                          Icons.phone,
                           color: primaryDarkColor,
                           size: 25,
                         ),
                         onPressed: () {
-                          generateLinkAndShareWithParams(str.entityId);
-                        },
-                      )),
-                  Container(
-                    padding: EdgeInsets.all(0),
-                    margin: EdgeInsets.all(0),
-                    height: 35.0,
-                    width: 45.0,
-                    child: RaisedButton(
-                      elevation: 5,
-                      padding: EdgeInsets.fromLTRB(2, 3, 2, 3),
-                      shape: RoundedRectangleBorder(
-                          side: BorderSide(color: Colors.blueGrey[200]),
-                          borderRadius: BorderRadius.all(Radius.circular(5.0))),
-                      color: Colors.white,
-                      splashColor: highlightColor,
-                      onPressed: () => toggleFavorite(str),
-                      highlightColor: Colors.orange[300],
-                      child: isFavourite(str.getMetaEntity())
-                          ? Icon(Icons.favorite,
-                              color: Colors.red[800], size: 25)
-                          : Icon(
-                              Icons.favorite_border,
-                              color: primaryIcon,
-                            ),
-                    ),
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    mainAxisSize: MainAxisSize.min,
-                    children: <Widget>[
-                      if (str.childEntities.length != 0)
-                        Container(
-                          padding: EdgeInsets.all(0),
-                          margin: EdgeInsets.all(0),
-                          width: 50,
-                          height: 40,
-                          child: FlatButton(
-                            padding: EdgeInsets.all(0),
-                            color: Colors.white,
-                            splashColor: highlightColor.withOpacity(.8),
-                            // shape: RoundedRectangleBorder(
-                            //     side: BorderSide(
-                            //         color: Colors.blueGrey[200]),
-                            //     borderRadius: BorderRadius.all(
-                            //         Radius.circular(2.0))),
-                            onPressed: () {
-                              Navigator.push(
+                          // callPhone('+919611009823');
+                          //TODO: Change this phone number later
+
+                          if (str.phone != null) {
+                            try {
+                              callPhone(str.phone);
+                            } catch (error) {
+                              Utils.showMyFlushbar(
                                   context,
-                                  MaterialPageRoute(
-                                      builder: (context) => SearchChildEntityOldPage(
-                                          pageName: "Search",
-                                          childList: str.childEntities,
-                                          parentName: str.name)));
-                            },
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: <Widget>[
-                                Container(
-                                  padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
-                                  transform:
-                                      Matrix4.translationValues(8.0, 0, 0),
-                                  child: Icon(
-                                    Icons.arrow_forward_ios,
-                                    color: Colors.cyan[400],
-                                    size: 25,
-                                    // color: Colors.white38,
+                                  Icons.error,
+                                  Duration(seconds: 5),
+                                  "Could not connect call to the number ${str.phone} !!",
+                                  "Try again later.");
+                            }
+                          } else {
+                            Utils.showMyFlushbar(
+                                context,
+                                Icons.info,
+                                Duration(seconds: 5),
+                                "Contact information not found!!",
+                                "");
+                          }
+                        },
+                      ),
+                    ),
+
+                    Container(
+                      padding: EdgeInsets.all(0),
+                      margin: EdgeInsets.all(0),
+                      height: 35.0,
+                      width: 45.0,
+                      child: RaisedButton(
+                          elevation: 5,
+                          padding: EdgeInsets.fromLTRB(2, 3, 2, 3),
+                          shape: RoundedRectangleBorder(
+                              side: BorderSide(color: Colors.blueGrey[200]),
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(5.0))),
+                          color: Colors.white,
+                          splashColor: highlightColor,
+                          child: Icon(
+                            Icons.location_on,
+                            color: primaryDarkColor,
+                            size: 25,
+                          ),
+                          onPressed: () {
+                            try {
+                              if (str.coordinates.geopoint.latitude != null)
+                                launchURL(
+                                    str.name,
+                                    Utils.getFormattedAddress(str.address),
+                                    str.coordinates.geopoint.latitude,
+                                    str.coordinates.geopoint.longitude);
+                              else {
+                                Utils.showMyFlushbar(context, Icons.error,
+                                    Duration(seconds: 5), locationNotFound, "");
+                              }
+                            } catch (error) {
+                              Utils.showMyFlushbar(context, Icons.error,
+                                  Duration(seconds: 5), cantOpenMaps, tryLater);
+                            }
+                          }),
+                    ),
+
+                    Container(
+                        padding: EdgeInsets.all(0),
+                        margin: EdgeInsets.all(0),
+                        height: 35.0,
+                        width: 45.0,
+                        child: RaisedButton(
+                          elevation: 5,
+                          padding: EdgeInsets.fromLTRB(2, 3, 2, 3),
+                          shape: RoundedRectangleBorder(
+                              side: BorderSide(color: Colors.blueGrey[200]),
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(5.0))),
+                          color: Colors.white,
+                          splashColor: highlightColor,
+                          child: Icon(
+                            Icons.share,
+                            color: primaryDarkColor,
+                            size: 25,
+                          ),
+                          onPressed: () {
+                            generateLinkAndShareWithParams(str.entityId);
+                          },
+                        )),
+                    Container(
+                      padding: EdgeInsets.all(0),
+                      margin: EdgeInsets.all(0),
+                      height: 35.0,
+                      width: 45.0,
+                      child: RaisedButton(
+                        elevation: 5,
+                        padding: EdgeInsets.fromLTRB(2, 3, 2, 3),
+                        shape: RoundedRectangleBorder(
+                            side: BorderSide(color: Colors.blueGrey[200]),
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(5.0))),
+                        color: Colors.white,
+                        splashColor: highlightColor,
+                        onPressed: () => toggleFavorite(str),
+                        highlightColor: Colors.orange[300],
+                        child: isFavourite(str.getMetaEntity())
+                            ? Icon(Icons.favorite,
+                                color: Colors.red[800], size: 25)
+                            : Icon(
+                                Icons.favorite_border,
+                                color: primaryIcon,
+                              ),
+                      ),
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
+                      children: <Widget>[
+                        if (str.childEntities.length != 0)
+                          Container(
+                            padding: EdgeInsets.all(0),
+                            margin: EdgeInsets.all(0),
+                            width: 50,
+                            height: 40,
+                            child: FlatButton(
+                              padding: EdgeInsets.all(0),
+                              color: Colors.white,
+                              splashColor: highlightColor.withOpacity(.8),
+                              onPressed: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            SearchChildEntityOldPage(
+                                                pageName: "Favs",
+                                                childList: str.childEntities,
+                                                parentName: str.name)));
+                              },
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: <Widget>[
+                                  Container(
+                                    padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
+                                    transform:
+                                        Matrix4.translationValues(8.0, 0, 0),
+                                    child: Icon(
+                                      Icons.arrow_forward_ios,
+                                      color: Colors.cyan[400],
+                                      size: 25,
+                                      // color: Colors.white38,
+                                    ),
                                   ),
-                                ),
-                                // Container(
-                                //   transform: Matrix4.translationValues(
-                                //       5.0, 0, 0),
-                                //   child: Icon(
-                                //     Icons.arrow_forward_ios,
-                                //     color: Colors.cyan[600],
-                                //     size: 10,
-                                //     // color: Colors.white70,
-                                //   ),
-                                // ),
-                                Container(
-                                  padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
-                                  transform:
-                                      Matrix4.translationValues(-8.0, 0, 0),
-                                  child: Icon(
-                                    Icons.arrow_forward_ios,
-                                    color: primaryDarkColor,
-                                    size: 25,
-                                    // color: Colors.white,
+                                  // Container(
+                                  //   transform: Matrix4.translationValues(
+                                  //       5.0, 0, 0),
+                                  //   child: Icon(
+                                  //     Icons.arrow_forward_ios,
+                                  //     color: Colors.cyan[600],
+                                  //     size: 10,
+                                  //     // color: Colors.white70,
+                                  //   ),
+                                  // ),
+                                  Container(
+                                    padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
+                                    transform:
+                                        Matrix4.translationValues(-8.0, 0, 0),
+                                    child: Icon(
+                                      Icons.arrow_forward_ios,
+                                      color: primaryDarkColor,
+                                      size: 25,
+                                      // color: Colors.white,
+                                    ),
                                   ),
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
                           ),
-                        ),
-                      if (str.childEntities.length == 0)
-                        Container(
-                          width: 40,
-                          height: 40,
-                        ),
-                    ],
-                  ),
-                ],
-              ),
+                        if (str.childEntities.length == 0)
+                          Container(
+                            width: 40,
+                            height: 40,
+                          ),
+                      ],
+                    ),
+                  ]),
             ),
           ],
         ),
@@ -1066,15 +1032,24 @@ class _ExplorePageState extends State<ExplorePage> {
 
   void showSlots(Entity store, DateTime dateTime) {
     //_prefs = await SharedPreferences.getInstance();
-
-    Navigator.push(
-        context,
-        MaterialPageRoute(
-            builder: (context) => ShowSlotsPage(
-                  entity: store,
-                  dateTime: dateTime,
-                  forPage: 'MainSearch',
-                )));
+    if (_fromPage == 'Favs')
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => ShowSlotsPage(
+                    entity: store,
+                    dateTime: dateTime,
+                    forPage: 'FavChild',
+                  )));
+    else if (_fromPage == 'Search')
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => ShowSlotsPage(
+                    entity: store,
+                    dateTime: dateTime,
+                    forPage: 'ChildSearch',
+                  )));
 
     print('After showDialog:');
     // });
@@ -1084,8 +1059,8 @@ class _ExplorePageState extends State<ExplorePage> {
       List<String> daysClosed, int advanceDays) {
     bool isClosed = false;
     bool isBookingAllowed = false;
-    String dayOfWeek;
     int daysCounter = 0;
+    String dayOfWeek;
     var dateWidgets = List<Widget>();
     for (var date in _dateList) {
       daysCounter++;
@@ -1093,7 +1068,8 @@ class _ExplorePageState extends State<ExplorePage> {
         isBookingAllowed = true;
       } else
         isBookingAllowed = false;
-
+      print("booking not allowed beyond $advanceDays");
+      print("Check:${DateFormat('EEEE').format(date)}");
       for (String str in daysClosed) {
         if (str.toLowerCase() ==
             DateFormat('EEEE').format(date).toLowerCase()) {
@@ -1103,16 +1079,10 @@ class _ExplorePageState extends State<ExplorePage> {
           isClosed = false;
         }
       }
-      // daysClosed.forEach((element) {
-      //   isClosed = (element.toLowerCase() ==
-      //           DateFormat('EEEE').format(date).toLowerCase())
-      //       ? true
-      //       : false;
-      // });
-
       dayOfWeek = Utils.getDayOfWeek(date);
       dateWidgets.add(buildDateItem(store, sid, sname, isClosed,
           isBookingAllowed, advanceDays, date, dayOfWeek));
+      print('Widget build from datelist  called');
     }
     return dateWidgets;
   }
@@ -1120,13 +1090,15 @@ class _ExplorePageState extends State<ExplorePage> {
   Widget buildDateItem(Entity store, String sid, String sname, bool isClosed,
       bool isBookingAllowed, int advanceDays, DateTime dt, String dayOfWeek) {
     bool dateBooked = false;
+    // UserAppData user = _userProfile;
 
     for (UserToken obj in (_state.bookings)) {
       if ((compareDateFormat
                   .format(dt)
                   .compareTo(compareDateFormat.format(obj.dateTime)) ==
               0) &&
-          (obj.entityId == sid && obj.number != -1)) {
+          (obj.entityId == sid) &&
+          obj.number != -1) {
         dateBooked = true;
       }
     }
@@ -1144,17 +1116,16 @@ class _ExplorePageState extends State<ExplorePage> {
                         ? primaryAccentColor
                         : primaryDarkColor)), // button color
             child: InkWell(
-              splashColor: (isClosed || !isBookingAllowed)
-                  ? null
-                  : highlightColor, // splash color
+              splashColor:
+                  (isClosed || !isBookingAllowed) ? null : highlightColor,
               onTap: () {
                 if (isClosed) {
                   Utils.showMyFlushbar(
                     context,
                     Icons.info,
                     Duration(seconds: 5),
-                    "This place is Closed on the selected day.",
-                    "Please select a different day.",
+                    closedOnDay,
+                    selectDifferentDate,
                   );
                 } else if (!isBookingAllowed) {
                   Utils.showMyFlushbar(
@@ -1162,7 +1133,7 @@ class _ExplorePageState extends State<ExplorePage> {
                     Icons.info,
                     Duration(seconds: 5),
                     "This place only allows advance booking for upto $advanceDays days.",
-                    "Please select an earlier date.",
+                    selectEarlierDate,
                   );
                 } else {
                   print("tapped");
@@ -1181,7 +1152,7 @@ class _ExplorePageState extends State<ExplorePage> {
                           color: (isClosed
                               ? Colors.red
                               : (!isBookingAllowed
-                                  ? Colors.grey[500]
+                                  ? Colors.grey[200]
                                   : Colors.white)))),
                   Text(dayOfWeek,
                       style: TextStyle(
@@ -1189,7 +1160,7 @@ class _ExplorePageState extends State<ExplorePage> {
                           color: (isClosed
                               ? Colors.red
                               : (!isBookingAllowed
-                                  ? Colors.grey[500]
+                                  ? Colors.grey[200]
                                   : Colors.white)))), // text
                 ],
               ),
@@ -1211,163 +1182,59 @@ class _ExplorePageState extends State<ExplorePage> {
     // return _stores.map((contact) => new ChildItem(contact.name)).toList();
   }
 
-  Future<void> showLocationAccessDialog() async {
-    print("SHOW Dialog called");
-    bool returnVal = await showDialog(
-        barrierDismissible: false,
-        context: context,
-        builder: (_) => AlertDialog(
-              titlePadding: EdgeInsets.fromLTRB(5, 10, 0, 0),
-              contentPadding: EdgeInsets.all(0),
-              actionsPadding: EdgeInsets.all(0),
-              //buttonPadding: EdgeInsets.all(0),
-              title: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Text(
-                    locationPermissionMsg,
-                    style: TextStyle(
-                      fontSize: 15,
-                      color: Colors.blueGrey[600],
-                    ),
-                  ),
-                  verticalSpacer,
-                  // myDivider,
-                ],
-              ),
-              content: Divider(
-                color: Colors.blueGrey[400],
-                height: 1,
-                //indent: 40,
-                //endIndent: 30,
-              ),
+  // Future<List<Entity>> getSearchEntitiesList() async {
+  //   double lat = 0;
+  //   double lon = 0;
+  //   double radiusOfSearch = 10;
+  //   int pageNumber = 0;
+  //   int pageSize = 0;
 
-              //content: Text('This is my content'),
-              actions: <Widget>[
-                SizedBox(
-                  height: 24,
-                  child: RaisedButton(
-                    elevation: 5,
-                    focusColor: highlightColor,
-                    splashColor: highlightColor,
-                    color: Colors.white,
-                    textColor: Colors.orange,
-                    shape: RoundedRectangleBorder(
-                        side: BorderSide(color: Colors.orange)),
-                    child: Text('No'),
-                    onPressed: () {
-                      Navigator.of(_).pop(false);
-                    },
-                  ),
-                ),
-                SizedBox(
-                  height: 24,
-                  child: RaisedButton(
-                    elevation: 10,
-                    color: btnColor,
-                    splashColor: highlightColor.withOpacity(.8),
-                    textColor: Colors.white,
-                    shape: RoundedRectangleBorder(
-                        side: BorderSide(color: Colors.orange)),
-                    child: Text('Yes'),
-                    onPressed: () {
-                      Navigator.of(_).pop(true);
-                    },
-                  ),
-                ),
-              ],
-            ));
+  //   Position pos = await Utils().getCurrLocation();
+  //   lat = pos.latitude;
+  //   lon = pos.longitude;
+  //   //TODO: comment - only for testing
+  //   lat = 12.960632;
+  //   lon = 77.641603;
 
-    if (returnVal) {
-      print("in true, opening app settings");
-      Utils.openAppSettings();
-    } else {
-      print("nothing to do, user denied location access");
-      Utils.showMyFlushbar(context, Icons.info, Duration(seconds: 3),
-          locationAccessDeniedStr, locationAccessDeniedSubStr);
-      print(returnVal);
-    }
-  }
+  //   //TODO: comment - only for testing
+  //   List<Entity> searchEntityList = await EntityService().search(
+  //       _searchText.toLowerCase(),
+  //       _entityType,
+  //       lat,
+  //       lon,
+  //       radiusOfSearch,
+  //       pageNumber,
+  //       pageSize);
+  //   return searchEntityList;
+  // }
 
-  Future<List<Entity>> getSearchEntitiesList() async {
-    double lat = 0;
-    double lon = 0;
-    double radiusOfSearch = 10;
-    int pageNumber = 0;
-    int pageSize = 0;
+  Future<void> _buildSearchList(String type, String name) async {
+    //Search in _stores list if search criteria matches
+    List<Entity> searchList = new List<Entity>();
+    for (int i = 0; i < _stores.length; i++) {
+      Entity en = _stores.elementAt(i);
 
-    Position pos;
-    try {
-      pos = await Utils.getCurrLocation();
-    } catch (e) {
-      showLocationAccessDialog();
-    }
-    if (pos == null) {
-      throw new Exception("UserLocationOff");
-    }
-    lat = pos.latitude;
-    lon = pos.longitude;
-    //TODO: comment - only for testing
-    //lat = 12.960632;
-    //lon = 77.641603;
-
-    //TODO: comment - only for testing
-    String entityTypeForSearch;
-    entityTypeForSearch = (_entityType == _searchInAll) ? null : _entityType;
-
-    List<Entity> searchEntityList = await EntityService().search(
-        _searchText.toLowerCase(),
-        entityTypeForSearch,
-        lat,
-        lon,
-        radiusOfSearch,
-        pageNumber,
-        pageSize);
-
-    return searchEntityList;
-  }
-
-  Future<void> _buildSearchList() async {
-    // if (_searchText.isEmpty && _entityType.isEmpty) {
-    //   return _stores.map(_buildItem).toList();
-    //   //return _stores.map((contact) => new ChildItem(contact.name)).toList();
-    // } else {
-    getSearchEntitiesList().then((value) {
-      if (value == null) {
-        _stores.clear();
-        setState(() {
-          _isSearching = "done";
-          messageTitle = cantSearch;
-          messageSubTitle = giveLocationPermission;
-        });
-        return;
-      }
-      if (value.length == 0) {
-        _stores.clear();
-      } else {
-        //Scrutinize the list returned froms server.
-        //1. entities that are bookable, public and active only should be listed
-        //2. Parent entities
-        _stores.clear();
-        for (int i = 0; i < value.length; i++) {
-          if (value[i].isActive) _stores.add(value[i]);
+      if (type != null) {
+        if (en.type != type) {
+          continue;
+        }
+        if (name != null && name != "") {
+          if (name.toLowerCase().contains(_searchText.toLowerCase())) {
+            searchList.add(en);
+          }
+        } else {
+          searchList.add(en);
         }
       }
-      //Write Gstate to file
-      _state.updateSearchResults(_stores);
-      setState(() {
-        //searchDone = true;
-        _isSearching = "done";
-      });
-    }).catchError((ex) {
-      if (ex.message.toString().contains("UserLocationOff")) {
-        _stores.clear();
-        setState(() {
-          _isSearching = "done";
-          messageTitle = cantSearch;
-          messageSubTitle = giveLocationPermission;
-        });
-      }
+    }
+    _stores.clear();
+    _stores.addAll(searchList);
+
+    //Write Gstate to file
+    //_state.updateSearchResults(_stores);
+    setState(() {
+      //searchDone = true;
+      _isSearching = "done";
     });
   }
 
