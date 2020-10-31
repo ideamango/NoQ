@@ -10,12 +10,13 @@ import 'package:noq/pages/notifications_page.dart';
 import 'package:noq/pages/shopping_list.dart';
 import 'package:noq/repository/slotRepository.dart';
 import 'package:noq/services/circular_progress.dart';
-import 'package:noq/services/mapService.dart';
+import 'package:noq/services/url_services.dart';
 import 'package:noq/style.dart';
+import 'package:noq/userHomePage.dart';
 import 'package:noq/utils.dart';
 import 'package:noq/widget/appbar.dart';
 import 'package:noq/widget/bottom_nav_bar.dart';
-import 'package:noq/widget/carousel.dart';
+import 'package:noq/widget/carousel_items.dart';
 import 'package:noq/widget/header.dart';
 import 'package:noq/widget/widgets.dart';
 import 'package:share/share.dart';
@@ -49,6 +50,7 @@ class _UserAccountPageState extends State<UserAccountPage> {
   String _dynamicLink;
   String appID = "";
   String output = "";
+  bool _initCompleted = false;
 
   @override
   void initState() {
@@ -59,12 +61,15 @@ class _UserAccountPageState extends State<UserAccountPage> {
       _upcomingBkgStatus = 'Loading';
       _pastBkgStatus = 'Loading';
     });
-    getGlobalState().whenComplete(() => _loadBookings());
-    AppReview.getAppID.then((onValue) {
-      setState(() {
-        appID = onValue;
+    getGlobalState().whenComplete(() {
+      AppReview.getAppID.then((onValue) {
+        setState(() {
+          appID = onValue;
+        });
+        print("App ID" + appID);
       });
-      print("App ID" + appID);
+      _loadBookings();
+      _initCompleted = true;
     });
   }
 
@@ -142,7 +147,6 @@ class _UserAccountPageState extends State<UserAccountPage> {
     fetchDataFromGlobalState();
   }
 
-  int _currentIndex = 0;
   List cardList = [Item1(), Item2(), Item3(), Item4(), Item5(), Item6()];
   List<T> map<T>(List list, Function handler) {
     List<T> result = [];
@@ -184,7 +188,6 @@ class _UserAccountPageState extends State<UserAccountPage> {
   }
 
   Widget _buildItem(UserToken booking) {
-    String address = getEntityAddress(booking.entityId);
     return Container(
         width: MediaQuery.of(context).size.width * .95,
         height: MediaQuery.of(context).size.width * .7 / 2.7,
@@ -240,7 +243,7 @@ class _UserAccountPageState extends State<UserAccountPage> {
                         Container(
                           padding: EdgeInsets.fromLTRB(5, 0, 0, 0),
                           child: Text(
-                            booking.entityName + ', ' + address,
+                            booking.entityName + ', ' + booking.address,
                             overflow: TextOverflow.ellipsis,
                             style: tokenDataTextStyle,
                           ),
@@ -325,8 +328,11 @@ class _UserAccountPageState extends State<UserAccountPage> {
                                     ),
                                     onPressed: () {
                                       try {
-                                        launchURL(booking.entityName, address,
-                                            booking.lat, booking.lon);
+                                        launchURL(
+                                            booking.entityName,
+                                            booking.address,
+                                            booking.lat,
+                                            booking.lon);
                                       } catch (error) {
                                         Utils.showMyFlushbar(
                                             context,
@@ -591,16 +597,6 @@ class _UserAccountPageState extends State<UserAccountPage> {
     // launch("https://play.google.com/store/apps/details?id=" + packageName);
   }
 
-  // openFeedbackPage() async {
-  //   print("To be done next....hold on!!!");
-  //   Utils.showMyFlushbar(
-  //       context,
-  //       Icons.help_outline,
-  //       Duration(seconds: 3),
-  //       "It seems you might have to wait a little longer!!",
-  //       "...work in progress");
-  // }
-
   generateLinkAndShare() async {
     var dynamicLink = await Utils.createDynamicLink();
     print("Dynamic Link: $dynamicLink");
@@ -628,25 +624,124 @@ class _UserAccountPageState extends State<UserAccountPage> {
     String inviteText = message + link;
     String inviteSubject = "Invite friends via..";
     String title = "My Account";
-    return MaterialApp(
-      theme: ThemeData.light().copyWith(),
-      home: Scaffold(
-        drawer: CustomDrawer(
-          phone: _state.currentUser.ph,
-        ),
-        appBar: CustomAppBar(
-          titleTxt: title,
-        ),
-        body: Scrollbar(
-          child: SingleChildScrollView(
-            padding: EdgeInsets.all(5),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                Card(
-                  margin: EdgeInsets.zero,
-                  child: Container(
-                      width: MediaQuery.of(context).size.width,
+    if (_initCompleted) {
+      return MaterialApp(
+        theme: ThemeData.light().copyWith(),
+        home: WillPopScope(
+          child: Scaffold(
+            // drawer: CustomDrawer(
+            //   phone: _state.currentUser.ph,
+            // ),
+            appBar: CustomAppBarWithBackButton(
+              backRoute: UserHomePage(),
+              titleTxt: title,
+            ),
+            body: Scrollbar(
+              child: SingleChildScrollView(
+                padding: EdgeInsets.all(5),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Card(
+                      margin: EdgeInsets.zero,
+                      child: Container(
+                          width: MediaQuery.of(context).size.width,
+                          decoration: BoxDecoration(
+                              border: Border.all(color: containerColor),
+                              color: Colors.grey[50],
+                              shape: BoxShape.rectangle,
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(5.0))),
+                          child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: <Widget>[
+                                Container(
+                                  decoration: darkContainer,
+                                  padding: EdgeInsets.all(3),
+                                  child: Row(
+                                      mainAxisSize: MainAxisSize.max,
+                                      children: <Widget>[
+                                        Text(
+                                          " ...what more to do!!",
+                                          style: TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 15),
+                                        ),
+                                      ]),
+                                ),
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceEvenly,
+                                  children: <Widget>[
+                                    Container(
+                                      width: MediaQuery.of(context).size.width *
+                                          .3,
+                                      child: RaisedButton(
+                                          color: btnColor,
+                                          textColor: Colors.white,
+                                          splashColor: highlightColor,
+                                          onPressed: () {
+                                            openPlayStoreAndRate();
+                                            Utils.showMyFlushbar(
+                                                context,
+                                                Icons.help_outline,
+                                                Duration(seconds: 3),
+                                                "Thanks!!",
+                                                ratingMsg);
+                                          },
+                                          child: const Text(
+                                            'Rate the app',
+                                            textAlign: TextAlign.center,
+                                          )),
+                                    ),
+                                    Container(
+                                      width: MediaQuery.of(context).size.width *
+                                          .3,
+                                      child: RaisedButton(
+                                          color: btnColor,
+                                          textColor: Colors.white,
+                                          splashColor: highlightColor,
+                                          onPressed: () {
+                                            // openFeedbackPage();
+                                          },
+                                          child: const Text(
+                                            'Give Feedback',
+                                            textAlign: TextAlign.center,
+                                          )),
+                                    ),
+                                    Container(
+                                      width: MediaQuery.of(context).size.width *
+                                          .3,
+                                      child: RaisedButton(
+                                          color: btnColor,
+                                          textColor: Colors.white,
+                                          splashColor: highlightColor,
+                                          onPressed: inviteText.isEmpty
+                                              ? null
+                                              : () {
+                                                  // A builder is used to retrieve the context immediately
+                                                  // surrounding the RaisedButton.
+                                                  //
+                                                  // The context's `findRenderObject` returns the first
+                                                  // RenderObject in its descendent tree when it's not
+                                                  // a RenderObjectWidget. The RaisedButton's RenderObject
+                                                  // has its position and size after it's built.
+                                                  final RenderBox box = context
+                                                      .findRenderObject();
+
+                                                  generateLinkAndShare();
+                                                },
+                                          child: const Text(
+                                            'Invite friends',
+                                            textAlign: TextAlign.center,
+                                          )),
+                                    ),
+                                  ],
+                                ),
+                              ])),
+                    ),
+                    verticalSpacer,
+                    Container(
                       decoration: BoxDecoration(
                           border: Border.all(color: containerColor),
                           color: Colors.grey[50],
@@ -662,206 +757,60 @@ class _UserAccountPageState extends State<UserAccountPage> {
                                   mainAxisSize: MainAxisSize.max,
                                   children: <Widget>[
                                     Text(
-                                      " ...what more to do!!",
+                                      " My Bookings",
                                       style: TextStyle(
                                           color: Colors.white, fontSize: 15),
                                     ),
                                   ]),
                             ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              children: <Widget>[
-                                Container(
-                                  width: MediaQuery.of(context).size.width * .3,
-                                  child: RaisedButton(
-                                      color: btnColor,
-                                      textColor: Colors.white,
-                                      splashColor: highlightColor,
-                                      onPressed: () {
-                                        openPlayStoreAndRate();
-                                        Utils.showMyFlushbar(
-                                            context,
-                                            Icons.help_outline,
-                                            Duration(seconds: 3),
-                                            "Thanks!!",
-                                            ratingMsg);
-                                      },
-                                      child: const Text(
-                                        'Rate the app',
-                                        textAlign: TextAlign.center,
-                                      )),
+                            Card(
+                              margin: EdgeInsets.zero,
+                              elevation: 20,
+                              child: Theme(
+                                data: ThemeData(
+                                  unselectedWidgetColor: Colors.grey[600],
+                                  accentColor: Colors.teal,
                                 ),
-                                Container(
-                                  width: MediaQuery.of(context).size.width * .3,
-                                  child: RaisedButton(
-                                      color: btnColor,
-                                      textColor: Colors.white,
-                                      splashColor: highlightColor,
-                                      onPressed: () {
-                                        // openFeedbackPage();
-                                      },
-                                      child: const Text(
-                                        'Give Feedback',
-                                        textAlign: TextAlign.center,
-                                      )),
-                                ),
-                                Container(
-                                  width: MediaQuery.of(context).size.width * .3,
-                                  child: RaisedButton(
-                                      color: btnColor,
-                                      textColor: Colors.white,
-                                      splashColor: highlightColor,
-                                      onPressed: inviteText.isEmpty
-                                          ? null
-                                          : () {
-                                              // A builder is used to retrieve the context immediately
-                                              // surrounding the RaisedButton.
-                                              //
-                                              // The context's `findRenderObject` returns the first
-                                              // RenderObject in its descendent tree when it's not
-                                              // a RenderObjectWidget. The RaisedButton's RenderObject
-                                              // has its position and size after it's built.
-                                              final RenderBox box =
-                                                  context.findRenderObject();
-
-                                              generateLinkAndShare();
-                                            },
-                                      child: const Text(
-                                        'Invite friends',
-                                        textAlign: TextAlign.center,
-                                      )),
-                                ),
-                              ],
-                            ),
-                          ])),
-                ),
-                verticalSpacer,
-                Container(
-                  decoration: BoxDecoration(
-                      border: Border.all(color: containerColor),
-                      color: Colors.grey[50],
-                      shape: BoxShape.rectangle,
-                      borderRadius: BorderRadius.all(Radius.circular(5.0))),
-                  child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        Container(
-                          decoration: darkContainer,
-                          padding: EdgeInsets.all(3),
-                          child: Row(
-                              mainAxisSize: MainAxisSize.max,
-                              children: <Widget>[
-                                Text(
-                                  " My Bookings",
-                                  style: TextStyle(
-                                      color: Colors.white, fontSize: 15),
-                                ),
-                              ]),
-                        ),
-                        Card(
-                          margin: EdgeInsets.zero,
-                          elevation: 20,
-                          child: Theme(
-                            data: ThemeData(
-                              unselectedWidgetColor: Colors.grey[600],
-                              accentColor: Colors.teal,
-                            ),
-                            child: ExpansionTile(
-                              //key: PageStorageKey(this.widget.headerTitle),
-                              initiallyExpanded: true,
-                              title: Text(
-                                "Upcoming Bookings",
-                                style: TextStyle(
-                                    color: Colors.blueGrey[700], fontSize: 17),
-                              ),
-                              backgroundColor: Colors.white,
-                              leading: Icon(
-                                Icons.date_range,
-                                color: primaryIcon,
-                              ),
-                              children: <Widget>[
-                                if (_upcomingBkgStatus == 'Success')
-                                  ConstrainedBox(
-                                    constraints: new BoxConstraints(
-                                      maxHeight:
-                                          MediaQuery.of(context).size.height *
-                                              .4,
-                                      maxWidth:
-                                          MediaQuery.of(context).size.width,
-                                    ),
-
-                                    // decoration: BoxDecoration(
-                                    //     shape: BoxShape.rectangle,
-                                    //     borderRadius: BorderRadius.all(Radius.circular(8.0))),
-                                    // height: MediaQuery.of(context).size.height * .6,
-                                    // margin: EdgeInsets.fromLTRB(10, 10, 10, 10),
-                                    child: Scrollbar(
-                                      child: ListView.builder(
-                                        shrinkWrap: true,
-                                        //scrollDirection: Axis.vertical,
-                                        itemBuilder:
-                                            (BuildContext context, int index) {
-                                          return Container(
-                                            child: new Column(
-                                                children: _newBookingsList
-                                                    .map(_buildItem)
-                                                    .toList()),
-                                            //children: <Widget>[firstRow, secondRow],
-                                          );
-                                        },
-                                        itemCount: 1,
-                                      ),
-                                    ),
+                                child: ExpansionTile(
+                                  //key: PageStorageKey(this.widget.headerTitle),
+                                  initiallyExpanded: true,
+                                  title: Text(
+                                    "Upcoming Bookings",
+                                    style: TextStyle(
+                                        color: Colors.blueGrey[700],
+                                        fontSize: 17),
                                   ),
-                                if (_upcomingBkgStatus == 'NoBookings')
-                                  _emptyStorePage("No bookings yet.. ",
-                                      "Book now to save time later!! "),
-                                if (_upcomingBkgStatus == 'Loading')
-                                  showCircularProgress(),
-                              ],
-                            ),
-                          ),
-                        ),
-                        verticalSpacer,
-                        Card(
-                          margin: EdgeInsets.zero,
-                          elevation: 20,
-                          child: Theme(
-                            data: ThemeData(
-                              unselectedWidgetColor: Colors.grey[600],
-                              accentColor: Colors.teal,
-                            ),
-                            child: ExpansionTile(
-                              title: Text(
-                                "Past Bookings",
-                                style: TextStyle(
-                                    color: Colors.blueGrey[700], fontSize: 17),
-                              ),
-                              backgroundColor: Colors.white,
-                              leading: Icon(
-                                Icons.access_time,
-                                color: primaryIcon,
-                              ),
-                              children: <Widget>[
-                                Column(
+                                  backgroundColor: Colors.white,
+                                  leading: Icon(
+                                    Icons.date_range,
+                                    color: primaryIcon,
+                                  ),
                                   children: <Widget>[
-                                    if (_pastBkgStatus == "Success")
+                                    if (_upcomingBkgStatus == 'Success')
                                       ConstrainedBox(
                                         constraints: new BoxConstraints(
                                           maxHeight: MediaQuery.of(context)
                                                   .size
                                                   .height *
                                               .4,
+                                          maxWidth:
+                                              MediaQuery.of(context).size.width,
                                         ),
+
+                                        // decoration: BoxDecoration(
+                                        //     shape: BoxShape.rectangle,
+                                        //     borderRadius: BorderRadius.all(Radius.circular(8.0))),
+                                        // height: MediaQuery.of(context).size.height * .6,
+                                        // margin: EdgeInsets.fromLTRB(10, 10, 10, 10),
                                         child: Scrollbar(
                                           child: ListView.builder(
                                             shrinkWrap: true,
-                                            scrollDirection: Axis.vertical,
+                                            //scrollDirection: Axis.vertical,
                                             itemBuilder: (BuildContext context,
                                                 int index) {
                                               return Container(
                                                 child: new Column(
-                                                    children: _pastBookingsList
+                                                    children: _newBookingsList
                                                         .map(_buildItem)
                                                         .toList()),
                                                 //children: <Widget>[firstRow, secondRow],
@@ -871,151 +820,244 @@ class _UserAccountPageState extends State<UserAccountPage> {
                                           ),
                                         ),
                                       ),
-                                    if (_pastBkgStatus == 'NoBookings')
-                                      _emptyStorePage("No bookings in past..",
+                                    if (_upcomingBkgStatus == 'NoBookings')
+                                      _emptyStorePage("No bookings yet.. ",
                                           "Book now to save time later!! "),
-                                    if (_pastBkgStatus == 'Loading')
+                                    if (_upcomingBkgStatus == 'Loading')
                                       showCircularProgress(),
                                   ],
-                                )
-                              ],
+                                ),
+                              ),
                             ),
-                          ),
-                        ),
-                      ]),
+                            verticalSpacer,
+                            Card(
+                              margin: EdgeInsets.zero,
+                              elevation: 20,
+                              child: Theme(
+                                data: ThemeData(
+                                  unselectedWidgetColor: Colors.grey[600],
+                                  accentColor: Colors.teal,
+                                ),
+                                child: ExpansionTile(
+                                  title: Text(
+                                    "Past Bookings",
+                                    style: TextStyle(
+                                        color: Colors.blueGrey[700],
+                                        fontSize: 17),
+                                  ),
+                                  backgroundColor: Colors.white,
+                                  leading: Icon(
+                                    Icons.access_time,
+                                    color: primaryIcon,
+                                  ),
+                                  children: <Widget>[
+                                    Column(
+                                      children: <Widget>[
+                                        if (_pastBkgStatus == "Success")
+                                          ConstrainedBox(
+                                            constraints: new BoxConstraints(
+                                              maxHeight: MediaQuery.of(context)
+                                                      .size
+                                                      .height *
+                                                  .4,
+                                            ),
+                                            child: Scrollbar(
+                                              child: ListView.builder(
+                                                shrinkWrap: true,
+                                                scrollDirection: Axis.vertical,
+                                                itemBuilder:
+                                                    (BuildContext context,
+                                                        int index) {
+                                                  return Container(
+                                                    child: new Column(
+                                                        children:
+                                                            _pastBookingsList
+                                                                .map(_buildItem)
+                                                                .toList()),
+                                                    //children: <Widget>[firstRow, secondRow],
+                                                  );
+                                                },
+                                                itemCount: 1,
+                                              ),
+                                            ),
+                                          ),
+                                        if (_pastBkgStatus == 'NoBookings')
+                                          _emptyStorePage(
+                                              "No bookings in past..",
+                                              "Book now to save time later!! "),
+                                        if (_pastBkgStatus == 'Loading')
+                                          showCircularProgress(),
+                                      ],
+                                    )
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ]),
+                    ),
+                    verticalSpacer,
+                    // Container(
+                    //   color: primaryDarkColor,
+                    //   child: Column(
+                    //     children: <Widget>[
+                    //       CarouselSlider(
+                    //         options: CarouselOptions(
+                    //           height: MediaQuery.of(context).size.height * .9,
+                    //           autoPlay: true,
+                    //           autoPlayInterval: Duration(seconds: 3),
+                    //           autoPlayAnimationDuration:
+                    //               Duration(milliseconds: 800),
+                    //           autoPlayCurve: Curves.easeInCubic,
+                    //           pauseAutoPlayOnTouch: true,
+                    //           aspectRatio: 2.0,
+                    //           onPageChanged: (index, carouselPageChangedReason) {
+                    //             setState(() {
+                    //               _currentIndex = index;
+                    //             });
+                    //           },
+                    //         ),
+                    //         items: cardList.map((card) {
+                    //           return Builder(builder: (BuildContext context) {
+                    //             return Container(
+                    //               height: MediaQuery.of(context).size.height * 0.40,
+                    //               width: MediaQuery.of(context).size.width,
+                    //               child: Card(
+                    //                 color: primaryDarkColor,
+                    //                 child: card,
+                    //               ),
+                    //             );
+                    //           });
+                    //         }).toList(),
+                    //       ),
+                    //       Row(
+                    //         mainAxisAlignment: MainAxisAlignment.center,
+                    //         children: <Widget>[
+                    //           Row(
+                    //             mainAxisAlignment: MainAxisAlignment.center,
+                    //             children: map<Widget>(cardList, (index, url) {
+                    //               return Container(
+                    //                 width: 7.0,
+                    //                 height: 7.0,
+                    //                 margin: EdgeInsets.symmetric(
+                    //                     vertical: 2.0, horizontal: 2.0),
+                    //                 decoration: BoxDecoration(
+                    //                   shape: BoxShape.circle,
+                    //                   color: _currentIndex == index
+                    //                       ? highlightColor
+                    //                       : Colors.grey,
+                    //                 ),
+                    //               );
+                    //             }),
+                    //           ),
+                    //         ],
+                    //       )
+                    //     ],
+                    //   ),
+                    // ),
+                    // verticalSpacer,
+                    //This is start of boxed container.
+                    // Container(
+                    //   decoration: BoxDecoration(
+                    //       border: Border.all(color: containerColor),
+                    //       color: Colors.grey[50],
+                    //       shape: BoxShape.rectangle,
+                    //       borderRadius: BorderRadius.all(Radius.circular(5.0))),
+                    //   child: Column(
+                    //       crossAxisAlignment: CrossAxisAlignment.start,
+                    //       children: <Widget>[
+                    //         Container(
+                    //           decoration: darkContainer,
+                    //           padding: EdgeInsets.all(3),
+                    //           child: Row(
+                    //               mainAxisSize: MainAxisSize.max,
+                    //               children: <Widget>[
+                    //                 Text(
+                    //                   " Notifications",
+                    //                   style: TextStyle(
+                    //                       color: Colors.white, fontSize: 15),
+                    //                 ),
+                    //               ]),
+                    //         ),
+                    //         Column(
+                    //           crossAxisAlignment: CrossAxisAlignment.center,
+                    //           children: <Widget>[
+                    //             Text("Add more actions here.."),
+                    //           ],
+                    //         )
+                    //       ]),
+                    // ),
+                    // //This is end of boxed container.
+                    // verticalSpacer,
+                    // //This is start of boxed container.
+                    // Container(
+                    //   decoration: BoxDecoration(
+                    //       border: Border.all(color: containerColor),
+                    //       color: Colors.grey[50],
+                    //       shape: BoxShape.rectangle,
+                    //       borderRadius: BorderRadius.all(Radius.circular(5.0))),
+                    //   child: Column(
+                    //       crossAxisAlignment: CrossAxisAlignment.start,
+                    //       children: <Widget>[
+                    //         Container(
+                    //           decoration: darkContainer,
+                    //           padding: EdgeInsets.all(3),
+                    //           child: Row(
+                    //               mainAxisSize: MainAxisSize.max,
+                    //               children: <Widget>[
+                    //                 Text(
+                    //                   " Settings",
+                    //                   style: TextStyle(
+                    //                       color: Colors.white, fontSize: 15),
+                    //                 ),
+                    //               ]),
+                    //         ),
+                    //         Column(
+                    //             crossAxisAlignment: CrossAxisAlignment.center,
+                    //             children: <Widget>[
+                    //               Text("Need a change.. Right at your service!!"),
+                    //             ]),
+                    //       ]),
+                    // ),
+                    // //This is end of boxed container.
+                  ],
                 ),
-                verticalSpacer,
-                // Container(
-                //   color: primaryDarkColor,
-                //   child: Column(
-                //     children: <Widget>[
-                //       CarouselSlider(
-                //         options: CarouselOptions(
-                //           height: MediaQuery.of(context).size.height * .9,
-                //           autoPlay: true,
-                //           autoPlayInterval: Duration(seconds: 3),
-                //           autoPlayAnimationDuration:
-                //               Duration(milliseconds: 800),
-                //           autoPlayCurve: Curves.easeInCubic,
-                //           pauseAutoPlayOnTouch: true,
-                //           aspectRatio: 2.0,
-                //           onPageChanged: (index, carouselPageChangedReason) {
-                //             setState(() {
-                //               _currentIndex = index;
-                //             });
-                //           },
-                //         ),
-                //         items: cardList.map((card) {
-                //           return Builder(builder: (BuildContext context) {
-                //             return Container(
-                //               height: MediaQuery.of(context).size.height * 0.40,
-                //               width: MediaQuery.of(context).size.width,
-                //               child: Card(
-                //                 color: primaryDarkColor,
-                //                 child: card,
-                //               ),
-                //             );
-                //           });
-                //         }).toList(),
-                //       ),
-                //       Row(
-                //         mainAxisAlignment: MainAxisAlignment.center,
-                //         children: <Widget>[
-                //           Row(
-                //             mainAxisAlignment: MainAxisAlignment.center,
-                //             children: map<Widget>(cardList, (index, url) {
-                //               return Container(
-                //                 width: 7.0,
-                //                 height: 7.0,
-                //                 margin: EdgeInsets.symmetric(
-                //                     vertical: 2.0, horizontal: 2.0),
-                //                 decoration: BoxDecoration(
-                //                   shape: BoxShape.circle,
-                //                   color: _currentIndex == index
-                //                       ? highlightColor
-                //                       : Colors.grey,
-                //                 ),
-                //               );
-                //             }),
-                //           ),
-                //         ],
-                //       )
-                //     ],
-                //   ),
-                // ),
-                // verticalSpacer,
-                //This is start of boxed container.
-                // Container(
-                //   decoration: BoxDecoration(
-                //       border: Border.all(color: containerColor),
-                //       color: Colors.grey[50],
-                //       shape: BoxShape.rectangle,
-                //       borderRadius: BorderRadius.all(Radius.circular(5.0))),
-                //   child: Column(
-                //       crossAxisAlignment: CrossAxisAlignment.start,
-                //       children: <Widget>[
-                //         Container(
-                //           decoration: darkContainer,
-                //           padding: EdgeInsets.all(3),
-                //           child: Row(
-                //               mainAxisSize: MainAxisSize.max,
-                //               children: <Widget>[
-                //                 Text(
-                //                   " Notifications",
-                //                   style: TextStyle(
-                //                       color: Colors.white, fontSize: 15),
-                //                 ),
-                //               ]),
-                //         ),
-                //         Column(
-                //           crossAxisAlignment: CrossAxisAlignment.center,
-                //           children: <Widget>[
-                //             Text("Add more actions here.."),
-                //           ],
-                //         )
-                //       ]),
-                // ),
-                // //This is end of boxed container.
-                // verticalSpacer,
-                // //This is start of boxed container.
-                // Container(
-                //   decoration: BoxDecoration(
-                //       border: Border.all(color: containerColor),
-                //       color: Colors.grey[50],
-                //       shape: BoxShape.rectangle,
-                //       borderRadius: BorderRadius.all(Radius.circular(5.0))),
-                //   child: Column(
-                //       crossAxisAlignment: CrossAxisAlignment.start,
-                //       children: <Widget>[
-                //         Container(
-                //           decoration: darkContainer,
-                //           padding: EdgeInsets.all(3),
-                //           child: Row(
-                //               mainAxisSize: MainAxisSize.max,
-                //               children: <Widget>[
-                //                 Text(
-                //                   " Settings",
-                //                   style: TextStyle(
-                //                       color: Colors.white, fontSize: 15),
-                //                 ),
-                //               ]),
-                //         ),
-                //         Column(
-                //             crossAxisAlignment: CrossAxisAlignment.center,
-                //             children: <Widget>[
-                //               Text("Need a change.. Right at your service!!"),
-                //             ]),
-                //       ]),
-                // ),
-                // //This is end of boxed container.
-              ],
+              ),
+            ),
+            bottomNavigationBar: CustomBottomBar(
+              barIndex: 3,
             ),
           ),
+          onWillPop: () async {
+            return true;
+          },
         ),
-        bottomNavigationBar: CustomBottomBar(
-          barIndex: 3,
+      );
+    } else {
+      return MaterialApp(
+        theme: ThemeData.light().copyWith(),
+        home: WillPopScope(
+          child: Scaffold(
+            appBar: CustomAppBarWithBackButton(
+              backRoute: UserHomePage(),
+              titleTxt: title,
+            ),
+            body: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  showCircularProgress(),
+                ],
+              ),
+            ),
+            bottomNavigationBar: CustomBottomBar(
+              barIndex: 3,
+            ),
+          ),
+          onWillPop: () async {
+            return true;
+          },
         ),
-      ),
-    );
+      );
+    }
   }
 }

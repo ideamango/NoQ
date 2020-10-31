@@ -8,12 +8,12 @@ import 'package:noq/db/db_model/meta_entity.dart';
 import 'package:noq/db/db_model/user_token.dart';
 import 'package:noq/db/db_service/entity_service.dart';
 import 'package:noq/global_state.dart';
-import 'package:noq/pages/SearchStoresPage.dart';
+import 'package:noq/pages/search_entity_page.dart';
 import 'package:noq/pages/favs_list_page.dart';
-import 'package:noq/pages/showSlotsPage.dart';
+import 'package:noq/pages/show_slots_page.dart';
 import 'package:noq/repository/StoreRepository.dart';
 import 'package:noq/services/circular_progress.dart';
-import 'package:noq/services/mapService.dart';
+import 'package:noq/services/url_services.dart';
 import 'package:noq/style.dart';
 import 'package:noq/utils.dart';
 import 'package:noq/widget/appbar.dart';
@@ -23,19 +23,20 @@ import 'package:share/share.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../userHomePage.dart';
 
-class SearchChildrenPage extends StatefulWidget {
+class SearchChildEntityOldPage extends StatefulWidget {
   final String pageName;
   final List<MetaEntity> childList;
   final String parentName;
   final String parentId;
-  SearchChildrenPage(
+  SearchChildEntityOldPage(
       {Key key, this.pageName, this.childList, this.parentName, this.parentId})
       : super(key: key);
   @override
-  _SearchChildrenPageState createState() => _SearchChildrenPageState();
+  _SearchChildEntityOldPageState createState() =>
+      _SearchChildEntityOldPageState();
 }
 
-class _SearchChildrenPageState extends State<SearchChildrenPage> {
+class _SearchChildEntityOldPageState extends State<SearchChildEntityOldPage> {
   bool initCompleted = false;
   bool isFavourited = false;
   DateTime dateTime = DateTime.now();
@@ -110,7 +111,7 @@ class _SearchChildrenPageState extends State<SearchChildrenPage> {
     Share.share(dynamicLink.toString());
   }
 
-  _SearchChildrenPageState() {
+  _SearchChildEntityOldPageState() {
     _searchTextController.addListener(() {
       if (_searchTextController.text.isEmpty && _entityType == null) {
         setState(() {
@@ -447,7 +448,7 @@ class _SearchChildrenPageState extends State<SearchChildrenPage> {
                         Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => SearchStoresPage()));
+                                builder: (context) => SearchEntityPage()));
                       // else if (_fromPage == "ShowSlots")
                       //   Navigator.push(
                       //       context,
@@ -509,7 +510,7 @@ class _SearchChildrenPageState extends State<SearchChildrenPage> {
                       Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => SearchStoresPage()));
+                              builder: (context) => SearchEntityPage()));
                     }),
                 title: Text(
                   title,
@@ -552,7 +553,7 @@ class _SearchChildrenPageState extends State<SearchChildrenPage> {
           Navigator.push(
               context,
               MaterialPageRoute(
-                  builder: (context) => SearchChildrenPage(
+                  builder: (context) => SearchChildEntityOldPage(
                         pageName: "SearchChild",
                         childList: str.childEntities,
                         parentName: str.name,
@@ -970,7 +971,7 @@ class _SearchChildrenPageState extends State<SearchChildrenPage> {
                                     context,
                                     MaterialPageRoute(
                                         builder: (context) =>
-                                            SearchChildrenPage(
+                                            SearchChildEntityOldPage(
                                                 pageName: "Favs",
                                                 childList: str.childEntities,
                                                 parentName: str.name)));

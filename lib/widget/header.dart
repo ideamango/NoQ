@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:noq/constants.dart';
 import 'package:noq/pages/about_page.dart';
 import 'package:noq/pages/help_page.dart';
-import 'package:noq/pages/manage_apartment_list_page.dart';
+import 'package:noq/pages/manage_entity_list_page.dart';
 import 'package:noq/pages/notifications_page.dart';
 import 'package:noq/pages/contact_us.dart';
 import 'package:noq/pages/share_app_page.dart';
 import 'package:noq/pages/terms_of_use.dart';
-import 'package:noq/pages/userAccountPage.dart';
+import 'package:noq/pages/user_account_page.dart';
 import 'package:noq/style.dart';
 import 'package:intl/intl.dart';
 
@@ -46,7 +46,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
       {
         "icon": Icons.store,
         "name": "Manage your Places",
-        "pageRoute": ManageApartmentsListPage(),
+        "pageRoute": ManageEntityListPage(),
       },
       // {
       //   "icon": Icons.notifications,

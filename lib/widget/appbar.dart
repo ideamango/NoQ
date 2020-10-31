@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:noq/global_state.dart';
-import 'package:noq/services/authService.dart';
+import 'package:noq/services/auth_service.dart';
 import 'package:noq/style.dart';
 import 'package:noq/userHomePage.dart';
 import 'package:noq/utils.dart';

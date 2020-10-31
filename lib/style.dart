@@ -137,6 +137,14 @@ final textInputTextStyle = TextStyle(
   fontSize: 15.0,
   //height: 2,
 );
+final textBotSheetTextStyle = TextStyle(
+  color: Colors.blueGrey[700],
+  // fontWeight: FontWeight.w800,
+  fontFamily: 'Monsterrat',
+  letterSpacing: 0.5,
+  fontSize: 12.0,
+  //height: 2,
+);
 final textLabelTextStyle = TextStyle(
   color: Colors.blueGrey[900],
   // fontWeight: FontWeight.w800,

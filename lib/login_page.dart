@@ -5,7 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:noq/events/auto_verification_completed_data.dart';
 import 'package:noq/events/event_bus.dart';
 import 'package:noq/events/events.dart';
-import 'package:noq/pages/SearchStoresPage.dart';
+import 'package:noq/pages/search_entity_page.dart';
 import 'package:noq/pages/explore_page.dart';
 import 'package:noq/pages/otpdialog.dart';
 import 'package:noq/pages/terms_of_use.dart';
@@ -17,7 +17,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import 'style.dart';
 import 'package:noq/constants.dart';
-import 'services/authService.dart';
+import 'services/auth_service.dart';
 
 class LoginPage extends StatefulWidget {
   @override

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:noq/constants.dart';
-import 'package:noq/pages/manage_apartment_list_page.dart';
-import 'package:noq/pages/manage_apartment_page.dart';
+import 'package:noq/pages/manage_entity_list_page.dart';
+import 'package:noq/pages/manage_entity_details_page.dart';
 import 'package:noq/services/circular_progress.dart';
 import 'package:noq/style.dart';
 import 'package:noq/utils.dart';
@@ -68,21 +68,26 @@ class GenerateScreenState extends State<GenerateScreen> {
     else
       return MaterialApp(
         theme: ThemeData.light().copyWith(),
-        home: Scaffold(
-          appBar: CustomAppBar(
-            titleTxt: "Generate Qr",
-          ),
-          body: Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                // Padding(padding: EdgeInsets.only(top: 20.0)),
-                showCircularProgress()
-              ],
+        home: WillPopScope(
+          child: Scaffold(
+            appBar: CustomAppBar(
+              titleTxt: "Generate Qr",
             ),
+            body: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  // Padding(padding: EdgeInsets.only(top: 20.0)),
+                  showCircularProgress()
+                ],
+              ),
+            ),
+            //drawer: CustomDrawer(),
+            // bottomNavigationBar: CustomBottomBar(barIndex: 1),
           ),
-          //drawer: CustomDrawer(),
-          // bottomNavigationBar: CustomBottomBar(barIndex: 1),
+          onWillPop: () async {
+            return true;
+          },
         ),
       );
   }
@@ -143,11 +148,12 @@ class GenerateScreenState extends State<GenerateScreen> {
     //  MediaQuery.of(context).size.height -
     //     MediaQuery.of(context).viewInsets.bottom;
     return MaterialApp(
-        // title: 'Add child entities',
-        theme: ThemeData.light().copyWith(),
-        home: Scaffold(
+      // title: 'Add child entities',
+      theme: ThemeData.light().copyWith(),
+      home: WillPopScope(
+        child: Scaffold(
           appBar: CustomAppBarWithBackButton(
-              titleTxt: "QR Code", backRoute: ManageApartmentsListPage()),
+              titleTxt: "QR Code", backRoute: ManageEntityListPage()),
           body: Center(
             child: Container(
               color: Colors.white,
@@ -155,20 +161,6 @@ class GenerateScreenState extends State<GenerateScreen> {
               height: MediaQuery.of(context).size.width * .9,
               child: Column(
                 children: <Widget>[
-                  // Expanded(
-                  //   child: TextField(
-                  //     controller: _textController,
-                  //     decoration: InputDecoration(
-                  //       hintText: "Enter text for generating QR",
-                  //       errorText: _inputErrorText,
-                  //       enabledBorder: UnderlineInputBorder(
-                  //           borderSide: BorderSide(color: Colors.grey)),
-                  //       focusedBorder: UnderlineInputBorder(
-                  //           borderSide: BorderSide(color: Colors.orange)),
-                  //     ),
-                  //   ),
-                  // ),
-
                   Expanded(
                     child: Center(
                       child: RepaintBoundary(
@@ -214,6 +206,11 @@ class GenerateScreenState extends State<GenerateScreen> {
               ),
             ),
           ),
-        ));
+        ),
+        onWillPop: () async {
+          return true;
+        },
+      ),
+    );
   }
 }

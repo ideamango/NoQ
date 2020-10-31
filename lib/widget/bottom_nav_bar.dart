@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:noq/dashboard.dart';
 import 'package:noq/db/db_model/entity.dart';
-import 'package:noq/pages/SearchStoresPage.dart';
+import 'package:noq/pages/search_entity_page.dart';
 import 'package:noq/pages/favs_list_page.dart';
-import 'package:noq/pages/userAccountPage.dart';
+import 'package:noq/pages/user_account_page.dart';
 import 'package:noq/style.dart';
 import 'package:noq/userHomePage.dart';
 
@@ -62,7 +61,7 @@ class _CustomBottomBarState extends State<CustomBottomBar> {
       setState(() {
         _botBarIndex = index;
       });
-      //Navigator.pop(context);
+      Navigator.pop(context);
       switch (index) {
         case 0:
           {
@@ -72,18 +71,24 @@ class _CustomBottomBarState extends State<CustomBottomBar> {
           break;
         case 1:
           {
+            // Navigator.push(context,
+            //  MaterialPageRoute(builder: (context) => UserHomePage()));
             Navigator.push(context,
-                MaterialPageRoute(builder: (context) => SearchStoresPage()));
+                MaterialPageRoute(builder: (context) => SearchEntityPage()));
           }
           break;
         case 2:
           {
+            //  Navigator.push(context,
+            //   MaterialPageRoute(builder: (context) => UserHomePage()));
             Navigator.push(context,
                 MaterialPageRoute(builder: (context) => FavsListPage()));
           }
           break;
         case 3:
           {
+            // Navigator.push(context,
+            //   MaterialPageRoute(builder: (context) => UserHomePage()));
             Navigator.push(context,
                 MaterialPageRoute(builder: (context) => UserAccountPage()));
           }
