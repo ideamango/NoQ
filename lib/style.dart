@@ -204,6 +204,7 @@ final Color gradientDarkColor = Colors.blueGrey[600];
 
 final Color headerBarColor = Colors.blueGrey[400];
 
+final Color categoryIconColor = Colors.orangeAccent[400];
 final Color highlightColor = Colors.orangeAccent;
 final Color unselectedColor = Colors.blueGrey[700];
 final Color disabledColor = Colors.grey[400];

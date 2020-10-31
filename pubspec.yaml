@@ -95,8 +95,7 @@ flutter:
     - 6.jpg
     - 7.jpg
     - whatsapp.png
-    - shoppingList.png
-    - notepadBg.jpg
+    - shoppingList.png   
     - paytm.svg
     - gpay.png
     - gpay_icon.png
@@ -121,7 +120,10 @@ flutter:
     - gym.png
     - office.png
     - shop.png
+    - hospital.png
+    - bank.png
     - others.png
+    - defaultSearchCategoryImg.png
   #  - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see

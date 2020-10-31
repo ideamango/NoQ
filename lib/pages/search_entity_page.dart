@@ -50,39 +50,12 @@ class _SearchEntityPageState extends State<SearchEntityPage>
   PersistentBottomSheetController bottomSheetController;
   bool showFab = true;
   String categoryType;
-  Map<String, String> categoryList = new Map<String, String>();
 
   List<String> searchTypes = new List<String>();
-  // @override
-  // void initState() {
-  //   super.initState();
-  //   GlobalState.getGlobalState().then((value) {
-  //     searchTypes = value.conf.entityTypes;
-  //     buildCategoryList();
-  //   });
-  // }
-
-  void buildCategoryList() {
-    categoryList["Mall"] = "mall.png";
-    categoryList["Super Market"] = "superMarket.png";
-    categoryList["Apartment"] = "apartment.png";
-    categoryList["Medical Store"] = "medicalStore.png";
-    categoryList["Shop"] = "shop.png";
-    categoryList["Pop Shop"] = "popShop.png";
-    categoryList["Salon"] = "salon.png";
-    categoryList["School"] = "school.png";
-    categoryList["Place of Worship"] = "placeOfWorship.png";
-    categoryList["Restaurant"] = "restaurant.png";
-    categoryList["Sports Center"] = "sportsCenter.png";
-    categoryList["Gym"] = "gym.png";
-    categoryList["Office"] = "office.png";
-    categoryList["Others"] = "others.png";
-  }
 
   Widget _buildCategoryItem(BuildContext context, int index) {
     String name = searchTypes[index];
-    String value = categoryList[name];
-    print("Image path assets/$value");
+    Widget image = Utils.getEntityTypeImage(name, 30);
 
     return GestureDetector(
         onTap: () {
@@ -92,10 +65,11 @@ class _SearchEntityPageState extends State<SearchEntityPage>
         },
         child: Column(
           children: <Widget>[
-            Image(
-              width: MediaQuery.of(context).size.width * .15,
-              image: AssetImage("assets/$value"),
-            ),
+            Container(
+                padding: EdgeInsets.all(0),
+                width: MediaQuery.of(context).size.width * .15,
+                height: MediaQuery.of(context).size.width * .15,
+                child: image),
             Text(
               name,
               style: textBotSheetTextStyle,
@@ -103,8 +77,6 @@ class _SearchEntityPageState extends State<SearchEntityPage>
           ],
         ));
   }
-
-  // bool searchDone = false;
 
   final compareDateFormat = new DateFormat('YYYYMMDD');
   List<DateTime> _dateList = new List<DateTime>();
@@ -146,7 +118,7 @@ class _SearchEntityPageState extends State<SearchEntityPage>
     _isSearching = "initial";
     getGlobalState().whenComplete(() {
       fetchPastSearchesList();
-      buildCategoryList();
+
       searchTypes = _state.conf.entityTypes;
       setState(() {
         initCompleted = true;
@@ -199,12 +171,6 @@ class _SearchEntityPageState extends State<SearchEntityPage>
         _buildSearchList();
       });
     });
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-    //_selectCategoryBtnController.dispose();
   }
 
   void fetchPastSearchesList() {
@@ -267,7 +233,7 @@ class _SearchEntityPageState extends State<SearchEntityPage>
     }
   }
 
-  generateLinkAndShareWithParams(String entityId) async {
+  Future<void> generateLinkAndShareWithParams(String entityId) async {
     var dynamicLink =
         await Utils.createDynamicLinkWithParams(entityId: entityId);
     print("Dynamic Link: $dynamicLink");
@@ -783,7 +749,7 @@ class _SearchEntityPageState extends State<SearchEntityPage>
     }
   }
 
-  showMyFloatingActionButton() {
+  Widget showMyFloatingActionButton() {
     return showFab
         ? Container(
             width: MediaQuery.of(context).size.width * .4,
@@ -792,6 +758,7 @@ class _SearchEntityPageState extends State<SearchEntityPage>
             child: SlideTransition(
               position: offset,
               child: FloatingActionButton(
+                heroTag: "bottomSheetBtn",
                 elevation: 30,
                 backgroundColor: btnColor,
                 shape: RoundedRectangleBorder(
@@ -848,7 +815,7 @@ class _SearchEntityPageState extends State<SearchEntityPage>
                                 padding: EdgeInsets.all(0),
                                 scrollDirection: Axis.vertical,
                                 shrinkWrap: true,
-                                itemCount: categoryList.length,
+                                itemCount: searchTypes.length,
                                 gridDelegate:
                                     SliverGridDelegateWithFixedCrossAxisCount(
                                         crossAxisCount: 4,
@@ -895,42 +862,25 @@ class _SearchEntityPageState extends State<SearchEntityPage>
   }
 
   Future<bool> willPopCallback() async {
-    //  Utils.showMyFlushbar(
-    //    context, Icons.info, Duration(seconds: 3), "dsfvsfg", "");
-    // ignore: unnecessary_statements
     if (bottomSheetController != null) {
       bottomSheetController.close();
+      bottomSheetController = null;
       return false;
-    } else
-      return true;
-  }
-
-  String getEntityTypeIcon(String type) {
-    String entityImageName;
-    if (categoryList.keys.contains(type)) {
-      entityImageName = categoryList[type];
+    } else {
+      //Navigator.of(context).pop();
+      Navigator.push(
+          context, MaterialPageRoute(builder: (context) => UserHomePage()));
+      return false;
     }
-    return entityImageName;
   }
 
   Widget entityImageIcon(String type) {
-    String imgName;
+    // String imgName;
     Widget imgWidget;
+    //  imgName = Utils.getEntityTypeImage(type);
 
-    if (getEntityTypeIcon(type) != null) {
-      imgName = getEntityTypeIcon(type);
-      imgWidget = ImageIcon(
-        AssetImage('assets/$imgName'),
-        size: 30,
-        //color: primaryDarkColor,
-      );
-    } else {
-      imgWidget = Icon(
-        Icons.shopping_cart,
-        color: primaryDarkColor,
-        size: 20,
-      );
-    }
+    imgWidget = Utils.getEntityTypeImage(type, 20);
+
     return imgWidget;
   }
 
@@ -981,19 +931,24 @@ class _SearchEntityPageState extends State<SearchEntityPage>
                     mainAxisSize: MainAxisSize.min,
                     children: <Widget>[
                       new Container(
+                        height: MediaQuery.of(context).size.width * .095,
+                        width: MediaQuery.of(context).size.width * .095,
                         margin: EdgeInsets.fromLTRB(
                             MediaQuery.of(context).size.width * .01,
                             MediaQuery.of(context).size.width * .01,
                             MediaQuery.of(context).size.width * .005,
                             MediaQuery.of(context).size.width * .005),
                         padding: EdgeInsets.all(
-                            MediaQuery.of(context).size.width * .01),
-                        alignment: Alignment.topCenter,
+                            MediaQuery.of(context).size.width * .02),
                         decoration: ShapeDecoration(
                           shape: CircleBorder(),
                           color: primaryIcon,
                         ),
-                        child: entityImageIcon(str.type),
+                        child: Container(
+                            alignment: Alignment.center,
+                            height: MediaQuery.of(context).size.width * .04,
+                            width: MediaQuery.of(context).size.width * .04,
+                            child: entityImageIcon(str.type)),
                       ),
                       verticalSpacer,
                     ],
@@ -1789,179 +1744,3 @@ class _SearchEntityPageState extends State<SearchEntityPage>
     );
   }
 }
-
-// class MyFloatingActionButton extends StatefulWidget {
-//   @override
-//   _MyFloatingActionButtonState createState() => _MyFloatingActionButtonState();
-// }
-
-// class _MyFloatingActionButtonState extends State<MyFloatingActionButton> {
-//   bool showFab = true;
-//   String categoryType;
-//   Map<String, String> categoryList = new Map<String, String>();
-
-//   List<String> searchTypes = new List<String>();
-//   @override
-//   void initState() {
-//     super.initState();
-//     GlobalState.getGlobalState().then((value) {
-//       searchTypes = value.conf.entityTypes;
-//       buildCategoryList();
-//     });
-//   }
-
-//   void buildCategoryList() {
-//     categoryList["Mall"] = "mall.png";
-//     categoryList["Super Market"] = "superMarket.png";
-//     categoryList["Apartment"] = "apartment.png";
-//     categoryList["Medical Store"] = "medicalStore.png";
-//     categoryList["Shop"] = "shop.png";
-//     categoryList["Pop Shop"] = "popShop.png";
-//     categoryList["Salon"] = "salon.png";
-//     categoryList["School"] = "school.png";
-//     categoryList["Place of Worship"] = "placeOfWorship.png";
-//     categoryList["Restaurant"] = "restaurant.png";
-//     categoryList["Sports Center"] = "sportsCenter.png";
-//     categoryList["Gym"] = "gym.png";
-//     categoryList["Office"] = "office.png";
-//     categoryList["Others"] = "others.png";
-//   }
-
-//   Widget _buildCategoryItem(BuildContext context, int index) {
-//     String name = searchTypes[index];
-//     String value = categoryList[name];
-//     print("Image path assets/$value");
-
-//     return GestureDetector(
-//         onTap: () {
-//           categoryType = name;
-//           Navigator.of(context).pop();
-//           EventBus.fireEvent(SEARCH_CATEGORY_SELECTED, null, categoryType);
-//         },
-//         child: Column(
-//           children: <Widget>[
-//             Image(
-//               width: MediaQuery.of(context).size.width * .15,
-//               image: AssetImage("assets/$value"),
-//             ),
-//             Text(
-//               name,
-//               style: textBotSheetTextStyle,
-//             ),
-//           ],
-//         ));
-//   }
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return showFab
-//         ? Container(
-//             width: MediaQuery.of(context).size.width * .4,
-//             height: MediaQuery.of(context).size.height * .1,
-//             padding: EdgeInsets.all(5),
-//             child: FloatingActionButton(
-//               elevation: 30,
-//               backgroundColor: btnColor,
-//               shape: RoundedRectangleBorder(
-//                   side: BorderSide(color: Colors.blueGrey[200]),
-//                   borderRadius: BorderRadius.all(Radius.circular(45.0))),
-//               child: Container(
-//                 child: Text(
-//                   "Choose Category",
-//                   style: TextStyle(color: Colors.white, fontSize: 16),
-//                   textAlign: TextAlign.center,
-//                 ),
-//               ),
-//               onPressed: () {
-//                 var bottomSheetController = showBottomSheet(
-//                   context: context,
-//                   elevation: 30,
-//                   shape: RoundedRectangleBorder(
-//                       side: BorderSide(color: Colors.blueGrey[200]),
-//                       borderRadius: BorderRadius.only(
-//                           topLeft: Radius.circular(20.0),
-//                           topRight: Radius.circular(20.0))),
-//                   builder: (context) => Container(
-//                     color: Colors.transparent,
-//                     height: MediaQuery.of(context).size.height * .6,
-//                     child: Column(
-//                       children: <Widget>[
-//                         Row(
-//                           children: <Widget>[
-//                             Container(
-//                               padding: EdgeInsets.all(0),
-//                               width: MediaQuery.of(context).size.width * .1,
-//                               height: MediaQuery.of(context).size.width * .1,
-//                               child: IconButton(
-//                                   padding: EdgeInsets.all(0),
-//                                   icon: Icon(
-//                                     Icons.cancel,
-//                                     color: btnDisabledolor,
-//                                   ),
-//                                   onPressed: () {
-//                                     Navigator.of(context).pop();
-//                                   }),
-//                             ),
-//                             Container(
-//                                 alignment: Alignment.center,
-//                                 width: MediaQuery.of(context).size.width * .8,
-//                                 child: Text(
-//                                   "Select Category",
-//                                   style: textInputTextStyle,
-//                                 )),
-//                           ],
-//                         ),
-//                         Divider(
-//                           height: 1,
-//                           color: primaryDarkColor,
-//                         ),
-//                         Expanded(
-//                           child: Container(
-//                             padding: EdgeInsets.all(0),
-//                             child: new GridView.builder(
-//                               padding: EdgeInsets.all(0),
-//                               scrollDirection: Axis.vertical,
-//                               shrinkWrap: true,
-//                               itemCount: categoryList.length,
-//                               gridDelegate:
-//                                   SliverGridDelegateWithFixedCrossAxisCount(
-//                                       crossAxisCount: 4,
-//                                       crossAxisSpacing: 10.0,
-//                                       mainAxisSpacing: 10),
-//                               itemBuilder: (BuildContext context, int index) {
-//                                 return new GridTile(
-//                                   child: Container(
-//                                     height: MediaQuery.of(context).size.height *
-//                                         .25,
-//                                     padding: EdgeInsets.all(0),
-//                                     // decoration:
-//                                     //     BoxDecoration(border: Border.all(color: Colors.black, width: 0.5)),
-//                                     child: Center(
-//                                       child: _buildCategoryItem(context, index),
-//                                     ),
-//                                   ),
-//                                 );
-//                               },
-//                             ),
-//                           ),
-//                         ),
-//                       ],
-//                     ),
-//                   ),
-//                 );
-//                 showFoatingActionButton(false);
-//                 bottomSheetController.closed.then((value) {
-//                   showFoatingActionButton(true);
-//                 });
-//               },
-//             ),
-//           )
-//         : Container();
-//   }
-
-//   void showFoatingActionButton(bool value) {
-//     setState(() {
-//       showFab = value;
-//     });
-//   }
-// }

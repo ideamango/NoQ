@@ -9,6 +9,8 @@ import 'package:noq/style.dart';
 import 'package:noq/widget/weekday_selector.dart';
 import 'package:noq/widget/widgets.dart';
 
+import 'constants.dart';
+
 class Utils {
   static String getDayOfWeek(DateTime date) {
     //String day;
@@ -328,5 +330,102 @@ class Utils {
     print(shortenedLink.shortUrl);
     print(link.authority);
     return shortenedLink.shortUrl;
+  }
+
+  // static Map<String, String> buildCategoryList() {
+  //   Map<String, String> categoryList = new Map<String, String>();
+  //   categoryList["Mall"] = "mall.png";
+  //   categoryList["Super Market"] = "superMarket.png";
+  //   categoryList["Apartment"] = "apartment.png";
+  //   categoryList["Medical Store"] = "medicalStore.png";
+  //   categoryList["Shop"] = "shop.png";
+  //   categoryList["Pop Shop"] = "popShop.png";
+  //   categoryList["Salon"] = "salon.png";
+  //   categoryList["School"] = "school.png";
+  //   categoryList["Place of Worship"] = "placeOfWorship.png";
+  //   categoryList["Restaurant"] = "restaurant.png";
+  //   categoryList["Sports Center"] = "sportsCenter.png";
+  //   categoryList["Gym"] = "gym.png";
+  //   categoryList["Office"] = "office.png";
+  //   categoryList["Others"] = "others.png";
+  //   categoryList["Bank"] = "bank.png";
+  //   categoryList["Hospital"] = "hospital.png";
+  //   return categoryList;
+  // }
+
+  static Widget getEntityTypeImage(String type, double size) {
+    Widget entityImageWidget;
+    IconData icon;
+    String image;
+
+    switch (type) {
+      case PLACE_TYPE_MALL:
+        icon = Icons.business;
+        break;
+      case PLACE_TYPE_SUPERMARKET:
+        icon = Icons.local_convenience_store;
+        break;
+      case PLACE_TYPE_APARTMENT:
+        icon = Icons.location_city;
+        break;
+      case PLACE_TYPE_MEDICAL:
+        icon = Icons.local_pharmacy;
+        break;
+      case PLACE_TYPE_RESTAURANT:
+        icon = Icons.restaurant_menu;
+        break;
+      case PLACE_TYPE_SALON:
+        image = "salon.png";
+        break;
+      case PLACE_TYPE_SHOP:
+        icon = Icons.store;
+        break;
+      case PLACE_TYPE_WORSHIP:
+        image = "placeOfWorship.png";
+        break;
+      case PLACE_TYPE_SCHOOL:
+        icon = Icons.school;
+        break;
+      case PLACE_TYPE_OFFICE:
+        icon = Icons.work;
+        break;
+      case PLACE_TYPE_GYM:
+        image = "gym.png";
+        break;
+      case PLACE_TYPE_SPORTS:
+        image = "sportsCenter.png";
+        break;
+      case PLACE_TYPE_POPSHOP:
+        icon = Icons.local_offer;
+        break;
+      case PLACE_TYPE_BANK:
+        icon = Icons.account_balance;
+        break;
+      case PLACE_TYPE_HOSPITAL:
+        icon = Icons.local_hospital;
+        break;
+      case PLACE_TYPE_OTHERS:
+        icon = Icons.add_shopping_cart;
+        break;
+    }
+    if (icon != null)
+      entityImageWidget = Icon(
+        icon,
+        size: size,
+        color: highlightColor,
+      );
+    else if (image != null)
+      entityImageWidget = ImageIcon(
+        AssetImage('assets/$image'),
+        size: size,
+        color: highlightColor,
+      );
+    else
+      entityImageWidget = Icon(
+        Icons.shopping_cart,
+        size: size,
+        color: highlightColor,
+      );
+    return entityImageWidget;
   }
 }
