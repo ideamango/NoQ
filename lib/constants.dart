@@ -3,6 +3,14 @@ const VERIFICATION_PENDING = "Verification Pending";
 const VERIFIED = "Verified";
 const VERIFICATION_REJECTED = "Rejected";
 
+const WEEK_DAY_SUNDAY = 'sunday';
+const WEEK_DAY_MONDAY = 'monday';
+const WEEK_DAY_TUESDAY = 'tuesday';
+const WEEK_DAY_WEDNESDAY = 'wednesday';
+const WEEK_DAY_THURSDAY = 'thursday';
+const WEEK_DAY_FRIDAY = 'friday';
+const WEEK_DAY_SATURDAY = 'saturday';
+
 String appName = 'Sukoon';
 var loginSubTxt = "Peace of Mind";
 var loginMainTxt = "";

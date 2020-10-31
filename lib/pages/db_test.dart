@@ -20,10 +20,10 @@ import 'package:noq/db/db_service/user_service.dart';
 import 'package:noq/events/event_bus.dart';
 import 'package:noq/events/events.dart';
 import 'package:noq/events/local_notification_data.dart';
-import 'package:noq/global_state.dart';
+import 'package:noq/constants.dart';
 
 class DBTest {
-  void createEntity() async {
+  Future<void> createEntity() async {
     Address adrs = new Address(
         city: "Hyderbad",
         state: "Telangana",
@@ -40,7 +40,7 @@ class DBTest {
         //geo: geoPoint,
         maxAllowed: 60,
         slotDuration: 60,
-        closedOn: ["Saturday", "Sunday"],
+        closedOn: [WEEK_DAY_SATURDAY, WEEK_DAY_SUNDAY],
         breakStartHour: 13,
         breakStartMinute: 30,
         breakEndHour: 14,
@@ -62,7 +62,7 @@ class DBTest {
     }
   }
 
-  void updateChildEntityBataWithOfferAndManager() async {
+  Future<void> updateChildEntityBataWithOfferAndManager() async {
     Entity ent = await EntityService().getEntity("Child101-1");
 
     Address adrs = new Address(
@@ -102,7 +102,7 @@ class DBTest {
     }
   }
 
-  void updateEntity(String name) async {
+  Future<void> updateEntity(String name) async {
     Entity ent = await EntityService().getEntity("Entity101");
     ent.name = name;
 
@@ -119,7 +119,7 @@ class DBTest {
     }
   }
 
-  void createChildEntityAndAddToParent(
+  Future<void> createChildEntityAndAddToParent(
       String id, String name, bool isActive) async {
     Address adrs = new Address(
         city: "Hyderbad",
@@ -137,7 +137,7 @@ class DBTest {
         isPublic: true,
         maxAllowed: 50,
         slotDuration: 30,
-        closedOn: ["Saturday", "Sunday"],
+        closedOn: [WEEK_DAY_SATURDAY, WEEK_DAY_SUNDAY],
         breakStartHour: 13,
         breakStartMinute: 15,
         breakEndHour: 14,
@@ -156,6 +156,7 @@ class DBTest {
           .upsertChildEntityToParent(child1, 'Entity101', "testregnum");
     } catch (e) {
       print("Exception while creating Child101: " + e.toString());
+      throw e;
     }
     print("Child1 created....");
   }
@@ -178,7 +179,7 @@ class DBTest {
         //geo: geoPoint,
         maxAllowed: 50,
         slotDuration: 30,
-        closedOn: ["Saturday", "Sunday"],
+        closedOn: [WEEK_DAY_SATURDAY, WEEK_DAY_SUNDAY],
         breakStartHour: 13,
         breakStartMinute: 15,
         breakEndHour: 14,
@@ -212,7 +213,7 @@ class DBTest {
         //geo: geoPoint,
         maxAllowed: 3,
         slotDuration: 60,
-        closedOn: ["Saturday", "Sunday"],
+        closedOn: [WEEK_DAY_SATURDAY, WEEK_DAY_SUNDAY],
         breakStartHour: 13,
         breakStartMinute: 30,
         breakEndHour: 14,
@@ -256,7 +257,7 @@ class DBTest {
     EventBus.fireEvent(LOCAL_NOTIFICATION_CREATED_EVENT, null, dataFor20Sec);
   }
 
-  void clearAll() async {
+  Future<void> clearAll() async {
     try {
       await TokenService().deleteSlot("Child101-1#2020~7~6");
       await TokenService().deleteSlot("Child101-1#2020~7~7");
@@ -275,19 +276,20 @@ class DBTest {
       await EntityService().deleteEntity('Entity102');
       //delete user
       await UserService().deleteCurrentUser();
-    } catch (e) {}
+    } catch (e) {
+      print("Error occurred in cleaning.. may be DB is already cleaned.");
+    }
   }
 
   void dbCall() async {
-    //FirebaseCrashlytics.instance.crash();
-    GlobalState gs = await GlobalState.getGlobalState();
-    gs.initializeNotification();
+    // FirebaseCrashlytics.instance.crash();
+    // GlobalState gs = await GlobalState.getGlobalState();
+    // gs.initializeNotification();
     fireLocalNotificationEvent();
-    // print("Automated DB testcases invoked..");
 
-    // clearAll();
-    // await securityPermissionTests();
-    // tests();
+    await clearAll();
+    await tests();
+    await securityPermissionTests();
   }
 
   Future<void> securityPermissionTests() async {
@@ -298,7 +300,7 @@ class DBTest {
     await EntityService().assignAdmin('Entity102', "+913611009823");
   }
 
-  void tests() async {
+  Future<void> tests() async {
     final User fireUser = FirebaseAuth.instance.currentUser;
     FirebaseFirestore fStore = FirebaseFirestore.instance;
 
@@ -310,27 +312,27 @@ class DBTest {
     AppUser u = await UserService().getCurrentUser();
 
     try {
-      createChildEntityAndAddToParent(
+      await createChildEntityAndAddToParent(
           'Child101-1', "Bata", true); //should fail as entity does not exists
     } catch (EntityDoesNotExistsException) {
       print(
           "EntityService.upsertChildEntityToParent (expected exception thrown) --> SUCCESS");
     }
-    createEntity();
+    await createEntity();
 
-    createEntity2();
+    await createEntity2();
 
-    createChildEntityAndAddToParent('Child101-1', "Bata", true);
+    await createChildEntityAndAddToParent('Child101-1', "Bata", true);
 
     await EntityService().assignAdmin('Child101-1', "+913611009823");
 
-    createChildEntityAndAddToParent('Child101-2', "Habinaro", true);
+    await createChildEntityAndAddToParent('Child101-2', "Habinaro", true);
 
-    updateEntity("Inorbit_Modified");
+    await updateEntity("Inorbit_Modified");
 
-    createChildEntityAndAddToParent('Child101-3', "Raymonds", false);
+    await createChildEntityAndAddToParent('Child101-3', "Raymonds", false);
 
-    updateEntity("Inorbit_Modified_Again");
+    await updateEntity("Inorbit_Modified_Again");
 
     Entity ent = await EntityService().getEntity('Entity101');
 
@@ -742,7 +744,7 @@ class DBTest {
           "EntityService.upsertChildEntityToParent (metaEntity updated in the Admin) ---------------------> Failure");
     }
 
-    updateChildEntityBataWithOfferAndManager();
+    await updateChildEntityBataWithOfferAndManager();
 
     Entity bata = await EntityService().getEntity('Child101-1');
 
@@ -785,7 +787,7 @@ class DBTest {
         isPublic: true,
         maxAllowed: 60,
         slotDuration: 60,
-        closedOn: ["Saturday", "Sunday"],
+        closedOn: [WEEK_DAY_SATURDAY, WEEK_DAY_SUNDAY],
         breakStartHour: 13,
         breakStartMinute: 30,
         breakEndHour: 14,
