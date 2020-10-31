@@ -627,7 +627,7 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
                   (Utils.isNotNullOrEmpty(_searchText) ||
                           Utils.isNotNullOrEmpty(_entityType))
                       ? Container(
-                          alignment: Alignment.topCenter,
+                          // alignment: Alignment.topCenter,
                           width: MediaQuery.of(context).size.width * .09,
                           child: InkWell(
                             child: Text(
@@ -702,7 +702,7 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
                                 itemCount: 1,
                                 itemBuilder: (BuildContext context, int index) {
                                   return Container(
-                                    margin: EdgeInsets.fromLTRB(10, 0, 10, 0),
+                                    margin: EdgeInsets.fromLTRB(10, 0, 10, 25),
                                     child: new Column(
                                       children: showPastSearches(),
                                     ),
@@ -936,6 +936,7 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
     return GestureDetector(
       onTap: () {},
       child: Card(
+        margin: EdgeInsets.only(top: 12),
         elevation: 10,
         child: Column(
           children: <Widget>[

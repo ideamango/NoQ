@@ -326,7 +326,7 @@ class _SearchEntityPageState extends State<SearchEntityPage>
                   itemCount: 1,
                   itemBuilder: (BuildContext context, int index) {
                     return Container(
-                      margin: EdgeInsets.fromLTRB(10, 5, 10, 10),
+                      margin: EdgeInsets.fromLTRB(10, 0, 10, 25),
                       child: new Column(
                         children: showSearchResults(),
                       ),
@@ -527,7 +527,7 @@ class _SearchEntityPageState extends State<SearchEntityPage>
       );
       Widget searchResultText = Container(
         width: MediaQuery.of(context).size.width * .85,
-        height: MediaQuery.of(context).size.height * .03,
+        //height: MediaQuery.of(context).size.height * .03,
         padding: EdgeInsets.all(0),
         child: RichText(
             overflow: TextOverflow.visible,
@@ -575,7 +575,7 @@ class _SearchEntityPageState extends State<SearchEntityPage>
           children: <Widget>[
             // categoryDropDown,
             searchInputText,
-            //verticalSpacer,
+            verticalSpacer,
             Container(
               width: MediaQuery.of(context).size.width * .95,
               child: Row(
@@ -588,9 +588,9 @@ class _SearchEntityPageState extends State<SearchEntityPage>
                   (Utils.isNotNullOrEmpty(_searchText) ||
                           Utils.isNotNullOrEmpty(_entityType))
                       ? Container(
-                          alignment: Alignment.center,
+                          //  alignment: Alignment.topCenter,
                           width: MediaQuery.of(context).size.width * .09,
-                          height: MediaQuery.of(context).size.height * .05,
+                          //height: MediaQuery.of(context).size.height * .05,
                           child: InkWell(
                             child: Text(
                               "Clear",
@@ -928,6 +928,7 @@ class _SearchEntityPageState extends State<SearchEntityPage>
         // }
       },
       child: Card(
+        margin: EdgeInsets.only(top: 12),
         elevation: 10,
         child: Column(
           children: <Widget>[
