@@ -269,9 +269,8 @@ class Entity {
         offer: offer,
         phone: phone,
         address: (address != null) ? Utils.getFormattedAddress(address) : null,
-        hasChildren: (childEntities != null)
-            ? (childEntities.length > 0 ? true : false)
-            : false);
+        hasChildren:
+            (childEntities != null && childEntities.length > 0) ? true : false);
 
     return meta;
   }
