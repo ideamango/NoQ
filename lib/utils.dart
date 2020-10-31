@@ -329,4 +329,34 @@ class Utils {
     print(link.authority);
     return shortenedLink.shortUrl;
   }
+
+  static Map<String, String> buildCategoryList() {
+    Map<String, String> categoryList = new Map<String, String>();
+    categoryList["Mall"] = "mall.png";
+    categoryList["Super Market"] = "superMarket.png";
+    categoryList["Apartment"] = "apartment.png";
+    categoryList["Medical Store"] = "medicalStore.png";
+    categoryList["Shop"] = "shop.png";
+    categoryList["Pop Shop"] = "popShop.png";
+    categoryList["Salon"] = "salon.png";
+    categoryList["School"] = "school.png";
+    categoryList["Place of Worship"] = "placeOfWorship.png";
+    categoryList["Restaurant"] = "restaurant.png";
+    categoryList["Sports Center"] = "sportsCenter.png";
+    categoryList["Gym"] = "gym.png";
+    categoryList["Office"] = "office.png";
+    categoryList["Others"] = "others.png";
+    categoryList["Bank"] = "bank.png";
+    categoryList["Hospital"] = "hospital.png";
+    return categoryList;
+  }
+
+  static String getEntityTypeIcon(String type) {
+    String entityImageName;
+
+    Switch
+  
+  
+    return entityImageName;
+  }
 }

@@ -818,6 +818,7 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
             child: SlideTransition(
               position: offset,
               child: FloatingActionButton(
+                heroTag: "bottomSheetChildBtn",
                 elevation: 30,
                 backgroundColor: btnColor,
                 shape: RoundedRectangleBorder(
@@ -948,12 +949,13 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
       imgWidget = ImageIcon(
         AssetImage('assets/$imgName'),
         size: 30,
+        color: highlightColor,
         //color: primaryDarkColor,
       );
     } else {
       imgWidget = Icon(
         Icons.shopping_cart,
-        color: primaryDarkColor,
+        color: highlightColor,
         size: 20,
       );
     }
