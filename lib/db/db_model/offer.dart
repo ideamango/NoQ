@@ -10,8 +10,11 @@ class Offer {
 
   Map<String, dynamic> toJson() => {
         'message': message,
-        'startDateTime': startDateTime.millisecondsSinceEpoch,
-        'endDateTime': endDateTime.millisecondsSinceEpoch,
+        'startDateTime': (startDateTime != null)
+            ? startDateTime.millisecondsSinceEpoch
+            : null,
+        'endDateTime':
+            (endDateTime != null) ? endDateTime.millisecondsSinceEpoch : null,
         'coupon': coupon
       };
 
@@ -19,10 +22,12 @@ class Offer {
     if (json == null) return null;
     return new Offer(
         message: json['message'],
-        startDateTime:
-            new DateTime.fromMillisecondsSinceEpoch(json['startDateTime']),
-        endDateTime:
-            new DateTime.fromMillisecondsSinceEpoch(json['endDateTime']),
+        startDateTime: (json['startDateTime'] != null)
+            ? new DateTime.fromMillisecondsSinceEpoch(json['startDateTime'])
+            : null,
+        endDateTime: (json['endDateTime'] != null)
+            ? new DateTime.fromMillisecondsSinceEpoch(json['endDateTime'])
+            : null,
         coupon: json['coupon']);
   }
 }

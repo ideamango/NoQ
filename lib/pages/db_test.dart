@@ -259,6 +259,15 @@ class DBTest {
 
   Future<void> clearAll() async {
     try {
+      await EntityService().deleteEntity('SportsEntity103');
+      await EntityService().deleteEntity('SportsEntity104');
+      await EntityService().deleteEntity('SportsEntity105');
+      await EntityService().deleteEntity('BankEntity106');
+      await EntityService().deleteEntity('SalonEntity107');
+      await EntityService().deleteEntity('SalonEntity108');
+      await EntityService().deleteEntity('GymEntity109');
+      await EntityService().deleteEntity('GymEntity110');
+
       await TokenService().deleteSlot("Child101-1#2020~7~6");
       await TokenService().deleteSlot("Child101-1#2020~7~7");
       await TokenService().deleteSlot("Child101-1#2020~7~8");
@@ -819,6 +828,11 @@ class DBTest {
     await createSportCenter3();
 
     await createBank();
+    await createSalon();
+    await createSalon2();
+
+    await createGym();
+    await createPrivateGym();
   }
 
   Future<void> createSportCenter() async {
@@ -927,7 +941,7 @@ class DBTest {
 
     MyGeoFirePoint geoPoint = new MyGeoFirePoint(17.444317, 78.355321);
     Entity entity = new Entity(
-        entityId: "SportsEntity104",
+        entityId: "SportsEntity105",
         name: "Place Sports 3",
         address: adrs,
         advanceDays: 2,
@@ -975,7 +989,7 @@ class DBTest {
 
     MyGeoFirePoint geoPoint = new MyGeoFirePoint(17.444317, 78.355321);
     Entity entity = new Entity(
-        entityId: "BankEntity105",
+        entityId: "BankEntity106",
         name: "Place Bank State of Peeru",
         address: adrs,
         advanceDays: 2,
@@ -1026,8 +1040,8 @@ class DBTest {
 
     MyGeoFirePoint geoPoint = new MyGeoFirePoint(17.444317, 78.355321);
     Entity entity = new Entity(
-        entityId: "SalaonEntity106",
-        name: "Place Bank State of Peeru",
+        entityId: "SalonEntity107",
+        name: "Place Smarty Solon and Parlour",
         address: adrs,
         advanceDays: 2,
         isPublic: true,
@@ -1077,8 +1091,8 @@ class DBTest {
 
     MyGeoFirePoint geoPoint = new MyGeoFirePoint(17.444317, 78.355321);
     Entity entity = new Entity(
-        entityId: "SalaonEntity107",
-        name: "Place Bank State of Peeru",
+        entityId: "SalonEntity108",
+        name: "Place Rocky Salon",
         address: adrs,
         advanceDays: 2,
         isPublic: true,
@@ -1098,6 +1112,106 @@ class DBTest {
         isBookable: true,
         isActive: true,
         verificationStatus: VERIFICATION_PENDING,
+        coordinates: geoPoint,
+        offer: offer,
+        paytm: "+919611009823",
+        phone: "+918328592031",
+        gpay: "+919611009823",
+        whatsapp: "+918328592031");
+
+    try {
+      await EntityService().upsertEntity(entity, "testReg111");
+    } catch (e) {
+      print("Exception occured " + e.toString());
+    }
+  }
+
+  Future<void> createGym() async {
+    Address adrs = new Address(
+        city: "Hyderbad",
+        state: "Telangana",
+        country: "India",
+        address: "Shop 61, Towli Chowk Bazar, Gachibowli");
+
+    Offer offer = new Offer();
+    offer.coupon = "Great Diwali Offer";
+    offer.message = "30% off for yearly subscription before Diwali 2021!!";
+    offer.startDateTime = DateTime.now();
+    offer.endDateTime = DateTime.utc(2021, 11, 4);
+
+    MyGeoFirePoint geoPoint = new MyGeoFirePoint(17.444317, 78.355321);
+    Entity entity = new Entity(
+        entityId: "GymEntity109",
+        name: "Place Great Tyson Gymkhana",
+        address: adrs,
+        advanceDays: 7,
+        isPublic: true,
+        maxAllowed: 60,
+        slotDuration: 60,
+        closedOn: [WEEK_DAY_MONDAY],
+        breakStartHour: 13,
+        breakStartMinute: 30,
+        breakEndHour: 14,
+        breakEndMinute: 30,
+        startTimeHour: 10,
+        startTimeMinute: 30,
+        endTimeHour: 21,
+        endTimeMinute: 0,
+        parentId: null,
+        type: PLACE_TYPE_GYM,
+        isBookable: true,
+        isActive: true,
+        verificationStatus: VERIFICATION_VERIFIED,
+        coordinates: geoPoint,
+        offer: offer,
+        paytm: "+919611009823",
+        phone: "+918328592031",
+        gpay: "+919611009823",
+        whatsapp: "+918328592031");
+
+    try {
+      await EntityService().upsertEntity(entity, "testReg111");
+    } catch (e) {
+      print("Exception occured " + e.toString());
+    }
+  }
+
+  Future<void> createPrivateGym() async {
+    Address adrs = new Address(
+        city: "Hyderbad",
+        state: "Telangana",
+        country: "India",
+        address: "Shop 61, Towli Chowk Bazar, Gachibowli");
+
+    Offer offer = new Offer();
+    offer.coupon = "Great Diwali Offer";
+    offer.message = "30% off for yearly subscription before Diwali 2021!!";
+    offer.startDateTime = DateTime.now();
+    offer.endDateTime = DateTime.utc(2021, 11, 4);
+
+    MyGeoFirePoint geoPoint = new MyGeoFirePoint(17.444317, 78.355321);
+    Entity entity = new Entity(
+        entityId: "GymEntity110",
+        name: "Place Great Private Gymkhana",
+        address: adrs,
+        advanceDays: 7,
+        isPublic: false,
+        maxAllowed: 60,
+        slotDuration: 60,
+        closedOn: [WEEK_DAY_THURSDAY],
+        breakStartHour: 13,
+        breakStartMinute: 30,
+        breakEndHour: 14,
+        breakEndMinute: 30,
+        startTimeHour: 10,
+        startTimeMinute: 30,
+        endTimeHour: 21,
+        endTimeMinute: 0,
+        parentId: null,
+        type: PLACE_TYPE_GYM,
+        isBookable: true,
+        isActive: true,
+        verificationStatus: VERIFICATION_VERIFIED,
         coordinates: geoPoint,
         offer: offer,
         paytm: "+919611009823",
