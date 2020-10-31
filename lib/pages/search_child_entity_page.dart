@@ -73,7 +73,8 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
     return GestureDetector(
         onTap: () {
           categoryType = name;
-          Navigator.of(context).pop();
+          childBottomSheetController.close();
+          childBottomSheetController = null;
           EventBus.fireEvent(SEARCH_CATEGORY_SELECTED, null, categoryType);
         },
         child: Column(
@@ -85,6 +86,7 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
                 child: image),
             Text(
               name,
+              textAlign: TextAlign.center,
               style: textBotSheetTextStyle,
             ),
           ],
@@ -461,7 +463,7 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
 
       Widget searchInputText = Container(
         width: MediaQuery.of(context).size.width * .95,
-        height: MediaQuery.of(context).size.width * .1,
+        height: MediaQuery.of(context).size.width * .15,
         decoration: new BoxDecoration(
           shape: BoxShape.rectangle,
           color: Colors.white,
@@ -570,7 +572,7 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
             overflow: TextOverflow.visible,
             maxLines: 2,
             text: TextSpan(
-                style: TextStyle(color: primaryDarkColor, fontSize: 12),
+                style: TextStyle(color: Colors.grey, fontSize: 12),
                 children: <TextSpan>[
                   Utils.isNotNullOrEmpty(_entityType) ||
                           Utils.isNotNullOrEmpty(_searchText)
@@ -584,7 +586,7 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
                   Utils.isNotNullOrEmpty(_entityType)
                       ? TextSpan(
                           text: _entityType,
-                          style: TextStyle(color: highlightColor, fontSize: 14))
+                          style: TextStyle(color: highlightColor, fontSize: 12))
                       : TextSpan(text: ""),
                   Utils.isNotNullOrEmpty(_entityType)
                       ? TextSpan(
@@ -625,11 +627,12 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
                   (Utils.isNotNullOrEmpty(_searchText) ||
                           Utils.isNotNullOrEmpty(_entityType))
                       ? Container(
+                          alignment: Alignment.topCenter,
                           width: MediaQuery.of(context).size.width * .09,
                           child: InkWell(
                             child: Text(
                               "Clear",
-                              style: errorTextStyle,
+                              style: errorTextStyleWithUnderLine,
                             ),
                             onTap: () {
                               setState(() {
@@ -818,7 +821,7 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
                       keyChildSearch.currentState.showBottomSheet<Null>(
                     (context) => Container(
                       color: Colors.transparent,
-                      height: MediaQuery.of(context).size.height * .6,
+                      height: MediaQuery.of(context).size.height * .7,
                       child: Column(
                         children: <Widget>[
                           Row(

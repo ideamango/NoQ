@@ -120,6 +120,13 @@ final errorTextStyle = TextStyle(
     //fontWeight: FontWeight.w500,
     fontFamily: 'Monsterrat',
     fontSize: 11);
+final errorTextStyleWithUnderLine = TextStyle(
+    color: Colors.red[400],
+    letterSpacing: 0.5,
+    //fontWeight: FontWeight.w500,
+    fontFamily: 'Monsterrat',
+    decoration: TextDecoration.underline,
+    fontSize: 11);
 
 final lightSubTextStyle = TextStyle(
   color: Colors.blueGrey[700],
