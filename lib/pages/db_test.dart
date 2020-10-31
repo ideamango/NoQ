@@ -289,6 +289,7 @@ class DBTest {
 
     await clearAll();
     await tests();
+    await createDummyPlaces();
     await securityPermissionTests();
   }
 
@@ -807,6 +808,305 @@ class DBTest {
     try {
       await EntityService()
           .upsertChildEntityToParent(entity, "Entity101", "SampleChildRegNum");
+    } catch (e) {
+      print("Exception occured " + e.toString());
+    }
+  }
+
+  Future<void> createDummyPlaces() async {
+    await createSportCenter();
+    await createSportCenter2();
+    await createSportCenter3();
+
+    await createBank();
+  }
+
+  Future<void> createSportCenter() async {
+    Address adrs = new Address(
+        city: "Hyderbad",
+        state: "Telangana",
+        country: "India",
+        address: "Shop 121, Row 5, Gachibowli",
+        landmark: "Behind Max Plaza");
+
+    Offer offer = new Offer();
+    offer.coupon = "Coup10";
+    offer.message = "Avail 10% off on booking betwee 1 PM to 5 PM on weekdays";
+
+    MyGeoFirePoint geoPoint = new MyGeoFirePoint(17.444317, 78.355321);
+    Entity entity = new Entity(
+        entityId: "SportsEntity103",
+        name: "Place Sport",
+        address: adrs,
+        advanceDays: 5,
+        isPublic: true,
+        maxAllowed: 60,
+        slotDuration: 60,
+        closedOn: [WEEK_DAY_TUESDAY],
+        breakStartHour: 13,
+        breakStartMinute: 30,
+        breakEndHour: 14,
+        breakEndMinute: 30,
+        startTimeHour: 10,
+        startTimeMinute: 30,
+        endTimeHour: 21,
+        endTimeMinute: 0,
+        parentId: null,
+        type: PLACE_TYPE_SPORTS,
+        isBookable: true,
+        isActive: true,
+        verificationStatus: VERIFICATION_VERIFIED,
+        coordinates: geoPoint,
+        offer: offer,
+        paytm: "+919611009823",
+        phone: "+918328592031",
+        gpay: "+919611009823",
+        whatsapp: "+918328592031");
+
+    try {
+      await EntityService().upsertEntity(entity, "testReg111");
+    } catch (e) {
+      print("Exception occured " + e.toString());
+    }
+  }
+
+  Future<void> createSportCenter2() async {
+    Address adrs = new Address(
+        city: "Hyderbad",
+        state: "Telangana",
+        country: "India",
+        address: "Shop 121, Row 5, Gachibowli");
+
+    MyGeoFirePoint geoPoint = new MyGeoFirePoint(17.444317, 78.355321);
+    Entity entity = new Entity(
+        entityId: "SportsEntity104",
+        name: "Place Sports Center 2",
+        address: adrs,
+        advanceDays: 3,
+        isPublic: true,
+        maxAllowed: 60,
+        slotDuration: 60,
+        closedOn: [WEEK_DAY_TUESDAY, WEEK_DAY_THURSDAY],
+        breakStartHour: 13,
+        breakStartMinute: 30,
+        breakEndHour: 14,
+        breakEndMinute: 30,
+        startTimeHour: 10,
+        startTimeMinute: 30,
+        endTimeHour: 21,
+        endTimeMinute: 0,
+        parentId: null,
+        type: PLACE_TYPE_SPORTS,
+        isBookable: true,
+        isActive: true,
+        verificationStatus: VERIFICATION_PENDING,
+        coordinates: geoPoint,
+        offer: null,
+        paytm: "+919611009823",
+        phone: "+918328592031",
+        gpay: "+919611009823",
+        whatsapp: "+918328592031");
+
+    try {
+      await EntityService().upsertEntity(entity, "testReg111");
+    } catch (e) {
+      print("Exception occured " + e.toString());
+    }
+  }
+
+  Future<void> createSportCenter3() async {
+    Address adrs = new Address(
+        city: "Hyderbad",
+        state: "Telangana",
+        country: "India",
+        address: "Shop 121, Chowk Bazar, Gachibowli");
+
+    Offer offer = new Offer();
+    offer.coupon = "Coup10";
+    offer.message = "Avail 10% off on booking betwee 1 PM to 5 PM on weekdays";
+
+    MyGeoFirePoint geoPoint = new MyGeoFirePoint(17.444317, 78.355321);
+    Entity entity = new Entity(
+        entityId: "SportsEntity104",
+        name: "Place Sports 3",
+        address: adrs,
+        advanceDays: 2,
+        isPublic: true,
+        maxAllowed: 60,
+        slotDuration: 60,
+        closedOn: null,
+        breakStartHour: 13,
+        breakStartMinute: 30,
+        breakEndHour: 14,
+        breakEndMinute: 30,
+        startTimeHour: 10,
+        startTimeMinute: 30,
+        endTimeHour: 21,
+        endTimeMinute: 0,
+        parentId: null,
+        type: PLACE_TYPE_SPORTS,
+        isBookable: true,
+        isActive: true,
+        verificationStatus: VERIFICATION_REJECTED,
+        coordinates: geoPoint,
+        offer: offer,
+        paytm: "+919611009823",
+        phone: "+918328592031",
+        gpay: "+919611009823",
+        whatsapp: "+918328592031");
+
+    try {
+      await EntityService().upsertEntity(entity, "testReg111");
+    } catch (e) {
+      print("Exception occured " + e.toString());
+    }
+  }
+
+  Future<void> createBank() async {
+    Address adrs = new Address(
+        city: "Hyderbad",
+        state: "Telangana",
+        country: "India",
+        address: "Shop 61, Towli Chowk Bazar, Gachibowli");
+
+    Offer offer = new Offer();
+    offer.coupon = "Coup10";
+    offer.message = "Life time free credit cards!!";
+
+    MyGeoFirePoint geoPoint = new MyGeoFirePoint(17.444317, 78.355321);
+    Entity entity = new Entity(
+        entityId: "BankEntity105",
+        name: "Place Bank State of Peeru",
+        address: adrs,
+        advanceDays: 2,
+        isPublic: true,
+        maxAllowed: 60,
+        slotDuration: 60,
+        closedOn: null,
+        breakStartHour: 13,
+        breakStartMinute: 30,
+        breakEndHour: 14,
+        breakEndMinute: 30,
+        startTimeHour: 10,
+        startTimeMinute: 30,
+        endTimeHour: 21,
+        endTimeMinute: 0,
+        parentId: null,
+        type: PLACE_TYPE_BANK,
+        isBookable: true,
+        isActive: true,
+        verificationStatus: VERIFICATION_PENDING,
+        coordinates: geoPoint,
+        offer: offer,
+        paytm: "+919611009823",
+        phone: "+918328592031",
+        gpay: "+919611009823",
+        whatsapp: "+918328592031");
+
+    try {
+      await EntityService().upsertEntity(entity, "testReg111");
+    } catch (e) {
+      print("Exception occured " + e.toString());
+    }
+  }
+
+  Future<void> createSalon() async {
+    Address adrs = new Address(
+        city: "Hyderbad",
+        state: "Telangana",
+        country: "India",
+        address: "Shop 61, Towli Chowk Bazar, Gachibowli");
+
+    Offer offer = new Offer();
+    offer.coupon = "Coup20";
+    offer.message =
+        "20% off on Face packs, hurry offer for limited period only!!";
+    offer.startDateTime = DateTime.now().add(Duration(days: 1));
+    offer.endDateTime = DateTime.now().add(Duration(days: 10));
+
+    MyGeoFirePoint geoPoint = new MyGeoFirePoint(17.444317, 78.355321);
+    Entity entity = new Entity(
+        entityId: "SalaonEntity106",
+        name: "Place Bank State of Peeru",
+        address: adrs,
+        advanceDays: 2,
+        isPublic: true,
+        maxAllowed: 60,
+        slotDuration: 60,
+        closedOn: null,
+        breakStartHour: 13,
+        breakStartMinute: 30,
+        breakEndHour: 14,
+        breakEndMinute: 30,
+        startTimeHour: 10,
+        startTimeMinute: 30,
+        endTimeHour: 21,
+        endTimeMinute: 0,
+        parentId: null,
+        type: PLACE_TYPE_SALON,
+        isBookable: true,
+        isActive: true,
+        verificationStatus: VERIFICATION_PENDING,
+        coordinates: geoPoint,
+        offer: offer,
+        paytm: "+919611009823",
+        phone: "+918328592031",
+        gpay: "+919611009823",
+        whatsapp: "+918328592031");
+
+    try {
+      await EntityService().upsertEntity(entity, "testReg111");
+    } catch (e) {
+      print("Exception occured " + e.toString());
+    }
+  }
+
+  Future<void> createSalon2() async {
+    Address adrs = new Address(
+        city: "Hyderbad",
+        state: "Telangana",
+        country: "India",
+        address: "Shop 61, Towli Chowk Bazar, Gachibowli");
+
+    Offer offer = new Offer();
+    offer.coupon = "Coup20";
+    offer.message =
+        "20% off on Hair dressing, hurry offer for limited period only!!";
+    offer.startDateTime = DateTime.now().add(Duration(days: 1));
+    offer.endDateTime = DateTime.now().add(Duration(days: 5));
+
+    MyGeoFirePoint geoPoint = new MyGeoFirePoint(17.444317, 78.355321);
+    Entity entity = new Entity(
+        entityId: "SalaonEntity107",
+        name: "Place Bank State of Peeru",
+        address: adrs,
+        advanceDays: 2,
+        isPublic: true,
+        maxAllowed: 60,
+        slotDuration: 60,
+        closedOn: null,
+        breakStartHour: 13,
+        breakStartMinute: 30,
+        breakEndHour: 14,
+        breakEndMinute: 30,
+        startTimeHour: 10,
+        startTimeMinute: 30,
+        endTimeHour: 21,
+        endTimeMinute: 0,
+        parentId: null,
+        type: PLACE_TYPE_SALON,
+        isBookable: true,
+        isActive: true,
+        verificationStatus: VERIFICATION_PENDING,
+        coordinates: geoPoint,
+        offer: offer,
+        paytm: "+919611009823",
+        phone: "+918328592031",
+        gpay: "+919611009823",
+        whatsapp: "+918328592031");
+
+    try {
+      await EntityService().upsertEntity(entity, "testReg111");
     } catch (e) {
       print("Exception occured " + e.toString());
     }
