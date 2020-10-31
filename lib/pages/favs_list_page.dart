@@ -186,20 +186,25 @@ class _FavsListPageState extends State<FavsListPage> {
     if (!initCompleted) {
       return MaterialApp(
         theme: ThemeData.light().copyWith(),
-        home: Scaffold(
-          appBar: CustomAppBar(
-            titleTxt: "My Favourites",
-          ),
-          body: Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                showCircularProgress(),
-              ],
+        home: WillPopScope(
+          child: Scaffold(
+            appBar: CustomAppBar(
+              titleTxt: "My Favourites",
             ),
+            body: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  showCircularProgress(),
+                ],
+              ),
+            ),
+            //drawer: CustomDrawer(),
+            bottomNavigationBar: CustomBottomBar(barIndex: 2),
           ),
-          //drawer: CustomDrawer(),
-          bottomNavigationBar: CustomBottomBar(barIndex: 2),
+          onWillPop: () async {
+            return true;
+          },
         ),
       );
     } else {
@@ -207,56 +212,61 @@ class _FavsListPageState extends State<FavsListPage> {
 
       return MaterialApp(
         theme: ThemeData.light().copyWith(),
-        home: Scaffold(
-          appBar: AppBar(
-              actions: <Widget>[],
-              flexibleSpace: Container(
-                decoration: gradientBackground,
-              ),
-              leading: IconButton(
-                  padding: EdgeInsets.all(0),
-                  alignment: Alignment.center,
-                  highlightColor: Colors.orange[300],
-                  icon: Icon(Icons.arrow_back),
-                  color: Colors.white,
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => UserHomePage()));
-                  }),
-              title: Text(
-                title,
-                style: TextStyle(color: Colors.white, fontSize: 16),
-                overflow: TextOverflow.ellipsis,
-              )),
-          body: Center(
-            child: Container(
-              //
-              child: Column(
-                children: <Widget>[
-                  (!Utils.isNullOrEmpty(_stores))
-                      ? Expanded(
-                          child: ListView.builder(
-                              itemCount: 1,
-                              itemBuilder: (BuildContext context, int index) {
-                                return Container(
-                                  margin: EdgeInsets.fromLTRB(10, 10, 10, 10),
-                                  child: new Column(
-                                    children: showFavourites(),
-                                  ),
-                                );
-                              }),
-                        )
-                      : _emptyFavsPage(),
-                ],
+        home: WillPopScope(
+          child: Scaffold(
+            appBar: AppBar(
+                actions: <Widget>[],
+                flexibleSpace: Container(
+                  decoration: gradientBackground,
+                ),
+                leading: IconButton(
+                    padding: EdgeInsets.all(0),
+                    alignment: Alignment.center,
+                    highlightColor: Colors.orange[300],
+                    icon: Icon(Icons.arrow_back),
+                    color: Colors.white,
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => UserHomePage()));
+                    }),
+                title: Text(
+                  title,
+                  style: TextStyle(color: Colors.white, fontSize: 16),
+                  overflow: TextOverflow.ellipsis,
+                )),
+            body: Center(
+              child: Container(
+                //
+                child: Column(
+                  children: <Widget>[
+                    (!Utils.isNullOrEmpty(_stores))
+                        ? Expanded(
+                            child: ListView.builder(
+                                itemCount: 1,
+                                itemBuilder: (BuildContext context, int index) {
+                                  return Container(
+                                    margin: EdgeInsets.fromLTRB(10, 10, 10, 10),
+                                    child: new Column(
+                                      children: showFavourites(),
+                                    ),
+                                  );
+                                }),
+                          )
+                        : _emptyFavsPage(),
+                  ],
+                ),
               ),
             ),
+            // drawer: CustomDrawer(),
+            bottomNavigationBar: CustomBottomBar(barIndex: 2),
+            // drawer: CustomDrawer(),
           ),
-          // drawer: CustomDrawer(),
-          bottomNavigationBar: CustomBottomBar(barIndex: 2),
-          // drawer: CustomDrawer(),
+          onWillPop: () async {
+            return true;
+          },
         ),
       );
     }

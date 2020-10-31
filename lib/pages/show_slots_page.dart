@@ -101,22 +101,27 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
   Widget _noSlotsPage() {
     return MaterialApp(
       theme: ThemeData.light().copyWith(),
-      home: Scaffold(
-        drawer: CustomDrawer(
-          phone: _state.currentUser.ph,
+      home: WillPopScope(
+        child: Scaffold(
+          drawer: CustomDrawer(
+            phone: _state.currentUser.ph,
+          ),
+          appBar: CustomAppBar(
+            titleTxt: title,
+          ),
+          body: Center(
+              child: Center(
+                  child: Container(
+            margin: EdgeInsets.fromLTRB(10, 10, 10, 10),
+            child: Text('All slots booked for this date!!'),
+          ))),
+          // bottomNavigationBar: CustomBottomBar(
+          //   barIndex: 3,
+          // ),
         ),
-        appBar: CustomAppBar(
-          titleTxt: title,
-        ),
-        body: Center(
-            child: Center(
-                child: Container(
-          margin: EdgeInsets.fromLTRB(10, 10, 10, 10),
-          child: Text('All slots booked for this date!!'),
-        ))),
-        // bottomNavigationBar: CustomBottomBar(
-        //   barIndex: 3,
-        // ),
+        onWillPop: () async {
+          return true;
+        },
       ),
     );
   }
@@ -169,158 +174,175 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
 
         return MaterialApp(
           theme: ThemeData.light().copyWith(),
-          home: Scaffold(
-            drawer: CustomDrawer(
-              phone: _state.currentUser.ph,
-            ),
-            appBar: CustomAppBarWithBackButton(
-                titleTxt: _storeName, backRoute: backRoute),
-            body: Padding(
-              padding: const EdgeInsets.fromLTRB(6, 6, 6, 6),
-              child: Container(
-                decoration: BoxDecoration(
-                    border: Border.all(color: borderColor),
-                    color: Colors.white,
-                    shape: BoxShape.rectangle,
-                    borderRadius: BorderRadius.all(Radius.circular(5.0))),
-                child: Column(
-                  children: <Widget>[
-                    Container(
-                      height: MediaQuery.of(context).size.width * .1,
-                      padding: EdgeInsets.fromLTRB(6, 0, 0, 0),
-                      decoration: darkContainer,
-                      child: Row(
-                        children: <Widget>[
-                          Icon(
-                            Icons.check_circle,
-                            size: 35,
-                            color: Colors.white,
-                          ),
-                          SizedBox(width: 12),
-                          Flexible(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: <Widget>[
-                                (selectedSlot == null)
-                                    ? Text(
-                                        "Select from available slots on " +
-                                            _dateFormatted +
-                                            ".",
-                                        style: TextStyle(
-                                            color: Colors.white, fontSize: 13),
-                                      )
-                                    : (isBooked(selectedSlot.dateTime,
-                                            entity.entityId))
-                                        ? Text(
-                                            'You already have a booking at $bookingTime on $bookingDate',
-                                            style: TextStyle(
-                                                color: primaryAccentColor,
-                                                fontSize: 13),
-                                          )
-                                        : Text(
-                                            'You selected a slot at $bookingTime on $bookingDate',
-                                            style: TextStyle(
-                                                color: highlightColor,
-                                                fontSize: 13),
-                                          ),
-                              ],
+          home: WillPopScope(
+            child: Scaffold(
+              drawer: CustomDrawer(
+                phone: _state.currentUser.ph,
+              ),
+              appBar: CustomAppBarWithBackButton(
+                  titleTxt: _storeName, backRoute: backRoute),
+              body: Padding(
+                padding: const EdgeInsets.fromLTRB(6, 6, 6, 6),
+                child: Container(
+                  decoration: BoxDecoration(
+                      border: Border.all(color: borderColor),
+                      color: Colors.white,
+                      shape: BoxShape.rectangle,
+                      borderRadius: BorderRadius.all(Radius.circular(5.0))),
+                  child: Column(
+                    children: <Widget>[
+                      Container(
+                        height: MediaQuery.of(context).size.width * .1,
+                        padding: EdgeInsets.fromLTRB(6, 0, 0, 0),
+                        decoration: darkContainer,
+                        child: Row(
+                          children: <Widget>[
+                            Icon(
+                              Icons.check_circle,
+                              size: 35,
+                              color: Colors.white,
                             ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Expanded(
-                      child: Container(
-                        child: new GridView.builder(
-                          padding: EdgeInsets.symmetric(horizontal: 5),
-                          scrollDirection: Axis.vertical,
-                          shrinkWrap: true,
-                          itemCount: _slotList.length,
-                          gridDelegate:
-                              SliverGridDelegateWithFixedCrossAxisCount(
-                                  crossAxisCount: 5,
-                                  crossAxisSpacing: 2.0,
-                                  mainAxisSpacing: 0.5),
-                          itemBuilder: (BuildContext context, int index) {
-                            return new GridTile(
-                              child: Container(
-                                padding: EdgeInsets.all(2),
-                                // decoration:
-                                //     BoxDecoration(border: Border.all(color: Colors.black, width: 0.5)),
-                                child: Center(
-                                  child: _buildGridItem(context, index),
-                                ),
+                            SizedBox(width: 12),
+                            Flexible(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: <Widget>[
+                                  (selectedSlot == null)
+                                      ? Text(
+                                          "Select from available slots on " +
+                                              _dateFormatted +
+                                              ".",
+                                          style: TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 13),
+                                        )
+                                      : (isBooked(selectedSlot.dateTime,
+                                              entity.entityId))
+                                          ? Text(
+                                              'You already have a booking at $bookingTime on $bookingDate',
+                                              style: TextStyle(
+                                                  color: primaryAccentColor,
+                                                  fontSize: 13),
+                                            )
+                                          : Text(
+                                              'You selected a slot at $bookingTime on $bookingDate',
+                                              style: TextStyle(
+                                                  color: highlightColor,
+                                                  fontSize: 13),
+                                            ),
+                                ],
                               ),
-                            );
-                          },
+                            ),
+                          ],
                         ),
                       ),
-                    ),
-                    Container(
-                      height: MediaQuery.of(context).size.width * .22,
-                      padding: EdgeInsets.all(4),
-                      // decoration: new BoxDecoration(
-                      //   border: Border.all(color: Colors.teal[200]),
-                      //   shape: BoxShape.rectangle,
-                      // color: Colors.cyan[100],
-                      // borderRadius: BorderRadius.only(
-                      //     topLeft: Radius.circular(4.0),
-                      //     topRight: Radius.circular(4.0))
-                      //),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: <Widget>[
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: <Widget>[
-                              SizedBox(
-                                width: MediaQuery.of(context).size.width * .8,
-                                height:
-                                    MediaQuery.of(context).size.height * .06,
-                                child: RaisedButton(
-                                  elevation: 10.0,
-                                  color: highlightColor,
-                                  splashColor: Colors.orangeAccent[700],
-                                  textColor: Colors.white,
-                                  child: Text(
-                                    'Book Slot',
-                                    style: TextStyle(fontSize: 20),
+                      Expanded(
+                        child: Container(
+                          child: new GridView.builder(
+                            padding: EdgeInsets.symmetric(horizontal: 5),
+                            scrollDirection: Axis.vertical,
+                            shrinkWrap: true,
+                            itemCount: _slotList.length,
+                            gridDelegate:
+                                SliverGridDelegateWithFixedCrossAxisCount(
+                                    crossAxisCount: 5,
+                                    crossAxisSpacing: 2.0,
+                                    mainAxisSpacing: 0.5),
+                            itemBuilder: (BuildContext context, int index) {
+                              return new GridTile(
+                                child: Container(
+                                  padding: EdgeInsets.all(2),
+                                  // decoration:
+                                  //     BoxDecoration(border: Border.all(color: Colors.black, width: 0.5)),
+                                  child: Center(
+                                    child: _buildGridItem(context, index),
                                   ),
-                                  onPressed: () {
-                                    if (selectedSlot != null)
-                                      bookSlot();
-                                    else {
-                                      Utils.showMyFlushbar(
-                                          context,
-                                          Icons.error,
-                                          Duration(seconds: 4),
-                                          forgotTimeSlot,
-                                          "");
-                                    }
-                                  },
                                 ),
-                              ),
-                              (_errorMessage != null
-                                  ? Text(
-                                      _errorMessage,
-                                      style: TextStyle(color: Colors.red),
-                                    )
-                                  : Container()),
-                            ],
+                              );
+                            },
                           ),
-                          SizedBox(
-                            height: 10,
-                          ),
-                          Row(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            children: <Widget>[
-                              Row(
-                                children: <Widget>[
+                        ),
+                      ),
+                      Container(
+                        height: MediaQuery.of(context).size.width * .22,
+                        padding: EdgeInsets.all(4),
+                        // decoration: new BoxDecoration(
+                        //   border: Border.all(color: Colors.teal[200]),
+                        //   shape: BoxShape.rectangle,
+                        // color: Colors.cyan[100],
+                        // borderRadius: BorderRadius.only(
+                        //     topLeft: Radius.circular(4.0),
+                        //     topRight: Radius.circular(4.0))
+                        //),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: <Widget>[
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: <Widget>[
+                                SizedBox(
+                                  width: MediaQuery.of(context).size.width * .8,
+                                  height:
+                                      MediaQuery.of(context).size.height * .06,
+                                  child: RaisedButton(
+                                    elevation: 10.0,
+                                    color: highlightColor,
+                                    splashColor: Colors.orangeAccent[700],
+                                    textColor: Colors.white,
+                                    child: Text(
+                                      'Book Slot',
+                                      style: TextStyle(fontSize: 20),
+                                    ),
+                                    onPressed: () {
+                                      if (selectedSlot != null)
+                                        bookSlot();
+                                      else {
+                                        Utils.showMyFlushbar(
+                                            context,
+                                            Icons.error,
+                                            Duration(seconds: 4),
+                                            forgotTimeSlot,
+                                            "");
+                                      }
+                                    },
+                                  ),
+                                ),
+                                (_errorMessage != null
+                                    ? Text(
+                                        _errorMessage,
+                                        style: TextStyle(color: Colors.red),
+                                      )
+                                    : Container()),
+                              ],
+                            ),
+                            SizedBox(
+                              height: 10,
+                            ),
+                            Row(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              children: <Widget>[
+                                Row(
+                                  children: <Widget>[
+                                    Icon(Icons.label,
+                                        color: highlightColor, size: 15),
+                                    Text(" Currently Selected",
+                                        style: TextStyle(
+                                          color: Colors.blueGrey[900],
+                                          // fontWeight: FontWeight.w800,
+                                          fontFamily: 'Monsterrat',
+                                          letterSpacing: 0.5,
+                                          fontSize: 9.0,
+                                          //height: 2,
+                                        )),
+                                  ],
+                                ),
+                                horizontalSpacer,
+                                Row(children: <Widget>[
                                   Icon(Icons.label,
-                                      color: highlightColor, size: 15),
-                                  Text(" Currently Selected",
+                                      color: Colors.cyan[300], size: 15),
+                                  Text(" Existing Booking",
                                       style: TextStyle(
                                         color: Colors.blueGrey[900],
                                         // fontWeight: FontWeight.w800,
@@ -329,97 +351,91 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
                                         fontSize: 9.0,
                                         //height: 2,
                                       )),
-                                ],
-                              ),
-                              horizontalSpacer,
-                              Row(children: <Widget>[
-                                Icon(Icons.label,
-                                    color: Colors.cyan[300], size: 15),
-                                Text(" Existing Booking",
-                                    style: TextStyle(
-                                      color: Colors.blueGrey[900],
-                                      // fontWeight: FontWeight.w800,
-                                      fontFamily: 'Monsterrat',
-                                      letterSpacing: 0.5,
-                                      fontSize: 9.0,
-                                      //height: 2,
-                                    )),
-                              ]),
-                              horizontalSpacer,
-                              Row(children: <Widget>[
-                                Icon(Icons.label,
-                                    color: Colors.blueGrey[400], size: 15),
-                                Text(" Not available",
-                                    style: TextStyle(
-                                      color: Colors.blueGrey[900],
-                                      // fontWeight: FontWeight.w800,
-                                      fontFamily: 'Monsterrat',
-                                      letterSpacing: 0.5,
-                                      fontSize: 9.0,
-                                      //height: 2,
-                                    )),
-                              ]),
-                            ],
-                          )
-                        ],
+                                ]),
+                                horizontalSpacer,
+                                Row(children: <Widget>[
+                                  Icon(Icons.label,
+                                      color: Colors.blueGrey[400], size: 15),
+                                  Text(" Not available",
+                                      style: TextStyle(
+                                        color: Colors.blueGrey[900],
+                                        // fontWeight: FontWeight.w800,
+                                        fontFamily: 'Monsterrat',
+                                        letterSpacing: 0.5,
+                                        fontSize: 9.0,
+                                        //height: 2,
+                                      )),
+                                ]),
+                              ],
+                            )
+                          ],
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
+
+              // Row(
+              //   children: <Widget>[
+              //     RaisedButton(
+              //       elevation: 12.0,
+              //       color: (selectedSlot != null) ? Colors.orange : Colors.grey,
+              //       textColor: Colors.white,
+              //       child: Text('Book Slot'),
+              //       onPressed: bookSlot,
+              //     ),
+              //     (_errorMessage != null
+              //         ? Text(
+              //             _errorMessage,
+              //             style: TextStyle(color: Colors.red),
+              //           )
+              //         : Container()),
+              //   ],
+              // )
+
+              // bottomNavigationBar: CustomBottomBar(
+              //   barIndex: 3,
+              // ),
             ),
-
-            // Row(
-            //   children: <Widget>[
-            //     RaisedButton(
-            //       elevation: 12.0,
-            //       color: (selectedSlot != null) ? Colors.orange : Colors.grey,
-            //       textColor: Colors.white,
-            //       child: Text('Book Slot'),
-            //       onPressed: bookSlot,
-            //     ),
-            //     (_errorMessage != null
-            //         ? Text(
-            //             _errorMessage,
-            //             style: TextStyle(color: Colors.red),
-            //           )
-            //         : Container()),
-            //   ],
-            // )
-
-            // bottomNavigationBar: CustomBottomBar(
-            //   barIndex: 3,
-            // ),
+            onWillPop: () async {
+              return true;
+            },
           ),
         );
       }
     } else {
       return MaterialApp(
         theme: ThemeData.light().copyWith(),
-        home: Scaffold(
-          appBar: CustomAppBar(
-            titleTxt: "Search",
-          ),
-          body: Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                // Padding(padding: EdgeInsets.only(top: 20.0)),
-                Text(
-                  "Loading..",
-                  style: TextStyle(fontSize: 20.0, color: borderColor),
-                ),
-                Padding(padding: EdgeInsets.only(top: 20.0)),
-                CircularProgressIndicator(
-                  backgroundColor: primaryAccentColor,
-                  valueColor: AlwaysStoppedAnimation<Color>(highlightColor),
-                  strokeWidth: 3,
-                )
-              ],
+        home: WillPopScope(
+          child: Scaffold(
+            appBar: CustomAppBar(
+              titleTxt: "Search",
             ),
+            body: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  // Padding(padding: EdgeInsets.only(top: 20.0)),
+                  Text(
+                    "Loading..",
+                    style: TextStyle(fontSize: 20.0, color: borderColor),
+                  ),
+                  Padding(padding: EdgeInsets.only(top: 20.0)),
+                  CircularProgressIndicator(
+                    backgroundColor: primaryAccentColor,
+                    valueColor: AlwaysStoppedAnimation<Color>(highlightColor),
+                    strokeWidth: 3,
+                  )
+                ],
+              ),
+            ),
+            //drawer: CustomDrawer(),
+            //  bottomNavigationBar: CustomBottomBar(barIndex: 1)
           ),
-          //drawer: CustomDrawer(),
-          //  bottomNavigationBar: CustomBottomBar(barIndex: 1)
+          onWillPop: () async {
+            return true;
+          },
         ),
       );
     }

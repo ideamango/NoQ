@@ -10,6 +10,7 @@ import 'package:noq/db/db_service/entity_service.dart';
 import 'package:noq/events/event_bus.dart';
 import 'package:noq/events/events.dart';
 import 'package:noq/global_state.dart';
+import 'package:noq/pages/search_entity_page.dart';
 import 'package:noq/pages/show_slots_page.dart';
 import 'package:noq/repository/StoreRepository.dart';
 import 'package:noq/services/circular_progress.dart';
@@ -50,7 +51,7 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
   String _searchInAll = 'Search in All';
   bool searchBoxClicked = false;
   bool fetchFromServer = false;
-  PersistentBottomSheetController bottomSheetController;
+  PersistentBottomSheetController childBottomSheetController;
   bool showFab = true;
   String categoryType;
   Map<String, String> categoryList = new Map<String, String>();
@@ -699,7 +700,7 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
                           Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => UserHomePage()));
+                                  builder: (context) => SearchEntityPage()));
                         }),
                     title: Text(
                       title,
@@ -830,7 +831,7 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
                   ),
                 ),
                 onPressed: () {
-                  bottomSheetController =
+                  childBottomSheetController =
                       keyChildSearch.currentState.showBottomSheet<Null>(
                     (context) => Container(
                       color: Colors.transparent,
@@ -909,7 +910,7 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
                             topRight: Radius.circular(20.0))),
                   );
                   showFoatingActionButton(false);
-                  bottomSheetController.closed.then((value) {
+                  childBottomSheetController.closed.then((value) {
                     showFoatingActionButton(true);
                   });
                 },
@@ -923,8 +924,8 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
     //  Utils.showMyFlushbar(
     //    context, Icons.info, Duration(seconds: 3), "dsfvsfg", "");
     // ignore: unnecessary_statements
-    if (bottomSheetController != null) {
-      bottomSheetController.close();
+    if (childBottomSheetController != null) {
+      childBottomSheetController.close();
       return false;
     } else
       return true;

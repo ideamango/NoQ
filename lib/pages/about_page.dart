@@ -28,113 +28,120 @@ class _AboutUsPageState extends State<AboutUsPage> {
     String title = "About Us";
     return MaterialApp(
       theme: ThemeData.light().copyWith(),
-      home: Scaffold(
-        drawer: CustomDrawer(
-          //TODO phone  here
-          //phone: _state.currentUser.ph,
-          phone: null,
-        ),
-        appBar: CustomAppBarWithBackButton(
-          backRoute: UserHomePage(),
-          titleTxt: title,
-        ),
-        body: Center(
-            child: Container(
-          margin: EdgeInsets.fromLTRB(10, 10, 10, 10),
-          child: ListView(
-            children: <Widget>[
-              Theme(
-                data: ThemeData(
-                  unselectedWidgetColor: Colors.grey[600],
-                  accentColor: primaryAccentColor,
-                ),
-                child: ExpansionTile(
-                  //key: PageStorageKey(this.widget.headerTitle),
-                  initiallyExpanded: true,
-                  title: Text(
-                    "Story of Sukoon",
-                    style: TextStyle(color: Colors.blueGrey[700], fontSize: 17),
-                  ),
-                  backgroundColor: Colors.white,
-                  leading: Icon(
-                    Icons.face,
-                    color: primaryIcon,
-                  ),
-                  children: <Widget>[
-                    ConstrainedBox(
-                      constraints: new BoxConstraints(
-                        maxHeight: MediaQuery.of(context).size.height * .5,
-                      ),
-                      child: Scrollbar(
-                        child: SingleChildScrollView(
-                          physics: BouncingScrollPhysics(),
-                          child: RichText(
-                              text: TextSpan(
-                                  style: highlightSubTextStyle,
-                                  children: <TextSpan>[
-                                TextSpan(text: ourStory),
-                              ])),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              Theme(
-                data: ThemeData(
-                  unselectedWidgetColor: Colors.grey[600],
-                  accentColor: primaryAccentColor,
-                ),
-                child: ExpansionTile(
-                  //key: PageStorageKey(this.widget.headerTitle),
-                  initiallyExpanded: true,
-                  title: Text(
-                    "Our Mission",
-                    style: TextStyle(color: Colors.blueGrey[700], fontSize: 17),
-                  ),
-                  backgroundColor: Colors.white,
-                  leading: Icon(
-                    Icons.description,
-                    color: primaryIcon,
-                  ),
-                  children: <Widget>[
-                    ConstrainedBox(
-                      constraints: new BoxConstraints(
-                        maxHeight: MediaQuery.of(context).size.height * .3,
-                      ),
-                      child: Scrollbar(
-                        child: SingleChildScrollView(
-                          physics: BouncingScrollPhysics(),
-                          child: RichText(
-                              text: TextSpan(
-                                  style: highlightSubTextStyle,
-                                  children: <TextSpan>[
-                                TextSpan(text: privacyPolicy),
-                              ])),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              verticalSpacer,
-              verticalSpacer,
-              // RaisedButton(
-              //   color: btnColor,
-              //   onPressed: () {
-              //     print("Agreed to terms");
-              //   },
-              //   child: Text(
-              //     "I Agree",
-              //     style: buttonTextStyle,
-              //   ),
-              // )
-            ],
+      home: WillPopScope(
+        child: Scaffold(
+          drawer: CustomDrawer(
+            //TODO phone  here
+            //phone: _state.currentUser.ph,
+            phone: null,
           ),
-        )),
-        // bottomNavigationBar: CustomBottomBar(
-        //   barIndex: 3,
-        // ),
+          appBar: CustomAppBarWithBackButton(
+            backRoute: UserHomePage(),
+            titleTxt: title,
+          ),
+          body: Center(
+              child: Container(
+            margin: EdgeInsets.fromLTRB(10, 10, 10, 10),
+            child: ListView(
+              children: <Widget>[
+                Theme(
+                  data: ThemeData(
+                    unselectedWidgetColor: Colors.grey[600],
+                    accentColor: primaryAccentColor,
+                  ),
+                  child: ExpansionTile(
+                    //key: PageStorageKey(this.widget.headerTitle),
+                    initiallyExpanded: true,
+                    title: Text(
+                      "Story of Sukoon",
+                      style:
+                          TextStyle(color: Colors.blueGrey[700], fontSize: 17),
+                    ),
+                    backgroundColor: Colors.white,
+                    leading: Icon(
+                      Icons.face,
+                      color: primaryIcon,
+                    ),
+                    children: <Widget>[
+                      ConstrainedBox(
+                        constraints: new BoxConstraints(
+                          maxHeight: MediaQuery.of(context).size.height * .5,
+                        ),
+                        child: Scrollbar(
+                          child: SingleChildScrollView(
+                            physics: BouncingScrollPhysics(),
+                            child: RichText(
+                                text: TextSpan(
+                                    style: highlightSubTextStyle,
+                                    children: <TextSpan>[
+                                  TextSpan(text: ourStory),
+                                ])),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Theme(
+                  data: ThemeData(
+                    unselectedWidgetColor: Colors.grey[600],
+                    accentColor: primaryAccentColor,
+                  ),
+                  child: ExpansionTile(
+                    //key: PageStorageKey(this.widget.headerTitle),
+                    initiallyExpanded: true,
+                    title: Text(
+                      "Our Mission",
+                      style:
+                          TextStyle(color: Colors.blueGrey[700], fontSize: 17),
+                    ),
+                    backgroundColor: Colors.white,
+                    leading: Icon(
+                      Icons.description,
+                      color: primaryIcon,
+                    ),
+                    children: <Widget>[
+                      ConstrainedBox(
+                        constraints: new BoxConstraints(
+                          maxHeight: MediaQuery.of(context).size.height * .3,
+                        ),
+                        child: Scrollbar(
+                          child: SingleChildScrollView(
+                            physics: BouncingScrollPhysics(),
+                            child: RichText(
+                                text: TextSpan(
+                                    style: highlightSubTextStyle,
+                                    children: <TextSpan>[
+                                  TextSpan(text: privacyPolicy),
+                                ])),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                verticalSpacer,
+                verticalSpacer,
+                // RaisedButton(
+                //   color: btnColor,
+                //   onPressed: () {
+                //     print("Agreed to terms");
+                //   },
+                //   child: Text(
+                //     "I Agree",
+                //     style: buttonTextStyle,
+                //   ),
+                // )
+              ],
+            ),
+          )),
+          // bottomNavigationBar: CustomBottomBar(
+          //   barIndex: 3,
+          // ),
+        ),
+        onWillPop: () async {
+          return true;
+        },
       ),
     );
   }

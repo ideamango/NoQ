@@ -163,180 +163,172 @@ class _ManageChildEntityListPageState extends State<ManageChildEntityListPage> {
       return MaterialApp(
         title: 'Add a child Place',
         //theme: ThemeData.light().copyWith(),
-        home: Scaffold(
-          appBar: AppBar(
-              actions: <Widget>[],
-              flexibleSpace: Container(
-                decoration: gradientBackground,
-              ),
-              leading: IconButton(
-                  padding: EdgeInsets.all(0),
-                  alignment: Alignment.center,
-                  highlightColor: highlightColor,
-                  icon: Icon(Icons.arrow_back),
-                  color: Colors.white,
-                  onPressed: () {
-                    // saveEntityDetails(parentEntity);
-                    print("going back");
-
-                    Navigator.of(context).pop();
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => UserHomePage()));
-                  }),
-              title: Text(
-                title,
-                style: TextStyle(color: Colors.white, fontSize: 16),
-                overflow: TextOverflow.ellipsis,
-              )),
-          body: Center(
-            child: new Form(
-              key: _servicesListFormKey,
-              autovalidate: true,
-              child: Padding(
-                padding: const EdgeInsets.all(5.0),
-                child: Column(
-                  children: <Widget>[
-                    Card(
-                      elevation: 20,
-                      child: Container(
-                        decoration: BoxDecoration(
-                            border: Border.all(color: borderColor),
-                            color: Colors.white,
-                            shape: BoxShape.rectangle,
-                            borderRadius:
-                                BorderRadius.all(Radius.circular(5.0))),
-                        child: Column(
-                          children: <Widget>[
-                            Container(
-                              height: MediaQuery.of(context).size.width * .1,
-                              padding: EdgeInsets.fromLTRB(6, 0, 0, 0),
-                              decoration: darkContainer,
-                              child: Row(
-                                children: <Widget>[
-                                  Icon(
-                                    Icons.business,
-                                    size: 35,
-                                    color: Colors.white,
-                                  ),
-                                  SizedBox(width: 12),
-                                  Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: <Widget>[
-                                      Text(
-                                        "Add a child Place",
-                                        style: TextStyle(
-                                            color: Colors.white, fontSize: 15),
-                                      ),
-                                      //TODO: Smita- uncomment after adding null check
-                                      // Text(
-
-                                      //   (parentEntity.address.locality +
-                                      //           ", " +
-                                      //           parentEntity.address.city +
-                                      //           ".") ??
-                                      //       "",
-                                      //   style: buttonXSmlTextStyle,
-                                      // ),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                            ),
-                            //subEntityType,
-                            (_msg != null)
-                                ? Text(
-                                    _msg,
-                                    style: errorTextStyle,
-                                  )
-                                : Container(),
-                            Padding(
-                              padding: const EdgeInsets.fromLTRB(8.0, 0, 8, 0),
-                              child: Row(
-                                // mainAxisAlignment: MainAxisAlignment.end,
-                                children: <Widget>[
-                                  Expanded(
-                                    child: subEntityType,
-                                  ),
-                                  Container(
-                                    child: IconButton(
-                                      icon: Icon(Icons.add_circle,
-                                          color: highlightColor, size: 40),
-                                      onPressed: () {
-                                        if (_subEntityType != null) {
-                                          setState(() {
-                                            _msg = null;
-                                          });
-                                          if (_servicesListFormKey.currentState
-                                              .validate()) {
-                                            _servicesListFormKey.currentState
-                                                .save();
-                                            _addNewServiceRow();
-                                          }
-                                        } else {
-                                          setState(() {
-                                            _msg = "Select type of place";
-                                          });
-                                        }
-                                      },
+        home: WillPopScope(
+          child: Scaffold(
+            appBar: CustomAppBarWithBackButton(
+              backRoute: ManageEntityListPage(),
+              titleTxt: title,
+            ),
+            body: Center(
+              child: new Form(
+                key: _servicesListFormKey,
+                autovalidate: true,
+                child: Padding(
+                  padding: const EdgeInsets.all(5.0),
+                  child: Column(
+                    children: <Widget>[
+                      Card(
+                        elevation: 20,
+                        child: Container(
+                          decoration: BoxDecoration(
+                              border: Border.all(color: borderColor),
+                              color: Colors.white,
+                              shape: BoxShape.rectangle,
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(5.0))),
+                          child: Column(
+                            children: <Widget>[
+                              Container(
+                                height: MediaQuery.of(context).size.width * .1,
+                                padding: EdgeInsets.fromLTRB(6, 0, 0, 0),
+                                decoration: darkContainer,
+                                child: Row(
+                                  children: <Widget>[
+                                    Icon(
+                                      Icons.business,
+                                      size: 35,
+                                      color: Colors.white,
                                     ),
-                                  ),
-                                ],
+                                    SizedBox(width: 12),
+                                    Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: <Widget>[
+                                        Text(
+                                          "Add a child Place",
+                                          style: TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 15),
+                                        ),
+                                        //TODO: Smita- uncomment after adding null check
+                                        // Text(
+
+                                        //   (parentEntity.address.locality +
+                                        //           ", " +
+                                        //           parentEntity.address.city +
+                                        //           ".") ??
+                                        //       "",
+                                        //   style: buttonXSmlTextStyle,
+                                        // ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
                               ),
-                            ),
-                          ],
+                              //subEntityType,
+                              (_msg != null)
+                                  ? Text(
+                                      _msg,
+                                      style: errorTextStyle,
+                                    )
+                                  : Container(),
+                              Padding(
+                                padding:
+                                    const EdgeInsets.fromLTRB(8.0, 0, 8, 0),
+                                child: Row(
+                                  // mainAxisAlignment: MainAxisAlignment.end,
+                                  children: <Widget>[
+                                    Expanded(
+                                      child: subEntityType,
+                                    ),
+                                    Container(
+                                      child: IconButton(
+                                        icon: Icon(Icons.add_circle,
+                                            color: highlightColor, size: 40),
+                                        onPressed: () {
+                                          if (_subEntityType != null) {
+                                            setState(() {
+                                              _msg = null;
+                                            });
+                                            if (_servicesListFormKey
+                                                .currentState
+                                                .validate()) {
+                                              _servicesListFormKey.currentState
+                                                  .save();
+                                              _addNewServiceRow();
+                                            }
+                                          } else {
+                                            setState(() {
+                                              _msg = "Select type of place";
+                                            });
+                                          }
+                                        },
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
-                    ),
-                    new Expanded(
-                      child: Align(
-                        alignment: Alignment.topCenter,
-                        child: ListView.builder(
-                          controller: _childScrollController,
-                          reverse: true,
-                          shrinkWrap: true,
-                          itemExtent: itemSize,
-                          //scrollDirection: Axis.vertical,
-                          itemBuilder: (BuildContext context, int index) {
-                            return Container(
-                              //  height: MediaQuery.of(context).size.height * .3,
-                              child: ChildEntityRow(
-                                  childEntity: servicesList[index],
-                                  entityMap: _entityMap),
-                            );
-                          },
-                          itemCount: servicesList.length,
+                      new Expanded(
+                        child: Align(
+                          alignment: Alignment.topCenter,
+                          child: ListView.builder(
+                            controller: _childScrollController,
+                            reverse: true,
+                            shrinkWrap: true,
+                            itemExtent: itemSize,
+                            //scrollDirection: Axis.vertical,
+                            itemBuilder: (BuildContext context, int index) {
+                              return Container(
+                                //  height: MediaQuery.of(context).size.height * .3,
+                                child: ChildEntityRow(
+                                    childEntity: servicesList[index],
+                                    entityMap: _entityMap),
+                              );
+                            },
+                            itemCount: servicesList.length,
+                          ),
                         ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
+                // bottomNavigationBar: buildBottomItems()
               ),
-              // bottomNavigationBar: buildBottomItems()
             ),
           ),
+          onWillPop: () async {
+            return true;
+          },
         ),
       );
     } else {
       return MaterialApp(
         theme: ThemeData.light().copyWith(),
-        home: Scaffold(
-          appBar: CustomAppBarWithBackButton(
-            backRoute: ManageEntityListPage(),
-            titleTxt: title,
-          ),
-
-          body: Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                showCircularProgress(),
-              ],
+        home: WillPopScope(
+          child: Scaffold(
+            appBar: CustomAppBarWithBackButton(
+              backRoute: ManageEntityListPage(),
+              titleTxt: title,
             ),
+
+            body: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  showCircularProgress(),
+                ],
+              ),
+            ),
+            //drawer: CustomDrawer(),
+            // bottomNavigationBar: CustomBottomBar(barIndex: 0),
           ),
-          //drawer: CustomDrawer(),
-          // bottomNavigationBar: CustomBottomBar(barIndex: 0),
+          onWillPop: () async {
+            return true;
+          },
         ),
       );
     }

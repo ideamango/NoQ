@@ -57,30 +57,35 @@ class _UserNotificationsPageState extends State<UserNotificationsPage> {
     String title = "Notifications";
     return MaterialApp(
       theme: ThemeData.light().copyWith(),
-      home: Scaffold(
-        drawer: CustomDrawer(
-          phone: _state.currentUser.ph,
+      home: WillPopScope(
+        child: Scaffold(
+          drawer: CustomDrawer(
+            phone: _state.currentUser.ph,
+          ),
+          appBar: CustomAppBar(
+            titleTxt: title,
+          ),
+          body: Center(
+            child: Container(
+                margin: EdgeInsets.fromLTRB(10, 10, 10, 10),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Text(
+                      'No Notifications yet!!',
+                      style: highlightTextStyle,
+                    ),
+                    Text('Be Safe | Save Time.', style: highlightSubTextStyle),
+                  ],
+                )),
+          ),
+          // bottomNavigationBar: CustomBottomBar(
+          //   barIndex: 0,
+          // ),
         ),
-        appBar: CustomAppBar(
-          titleTxt: title,
-        ),
-        body: Center(
-          child: Container(
-              margin: EdgeInsets.fromLTRB(10, 10, 10, 10),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  Text(
-                    'No Notifications yet!!',
-                    style: highlightTextStyle,
-                  ),
-                  Text('Be Safe | Save Time.', style: highlightSubTextStyle),
-                ],
-              )),
-        ),
-        // bottomNavigationBar: CustomBottomBar(
-        //   barIndex: 0,
-        // ),
+        onWillPop: () async {
+          return true;
+        },
       ),
     );
   }
