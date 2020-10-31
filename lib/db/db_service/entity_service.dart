@@ -16,8 +16,6 @@ class EntityService {
   Future<bool> upsertEntity(Entity entity, String regNum) async {
     final fAuth.User fireUser = FirebaseAuth.instance.currentUser;
 
-    Exception ex;
-
     FirebaseFirestore fStore = FirebaseFirestore.instance;
     final DocumentReference entityRef =
         fStore.doc('entities/' + entity.entityId);
@@ -105,13 +103,8 @@ class EntityService {
       } catch (e) {
         print("Transaction Error: While making admin - " + e.toString());
         isSuccess = false;
-        ex = e;
       }
     });
-
-    if (ex != null) {
-      throw ex;
-    }
 
     return isSuccess;
   }
@@ -153,7 +146,6 @@ class EntityService {
     final fAuth.User fireUser = FirebaseAuth.instance.currentUser;
     FirebaseFirestore fStore = FirebaseFirestore.instance;
     bool isSuccess = false;
-    Exception ex;
 
     //STEPS:
     //1. delete all the childEntities in the recursive manner (out of the main transaction)
@@ -262,13 +254,8 @@ class EntityService {
         isSuccess = true;
       } catch (e) {
         isSuccess = false;
-        ex = e;
       }
     });
-
-    if (ex != null) {
-      throw ex;
-    }
 
     return isSuccess;
   }
@@ -279,7 +266,6 @@ class EntityService {
 
     AppUser u;
     bool isSuccess = true;
-    Exception ex;
 
     final DocumentReference userRef = fStore.doc('users/' + phone);
     final DocumentReference entityRef = fStore.doc('entities/' + entityId);
@@ -344,13 +330,8 @@ class EntityService {
       } catch (e) {
         print("Transactio Error: While making admin - " + e.toString());
         isSuccess = false;
-        ex = e;
       }
     });
-
-    if (ex != null) {
-      throw ex;
-    }
 
     return isSuccess;
   }
@@ -364,7 +345,6 @@ class EntityService {
 
   Future<bool> upsertChildEntityToParent(
       Entity childEntity, String parentEntityId, String childRegNum) async {
-    Exception ex;
     //ChildEntity might already exists or can be new
     //ChildEntity Meta should be added in the parentEntity
     //ChildEntity should have parentEntityId set on the parentId attribute
@@ -501,14 +481,10 @@ class EntityService {
         isSuccess = true;
       } catch (e) {
         print('Error upsert child to parent' + e.toString());
-        ex = e;
+
         isSuccess = false;
       }
     });
-
-    if (ex != null) {
-      throw ex;
-    }
 
     return isSuccess;
   }
