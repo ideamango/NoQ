@@ -54,7 +54,7 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
   PersistentBottomSheetController childBottomSheetController;
   bool showFab = true;
   String categoryType;
-  Map<String, String> categoryList = new Map<String, String>();
+  // Map<String, String> categoryList = new Map<String, String>();
 
   List<String> searchTypes = new List<String>();
   // @override
@@ -66,27 +66,9 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
   //   });
   // }
 
-  void buildCategoryList() {
-    categoryList["Mall"] = "mall.png";
-    categoryList["Super Market"] = "superMarket.png";
-    categoryList["Apartment"] = "apartment.png";
-    categoryList["Medical Store"] = "medicalStore.png";
-    categoryList["Shop"] = "shop.png";
-    categoryList["Pop Shop"] = "popShop.png";
-    categoryList["Salon"] = "salon.png";
-    categoryList["School"] = "school.png";
-    categoryList["Place of Worship"] = "placeOfWorship.png";
-    categoryList["Restaurant"] = "restaurant.png";
-    categoryList["Sports Center"] = "sportsCenter.png";
-    categoryList["Gym"] = "gym.png";
-    categoryList["Office"] = "office.png";
-    categoryList["Others"] = "others.png";
-  }
-
   Widget _buildCategoryItem(BuildContext context, int index) {
     String name = searchTypes[index];
-    String value = categoryList[name];
-    print("Image path assets/$value");
+    Widget image = Utils.getEntityTypeImage(name, 30);
 
     return GestureDetector(
         onTap: () {
@@ -96,10 +78,11 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
         },
         child: Column(
           children: <Widget>[
-            Image(
-              width: MediaQuery.of(context).size.width * .15,
-              image: AssetImage("assets/$value"),
-            ),
+            Container(
+                padding: EdgeInsets.all(0),
+                width: MediaQuery.of(context).size.width * .15,
+                height: MediaQuery.of(context).size.width * .15,
+                child: image),
             Text(
               name,
               style: textBotSheetTextStyle,
@@ -155,7 +138,6 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
 
     title = "Places inside " + widget.parentName;
     getGlobalState().whenComplete(() {
-      buildCategoryList();
       searchTypes = _state.conf.entityTypes;
       getEntitiesList().whenComplete(() {
         setState(() {
@@ -875,7 +857,7 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
                                 padding: EdgeInsets.all(0),
                                 scrollDirection: Axis.vertical,
                                 shrinkWrap: true,
-                                itemCount: categoryList.length,
+                                itemCount: searchTypes.length,
                                 gridDelegate:
                                     SliverGridDelegateWithFixedCrossAxisCount(
                                         crossAxisCount: 4,
@@ -927,38 +909,19 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
     // ignore: unnecessary_statements
     if (childBottomSheetController != null) {
       childBottomSheetController.close();
+      childBottomSheetController = null;
       return false;
-    } else
-      return true;
-  }
-
-  String getEntityTypeIcon(String type) {
-    String entityImageName;
-    if (categoryList.keys.contains(type)) {
-      entityImageName = categoryList[type];
+    } else {
+      //Navigator.of(context).pop();
+      Navigator.push(
+          context, MaterialPageRoute(builder: (context) => SearchEntityPage()));
+      return false;
     }
-    return entityImageName;
   }
 
   Widget entityImageIcon(String type) {
-    String imgName;
     Widget imgWidget;
-
-    if (getEntityTypeIcon(type) != null) {
-      imgName = getEntityTypeIcon(type);
-      imgWidget = ImageIcon(
-        AssetImage('assets/$imgName'),
-        size: 30,
-        color: highlightColor,
-        //color: primaryDarkColor,
-      );
-    } else {
-      imgWidget = Icon(
-        Icons.shopping_cart,
-        color: highlightColor,
-        size: 20,
-      );
-    }
+    imgWidget = Utils.getEntityTypeImage(type, 20);
     return imgWidget;
   }
 

@@ -14,7 +14,7 @@ const WEEK_DAY_SATURDAY = 'saturday';
 const PLACE_TYPE_MALL = "Mall";
 const PLACE_TYPE_SUPERMARKET = "Super Market";
 const PLACE_TYPE_APARTMENT = "Apartment";
-const PLACE_TYPE_Medical = "Medical Store";
+const PLACE_TYPE_MEDICAL = "Medical Store";
 const PLACE_TYPE_SHOP = "Shop";
 const PLACE_TYPE_WORSHIP = "Place of Worship";
 const PLACE_TYPE_RESTAURANT = "Restaurant";
@@ -26,7 +26,7 @@ const PLACE_TYPE_SPORTS = "Sports Center";
 const PLACE_TYPE_POPSHOP = "Pop Shop";
 const PLACE_TYPE_BANK = "Bank";
 const PLACE_TYPE_HOSPITAL = "Hospital";
-const PLACE_TYPE_Others = "Others";
+const PLACE_TYPE_OTHERS = "Others";
 
 String appName = 'Sukoon';
 var loginSubTxt = "Peace of Mind";

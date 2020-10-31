@@ -50,27 +50,12 @@ class _SearchEntityPageState extends State<SearchEntityPage>
   PersistentBottomSheetController bottomSheetController;
   bool showFab = true;
   String categoryType;
-  Map<String, String> categoryList = new Map<String, String>();
 
   List<String> searchTypes = new List<String>();
-  // @override
-  // void initState() {
-  //   super.initState();
-  //   GlobalState.getGlobalState().then((value) {
-  //     searchTypes = value.conf.entityTypes;
-  //     buildCategoryList();
-  //   });
-  // }
 
   Widget _buildCategoryItem(BuildContext context, int index) {
     String name = searchTypes[index];
-    String imgName = getEntityTypeIcon(name);
-    if (imgName == null) {
-      imgName = "defaultSearchCategoryImg.png";
-    }
-
-    String value = categoryList[name];
-    print("Image path assets/$value");
+    Widget image = Utils.getEntityTypeImage(name, 30);
 
     return GestureDetector(
         onTap: () {
@@ -80,10 +65,11 @@ class _SearchEntityPageState extends State<SearchEntityPage>
         },
         child: Column(
           children: <Widget>[
-            Image(
-              width: MediaQuery.of(context).size.width * .15,
-              image: AssetImage("assets/$value"),
-            ),
+            Container(
+                padding: EdgeInsets.all(0),
+                width: MediaQuery.of(context).size.width * .15,
+                height: MediaQuery.of(context).size.width * .15,
+                child: image),
             Text(
               name,
               style: textBotSheetTextStyle,
@@ -91,8 +77,6 @@ class _SearchEntityPageState extends State<SearchEntityPage>
           ],
         ));
   }
-
-  // bool searchDone = false;
 
   final compareDateFormat = new DateFormat('YYYYMMDD');
   List<DateTime> _dateList = new List<DateTime>();
@@ -134,7 +118,7 @@ class _SearchEntityPageState extends State<SearchEntityPage>
     _isSearching = "initial";
     getGlobalState().whenComplete(() {
       fetchPastSearchesList();
-      categoryList = Utils.buildCategoryList();
+
       searchTypes = _state.conf.entityTypes;
       setState(() {
         initCompleted = true;
@@ -187,12 +171,6 @@ class _SearchEntityPageState extends State<SearchEntityPage>
         _buildSearchList();
       });
     });
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-    //_selectCategoryBtnController.dispose();
   }
 
   void fetchPastSearchesList() {
@@ -837,7 +815,7 @@ class _SearchEntityPageState extends State<SearchEntityPage>
                                 padding: EdgeInsets.all(0),
                                 scrollDirection: Axis.vertical,
                                 shrinkWrap: true,
-                                itemCount: categoryList.length,
+                                itemCount: searchTypes.length,
                                 gridDelegate:
                                     SliverGridDelegateWithFixedCrossAxisCount(
                                         crossAxisCount: 4,
@@ -886,6 +864,7 @@ class _SearchEntityPageState extends State<SearchEntityPage>
   Future<bool> willPopCallback() async {
     if (bottomSheetController != null) {
       bottomSheetController.close();
+      bottomSheetController = null;
       return false;
     } else {
       //Navigator.of(context).pop();
@@ -895,32 +874,13 @@ class _SearchEntityPageState extends State<SearchEntityPage>
     }
   }
 
-  String getEntityTypeIcon(String type) {
-    String entityImageName;
-    if (categoryList.keys.contains(type)) {
-      entityImageName = categoryList[type];
-    }
-    return entityImageName;
-  }
-
   Widget entityImageIcon(String type) {
-    String imgName;
+    // String imgName;
     Widget imgWidget;
+    //  imgName = Utils.getEntityTypeImage(type);
 
-    if (getEntityTypeIcon(type) != null) {
-      imgName = getEntityTypeIcon(type);
-      imgWidget = ImageIcon(
-        AssetImage('assets/$imgName'),
-        size: 30,
-        color: highlightColor,
-      );
-    } else {
-      imgWidget = Icon(
-        Icons.shopping_cart,
-        color: highlightColor,
-        size: 20,
-      );
-    }
+    imgWidget = Utils.getEntityTypeImage(type, 20);
+
     return imgWidget;
   }
 
@@ -971,19 +931,24 @@ class _SearchEntityPageState extends State<SearchEntityPage>
                     mainAxisSize: MainAxisSize.min,
                     children: <Widget>[
                       new Container(
+                        height: MediaQuery.of(context).size.width * .095,
+                        width: MediaQuery.of(context).size.width * .095,
                         margin: EdgeInsets.fromLTRB(
                             MediaQuery.of(context).size.width * .01,
                             MediaQuery.of(context).size.width * .01,
                             MediaQuery.of(context).size.width * .005,
                             MediaQuery.of(context).size.width * .005),
                         padding: EdgeInsets.all(
-                            MediaQuery.of(context).size.width * .01),
-                        alignment: Alignment.topCenter,
+                            MediaQuery.of(context).size.width * .02),
                         decoration: ShapeDecoration(
                           shape: CircleBorder(),
                           color: primaryIcon,
                         ),
-                        child: entityImageIcon(str.type),
+                        child: Container(
+                            alignment: Alignment.center,
+                            height: MediaQuery.of(context).size.width * .04,
+                            width: MediaQuery.of(context).size.width * .04,
+                            child: entityImageIcon(str.type)),
                       ),
                       verticalSpacer,
                     ],
