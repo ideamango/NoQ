@@ -266,6 +266,7 @@ class DBTest {
       await EntityService().deleteEntity('SalonEntity107');
       await EntityService().deleteEntity('SalonEntity108');
       await EntityService().deleteEntity('GymEntity109');
+      await EntityService().deleteEntity('GymEntity110');
 
       await TokenService().deleteSlot("Child101-1#2020~7~6");
       await TokenService().deleteSlot("Child101-1#2020~7~7");
@@ -831,6 +832,7 @@ class DBTest {
     await createSalon2();
 
     await createGym();
+    await createPrivateGym();
   }
 
   Future<void> createSportCenter() async {
@@ -1147,6 +1149,56 @@ class DBTest {
         maxAllowed: 60,
         slotDuration: 60,
         closedOn: [WEEK_DAY_MONDAY],
+        breakStartHour: 13,
+        breakStartMinute: 30,
+        breakEndHour: 14,
+        breakEndMinute: 30,
+        startTimeHour: 10,
+        startTimeMinute: 30,
+        endTimeHour: 21,
+        endTimeMinute: 0,
+        parentId: null,
+        type: PLACE_TYPE_GYM,
+        isBookable: true,
+        isActive: true,
+        verificationStatus: VERIFICATION_VERIFIED,
+        coordinates: geoPoint,
+        offer: offer,
+        paytm: "+919611009823",
+        phone: "+918328592031",
+        gpay: "+919611009823",
+        whatsapp: "+918328592031");
+
+    try {
+      await EntityService().upsertEntity(entity, "testReg111");
+    } catch (e) {
+      print("Exception occured " + e.toString());
+    }
+  }
+
+  Future<void> createPrivateGym() async {
+    Address adrs = new Address(
+        city: "Hyderbad",
+        state: "Telangana",
+        country: "India",
+        address: "Shop 61, Towli Chowk Bazar, Gachibowli");
+
+    Offer offer = new Offer();
+    offer.coupon = "Great Diwali Offer";
+    offer.message = "30% off for yearly subscription before Diwali 2021!!";
+    offer.startDateTime = DateTime.now();
+    offer.endDateTime = DateTime.utc(2021, 11, 4);
+
+    MyGeoFirePoint geoPoint = new MyGeoFirePoint(17.444317, 78.355321);
+    Entity entity = new Entity(
+        entityId: "GymEntity110",
+        name: "Place Great Private Gymkhana",
+        address: adrs,
+        advanceDays: 7,
+        isPublic: false,
+        maxAllowed: 60,
+        slotDuration: 60,
+        closedOn: [WEEK_DAY_THURSDAY],
         breakStartHour: 13,
         breakStartMinute: 30,
         breakEndHour: 14,
