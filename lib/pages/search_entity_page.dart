@@ -305,17 +305,22 @@ class _SearchEntityPageState extends State<SearchEntityPage>
                 ),
               if (messageTitle != "NotFound")
                 Column(children: <Widget>[
-                  SizedBox(height: MediaQuery.of(context).size.height * .32),
-                  Text(
-                    txtMsg,
-                    style: highlightTextStyle,
-                    textAlign: TextAlign.center,
-                  ),
-                  Text(
-                    txtSubMsg,
-                    style: highlightSubTextStyle,
-                    textAlign: TextAlign.center,
-                  ),
+                  SizedBox(height: MediaQuery.of(context).size.height * .02),
+                  Container(
+                      color: Colors.transparent,
+                      child: Image(
+                        image: AssetImage('assets/search_home.png'),
+                      )),
+                  // Text(
+                  //   txtMsg,
+                  //   style: highlightTextStyle,
+                  //   textAlign: TextAlign.center,
+                  // ),
+                  // Text(
+                  //   txtSubMsg,
+                  //   style: highlightSubTextStyle,
+                  //   textAlign: TextAlign.center,
+                  // ),
                 ]),
             ],
           ),
