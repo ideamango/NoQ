@@ -28,6 +28,8 @@ const PLACE_TYPE_BANK = "Bank";
 const PLACE_TYPE_HOSPITAL = "Hospital";
 const PLACE_TYPE_OTHERS = "Others";
 
+const SELECT_TYPE_OF_PLACE = "Type of Place";
+
 String appName = 'Sukoon';
 var loginSubTxt = "Peace of Mind";
 var loginMainTxt = "";
@@ -132,6 +134,7 @@ String cantSearch = "Oops.. Can't Search!";
 String searchResultText1 = "Showing search results for places ";
 String searchResultText2 = "in ";
 String searchResultText3 = " category ";
+const SYMBOL_AND = "& ";
 
 String searchResultText4 = "by name ";
 
