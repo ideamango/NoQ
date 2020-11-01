@@ -23,6 +23,7 @@ import 'package:noq/widget/widgets.dart';
 import 'package:share/share.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../userHomePage.dart';
+import 'package:eventify/eventify.dart' as Eventify;
 
 class SearchChildEntityPage extends StatefulWidget {
   final String pageName;
@@ -123,12 +124,21 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
 
   AnimationController controller;
   Animation<Offset> offset;
+  Eventify.Listener eventListener;
 
   //List<String> searchTypes;
   void showFoatingActionButton(bool value) {
     setState(() {
       showFab = value;
     });
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _selectCategoryBtnController.dispose();
+    EventBus.unregisterEvent(eventListener);
+    print("Search page dispose called...");
   }
 
   @override
@@ -197,7 +207,8 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
   }
 
   void registerCategorySelectEvent() {
-    EventBus.registerEvent(SEARCH_CATEGORY_SELECTED, null, (event, arg) {
+    eventListener =
+        EventBus.registerEvent(SEARCH_CATEGORY_SELECTED, null, (event, arg) {
       if (event == null) {
         return;
       }
@@ -209,12 +220,6 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
         _buildSearchList();
       });
     });
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-    _selectCategoryBtnController.dispose();
   }
 
   void fetchPastSearchesList() {
@@ -595,9 +600,11 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
                         )
                       : TextSpan(text: ""),
                   Utils.isNotNullOrEmpty(_searchText)
-                      ? TextSpan(
-                          text: searchResultText4,
-                        )
+                      ? (Utils.isNotNullOrEmpty(_entityType))
+                          ? TextSpan(text: SYMBOL_AND + searchResultText4)
+                          : TextSpan(
+                              text: searchResultText4,
+                            )
                       : TextSpan(text: ""),
                   Utils.isNotNullOrEmpty(_searchText)
                       ? TextSpan(
@@ -812,7 +819,7 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
                     borderRadius: BorderRadius.all(Radius.circular(45.0))),
                 child: Container(
                   child: Text(
-                    "Select Category",
+                    SELECT_TYPE_OF_PLACE,
                     style: TextStyle(color: Colors.white, fontSize: 16),
                     textAlign: TextAlign.center,
                   ),
@@ -847,7 +854,7 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
                                   alignment: Alignment.center,
                                   width: MediaQuery.of(context).size.width * .8,
                                   child: Text(
-                                    "Select Category",
+                                    SELECT_TYPE_OF_PLACE,
                                     style: textInputTextStyle,
                                   )),
                             ],

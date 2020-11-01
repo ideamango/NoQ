@@ -23,6 +23,7 @@ import 'package:noq/widget/widgets.dart';
 import 'package:share/share.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../userHomePage.dart';
+import 'package:eventify/eventify.dart' as Eventify;
 
 class SearchEntityPage extends StatefulWidget {
   //final String forPage;
@@ -102,6 +103,7 @@ class _SearchEntityPageState extends State<SearchEntityPage>
   String messageTitle;
   String messageSubTitle;
   String _dynamicLink;
+  Eventify.Listener eventListener;
 
   ScrollController _selectCategoryBtnController;
 
@@ -113,6 +115,14 @@ class _SearchEntityPageState extends State<SearchEntityPage>
     setState(() {
       showFab = value;
     });
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    EventBus.unregisterEvent(eventListener);
+    _selectCategoryBtnController.dispose();
+    print("Search page dispose called...");
   }
 
   @override
@@ -162,7 +172,8 @@ class _SearchEntityPageState extends State<SearchEntityPage>
   }
 
   void registerCategorySelectEvent() {
-    EventBus.registerEvent(SEARCH_CATEGORY_SELECTED, null, (event, arg) {
+    eventListener =
+        EventBus.registerEvent(SEARCH_CATEGORY_SELECTED, null, (event, arg) {
       if (event == null) {
         return;
       }
@@ -555,9 +566,11 @@ class _SearchEntityPageState extends State<SearchEntityPage>
                         )
                       : TextSpan(text: ""),
                   Utils.isNotNullOrEmpty(_searchText)
-                      ? TextSpan(
-                          text: searchResultText4,
-                        )
+                      ? (Utils.isNotNullOrEmpty(_entityType))
+                          ? TextSpan(text: SYMBOL_AND + searchResultText4)
+                          : TextSpan(
+                              text: searchResultText4,
+                            )
                       : TextSpan(text: ""),
                   Utils.isNotNullOrEmpty(_searchText)
                       ? TextSpan(
@@ -773,7 +786,7 @@ class _SearchEntityPageState extends State<SearchEntityPage>
                     borderRadius: BorderRadius.all(Radius.circular(45.0))),
                 child: Container(
                   child: Text(
-                    "Select Category",
+                    SELECT_TYPE_OF_PLACE,
                     style: TextStyle(color: Colors.white, fontSize: 16),
                     textAlign: TextAlign.center,
                   ),
@@ -808,7 +821,7 @@ class _SearchEntityPageState extends State<SearchEntityPage>
                                   alignment: Alignment.center,
                                   width: MediaQuery.of(context).size.width * .8,
                                   child: Text(
-                                    "Select Category",
+                                    SELECT_TYPE_OF_PLACE,
                                     style: textInputTextStyle,
                                   )),
                             ],

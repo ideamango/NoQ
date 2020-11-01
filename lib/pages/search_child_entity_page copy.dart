@@ -553,9 +553,11 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
                         )
                       : TextSpan(text: ""),
                   Utils.isNotNullOrEmpty(_searchText)
-                      ? TextSpan(
-                          text: searchResultText4,
-                        )
+                      ? (Utils.isNotNullOrEmpty(_entityType))
+                          ? TextSpan(text: SYMBOL_AND + searchResultText4)
+                          : TextSpan(
+                              text: searchResultText4,
+                            )
                       : TextSpan(text: ""),
                   Utils.isNotNullOrEmpty(_searchText)
                       ? TextSpan(
@@ -766,7 +768,7 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
                     borderRadius: BorderRadius.all(Radius.circular(45.0))),
                 child: Container(
                   child: Text(
-                    "Select Category",
+                    SELECT_TYPE_OF_PLACE,
                     style: TextStyle(color: Colors.white, fontSize: 16),
                     textAlign: TextAlign.center,
                   ),
@@ -799,7 +801,7 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
                                   alignment: Alignment.center,
                                   width: MediaQuery.of(context).size.width * .8,
                                   child: Text(
-                                    "Select Category",
+                                    SELECT_TYPE_OF_PLACE,
                                     style: textInputTextStyle,
                                   )),
                             ],
