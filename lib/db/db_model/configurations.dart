@@ -10,7 +10,8 @@ class Configurations {
       this.whatsappPhone,
       this.supportReasons,
       this.enableDonation,
-      this.phCountryCode});
+      this.phCountryCode,
+      this.searchRadius});
 
   List<String> entityTypes;
   List<String> messages;
@@ -21,6 +22,7 @@ class Configurations {
   List<String> supportReasons;
   bool enableDonation;
   String phCountryCode;
+  int searchRadius;
 
   Map<String, dynamic> toJson() => {
         'entityTypes': entityTypes,
@@ -31,7 +33,8 @@ class Configurations {
         'whatsappPhone': whatsappPhone,
         'supportReasons': supportReasons,
         'enableDonation': enableDonation,
-        'phCountryCode': phCountryCode
+        'phCountryCode': phCountryCode,
+        'searchRadius': searchRadius
       };
 
   static Configurations fromJson(Map<String, dynamic> json) {
@@ -45,7 +48,8 @@ class Configurations {
         whatsappPhone: json['whatsappPhone'],
         supportReasons: convertToStringsArrayFromJson(json['supportReasons']),
         enableDonation: json['enableDonation'],
-        phCountryCode: json['phCountryCode']);
+        phCountryCode: json['phCountryCode'],
+        searchRadius: json['searchRadius']);
   }
 
   static List<String> convertToStringsArrayFromJson(List<dynamic> json) {

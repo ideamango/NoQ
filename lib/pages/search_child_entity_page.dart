@@ -1644,7 +1644,6 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
   Future<List<Entity>> getSearchEntitiesList() async {
     double lat = 0;
     double lon = 0;
-    double radiusOfSearch = 10;
     int pageNumber = 0;
     int pageSize = 0;
 
@@ -1672,7 +1671,7 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
         entityTypeForSearch,
         lat,
         lon,
-        radiusOfSearch,
+        _state.conf.searchRadius,
         pageNumber,
         pageSize);
 
