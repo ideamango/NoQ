@@ -367,7 +367,7 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
                   itemCount: 1,
                   itemBuilder: (BuildContext context, int index) {
                     return Container(
-                      margin: EdgeInsets.fromLTRB(10, 10, 10, 10),
+                      margin: EdgeInsets.fromLTRB(10, 10, 10, 25),
                       child: new Column(
                         children: showSearchResults(),
                       ),
@@ -463,7 +463,7 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
 
       Widget searchInputText = Container(
         width: MediaQuery.of(context).size.width * .95,
-        height: MediaQuery.of(context).size.width * .15,
+        height: MediaQuery.of(context).size.width * .12,
         decoration: new BoxDecoration(
           shape: BoxShape.rectangle,
           color: Colors.white,
@@ -481,7 +481,7 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
           cursorColor: Colors.blueGrey[500],
           cursorWidth: 1,
           textAlignVertical: TextAlignVertical.center,
-          style: new TextStyle(fontSize: 12, color: Colors.blueGrey[700]),
+          style: new TextStyle(fontSize: 15, color: Colors.blueGrey[700]),
           decoration: new InputDecoration(
               contentPadding: EdgeInsets.all(2),
               isDense: true,
@@ -568,6 +568,7 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
       );
       Widget searchResultText = Container(
         width: MediaQuery.of(context).size.width * .85,
+        padding: EdgeInsets.all(0),
         child: RichText(
             overflow: TextOverflow.visible,
             maxLines: 2,
@@ -820,7 +821,7 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
                   childBottomSheetController =
                       keyChildSearch.currentState.showBottomSheet<Null>(
                     (context) => Container(
-                      color: Colors.transparent,
+                      color: Colors.cyan[50],
                       height: MediaQuery.of(context).size.height * .7,
                       child: Column(
                         children: <Widget>[
@@ -837,7 +838,9 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
                                       color: btnDisabledolor,
                                     ),
                                     onPressed: () {
-                                      Navigator.of(context).pop();
+                                      childBottomSheetController.close();
+                                      childBottomSheetController = null;
+                                      //Navigator.of(context).pop();
                                     }),
                               ),
                               Container(
@@ -889,6 +892,7 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
                       ),
                     ),
                     elevation: 30,
+                    clipBehavior: Clip.hardEdge,
                     shape: RoundedRectangleBorder(
                         side: BorderSide(color: Colors.blueGrey[200]),
                         borderRadius: BorderRadius.only(
@@ -950,19 +954,26 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
                     mainAxisSize: MainAxisSize.min,
                     children: <Widget>[
                       new Container(
+                        height: MediaQuery.of(context).size.width * .095,
+                        width: MediaQuery.of(context).size.width * .095,
                         margin: EdgeInsets.fromLTRB(
                             MediaQuery.of(context).size.width * .01,
                             MediaQuery.of(context).size.width * .01,
                             MediaQuery.of(context).size.width * .005,
                             MediaQuery.of(context).size.width * .005),
                         padding: EdgeInsets.all(
-                            MediaQuery.of(context).size.width * .01),
+                            MediaQuery.of(context).size.width * .02),
                         alignment: Alignment.topCenter,
                         decoration: ShapeDecoration(
                           shape: CircleBorder(),
                           color: primaryIcon,
                         ),
-                        child: entityImageIcon(str.type),
+                        child: Container(
+                          alignment: Alignment.center,
+                          height: MediaQuery.of(context).size.width * .04,
+                          width: MediaQuery.of(context).size.width * .04,
+                          child: entityImageIcon(str.type),
+                        ),
                       ),
                       verticalSpacer,
                     ],
