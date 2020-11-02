@@ -122,7 +122,13 @@ String contactInfoStr =
 String ratingMsg =
     "We really appreciate the time you took out to provide your review.";
 
+String correctQRCode = "Report the problem to the Place owner.";
+String invalidQRCode = "Invalid QR code, sorry we can't process it.";
+String cameraAccess = "Sukoon needs access to the Camera.";
+String openCameraAccessSetting = "Open Settings to provide the Camera access.";
 String locationNotFound = "Oops.. No location found for this place!";
+String entityAlreadyInFav =
+    "This place is already present in your Favourites!!";
 
 String forgotTimeSlot = "Oops.. You forgot to select a time slot!";
 

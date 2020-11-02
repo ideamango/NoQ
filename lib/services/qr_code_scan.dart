@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io' show Platform;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:noq/constants.dart';
 import 'package:noq/db/db_model/entity.dart';
 import 'package:noq/db/db_service/entity_service.dart';
 import 'package:noq/global_state.dart';
@@ -28,12 +29,9 @@ class QrCodeScanner {
 
         addEntityToFavs(context, entityId.substring(3));
       }
-      Utils.showMyFlushbar(
-          context,
-          Icons.info,
-          Duration(seconds: 3),
-          "Hard to figure out what is to be done !!",
-          "Seems like nothing to process.");
+
+      Utils.showMyFlushbar(context, Icons.info, Duration(seconds: 3),
+          invalidQRCode, correctQRCode);
 
       // launchUri(scanResult.rawContent);
 
@@ -55,7 +53,8 @@ class QrCodeScanner {
       );
 
       if (e.code == BarcodeScanner.cameraAccessDenied) {
-        result.rawContent = 'The user did not grant the camera permission!';
+        Utils.showMyFlushbar(context, Icons.info, Duration(seconds: 5),
+            cameraAccess, openCameraAccessSetting);
       } else {
         result.rawContent = 'Unknown error: $e';
       }
@@ -95,8 +94,8 @@ class QrCodeScanner {
               context, Icons.info, Duration(seconds: 3), "Oops error...", "");
         });
       } else {
-        Utils.showMyFlushbar(context, Icons.info, Duration(seconds: 3),
-            "Entity is already present in your Favourites!!", "");
+        Utils.showMyFlushbar(
+            context, Icons.info, Duration(seconds: 3), entityAlreadyInFav, "");
       }
     } else {
       Utils.showMyFlushbar(
