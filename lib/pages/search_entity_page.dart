@@ -21,7 +21,7 @@ import 'package:noq/widget/appbar.dart';
 import 'package:noq/widget/bottom_nav_bar.dart';
 import 'package:noq/widget/widgets.dart';
 import 'package:share/share.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+
 import '../userHomePage.dart';
 import 'package:eventify/eventify.dart' as Eventify;
 
@@ -39,11 +39,8 @@ class _SearchEntityPageState extends State<SearchEntityPage>
   bool isFavourited = false;
   DateTime dateTime = DateTime.now();
   final dtFormat = new DateFormat('dd');
-  SharedPreferences _prefs;
-  GlobalState _globalState;
   List<Entity> _stores = new List<Entity>();
   List<Entity> _pastSearches = new List<Entity>();
-  List<Entity> _searchResultstores = new List<Entity>();
   String _entityType;
   String _searchInAll = 'Search in All';
   bool searchBoxClicked = false;
@@ -103,7 +100,7 @@ class _SearchEntityPageState extends State<SearchEntityPage>
   String messageTitle;
   String messageSubTitle;
   String _dynamicLink;
-  Eventify.Listener eventListener;
+  Eventify.Listener _eventListener;
 
   ScrollController _selectCategoryBtnController;
 
@@ -120,7 +117,7 @@ class _SearchEntityPageState extends State<SearchEntityPage>
   @override
   void dispose() {
     super.dispose();
-    EventBus.unregisterEvent(eventListener);
+    EventBus.unregisterEvent(_eventListener);
     _selectCategoryBtnController.dispose();
     print("Search page dispose called...");
   }
@@ -172,7 +169,7 @@ class _SearchEntityPageState extends State<SearchEntityPage>
   }
 
   void registerCategorySelectEvent() {
-    eventListener =
+    _eventListener =
         EventBus.registerEvent(SEARCH_CATEGORY_SELECTED, null, (event, arg) {
       if (event == null) {
         return;

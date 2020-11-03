@@ -157,7 +157,9 @@ class MetaEntity {
         metaEnt.lat == this.lat &&
         metaEnt.lon == this.lon &&
         metaEnt.maxAllowed == this.maxAllowed &&
-        metaEnt.whatsapp == this.whatsapp) {
+        metaEnt.whatsapp == this.whatsapp &&
+        metaEnt.gpay == this.gpay &&
+        metaEnt.applepay == this.applepay) {
       if (this.closedOn != null && metaEnt.closedOn != null) {
         int matchCount = 0;
 

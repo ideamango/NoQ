@@ -162,6 +162,27 @@ String shareWithOwners =
 String accessRestricted =
     "Access to this place is restricted to its residents or employees.";
 
+String slotBooking = "Hold on... Booking a slot for you!!";
+
+String takingMoment = "This would take a moment.";
+
+String alreadyHaveBooking = "You already have an active booking for same time.";
+
+String wantToBookAnotherSlot =
+    "If you wish to book for another time, cancel this one from your bookings in Home Page";
+
+String allSlotsBookedForDate = 'All slots booked for this date!!';
+
+String couldNotBookToken = "Oops! Couldn't book the token.";
+
+String slotsAlreadyBooked =
+    "All the slots full at this time. Please choose different time or date.";
+
+String tokenAlreadyExists =
+    "Its because you already have an active booking for same time.";
+
+String tryAgainToBook = "Please try again or choose a different time or date.";
+
 enum Role { Manager, Admin, ContactPerson, Employee }
 List<String> roleTypes = ['Admin', 'Manager'];
 // List<String> entityTypes = [

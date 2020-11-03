@@ -124,7 +124,7 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
 
   AnimationController controller;
   Animation<Offset> offset;
-  Eventify.Listener eventListener;
+  Eventify.Listener _eventListener;
 
   //List<String> searchTypes;
   void showFoatingActionButton(bool value) {
@@ -137,7 +137,7 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
   void dispose() {
     super.dispose();
     _selectCategoryBtnController.dispose();
-    EventBus.unregisterEvent(eventListener);
+    EventBus.unregisterEvent(_eventListener);
     print("Search page dispose called...");
   }
 
@@ -207,7 +207,7 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
   }
 
   void registerCategorySelectEvent() {
-    eventListener =
+    _eventListener =
         EventBus.registerEvent(SEARCH_CATEGORY_SELECTED, null, (event, arg) {
       if (event == null) {
         return;

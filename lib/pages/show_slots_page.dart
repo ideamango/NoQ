@@ -113,7 +113,7 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
               child: Center(
                   child: Container(
             margin: EdgeInsets.fromLTRB(10, 10, 10, 10),
-            child: Text('All slots booked for this date!!'),
+            child: Text(allSlotsBookedForDate),
           ))),
           // bottomNavigationBar: CustomBottomBar(
           //   barIndex: 3,
@@ -267,14 +267,6 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
                       Container(
                         height: MediaQuery.of(context).size.width * .22,
                         padding: EdgeInsets.all(4),
-                        // decoration: new BoxDecoration(
-                        //   border: Border.all(color: Colors.teal[200]),
-                        //   shape: BoxShape.rectangle,
-                        // color: Colors.cyan[100],
-                        // borderRadius: BorderRadius.only(
-                        //     topLeft: Radius.circular(4.0),
-                        //     topRight: Radius.circular(4.0))
-                        //),
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.end,
                           children: <Widget>[
@@ -375,28 +367,6 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
                   ),
                 ),
               ),
-
-              // Row(
-              //   children: <Widget>[
-              //     RaisedButton(
-              //       elevation: 12.0,
-              //       color: (selectedSlot != null) ? Colors.orange : Colors.grey,
-              //       textColor: Colors.white,
-              //       child: Text('Book Slot'),
-              //       onPressed: bookSlot,
-              //     ),
-              //     (_errorMessage != null
-              //         ? Text(
-              //             _errorMessage,
-              //             style: TextStyle(color: Colors.red),
-              //           )
-              //         : Container()),
-              //   ],
-              // )
-
-              // bottomNavigationBar: CustomBottomBar(
-              //   barIndex: 3,
-              // ),
             ),
             onWillPop: () async {
               return true;
@@ -514,13 +484,12 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
           onPressed: () {
             if (!isDisabled(sl.dateTime)) {
               if (isBooked(sl.dateTime, entity.entityId)) {
-                print("Slot already booked");
                 Utils.showMyFlushbar(
                     context,
                     Icons.info_outline,
                     Duration(seconds: 6),
-                    "You already have an active booking for same time.",
-                    "If you wish to book for another time, cancel this one from your bookings in Home Page");
+                    alreadyHaveBooking,
+                    wantToBookAnotherSlot);
                 return null;
               }
               if (sl.isFull == false) {
@@ -556,8 +525,8 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
         Duration(
           seconds: 3,
         ),
-        "Hold on..Booking slot for you!!",
-        "This would take a moment.");
+        slotBooking,
+        takingMoment);
 
     print(selectedSlot.dateTime);
     if (isBooked(selectedSlot.dateTime, entity.entityId)) {
@@ -569,11 +538,11 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
     bookSlotForStore(meta, selectedSlot).then((value) {
       if (value == null) {
         showFlushBar();
-        print("nuuuuuuuuuuuuull token");
         return;
       } else {
         //update in global State
         _state.addBooking(value);
+        selectedSlot.currentNumber++;
       }
       _token = value.getDisplayName();
 
@@ -604,26 +573,14 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
 
       //TODO Smita - Not going in any of if bcoz exception is wrapped in type platform exception.
       if (error is SlotFullException) {
-        Utils.showMyFlushbar(
-            context,
-            Icons.error,
-            Duration(seconds: 5),
-            "Oops! Couldn't book the token.",
-            "All slots full in this time slot. Please choose different time or date.");
+        Utils.showMyFlushbar(context, Icons.error, Duration(seconds: 5),
+            couldNotBookToken, slotsAlreadyBooked);
       } else if (error is TokenAlreadyExistsException) {
-        Utils.showMyFlushbar(
-            context,
-            Icons.error,
-            Duration(seconds: 5),
-            "Oops! Couldn't book the token.",
-            "Its because you already have an active booking for same time.");
+        Utils.showMyFlushbar(context, Icons.error, Duration(seconds: 5),
+            couldNotBookToken, tokenAlreadyExists);
       } else {
-        Utils.showMyFlushbar(
-            context,
-            Icons.error,
-            Duration(seconds: 5),
-            "Oops! Couldn't book the token.",
-            "Please try again or choose a different time or date.");
+        Utils.showMyFlushbar(context, Icons.error, Duration(seconds: 5),
+            couldNotBookToken, tryAgainToBook);
       }
     });
   }
@@ -653,7 +610,7 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
       progressIndicatorBackgroundColor: Colors.blueGrey[800],
       routeBlur: 10.0,
       titleText: Text(
-        "Oops! Couldn't book the token.",
+        couldNotBookToken,
         style: TextStyle(
             fontWeight: FontWeight.bold,
             fontSize: 16.0,
@@ -661,7 +618,7 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
             fontFamily: "ShadowsIntoLightTwo"),
       ),
       messageText: Text(
-        " This could be because you already have an active booking for same time.",
+        tokenAlreadyExists,
         style: TextStyle(
             fontSize: 12.0,
             color: Colors.blueGrey[50],
