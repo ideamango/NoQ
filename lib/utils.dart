@@ -8,6 +8,7 @@ import 'package:noq/db/db_model/address.dart';
 import 'package:noq/style.dart';
 import 'package:noq/widget/weekday_selector.dart';
 import 'package:noq/widget/widgets.dart';
+import 'package:share/share.dart';
 
 import 'constants.dart';
 
@@ -352,6 +353,15 @@ class Utils {
   //   categoryList["Hospital"] = "hospital.png";
   //   return categoryList;
   // }
+
+  static generateLinkAndShare() async {
+    var dynamicLink = await Utils.createDynamicLink();
+    print("Dynamic Link: $dynamicLink");
+    // _dynamicLink =
+    //     Uri.https(dynamicLink.authority, dynamicLink.path).toString();
+    // dynamicLink has been generated. share it with others to use it accordingly.
+    Share.share(Uri.https(dynamicLink.authority, dynamicLink.path).toString());
+  }
 
   static Widget getEntityTypeImage(String type, double size) {
     Widget entityImageWidget;

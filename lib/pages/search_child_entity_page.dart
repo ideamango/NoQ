@@ -1,3 +1,4 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:geolocator/geolocator.dart';
@@ -10,6 +11,7 @@ import 'package:noq/db/db_service/entity_service.dart';
 import 'package:noq/events/event_bus.dart';
 import 'package:noq/events/events.dart';
 import 'package:noq/global_state.dart';
+import 'package:noq/pages/contact_us.dart';
 import 'package:noq/pages/search_entity_page.dart';
 import 'package:noq/pages/show_slots_page.dart';
 import 'package:noq/repository/StoreRepository.dart';
@@ -53,6 +55,7 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
   bool searchBoxClicked = false;
   bool fetchFromServer = false;
   PersistentBottomSheetController childBottomSheetController;
+
   bool showFab = true;
   String categoryType;
   // Map<String, String> categoryList = new Map<String, String>();
@@ -121,7 +124,7 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
   String _fromPage;
   List<Entity> enList = new List<Entity>();
   ScrollController _selectCategoryBtnController;
-
+  Widget _msgOnboard;
   AnimationController controller;
   Animation<Offset> offset;
   Eventify.Listener eventListener;
@@ -326,31 +329,18 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
                     ),
                     Padding(
                       padding: EdgeInsets.all(5),
-                      child: Text(
-                        txtSubMsg,
-                        style: TextStyle(
-                          color: primaryDarkColor,
-                          fontFamily: 'Montserrat',
-                          fontSize: 18,
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
+                      child: _msgOnboard,
                     ),
                   ],
                 ),
               if (messageTitle != "NotFound")
                 Column(children: <Widget>[
-                  SizedBox(height: MediaQuery.of(context).size.height * .32),
-                  Text(
-                    txtMsg,
-                    style: highlightTextStyle,
-                    textAlign: TextAlign.center,
-                  ),
-                  Text(
-                    txtSubMsg,
-                    style: highlightSubTextStyle,
-                    textAlign: TextAlign.center,
-                  ),
+                  SizedBox(height: MediaQuery.of(context).size.height * .02),
+                  Container(
+                      color: Colors.transparent,
+                      child: Image(
+                        image: AssetImage('assets/search_home.png'),
+                      )),
                 ]),
             ],
           ),
@@ -1689,26 +1679,62 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
         _isSearching = "done";
       });
       return;
-    }
-    for (int i = 0; i < enList.length; i++) {
-      Entity en = enList.elementAt(i);
+    } else {
+      for (int i = 0; i < enList.length; i++) {
+        Entity en = enList.elementAt(i);
 
-      if ((Utils.isNotNullOrEmpty(_entityType) &&
-          Utils.isNotNullOrEmpty(_searchText))) {
-        if (en.type == _entityType &&
-            en.name.toLowerCase().contains(_searchText.toLowerCase())) {
-          searchList.add(en);
+        if ((Utils.isNotNullOrEmpty(_entityType) &&
+            Utils.isNotNullOrEmpty(_searchText))) {
+          if (en.type == _entityType &&
+              en.name.toLowerCase().contains(_searchText.toLowerCase())) {
+            searchList.add(en);
+          }
+        } else if ((!Utils.isNotNullOrEmpty(_entityType) &&
+            Utils.isNotNullOrEmpty(_searchText))) {
+          if (en.name.toLowerCase().contains(_searchText.toLowerCase())) {
+            searchList.add(en);
+          }
+        } else if ((Utils.isNotNullOrEmpty(_entityType) &&
+            !Utils.isNotNullOrEmpty(_searchText))) {
+          if (en.type == _entityType) {
+            searchList.add(en);
+          }
         }
-      } else if ((!Utils.isNotNullOrEmpty(_entityType) &&
-          Utils.isNotNullOrEmpty(_searchText))) {
-        if (en.name.toLowerCase().contains(_searchText.toLowerCase())) {
-          searchList.add(en);
-        }
-      } else if ((Utils.isNotNullOrEmpty(_entityType) &&
-          !Utils.isNotNullOrEmpty(_searchText))) {
-        if (en.type == _entityType) {
-          searchList.add(en);
-        }
+      }
+      if (searchList.length == 0) {
+        setState(() {
+          messageTitle = "NotFound";
+
+          // messageSubTitle = notFoundMsg;
+          _msgOnboard = RichText(
+              text: TextSpan(
+                  style: TextStyle(color: Colors.blueGrey, fontSize: 15),
+                  children: <TextSpan>[
+                TextSpan(text: notFoundMsg1, style: TextStyle(fontSize: 18)),
+                TextSpan(
+                  text: notFoundMsg4,
+                  style: TextStyle(color: Colors.blue),
+                  recognizer: new TapGestureRecognizer()
+                    ..onTap = () {
+                      _searchTextController.text = "";
+                      Utils.generateLinkAndShare();
+                    },
+                ),
+                TextSpan(text: notFoundMsg5),
+                TextSpan(text: notFoundMsg3),
+                TextSpan(
+                    text: notFoundMsg2,
+                    style: TextStyle(color: Colors.blue),
+                    recognizer: new TapGestureRecognizer()
+                      ..onTap = () {
+                        _searchTextController.text = "";
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => ContactUsPage()));
+                      }),
+              ]));
+        });
       }
     }
 

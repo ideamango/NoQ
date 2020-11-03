@@ -284,45 +284,43 @@ class _ContactUsPageState extends State<ContactUsPage> {
                           leading: Container(
                               padding: EdgeInsets.fromLTRB(0, 25, 0, 0),
                               child: const Icon(Icons.email)),
-                          title: Expanded(
-                            child: Column(
-                              children: <Widget>[
-                                TextField(
-                                  autofocus: false,
-                                  controller: _msgController,
-                                  decoration: InputDecoration(
-                                    labelText: 'Enter your message here..',
-                                    enabledBorder: OutlineInputBorder(
-                                        borderSide:
-                                            BorderSide(color: Colors.grey)),
-                                    focusedBorder: OutlineInputBorder(
-                                        borderSide:
-                                            BorderSide(color: Colors.orange)),
-                                    // errorText:
-                                    //     _validate ? 'Please enter your message' : null,
-                                  ),
-                                  //validator: validateText,
-                                  keyboardType: TextInputType.multiline,
-                                  maxLength: null,
-                                  maxLines: 3,
-                                  onChanged: (value) {
-                                    if (_msgController.text?.length != 0)
-                                      setState(() {
-                                        _errMsg = null;
-                                      });
+                          title: Column(
+                            children: <Widget>[
+                              TextField(
+                                autofocus: false,
+                                controller: _msgController,
+                                decoration: InputDecoration(
+                                  labelText: 'Enter your message here..',
+                                  enabledBorder: OutlineInputBorder(
+                                      borderSide:
+                                          BorderSide(color: Colors.grey)),
+                                  focusedBorder: OutlineInputBorder(
+                                      borderSide:
+                                          BorderSide(color: Colors.orange)),
+                                  // errorText:
+                                  //     _validate ? 'Please enter your message' : null,
+                                ),
+                                //validator: validateText,
+                                keyboardType: TextInputType.multiline,
+                                maxLength: null,
+                                maxLines: 3,
+                                onChanged: (value) {
+                                  if (_msgController.text?.length != 0)
                                     setState(() {
-                                      _mailSecLine = _msgController.text;
-                                      _mailBody =
-                                          _mailFirstline + "\n" + _mailSecLine;
+                                      _errMsg = null;
                                     });
-                                  },
-                                ),
-                                Text(
-                                  (_errMsg != null) ? _errMsg : "",
-                                  style: errorTextStyle,
-                                ),
-                              ],
-                            ),
+                                  setState(() {
+                                    _mailSecLine = _msgController.text;
+                                    _mailBody =
+                                        _mailFirstline + "\n" + _mailSecLine;
+                                  });
+                                },
+                              ),
+                              Text(
+                                (_errMsg != null) ? _errMsg : "",
+                                style: errorTextStyle,
+                              ),
+                            ],
                           ),
                         ),
                         verticalSpacer,

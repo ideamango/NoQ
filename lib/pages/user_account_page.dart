@@ -597,15 +597,6 @@ class _UserAccountPageState extends State<UserAccountPage> {
     // launch("https://play.google.com/store/apps/details?id=" + packageName);
   }
 
-  generateLinkAndShare() async {
-    var dynamicLink = await Utils.createDynamicLink();
-    print("Dynamic Link: $dynamicLink");
-    // _dynamicLink =
-    //     Uri.https(dynamicLink.authority, dynamicLink.path).toString();
-    // dynamicLink has been generated. share it with others to use it accordingly.
-    Share.share(Uri.https(dynamicLink.authority, dynamicLink.path).toString());
-  }
-
   @override
   void dispose() {
     super.dispose();
@@ -729,7 +720,7 @@ class _UserAccountPageState extends State<UserAccountPage> {
                                                   final RenderBox box = context
                                                       .findRenderObject();
 
-                                                  generateLinkAndShare();
+                                                  Utils.generateLinkAndShare();
                                                 },
                                           child: const Text(
                                             'Invite friends',
