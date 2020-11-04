@@ -1,6 +1,5 @@
-import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:json_annotation/json_annotation.dart';
+
 import 'package:noq/db/db_model/configurations.dart';
 import 'package:noq/db/db_model/entity.dart';
 import 'package:noq/db/db_model/meta_entity.dart';
@@ -9,7 +8,7 @@ import 'package:noq/db/db_model/user_token.dart';
 import 'package:noq/db/db_service/configurations_service.dart';
 import 'package:noq/db/db_service/token_service.dart';
 import 'package:noq/events/local_notification_data.dart';
-import 'package:noq/repository/local_db_repository.dart';
+
 import 'package:noq/utils.dart';
 import 'db/db_service/user_service.dart';
 import 'events/event_bus.dart';

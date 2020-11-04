@@ -1310,7 +1310,6 @@ class _ExplorePageState extends State<ExplorePage> {
   Future<List<Entity>> getSearchEntitiesList() async {
     double lat = 0;
     double lon = 0;
-    double radiusOfSearch = 10;
     int pageNumber = 0;
     int pageSize = 0;
 
@@ -1338,7 +1337,7 @@ class _ExplorePageState extends State<ExplorePage> {
         entityTypeForSearch,
         lat,
         lon,
-        radiusOfSearch,
+        _state.conf.searchRadius,
         pageNumber,
         pageSize);
 

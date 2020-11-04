@@ -387,6 +387,7 @@ class _LoginPageState extends State<LoginPage> {
             //   _pinPutController.text = smsCode;
             // }
 
+            //this dialog is shown on Login once, but the event should be unregistered when the user logs-out
             EventBus.registerEvent(AUTO_VERIFICATION_COMPLETED_EVENT, context,
                 (evt, obj) {
               AutoVerificationCompletedData data =

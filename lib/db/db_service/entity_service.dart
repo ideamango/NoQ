@@ -656,7 +656,8 @@ class EntityService {
   }
 
   Future<List<Entity>> search(String name, String type, double lat, double lon,
-      double radius, int pageNumber, int pageSize) async {
+      int radius, int pageNumber, int pageSize) async {
+    double rad = radius.toDouble();
     List<Entity> entities = new List<Entity>();
     FirebaseFirestore fStore = FirebaseFirestore.instance;
     Geoflutterfire geo = Geoflutterfire();
@@ -692,7 +693,7 @@ class EntityService {
 
     Stream<List<DocumentSnapshot>> stream = geo
         .collection(collectionRef: collectionReference)
-        .within(center: center, radius: radius, field: field);
+        .within(center: center, radius: rad, field: field);
 
     try {
       for (DocumentSnapshot ds in await stream.first) {

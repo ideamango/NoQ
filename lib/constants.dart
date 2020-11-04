@@ -126,7 +126,13 @@ String contactInfoStr =
 String ratingMsg =
     "We really appreciate the time you took out to provide your review.";
 
+String correctQRCode = "Report the problem to the Place owner.";
+String invalidQRCode = "Invalid QR code, sorry we can't process it.";
+String cameraAccess = "Sukoon needs access to the Camera.";
+String openCameraAccessSetting = "Open Settings to provide the Camera access.";
 String locationNotFound = "Oops.. No location found for this place!";
+String entityAlreadyInFav =
+    "This place is already present in your Favourites!!";
 
 String forgotTimeSlot = "Oops.. You forgot to select a time slot!";
 
@@ -159,6 +165,27 @@ String shareWithOwners =
 
 String accessRestricted =
     "Access to this place is restricted to its residents or employees.";
+
+String slotBooking = "Hold on... Booking a slot for you!!";
+
+String takingMoment = "This would take a moment.";
+
+String alreadyHaveBooking = "You already have an active booking for same time.";
+
+String wantToBookAnotherSlot =
+    "If you wish to book for another time, cancel this one from your bookings in Home Page";
+
+String allSlotsBookedForDate = 'All slots booked for this date!!';
+
+String couldNotBookToken = "Oops! Couldn't book the token.";
+
+String slotsAlreadyBooked =
+    "All the slots full at this time. Please choose different time or date.";
+
+String tokenAlreadyExists =
+    "Its because you already have an active booking for same time.";
+
+String tryAgainToBook = "Please try again or choose a different time or date.";
 
 enum Role { Manager, Admin, ContactPerson, Employee }
 List<String> roleTypes = ['Admin', 'Manager'];
