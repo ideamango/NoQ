@@ -57,7 +57,7 @@ String whyLocationIsRequired =
     'This will be help users/customer find your Place.';
 
 String userCurrentLoc = 'Use Current Location';
-
+String userAccountHeadingTxt = "You have logged in with ";
 String locationMarkingActiveInfo =
     'Note: Users will be able to search/discover your Facility/Establishment based on this location, so ensure that this is correctly saved before you make it "Active"';
 String contactUsPageHeadline =

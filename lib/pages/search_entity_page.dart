@@ -130,6 +130,7 @@ class _SearchEntityPageState extends State<SearchEntityPage>
   @override
   void initState() {
     super.initState();
+
     _isSearching = "initial";
     getGlobalState().whenComplete(() {
       fetchPastSearchesList();
@@ -901,7 +902,7 @@ class _SearchEntityPageState extends State<SearchEntityPage>
     Widget imgWidget;
     //  imgName = Utils.getEntityTypeImage(type);
 
-    imgWidget = Utils.getEntityTypeImage(type, 20);
+    imgWidget = Utils.getEntityTypeImage(type, 25);
 
     return imgWidget;
   }
@@ -956,11 +957,11 @@ class _SearchEntityPageState extends State<SearchEntityPage>
                       new Container(
                         height: MediaQuery.of(context).size.width * .095,
                         width: MediaQuery.of(context).size.width * .095,
-                        margin: EdgeInsets.fromLTRB(
-                            MediaQuery.of(context).size.width * .01,
-                            MediaQuery.of(context).size.width * .01,
-                            MediaQuery.of(context).size.width * .005,
-                            MediaQuery.of(context).size.width * .005),
+                        // margin: EdgeInsets.fromLTRB(
+                        //     MediaQuery.of(context).size.width * .01,
+                        //     MediaQuery.of(context).size.width * .01,
+                        //     MediaQuery.of(context).size.width * .005,
+                        //     MediaQuery.of(context).size.width * .005),
                         padding: EdgeInsets.all(
                             MediaQuery.of(context).size.width * .02),
                         decoration: ShapeDecoration(
@@ -968,9 +969,11 @@ class _SearchEntityPageState extends State<SearchEntityPage>
                           color: primaryIcon,
                         ),
                         child: Container(
+                            padding: EdgeInsets.zero,
+                            margin: EdgeInsets.zero,
                             alignment: Alignment.center,
-                            height: MediaQuery.of(context).size.width * .04,
-                            width: MediaQuery.of(context).size.width * .04,
+                            height: MediaQuery.of(context).size.width * .06,
+                            width: MediaQuery.of(context).size.width * .06,
                             child: entityImageIcon(str.type)),
                       ),
                       verticalSpacer,
@@ -978,7 +981,7 @@ class _SearchEntityPageState extends State<SearchEntityPage>
                   ),
                 ),
                 Container(
-                  width: MediaQuery.of(context).size.width * .82,
+                  width: MediaQuery.of(context).size.width * .84,
                   padding: EdgeInsets.all(2),
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
@@ -986,22 +989,28 @@ class _SearchEntityPageState extends State<SearchEntityPage>
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
                       Container(
-                        width: MediaQuery.of(context).size.width * .78,
-                        padding: EdgeInsets.all(0),
+                        width: MediaQuery.of(context).size.width * .83,
+                        padding: EdgeInsets.zero,
+                        margin: EdgeInsets.zero,
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: <Widget>[
                             Container(
-                              width: MediaQuery.of(context).size.width * .5,
+                              width: MediaQuery.of(context).size.width * .6,
                               padding: EdgeInsets.all(0),
                               child: Row(
                                 // mainAxisAlignment: Mai1nAxisAlignment.spaceBetween,
                                 // crossAxisAlignment: CrossAxisAlignment.center,
                                 children: <Widget>[
-                                  Text(
-                                    (str.name) ?? str.name.toString(),
-                                    style: TextStyle(fontSize: 17),
-                                    overflow: TextOverflow.ellipsis,
+                                  Container(
+                                    padding: EdgeInsets.zero,
+                                    width:
+                                        MediaQuery.of(context).size.width * .46,
+                                    child: Text(
+                                      (str.name) ?? str.name.toString(),
+                                      style: TextStyle(fontSize: 17),
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
                                   ),
                                   (str.verificationStatus == "Verified")
                                       ? new Container(
@@ -1065,7 +1074,7 @@ class _SearchEntityPageState extends State<SearchEntityPage>
                               ),
                             ),
                             Container(
-                              width: MediaQuery.of(context).size.width * .2,
+                              width: MediaQuery.of(context).size.width * .18,
                               padding: EdgeInsets.all(0),
                               child: Row(
                                 children: <Widget>[
@@ -1103,7 +1112,7 @@ class _SearchEntityPageState extends State<SearchEntityPage>
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: <Widget>[
                           Container(
-                            width: MediaQuery.of(context).size.width * .78,
+                            width: MediaQuery.of(context).size.width * .83,
                             child: Text(
                               (Utils.getFormattedAddress(str.address) != "")
                                   ? Utils.getFormattedAddress(str.address)

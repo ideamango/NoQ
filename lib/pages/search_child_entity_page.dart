@@ -953,22 +953,22 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
                       new Container(
                         height: MediaQuery.of(context).size.width * .095,
                         width: MediaQuery.of(context).size.width * .095,
-                        margin: EdgeInsets.fromLTRB(
-                            MediaQuery.of(context).size.width * .01,
-                            MediaQuery.of(context).size.width * .01,
-                            MediaQuery.of(context).size.width * .005,
-                            MediaQuery.of(context).size.width * .005),
-                        padding: EdgeInsets.all(
-                            MediaQuery.of(context).size.width * .02),
-                        alignment: Alignment.topCenter,
+                        // margin: EdgeInsets.fromLTRB(
+                        //     MediaQuery.of(context).size.width * .01,
+                        //     MediaQuery.of(context).size.width * .01,
+                        //     MediaQuery.of(context).size.width * .005,
+                        //     MediaQuery.of(context).size.width * .005),
+                        // padding: EdgeInsets.all(
+                        //     MediaQuery.of(context).size.width * .02),
+                        alignment: Alignment.center,
                         decoration: ShapeDecoration(
                           shape: CircleBorder(),
                           color: primaryIcon,
                         ),
                         child: Container(
                           alignment: Alignment.center,
-                          height: MediaQuery.of(context).size.width * .04,
-                          width: MediaQuery.of(context).size.width * .04,
+                          height: MediaQuery.of(context).size.width * .06,
+                          width: MediaQuery.of(context).size.width * .06,
                           child: entityImageIcon(str.type),
                         ),
                       ),
