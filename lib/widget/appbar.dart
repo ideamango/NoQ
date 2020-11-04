@@ -241,7 +241,9 @@ class _CustomAppBarWithBackButtonState
         IconButton(
             icon: Icon(Icons.exit_to_app),
             color: Colors.white,
-            onPressed: _logout)
+            onPressed: () {
+              Utils.logout(context);
+            })
       ],
       // leading: Builder(
       //   builder: (BuildContext context) {

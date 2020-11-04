@@ -204,7 +204,8 @@ class _UserAccountPageState extends State<UserAccountPage> {
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: <Widget>[
                     Container(
-                      padding: EdgeInsets.fromLTRB( MediaQuery.of(context).size.height * .008, 0, 0, 0),
+                      padding: EdgeInsets.fromLTRB(
+                          MediaQuery.of(context).size.height * .008, 0, 0, 0),
                       alignment: Alignment.centerLeft,
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -225,8 +226,7 @@ class _UserAccountPageState extends State<UserAccountPage> {
                       ),
                     ),
                     Divider(
-                      indent: 5,
-  indent: MediaQuery.of(context).size.height * .008,
+                      indent: MediaQuery.of(context).size.height * .008,
                       // thickness: 1,
                       height: 1,
                       color: Colors.blueGrey[300],
@@ -236,7 +236,11 @@ class _UserAccountPageState extends State<UserAccountPage> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
                         Container(
-                          padding: EdgeInsets.fromLTRB(MediaQuery.of(context).size.height * .008,, 0, 0, 0),
+                          padding: EdgeInsets.fromLTRB(
+                              MediaQuery.of(context).size.height * .008,
+                              0,
+                              0,
+                              0),
                           child: Text(
                             booking.entityName + ', ' + booking.address,
                             overflow: TextOverflow.ellipsis,
@@ -302,13 +306,14 @@ class _UserAccountPageState extends State<UserAccountPage> {
                                   ),
                                   onPressed: () {
                                     //If booking is past booking then no sense of cancelling , show msg to user
-                                    if(booking.dateTime.isBefore( DateTime.now()))
+                                    if (booking.dateTime
+                                        .isBefore(DateTime.now()))
                                       Utils.showMyFlushbar(
-                                            context,
-                                            Icons.info,
-                                            Duration(seconds: 5),
-                                            "This booking token has already expired!!",
-                                            "");
+                                          context,
+                                          Icons.info,
+                                          Duration(seconds: 5),
+                                          "This booking token has already expired!!",
+                                          "");
                                     //booking number is -1 means its already been cancelled, Do Nothing
                                     if (booking.number == -1)
                                       return null;
@@ -436,7 +441,7 @@ class _UserAccountPageState extends State<UserAccountPage> {
                       children: <Widget>[
                         // Text('Time: ', style: tokenHeadingTextStyle),
                         Text(
-                         Utils.formatTime(booking.dateTime.hour.toString()) +
+                          Utils.formatTime(booking.dateTime.hour.toString()) +
                               ':' +
                               Utils.formatTime(
                                   booking.dateTime.minute.toString()),
@@ -622,7 +627,6 @@ class _UserAccountPageState extends State<UserAccountPage> {
     String title = "My Account";
     if (_initCompleted) {
       return MaterialApp(
-        color: Colors.blue,
         theme: ThemeData.light().copyWith(),
         home: WillPopScope(
           child: Scaffold(
@@ -644,6 +648,7 @@ class _UserAccountPageState extends State<UserAccountPage> {
                       margin: EdgeInsets.zero,
                       elevation: 20,
                       child: Container(
+                        color: Colors.transparent,
                         height: MediaQuery.of(context).size.height * .15,
                         width: MediaQuery.of(context).size.width * .95,
                         child: Row(
@@ -762,170 +767,129 @@ class _UserAccountPageState extends State<UserAccountPage> {
                     Card(
                       margin: EdgeInsets.zero,
                       elevation: 20,
-                      child: Container(
-                        width: MediaQuery.of(context).size.width * .95,
-                        decoration: BoxDecoration(
-                            // border: Border.all(color: containerColor),
-                            color: Colors.grey[50],
-                            shape: BoxShape.rectangle,
-                            borderRadius:
-                                BorderRadius.all(Radius.circular(5.0))),
-                        child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: <Widget>[
-                              Container(
-                                decoration: darkContainer,
-                                padding: EdgeInsets.all(3),
-                                child: Row(
-                                    mainAxisSize: MainAxisSize.max,
-                                    children: <Widget>[
-                                      Text(
-                                        " My Bookings",
-                                        style: TextStyle(
-                                            color: Colors.white, fontSize: 15),
-                                      ),
-                                    ]),
-                              ),
-                              Card(
-                                margin: EdgeInsets.zero,
-                                elevation: 20,
-                                child: Theme(
-                                  data: ThemeData(
-                                    unselectedWidgetColor: Colors.grey[600],
-                                    accentColor: Colors.teal,
-                                  ),
-                                  child: ExpansionTile(
-                                    //key: PageStorageKey(this.widget.headerTitle),
+                      child: Theme(
+                        data: ThemeData(
+                          unselectedWidgetColor: Colors.grey[600],
+                          accentColor: btnColor,
+                        ),
+                        child: ExpansionTile(
+                          //key: PageStorageKey(this.widget.headerTitle),
 
-                                    title: Text(
-                                      "Upcoming Bookings",
-                                      style: TextStyle(
-                                          color: Colors.blueGrey[700],
-                                          fontSize: 17),
-                                    ),
-                                    backgroundColor: Colors.white,
-                                    leading: Icon(
-                                      Icons.date_range,
-                                      color: primaryIcon,
-                                    ),
-                                    children: <Widget>[
-                                      if (_upcomingBkgStatus == 'Success')
-                                        ConstrainedBox(
-                                          constraints: new BoxConstraints(
-                                            maxHeight: MediaQuery.of(context)
-                                                    .size
-                                                    .height *
-                                                .4,
-                                            maxWidth: MediaQuery.of(context)
-                                                .size
-                                                .width,
-                                          ),
+                          title: Text(
+                            "Upcoming Bookings",
+                            style: TextStyle(
+                                color: Colors.blueGrey[700], fontSize: 17),
+                          ),
+                          backgroundColor: Colors.white,
+                          leading: Icon(
+                            Icons.date_range,
+                            color: primaryIcon,
+                          ),
+                          children: <Widget>[
+                            if (_upcomingBkgStatus == 'Success')
+                              ConstrainedBox(
+                                constraints: new BoxConstraints(
+                                  maxHeight:
+                                      MediaQuery.of(context).size.height * .4,
+                                  maxWidth: MediaQuery.of(context).size.width,
+                                ),
 
-                                          // decoration: BoxDecoration(
-                                          //     shape: BoxShape.rectangle,
-                                          //     borderRadius: BorderRadius.all(Radius.circular(8.0))),
-                                          // height: MediaQuery.of(context).size.height * .6,
-                                          // margin: EdgeInsets.fromLTRB(10, 10, 10, 10),
-                                          child: Scrollbar(
-                                            child: ListView.builder(
-                                              shrinkWrap: true,
-                                              //scrollDirection: Axis.vertical,
-                                              itemBuilder:
-                                                  (BuildContext context,
-                                                      int index) {
-                                                return Container(
-                                                  child: new Column(
-                                                      children: _newBookingsList
-                                                          .map(_buildItem)
-                                                          .toList()),
-                                                  //children: <Widget>[firstRow, secondRow],
-                                                );
-                                              },
-                                              itemCount: 1,
-                                            ),
-                                          ),
-                                        ),
-                                      if (_upcomingBkgStatus == 'NoBookings')
-                                        _emptyStorePage("No bookings yet.. ",
-                                            "Book now to save time later!! "),
-                                      if (_upcomingBkgStatus == 'Loading')
-                                        showCircularProgress(),
-                                    ],
+                                // decoration: BoxDecoration(
+                                //     shape: BoxShape.rectangle,
+                                //     borderRadius: BorderRadius.all(Radius.circular(8.0))),
+                                // height: MediaQuery.of(context).size.height * .6,
+                                // margin: EdgeInsets.fromLTRB(10, 10, 10, 10),
+                                child: Scrollbar(
+                                  child: ListView.builder(
+                                    shrinkWrap: true,
+                                    //scrollDirection: Axis.vertical,
+                                    itemBuilder:
+                                        (BuildContext context, int index) {
+                                      return Container(
+                                        child: new Column(
+                                            children: _newBookingsList
+                                                .map(_buildItem)
+                                                .toList()),
+                                        //children: <Widget>[firstRow, secondRow],
+                                      );
+                                    },
+                                    itemCount: 1,
                                   ),
                                 ),
                               ),
-                              verticalSpacer,
-                              Card(
-                                margin: EdgeInsets.zero,
-                                elevation: 20,
-                                child: Theme(
-                                  data: ThemeData(
-                                    unselectedWidgetColor: Colors.grey[600],
-                                    accentColor: Colors.teal,
-                                  ),
-                                  child: ExpansionTile(
-                                    initiallyExpanded: true,
-                                    title: Text(
-                                      "Past Bookings",
-                                      style: TextStyle(
-                                          color: Colors.blueGrey[700],
-                                          fontSize: 17),
-                                    ),
-                                    backgroundColor: Colors.white,
-                                    leading: Icon(
-                                      Icons.access_time,
-                                      color: primaryIcon,
-                                    ),
-                                    children: <Widget>[
-                                      Column(
-                                        children: <Widget>[
-                                          if (_pastBkgStatus == "Success")
-                                            ConstrainedBox(
-                                              constraints: new BoxConstraints(
-                                                maxHeight:
-                                                    MediaQuery.of(context)
-                                                            .size
-                                                            .height *
-                                                        .4,
-                                              ),
-                                              child: Scrollbar(
-                                                child: ListView.builder(
-                                                  shrinkWrap: true,
-                                                  scrollDirection:
-                                                      Axis.vertical,
-                                                  itemBuilder:
-                                                      (BuildContext context,
-                                                          int index) {
-                                                    return Container(
-                                                      child: new Column(
-                                                          children:
-                                                              _pastBookingsList
-                                                                  .map(
-                                                                      _buildItem)
-                                                                  .toList()),
-                                                      //children: <Widget>[firstRow, secondRow],
-                                                    );
-                                                  },
-                                                  itemCount: 1,
-                                                ),
-                                              ),
-                                            ),
-                                          if (_pastBkgStatus == 'NoBookings')
-                                            _emptyStorePage(
-                                                "No bookings in past..",
-                                                "Book now to save time later!! "),
-                                          if (_pastBkgStatus == 'Loading')
-                                            showCircularProgress(),
-                                        ],
-                                      )
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            ]),
+                            if (_upcomingBkgStatus == 'NoBookings')
+                              _emptyStorePage("No bookings yet.. ",
+                                  "Book now to save time later!! "),
+                            if (_upcomingBkgStatus == 'Loading')
+                              showCircularProgress(),
+                          ],
+                        ),
                       ),
                     ),
-                    //verticalSpacer,
+                    SizedBox(
+                      height: MediaQuery.of(context).size.height * .03,
+                    ),
+                    Card(
+                      margin: EdgeInsets.zero,
+                      elevation: 20,
+                      child: Theme(
+                        data: ThemeData(
+                          unselectedWidgetColor: Colors.grey[600],
+                          accentColor: btnColor,
+                        ),
+                        child: ExpansionTile(
+                          initiallyExpanded: true,
+                          title: Text(
+                            "Past Bookings",
+                            style: TextStyle(
+                                color: Colors.blueGrey[700], fontSize: 17),
+                          ),
+                          backgroundColor: Colors.white,
+                          leading: Icon(
+                            Icons.access_time,
+                            color: primaryIcon,
+                          ),
+                          children: <Widget>[
+                            Column(
+                              children: <Widget>[
+                                if (_pastBkgStatus == "Success")
+                                  ConstrainedBox(
+                                    constraints: new BoxConstraints(
+                                      maxHeight:
+                                          MediaQuery.of(context).size.height *
+                                              .4,
+                                    ),
+                                    child: Scrollbar(
+                                      child: ListView.builder(
+                                        shrinkWrap: true,
+                                        scrollDirection: Axis.vertical,
+                                        itemBuilder:
+                                            (BuildContext context, int index) {
+                                          return Container(
+                                            child: new Column(
+                                                children: _pastBookingsList
+                                                    .map(_buildItem)
+                                                    .toList()),
+                                            //children: <Widget>[firstRow, secondRow],
+                                          );
+                                        },
+                                        itemCount: 1,
+                                      ),
+                                    ),
+                                  ),
+                                if (_pastBkgStatus == 'NoBookings')
+                                  _emptyStorePage("No bookings in past..",
+                                      "Book now to save time later!! "),
+                                if (_pastBkgStatus == 'Loading')
+                                  showCircularProgress(),
+                              ],
+                            )
+                          ],
+                        ),
+                      ),
+                    ),
+                    verticalSpacer,
+                    verticalSpacer,
                   ],
                 ),
               ),
@@ -940,9 +904,7 @@ class _UserAccountPageState extends State<UserAccountPage> {
                       textColor: Colors.white,
                       splashColor: highlightColor,
                       onPressed: () {
-                        openPlayStoreAndRate();
-                        Utils.showMyFlushbar(context, Icons.help_outline,
-                            Duration(seconds: 3), "Thanks!!", ratingMsg);
+                        Utils.logout(context);
                       },
                       child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,

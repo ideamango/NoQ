@@ -21,7 +21,7 @@ import 'package:noq/widget/header.dart';
 import 'package:noq/widget/widgets.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:intl/intl.dart';
-import '../constants.dart';
+import 'package:noq/constants.dart';
 
 class ShowSlotsPage extends StatefulWidget {
   final Entity entity;

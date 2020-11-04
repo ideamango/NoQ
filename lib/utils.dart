@@ -5,6 +5,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:noq/db/db_model/address.dart';
+import 'package:noq/global_state.dart';
+import 'package:noq/services/auth_service.dart';
 import 'package:noq/style.dart';
 import 'package:noq/widget/weekday_selector.dart';
 import 'package:noq/widget/widgets.dart';
@@ -437,5 +439,91 @@ class Utils {
         color: highlightColor,
       );
     return entityImageWidget;
+  }
+
+  static void logout(BuildContext context) {
+    showDialog(
+        barrierDismissible: false,
+        context: context,
+        builder: (_) => AlertDialog(
+              titlePadding: EdgeInsets.fromLTRB(10, 15, 10, 10),
+              contentPadding: EdgeInsets.all(0),
+              actionsPadding: EdgeInsets.all(5),
+              //buttonPadding: EdgeInsets.all(0),
+              title: Container(
+                width: MediaQuery.of(context).size.width,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Text(
+                      'Are you sure you want to logout?',
+                      style: TextStyle(
+                        fontSize: 15,
+                        color: Colors.blueGrey[600],
+                      ),
+                    ),
+                    verticalSpacer,
+                    // myDivider,
+                  ],
+                ),
+              ),
+              content: Container(
+                width: MediaQuery.of(context).size.width,
+                child: Divider(
+                  color: Colors.blueGrey[400],
+                  height: 1,
+                  //indent: 40,
+                  //endIndent: 30,
+                ),
+              ),
+
+              //content: Text('This is my content'),
+              actions: <Widget>[
+                SizedBox(
+                  height: 24,
+                  child: FlatButton(
+                    color: Colors.transparent,
+                    splashColor: highlightColor.withOpacity(.8),
+                    textColor: Colors.orange,
+                    shape: RoundedRectangleBorder(
+                        side: BorderSide(color: Colors.orange)),
+                    child: Text('Yes'),
+                    onPressed: () {
+                      Utils.showMyFlushbar(
+                          context,
+                          Icons.info_outline,
+                          Duration(
+                            seconds: 3,
+                          ),
+                          "Logging off.. ",
+                          "Hope to see you soon!!");
+                      Navigator.of(context, rootNavigator: true).pop();
+                      Future.delayed(Duration(seconds: 2)).then((value) {
+                        AuthService().signOut(context);
+                        GlobalState.resetGlobalState();
+                      });
+                    },
+                  ),
+                ),
+                SizedBox(
+                  height: 24,
+                  child: FlatButton(
+                    // elevation: 20,
+                    autofocus: true,
+                    focusColor: highlightColor,
+                    splashColor: highlightColor,
+                    color: Colors.white,
+                    textColor: Colors.orange,
+                    shape: RoundedRectangleBorder(
+                        side: BorderSide(color: Colors.orange)),
+                    child: Text('No'),
+                    onPressed: () {
+                      Navigator.of(context, rootNavigator: true).pop();
+                      // Navigator.of(context, rootNavigator: true).pop('dialog');
+                    },
+                  ),
+                ),
+              ],
+            ));
   }
 }
