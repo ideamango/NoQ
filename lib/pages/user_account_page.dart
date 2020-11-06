@@ -51,6 +51,8 @@ class _UserAccountPageState extends State<UserAccountPage> {
   String appID = "";
   String output = "";
   bool _initCompleted = false;
+  //ScrollController _scrollController;
+  // bool _expansionClick = false;
 
   @override
   void initState() {
@@ -639,7 +641,10 @@ class _UserAccountPageState extends State<UserAccountPage> {
               titleTxt: title,
             ),
             body: Scrollbar(
+              //isAlwaysShown: true,
+              //controller: _scrollController,
               child: SingleChildScrollView(
+                // controller: _scrollController,
                 padding: EdgeInsets.all(15),
                 child: Column(
                   //  mainAxisSize: MainAxisSize.max,
@@ -663,16 +668,19 @@ class _UserAccountPageState extends State<UserAccountPage> {
                             ),
                             RichText(
                                 text: TextSpan(
-                                    style: highlightSubTextStyle,
+                                    style: userAccountHeadingTextStyle,
                                     children: <TextSpan>[
                                   TextSpan(text: userAccountHeadingTxt),
+                                  TextSpan(text: "\n"),
                                   TextSpan(text: _state.currentUser.ph),
                                 ])),
                           ],
                         ),
                       ),
                     ),
-                    verticalSpacer,
+                    SizedBox(
+                      height: MediaQuery.of(context).size.height * .03,
+                    ),
                     Card(
                       margin: EdgeInsets.zero,
                       elevation: 20,
@@ -764,7 +772,9 @@ class _UserAccountPageState extends State<UserAccountPage> {
                             ],
                           )),
                     ),
-                    verticalSpacer,
+                    SizedBox(
+                      height: MediaQuery.of(context).size.height * .03,
+                    ),
                     Card(
                       margin: EdgeInsets.zero,
                       elevation: 20,
@@ -839,7 +849,7 @@ class _UserAccountPageState extends State<UserAccountPage> {
                           accentColor: btnColor,
                         ),
                         child: ExpansionTile(
-                          initiallyExpanded: true,
+                          initiallyExpanded: false,
                           title: Text(
                             "Past Bookings",
                             style: TextStyle(
@@ -893,17 +903,15 @@ class _UserAccountPageState extends State<UserAccountPage> {
                     verticalSpacer,
                     verticalSpacer,
                     verticalSpacer,
-                    verticalSpacer,
-                    verticalSpacer,
                   ],
                 ),
               ),
             ),
-            floatingActionButton: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            floatingActionButton: Column(
+              mainAxisAlignment: MainAxisAlignment.end,
               children: <Widget>[
                 Container(
-                  width: MediaQuery.of(context).size.width * .9,
+                  width: MediaQuery.of(context).size.width,
                   child: RaisedButton(
                       color: btnColor,
                       textColor: Colors.white,
@@ -921,10 +929,13 @@ class _UserAccountPageState extends State<UserAccountPage> {
                             ),
                           ])),
                 ),
+                SizedBox(
+                  height: MediaQuery.of(context).size.height * .07,
+                ),
               ],
             ),
             floatingActionButtonLocation:
-                FloatingActionButtonLocation.centerFloat,
+                FloatingActionButtonLocation.centerDocked,
             bottomNavigationBar: CustomBottomBar(
               barIndex: 3,
             ),
