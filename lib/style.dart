@@ -221,6 +221,11 @@ final highlightSubTextStyle = TextStyle(
     fontFamily: 'RalewayRegular',
     fontSize: 12.0,
     height: 1.5);
+final userAccountHeadingTextStyle = TextStyle(
+    color: Colors.black87,
+    fontFamily: 'RalewayRegular',
+    fontSize: 15.0,
+    height: 1.5);
 final lightTextStyle =
     TextStyle(color: Colors.white, fontFamily: 'Montserrat', fontSize: 12.0);
 final linkTextStyle = TextStyle(
@@ -282,7 +287,7 @@ final gradientBackground = new BoxDecoration(
   gradient: new LinearGradient(
       colors: [
         Colors.cyanAccent,
-        gradientDarkColor,
+        btnColor,
       ],
       begin: const FractionalOffset(0.0, 0.0),
       end: const FractionalOffset(1.0, 0.0),
