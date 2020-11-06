@@ -639,7 +639,9 @@ class _UserHomePageState extends State<UserHomePage> {
                                     if (phoneNo != null && phoneNo != "") {
                                       try {
                                         launchWhatsApp(
-                                            message: whatsappMessage,
+                                            message: whatsappMessageToPlaceOwner +
+                                                booking.getDisplayName() +
+                                                "\n\n<Type your message here..>",
                                             phone: phoneNo);
                                       } catch (error) {
                                         Utils.showMyFlushbar(
