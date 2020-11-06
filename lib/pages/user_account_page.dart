@@ -211,11 +211,6 @@ class _UserAccountPageState extends State<UserAccountPage> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
-                          // Text(
-                          //   'TOKEN No. -',
-                          //   style: tokenTextStyle,
-                          //   textAlign: TextAlign.left,
-                          // ),
                           Text(
                             booking.getDisplayName(),
                             style: tokenTextStyle,
@@ -227,7 +222,6 @@ class _UserAccountPageState extends State<UserAccountPage> {
                     ),
                     Divider(
                       indent: MediaQuery.of(context).size.height * .008,
-                      // thickness: 1,
                       height: 1,
                       color: Colors.blueGrey[300],
                     ),
@@ -236,6 +230,11 @@ class _UserAccountPageState extends State<UserAccountPage> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
                         Container(
+                          margin: EdgeInsets.fromLTRB(
+                              MediaQuery.of(context).size.height * .008,
+                              0,
+                              0,
+                              0),
                           padding: EdgeInsets.fromLTRB(
                               MediaQuery.of(context).size.height * .008,
                               0,

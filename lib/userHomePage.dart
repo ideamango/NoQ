@@ -167,6 +167,7 @@ class _UserHomePageState extends State<UserHomePage> {
               ),
               body: Scrollbar(
                 child: SingleChildScrollView(
+                  padding: EdgeInsets.all(15),
                   child: Column(
                     children: <Widget>[
                       Card(
@@ -260,11 +261,12 @@ class _UserHomePageState extends State<UserHomePage> {
                         //child: Image.asset('assets/noq_home.png'),
                       ),
                       Card(
+                        margin: EdgeInsets.zero,
                         elevation: 20,
                         child: Theme(
                           data: ThemeData(
                             unselectedWidgetColor: Colors.grey[600],
-                            accentColor: Colors.teal,
+                            accentColor: btnColor,
                           ),
                           child: ExpansionTile(
                             //key: PageStorageKey(this.widget.headerTitle),
@@ -285,6 +287,7 @@ class _UserHomePageState extends State<UserHomePage> {
                                   constraints: new BoxConstraints(
                                     maxHeight:
                                         MediaQuery.of(context).size.height * .4,
+                                    maxWidth: MediaQuery.of(context).size.width,
                                   ),
                                   child: Scrollbar(
                                     child: ListView.builder(
@@ -293,9 +296,9 @@ class _UserHomePageState extends State<UserHomePage> {
                                       itemBuilder:
                                           (BuildContext context, int index) {
                                         return Container(
-                                          padding: EdgeInsets.symmetric(
-                                            horizontal: 8,
-                                          ),
+                                          // padding: EdgeInsets.symmetric(
+                                          //   horizontal: 8,
+                                          // ),
                                           child: new Column(
                                               children: _newBookingsList
                                                   .map(_buildItem)
@@ -439,8 +442,8 @@ class _UserHomePageState extends State<UserHomePage> {
     // String address = Utils.getFormattedAddress(booking.address);
 
     return Container(
-        width: MediaQuery.of(context).size.width,
-        height: MediaQuery.of(context).size.width * .7 / 2.6,
+        width: MediaQuery.of(context).size.width * .95,
+        height: MediaQuery.of(context).size.width * .7 / 2.7,
         decoration: BoxDecoration(
           image: DecorationImage(
             image: AssetImage('assets/ticket.jpg'),
@@ -478,8 +481,6 @@ class _UserHomePageState extends State<UserHomePage> {
                     ),
                     Divider(
                       indent: MediaQuery.of(context).size.height * .008,
-
-                      // thickness: 1,
                       height: 1,
                       color: Colors.blueGrey[300],
                     ),
@@ -527,8 +528,6 @@ class _UserHomePageState extends State<UserHomePage> {
                                       size: 20,
                                     ),
                                     onPressed: () {
-// TODO Smita - Get public contact and update booking.entityId
-
                                       if (booking.phone != null) {
                                         try {
                                           callPhone(booking.phone);
@@ -564,6 +563,16 @@ class _UserHomePageState extends State<UserHomePage> {
                                     size: 22,
                                   ),
                                   onPressed: () {
+                                    //If booking is past booking then no sense of cancelling , show msg to user
+                                    if (booking.dateTime
+                                        .isBefore(DateTime.now()))
+                                      Utils.showMyFlushbar(
+                                          context,
+                                          Icons.info,
+                                          Duration(seconds: 5),
+                                          "This booking token has already expired!!",
+                                          "");
+                                    //booking number is -1 means its already been cancelled, Do Nothing
                                     if (booking.number == -1)
                                       return null;
                                     else
@@ -673,7 +682,7 @@ class _UserHomePageState extends State<UserHomePage> {
                 color: Colors.blueGrey[300],
               ),
               Container(
-                width: MediaQuery.of(context).size.width * .2,
+                width: MediaQuery.of(context).size.width * .21,
                 // padding: EdgeInsets.fromLTRB(5, 5, 0, 0),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
