@@ -8,7 +8,6 @@ import 'package:noq/db/db_service/entity_service.dart';
 import 'package:noq/global_state.dart';
 import 'package:noq/pages/favs_list_page.dart';
 import 'package:noq/repository/StoreRepository.dart';
-import 'package:noq/services/url_services.dart';
 
 import 'package:noq/style.dart';
 

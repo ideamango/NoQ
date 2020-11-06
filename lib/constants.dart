@@ -37,6 +37,8 @@ String dateDisplayFormat = 'EEE, MMM d';
 String homeScreenMsgTxt =
     "Add the amenities in Apartment or Workplace to your 'favourites' and book a slot anytime.";
 String whatsappContactUsMsg = "Hey!!";
+
+String whatsappMessageToPlaceOwner = "Hey there! My Sukoon Token number is ";
 String whatsappMessage =
     "Hey!! Are you worried about safety or long waiting in queues? \nNo worries, booK your piece of mind with SUKOON mobile app. \nBook your slot when it's Less crowded and Stay SAFE.";
 String qrCodeShareMessage =
