@@ -267,16 +267,13 @@ class _SearchEntityPageState extends State<SearchEntityPage>
         : defaultSearchSubMsg);
     return Center(
       child: Container(
-        // height: MediaQuery.of(context).size.height * .35,
-        alignment: Alignment.bottomCenter,
+        height: MediaQuery.of(context).size.height * .7,
+        alignment: Alignment.topCenter,
         child: SingleChildScrollView(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
-              // SizedBox(
-              //   height: MediaQuery.of(context).size.height * .25,
-              // ),
               if (messageTitle == "NotFound")
                 Column(
                   children: <Widget>[

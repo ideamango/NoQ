@@ -167,7 +167,7 @@ class _UserHomePageState extends State<UserHomePage> {
               ),
               body: Scrollbar(
                 child: SingleChildScrollView(
-                  padding: EdgeInsets.all(15),
+                  padding: EdgeInsets.all(MediaQuery.of(context).size.width * .036),
                   child: Column(
                     children: <Widget>[
                       Card(

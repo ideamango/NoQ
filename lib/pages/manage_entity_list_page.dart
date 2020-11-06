@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:noq/constants.dart';
 import 'package:noq/db/db_model/entity.dart';
 import 'package:noq/db/db_model/meta_entity.dart';
+import 'package:noq/events/event_bus.dart';
+import 'package:noq/events/events.dart';
 import 'package:noq/global_state.dart';
 import 'package:noq/pages/entity_item.dart';
 import 'package:noq/repository/StoreRepository.dart';
@@ -9,7 +12,9 @@ import 'package:noq/style.dart';
 import 'package:noq/userHomePage.dart';
 import 'package:noq/utils.dart';
 import 'package:noq/widget/appbar.dart';
+import 'package:noq/widget/widgets.dart';
 import 'package:uuid/uuid.dart';
+import 'package:eventify/eventify.dart' as Eventify;
 
 class ManageEntityListPage extends StatefulWidget {
   @override
@@ -17,22 +22,73 @@ class ManageEntityListPage extends StatefulWidget {
 }
 
 class _ManageEntityListPageState extends State<ManageEntityListPage> {
-  String _msg;
-  final GlobalKey<FormState> _entityListFormKey = new GlobalKey<FormState>();
   List<MetaEntity> metaEntitiesList;
   Entity entity;
   String _entityType;
   ScrollController _scrollController;
   final itemSize = 100.0;
   List<String> entityTypes;
-
   GlobalState _state;
   bool stateInitFinished = false;
   Map<String, Entity> _parentEntityMap = Map<String, Entity>();
   bool _initCompleted = false;
+  String categoryType;
+  PersistentBottomSheetController bottomSheetController;
+  final manageEntityListPagekey = new GlobalKey<ScaffoldState>();
+  Eventify.Listener _eventListener;
+
+  Widget _buildCategoryItem(BuildContext context, int index) {
+    String name = entityTypes[index];
+    Widget image = Utils.getEntityTypeImage(name, 30);
+
+    return GestureDetector(
+        onTap: () {
+          categoryType = name;
+          bottomSheetController.close();
+          bottomSheetController = null;
+          //   Navigator.of(context).pop();
+          EventBus.fireEvent(SEARCH_CATEGORY_SELECTED, null, categoryType);
+        },
+        child: Column(
+          children: <Widget>[
+            Container(
+                padding: EdgeInsets.all(0),
+                width: MediaQuery.of(context).size.width * .15,
+                height: MediaQuery.of(context).size.width * .15,
+                child: image),
+            Text(
+              name,
+              textAlign: TextAlign.center,
+              style: textBotSheetTextStyle,
+            ),
+          ],
+        ));
+  }
+
+  void registerCategorySelectEvent() {
+    _eventListener =
+        EventBus.registerEvent(SEARCH_CATEGORY_SELECTED, null, (event, arg) {
+      if (event == null) {
+        return;
+      }
+      String categoryType = event.eventData;
+      setState(() {
+        _entityType = categoryType;
+      });
+      //If user has selected any type then add a row else show msg to user
+      if (_entityType != null) {
+        _addNewServiceRow();
+      } else {
+        //Utils.showMyFlushbar(context, icon, duration, title, msg)
+        print("Select sth ");
+      }
+    });
+  }
+
   @override
   void dispose() {
     super.dispose();
+    EventBus.unregisterEvent(_eventListener);
   }
 
   @override
@@ -45,6 +101,7 @@ class _ManageEntityListPageState extends State<ManageEntityListPage> {
       });
     });
     entityTypes = new List<String>();
+    registerCategorySelectEvent();
   }
 
   Future<void> getGlobalState() async {
@@ -59,8 +116,6 @@ class _ManageEntityListPageState extends State<ManageEntityListPage> {
 // Show only first level entities to user.
       for (int i = 0; i < _state.currentUser.entities.length; i++) {
         MetaEntity m = _state.currentUser.entities[i];
-        // print(m.name + '::' + parentName);
-
         bool isAdminOfParent = false;
         if (m.parentId != null) {
           for (MetaEntity parent in _state.currentUser.entities) {
@@ -70,12 +125,10 @@ class _ManageEntityListPageState extends State<ManageEntityListPage> {
             }
           }
         }
-
         if (!isAdminOfParent) {
           metaEntitiesList.add(m);
         }
       }
-      // metaEntitiesList = _state.currentUser.entities;
     }
 
     entityTypes = _state.conf.entityTypes;
@@ -140,12 +193,6 @@ class _ManageEntityListPageState extends State<ManageEntityListPage> {
       },
       onSaved: (String value) {
         _entityType = value;
-        setState(() {
-          _msg = null;
-        });
-        // entity.childCollection
-        //    .add(new ChildEntityAppData.cType(value, entity.id));
-        //   saveEntityDetails(entity);
       },
     );
     String title = "Manage your Places";
@@ -154,128 +201,81 @@ class _ManageEntityListPageState extends State<ManageEntityListPage> {
         theme: ThemeData.light().copyWith(),
         home: new WillPopScope(
           child: Scaffold(
+            key: manageEntityListPagekey,
             appBar: CustomAppBarWithBackButton(
               backRoute: UserHomePage(),
               titleTxt: title,
             ),
             body: Center(
-              child: new Form(
-                key: _entityListFormKey,
-                autovalidate: true,
-                child: Column(
-                  children: <Widget>[
-                    Card(
-                      elevation: 20,
-                      child: Container(
-                        decoration: BoxDecoration(
-                            border: Border.all(color: borderColor),
-                            color: Colors.white,
-                            shape: BoxShape.rectangle,
-                            borderRadius:
-                                BorderRadius.all(Radius.circular(5.0))),
-                        child: Column(
+              child: Column(
+                children: <Widget>[
+                  Card(
+                    elevation: 20,
+                    margin:
+                        EdgeInsets.all(MediaQuery.of(context).size.width * .03),
+                    child: Container(
+                      decoration: BoxDecoration(
+                          border: Border.all(color: borderColor),
+                          color: Colors.white,
+                          shape: BoxShape.rectangle,
+                          borderRadius: BorderRadius.all(Radius.circular(5.0))),
+                      child: InkWell(
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
                           children: <Widget>[
-                            Container(
-                              height: MediaQuery.of(context).size.width * .1,
-                              padding: EdgeInsets.fromLTRB(6, 0, 0, 0),
-                              decoration: darkContainer,
-                              child: Row(
-                                children: <Widget>[
-                                  Icon(
-                                    Icons.business,
-                                    size: 35,
-                                    color: Colors.white,
-                                  ),
-                                  SizedBox(width: 12),
-                                  Text(
-                                    "Add Places to manage",
-                                    style: TextStyle(
-                                        color: Colors.white, fontSize: 15),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            // subEntityType,
-                            (_msg != null)
-                                ? Text(
-                                    _msg,
-                                    style: errorTextStyle,
-                                  )
-                                : Container(),
-                            Padding(
-                              padding: const EdgeInsets.fromLTRB(8.0, 0, 8, 0),
-                              child: Row(
-                                // mainAxisAlignment: MainAxisAlignment.end,
-                                children: <Widget>[
-                                  Expanded(
-                                    child: subEntityType,
-                                  ),
-                                  Container(
-                                    child: IconButton(
-                                      icon: Icon(Icons.add_circle,
-                                          color: highlightColor, size: 40),
-                                      onPressed: () {
-                                        if (_entityType != null) {
-                                          setState(() {
-                                            _msg = null;
-                                          });
-                                          if (_entityListFormKey.currentState
-                                              .validate()) {
-                                            _entityListFormKey.currentState
-                                                .save();
-                                            _addNewServiceRow();
-                                            //   _subEntityType = "Select";
-                                            // } else {
-                                            //   _msg = "Select service type";
-                                            // }
-                                          }
-                                        } else {
-                                          setState(() {
-                                            _msg = "Select service type";
-                                          });
-                                        }
-                                      },
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
+                            Text("Add a new Place",
+                                style: TextStyle(fontSize: 18)),
+                            horizontalSpacer,
+                            Icon(Icons.add_circle,
+                                color: highlightColor, size: 40),
                           ],
+                        ),
+                        onTap: () {
+                          print("Tappped");
+                          showCategorySheet();
+                        },
+                      ),
+                    ),
+                  ),
+                  if (!Utils.isNullOrEmpty(metaEntitiesList))
+                    Expanded(
+                      child: Align(
+                        alignment: Alignment.topCenter,
+                        child: ListView.builder(
+                          padding: EdgeInsets.all(
+                              MediaQuery.of(context).size.width * .026),
+                          controller: _scrollController,
+                          reverse: true,
+                          shrinkWrap: true,
+                          itemExtent: itemSize,
+                          itemBuilder: (BuildContext context, int index) {
+                            return Container(
+                              child: EntityRow(
+                                  entity: metaEntitiesList[index],
+                                  parentEntityMap: _parentEntityMap),
+                            );
+                          },
+                          itemCount: metaEntitiesList.length,
                         ),
                       ),
                     ),
-                    if (!Utils.isNullOrEmpty(metaEntitiesList))
-                      Expanded(
-                        child: Align(
-                          alignment: Alignment.topCenter,
-                          child: ListView.builder(
-                            controller: _scrollController,
-                            reverse: true,
-                            shrinkWrap: true,
-                            itemExtent: itemSize,
-                            // shrinkWrap: true,
-                            itemBuilder: (BuildContext context, int index) {
-                              return Container(
-                                child: EntityRow(
-                                    entity: metaEntitiesList[index],
-                                    parentEntityMap: _parentEntityMap),
-                              );
-                            },
-                            itemCount: metaEntitiesList.length,
-                          ),
-                        ),
-                      ),
-                  ],
-                ),
-                // bottomNavigationBar: buildBottomItems()
+                  verticalSpacer,
+                  verticalSpacer,
+                ],
               ),
             ),
-            // bottomNavigationBar: CustomBottomBar(
-            //   barIndex: 0,
-            // ),
           ),
           onWillPop: () async {
-            return true;
+            if (bottomSheetController != null) {
+              bottomSheetController.close();
+              bottomSheetController = null;
+              return false;
+            } else {
+              //Navigator.of(context).pop();
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => UserHomePage()));
+              return false;
+            }
           },
         ),
       );
@@ -284,11 +284,11 @@ class _ManageEntityListPageState extends State<ManageEntityListPage> {
         theme: ThemeData.light().copyWith(),
         home: new WillPopScope(
           child: Scaffold(
+            key: manageEntityListPagekey,
             appBar: CustomAppBarWithBackButton(
               backRoute: UserHomePage(),
               titleTxt: title,
             ),
-
             body: Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -297,8 +297,6 @@ class _ManageEntityListPageState extends State<ManageEntityListPage> {
                 ],
               ),
             ),
-            //drawer: CustomDrawer(),
-            // bottomNavigationBar: CustomBottomBar(barIndex: 0),
           ),
           onWillPop: () async {
             return true;
@@ -306,5 +304,84 @@ class _ManageEntityListPageState extends State<ManageEntityListPage> {
         ),
       );
     }
+  }
+
+  showCategorySheet() {
+    bottomSheetController =
+        manageEntityListPagekey.currentState.showBottomSheet<Null>(
+      (context) => Container(
+        color: Colors.cyan[50],
+        height: MediaQuery.of(context).size.height * .7,
+        child: Column(
+          children: <Widget>[
+            Row(
+              children: <Widget>[
+                Container(
+                  padding: EdgeInsets.all(0),
+                  width: MediaQuery.of(context).size.width * .1,
+                  height: MediaQuery.of(context).size.width * .1,
+                  child: IconButton(
+                      padding: EdgeInsets.all(0),
+                      icon: Icon(
+                        Icons.cancel,
+                        color: btnDisabledolor,
+                      ),
+                      onPressed: () {
+                        bottomSheetController.close();
+                        bottomSheetController = null;
+                        // Navigator.of(context).pop();
+                      }),
+                ),
+                Container(
+                    alignment: Alignment.center,
+                    width: MediaQuery.of(context).size.width * .8,
+                    child: Text(
+                      SELECT_TYPE_OF_PLACE,
+                      style: textInputTextStyle,
+                    )),
+              ],
+            ),
+            Divider(
+              height: 1,
+              color: primaryDarkColor,
+            ),
+            Expanded(
+              child: Container(
+                padding: EdgeInsets.all(0),
+                child: new GridView.builder(
+                  padding: EdgeInsets.all(0),
+                  scrollDirection: Axis.vertical,
+                  shrinkWrap: true,
+                  itemCount: entityTypes.length,
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 4,
+                      crossAxisSpacing: 10.0,
+                      mainAxisSpacing: 10),
+                  itemBuilder: (BuildContext context, int index) {
+                    return new GridTile(
+                      child: Container(
+                        height: MediaQuery.of(context).size.height * .25,
+                        padding: EdgeInsets.all(0),
+                        // decoration:
+                        //     BoxDecoration(border: Border.all(color: Colors.black, width: 0.5)),
+                        child: Center(
+                          child: _buildCategoryItem(context, index),
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+      elevation: 30,
+      clipBehavior: Clip.hardEdge,
+      shape: RoundedRectangleBorder(
+          side: BorderSide(color: Colors.blueGrey[200]),
+          borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(20.0), topRight: Radius.circular(20.0))),
+    );
   }
 }

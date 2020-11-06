@@ -184,6 +184,7 @@ class EntityRowState extends State<EntityRow> {
                         (_metaEntity.name != null)
                             ? _metaEntity.name
                             : "Untitled",
+                            overflow: TextOverflow.ellipsis,
                         style: TextStyle(
                             color: Colors.blueGrey[700], fontSize: 17),
                       ),
@@ -198,7 +199,7 @@ class EntityRowState extends State<EntityRow> {
               Container(
                   padding: EdgeInsets.zero,
                   margin: EdgeInsets.zero,
-                  width: MediaQuery.of(context).size.width * .4,
+                  width: MediaQuery.of(context).size.width * .36,
                   // height: MediaQuery.of(context).size.width * .08,
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.end,
@@ -246,7 +247,7 @@ class EntityRowState extends State<EntityRow> {
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: <Widget>[
               Container(
-                width: MediaQuery.of(context).size.width * .45,
+                width: MediaQuery.of(context).size.width * .4,
                 height: 30,
                 child: RaisedButton(
                   elevation: 7,
@@ -268,7 +269,7 @@ class EntityRowState extends State<EntityRow> {
               verticalSpacer,
               Container(
                 height: 30,
-                width: MediaQuery.of(context).size.width * .45,
+                width: MediaQuery.of(context).size.width * .4,
                 child: RaisedButton(
                   elevation: 7,
                   color: btnColor,

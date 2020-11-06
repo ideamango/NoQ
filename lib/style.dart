@@ -223,7 +223,7 @@ final highlightSubTextStyle = TextStyle(
     height: 1.5);
 final userAccountHeadingTextStyle = TextStyle(
     color: Colors.black87,
-    fontFamily: 'RalewayRegular',
+    fontFamily: 'Montserrat',
     fontSize: 15.0,
     height: 1.5);
 final lightTextStyle =
