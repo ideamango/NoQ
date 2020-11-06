@@ -59,7 +59,7 @@ String whyLocationIsRequired =
     'This will be help users/customer find your Place.';
 
 String userCurrentLoc = 'Use Current Location';
-
+String userAccountHeadingTxt = "You have logged in with ";
 String locationMarkingActiveInfo =
     'Note: Users will be able to search/discover your Facility/Establishment based on this location, so ensure that this is correctly saved before you make it "Active"';
 String contactUsPageHeadline =
@@ -72,10 +72,14 @@ String helpPageMainMsg = "We are working on getting best help..";
 String defaultSearchMsg = 'Search places by Category or Name!!';
 String defaultSearchSubMsg =
     'Add places to your favourites and quickly browse through later!!';
+String notFoundMsg1 = "NO WORRIES.. ";
+String notFoundMsg2 = "Contact Us.";
+String notFoundMsg3 = "or ";
+String notFoundMsg4 = "Share this app ";
+String notFoundMsg5 =
+    "with the place owner to Register with us at absolutely no charges ";
 
-String notFoundMsg = "No worries.. Ask the place owner to Register for free!!";
 String noFavMsg = 'No favourites yet!!';
-
 String tokenHeading = 'Yay!! Your booking is confirmed.';
 String tokenTextH1 =
     "Booked your peace of mind. No more long waiting in queues!";

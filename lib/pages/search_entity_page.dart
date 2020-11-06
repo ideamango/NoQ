@@ -1,3 +1,4 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:geolocator/geolocator.dart';
@@ -11,6 +12,7 @@ import 'package:noq/db/db_service/entity_service.dart';
 import 'package:noq/events/event_bus.dart';
 import 'package:noq/events/events.dart';
 import 'package:noq/global_state.dart';
+import 'package:noq/pages/contact_us.dart';
 import 'package:noq/pages/search_child_entity_page.dart';
 import 'package:noq/pages/show_slots_page.dart';
 import 'package:noq/services/circular_progress.dart';
@@ -48,7 +50,7 @@ class _SearchEntityPageState extends State<SearchEntityPage>
   PersistentBottomSheetController bottomSheetController;
   bool showFab = true;
   String categoryType;
-
+  Widget _msgOnboard;
   List<String> searchTypes = new List<String>();
 
   Widget _buildCategoryItem(BuildContext context, int index) {
@@ -125,6 +127,7 @@ class _SearchEntityPageState extends State<SearchEntityPage>
   @override
   void initState() {
     super.initState();
+
     _isSearching = "initial";
     getGlobalState().whenComplete(() {
       fetchPastSearchesList();
@@ -288,15 +291,7 @@ class _SearchEntityPageState extends State<SearchEntityPage>
                     ),
                     Padding(
                       padding: EdgeInsets.all(5),
-                      child: Text(
-                        txtSubMsg,
-                        style: TextStyle(
-                          color: primaryDarkColor,
-                          fontFamily: 'Montserrat',
-                          fontSize: 18,
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
+                      child: _msgOnboard,
                     ),
                   ],
                 ),
@@ -904,7 +899,7 @@ class _SearchEntityPageState extends State<SearchEntityPage>
     Widget imgWidget;
     //  imgName = Utils.getEntityTypeImage(type);
 
-    imgWidget = Utils.getEntityTypeImage(type, 20);
+    imgWidget = Utils.getEntityTypeImage(type, 25);
 
     return imgWidget;
   }
@@ -959,11 +954,11 @@ class _SearchEntityPageState extends State<SearchEntityPage>
                       new Container(
                         height: MediaQuery.of(context).size.width * .095,
                         width: MediaQuery.of(context).size.width * .095,
-                        margin: EdgeInsets.fromLTRB(
-                            MediaQuery.of(context).size.width * .01,
-                            MediaQuery.of(context).size.width * .01,
-                            MediaQuery.of(context).size.width * .005,
-                            MediaQuery.of(context).size.width * .005),
+                        // margin: EdgeInsets.fromLTRB(
+                        //     MediaQuery.of(context).size.width * .01,
+                        //     MediaQuery.of(context).size.width * .01,
+                        //     MediaQuery.of(context).size.width * .005,
+                        //     MediaQuery.of(context).size.width * .005),
                         padding: EdgeInsets.all(
                             MediaQuery.of(context).size.width * .02),
                         decoration: ShapeDecoration(
@@ -971,9 +966,11 @@ class _SearchEntityPageState extends State<SearchEntityPage>
                           color: primaryIcon,
                         ),
                         child: Container(
+                            padding: EdgeInsets.zero,
+                            margin: EdgeInsets.zero,
                             alignment: Alignment.center,
-                            height: MediaQuery.of(context).size.width * .04,
-                            width: MediaQuery.of(context).size.width * .04,
+                            height: MediaQuery.of(context).size.width * .06,
+                            width: MediaQuery.of(context).size.width * .06,
                             child: entityImageIcon(str.type)),
                       ),
                       verticalSpacer,
@@ -981,7 +978,7 @@ class _SearchEntityPageState extends State<SearchEntityPage>
                   ),
                 ),
                 Container(
-                  width: MediaQuery.of(context).size.width * .82,
+                  width: MediaQuery.of(context).size.width * .84,
                   padding: EdgeInsets.all(2),
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
@@ -989,22 +986,28 @@ class _SearchEntityPageState extends State<SearchEntityPage>
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
                       Container(
-                        width: MediaQuery.of(context).size.width * .78,
-                        padding: EdgeInsets.all(0),
+                        width: MediaQuery.of(context).size.width * .83,
+                        padding: EdgeInsets.zero,
+                        margin: EdgeInsets.zero,
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: <Widget>[
                             Container(
-                              width: MediaQuery.of(context).size.width * .5,
+                              width: MediaQuery.of(context).size.width * .6,
                               padding: EdgeInsets.all(0),
                               child: Row(
                                 // mainAxisAlignment: Mai1nAxisAlignment.spaceBetween,
                                 // crossAxisAlignment: CrossAxisAlignment.center,
                                 children: <Widget>[
-                                  Text(
-                                    (str.name) ?? str.name.toString(),
-                                    style: TextStyle(fontSize: 17),
-                                    overflow: TextOverflow.ellipsis,
+                                  Container(
+                                    padding: EdgeInsets.zero,
+                                    width:
+                                        MediaQuery.of(context).size.width * .46,
+                                    child: Text(
+                                      (str.name) ?? str.name.toString(),
+                                      style: TextStyle(fontSize: 17),
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
                                   ),
                                   (str.verificationStatus == "Verified")
                                       ? new Container(
@@ -1068,7 +1071,7 @@ class _SearchEntityPageState extends State<SearchEntityPage>
                               ),
                             ),
                             Container(
-                              width: MediaQuery.of(context).size.width * .2,
+                              width: MediaQuery.of(context).size.width * .18,
                               padding: EdgeInsets.all(0),
                               child: Row(
                                 children: <Widget>[
@@ -1106,7 +1109,7 @@ class _SearchEntityPageState extends State<SearchEntityPage>
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: <Widget>[
                           Container(
-                            width: MediaQuery.of(context).size.width * .78,
+                            width: MediaQuery.of(context).size.width * .83,
                             child: Text(
                               (Utils.getFormattedAddress(str.address) != "")
                                   ? Utils.getFormattedAddress(str.address)
@@ -1703,7 +1706,36 @@ class _SearchEntityPageState extends State<SearchEntityPage>
             Utils.isNotNullOrEmpty(_searchText)) {
           setState(() {
             messageTitle = "NotFound";
-            messageSubTitle = notFoundMsg;
+
+            // messageSubTitle = notFoundMsg;
+            _msgOnboard = RichText(
+                text: TextSpan(
+                    style: TextStyle(color: Colors.blueGrey, fontSize: 15),
+                    children: <TextSpan>[
+                  TextSpan(text: notFoundMsg1, style: TextStyle(fontSize: 18)),
+                  TextSpan(
+                    text: notFoundMsg4,
+                    style: TextStyle(color: Colors.blue),
+                    recognizer: new TapGestureRecognizer()
+                      ..onTap = () {
+                        _searchTextController.text = "";
+                        Utils.generateLinkAndShare();
+                      },
+                  ),
+                  TextSpan(text: notFoundMsg5),
+                  TextSpan(text: notFoundMsg3),
+                  TextSpan(
+                      text: notFoundMsg2,
+                      style: TextStyle(color: Colors.blue),
+                      recognizer: new TapGestureRecognizer()
+                        ..onTap = () {
+                          _searchTextController.text = "";
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => ContactUsPage()));
+                        }),
+                ]));
           });
         } else {
           setState(() {
@@ -1711,7 +1743,6 @@ class _SearchEntityPageState extends State<SearchEntityPage>
             messageSubTitle = "";
           });
         }
-
         _stores.clear();
       } else {
         //Case 3- Show search results.

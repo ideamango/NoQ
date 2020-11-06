@@ -461,7 +461,7 @@ class _UserHomePageState extends State<UserHomePage> {
 
   Widget _buildItem(UserToken booking) {
     // String address = Utils.getFormattedAddress(booking.address);
-    String address = getEntityAddress(booking.entityId);
+
     return Container(
         width: MediaQuery.of(context).size.width,
         height: MediaQuery.of(context).size.width * .7 / 2.6,
@@ -523,7 +523,7 @@ class _UserHomePageState extends State<UserHomePage> {
                               0,
                               0),
                           child: Text(
-                            booking.entityName + ', ' + address,
+                            booking.entityName + ', ' + booking.address,
                             overflow: TextOverflow.ellipsis,
                             style: tokenDataTextStyle,
                           ),
@@ -610,8 +610,11 @@ class _UserHomePageState extends State<UserHomePage> {
                                     ),
                                     onPressed: () {
                                       try {
-                                        launchURL(booking.entityName, address,
-                                            booking.lat, booking.lon);
+                                        launchURL(
+                                            booking.entityName,
+                                            booking.address,
+                                            booking.lat,
+                                            booking.lon);
                                       } catch (error) {
                                         Utils.showMyFlushbar(
                                             context,

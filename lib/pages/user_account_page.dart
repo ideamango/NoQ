@@ -156,12 +156,6 @@ class _UserAccountPageState extends State<UserAccountPage> {
     return result;
   }
 
-  @override
-  String getEntityAddress(String entityId) {
-    //TODO SMITA Add implementation
-    return 'Gachibowli, Hyderabad';
-  }
-
   void showShoppingList(UserToken booking) {
     Navigator.push(
         context,
@@ -202,7 +196,7 @@ class _UserAccountPageState extends State<UserAccountPage> {
             new Row(mainAxisAlignment: MainAxisAlignment.center, children: <
                 Widget>[
               Container(
-                width: MediaQuery.of(context).size.width * .68,
+                width: MediaQuery.of(context).size.width * .7,
                 height: MediaQuery.of(context).size.width * .7 / 3.5,
                 child: Column(
                   //mainAxisSize: MainAxisSize.max,
@@ -210,7 +204,8 @@ class _UserAccountPageState extends State<UserAccountPage> {
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: <Widget>[
                     Container(
-                      padding: EdgeInsets.fromLTRB(5, 0, 0, 0),
+                      padding: EdgeInsets.fromLTRB(
+                          MediaQuery.of(context).size.height * .008, 0, 0, 0),
                       alignment: Alignment.centerLeft,
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -225,13 +220,13 @@ class _UserAccountPageState extends State<UserAccountPage> {
                             booking.getDisplayName(),
                             style: tokenTextStyle,
                             textAlign: TextAlign.left,
+                            overflow: TextOverflow.ellipsis,
                           ),
                         ],
                       ),
                     ),
                     Divider(
-                      indent: 5,
-
+                      indent: MediaQuery.of(context).size.height * .008,
                       // thickness: 1,
                       height: 1,
                       color: Colors.blueGrey[300],
@@ -241,7 +236,11 @@ class _UserAccountPageState extends State<UserAccountPage> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
                         Container(
-                          padding: EdgeInsets.fromLTRB(5, 0, 0, 0),
+                          padding: EdgeInsets.fromLTRB(
+                              MediaQuery.of(context).size.height * .008,
+                              0,
+                              0,
+                              0),
                           child: Text(
                             booking.entityName + ', ' + booking.address,
                             overflow: TextOverflow.ellipsis,
@@ -249,7 +248,7 @@ class _UserAccountPageState extends State<UserAccountPage> {
                           ),
                         ),
                         SizedBox(
-                          height: 2,
+                          height: MediaQuery.of(context).size.height * .008,
                         ),
                         Container(
                           // alignment: Alignment.centerLeft,
@@ -306,6 +305,16 @@ class _UserAccountPageState extends State<UserAccountPage> {
                                     size: 22,
                                   ),
                                   onPressed: () {
+                                    //If booking is past booking then no sense of cancelling , show msg to user
+                                    if (booking.dateTime
+                                        .isBefore(DateTime.now()))
+                                      Utils.showMyFlushbar(
+                                          context,
+                                          Icons.info,
+                                          Duration(seconds: 5),
+                                          "This booking token has already expired!!",
+                                          "");
+                                    //booking number is -1 means its already been cancelled, Do Nothing
                                     if (booking.number == -1)
                                       return null;
                                     else
@@ -434,9 +443,10 @@ class _UserAccountPageState extends State<UserAccountPage> {
                       children: <Widget>[
                         // Text('Time: ', style: tokenHeadingTextStyle),
                         Text(
-                          booking.dateTime.hour.toString() +
+                          Utils.formatTime(booking.dateTime.hour.toString()) +
                               ':' +
-                              booking.dateTime.minute.toString(),
+                              Utils.formatTime(
+                                  booking.dateTime.minute.toString()),
                           style: tokenDateTextStyle,
                         ),
                       ],
@@ -599,15 +609,6 @@ class _UserAccountPageState extends State<UserAccountPage> {
     // launch("https://play.google.com/store/apps/details?id=" + packageName);
   }
 
-  generateLinkAndShare() async {
-    var dynamicLink = await Utils.createDynamicLink();
-    print("Dynamic Link: $dynamicLink");
-    // _dynamicLink =
-    //     Uri.https(dynamicLink.authority, dynamicLink.path).toString();
-    // dynamicLink has been generated. share it with others to use it accordingly.
-    Share.share(Uri.https(dynamicLink.authority, dynamicLink.path).toString());
-  }
-
   @override
   void dispose() {
     super.dispose();
@@ -640,391 +641,291 @@ class _UserAccountPageState extends State<UserAccountPage> {
             ),
             body: Scrollbar(
               child: SingleChildScrollView(
-                padding: EdgeInsets.all(5),
+                padding: EdgeInsets.all(15),
                 child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
+                  //  mainAxisSize: MainAxisSize.max,
+                  // mainAxisAlignment: MainAxisAlignment.start,
                   children: <Widget>[
                     Card(
                       margin: EdgeInsets.zero,
+                      elevation: 20,
                       child: Container(
-                          width: MediaQuery.of(context).size.width,
+                        color: Colors.transparent,
+                        height: MediaQuery.of(context).size.height * .15,
+                        width: MediaQuery.of(context).size.width * .95,
+                        child: Row(
+                          children: <Widget>[
+                            Container(
+                              height: MediaQuery.of(context).size.height * .13,
+                              width: MediaQuery.of(context).size.width * .35,
+                              child: Image(
+                                image: AssetImage('assets/user_account.png'),
+                              ),
+                            ),
+                            RichText(
+                                text: TextSpan(
+                                    style: highlightSubTextStyle,
+                                    children: <TextSpan>[
+                                  TextSpan(text: userAccountHeadingTxt),
+                                  TextSpan(text: _state.currentUser.ph),
+                                ])),
+                          ],
+                        ),
+                      ),
+                    ),
+                    verticalSpacer,
+                    Card(
+                      margin: EdgeInsets.zero,
+                      elevation: 20,
+                      child: Container(
+                          width: MediaQuery.of(context).size.width * .95,
                           decoration: BoxDecoration(
-                              border: Border.all(color: containerColor),
+                              // border: Border.all(color: containerColor),
                               color: Colors.grey[50],
                               shape: BoxShape.rectangle,
                               borderRadius:
                                   BorderRadius.all(Radius.circular(5.0))),
-                          child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: <Widget>[
-                                Container(
-                                  decoration: darkContainer,
-                                  padding: EdgeInsets.all(3),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: <Widget>[
+                              Container(
+                                width: MediaQuery.of(context).size.width * .45,
+                                child: RaisedButton(
+                                    color: btnColor,
+                                    textColor: Colors.white,
+                                    splashColor: highlightColor,
+                                    onPressed: () {
+                                      openPlayStoreAndRate();
+                                      Utils.showMyFlushbar(
+                                          context,
+                                          Icons.help_outline,
+                                          Duration(seconds: 3),
+                                          "Thanks!!",
+                                          ratingMsg);
+                                    },
+                                    child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: <Widget>[
+                                          Icon(Icons.star),
+                                          Text(
+                                            '  Rate the app',
+                                            textAlign: TextAlign.center,
+                                          ),
+                                        ])),
+                              ),
+                              // Container(
+                              //   width: MediaQuery.of(context).size.width *
+                              //       .3,
+                              //   child: RaisedButton(
+                              //       color: btnColor,
+                              //       textColor: Colors.white,
+                              //       splashColor: highlightColor,
+                              //       onPressed: () {
+                              //         // openFeedbackPage();
+                              //       },
+                              //       child: const Text(
+                              //         'Give Feedback',
+                              //         textAlign: TextAlign.center,
+                              //       )),
+                              // ),
+                              Container(
+                                width: MediaQuery.of(context).size.width * .45,
+                                child: RaisedButton(
+                                  color: btnColor,
+                                  textColor: Colors.white,
+                                  splashColor: highlightColor,
+                                  onPressed: inviteText.isEmpty
+                                      ? null
+                                      : () {
+                                          // A builder is used to retrieve the context immediately
+                                          // surrounding the RaisedButton.
+                                          //
+                                          // The context's `findRenderObject` returns the first
+                                          // RenderObject in its descendent tree when it's not
+                                          // a RenderObjectWidget. The RaisedButton's RenderObject
+                                          // has its position and size after it's built.
+                                          final RenderBox box =
+                                              context.findRenderObject();
+
+                                          Utils.generateLinkAndShare();
+                                        },
                                   child: Row(
-                                      mainAxisSize: MainAxisSize.max,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
                                       children: <Widget>[
+                                        Icon(Icons.share),
                                         Text(
-                                          " ...what more to do!!",
-                                          style: TextStyle(
-                                              color: Colors.white,
-                                              fontSize: 15),
+                                          '  Invite friends',
+                                          textAlign: TextAlign.center,
                                         ),
                                       ]),
                                 ),
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceEvenly,
-                                  children: <Widget>[
-                                    Container(
-                                      width: MediaQuery.of(context).size.width *
-                                          .3,
-                                      child: RaisedButton(
-                                          color: btnColor,
-                                          textColor: Colors.white,
-                                          splashColor: highlightColor,
-                                          onPressed: () {
-                                            openPlayStoreAndRate();
-                                            Utils.showMyFlushbar(
-                                                context,
-                                                Icons.help_outline,
-                                                Duration(seconds: 3),
-                                                "Thanks!!",
-                                                ratingMsg);
-                                          },
-                                          child: const Text(
-                                            'Rate the app',
-                                            textAlign: TextAlign.center,
-                                          )),
-                                    ),
-                                    Container(
-                                      width: MediaQuery.of(context).size.width *
-                                          .3,
-                                      child: RaisedButton(
-                                          color: btnColor,
-                                          textColor: Colors.white,
-                                          splashColor: highlightColor,
-                                          onPressed: () {
-                                            // openFeedbackPage();
-                                          },
-                                          child: const Text(
-                                            'Give Feedback',
-                                            textAlign: TextAlign.center,
-                                          )),
-                                    ),
-                                    Container(
-                                      width: MediaQuery.of(context).size.width *
-                                          .3,
-                                      child: RaisedButton(
-                                          color: btnColor,
-                                          textColor: Colors.white,
-                                          splashColor: highlightColor,
-                                          onPressed: inviteText.isEmpty
-                                              ? null
-                                              : () {
-                                                  // A builder is used to retrieve the context immediately
-                                                  // surrounding the RaisedButton.
-                                                  //
-                                                  // The context's `findRenderObject` returns the first
-                                                  // RenderObject in its descendent tree when it's not
-                                                  // a RenderObjectWidget. The RaisedButton's RenderObject
-                                                  // has its position and size after it's built.
-                                                  final RenderBox box = context
-                                                      .findRenderObject();
-
-                                                  generateLinkAndShare();
-                                                },
-                                          child: const Text(
-                                            'Invite friends',
-                                            textAlign: TextAlign.center,
-                                          )),
-                                    ),
-                                  ],
-                                ),
-                              ])),
+                              ),
+                            ],
+                          )),
                     ),
                     verticalSpacer,
-                    Container(
-                      decoration: BoxDecoration(
-                          border: Border.all(color: containerColor),
-                          color: Colors.grey[50],
-                          shape: BoxShape.rectangle,
-                          borderRadius: BorderRadius.all(Radius.circular(5.0))),
-                      child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
+                    Card(
+                      margin: EdgeInsets.zero,
+                      elevation: 20,
+                      child: Theme(
+                        data: ThemeData(
+                          unselectedWidgetColor: Colors.grey[600],
+                          accentColor: btnColor,
+                        ),
+                        child: ExpansionTile(
+                          //key: PageStorageKey(this.widget.headerTitle),
+
+                          title: Text(
+                            "Upcoming Bookings",
+                            style: TextStyle(
+                                color: Colors.blueGrey[700], fontSize: 17),
+                          ),
+                          backgroundColor: Colors.white,
+                          leading: Icon(
+                            Icons.date_range,
+                            color: primaryIcon,
+                          ),
                           children: <Widget>[
-                            Container(
-                              decoration: darkContainer,
-                              padding: EdgeInsets.all(3),
-                              child: Row(
-                                  mainAxisSize: MainAxisSize.max,
-                                  children: <Widget>[
-                                    Text(
-                                      " My Bookings",
-                                      style: TextStyle(
-                                          color: Colors.white, fontSize: 15),
-                                    ),
-                                  ]),
-                            ),
-                            Card(
-                              margin: EdgeInsets.zero,
-                              elevation: 20,
-                              child: Theme(
-                                data: ThemeData(
-                                  unselectedWidgetColor: Colors.grey[600],
-                                  accentColor: Colors.teal,
+                            if (_upcomingBkgStatus == 'Success')
+                              ConstrainedBox(
+                                constraints: new BoxConstraints(
+                                  maxHeight:
+                                      MediaQuery.of(context).size.height * .4,
+                                  maxWidth: MediaQuery.of(context).size.width,
                                 ),
-                                child: ExpansionTile(
-                                  //key: PageStorageKey(this.widget.headerTitle),
-                                  initiallyExpanded: true,
-                                  title: Text(
-                                    "Upcoming Bookings",
-                                    style: TextStyle(
-                                        color: Colors.blueGrey[700],
-                                        fontSize: 17),
-                                  ),
-                                  backgroundColor: Colors.white,
-                                  leading: Icon(
-                                    Icons.date_range,
-                                    color: primaryIcon,
-                                  ),
-                                  children: <Widget>[
-                                    if (_upcomingBkgStatus == 'Success')
-                                      ConstrainedBox(
-                                        constraints: new BoxConstraints(
-                                          maxHeight: MediaQuery.of(context)
-                                                  .size
-                                                  .height *
-                                              .4,
-                                          maxWidth:
-                                              MediaQuery.of(context).size.width,
-                                        ),
 
-                                        // decoration: BoxDecoration(
-                                        //     shape: BoxShape.rectangle,
-                                        //     borderRadius: BorderRadius.all(Radius.circular(8.0))),
-                                        // height: MediaQuery.of(context).size.height * .6,
-                                        // margin: EdgeInsets.fromLTRB(10, 10, 10, 10),
-                                        child: Scrollbar(
-                                          child: ListView.builder(
-                                            shrinkWrap: true,
-                                            //scrollDirection: Axis.vertical,
-                                            itemBuilder: (BuildContext context,
-                                                int index) {
-                                              return Container(
-                                                child: new Column(
-                                                    children: _newBookingsList
-                                                        .map(_buildItem)
-                                                        .toList()),
-                                                //children: <Widget>[firstRow, secondRow],
-                                              );
-                                            },
-                                            itemCount: 1,
-                                          ),
-                                        ),
+                                // decoration: BoxDecoration(
+                                //     shape: BoxShape.rectangle,
+                                //     borderRadius: BorderRadius.all(Radius.circular(8.0))),
+                                // height: MediaQuery.of(context).size.height * .6,
+                                // margin: EdgeInsets.fromLTRB(10, 10, 10, 10),
+                                child: Scrollbar(
+                                  child: ListView.builder(
+                                    shrinkWrap: true,
+                                    //scrollDirection: Axis.vertical,
+                                    itemBuilder:
+                                        (BuildContext context, int index) {
+                                      return Container(
+                                        child: new Column(
+                                            children: _newBookingsList
+                                                .map(_buildItem)
+                                                .toList()),
+                                        //children: <Widget>[firstRow, secondRow],
+                                      );
+                                    },
+                                    itemCount: 1,
+                                  ),
+                                ),
+                              ),
+                            if (_upcomingBkgStatus == 'NoBookings')
+                              _emptyStorePage("No bookings yet.. ",
+                                  "Book now to save time later!! "),
+                            if (_upcomingBkgStatus == 'Loading')
+                              showCircularProgress(),
+                          ],
+                        ),
+                      ),
+                    ),
+                    SizedBox(
+                      height: MediaQuery.of(context).size.height * .03,
+                    ),
+                    Card(
+                      margin: EdgeInsets.zero,
+                      elevation: 20,
+                      child: Theme(
+                        data: ThemeData(
+                          unselectedWidgetColor: Colors.grey[600],
+                          accentColor: btnColor,
+                        ),
+                        child: ExpansionTile(
+                          initiallyExpanded: true,
+                          title: Text(
+                            "Past Bookings",
+                            style: TextStyle(
+                                color: Colors.blueGrey[700], fontSize: 17),
+                          ),
+                          backgroundColor: Colors.white,
+                          leading: Icon(
+                            Icons.access_time,
+                            color: primaryIcon,
+                          ),
+                          children: <Widget>[
+                            Column(
+                              children: <Widget>[
+                                if (_pastBkgStatus == "Success")
+                                  ConstrainedBox(
+                                    constraints: new BoxConstraints(
+                                      maxHeight:
+                                          MediaQuery.of(context).size.height *
+                                              .4,
+                                    ),
+                                    child: Scrollbar(
+                                      child: ListView.builder(
+                                        shrinkWrap: true,
+                                        scrollDirection: Axis.vertical,
+                                        itemBuilder:
+                                            (BuildContext context, int index) {
+                                          return Container(
+                                            child: new Column(
+                                                children: _pastBookingsList
+                                                    .map(_buildItem)
+                                                    .toList()),
+                                            //children: <Widget>[firstRow, secondRow],
+                                          );
+                                        },
+                                        itemCount: 1,
                                       ),
-                                    if (_upcomingBkgStatus == 'NoBookings')
-                                      _emptyStorePage("No bookings yet.. ",
-                                          "Book now to save time later!! "),
-                                    if (_upcomingBkgStatus == 'Loading')
-                                      showCircularProgress(),
-                                  ],
-                                ),
-                              ),
-                            ),
-                            verticalSpacer,
-                            Card(
-                              margin: EdgeInsets.zero,
-                              elevation: 20,
-                              child: Theme(
-                                data: ThemeData(
-                                  unselectedWidgetColor: Colors.grey[600],
-                                  accentColor: Colors.teal,
-                                ),
-                                child: ExpansionTile(
-                                  title: Text(
-                                    "Past Bookings",
-                                    style: TextStyle(
-                                        color: Colors.blueGrey[700],
-                                        fontSize: 17),
+                                    ),
                                   ),
-                                  backgroundColor: Colors.white,
-                                  leading: Icon(
-                                    Icons.access_time,
-                                    color: primaryIcon,
-                                  ),
-                                  children: <Widget>[
-                                    Column(
-                                      children: <Widget>[
-                                        if (_pastBkgStatus == "Success")
-                                          ConstrainedBox(
-                                            constraints: new BoxConstraints(
-                                              maxHeight: MediaQuery.of(context)
-                                                      .size
-                                                      .height *
-                                                  .4,
-                                            ),
-                                            child: Scrollbar(
-                                              child: ListView.builder(
-                                                shrinkWrap: true,
-                                                scrollDirection: Axis.vertical,
-                                                itemBuilder:
-                                                    (BuildContext context,
-                                                        int index) {
-                                                  return Container(
-                                                    child: new Column(
-                                                        children:
-                                                            _pastBookingsList
-                                                                .map(_buildItem)
-                                                                .toList()),
-                                                    //children: <Widget>[firstRow, secondRow],
-                                                  );
-                                                },
-                                                itemCount: 1,
-                                              ),
-                                            ),
-                                          ),
-                                        if (_pastBkgStatus == 'NoBookings')
-                                          _emptyStorePage(
-                                              "No bookings in past..",
-                                              "Book now to save time later!! "),
-                                        if (_pastBkgStatus == 'Loading')
-                                          showCircularProgress(),
-                                      ],
-                                    )
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ]),
+                                if (_pastBkgStatus == 'NoBookings')
+                                  _emptyStorePage("No bookings in past..",
+                                      "Book now to save time later!! "),
+                                if (_pastBkgStatus == 'Loading')
+                                  showCircularProgress(),
+                              ],
+                            )
+                          ],
+                        ),
+                      ),
                     ),
                     verticalSpacer,
-                    // Container(
-                    //   color: primaryDarkColor,
-                    //   child: Column(
-                    //     children: <Widget>[
-                    //       CarouselSlider(
-                    //         options: CarouselOptions(
-                    //           height: MediaQuery.of(context).size.height * .9,
-                    //           autoPlay: true,
-                    //           autoPlayInterval: Duration(seconds: 3),
-                    //           autoPlayAnimationDuration:
-                    //               Duration(milliseconds: 800),
-                    //           autoPlayCurve: Curves.easeInCubic,
-                    //           pauseAutoPlayOnTouch: true,
-                    //           aspectRatio: 2.0,
-                    //           onPageChanged: (index, carouselPageChangedReason) {
-                    //             setState(() {
-                    //               _currentIndex = index;
-                    //             });
-                    //           },
-                    //         ),
-                    //         items: cardList.map((card) {
-                    //           return Builder(builder: (BuildContext context) {
-                    //             return Container(
-                    //               height: MediaQuery.of(context).size.height * 0.40,
-                    //               width: MediaQuery.of(context).size.width,
-                    //               child: Card(
-                    //                 color: primaryDarkColor,
-                    //                 child: card,
-                    //               ),
-                    //             );
-                    //           });
-                    //         }).toList(),
-                    //       ),
-                    //       Row(
-                    //         mainAxisAlignment: MainAxisAlignment.center,
-                    //         children: <Widget>[
-                    //           Row(
-                    //             mainAxisAlignment: MainAxisAlignment.center,
-                    //             children: map<Widget>(cardList, (index, url) {
-                    //               return Container(
-                    //                 width: 7.0,
-                    //                 height: 7.0,
-                    //                 margin: EdgeInsets.symmetric(
-                    //                     vertical: 2.0, horizontal: 2.0),
-                    //                 decoration: BoxDecoration(
-                    //                   shape: BoxShape.circle,
-                    //                   color: _currentIndex == index
-                    //                       ? highlightColor
-                    //                       : Colors.grey,
-                    //                 ),
-                    //               );
-                    //             }),
-                    //           ),
-                    //         ],
-                    //       )
-                    //     ],
-                    //   ),
-                    // ),
-                    // verticalSpacer,
-                    //This is start of boxed container.
-                    // Container(
-                    //   decoration: BoxDecoration(
-                    //       border: Border.all(color: containerColor),
-                    //       color: Colors.grey[50],
-                    //       shape: BoxShape.rectangle,
-                    //       borderRadius: BorderRadius.all(Radius.circular(5.0))),
-                    //   child: Column(
-                    //       crossAxisAlignment: CrossAxisAlignment.start,
-                    //       children: <Widget>[
-                    //         Container(
-                    //           decoration: darkContainer,
-                    //           padding: EdgeInsets.all(3),
-                    //           child: Row(
-                    //               mainAxisSize: MainAxisSize.max,
-                    //               children: <Widget>[
-                    //                 Text(
-                    //                   " Notifications",
-                    //                   style: TextStyle(
-                    //                       color: Colors.white, fontSize: 15),
-                    //                 ),
-                    //               ]),
-                    //         ),
-                    //         Column(
-                    //           crossAxisAlignment: CrossAxisAlignment.center,
-                    //           children: <Widget>[
-                    //             Text("Add more actions here.."),
-                    //           ],
-                    //         )
-                    //       ]),
-                    // ),
-                    // //This is end of boxed container.
-                    // verticalSpacer,
-                    // //This is start of boxed container.
-                    // Container(
-                    //   decoration: BoxDecoration(
-                    //       border: Border.all(color: containerColor),
-                    //       color: Colors.grey[50],
-                    //       shape: BoxShape.rectangle,
-                    //       borderRadius: BorderRadius.all(Radius.circular(5.0))),
-                    //   child: Column(
-                    //       crossAxisAlignment: CrossAxisAlignment.start,
-                    //       children: <Widget>[
-                    //         Container(
-                    //           decoration: darkContainer,
-                    //           padding: EdgeInsets.all(3),
-                    //           child: Row(
-                    //               mainAxisSize: MainAxisSize.max,
-                    //               children: <Widget>[
-                    //                 Text(
-                    //                   " Settings",
-                    //                   style: TextStyle(
-                    //                       color: Colors.white, fontSize: 15),
-                    //                 ),
-                    //               ]),
-                    //         ),
-                    //         Column(
-                    //             crossAxisAlignment: CrossAxisAlignment.center,
-                    //             children: <Widget>[
-                    //               Text("Need a change.. Right at your service!!"),
-                    //             ]),
-                    //       ]),
-                    // ),
-                    // //This is end of boxed container.
+                    verticalSpacer,
+                    verticalSpacer,
+                    verticalSpacer,
+                    verticalSpacer,
+                    verticalSpacer,
                   ],
                 ),
               ),
             ),
+            floatingActionButton: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: <Widget>[
+                Container(
+                  width: MediaQuery.of(context).size.width * .9,
+                  child: RaisedButton(
+                      color: btnColor,
+                      textColor: Colors.white,
+                      splashColor: highlightColor,
+                      onPressed: () {
+                        Utils.logout(context);
+                      },
+                      child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: <Widget>[
+                            Icon(Icons.exit_to_app),
+                            Text(
+                              '  Logout',
+                              textAlign: TextAlign.center,
+                            ),
+                          ])),
+                ),
+              ],
+            ),
+            floatingActionButtonLocation:
+                FloatingActionButtonLocation.centerFloat,
             bottomNavigationBar: CustomBottomBar(
               barIndex: 3,
             ),
