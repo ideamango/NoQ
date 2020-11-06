@@ -21,31 +21,19 @@ class QrCodeScanner {
     ScanResult scanResult;
     try {
       scanResult = await BarcodeScanner.scan();
-      print("PRINTING scan result");
-      print(scanResult.rawContent);
+
       if (scanResult.rawContent.contains('entityId')) {
         List<String> url = scanResult.rawContent.split('entityId');
         String entityId = url[1];
 
         addEntityToFavs(context, entityId.substring(3));
+      } else if (scanResult.type == ResultType.Cancelled) {
+        Utils.showMyFlushbar(context, Icons.info, Duration(seconds: 3),
+            "QR scan is cancelled by you..", "Try again!!");
+      } else {
+        Utils.showMyFlushbar(context, Icons.info, Duration(seconds: 3),
+            invalidQRCode, correctQRCode);
       }
-
-      Utils.showMyFlushbar(context, Icons.info, Duration(seconds: 3),
-          invalidQRCode, correctQRCode);
-
-      // launchUri(scanResult.rawContent);
-
-      // final UriData uriDatalink = UriData.fromString(scanResult.rawContent);
-      // print(uriDatalink.parameters);
-      // print("Deep link path ");
-      // print(uriDatalink.parameters.containsKey("entityId"));
-      //   print(deepLink.path);
-      // if (deepLink.queryParameters.containsKey("entityId")) {
-      //   print("QueryParams ${deepLink.queryParameters}");
-      // }
-      // List<String> url = scanResult.rawContent.split('/');
-      // String entityId = url[3];
-      // addEntityToFavs(context, entityId);
     } on PlatformException catch (e) {
       var result = ScanResult(
         type: ResultType.Error,
@@ -55,13 +43,16 @@ class QrCodeScanner {
       if (e.code == BarcodeScanner.cameraAccessDenied) {
         Utils.showMyFlushbar(context, Icons.info, Duration(seconds: 5),
             cameraAccess, openCameraAccessSetting);
+        openAppSettings();
       } else {
         result.rawContent = 'Unknown error: $e';
       }
 
       scanResult = result;
+    } catch (e) {
+      Utils.showMyFlushbar(context, Icons.info, Duration(seconds: 5),
+          "Something went wrong..", "Unable to process");
     }
-    print("EXITING");
   }
 
   static void addEntityToFavs(BuildContext context, String id) async {
@@ -78,8 +69,8 @@ class QrCodeScanner {
           continue;
       }
       if (!entityContains) {
-        Utils.showMyFlushbar(
-            context, Icons.info, Duration(seconds: 3), "Processing...", "");
+        Utils.showMyFlushbar(context, Icons.info, Duration(seconds: 3),
+            "Adding to your Favourites..", "");
         EntityService()
             .addEntityToUserFavourite(entity.getMetaEntity())
             .then((value) {
@@ -87,8 +78,14 @@ class QrCodeScanner {
             gs.currentUser.favourites.add(entity.getMetaEntity());
             Navigator.pushReplacement(context,
                 MaterialPageRoute(builder: (context) => FavsListPage()));
-          } else
-            print("Entity can't be added to Favorites");
+          } else {
+            Utils.showMyFlushbar(
+                context,
+                Icons.info,
+                Duration(seconds: 3),
+                "The place can't be added to your Favourites",
+                "Try again later");
+          }
         }).catchError((onError) {
           Utils.showMyFlushbar(
               context, Icons.info, Duration(seconds: 3), "Oops error...", "");
