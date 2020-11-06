@@ -187,6 +187,8 @@ String slotsAlreadyBooked =
 String tokenAlreadyExists =
     "Its because you already have an active booking for same time.";
 
+String bookingExpired = "This booking token has already expired!!";
+
 String tryAgainToBook = "Please try again or choose a different time or date.";
 
 String faqHead1 = "How Sukoon helps bring Sukoon to your life?";

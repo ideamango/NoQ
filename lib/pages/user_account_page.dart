@@ -51,6 +51,7 @@ class _UserAccountPageState extends State<UserAccountPage> {
   String appID = "";
   String output = "";
   bool _initCompleted = false;
+
   //ScrollController _scrollController;
   // bool _expansionClick = false;
 
@@ -313,7 +314,7 @@ class _UserAccountPageState extends State<UserAccountPage> {
                                           context,
                                           Icons.info,
                                           Duration(seconds: 5),
-                                          "This booking token has already expired!!",
+                                          bookingExpired,
                                           "");
                                     //booking number is -1 means its already been cancelled, Do Nothing
                                     if (booking.number == -1)
@@ -849,7 +850,7 @@ class _UserAccountPageState extends State<UserAccountPage> {
                           accentColor: btnColor,
                         ),
                         child: ExpansionTile(
-                          initiallyExpanded: false,
+                          initiallyExpanded: true,
                           title: Text(
                             "Past Bookings",
                             style: TextStyle(
@@ -907,6 +908,8 @@ class _UserAccountPageState extends State<UserAccountPage> {
                 ),
               ),
             ),
+            floatingActionButtonAnimator:
+                AnimationToolkit.floatingButtonAnimator,
             floatingActionButton: Column(
               mainAxisAlignment: MainAxisAlignment.end,
               children: <Widget>[
@@ -972,5 +975,30 @@ class _UserAccountPageState extends State<UserAccountPage> {
         ),
       );
     }
+  }
+}
+
+class AnimationToolkit {
+  // ...
+  static const FloatingActionButtonAnimator floatingButtonAnimator =
+      _FloatingButtonAnimator();
+}
+
+class _FloatingButtonAnimator extends FloatingActionButtonAnimator {
+  const _FloatingButtonAnimator();
+
+  @override
+  Animation<double> getScaleAnimation({Animation<double> parent}) {
+    return Tween<double>(begin: 1.0, end: 1.0).animate(parent);
+  }
+
+  @override
+  Animation<double> getRotationAnimation({Animation<double> parent}) {
+    return Tween<double>(begin: 0, end: 1.0).animate(parent);
+  }
+
+  @override
+  Offset getOffset({Offset begin, Offset end, double progress}) {
+    return end;
   }
 }
