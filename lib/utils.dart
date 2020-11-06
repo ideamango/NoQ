@@ -326,7 +326,7 @@ class Utils {
         ),
         socialMetaTagParameters: SocialMetaTagParameters(
           title: 'Check out this amazing app',
-          description: 'It saves time and keeps you at safe-distance!',
+          description: 'It saves time and helps you maintain safe-distance!',
         ));
     final link = await parameters.buildUrl();
     final ShortDynamicLink shortenedLink = await parameters.buildShortLink();

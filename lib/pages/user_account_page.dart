@@ -689,6 +689,7 @@ class _UserAccountPageState extends State<UserAccountPage> {
                             margin: EdgeInsets.zero,
                             elevation: 20,
                             child: Container(
+                                padding: EdgeInsets.all(5),
                                 width: MediaQuery.of(context).size.width * .95,
                                 decoration: BoxDecoration(
                                     // border: Border.all(color: containerColor),
@@ -702,7 +703,7 @@ class _UserAccountPageState extends State<UserAccountPage> {
                                   children: <Widget>[
                                     Container(
                                       width: MediaQuery.of(context).size.width *
-                                          .45,
+                                          .42,
                                       child: RaisedButton(
                                           color: btnColor,
                                           textColor: Colors.white,
@@ -727,24 +728,10 @@ class _UserAccountPageState extends State<UserAccountPage> {
                                                 ),
                                               ])),
                                     ),
-                                    // Container(
-                                    //   width: MediaQuery.of(context).size.width *
-                                    //       .3,
-                                    //   child: RaisedButton(
-                                    //       color: btnColor,
-                                    //       textColor: Colors.white,
-                                    //       splashColor: highlightColor,
-                                    //       onPressed: () {
-                                    //         // openFeedbackPage();
-                                    //       },
-                                    //       child: const Text(
-                                    //         'Give Feedback',
-                                    //         textAlign: TextAlign.center,
-                                    //       )),
-                                    // ),
+                                    horizontalSpacer,
                                     Container(
                                       width: MediaQuery.of(context).size.width *
-                                          .45,
+                                          .42,
                                       child: RaisedButton(
                                         color: btnColor,
                                         textColor: Colors.white,

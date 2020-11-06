@@ -214,6 +214,7 @@ class _ManageEntityListPageState extends State<ManageEntityListPage> {
                     margin:
                         EdgeInsets.all(MediaQuery.of(context).size.width * .03),
                     child: Container(
+                      padding: EdgeInsets.all(5),
                       decoration: BoxDecoration(
                           border: Border.all(color: borderColor),
                           color: Colors.white,
@@ -221,10 +222,11 @@ class _ManageEntityListPageState extends State<ManageEntityListPage> {
                           borderRadius: BorderRadius.all(Radius.circular(5.0))),
                       child: InkWell(
                         child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: <Widget>[
-                            Text("Add a new Place",
-                                style: TextStyle(fontSize: 18)),
+                            Text(" Add a new Place",
+                                style: TextStyle(
+                                    fontSize: 18, color: Colors.blueGrey[700])),
                             horizontalSpacer,
                             Icon(Icons.add_circle,
                                 color: highlightColor, size: 40),

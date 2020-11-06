@@ -896,7 +896,7 @@ class _SearchEntityPageState extends State<SearchEntityPage>
     Widget imgWidget;
     //  imgName = Utils.getEntityTypeImage(type);
 
-    imgWidget = Utils.getEntityTypeImage(type, 25);
+    imgWidget = Utils.getEntityTypeImage(type, 30);
 
     return imgWidget;
   }
@@ -921,21 +921,9 @@ class _SearchEntityPageState extends State<SearchEntityPage>
                         parentId: str.entityId,
                       )));
         }
-
-        // if (child.length != 0) {
-        //   Navigator.push(
-        //       context,
-        //       MaterialPageRoute(
-        //           builder: (context) => SearchStoresPage(forPage: "Child")));
-
-        //   // Navigator.push(
-        //   //     context,
-        //   //     MaterialPageRoute(
-        //   //         builder: (context) => EntityServicesListPage(entity: str)));
-        // }
       },
       child: Card(
-        margin: EdgeInsets.only(top: 12),
+        margin: EdgeInsets.fromLTRB(8, 12, 8, 0),
         elevation: 10,
         child: Column(
           children: <Widget>[
@@ -944,38 +932,33 @@ class _SearchEntityPageState extends State<SearchEntityPage>
               // mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
                 Container(
+                  padding: EdgeInsets.all(4),
                   width: MediaQuery.of(context).size.width * .1,
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: <Widget>[
-                      new Container(
-                        height: MediaQuery.of(context).size.width * .095,
-                        width: MediaQuery.of(context).size.width * .095,
-                        // margin: EdgeInsets.fromLTRB(
-                        //     MediaQuery.of(context).size.width * .01,
-                        //     MediaQuery.of(context).size.width * .01,
-                        //     MediaQuery.of(context).size.width * .005,
-                        //     MediaQuery.of(context).size.width * .005),
-                        padding: EdgeInsets.all(
-                            MediaQuery.of(context).size.width * .02),
-                        decoration: ShapeDecoration(
-                          shape: CircleBorder(),
-                          color: primaryIcon,
-                        ),
-                        child: Container(
-                            padding: EdgeInsets.zero,
-                            margin: EdgeInsets.zero,
-                            alignment: Alignment.center,
-                            height: MediaQuery.of(context).size.width * .06,
-                            width: MediaQuery.of(context).size.width * .06,
-                            child: entityImageIcon(str.type)),
-                      ),
-                      verticalSpacer,
-                    ],
+                  child: new Container(
+                    height: MediaQuery.of(context).size.width * .095,
+                    width: MediaQuery.of(context).size.width * .095,
+                    // margin: EdgeInsets.fromLTRB(
+                    //     MediaQuery.of(context).size.width * .01,
+                    //     MediaQuery.of(context).size.width * .01,
+                    //     MediaQuery.of(context).size.width * .005,
+                    //     MediaQuery.of(context).size.width * .005),
+                    padding:
+                        EdgeInsets.all(MediaQuery.of(context).size.width * .02),
+                    decoration: ShapeDecoration(
+                      shape: CircleBorder(),
+                      color: primaryIcon,
+                    ),
+                    child: Container(
+                        padding: EdgeInsets.zero,
+                        margin: EdgeInsets.zero,
+                        alignment: Alignment.center,
+                        height: MediaQuery.of(context).size.width * .09,
+                        width: MediaQuery.of(context).size.width * .09,
+                        child: entityImageIcon(str.type)),
                   ),
                 ),
                 Container(
-                  width: MediaQuery.of(context).size.width * .84,
+                  width: MediaQuery.of(context).size.width * .8,
                   padding: EdgeInsets.all(2),
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
@@ -1106,7 +1089,7 @@ class _SearchEntityPageState extends State<SearchEntityPage>
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: <Widget>[
                           Container(
-                            width: MediaQuery.of(context).size.width * .83,
+                            width: MediaQuery.of(context).size.width * .78,
                             child: Text(
                               (Utils.getFormattedAddress(str.address) != "")
                                   ? Utils.getFormattedAddress(str.address)

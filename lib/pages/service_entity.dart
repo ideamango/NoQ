@@ -198,9 +198,9 @@ class ChildEntityRowState extends State<ChildEntityRow> {
             mainAxisAlignment: MainAxisAlignment.end,
             children: <Widget>[
               Container(
-                margin: EdgeInsets.fromLTRB(0, 0, 5, 0),
+                //margin: EdgeInsets.fromLTRB(0, 0, 5, 0),
                 height: 30,
-                width: MediaQuery.of(context).size.width * .4,
+                width: MediaQuery.of(context).size.width * .42,
                 child: RaisedButton(
                   elevation: 7,
                   color: btnColor,

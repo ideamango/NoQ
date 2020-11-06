@@ -1102,7 +1102,7 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: <Widget>[
                           Container(
-                            width: MediaQuery.of(context).size.width * .78,
+                            width: MediaQuery.of(context).size.width * .75,
                             child: Text(
                               (Utils.getFormattedAddress(str.address) != "")
                                   ? Utils.getFormattedAddress(str.address)
