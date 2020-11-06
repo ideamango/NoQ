@@ -187,6 +187,14 @@ String tokenAlreadyExists =
 
 String tryAgainToBook = "Please try again or choose a different time or date.";
 
+String faqHead1 = "How Sukoon helps bring Sukoon to your life?";
+String faqHead1Sub1 = "Lets look at the problems first..";
+String faqHead1Sub2 = "How this app helps me?";
+String faqHead2 = "Registration";
+String faqHead2Sub1 = "Registration";
+String faqHead2Sub2 = "How do I register?";
+String faqHead2Sub3 = "Would I be charged?";
+
 enum Role { Manager, Admin, ContactPerson, Employee }
 List<String> roleTypes = ['Admin', 'Manager'];
 // List<String> entityTypes = [

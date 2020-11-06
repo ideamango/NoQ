@@ -208,10 +208,11 @@ class _HelpPageState extends State<HelpPage> {
                                   height:
                                       MediaQuery.of(context).size.width * .08,
                                   width: MediaQuery.of(context).size.width,
+                                  alignment: Alignment.center,
                                   padding: EdgeInsets.fromLTRB(6, 0, 0, 0),
                                   decoration: btnColorContainer,
                                   child: Text(
-                                    "How Sukoon helps bring Sukoon to your life?",
+                                    faqHead1,
                                     style: faqTabTextStyle,
                                   )),
                               Padding(
@@ -219,7 +220,7 @@ class _HelpPageState extends State<HelpPage> {
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: <Widget>[
-                                    Text('Lets look at the problems first..',
+                                    Text(faqHead1Sub1,
                                         style: textLabelTextStyle),
                                     verticalSpacer,
                                     RichText(
@@ -245,7 +246,7 @@ class _HelpPageState extends State<HelpPage> {
                                     verticalSpacer,
                                     myDivider,
                                     verticalSpacer,
-                                    Text('How this app helps me?',
+                                    Text(faqHead1Sub2,
                                         style: textLabelTextStyle),
                                     verticalSpacer,
                                     RichText(
@@ -286,9 +287,10 @@ class _HelpPageState extends State<HelpPage> {
                                       MediaQuery.of(context).size.width * .08,
                                   width: MediaQuery.of(context).size.width,
                                   padding: EdgeInsets.fromLTRB(6, 0, 0, 0),
+                                  alignment: Alignment.center,
                                   decoration: btnColorContainer,
                                   child: Text(
-                                    "Registration",
+                                    faqHead2,
                                     style: whiteBoldTextStyle1,
                                   )),
                               Padding(
@@ -296,7 +298,7 @@ class _HelpPageState extends State<HelpPage> {
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: <Widget>[
-                                    Text('How do I register?',
+                                    Text(faqHead2Sub2,
                                         style: textLabelTextStyle),
                                     verticalSpacer,
                                     RichText(
@@ -305,10 +307,7 @@ class _HelpPageState extends State<HelpPage> {
                                             children: <TextSpan>[
                                           TextSpan(
                                               text:
-                                                  'Registering with us is very simple and safe. We just ask for your phone number and '),
-                                          TextSpan(
-                                              text:
-                                                  'NO other details will be asked. After providing your number, you will recieve an OTP on your '),
+                                                  'Registering with us is very simple and safe. We just ask for your phone number and NO other details will be asked. After providing your number, you will recieve an OTP on your '),
                                           TextSpan(
                                               text:
                                                   'phone number, just enter that and Done!!'),
@@ -316,7 +315,7 @@ class _HelpPageState extends State<HelpPage> {
                                     verticalSpacer,
                                     myDivider,
                                     verticalSpacer,
-                                    Text('Would I be charged?',
+                                    Text(faqHead2Sub3,
                                         style: textLabelTextStyle),
                                     verticalSpacer,
                                     RichText(
@@ -376,6 +375,7 @@ class _HelpPageState extends State<HelpPage> {
                                   width: MediaQuery.of(context).size.width,
                                   padding: EdgeInsets.fromLTRB(6, 0, 0, 0),
                                   decoration: btnColorContainer,
+                                  alignment: Alignment.center,
                                   child: Text(
                                     "How does it work?",
                                     style: whiteBoldTextStyle1,

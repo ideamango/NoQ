@@ -62,6 +62,14 @@ class GlobalState {
     return _gs;
   }
 
+ static Future<List<String>> getEntityTypesFromConf() async {
+    if (_gs == null) {
+      _gs = new GlobalState._();
+    }
+    
+ }
+
+
   List<UserToken> getPastBookings() {
     List<UserToken> pastBookings = new List<UserToken>();
     DateTime now = DateTime.now();

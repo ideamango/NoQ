@@ -142,7 +142,10 @@ flutter:
   fonts:
       - family: AnandaNamaste
         fonts:
-          - asset: fonts/AnandaNamaste.ttf       
+          - asset: fonts/AnandaNamaste.ttf 
+      - family: RalewayRegular
+        fonts:
+          - asset: fonts/Raleway-Regular.ttf      
   #   - family: Trajan Pro
   #     fonts:
   #       - asset: fonts/TrajanPro.ttf

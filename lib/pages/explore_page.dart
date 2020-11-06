@@ -74,55 +74,22 @@ class _ExplorePageState extends State<ExplorePage> {
   void initState() {
     super.initState();
     _isSearching = "initial";
-    // getGlobalState().whenComplete(() {
-    //   fetchPastSearchesList();
-    //   searchTypes = _state.conf.entityTypes;
-    //   //insert only if 'All' option not there
-    //   if (!searchTypes.contains(_searchInAll))
-    //     searchTypes.insert(0, _searchInAll);
-    //   setState(() {
-    //     initCompleted = true;
-    //   });
-    // });
+    getGlobalState().whenComplete(() {
+      //   fetchPastSearchesList();
+      searchTypes = _state.conf.entityTypes;
+      //insert only if 'All' option not there
+      if (!searchTypes.contains(_searchInAll))
+        searchTypes.insert(0, _searchInAll);
+      setState(() {
+        initCompleted = true;
+      });
+    });
   }
 
   @override
   void dispose() {
     super.dispose();
   }
-
-  // void fetchPastSearchesList() {
-  //   //Load details from local files
-  //   // if (initCompleted) {
-  //   if (!Utils.isNullOrEmpty(_state.pastSearches)) {
-  //     setState(() {
-  //       _pastSearches = _state.pastSearches;
-  //     });
-
-  //     // }
-  //   } else if (_state.pastSearches != null && _state.pastSearches.length == 0)
-  //     messageTitle = "No previous searches!!";
-  //   //  _list = _stores;
-  // }
-
-  // _SearchStoresPageState() {
-  //   _searchTextController.addListener(() {
-  //     if (_searchTextController.text.isEmpty && _entityType == null) {
-  //       setState(() {
-  //         _isSearching = "initial";
-  //         _searchText = "";
-  //       });
-  //     } else {
-  //       if (_searchTextController.text.length >= 3) {
-  //         setState(() {
-  //           _isSearching = "searching";
-  //           _searchText = _searchTextController.text;
-  //         });
-  //         _buildSearchList();
-  //       }
-  //     }
-  //   });
-  // }
 
   Future<void> getGlobalState() async {
     _state = await GlobalState.getGlobalState();
@@ -247,82 +214,40 @@ class _ExplorePageState extends State<ExplorePage> {
   @override
   Widget build(BuildContext context) {
 // build widget only after init has completed, till then show progress indicator.
-    if (!initCompleted) {
-      return MaterialApp(
-        theme: ThemeData.light().copyWith(),
-        home: WillPopScope(
-          child: Scaffold(
-            appBar: CustomAppBar(
-              titleTxt: "Search",
-            ),
-            body: Center(
-              child: Container(
-                margin: EdgeInsets.fromLTRB(
-                    10,
-                    MediaQuery.of(context).size.width * .5,
-                    10,
-                    MediaQuery.of(context).size.width * .5),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    showCircularProgress(),
-                  ],
-                ),
-              ),
-            ),
+    // if (!initCompleted) {
+    //   return MaterialApp(
+    //     theme: ThemeData.light().copyWith(),
+    //     home: WillPopScope(
+    //       child: Scaffold(
+    //         appBar: CustomAppBar(
+    //           titleTxt: "Search",
+    //         ),
+    //         body: Center(
+    //           child: Container(
+    //             margin: EdgeInsets.fromLTRB(
+    //                 10,
+    //                 MediaQuery.of(context).size.width * .5,
+    //                 10,
+    //                 MediaQuery.of(context).size.width * .5),
+    //             child: Column(
+    //               mainAxisAlignment: MainAxisAlignment.center,
+    //               children: <Widget>[
+    //                 showCircularProgress(),
+    //               ],
+    //             ),
+    //           ),
+    //         ),
 
-            //drawer: CustomDrawer(),
-            // bottomNavigationBar: CustomBottomBar(barIndex: 1)
-          ),
-          onWillPop: () async {
-            return true;
-          },
-        ),
-      );
-    } else {
-      Widget categoryDropDown = Container(
-          width: MediaQuery.of(context).size.width * .48,
-          height: MediaQuery.of(context).size.width * .1,
-          decoration: new BoxDecoration(
-            shape: BoxShape.rectangle,
-            color: Colors.white,
-            // color: Colors.white,
-            borderRadius: BorderRadius.all(Radius.circular(5.0)),
-            border: new Border.all(
-              color: Colors.blueGrey[400],
-              width: 0.5,
-            ),
-          ),
-          child: DropdownButtonHideUnderline(
-              child: ButtonTheme(
-            alignedDropdown: true,
-            child: new DropdownButton(
-              iconEnabledColor: Colors.blueGrey[500],
-              dropdownColor: Colors.white,
-              itemHeight: kMinInteractiveDimension,
-              hint: new Text("Select a category"),
-              style: TextStyle(fontSize: 12, color: Colors.blueGrey[500]),
-              value: _entityType,
-              isDense: true,
-              // icon: Icon(Icons.search),
-              onChanged: (newValue) {
-                setState(() {
-                  _entityType = newValue;
-                  _isSearching = "searching";
-                  _buildSearchList();
-                });
-              },
-              items: searchTypes.map((type) {
-                return DropdownMenuItem(
-                  value: type,
-                  child: new Text(type.toString(),
-                      style:
-                          TextStyle(fontSize: 12, color: Colors.blueGrey[500])),
-                );
-              }).toList(),
-            ),
-          )));
-      Widget searchInputText = Container(
+    //         //drawer: CustomDrawer(),
+    //         // bottomNavigationBar: CustomBottomBar(barIndex: 1)
+    //       ),
+    //       onWillPop: () async {
+    //         return true;
+    //       },
+    //     ),
+    //   );
+    // } else {
+    Widget categoryDropDown = Container(
         width: MediaQuery.of(context).size.width * .48,
         height: MediaQuery.of(context).size.width * .1,
         decoration: new BoxDecoration(
@@ -335,244 +260,282 @@ class _ExplorePageState extends State<ExplorePage> {
             width: 0.5,
           ),
         ),
-        alignment: Alignment.center,
-        child: new TextField(
-          //autofocus: true,
-          controller: _searchTextController,
-          cursorColor: Colors.blueGrey[500],
-          cursorWidth: 1,
-          textAlignVertical: TextAlignVertical.center,
-          style: new TextStyle(fontSize: 12, color: Colors.blueGrey[700]),
-          decoration: new InputDecoration(
-              contentPadding: EdgeInsets.all(2),
-              isDense: true,
-              prefixIconConstraints: BoxConstraints(
-                maxWidth: 25,
-                maxHeight: 22,
-              ),
-              suffixIconConstraints: BoxConstraints(
-                maxWidth: 25,
-                maxHeight: 22,
-              ),
+        child: DropdownButtonHideUnderline(
+            child: ButtonTheme(
+          alignedDropdown: true,
+          child: new DropdownButton(
+            iconEnabledColor: Colors.blueGrey[500],
+            dropdownColor: Colors.white,
+            itemHeight: kMinInteractiveDimension,
+            hint: new Text("Select a category"),
+            style: TextStyle(fontSize: 12, color: Colors.blueGrey[500]),
+            value: _entityType,
+            isDense: true,
+            // icon: Icon(Icons.search),
+            onChanged: (newValue) {
+              setState(() {
+                _entityType = newValue;
+                _isSearching = "searching";
+                _buildSearchList();
+              });
+            },
+            items: searchTypes.map((type) {
+              return DropdownMenuItem(
+                value: type,
+                child: new Text(type.toString(),
+                    style:
+                        TextStyle(fontSize: 12, color: Colors.blueGrey[500])),
+              );
+            }).toList(),
+          ),
+        )));
+    Widget searchInputText = Container(
+      width: MediaQuery.of(context).size.width * .48,
+      height: MediaQuery.of(context).size.width * .1,
+      decoration: new BoxDecoration(
+        shape: BoxShape.rectangle,
+        color: Colors.white,
+        // color: Colors.white,
+        borderRadius: BorderRadius.all(Radius.circular(5.0)),
+        border: new Border.all(
+          color: Colors.blueGrey[400],
+          width: 0.5,
+        ),
+      ),
+      alignment: Alignment.center,
+      child: new TextField(
+        //autofocus: true,
+        controller: _searchTextController,
+        cursorColor: Colors.blueGrey[500],
+        cursorWidth: 1,
+        textAlignVertical: TextAlignVertical.center,
+        style: new TextStyle(fontSize: 12, color: Colors.blueGrey[700]),
+        decoration: new InputDecoration(
+            contentPadding: EdgeInsets.all(2),
+            isDense: true,
+            prefixIconConstraints: BoxConstraints(
+              maxWidth: 25,
+              maxHeight: 22,
+            ),
+            suffixIconConstraints: BoxConstraints(
+              maxWidth: 25,
+              maxHeight: 22,
+            ),
 
-              //contentPadding: EdgeInsets.all(0),
-              focusedBorder: UnderlineInputBorder(
-                  borderSide: BorderSide(color: Colors.transparent)),
-              enabledBorder: OutlineInputBorder(
-                borderSide: BorderSide(color: Colors.transparent, width: 0.5),
-              ),
-              prefixIcon: IconButton(
-                // transform: Matrix4.translationValues(-10.0, 0, 0),
-                icon: new Icon(Icons.search,
-                    size: 17, color: Colors.blueGrey[500]),
-                alignment: Alignment.center,
+            //contentPadding: EdgeInsets.all(0),
+            focusedBorder: UnderlineInputBorder(
+                borderSide: BorderSide(color: Colors.transparent)),
+            enabledBorder: OutlineInputBorder(
+              borderSide: BorderSide(color: Colors.transparent, width: 0.5),
+            ),
+            prefixIcon: IconButton(
+              // transform: Matrix4.translationValues(-10.0, 0, 0),
+              icon:
+                  new Icon(Icons.search, size: 17, color: Colors.blueGrey[500]),
+              alignment: Alignment.center,
+              padding: EdgeInsets.all(0),
+              onPressed: () {},
+            ),
+            suffixIcon: new IconButton(
+                //constraints: BoxConstraints.tight(Size(15, 15)),
+                alignment: Alignment.centerLeft,
                 padding: EdgeInsets.all(0),
-                onPressed: () {},
-              ),
-              suffixIcon: new IconButton(
-                  //constraints: BoxConstraints.tight(Size(15, 15)),
-                  alignment: Alignment.centerLeft,
-                  padding: EdgeInsets.all(0),
-                  icon: new Icon(
-                    Icons.close,
-                    size: 17,
-                    color: Colors.blueGrey[500],
-                  ),
-                  onPressed: () {
-                    //TODO: correct search end
-                    searchBoxClicked = false;
-                    _searchTextController.clear();
-                    _searchText = "";
-                    setState(() {
-                      _isSearching = "searching";
-                    });
-                    _buildSearchList();
-                  }),
-
-              // Container(
-              //   // transform: Matrix4.translationValues(3.0, 3, 0),
-              //   padding: EdgeInsets.all(0),
-              //   margin: ,
-              //   child:
-              // ),
-              // suffixIconConstraints: BoxConstraints(
-              //   maxWidth: 25,
-              //   maxHeight: 22,
-              // ),
-              hintText: "Search by Name",
-              hintStyle:
-                  new TextStyle(fontSize: 12, color: Colors.blueGrey[500])),
-          onChanged: (value) {
-            if (_searchTextController.text.isEmpty) {
-              if (_entityType == null)
-                setState(() {
-                  _isSearching = "initial";
+                icon: new Icon(
+                  Icons.close,
+                  size: 17,
+                  color: Colors.blueGrey[500],
+                ),
+                onPressed: () {
+                  //TODO: correct search end
+                  searchBoxClicked = false;
+                  _searchTextController.clear();
                   _searchText = "";
-                });
-              else {
+                  setState(() {
+                    _isSearching = "searching";
+                  });
+                  _buildSearchList();
+                }),
+
+            // Container(
+            //   // transform: Matrix4.translationValues(3.0, 3, 0),
+            //   padding: EdgeInsets.all(0),
+            //   margin: ,
+            //   child:
+            // ),
+            // suffixIconConstraints: BoxConstraints(
+            //   maxWidth: 25,
+            //   maxHeight: 22,
+            // ),
+            hintText: "Search by Name",
+            hintStyle:
+                new TextStyle(fontSize: 12, color: Colors.blueGrey[500])),
+        onChanged: (value) {
+          if (_searchTextController.text.isEmpty) {
+            if (_entityType == null)
+              setState(() {
+                _isSearching = "initial";
+                _searchText = "";
+              });
+            else {
+              _searchText = _searchTextController.text;
+              _buildSearchList();
+            }
+          } else {
+            if (_searchTextController.text.length >= 3) {
+              setState(() {
+                _isSearching = "searching";
                 _searchText = _searchTextController.text;
                 _buildSearchList();
-              }
-            } else {
-              if (_searchTextController.text.length >= 3) {
-                setState(() {
-                  _isSearching = "searching";
-                  _searchText = _searchTextController.text;
-                  _buildSearchList();
-                });
-              }
+              });
             }
-          },
-        ),
-      );
-      Widget filterBar = Container(
-        margin: EdgeInsets.fromLTRB(0, 5, 0, 0),
-        //  padding: EdgeInsets.fromLTRB(5, 0, 5, 0),
-        //decoration: gradientBackground,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: <Widget>[categoryDropDown, searchInputText],
-        ),
-      );
-      String title = "Search";
-      print(_searchText);
-      print(_entityType);
-      if (_isSearching == "initial" &&
-          _searchText.isEmpty &&
-          _entityType == null)
-        return MaterialApp(
-          routes: <String, WidgetBuilder>{
-            '/childSearch': (BuildContext context) =>
-                SearchChildEntityOldPage(),
-            '/mainSearch': (BuildContext context) => SearchEntityPage(),
-          },
-          theme: ThemeData.light().copyWith(),
-          home: WillPopScope(
-            child: Scaffold(
-              resizeToAvoidBottomInset: false,
-              appBar: AppBar(
-                  actions: <Widget>[],
-                  flexibleSpace: Container(
-                    decoration: gradientBackground,
-                  ),
-                  leading: IconButton(
-                      padding: EdgeInsets.all(0),
-                      alignment: Alignment.center,
-                      highlightColor: Colors.orange[300],
-                      icon: Icon(Icons.arrow_back),
-                      color: Colors.white,
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => UserHomePage()));
-                      }),
-                  title: Text(
-                    title,
-                    style: TextStyle(color: Colors.white, fontSize: 16),
-                    overflow: TextOverflow.ellipsis,
-                  )),
-              body: Column(
-                children: <Widget>[
-                  filterBar,
-                  (!Utils.isNullOrEmpty(_pastSearches))
-                      ? Expanded(
-                          child: ListView.builder(
-                              itemCount: 1,
-                              itemBuilder: (BuildContext context, int index) {
-                                return Container(
-                                  margin: EdgeInsets.fromLTRB(10, 10, 10, 10),
-                                  child: new Column(
-                                    children: showPastSearches(),
-                                  ),
-                                );
-                              }),
-                        )
-                      : _emptySearchPage(),
-                ],
-              ),
-              // drawer: CustomDrawer(),
-              // bottomNavigationBar: CustomBottomBar(barIndex: 1)
-
-              // drawer: CustomDrawer(),
+          }
+        },
+      ),
+    );
+    Widget filterBar = Container(
+      margin: EdgeInsets.fromLTRB(0, 5, 0, 0),
+      //  padding: EdgeInsets.fromLTRB(5, 0, 5, 0),
+      //decoration: gradientBackground,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: <Widget>[categoryDropDown, searchInputText],
+      ),
+    );
+    String title = "Search";
+    print(_searchText);
+    print(_entityType);
+    if (_isSearching == "initial" && _searchText.isEmpty && _entityType == null)
+      return MaterialApp(
+        routes: <String, WidgetBuilder>{
+          '/childSearch': (BuildContext context) => SearchChildEntityOldPage(),
+          '/mainSearch': (BuildContext context) => SearchEntityPage(),
+        },
+        theme: ThemeData.light().copyWith(),
+        home: WillPopScope(
+          child: Scaffold(
+            resizeToAvoidBottomInset: false,
+            appBar: AppBar(
+                actions: <Widget>[],
+                flexibleSpace: Container(
+                  decoration: gradientBackground,
+                ),
+                leading: IconButton(
+                    padding: EdgeInsets.all(0),
+                    alignment: Alignment.center,
+                    highlightColor: Colors.orange[300],
+                    icon: Icon(Icons.arrow_back),
+                    color: Colors.white,
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => UserHomePage()));
+                    }),
+                title: Text(
+                  title,
+                  style: TextStyle(color: Colors.white, fontSize: 16),
+                  overflow: TextOverflow.ellipsis,
+                )),
+            body: Column(
+              children: <Widget>[
+                filterBar,
+                (!Utils.isNullOrEmpty(_pastSearches))
+                    ? Expanded(
+                        child: ListView.builder(
+                            itemCount: 1,
+                            itemBuilder: (BuildContext context, int index) {
+                              return Container(
+                                margin: EdgeInsets.fromLTRB(10, 10, 10, 10),
+                                child: new Column(
+                                  children: showPastSearches(),
+                                ),
+                              );
+                            }),
+                      )
+                    : _emptySearchPage(),
+              ],
             ),
-            onWillPop: () async {
-              return true;
-            },
+            // drawer: CustomDrawer(),
+            // bottomNavigationBar: CustomBottomBar(barIndex: 1)
+
+            // drawer: CustomDrawer(),
           ),
-        );
-      else {
-        print("Came in isSearching");
-        return MaterialApp(
-          routes: <String, WidgetBuilder>{
-            '/childSearch': (BuildContext context) =>
-                SearchChildEntityOldPage(),
-            '/mainSearch': (BuildContext context) => SearchEntityPage(),
+          onWillPop: () async {
+            return true;
           },
-          theme: ThemeData.light().copyWith(),
-          home: WillPopScope(
-            child: Scaffold(
-              appBar: AppBar(
-                  actions: <Widget>[],
-                  flexibleSpace: Container(
-                    decoration: gradientBackground,
-                  ),
-                  leading: IconButton(
-                      padding: EdgeInsets.all(0),
-                      alignment: Alignment.center,
-                      highlightColor: Colors.orange[300],
-                      icon: Icon(Icons.arrow_back),
-                      color: Colors.white,
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => UserHomePage()));
-                      }),
-                  title: Text(
-                    title,
-                    style: TextStyle(color: Colors.white, fontSize: 16),
-                    overflow: TextOverflow.ellipsis,
-                  )),
-              body: Column(
-                children: <Widget>[
-                  filterBar,
-                  (_isSearching == "done")
-                      ? ((_stores.length == 0)
-                          ? _emptySearchPage()
-                          : Expanded(child: _listSearchResults()))
-                      //Else could be one when isSearching is 'searching', show circular progress.
-                      : Center(
-                          child: Container(
-                            height: MediaQuery.of(context).size.height * .35,
-                            alignment: Alignment.bottomCenter,
-                            child: SingleChildScrollView(
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                mainAxisSize: MainAxisSize.min,
-                                children: <Widget>[
-                                  showCircularProgress(),
-                                ],
-                              ),
+        ),
+      );
+    else {
+      print("Came in isSearching");
+      return MaterialApp(
+        routes: <String, WidgetBuilder>{
+          '/childSearch': (BuildContext context) => SearchChildEntityOldPage(),
+          '/mainSearch': (BuildContext context) => SearchEntityPage(),
+        },
+        theme: ThemeData.light().copyWith(),
+        home: WillPopScope(
+          child: Scaffold(
+            appBar: AppBar(
+                actions: <Widget>[],
+                flexibleSpace: Container(
+                  decoration: gradientBackground,
+                ),
+                leading: IconButton(
+                    padding: EdgeInsets.all(0),
+                    alignment: Alignment.center,
+                    highlightColor: Colors.orange[300],
+                    icon: Icon(Icons.arrow_back),
+                    color: Colors.white,
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => UserHomePage()));
+                    }),
+                title: Text(
+                  title,
+                  style: TextStyle(color: Colors.white, fontSize: 16),
+                  overflow: TextOverflow.ellipsis,
+                )),
+            body: Column(
+              children: <Widget>[
+                filterBar,
+                (_isSearching == "done")
+                    ? ((_stores.length == 0)
+                        ? _emptySearchPage()
+                        : Expanded(child: _listSearchResults()))
+                    //Else could be one when isSearching is 'searching', show circular progress.
+                    : Center(
+                        child: Container(
+                          height: MediaQuery.of(context).size.height * .35,
+                          alignment: Alignment.bottomCenter,
+                          child: SingleChildScrollView(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              mainAxisSize: MainAxisSize.min,
+                              children: <Widget>[
+                                showCircularProgress(),
+                              ],
                             ),
                           ),
-                        )
-                ],
-              ),
-              // drawer: CustomDrawer(),
-              // bottomNavigationBar: CustomBottomBar(barIndex: 1)
-
-              // drawer: CustomDrawer(),
+                        ),
+                      )
+              ],
             ),
-            onWillPop: () async {
-              return true;
-            },
+            // drawer: CustomDrawer(),
+            // bottomNavigationBar: CustomBottomBar(barIndex: 1)
+
+            // drawer: CustomDrawer(),
           ),
-        );
-      }
+          onWillPop: () async {
+            return true;
+          },
+        ),
+      );
     }
+    // }
   }
 
   Widget _buildItem(Entity str) {

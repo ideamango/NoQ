@@ -71,18 +71,12 @@ class _UserHomePageState extends State<UserHomePage> {
   @override
   void initState() {
     super.initState();
-    setState(() {
-      _upcomingBkgStatus = 'Loading';
-      _pastBkgStatus = 'Loading';
-    });
     getGlobalState().whenComplete(() {
+      _loadBookings();
       setState(() {
         _initCompleted = true;
       });
-      _loadBookings();
     });
-
-    //  this.initDynamicLinks();
   }
 
   Future<void> getGlobalState() async {
@@ -137,9 +131,7 @@ class _UserHomePageState extends State<UserHomePage> {
   }
 
   void _loadBookings() async {
-    //Fetch details from server
-
-    //loadDataFromPrefs();
+    //Fetch booking details from server
     fetchDataFromGlobalState();
   }
 
@@ -318,8 +310,8 @@ class _UserHomePageState extends State<UserHomePage> {
                               if (_upcomingBkgStatus == 'NoBookings')
                                 _emptyStorePage("No bookings yet.. ",
                                     "Book now to save time later!! "),
-                              if (_upcomingBkgStatus == 'Loading')
-                                showCircularProgress(),
+                              // if (_upcomingBkgStatus == 'Loading')
+                              //   showCircularProgress(),
                             ],
                           ),
                         ),
@@ -342,22 +334,6 @@ class _UserHomePageState extends State<UserHomePage> {
                         padding: EdgeInsets.all(5),
                         child: Image(image: AssetImage('assets/6.jpg')),
                       ),
-                      // Container(
-                      //   width: MediaQuery.of(context).size.width * .8,
-                      //   height: MediaQuery.of(context).size.height * .2,
-                      //   child: Row(children: <Widget>[
-                      //     RichText(
-                      //       text: TextSpan(
-                      //           style: highlightSubTextStyle,
-                      //           children: <TextSpan>[
-                      //             TextSpan(
-                      //                 text:
-                      //                     "Click here if you  own a business, See how this works!"),
-                      //           ]),
-                      //     ),
-                      //     BookingsSheetButton(),
-                      //   ]),
-                      // )
                     ],
                   ),
                 ),
