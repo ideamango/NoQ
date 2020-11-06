@@ -155,7 +155,7 @@ final textBotSheetTextStyle = TextStyle(
 final textLabelTextStyle = TextStyle(
   color: Colors.blueGrey[900],
   // fontWeight: FontWeight.w800,
-  fontFamily: 'Monsterrat',
+  fontFamily: 'RalewayRegular',
   letterSpacing: 0.5,
   fontSize: 15.0,
   //height: 2,
@@ -170,11 +170,9 @@ final labelSmlTextStyle = TextStyle(
 );
 final labelMedTextStyle = TextStyle(
   color: Colors.grey[700],
-  // fontWeight: FontWeight.w800,
   fontFamily: 'Monsterrat',
   letterSpacing: 0.5,
   fontSize: 15.0,
-  //height: 2,
 );
 final infoTextStyle = TextStyle(
   color: Colors.blueGrey[700],
@@ -219,7 +217,10 @@ final Color btnDisabledolor = Colors.blueGrey[200];
 
 final Color highlightText = Colors.blueGrey[800];
 final highlightSubTextStyle = TextStyle(
-    color: Colors.blueGrey[800], fontFamily: 'Montserrat', fontSize: 12.0);
+    color: Colors.black87,
+    fontFamily: 'RalewayRegular',
+    fontSize: 12.0,
+    height: 1.5);
 final lightTextStyle =
     TextStyle(color: Colors.white, fontFamily: 'Montserrat', fontSize: 12.0);
 final linkTextStyle = TextStyle(
@@ -234,10 +235,7 @@ final tokenTextStyle = TextStyle(
     fontSize: 15.0);
 
 final tokenDataTextStyle = TextStyle(
-    color: primaryAccentColor,
-    //fontWeight: FontWeight.w500,
-    fontFamily: 'Montserrat',
-    fontSize: 12.0);
+    fontFamily: 'RalewayRegular', fontSize: 12, color: primaryAccentColor);
 final tokenDateTextStyle = TextStyle(
     color: Colors.white,
     // fontWeight: FontWeight.w500,
