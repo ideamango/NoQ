@@ -671,7 +671,7 @@ class _SearchEntityPageState extends State<SearchEntityPage>
                                 itemCount: 1,
                                 itemBuilder: (BuildContext context, int index) {
                                   return Container(
-                                    margin: EdgeInsets.fromLTRB(10, 0, 10, 0),
+                                    margin: EdgeInsets.fromLTRB(10, 0, 10, 50),
                                     child: new Column(
                                       children: showPastSearches(),
                                     ),
