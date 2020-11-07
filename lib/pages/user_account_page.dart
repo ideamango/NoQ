@@ -641,7 +641,7 @@ class _UserAccountPageState extends State<UserAccountPage> {
             body: Column(
               children: <Widget>[
                 Container(
-                  height: MediaQuery.of(context).size.height * .75,
+                  height: MediaQuery.of(context).size.height * .721,
                   child: Scrollbar(
                     child: SingleChildScrollView(
                       padding: EdgeInsets.all(
@@ -906,7 +906,7 @@ class _UserAccountPageState extends State<UserAccountPage> {
                   ),
                 ),
                 Container(
-                  height: MediaQuery.of(context).size.height * .05,
+                  height: MediaQuery.of(context).size.height * .07,
                   width: MediaQuery.of(context).size.width,
                   child: RaisedButton(
                       color: btnColor,
