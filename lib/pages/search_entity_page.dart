@@ -26,6 +26,7 @@ import 'package:share/share.dart';
 
 import '../userHomePage.dart';
 import 'package:eventify/eventify.dart' as Eventify;
+import 'package:auto_size_text/auto_size_text.dart';
 
 class SearchEntityPage extends StatefulWidget {
   //final String forPage;
@@ -983,9 +984,11 @@ class _SearchEntityPageState extends State<SearchEntityPage>
                                     padding: EdgeInsets.zero,
                                     width:
                                         MediaQuery.of(context).size.width * .46,
-                                    child: Text(
+                                    child: AutoSizeText(
                                       (str.name) ?? str.name.toString(),
                                       style: TextStyle(fontSize: 17),
+                                      maxLines: 1,
+                                      minFontSize: 14,
                                       overflow: TextOverflow.ellipsis,
                                     ),
                                   ),
@@ -1084,21 +1087,18 @@ class _SearchEntityPageState extends State<SearchEntityPage>
                           ],
                         ),
                       ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: <Widget>[
-                          Container(
-                            width: MediaQuery.of(context).size.width * .78,
-                            child: Text(
-                              (Utils.getFormattedAddress(str.address) != "")
-                                  ? Utils.getFormattedAddress(str.address)
-                                  : "No Address found",
-                              overflow: TextOverflow.ellipsis,
-                              style: labelSmlTextStyle,
-                            ),
-                          ),
-                        ],
+                      Container(
+                        padding: EdgeInsets.only(top: 3),
+                        width: MediaQuery.of(context).size.width * .78,
+                        child: AutoSizeText(
+                          (Utils.getFormattedAddress(str.address) != "")
+                              ? Utils.getFormattedAddress(str.address)
+                              : "No Address found",
+                          maxLines: 1,
+                          minFontSize: 12,
+                          overflow: TextOverflow.ellipsis,
+                          style: labelSmlTextStyle,
+                        ),
                       ),
                       SizedBox(height: 5),
                       if (str.isBookable != null && str.isActive != null)
@@ -1107,16 +1107,8 @@ class _SearchEntityPageState extends State<SearchEntityPage>
                               width: MediaQuery.of(context).size.width * .78,
                               //padding: EdgeInsets.fromLTRB(0, 5, 5, 5),
                               child: Row(
-                                children: <Widget>[
-                                  Row(
-                                    children: _buildDateGridItems(
-                                        str,
-                                        str.entityId,
-                                        str.name,
-                                        str.closedOn,
-                                        str.advanceDays),
-                                  ),
-                                ],
+                                children: _buildDateGridItems(str, str.entityId,
+                                    str.name, str.closedOn, str.advanceDays),
                               )),
                     ],
                   ),
