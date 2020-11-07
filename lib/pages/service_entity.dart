@@ -107,7 +107,7 @@ class ChildEntityRowState extends State<ChildEntityRow> {
     return Container(
       // height: MediaQuery.of(context).size.width * .55,
       margin: EdgeInsets.all(5),
-      padding: EdgeInsets.all(5),
+      padding: EdgeInsets.all(8),
       decoration: BoxDecoration(
           border: Border.all(color: borderColor),
           color: Colors.white,
@@ -115,10 +115,10 @@ class ChildEntityRowState extends State<ChildEntityRow> {
           borderRadius: BorderRadius.all(Radius.circular(5.0))),
       child: Column(
         //   mainAxisSize: MainAxisSize.max,
-        //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: <Widget>[
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            //mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
               GestureDetector(
                 onTap: () {
@@ -126,7 +126,7 @@ class ChildEntityRowState extends State<ChildEntityRow> {
                   showServiceForm();
                 },
                 child: Container(
-                  padding: EdgeInsets.fromLTRB(0, 0, 5, 0),
+                  //padding: EdgeInsets.fromLTRB(0, 0, 5, 0),
                   width: MediaQuery.of(context).size.width * .5,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -135,6 +135,7 @@ class ChildEntityRowState extends State<ChildEntityRow> {
                         (_metaEntity.name != null)
                             ? _metaEntity.name
                             : "Untitled",
+                        overflow: TextOverflow.ellipsis,
                         style: TextStyle(
                             color: Colors.blueGrey[700], fontSize: 17),
                       ),
@@ -147,9 +148,9 @@ class ChildEntityRowState extends State<ChildEntityRow> {
                 ),
               ),
               Container(
-                  padding: EdgeInsets.fromLTRB(0, 0, 5, 0),
+                  padding: EdgeInsets.zero,
                   margin: EdgeInsets.zero,
-                  width: MediaQuery.of(context).size.width * .4,
+                  width: MediaQuery.of(context).size.width * .36,
                   //   height: MediaQuery.of(context).size.width * .08,
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.end,
@@ -192,14 +193,14 @@ class ChildEntityRowState extends State<ChildEntityRow> {
                   )),
             ],
           ),
-          verticalSpacer,
+          //  horizontalSpacer,
           Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: <Widget>[
               Container(
-                margin: EdgeInsets.fromLTRB(0, 0, 5, 0),
+                //margin: EdgeInsets.fromLTRB(0, 0, 5, 0),
                 height: 30,
-                width: MediaQuery.of(context).size.width * .45,
+                width: MediaQuery.of(context).size.width * .42,
                 child: RaisedButton(
                   elevation: 7,
                   color: btnColor,

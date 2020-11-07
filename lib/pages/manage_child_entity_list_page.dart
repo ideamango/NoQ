@@ -16,6 +16,10 @@ import 'package:noq/utils.dart';
 import 'package:noq/widget/appbar.dart';
 import 'package:noq/widget/bottom_nav_bar.dart';
 import 'package:uuid/uuid.dart';
+import 'package:noq/events/event_bus.dart';
+import 'package:noq/events/events.dart';
+import 'package:eventify/eventify.dart' as Eventify;
+import 'package:noq/widget/widgets.dart';
 
 class ManageChildEntityListPage extends StatefulWidget {
   final Entity entity;
@@ -43,9 +47,63 @@ class _ManageChildEntityListPageState extends State<ManageChildEntityListPage> {
 //Add service Row
 
   int _count = 0;
+  String categoryType;
+  PersistentBottomSheetController childBottomSheetController;
+  final manageChildEntityListPagekey = new GlobalKey<ScaffoldState>();
+  Eventify.Listener _eventListener;
+
+  Widget _buildCategoryItem(BuildContext context, int index) {
+    String name = subEntityTypes[index];
+    Widget image = Utils.getEntityTypeImage(name, 30);
+
+    return GestureDetector(
+        onTap: () {
+          categoryType = name;
+          childBottomSheetController.close();
+          childBottomSheetController = null;
+          //   Navigator.of(context).pop();
+          EventBus.fireEvent(SEARCH_CATEGORY_SELECTED, null, categoryType);
+        },
+        child: Column(
+          children: <Widget>[
+            Container(
+                padding: EdgeInsets.all(0),
+                width: MediaQuery.of(context).size.width * .15,
+                height: MediaQuery.of(context).size.width * .15,
+                child: image),
+            Text(
+              name,
+              textAlign: TextAlign.center,
+              style: textBotSheetTextStyle,
+            ),
+          ],
+        ));
+  }
+
+  void registerCategorySelectEvent() {
+    _eventListener =
+        EventBus.registerEvent(SEARCH_CATEGORY_SELECTED, null, (event, arg) {
+      if (event == null) {
+        return;
+      }
+      String categoryType = event.eventData;
+      setState(() {
+        _subEntityType = categoryType;
+      });
+      //If user has selected any type then add a row else show msg to user
+      if (_subEntityType != null) {
+        _addNewServiceRow();
+      } else {
+        //Utils.showMyFlushbar(context, icon, duration, title, msg)
+        print("Select sth ");
+      }
+    });
+  }
+
   @override
   void dispose() {
     super.dispose();
+    EventBus.unregisterEvent(_eventListener);
   }
 
   Future<Entity> getEntityById(String id) async {
@@ -74,7 +132,7 @@ class _ManageChildEntityListPageState extends State<ManageChildEntityListPage> {
         _initCompleted = true;
       });
     });
-
+    registerCategorySelectEvent();
     // subEntityTypes = new List<String>();
   }
 
@@ -150,9 +208,9 @@ class _ManageChildEntityListPageState extends State<ManageChildEntityListPage> {
       },
       onSaved: (String value) {
         _subEntityType = value;
-        setState(() {
-          _msg = null;
-        });
+        // setState(() {
+        //   _msg = null;
+        // });
         // entity.childCollection
         //    .add(new ChildEntityAppData.cType(value, entity.id));
         //   saveEntityDetails(entity);
@@ -165,143 +223,87 @@ class _ManageChildEntityListPageState extends State<ManageChildEntityListPage> {
         //theme: ThemeData.light().copyWith(),
         home: WillPopScope(
           child: Scaffold(
+            key: manageChildEntityListPagekey,
             appBar: CustomAppBarWithBackButton(
               backRoute: ManageEntityListPage(),
               titleTxt: title,
             ),
             body: Center(
-              child: new Form(
-                key: _servicesListFormKey,
-                autovalidate: true,
-                child: Padding(
-                  padding: const EdgeInsets.all(5.0),
-                  child: Column(
-                    children: <Widget>[
-                      Card(
-                        elevation: 20,
-                        child: Container(
-                          decoration: BoxDecoration(
-                              border: Border.all(color: borderColor),
-                              color: Colors.white,
-                              shape: BoxShape.rectangle,
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(5.0))),
-                          child: Column(
-                            children: <Widget>[
-                              Container(
-                                height: MediaQuery.of(context).size.width * .1,
-                                padding: EdgeInsets.fromLTRB(6, 0, 0, 0),
-                                decoration: darkContainer,
-                                child: Row(
-                                  children: <Widget>[
-                                    Icon(
-                                      Icons.business,
-                                      size: 35,
-                                      color: Colors.white,
-                                    ),
-                                    SizedBox(width: 12),
-                                    Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: <Widget>[
-                                        Text(
-                                          "Add a child Place",
-                                          style: TextStyle(
-                                              color: Colors.white,
-                                              fontSize: 15),
-                                        ),
-                                        //TODO: Smita- uncomment after adding null check
-                                        // Text(
-
-                                        //   (parentEntity.address.locality +
-                                        //           ", " +
-                                        //           parentEntity.address.city +
-                                        //           ".") ??
-                                        //       "",
-                                        //   style: buttonXSmlTextStyle,
-                                        // ),
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              //subEntityType,
-                              (_msg != null)
-                                  ? Text(
-                                      _msg,
-                                      style: errorTextStyle,
-                                    )
-                                  : Container(),
-                              Padding(
-                                padding:
-                                    const EdgeInsets.fromLTRB(8.0, 0, 8, 0),
-                                child: Row(
-                                  // mainAxisAlignment: MainAxisAlignment.end,
-                                  children: <Widget>[
-                                    Expanded(
-                                      child: subEntityType,
-                                    ),
-                                    Container(
-                                      child: IconButton(
-                                        icon: Icon(Icons.add_circle,
-                                            color: highlightColor, size: 40),
-                                        onPressed: () {
-                                          if (_subEntityType != null) {
-                                            setState(() {
-                                              _msg = null;
-                                            });
-                                            if (_servicesListFormKey
-                                                .currentState
-                                                .validate()) {
-                                              _servicesListFormKey.currentState
-                                                  .save();
-                                              _addNewServiceRow();
-                                            }
-                                          } else {
-                                            setState(() {
-                                              _msg = "Select type of place";
-                                            });
-                                          }
-                                        },
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
+              child: Column(
+                children: <Widget>[
+                  Card(
+                    elevation: 20,
+                    margin:
+                        EdgeInsets.all(MediaQuery.of(context).size.width * .03),
+                    child: Container(
+                      padding: EdgeInsets.all(5),
+                      decoration: BoxDecoration(
+                          border: Border.all(color: borderColor),
+                          color: Colors.white,
+                          shape: BoxShape.rectangle,
+                          borderRadius: BorderRadius.all(Radius.circular(5.0))),
+                      child: InkWell(
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: <Widget>[
+                            Text(" Add a new Place",
+                                style: TextStyle(
+                                    fontSize: 18, color: Colors.blueGrey[700])),
+                            horizontalSpacer,
+                            Icon(Icons.add_circle,
+                                color: highlightColor, size: 40),
+                          ],
                         ),
+                        onTap: () {
+                          print("Tappped");
+                          showCategorySheet();
+                        },
                       ),
-                      new Expanded(
-                        child: Align(
-                          alignment: Alignment.topCenter,
-                          child: ListView.builder(
-                            controller: _childScrollController,
-                            reverse: true,
-                            shrinkWrap: true,
-                            itemExtent: itemSize,
-                            //scrollDirection: Axis.vertical,
-                            itemBuilder: (BuildContext context, int index) {
-                              return Container(
-                                //  height: MediaQuery.of(context).size.height * .3,
-                                child: ChildEntityRow(
-                                    childEntity: servicesList[index],
-                                    entityMap: _entityMap),
-                              );
-                            },
-                            itemCount: servicesList.length,
-                          ),
-                        ),
-                      ),
-                    ],
+                    ),
                   ),
-                ),
-                // bottomNavigationBar: buildBottomItems()
+                  if (!Utils.isNullOrEmpty(servicesList))
+                    new Expanded(
+                      child: Align(
+                        alignment: Alignment.topCenter,
+                        child: ListView.builder(
+                          padding: EdgeInsets.all(
+                              MediaQuery.of(context).size.width * .026),
+                          controller: _childScrollController,
+                          reverse: true,
+                          shrinkWrap: true,
+                          itemExtent: itemSize,
+                          //scrollDirection: Axis.vertical,
+                          itemBuilder: (BuildContext context, int index) {
+                            return Container(
+                              //  height: MediaQuery.of(context).size.height * .3,
+                              child: ChildEntityRow(
+                                  childEntity: servicesList[index],
+                                  entityMap: _entityMap),
+                            );
+                          },
+                          itemCount: servicesList.length,
+                        ),
+                      ),
+                    ),
+                  verticalSpacer,
+                  verticalSpacer,
+                ],
               ),
             ),
           ),
           onWillPop: () async {
-            return true;
+            if (childBottomSheetController != null) {
+              childBottomSheetController.close();
+              childBottomSheetController = null;
+              return false;
+            } else {
+              //Navigator.of(context).pop();
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => ManageEntityListPage()));
+              return false;
+            }
           },
         ),
       );
@@ -310,6 +312,7 @@ class _ManageChildEntityListPageState extends State<ManageChildEntityListPage> {
         theme: ThemeData.light().copyWith(),
         home: WillPopScope(
           child: Scaffold(
+            key: manageChildEntityListPagekey,
             appBar: CustomAppBarWithBackButton(
               backRoute: ManageEntityListPage(),
               titleTxt: title,
@@ -332,5 +335,84 @@ class _ManageChildEntityListPageState extends State<ManageChildEntityListPage> {
         ),
       );
     }
+  }
+
+  showCategorySheet() {
+    childBottomSheetController =
+        manageChildEntityListPagekey.currentState.showBottomSheet<Null>(
+      (context) => Container(
+        color: Colors.cyan[50],
+        height: MediaQuery.of(context).size.height * .7,
+        child: Column(
+          children: <Widget>[
+            Row(
+              children: <Widget>[
+                Container(
+                  padding: EdgeInsets.all(0),
+                  width: MediaQuery.of(context).size.width * .1,
+                  height: MediaQuery.of(context).size.width * .1,
+                  child: IconButton(
+                      padding: EdgeInsets.all(0),
+                      icon: Icon(
+                        Icons.cancel,
+                        color: btnDisabledolor,
+                      ),
+                      onPressed: () {
+                        childBottomSheetController.close();
+                        childBottomSheetController = null;
+                        // Navigator.of(context).pop();
+                      }),
+                ),
+                Container(
+                    alignment: Alignment.center,
+                    width: MediaQuery.of(context).size.width * .8,
+                    child: Text(
+                      SELECT_TYPE_OF_PLACE,
+                      style: textInputTextStyle,
+                    )),
+              ],
+            ),
+            Divider(
+              height: 1,
+              color: primaryDarkColor,
+            ),
+            Expanded(
+              child: Container(
+                padding: EdgeInsets.all(0),
+                child: new GridView.builder(
+                  padding: EdgeInsets.all(0),
+                  scrollDirection: Axis.vertical,
+                  shrinkWrap: true,
+                  itemCount: subEntityTypes.length,
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 4,
+                      crossAxisSpacing: 10.0,
+                      mainAxisSpacing: 10),
+                  itemBuilder: (BuildContext context, int index) {
+                    return new GridTile(
+                      child: Container(
+                        height: MediaQuery.of(context).size.height * .25,
+                        padding: EdgeInsets.all(0),
+                        // decoration:
+                        //     BoxDecoration(border: Border.all(color: Colors.black, width: 0.5)),
+                        child: Center(
+                          child: _buildCategoryItem(context, index),
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+      elevation: 30,
+      clipBehavior: Clip.hardEdge,
+      shape: RoundedRectangleBorder(
+          side: BorderSide(color: Colors.blueGrey[200]),
+          borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(20.0), topRight: Radius.circular(20.0))),
+    );
   }
 }

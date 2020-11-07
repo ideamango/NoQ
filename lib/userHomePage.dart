@@ -167,14 +167,17 @@ class _UserHomePageState extends State<UserHomePage> {
               ),
               body: Scrollbar(
                 child: SingleChildScrollView(
-                  padding: EdgeInsets.all(15),
+                  padding: EdgeInsets.all(MediaQuery.of(context).size.width * .036),
                   child: Column(
                     children: <Widget>[
                       Card(
+                        margin: EdgeInsets.zero,
                         elevation: 20,
                         child: Container(
+                          height: MediaQuery.of(context).size.height * .331,
                           padding: EdgeInsets.all(5),
                           child: Column(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: <Widget>[
                               Column(
                                 children: <Widget>[
@@ -239,20 +242,13 @@ class _UserHomePageState extends State<UserHomePage> {
                                   )
                                 ],
                               ),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
+                              Column(
                                 children: <Widget>[
-                                  Column(
-                                    children: <Widget>[
-                                      Text(homeScreenMsgTxt2,
-                                          style: homeMsgStyle2),
-                                      Text(
-                                        homeScreenMsgTxt3,
-                                        style: homeMsgStyle3,
-                                      ),
-                                    ],
+                                  Text(homeScreenMsgTxt2, style: homeMsgStyle2),
+                                  Text(
+                                    homeScreenMsgTxt3,
+                                    style: homeMsgStyle3,
                                   ),
-                                  // QrCodeScanner().build(context),
                                 ],
                               )
                             ],
@@ -260,6 +256,7 @@ class _UserHomePageState extends State<UserHomePage> {
                         ),
                         //child: Image.asset('assets/noq_home.png'),
                       ),
+                      verticalSpacer,
                       Card(
                         margin: EdgeInsets.zero,
                         elevation: 20,
@@ -333,9 +330,16 @@ class _UserHomePageState extends State<UserHomePage> {
                             child: Text("Run test"),
                           ),
                         ),
-                      Container(
-                        padding: EdgeInsets.all(5),
-                        child: Image(image: AssetImage('assets/6.jpg')),
+                      verticalSpacer,
+                      Card(
+                        margin: EdgeInsets.zero,
+                        elevation: 20,
+                        child: Container(
+                          height: MediaQuery.of(context).size.height * .18,
+                          margin: EdgeInsets.zero,
+                          padding: EdgeInsets.all(0),
+                          child: Image(image: AssetImage('assets/6.jpg')),
+                        ),
                       ),
                     ],
                   ),
