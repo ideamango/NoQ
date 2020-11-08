@@ -623,7 +623,8 @@ class _SearchChildEntityOldPageState extends State<SearchChildEntityOldPage> {
                                     style: TextStyle(fontSize: 17),
                                     overflow: TextOverflow.ellipsis,
                                   ),
-                                  (str.verificationStatus == "Verified")
+                                  (str.verificationStatus ==
+                                          VERIFICATION_VERIFIED)
                                       ? new Container(
                                           width: MediaQuery.of(context)
                                                   .size
@@ -646,7 +647,7 @@ class _SearchChildEntityOldPageState extends State<SearchChildEntityOldPage> {
                                                   context,
                                                   Icons.info,
                                                   Duration(seconds: 5),
-                                                  "Verified",
+                                                  VERIFICATION_VERIFIED,
                                                   "");
                                             },
                                           ),

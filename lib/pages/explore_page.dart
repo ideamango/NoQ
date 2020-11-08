@@ -632,7 +632,8 @@ class _ExplorePageState extends State<ExplorePage> {
                                     style: TextStyle(fontSize: 17),
                                     overflow: TextOverflow.ellipsis,
                                   ),
-                                  (str.verificationStatus == "Verified")
+                                  (str.verificationStatus ==
+                                          VERIFICATION_VERIFIED)
                                       ? new Container(
                                           width: MediaQuery.of(context)
                                                   .size
@@ -655,7 +656,7 @@ class _ExplorePageState extends State<ExplorePage> {
                                                   context,
                                                   Icons.info,
                                                   Duration(seconds: 5),
-                                                  "Verified",
+                                                  VERIFICATION_VERIFIED,
                                                   "");
                                             },
                                           ),

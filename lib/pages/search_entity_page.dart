@@ -996,7 +996,8 @@ class _SearchEntityPageState extends State<SearchEntityPage>
                                       overflow: TextOverflow.ellipsis,
                                     ),
                                   ),
-                                  (str.verificationStatus == "Verified")
+                                  (str.verificationStatus ==
+                                          VERIFICATION_VERIFIED)
                                       ? new Container(
                                           width: MediaQuery.of(context)
                                                   .size
@@ -1019,7 +1020,7 @@ class _SearchEntityPageState extends State<SearchEntityPage>
                                                   context,
                                                   Icons.info,
                                                   Duration(seconds: 5),
-                                                  "Verified",
+                                                  VERIFICATION_VERIFIED,
                                                   "");
                                             },
                                           ),
