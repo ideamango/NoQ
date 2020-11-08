@@ -28,7 +28,7 @@ const PLACE_TYPE_BANK = "Bank";
 const PLACE_TYPE_HOSPITAL = "Hospital";
 const PLACE_TYPE_OTHERS = "Others";
 
-const SELECT_TYPE_OF_PLACE = "Type of Place";
+const SELECT_TYPE_OF_PLACE = "Search by Type of Place";
 
 String appName = 'Sukoon';
 var loginSubTxt = "Peace of Mind";

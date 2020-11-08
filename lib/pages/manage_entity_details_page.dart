@@ -820,7 +820,7 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
         style: textInputTextStyle,
         controller: _descController,
         decoration: CommonStyle.textFieldStyle(
-            labelTextStr: "Description", hintTextStr: ""),
+            labelTextStr: "Description (optional)", hintTextStr: ""),
         validator: (value) {
           if (!validateField)
             return validateText(value);
@@ -1214,7 +1214,7 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
         controller: _whatsappPhoneController,
         decoration: InputDecoration(
           prefixText: '+91',
-          labelText: 'WhatsApp Number',
+          labelText: 'WhatsApp Number (optional)',
           enabledBorder:
               UnderlineInputBorder(borderSide: BorderSide(color: Colors.grey)),
           focusedBorder: UnderlineInputBorder(
@@ -1245,7 +1245,7 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
         controller: _contactPhoneController,
         decoration: InputDecoration(
           prefixText: '+91',
-          labelText: 'Contact Number',
+          labelText: 'Contact Number  (optional)',
           enabledBorder:
               UnderlineInputBorder(borderSide: BorderSide(color: Colors.grey)),
           focusedBorder: UnderlineInputBorder(
@@ -1271,7 +1271,7 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
         controller: _paytmPhoneController,
         decoration: InputDecoration(
           prefixText: '+91',
-          labelText: 'PayTm Number',
+          labelText: 'PayTm Number (optional)',
           enabledBorder:
               UnderlineInputBorder(borderSide: BorderSide(color: Colors.grey)),
           focusedBorder: UnderlineInputBorder(
@@ -2005,7 +2005,7 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
             // contentPadding: EdgeInsets.all(0),
             focusedBorder: InputBorder.none,
             enabledBorder: InputBorder.none,
-            hintText: "Enter Admin's Contact number & press (+)",
+            hintText: "Enter Admin's Contact number & press (+) (optional)",
             hintStyle:
                 new TextStyle(fontSize: 12, color: Colors.blueGrey[500])),
         validator: Utils.validateMobileField,
