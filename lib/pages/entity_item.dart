@@ -233,6 +233,7 @@ class EntityRowState extends State<EntityRow> {
                             alignment: Alignment.center,
                             highlightColor: Colors.orange[300],
                             icon: Icon(Icons.share),
+                            color: primaryDarkColor,
                             iconSize: 25,
                             onPressed: () {
                               share();

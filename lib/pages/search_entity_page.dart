@@ -268,7 +268,7 @@ class _SearchEntityPageState extends State<SearchEntityPage>
         : defaultSearchSubMsg);
     return Center(
       child: Container(
-        height: MediaQuery.of(context).size.height * .7,
+        height: MediaQuery.of(context).size.height * .6,
         alignment: Alignment.topCenter,
         child: SingleChildScrollView(
           child: Column(
@@ -504,7 +504,7 @@ class _SearchEntityPageState extends State<SearchEntityPage>
               //   maxWidth: 25,
               //   maxHeight: 22,
               // ),
-              hintText: "Search by Name",
+              hintText: "Search by Name of Business/Place",
               hintStyle:
                   new TextStyle(fontSize: 12, color: Colors.blueGrey[500])),
           onChanged: (value) {
@@ -684,6 +684,8 @@ class _SearchEntityPageState extends State<SearchEntityPage>
                 ),
                 // drawer: CustomDrawer(),
                 floatingActionButton: showMyFloatingActionButton(),
+                floatingActionButtonLocation:
+                    FloatingActionButtonLocation.centerFloat,
                 bottomNavigationBar: CustomBottomBar(barIndex: 1)
 
                 // drawer: CustomDrawer(),
@@ -753,6 +755,8 @@ class _SearchEntityPageState extends State<SearchEntityPage>
                 ),
                 // drawer: CustomDrawer(),
                 floatingActionButton: showMyFloatingActionButton(),
+                floatingActionButtonLocation:
+                    FloatingActionButtonLocation.centerFloat,
                 bottomNavigationBar: CustomBottomBar(barIndex: 1)
 
                 // drawer: CustomDrawer(),
@@ -767,7 +771,7 @@ class _SearchEntityPageState extends State<SearchEntityPage>
   Widget showMyFloatingActionButton() {
     return showFab
         ? Container(
-            width: MediaQuery.of(context).size.width * .4,
+            width: MediaQuery.of(context).size.width * .8,
             height: MediaQuery.of(context).size.height * .08,
             padding: EdgeInsets.all(5),
             child: SlideTransition(

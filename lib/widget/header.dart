@@ -45,7 +45,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
       },
       {
         "icon": Icons.store,
-        "name": "Manage your Places",
+        "name": "Register your Business/Place",
         "pageRoute": ManageEntityListPage(),
       },
       // {

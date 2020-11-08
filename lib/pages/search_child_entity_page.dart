@@ -712,6 +712,8 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
                 ),
                 // drawer: CustomDrawer(),
                 floatingActionButton: showMyFloatingActionButton(),
+                floatingActionButtonLocation:
+                    FloatingActionButtonLocation.centerFloat,
                 bottomNavigationBar: CustomBottomBar(barIndex: 1)
 
                 // drawer: CustomDrawer(),
@@ -795,7 +797,7 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
   showMyFloatingActionButton() {
     return showFab
         ? Container(
-            width: MediaQuery.of(context).size.width * .4,
+            width: MediaQuery.of(context).size.width * .8,
             height: MediaQuery.of(context).size.height * .08,
             padding: EdgeInsets.all(5),
             child: SlideTransition(
@@ -1063,37 +1065,43 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
                                 ],
                               ),
                             ),
-                            Container(
-                              width: MediaQuery.of(context).size.width * .2,
-                              padding: EdgeInsets.all(0),
-                              child: Row(
-                                children: <Widget>[
-                                  Text(
-                                      Utils.formatTime(
-                                              str.startTimeHour.toString()) +
-                                          ':' +
-                                          Utils.formatTime(
-                                              str.startTimeMinute.toString()),
-                                      style: TextStyle(
-                                          color: Colors.green[600],
-                                          fontFamily: 'Monsterrat',
-                                          letterSpacing: 0.5,
-                                          fontSize: 10.0)),
-                                  Text(' - '),
-                                  Text(
-                                      Utils.formatTime(
-                                              str.endTimeHour.toString()) +
-                                          ':' +
-                                          Utils.formatTime(
-                                              str.endTimeMinute.toString()),
-                                      style: TextStyle(
-                                          color: Colors.red[900],
-                                          fontFamily: 'Monsterrat',
-                                          letterSpacing: 0.5,
-                                          fontSize: 10.0)),
-                                ],
+                            if (str.startTimeHour != null)
+                              Container(
+                                width: MediaQuery.of(context).size.width * .2,
+                                padding: EdgeInsets.all(0),
+                                child: Row(
+                                  children: <Widget>[
+                                    Text(
+                                        Utils.formatTime(
+                                                str.startTimeHour.toString()) +
+                                            ':' +
+                                            Utils.formatTime(
+                                                str.startTimeMinute.toString()),
+                                        style: TextStyle(
+                                            color: Colors.green[600],
+                                            fontFamily: 'Monsterrat',
+                                            letterSpacing: 0.5,
+                                            fontSize: 10.0)),
+                                    Text(' - '),
+                                    Text(
+                                        Utils.formatTime(
+                                                str.endTimeHour.toString()) +
+                                            ':' +
+                                            Utils.formatTime(
+                                                str.endTimeMinute.toString()),
+                                        style: TextStyle(
+                                            color: Colors.red[900],
+                                            fontFamily: 'Monsterrat',
+                                            letterSpacing: 0.5,
+                                            fontSize: 10.0)),
+                                  ],
+                                ),
                               ),
-                            ),
+                            if (str.startTimeHour == null)
+                              Container(
+                                width: MediaQuery.of(context).size.width * .2,
+                                child: Text(""),
+                              ),
                           ],
                         ),
                       ),
