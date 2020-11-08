@@ -253,21 +253,21 @@ class Utils {
       {@required String entityId}) async {
     final DynamicLinkParameters parameters = DynamicLinkParameters(
       // This should match firebase but without the username query param
-      uriPrefix: 'https://sukoontest2.page.link',
+      uriPrefix: shareURLPrefix,
       // This can be whatever you want for the uri, https://yourapp.com/groupinvite?username=$userName
-      link: Uri.parse('https://sukoontest2.page.link/?entityId=$entityId'),
+      link: Uri.parse(shareURLPrefix + '/?entityId=$entityId'),
       androidParameters: AndroidParameters(
-          packageName: 'mobi.sukoon',
+          packageName: bundleId,
           minimumVersion: 1,
           fallbackUrl: Uri.parse('https://watcharoundyou.wordpress.com/')),
       iosParameters: IosParameters(
-        bundleId: 'mobi.sukoon',
+        bundleId: bundleId,
         minimumVersion: '1',
-        appStoreId: '962194608',
+        appStoreId: appStoreId,
       ),
       socialMetaTagParameters: SocialMetaTagParameters(
-        title: 'Check out this amazing app',
-        description: 'It saves time and helps you maintain safe-distance!',
+        title: appShareHeading,
+        description: appShareMessage,
       ),
     );
     final link = await parameters.buildUrl();
@@ -282,21 +282,21 @@ class Utils {
       {@required String entityId}) async {
     final DynamicLinkParameters parameters = DynamicLinkParameters(
       // This should match firebase but without the username query param
-      uriPrefix: 'https://sukoontest2.page.link',
+      uriPrefix: shareURLPrefix,
       // This can be whatever you want for the uri, https://yourapp.com/groupinvite?username=$userName
-      link: Uri.parse('https://sukoontest2.page.link/?entityId=$entityId'),
+      link: Uri.parse(shareURLPrefix + '/?entityId=$entityId'),
       androidParameters: AndroidParameters(
-          packageName: 'mobi.sukoon',
+          packageName: bundleId,
           minimumVersion: 1,
           fallbackUrl: Uri.parse('https://watcharoundyou.wordpress.com/')),
       iosParameters: IosParameters(
-        bundleId: 'mobi.sukoon',
+        bundleId: bundleId,
         minimumVersion: '1',
         // appStoreId: '962194608',
       ),
       socialMetaTagParameters: SocialMetaTagParameters(
-        title: 'Check out this amazing app',
-        description: 'It saves time and helps you maintain safe-distance!',
+        title: appShareHeading,
+        description: appShareMessage,
       ),
     );
     final link = await parameters.buildUrl();
@@ -310,23 +310,23 @@ class Utils {
   static Future<Uri> createDynamicLink() async {
     final DynamicLinkParameters parameters = DynamicLinkParameters(
         // This should match firebase but without the username query param
-        uriPrefix: 'https://sukoontest2.page.link',
+        uriPrefix: shareURLPrefix,
         // This can be whatever you want for the uri, https://yourapp.com/groupinvite?username=$userName
-        link: Uri.parse('https://sukoontest2.page.link'),
+        link: Uri.parse(shareURLPrefix),
         androidParameters: AndroidParameters(
-          packageName: 'mobi.sukoon',
+          packageName: bundleId,
           minimumVersion: 1,
         ),
         iosParameters: IosParameters(
           //TODO: For testing - Smita
 
-          bundleId: 'mobi.sukoon',
+          bundleId: bundleId,
           minimumVersion: '1',
-          appStoreId: '962194608',
+          appStoreId: appStoreId,
         ),
         socialMetaTagParameters: SocialMetaTagParameters(
-          title: 'Check out this amazing app',
-          description: 'It saves time and helps you maintain safe-distance!',
+          title: appShareHeading,
+          description: appShareMessage,
         ));
     final link = await parameters.buildUrl();
     final ShortDynamicLink shortenedLink = await parameters.buildShortLink();

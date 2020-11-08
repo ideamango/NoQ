@@ -40,9 +40,9 @@ String whatsappContactUsMsg = "Hey!!";
 
 String whatsappMessageToPlaceOwner = "Hey there! My Sukoon Token number is ";
 String whatsappMessage =
-    "Hey!! Are you worried about safety or long waiting in queues? \nNo worries, booK your piece of mind with SUKOON mobile app. \nBook your slot when it's Less crowded and Stay SAFE.";
+    "Hey!! Are you worried about safety in the crowded place or long waiting in queues? \nNo worries, book your piece of mind with Sukoon mobile app. \nBook your slot when it's Less crowded and Stay Safe!!";
 String qrCodeShareMessage =
-    "Hey!! Are you worried about safety or long waiting in queues? \nNo worries, booK your piece of mind with SUKOON mobile app. \nBook your slot when it's Less crowded and Stay SAFE. \nJust scan QR code and Voila!!";
+    "Hey!! Are you worried about safety in the crowded place or long waiting in queues? \nNo worries, book your piece of mind with Sukoon mobile app. \nBook your slot when it's Less crowded and Stay Safe!!. \n\nJust scan the QR code of the place you want to visit and start booking..";
 String locationPermissionMsg =
     'To find nearby places we need access to your current location. Open Settings and give permission to "Sukoon" to access your location.';
 String locationAccessDeniedStr =
@@ -96,6 +96,9 @@ String drawerHeaderTxt32 = 'Rush ';
 String drawerHeaderTxt33 = 'hours !!  ';
 String drawerHeaderTxt41 = 'Save ';
 String drawerHeaderTxt42 = 'time !!';
+String bundleId = 'mobi.sukoon';
+String appStoreId = '962194608';
+String shareURLPrefix = 'https://sukoontest2.page.link';
 String publicInfo =
     "Public: If this is off - it means your service/facility is restricted to only either your employees or residents. Example: Office or Apartment.";
 String activeDef =
@@ -158,6 +161,8 @@ String closedOnDay = "This place is closed on this day.";
 
 String selectDifferentDate = "This place is closed on this day.";
 
+String pageTitleManageEntityList = "Manage your Places";
+
 String giveLocationPermission =
     "Open location settings and give permissions to access current location.";
 
@@ -193,6 +198,16 @@ String bookingExpired = "This booking token has already expired!!";
 
 String tryAgainToBook = "Please try again or choose a different time or date.";
 
+String appShareHeading =
+    "Book your piece of mind with Sukoon, a Universal Booking App.";
+String appShareMessage =
+    "Worried about your Safety in the crowded place OR Tired of long waiting in the Queue? \n\nSukoon helps you to Book a Time-Slot when the rush is less. \nDownload and start booking for free!!";
+
+String entityShareHeading =
+    " is inviting you to pre-book the time-slot for your next visit.";
+String entityShareMessage =
+    "Now you don't have to worry about Safety at crowded place or high wait time due to long queues. \nBook your slot when the crowd is less. \nDownload Sukoon app and start booking for free!!";
+
 String faqHead1 = "How Sukoon helps bring Sukoon to your life?";
 String faqHead1Sub1 = "Lets look at the problems first..";
 String faqHead1Sub2 = "How this app helps me?";
@@ -203,27 +218,6 @@ String faqHead2Sub3 = "Would I be charged?";
 
 enum Role { Manager, Admin, ContactPerson, Employee }
 List<String> roleTypes = ['Admin', 'Manager'];
-// List<String> entityTypes = [
-//   'Grocery/ Super Market ',
-//   'Apartment',
-//   'Office',
-//   'Mall',
-//   'Salon',
-//   'MedicalStore'
-// ];
-// List<String> subEntityTypes = [
-//   'Swimming Pool',
-//   'Gym',
-//   'Salon',
-//   'Medical Store',
-//   'Grocery Store',
-//   'Library',
-//   'Game Parlors',
-//   'Commercial Space',
-//   'Cafe',
-//   'Restaurant',
-//   'Others'
-// ];
 
 List<String> mailReasons = [
   'General Enquiry',
