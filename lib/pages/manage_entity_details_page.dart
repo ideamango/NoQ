@@ -601,6 +601,14 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
       isPublic = (entity.isPublic) ?? false;
       isBookable = (entity.isBookable) ?? false;
       isActive = (entity.isActive) ?? false;
+      var entitytype = entity.type.toString();
+      if (entitytype != "Mall" &&
+          entitytype != "Apartment" &&
+          entitytype != "School" &&
+          entitytype != "Bank") {
+        isPublic = true;
+        isBookable = true;
+      }
       if (isActive) {
         validateField = true;
         _autoValidate = true;
