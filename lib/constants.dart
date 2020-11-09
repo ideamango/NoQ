@@ -141,6 +141,7 @@ String entityAlreadyInFav =
     "This place is already present in your Favourites!!";
 
 String forgotTimeSlot = "Oops.. You forgot to select a time slot!";
+String confirmLogout = "Are you sure you want to logout?";
 
 String tryLater = "Please try again later.";
 
