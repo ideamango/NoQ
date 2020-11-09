@@ -429,19 +429,19 @@ class Utils {
       entityImageWidget = Icon(
         icon,
         size: size,
-        color: highlightColor,
+        color: borderColor,
       );
     else if (image != null)
       entityImageWidget = ImageIcon(
         AssetImage('assets/$image'),
-        size: size,
-        color: highlightColor,
+        size: size + 10,
+        color: borderColor,
       );
     else
       entityImageWidget = Icon(
         Icons.shopping_cart,
         size: size,
-        color: highlightColor,
+        color: borderColor,
       );
     return entityImageWidget;
   }
