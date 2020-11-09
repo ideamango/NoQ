@@ -104,6 +104,11 @@ class GenerateScreenState extends State<GenerateScreen> {
 
   Future<void> _loadImage() async {
     try {
+      //Dynamic Link Text
+      //'SUKOON ~ Book your peace of mind!!'
+      String msgTitle = widget.entityName + entityShareByOwnerMailSubject;
+      String msgBody = qrCodeShareMessage;
+
       RenderRepaintBoundary boundary =
           globalKey.currentContext.findRenderObject();
       var image = await boundary.toImage();
@@ -118,8 +123,8 @@ class GenerateScreenState extends State<GenerateScreen> {
       // channel.invokeMethod('shareFile', 'qrcodeForShare.png');
       final RenderBox box = context.findRenderObject();
       Share.shareFiles(['${tempDir.path}/qrcodeForShare.png'],
-          subject: 'SUKOON ~ Book your peace of mind!!',
-          text: qrCodeShareMessage,
+          subject: msgTitle,
+          text: msgBody,
           sharePositionOrigin: box.localToGlobal(Offset.zero) & box.size);
     } catch (e) {
       print(e.toString());

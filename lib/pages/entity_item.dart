@@ -149,8 +149,8 @@ class EntityRowState extends State<EntityRow> {
               context,
               MaterialPageRoute(
                   builder: (context) => GenerateScreen(
-                        entityId: _metaEntity.entityId, entityName: _metaEntity.name
-                      )));
+                      entityId: _metaEntity.entityId,
+                      entityName: _metaEntity.name)));
       });
     }
 
