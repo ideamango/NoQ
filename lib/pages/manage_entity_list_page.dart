@@ -195,7 +195,7 @@ class _ManageEntityListPageState extends State<ManageEntityListPage> {
         _entityType = value;
       },
     );
-    String title = "Manage your Places";
+    String title = pageTitleManageEntityList;
     if (_initCompleted) {
       return MaterialApp(
         theme: ThemeData.light().copyWith(),

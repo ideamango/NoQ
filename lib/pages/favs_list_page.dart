@@ -370,7 +370,8 @@ class _FavsListPageState extends State<FavsListPage> {
                                       overflow: TextOverflow.ellipsis,
                                     ),
                                   ),
-                                  (str.verificationStatus == "Verified")
+                                  (str.verificationStatus ==
+                                          VERIFICATION_VERIFIED)
                                       ? new Container(
                                           width: MediaQuery.of(context)
                                                   .size
@@ -393,7 +394,7 @@ class _FavsListPageState extends State<FavsListPage> {
                                                   context,
                                                   Icons.info,
                                                   Duration(seconds: 5),
-                                                  "Verified",
+                                                  VERIFICATION_VERIFIED,
                                                   "");
                                             },
                                           ),

@@ -1020,7 +1020,7 @@ class _SearchEntityPageState extends State<SearchEntityPage>
                                                   context,
                                                   Icons.info,
                                                   Duration(seconds: 5),
-                                                  "Verified",
+                                                  VERIFICATION_VERIFIED,
                                                   "");
                                             },
                                           ),

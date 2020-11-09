@@ -253,21 +253,21 @@ class Utils {
       {@required String entityId}) async {
     final DynamicLinkParameters parameters = DynamicLinkParameters(
       // This should match firebase but without the username query param
-      uriPrefix: 'https://sukoontest2.page.link',
+      uriPrefix: shareURLPrefix,
       // This can be whatever you want for the uri, https://yourapp.com/groupinvite?username=$userName
-      link: Uri.parse('https://sukoontest2.page.link/?entityId=$entityId'),
+      link: Uri.parse(shareURLPrefix + '/?entityId=$entityId'),
       androidParameters: AndroidParameters(
-          packageName: 'mobi.sukoon',
+          packageName: bundleId,
           minimumVersion: 1,
           fallbackUrl: Uri.parse('https://watcharoundyou.wordpress.com/')),
       iosParameters: IosParameters(
-        bundleId: 'mobi.sukoon',
+        bundleId: bundleId,
         minimumVersion: '1',
-        appStoreId: '962194608',
+        appStoreId: appStoreId,
       ),
       socialMetaTagParameters: SocialMetaTagParameters(
-        title: 'Check out this amazing app',
-        description: 'It saves time and helps you maintain safe-distance!',
+        title: appShareHeading,
+        description: appShareMessage,
       ),
     );
     final link = await parameters.buildUrl();
@@ -279,24 +279,27 @@ class Utils {
   }
 
   static Future<Uri> createDynamicLinkWithParams(
-      {@required String entityId}) async {
+      String entityId, String msgTitle, String msgBody) async {
     final DynamicLinkParameters parameters = DynamicLinkParameters(
       // This should match firebase but without the username query param
-      uriPrefix: 'https://sukoontest2.page.link',
+      uriPrefix: shareURLPrefix,
       // This can be whatever you want for the uri, https://yourapp.com/groupinvite?username=$userName
-      link: Uri.parse('https://sukoontest2.page.link/?entityId=$entityId'),
+
+      link: Utils.isNotNullOrEmpty(entityId)
+          ? Uri.parse(shareURLPrefix + '/?entityId=$entityId')
+          : Uri.parse(shareURLPrefix),
       androidParameters: AndroidParameters(
-          packageName: 'mobi.sukoon',
+          packageName: bundleId,
           minimumVersion: 1,
           fallbackUrl: Uri.parse('https://watcharoundyou.wordpress.com/')),
       iosParameters: IosParameters(
-        bundleId: 'mobi.sukoon',
+        bundleId: bundleId,
         minimumVersion: '1',
         // appStoreId: '962194608',
       ),
       socialMetaTagParameters: SocialMetaTagParameters(
-        title: 'Check out this amazing app',
-        description: 'It saves time and helps you maintain safe-distance!',
+        title: msgTitle,
+        description: msgBody,
       ),
     );
     final link = await parameters.buildUrl();
@@ -307,33 +310,33 @@ class Utils {
     return shortenedLink.shortUrl;
   }
 
-  static Future<Uri> createDynamicLink() async {
-    final DynamicLinkParameters parameters = DynamicLinkParameters(
-        // This should match firebase but without the username query param
-        uriPrefix: 'https://sukoontest2.page.link',
-        // This can be whatever you want for the uri, https://yourapp.com/groupinvite?username=$userName
-        link: Uri.parse('https://sukoontest2.page.link'),
-        androidParameters: AndroidParameters(
-          packageName: 'mobi.sukoon',
-          minimumVersion: 1,
-        ),
-        iosParameters: IosParameters(
-          //TODO: For testing - Smita
+  // static Future<Uri> createDynamicLink() async {
+  //   final DynamicLinkParameters parameters = DynamicLinkParameters(
+  //       // This should match firebase but without the username query param
+  //       uriPrefix: shareURLPrefix,
+  //       // This can be whatever you want for the uri, https://yourapp.com/groupinvite?username=$userName
+  //       link: Uri.parse(shareURLPrefix),
+  //       androidParameters: AndroidParameters(
+  //         packageName: bundleId,
+  //         minimumVersion: 1,
+  //       ),
+  //       iosParameters: IosParameters(
+  //         //TODO: For testing - Smita
 
-          bundleId: 'mobi.sukoon',
-          minimumVersion: '1',
-          appStoreId: '962194608',
-        ),
-        socialMetaTagParameters: SocialMetaTagParameters(
-          title: 'Check out this amazing app',
-          description: 'It saves time and helps you maintain safe-distance!',
-        ));
-    final link = await parameters.buildUrl();
-    final ShortDynamicLink shortenedLink = await parameters.buildShortLink();
-    print(shortenedLink.shortUrl);
-    print(link.authority);
-    return shortenedLink.shortUrl;
-  }
+  //         bundleId: bundleId,
+  //         minimumVersion: '1',
+  //         appStoreId: appStoreId,
+  //       ),
+  //       socialMetaTagParameters: SocialMetaTagParameters(
+  //         title: appShareHeading,
+  //         description: appShareMessage,
+  //       ));
+  //   final link = await parameters.buildUrl();
+  //   final ShortDynamicLink shortenedLink = await parameters.buildShortLink();
+  //   print(shortenedLink.shortUrl);
+  //   print(link.authority);
+  //   return shortenedLink.shortUrl;
+  // }
 
   // static Map<String, String> buildCategoryList() {
   //   Map<String, String> categoryList = new Map<String, String>();
@@ -456,7 +459,7 @@ class Utils {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     Text(
-                      'Are you sure you want to logout?',
+                      confirmLogout,
                       style: TextStyle(
                         fontSize: 15,
                         color: Colors.blueGrey[600],
