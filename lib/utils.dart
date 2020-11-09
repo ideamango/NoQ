@@ -250,7 +250,8 @@ class Utils {
   }
 
   static Future<Uri> createDynamicLinkFullWithParams(
-      {@required String entityId}) async {
+      String entityId, String entityName) async {
+    String msgTitle = entityName + entityShareByOwnerHeading;
     final DynamicLinkParameters parameters = DynamicLinkParameters(
       // This should match firebase but without the username query param
       uriPrefix: shareURLPrefix,
@@ -266,8 +267,8 @@ class Utils {
         appStoreId: appStoreId,
       ),
       socialMetaTagParameters: SocialMetaTagParameters(
-        title: appShareHeading,
-        description: appShareMessage,
+        title: msgTitle,
+        description: entityShareMessage,
       ),
     );
     final link = await parameters.buildUrl();
@@ -295,7 +296,7 @@ class Utils {
       iosParameters: IosParameters(
         bundleId: bundleId,
         minimumVersion: '1',
-        // appStoreId: '962194608',
+        appStoreId: appStoreId,
       ),
       socialMetaTagParameters: SocialMetaTagParameters(
         title: msgTitle,
@@ -359,8 +360,9 @@ class Utils {
   //   return categoryList;
   // }
 
-  static generateLinkAndShare() async {
-    var dynamicLink = await Utils.createDynamicLink();
+  static generateLinkAndShare(String msgTitle, String msgBody) async {
+    var dynamicLink =
+        await Utils.createDynamicLinkWithParams(null, msgTitle, msgBody);
     print("Dynamic Link: $dynamicLink");
     // _dynamicLink =
     //     Uri.https(dynamicLink.authority, dynamicLink.path).toString();

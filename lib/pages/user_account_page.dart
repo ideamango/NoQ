@@ -749,7 +749,9 @@ class _UserAccountPageState extends State<UserAccountPage> {
                                                 final RenderBox box =
                                                     context.findRenderObject();
 
-                                                Utils.generateLinkAndShare();
+                                                Utils.generateLinkAndShare(
+                                                    appShareHeading,
+                                                    appShareMessage);
                                               },
                                         child: Row(
                                             mainAxisAlignment:

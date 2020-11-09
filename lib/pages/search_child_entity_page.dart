@@ -285,9 +285,11 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
     }
   }
 
-  generateLinkAndShareWithParams(String entityId) async {
+  generateLinkAndShareWithParams(String entityId, String name) async {
+    String msgTitle = entityShareByUserHeading + name;
+    String msgBody = entityShareMessage;
     var dynamicLink =
-        await Utils.createDynamicLinkWithParams(entityId: entityId);
+        await Utils.createDynamicLinkWithParams(entityId, msgTitle, msgBody);
     print("Dynamic Link: $dynamicLink");
 
     _dynamicLink =
@@ -1313,7 +1315,8 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
                           size: 25,
                         ),
                         onPressed: () {
-                          generateLinkAndShareWithParams(str.entityId);
+                          generateLinkAndShareWithParams(
+                              str.entityId, str.name);
                         },
                       )),
                   Container(
@@ -1725,7 +1728,8 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
                   recognizer: new TapGestureRecognizer()
                     ..onTap = () {
                       _searchTextController.text = "";
-                      Utils.generateLinkAndShare();
+                      Utils.generateLinkAndShare(
+                          appShareWithOwnerHeading, appShareWithOwnerMessage);
                     },
                 ),
                 TextSpan(text: notFoundMsg5),

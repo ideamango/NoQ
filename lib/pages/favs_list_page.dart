@@ -157,9 +157,12 @@ class _FavsListPageState extends State<FavsListPage> {
     }
   }
 
-  generateLinkAndShareWithParams(String entityId) async {
+  generateLinkAndShareWithParams(String entityId, String name) async {
+    String msgTitle = entityShareByUserHeading + name;
+    String msgBody = entityShareMessage;
     var dynamicLink =
-        await Utils.createDynamicLinkWithParams(entityId: entityId);
+        await Utils.createDynamicLinkWithParams(entityId, msgTitle, msgBody);
+    print("Dynamic Link: $dynamicLink");
     print("Dynamic Link: $dynamicLink");
 
     _dynamicLink =
@@ -666,7 +669,8 @@ class _FavsListPageState extends State<FavsListPage> {
                             size: 25,
                           ),
                           onPressed: () {
-                            generateLinkAndShareWithParams(str.entityId);
+                            generateLinkAndShareWithParams(
+                                str.entityId, str.name);
                           },
                         )),
                     Container(

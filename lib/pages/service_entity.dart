@@ -64,9 +64,11 @@ class ChildEntityRowState extends State<ChildEntityRow> {
       });
     }
 
-    generateLinkAndShareWithParams(String entityId) async {
+    generateLinkAndShareWithParams(String entityId, String name) async {
+      String msgTitle = name + entityShareByOwnerHeading;
+      String msgBody = entityShareMessage;
       var dynamicLink =
-          await Utils.createDynamicLinkWithParams(entityId: entityId);
+          await Utils.createDynamicLinkWithParams(entityId, msgTitle, msgBody);
       print("Dynamic Link: $dynamicLink");
 
       String _dynamicLink =
@@ -83,7 +85,8 @@ class ChildEntityRowState extends State<ChildEntityRow> {
           Utils.showMyFlushbar(context, Icons.info, Duration(seconds: 4),
               missingInfoForShareStr, missingInfoForShareSubStr);
         } else
-          generateLinkAndShareWithParams(_metaEntity.entityId);
+          generateLinkAndShareWithParams(
+              _metaEntity.entityId, _metaEntity.name);
       });
     }
 
@@ -99,8 +102,8 @@ class ChildEntityRowState extends State<ChildEntityRow> {
               context,
               MaterialPageRoute(
                   builder: (context) => GenerateScreen(
-                        entityId: _metaEntity.entityId,
-                      )));
+                      entityId: _metaEntity.entityId,
+                      entityName: _metaEntity.name)));
       });
     }
 
