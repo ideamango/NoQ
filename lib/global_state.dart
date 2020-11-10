@@ -6,8 +6,10 @@ import 'package:noq/db/db_model/meta_entity.dart';
 import 'package:noq/db/db_model/app_user.dart';
 import 'package:noq/db/db_model/user_token.dart';
 import 'package:noq/db/db_service/configurations_service.dart';
+import 'package:noq/db/db_service/entity_service.dart';
 import 'package:noq/db/db_service/token_service.dart';
 import 'package:noq/events/local_notification_data.dart';
+import 'package:noq/tuple.dart';
 
 import 'package:noq/utils.dart';
 import 'db/db_service/user_service.dart';
@@ -20,6 +22,8 @@ class GlobalState {
   Configurations conf;
   List<UserToken> bookings;
   List<Entity> pastSearches;
+  Map<String, Entity> _entities;
+  Map<String, bool> _entityState;
 
   static GlobalState _gs;
 
@@ -32,6 +36,12 @@ class GlobalState {
     if (_gs == null) {
       _gs = new GlobalState._();
     }
+
+    if (_gs._entities == null) {
+      _gs._entities = new Map<String, Entity>();
+      _gs._entityState = new Map<String, bool>();
+    }
+
     if (_gs.currentUser == null) {
       try {
         _gs.currentUser = await UserService().getCurrentUser();
@@ -62,13 +72,47 @@ class GlobalState {
     return _gs;
   }
 
- static Future<List<String>> getEntityTypesFromConf() async {
-    if (_gs == null) {
-      _gs = new GlobalState._();
-    }
-    
- }
+  Future<Tuple<Entity, bool>> getEntity(String id) async {
+    if (_entities.containsKey(id)) {
+      return new Tuple(item1: _entities[id], item2: _entityState[id]);
+    } else {
+      //load from server
+      Entity ent = await EntityService().getEntity(id);
+      if (ent == null) {
+        return null;
+      }
 
+      _entities[id] = ent;
+      _entityState[id] = true;
+
+      return new Tuple(item1: ent, item2: true);
+    }
+  }
+
+  Future<bool> deleteEntity(String id) async {
+    bool isDeleted = await EntityService().deleteEntity(id);
+    if (isDeleted) {
+      _entities.remove(id);
+      _entityState.remove(id);
+      return true;
+    }
+    return false;
+  }
+
+  Future<bool> putEntity(Entity entity, bool saveOnServer) async {
+    _entities[entity.entityId] = entity;
+    if (saveOnServer) {
+      if (await EntityService().upsertEntity(entity)) {
+        _entityState[entity.entityId] = true;
+        return true;
+      } else {
+        _entityState[entity.entityId] = false;
+      }
+    } else {
+      _entityState[entity.entityId] = false;
+    }
+    return false;
+  }
 
   List<UserToken> getPastBookings() {
     List<UserToken> pastBookings = new List<UserToken>();

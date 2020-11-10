@@ -56,7 +56,8 @@ class DBTest {
         coordinates: geoPoint);
 
     try {
-      await EntityService().upsertEntity(entity, "testReg");
+      entity.regNum = "testReg";
+      await EntityService().upsertEntity(entity);
     } catch (e) {
       print("Exception occured " + e.toString());
     }
@@ -96,7 +97,8 @@ class DBTest {
     ent.managers.add(manager1);
 
     try {
-      await EntityService().upsertEntity(ent, "BataRegNumber");
+      ent.regNum = "BataRegNumber";
+      await EntityService().upsertEntity(ent);
     } catch (e) {
       print("Exception occured " + e.toString());
     }
@@ -113,7 +115,7 @@ class DBTest {
         address: "Shop 10, Gachibowli");
 
     try {
-      await EntityService().upsertEntity(ent, null);
+      await EntityService().upsertEntity(ent);
     } catch (e) {
       print("Exception occured " + e.toString());
     }
@@ -152,8 +154,9 @@ class DBTest {
         isActive: isActive,
         coordinates: geoPoint);
     try {
-      bool added = await EntityService()
-          .upsertChildEntityToParent(child1, 'Entity101', "testregnum");
+      child1.regNum = "testregnum";
+      bool added =
+          await EntityService().upsertChildEntityToParent(child1, 'Entity101');
     } catch (e) {
       print("Exception while creating Child101: " + e.toString());
       throw e;
@@ -231,7 +234,7 @@ class DBTest {
     // Employee manager1 = new Employee(name: "Rakesh", ph: "+91888888888", employeeId: "empyId", shiftStartHour: );
 
     try {
-      await EntityService().upsertEntity(entity, "");
+      await EntityService().upsertEntity(entity);
     } catch (e) {
       print("Exception occured " + e.toString());
     }
@@ -815,8 +818,8 @@ class DBTest {
         whatsapp: "+919611009823");
 
     try {
-      await EntityService()
-          .upsertChildEntityToParent(entity, "Entity101", "SampleChildRegNum");
+      entity.regNum = "SampleChildRegNum";
+      await EntityService().upsertChildEntityToParent(entity, "Entity101");
     } catch (e) {
       print("Exception occured " + e.toString());
     }
@@ -878,7 +881,8 @@ class DBTest {
         whatsapp: "+918328592031");
 
     try {
-      await EntityService().upsertEntity(entity, "testReg111");
+      entity.regNum = "testReg111";
+      await EntityService().upsertEntity(entity);
     } catch (e) {
       print("Exception occured " + e.toString());
     }
@@ -922,7 +926,10 @@ class DBTest {
         whatsapp: "+918328592031");
 
     try {
-      await EntityService().upsertEntity(entity, "testReg111");
+      entity.regNum = "testReg111";
+      await EntityService().upsertEntity(
+        entity,
+      );
     } catch (e) {
       print("Exception occured " + e.toString());
     }
@@ -970,7 +977,8 @@ class DBTest {
         whatsapp: "+918328592031");
 
     try {
-      await EntityService().upsertEntity(entity, "testReg111");
+      entity.regNum = "testReg111";
+      await EntityService().upsertEntity(entity);
     } catch (e) {
       print("Exception occured " + e.toString());
     }
@@ -1018,7 +1026,8 @@ class DBTest {
         whatsapp: "+918328592031");
 
     try {
-      await EntityService().upsertEntity(entity, "testReg111");
+      entity.regNum = "testReg111";
+      await EntityService().upsertEntity(entity);
     } catch (e) {
       print("Exception occured " + e.toString());
     }
@@ -1069,7 +1078,8 @@ class DBTest {
         whatsapp: "+918328592031");
 
     try {
-      await EntityService().upsertEntity(entity, "testReg111");
+      entity.regNum = "testReg111";
+      await EntityService().upsertEntity(entity);
     } catch (e) {
       print("Exception occured " + e.toString());
     }
@@ -1120,7 +1130,8 @@ class DBTest {
         whatsapp: "+918328592031");
 
     try {
-      await EntityService().upsertEntity(entity, "testReg111");
+      entity.regNum = "testReg111";
+      await EntityService().upsertEntity(entity);
     } catch (e) {
       print("Exception occured " + e.toString());
     }
@@ -1170,7 +1181,8 @@ class DBTest {
         whatsapp: "+918328592031");
 
     try {
-      await EntityService().upsertEntity(entity, "testReg111");
+      entity.regNum = "testReg111";
+      await EntityService().upsertEntity(entity);
     } catch (e) {
       print("Exception occured " + e.toString());
     }
@@ -1220,7 +1232,8 @@ class DBTest {
         whatsapp: "+918328592031");
 
     try {
-      await EntityService().upsertEntity(entity, "testReg111");
+      entity.regNum = "testReg111";
+      await EntityService().upsertEntity(entity);
     } catch (e) {
       print("Exception occured " + e.toString());
     }

@@ -280,10 +280,26 @@ class _SearchEntityPageState extends State<SearchEntityPage>
                   children: <Widget>[
                     SizedBox(height: MediaQuery.of(context).size.height * .1),
                     Container(
-                      height: MediaQuery.of(context).size.height * .4,
+                      height: MediaQuery.of(context).size.height * .3,
                       decoration: BoxDecoration(
                         image: DecorationImage(
                             image: AssetImage("assets/notFound.png"),
+                            fit: BoxFit.cover),
+                      ),
+                    ),
+                    Container(
+                      height: MediaQuery.of(context).size.height * .15,
+                      decoration: BoxDecoration(
+                        image: DecorationImage(
+                            image: AssetImage("assets/notFound1.png"),
+                            fit: BoxFit.cover),
+                      ),
+                    ),
+                    Container(
+                      height: MediaQuery.of(context).size.height * .15,
+                      decoration: BoxDecoration(
+                        image: DecorationImage(
+                            image: AssetImage("assets/notFound2.png"),
                             fit: BoxFit.cover),
                       ),
                     ),
