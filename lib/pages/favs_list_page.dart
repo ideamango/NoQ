@@ -1,3 +1,4 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
@@ -156,9 +157,12 @@ class _FavsListPageState extends State<FavsListPage> {
     }
   }
 
-  generateLinkAndShareWithParams(String entityId) async {
+  generateLinkAndShareWithParams(String entityId, String name) async {
+    String msgTitle = entityShareByUserHeading + name;
+    String msgBody = entityShareMessage;
     var dynamicLink =
-        await Utils.createDynamicLinkWithParams(entityId: entityId);
+        await Utils.createDynamicLinkWithParams(entityId, msgTitle, msgBody);
+    print("Dynamic Link: $dynamicLink");
     print("Dynamic Link: $dynamicLink");
 
     _dynamicLink =
@@ -272,6 +276,16 @@ class _FavsListPageState extends State<FavsListPage> {
     }
   }
 
+  Widget entityImageIcon(String type) {
+    // String imgName;
+    Widget imgWidget;
+    //  imgName = Utils.getEntityTypeImage(type);
+
+    imgWidget = Utils.getEntityTypeImage(type, 30);
+
+    return imgWidget;
+  }
+
   Widget _buildItem(Entity str) {
     _prepareDateList();
     //_buildDateGridItems(str.id);
@@ -291,6 +305,7 @@ class _FavsListPageState extends State<FavsListPage> {
         }
       },
       child: Card(
+        margin: EdgeInsets.fromLTRB(8, 12, 8, 0),
         elevation: 10,
         child: Column(
           children: <Widget>[
@@ -299,35 +314,33 @@ class _FavsListPageState extends State<FavsListPage> {
               // mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
                 Container(
+                  padding: EdgeInsets.all(4),
                   width: MediaQuery.of(context).size.width * .1,
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: <Widget>[
-                      new Container(
-                        margin: EdgeInsets.fromLTRB(
-                            MediaQuery.of(context).size.width * .01,
-                            MediaQuery.of(context).size.width * .01,
-                            MediaQuery.of(context).size.width * .005,
-                            MediaQuery.of(context).size.width * .005),
-                        padding: EdgeInsets.all(
-                            MediaQuery.of(context).size.width * .01),
-                        alignment: Alignment.topCenter,
-                        decoration: ShapeDecoration(
-                          shape: CircleBorder(),
-                          color: primaryIcon,
-                        ),
-                        child: Icon(
-                          Icons.shopping_cart,
-                          color: Colors.white,
-                          size: 20,
-                        ),
-                      ),
-                      verticalSpacer,
-                    ],
+                  child: new Container(
+                    height: MediaQuery.of(context).size.width * .095,
+                    width: MediaQuery.of(context).size.width * .095,
+                    // margin: EdgeInsets.fromLTRB(
+                    //     MediaQuery.of(context).size.width * .01,
+                    //     MediaQuery.of(context).size.width * .01,
+                    //     MediaQuery.of(context).size.width * .005,
+                    //     MediaQuery.of(context).size.width * .005),
+                    padding:
+                        EdgeInsets.all(MediaQuery.of(context).size.width * .02),
+                    decoration: ShapeDecoration(
+                      shape: CircleBorder(),
+                      color: primaryIcon,
+                    ),
+                    child: Container(
+                        padding: EdgeInsets.zero,
+                        margin: EdgeInsets.zero,
+                        alignment: Alignment.center,
+                        height: MediaQuery.of(context).size.width * .09,
+                        width: MediaQuery.of(context).size.width * .09,
+                        child: entityImageIcon(str.type)),
                   ),
                 ),
                 Container(
-                  width: MediaQuery.of(context).size.width * .82,
+                  width: MediaQuery.of(context).size.width * .8,
                   padding: EdgeInsets.all(2),
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
@@ -335,22 +348,30 @@ class _FavsListPageState extends State<FavsListPage> {
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
                       Container(
-                        width: MediaQuery.of(context).size.width * .78,
-                        padding: EdgeInsets.all(0),
+                        width: MediaQuery.of(context).size.width * .83,
+                        padding: EdgeInsets.zero,
+                        margin: EdgeInsets.zero,
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: <Widget>[
                             Container(
-                              width: MediaQuery.of(context).size.width * .5,
+                              width: MediaQuery.of(context).size.width * .6,
                               padding: EdgeInsets.all(0),
                               child: Row(
-                                // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                // mainAxisAlignment: Mai1nAxisAlignment.spaceBetween,
                                 // crossAxisAlignment: CrossAxisAlignment.center,
                                 children: <Widget>[
-                                  Text(
-                                    (str.name) ?? str.name.toString(),
-                                    style: TextStyle(fontSize: 17),
-                                    overflow: TextOverflow.ellipsis,
+                                  Container(
+                                    padding: EdgeInsets.zero,
+                                    width:
+                                        MediaQuery.of(context).size.width * .46,
+                                    child: AutoSizeText(
+                                      (str.name) ?? str.name.toString(),
+                                      style: TextStyle(fontSize: 17),
+                                      maxLines: 1,
+                                      minFontSize: 14,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
                                   ),
                                   (str.verificationStatus ==
                                           VERIFICATION_VERIFIED)
@@ -405,7 +426,7 @@ class _FavsListPageState extends State<FavsListPage> {
                                                   context,
                                                   Icons.info,
                                                   Duration(seconds: 5),
-                                                  accessRestricted,
+                                                  "Access to this place is restricted to its residents or employees.",
                                                   "");
                                             },
                                           ),
@@ -414,55 +435,60 @@ class _FavsListPageState extends State<FavsListPage> {
                                 ],
                               ),
                             ),
-                            Container(
-                              width: MediaQuery.of(context).size.width * .2,
-                              padding: EdgeInsets.all(0),
-                              child: Row(
-                                children: <Widget>[
-                                  Text(
-                                      Utils.formatTime(
-                                              str.startTimeHour.toString()) +
-                                          ':' +
-                                          Utils.formatTime(
-                                              str.startTimeMinute.toString()),
-                                      style: TextStyle(
-                                          color: Colors.green[600],
-                                          fontFamily: 'Monsterrat',
-                                          letterSpacing: 0.5,
-                                          fontSize: 10.0)),
-                                  Text(' - '),
-                                  Text(
-                                      Utils.formatTime(
-                                              str.endTimeHour.toString()) +
-                                          ':' +
-                                          Utils.formatTime(
-                                              str.endTimeMinute.toString()),
-                                      style: TextStyle(
-                                          color: Colors.red[900],
-                                          fontFamily: 'Monsterrat',
-                                          letterSpacing: 0.5,
-                                          fontSize: 10.0)),
-                                ],
+                            if (str.startTimeHour != null)
+                              Container(
+                                width: MediaQuery.of(context).size.width * .18,
+                                padding: EdgeInsets.all(0),
+                                child: Row(
+                                  children: <Widget>[
+                                    Text(
+                                        Utils.formatTime(
+                                                str.startTimeHour.toString()) +
+                                            ':' +
+                                            Utils.formatTime(
+                                                str.startTimeMinute.toString()),
+                                        style: TextStyle(
+                                            color: Colors.green[600],
+                                            fontFamily: 'Monsterrat',
+                                            letterSpacing: 0.5,
+                                            fontSize: 10.0)),
+                                    Text(' - '),
+                                    Text(
+                                        Utils.formatTime(
+                                                str.endTimeHour.toString()) +
+                                            ':' +
+                                            Utils.formatTime(
+                                                str.endTimeMinute.toString()),
+                                        style: TextStyle(
+                                            color: Colors.red[900],
+                                            fontFamily: 'Monsterrat',
+                                            letterSpacing: 0.5,
+                                            fontSize: 10.0)),
+                                  ],
+                                ),
                               ),
-                            ),
+                            if (str.startTimeHour == null)
+                              Container(
+                                width: MediaQuery.of(context).size.width * .18,
+                                child: Text(
+                                  "",
+                                ),
+                              ),
                           ],
                         ),
                       ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: <Widget>[
-                          Container(
-                            width: MediaQuery.of(context).size.width * .78,
-                            child: Text(
-                              (Utils.getFormattedAddress(str.address) != "")
-                                  ? Utils.getFormattedAddress(str.address)
-                                  : "No Address found",
-                              overflow: TextOverflow.ellipsis,
-                              style: labelSmlTextStyle,
-                            ),
-                          ),
-                        ],
+                      Container(
+                        padding: EdgeInsets.only(top: 3),
+                        width: MediaQuery.of(context).size.width * .78,
+                        child: AutoSizeText(
+                          (Utils.getFormattedAddress(str.address) != "")
+                              ? Utils.getFormattedAddress(str.address)
+                              : "No Address found",
+                          maxLines: 1,
+                          minFontSize: 12,
+                          overflow: TextOverflow.ellipsis,
+                          style: labelSmlTextStyle,
+                        ),
                       ),
                       SizedBox(height: 5),
                       if (str.isBookable != null && str.isActive != null)
@@ -471,16 +497,8 @@ class _FavsListPageState extends State<FavsListPage> {
                               width: MediaQuery.of(context).size.width * .78,
                               //padding: EdgeInsets.fromLTRB(0, 5, 5, 5),
                               child: Row(
-                                children: <Widget>[
-                                  Row(
-                                    children: _buildDateGridItems(
-                                        str,
-                                        str.entityId,
-                                        str.name,
-                                        str.closedOn,
-                                        str.advanceDays),
-                                  ),
-                                ],
+                                children: _buildDateGridItems(str, str.entityId,
+                                    str.name, str.closedOn, str.advanceDays),
                               )),
                     ],
                   ),
@@ -651,7 +669,8 @@ class _FavsListPageState extends State<FavsListPage> {
                             size: 25,
                           ),
                           onPressed: () {
-                            generateLinkAndShareWithParams(str.entityId);
+                            generateLinkAndShareWithParams(
+                                str.entityId, str.name);
                           },
                         )),
                     Container(

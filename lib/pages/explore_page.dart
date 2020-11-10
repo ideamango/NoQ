@@ -140,9 +140,11 @@ class _ExplorePageState extends State<ExplorePage> {
     }
   }
 
-  generateLinkAndShareWithParams(String entityId) async {
+  generateLinkAndShareWithParams(String entityId, String name) async {
+    String msgTitle = name + entityShareByUserHeading;
+    String msgBody = entityShareMessage;
     var dynamicLink =
-        await Utils.createDynamicLinkWithParams(entityId: entityId);
+        await Utils.createDynamicLinkWithParams(entityId, msgTitle, msgBody);
     print("Dynamic Link: $dynamicLink");
 
     _dynamicLink =
@@ -935,7 +937,8 @@ class _ExplorePageState extends State<ExplorePage> {
                           size: 25,
                         ),
                         onPressed: () {
-                          generateLinkAndShareWithParams(str.entityId);
+                          generateLinkAndShareWithParams(
+                              str.entityId, str.name);
                         },
                       )),
                   Container(

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:noq/constants.dart';
 import 'package:noq/db/db_model/entity.dart';
 import 'package:noq/db/db_model/meta_entity.dart';
 import 'package:noq/db/db_service/entity_service.dart';
@@ -75,9 +76,11 @@ class EntityRowState extends State<EntityRow> {
       });
     }
 
-    generateLinkAndShareWithParams(String entityId) async {
+    generateLinkAndShareWithParams(String entityId, String name) async {
+      String msgTitle = name + entityShareByOwnerHeading;
+      String msgBody = entityShareMessage;
       var dynamicLink =
-          await Utils.createDynamicLinkWithParams(entityId: entityId);
+          await Utils.createDynamicLinkWithParams(entityId, msgTitle, msgBody);
       print("Dynamic Link: $dynamicLink");
 
       String _dynamicLink =
@@ -125,7 +128,8 @@ class EntityRowState extends State<EntityRow> {
               "Important details are missing in entity, Please fill those first.",
               "Save Entity and then Share!!");
         } else
-          generateLinkAndShareWithParams(_metaEntity.entityId);
+          generateLinkAndShareWithParams(
+              _metaEntity.entityId, _metaEntity.name);
       });
     }
 
@@ -145,8 +149,8 @@ class EntityRowState extends State<EntityRow> {
               context,
               MaterialPageRoute(
                   builder: (context) => GenerateScreen(
-                        entityId: _metaEntity.entityId,
-                      )));
+                      entityId: _metaEntity.entityId,
+                      entityName: _metaEntity.name)));
       });
     }
 

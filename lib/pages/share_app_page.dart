@@ -24,7 +24,8 @@ class _ShareAppPageState extends State<ShareAppPage> {
   @override
   void initState() {
     super.initState();
-    Utils.createDynamicLink().then((value) {
+    Utils.createDynamicLinkWithParams(null, appShareHeading, appShareMessage)
+        .then((value) {
       setState(() {
         _initCompleted = true;
         dynamicLink = value;

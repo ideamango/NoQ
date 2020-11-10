@@ -40,9 +40,9 @@ String whatsappContactUsMsg = "Hey!!";
 
 String whatsappMessageToPlaceOwner = "Hey there! My Sukoon Token number is ";
 String whatsappMessage =
-    "Hey!! Are you worried about safety in the crowded place or long waiting in queues? \nNo worries, book your piece of mind with Sukoon mobile app. \nBook your slot when it's Less crowded and Stay Safe!!";
+    "Hey!! Are you worried about safety in the crowded place or long waiting in queues? \nNo worries, book your peace of mind with Sukoon mobile app. \nBook your slot when it's Less crowded and Stay Safe!!";
 String qrCodeShareMessage =
-    "Hey!! Are you worried about safety in the crowded place or long waiting in queues? \nNo worries, book your piece of mind with Sukoon mobile app. \nBook your slot when it's Less crowded and Stay Safe!!. \n\nJust scan the QR code of the place you want to visit and start booking..";
+    "Hey!! Are you worried about safety in the crowded place or long waiting in queues? \nNo worries, book your peace of mind with Sukoon mobile app. \nBook your slot when it's Less crowded and Stay Safe!!.\n\nJust scan the QR code of the place you want to visit and start booking..";
 String locationPermissionMsg =
     'To find nearby places we need access to your current location. Open Settings and give permission to "Sukoon" to access your location.';
 String locationAccessDeniedStr =
@@ -199,17 +199,21 @@ String bookingExpired = "This booking token has already expired!!";
 String tryAgainToBook = "Please try again or choose a different time or date.";
 
 String appShareHeading =
-    "Book your piece of mind with Sukoon, a Universal Booking App.";
+    "Book your peace of mind with Sukoon, a Universal Booking App.";
 String appShareMessage =
-    "Worried about your Safety in the crowded place OR Tired of long waiting in the Queue? \n\nSukoon helps you to Book a Time-Slot when the rush is less. \nDownload and start booking your piece of mind!!";
-
+    "Worried about your Safety in the crowded place OR Tired of long waiting in the Queue? \n\nSukoon helps you to Book a Time-Slot when the rush is less. \nDownload and start booking your peace of mind!!";
+String appShareWithOwnerHeading = "Message title to business owner from Sukoon";
+String appShareWithOwnerMessage = "Message body to business owner from Sukoon";
+//append place name in the last
 String entityShareByUserHeading = "Book your time-slot on your next visit to ";
-
+String entityShareByOwnerMailSubject =
+    " is inviting you to use SUKOON to Book your peace of mind!!";
+//append place name in start of string
 String entityShareByOwnerHeading =
     " is inviting you to pre-book the time-slot for your next visit.";
 
 String entityShareMessage =
-    "Now you don't have to worry about Safety at crowded place or tiring wait time due to long queues. \nBook your slot when the crowd is less. \nDownload Sukoon app and start booking your piece of mind!!";
+    "Now you don't have to worry about Safety \nat crowded place or tiring wait time due to long queues. \n\nBook your slot when the crowd is less. \nDownload Sukoon app and start booking your peace of mind!!";
 
 String faqHead1 = "How Sukoon helps bring Sukoon to your life?";
 String faqHead1Sub1 = "Lets look at the problems first..";

@@ -70,7 +70,7 @@ class _SearchEntityPageState extends State<SearchEntityPage>
           children: <Widget>[
             Container(
                 padding: EdgeInsets.all(0),
-                width: MediaQuery.of(context).size.width * .15,
+                //  width: MediaQuery.of(context).size.width * .15,
                 height: MediaQuery.of(context).size.width * .15,
                 child: image),
             Text(
@@ -248,9 +248,12 @@ class _SearchEntityPageState extends State<SearchEntityPage>
     }
   }
 
-  Future<void> generateLinkAndShareWithParams(String entityId) async {
+  Future<void> generateLinkAndShareWithParams(
+      String entityId, String name) async {
+    String msgTitle = entityShareByUserHeading + name;
+    String msgBody = entityShareMessage;
     var dynamicLink =
-        await Utils.createDynamicLinkWithParams(entityId: entityId);
+        await Utils.createDynamicLinkWithParams(entityId, msgTitle, msgBody);
     print("Dynamic Link: $dynamicLink");
 
     _dynamicLink =
@@ -952,31 +955,18 @@ class _SearchEntityPageState extends State<SearchEntityPage>
               crossAxisAlignment: CrossAxisAlignment.start,
               // mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
-                Container(
-                  padding: EdgeInsets.all(4),
+                new Container(
                   width: MediaQuery.of(context).size.width * .1,
-                  child: new Container(
-                    height: MediaQuery.of(context).size.width * .095,
-                    width: MediaQuery.of(context).size.width * .095,
-                    // margin: EdgeInsets.fromLTRB(
-                    //     MediaQuery.of(context).size.width * .01,
-                    //     MediaQuery.of(context).size.width * .01,
-                    //     MediaQuery.of(context).size.width * .005,
-                    //     MediaQuery.of(context).size.width * .005),
-                    padding:
-                        EdgeInsets.all(MediaQuery.of(context).size.width * .02),
-                    decoration: ShapeDecoration(
-                      shape: CircleBorder(),
-                      color: primaryIcon,
-                    ),
-                    child: Container(
-                        padding: EdgeInsets.zero,
-                        margin: EdgeInsets.zero,
-                        alignment: Alignment.center,
-                        height: MediaQuery.of(context).size.width * .09,
-                        width: MediaQuery.of(context).size.width * .09,
-                        child: entityImageIcon(str.type)),
-                  ),
+                  // margin: EdgeInsets.all(
+                  //   MediaQuery.of(context).size.width * .01,
+                  // ),
+                  padding: EdgeInsets.only(
+                      top: MediaQuery.of(context).size.width * .02),
+                  // decoration: ShapeDecoration(
+                  //   shape: CircleBorder(),
+                  //   //color: primaryIcon,
+                  // ),
+                  child: entityImageIcon(str.type),
                 ),
                 Container(
                   width: MediaQuery.of(context).size.width * .8,
@@ -1304,7 +1294,8 @@ class _SearchEntityPageState extends State<SearchEntityPage>
                           size: 25,
                         ),
                         onPressed: () {
-                          generateLinkAndShareWithParams(str.entityId);
+                          generateLinkAndShareWithParams(
+                              str.entityId, str.name);
                         },
                       )),
                   Container(
@@ -1712,7 +1703,8 @@ class _SearchEntityPageState extends State<SearchEntityPage>
                     recognizer: new TapGestureRecognizer()
                       ..onTap = () {
                         _searchTextController.text = "";
-                        Utils.generateLinkAndShare();
+                        Utils.generateLinkAndShare(
+                            appShareWithOwnerHeading, appShareWithOwnerMessage);
                       },
                   ),
                   TextSpan(text: notFoundMsg5),
