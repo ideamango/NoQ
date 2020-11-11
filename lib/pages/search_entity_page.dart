@@ -290,21 +290,37 @@ class _SearchEntityPageState extends State<SearchEntityPage>
                             fit: BoxFit.cover),
                       ),
                     ),
-                    Container(
-                      height: MediaQuery.of(context).size.height * .1,
-                      decoration: BoxDecoration(
-                        image: DecorationImage(
-                            image: AssetImage("assets/notFound1.png"),
-                            fit: BoxFit.cover),
+                    InkWell(
+                      child: Container(
+                        height: MediaQuery.of(context).size.height * .1,
+                        decoration: BoxDecoration(
+                          image: DecorationImage(
+                              image: AssetImage("assets/notFound1.png"),
+                              fit: BoxFit.cover),
+                        ),
                       ),
+                      onTap: () {
+                        _searchTextController.text = "";
+                        Utils.generateLinkAndShare(
+                            appShareWithOwnerHeading, appShareWithOwnerMessage);
+                      },
                     ),
-                    Container(
-                      height: MediaQuery.of(context).size.height * .1,
-                      decoration: BoxDecoration(
-                        image: DecorationImage(
-                            image: AssetImage("assets/notFound2.png"),
-                            fit: BoxFit.cover),
+                    InkWell(
+                      child: Container(
+                        height: MediaQuery.of(context).size.height * .1,
+                        decoration: BoxDecoration(
+                          image: DecorationImage(
+                              image: AssetImage("assets/notFound2.png"),
+                              fit: BoxFit.cover),
+                        ),
                       ),
+                      onTap: () {
+                        _searchTextController.text = "";
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => ContactUsPage()));
+                      },
                     ),
                     // Padding(
                     //   padding: EdgeInsets.all(5),
@@ -362,8 +378,6 @@ class _SearchEntityPageState extends State<SearchEntityPage>
         ),
       );
     }
-
-    //}
   }
 
   @override
