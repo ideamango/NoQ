@@ -12,6 +12,7 @@ import 'package:noq/db/db_model/meta_entity.dart';
 import 'package:noq/db/db_model/my_geo_fire_point.dart';
 import 'package:noq/db/db_model/app_user.dart';
 import 'package:noq/db/db_service/user_service.dart';
+import 'package:noq/enum/EntityTypes.dart';
 import 'package:noq/events/event_bus.dart';
 import 'package:noq/events/events.dart';
 import 'package:noq/global_state.dart';
@@ -602,13 +603,22 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
       isBookable = (entity.isBookable) ?? false;
       isActive = (entity.isActive) ?? false;
       var entitytype = entity.type.toString();
-      if (entitytype != "Mall" &&
-          entitytype != "Apartment" &&
-          entitytype != "School" &&
-          entitytype != "Bank") {
+      if (entitytype == EntityTypes.Mall) {
+        //is Public and Not bookable
+        isPublic = true;
+        isBookable = false;
+      } else if (entitytype == EntityTypes.Apartment ||
+          entitytype == EntityTypes.School ||
+          entitytype == EntityTypes.Office) {
+        // is Private and Not bookable
+        isPublic = false;
+        isBookable = false;
+      } else {
+        // is public and bookable
         isPublic = true;
         isBookable = true;
       }
+
       if (isActive) {
         validateField = true;
         _autoValidate = true;
