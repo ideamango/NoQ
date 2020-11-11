@@ -180,7 +180,7 @@ class DynamicLinkService {
             // Call method to add entity to favs list, if not already present,
             // else just load favs page.
             String entityId = deepLink.queryParameters['entityId'];
-            addEntityToFavs(context, entityId);
+            Utils.addEntityToFavs(context, entityId);
           }
         } else
           Navigator.pushReplacement(
@@ -190,44 +190,6 @@ class DynamicLinkService {
     } catch (e) {
       print(e.toString());
       print(e.message);
-    }
-  }
-
-  void addEntityToFavs(BuildContext context, String id) async {
-    Entity entity = await getEntity(id);
-    GlobalState gs = await GlobalState.getGlobalState();
-
-    bool entityContains = false;
-    for (int i = 0; i < gs.currentUser.favourites.length; i++) {
-      if (gs.currentUser.favourites[i].entityId == id) {
-        entityContains = true;
-        break;
-      } else
-        continue;
-    }
-    if (!entityContains) {
-      Utils.showMyFlushbar(context, Icons.info, Duration(seconds: 3),
-          "Processing...", "Hold on.");
-      bool result = await EntityService()
-          .addEntityToUserFavourite(entity.getMetaEntity());
-
-      if (result) {
-        gs.currentUser.favourites.add(entity.getMetaEntity());
-        Navigator.pushReplacement(
-            context, MaterialPageRoute(builder: (context) => FavsListPage()));
-      } else {
-        print("Oops.. Entity can't be added to Favorites");
-
-        Utils.showMyFlushbar(
-            context,
-            Icons.info,
-            Duration(seconds: 3),
-            "Oops!! Error in adding this entity to your favorites!!",
-            "Try again later.");
-      }
-    } else {
-      Utils.showMyFlushbar(context, Icons.info, Duration(seconds: 3),
-          "Entity is already present in your Favourites!!", "");
     }
   }
 }

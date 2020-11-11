@@ -1,26 +1,29 @@
 import 'package:noq/db/db_model/entity.dart';
 import 'package:noq/db/db_model/entity_private.dart';
 import 'package:noq/db/db_service/entity_service.dart';
+import 'package:noq/global_state.dart';
+import 'package:noq/tuple.dart';
 import 'package:noq/utils.dart';
 
 // Get list of Stores from Server
 
 Future<bool> upsertEntity(Entity entity, String regNum) async {
-  bool status = await EntityService().upsertEntity(entity, regNum);
-  return status;
+  entity.regNum = regNum;
+  GlobalState gs = await GlobalState.getGlobalState();
+  return await gs.putEntity(entity, true);
 }
 
 Future<bool> deleteEntity(String entityId) async {
-  bool status = await EntityService().deleteEntity(entityId);
-  return status;
+  GlobalState gs = await GlobalState.getGlobalState();
+  return await gs.deleteEntity(entityId);
 }
 
-Future<Entity> getEntity(String metaEntityId) async {
-  Entity entity = await EntityService().getEntity(metaEntityId);
-  return entity;
+Future<Tuple<Entity, bool>> getEntity(String entityId) async {
+  GlobalState gs = await GlobalState.getGlobalState();
+  return await gs.getEntity(entityId);
 }
 
-Entity createEntity(String entityId, String entityType) {
+Future<Entity> createEntity(String entityId, String entityType) async {
   Entity entity = new Entity(
       entityId: entityId,
       name: null,
@@ -44,6 +47,10 @@ Entity createEntity(String entityId, String entityType) {
       isBookable: false,
       isActive: false,
       coordinates: null);
+
+  GlobalState gs = await GlobalState.getGlobalState();
+  await gs.putEntity(entity, false);
+
   return entity;
 }
 

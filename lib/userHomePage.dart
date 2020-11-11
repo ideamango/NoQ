@@ -167,7 +167,8 @@ class _UserHomePageState extends State<UserHomePage> {
               ),
               body: Scrollbar(
                 child: SingleChildScrollView(
-                  padding: EdgeInsets.all(MediaQuery.of(context).size.width * .036),
+                  padding:
+                      EdgeInsets.all(MediaQuery.of(context).size.width * .036),
                   child: Column(
                     children: <Widget>[
                       Card(
@@ -316,7 +317,7 @@ class _UserHomePageState extends State<UserHomePage> {
                           ),
                         ),
                       ),
-                      if (_state.currentUser.ph == '+919999999999')
+                      if (_state.getCurrentUser().ph == '+919999999999')
                         Container(
                           height: 30,
                           width: 60,
@@ -363,7 +364,7 @@ class _UserHomePageState extends State<UserHomePage> {
               floatingActionButtonLocation:
                   FloatingActionButtonLocation.centerDocked,
               drawer: CustomDrawer(
-                phone: _state.currentUser.ph,
+                phone: _state.getCurrentUser().ph,
               ),
               bottomNavigationBar: CustomBottomBar(
                 barIndex: 0,

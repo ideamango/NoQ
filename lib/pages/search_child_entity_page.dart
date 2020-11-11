@@ -18,6 +18,7 @@ import 'package:noq/repository/StoreRepository.dart';
 import 'package:noq/services/circular_progress.dart';
 import 'package:noq/services/url_services.dart';
 import 'package:noq/style.dart';
+import 'package:noq/tuple.dart';
 import 'package:noq/utils.dart';
 import 'package:noq/widget/appbar.dart';
 import 'package:noq/widget/bottom_nav_bar.dart';
@@ -197,9 +198,16 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
   Future<void> getEntitiesList() async {
     if (!Utils.isNullOrEmpty(widget.childList)) {
       for (int i = 0; i < widget.childList.length; i++) {
-        Entity value = await getEntity(widget.childList[i].entityId);
+        Tuple<Entity, bool> value =
+            await _state.getEntity(widget.childList[i].entityId);
+        if (value == null) {
+          continue;
+        }
+
+        Entity entity = value.item1;
+
         if (value != null) {
-          enList.add(value);
+          enList.add(entity);
         }
       }
     }
@@ -256,7 +264,7 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
   }
 
   bool isFavourite(MetaEntity en) {
-    List<MetaEntity> favs = _state.currentUser.favourites;
+    List<MetaEntity> favs = _state.getCurrentUser().favourites;
     if (Utils.isNullOrEmpty(favs)) return false;
 
     for (int i = 0; i < favs.length; i++) {

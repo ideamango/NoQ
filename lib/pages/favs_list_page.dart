@@ -10,7 +10,7 @@ import 'package:noq/db/db_model/meta_entity.dart';
 import 'package:noq/db/db_model/user_token.dart';
 import 'package:noq/db/db_service/entity_service.dart';
 import 'package:noq/global_state.dart';
-import 'package:noq/pages/search_child_entity_page_old.dart';
+
 import 'package:noq/pages/show_slots_page.dart';
 import 'package:noq/repository/local_db_repository.dart';
 import 'package:noq/repository/slotRepository.dart';
@@ -79,10 +79,10 @@ class _FavsListPageState extends State<FavsListPage> {
     List<Entity> newList = new List<Entity>();
     Entity e;
     //if (initCompleted) {
-    print(_state.currentUser.favourites);
+    print(_state.getCurrentUser().favourites);
 
-    if (!Utils.isNullOrEmpty(_state.currentUser.favourites)) {
-      for (MetaEntity fs in _state.currentUser.favourites) {
+    if (!Utils.isNullOrEmpty(_state.getCurrentUser().favourites)) {
+      for (MetaEntity fs in _state.getCurrentUser().favourites) {
         e = await EntityService().getEntity(fs.entityId);
         newList.add(e);
       }
@@ -105,7 +105,7 @@ class _FavsListPageState extends State<FavsListPage> {
   }
 
   bool isFavourite(MetaEntity en) {
-    List<MetaEntity> favs = _state.currentUser.favourites;
+    List<MetaEntity> favs = _state.getCurrentUser().favourites;
     for (int i = 0; i < favs.length; i++) {
       if (favs[i].entityId == en.entityId) {
         return true;
@@ -291,19 +291,7 @@ class _FavsListPageState extends State<FavsListPage> {
     //_buildDateGridItems(str.id);
     print('after buildDateGrid called');
     return GestureDetector(
-      onTap: () {
-        print("Container clicked");
-        //TODO: If entity has child then fecth them from server show in next screen
-        if (str.childEntities.length != 0) {
-          Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => SearchChildEntityOldPage(
-                      pageName: "Favs",
-                      childList: str.childEntities,
-                      parentName: str.name)));
-        }
-      },
+      onTap: () {},
       child: Card(
         margin: EdgeInsets.fromLTRB(8, 12, 8, 0),
         elevation: 10,
@@ -719,16 +707,7 @@ class _FavsListPageState extends State<FavsListPage> {
                                 //         color: Colors.blueGrey[200]),
                                 //     borderRadius: BorderRadius.all(
                                 //         Radius.circular(2.0))),
-                                onPressed: () {
-                                  Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) =>
-                                              SearchChildEntityOldPage(
-                                                  pageName: "Favs",
-                                                  childList: str.childEntities,
-                                                  parentName: str.name)));
-                                },
+                                onPressed: () {},
                                 child: Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: <Widget>[

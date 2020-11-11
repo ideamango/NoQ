@@ -8,9 +8,10 @@ import 'package:noq/db/db_service/entity_service.dart';
 import 'package:noq/db/db_service/slot_full_exception.dart';
 import 'package:noq/db/db_service/token_already_exists_exception.dart';
 import 'package:noq/global_state.dart';
+import 'package:noq/pages/search_child_entity_page.dart';
 import 'package:noq/pages/search_entity_page.dart';
 import 'package:noq/pages/favs_list_page.dart';
-import 'package:noq/pages/search_child_entity_page_old.dart';
+
 import 'package:noq/pages/token_alert.dart';
 import 'package:noq/repository/slotRepository.dart';
 import 'package:noq/style.dart';
@@ -104,7 +105,7 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
       home: WillPopScope(
         child: Scaffold(
           drawer: CustomDrawer(
-            phone: _state.currentUser.ph,
+            phone: _state.getCurrentUser().ph,
           ),
           appBar: CustomAppBar(
             titleTxt: title,
@@ -157,7 +158,7 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
         dynamic backRoute;
         if (widget.forPage == 'MainSearch') backRoute = SearchEntityPage();
         if (widget.forPage == 'ChildSearch')
-          backRoute = SearchChildEntityOldPage(
+          backRoute = SearchChildEntityPage(
             pageName: "Search",
             parentName: parentEntity.name,
             childList: parentEntity.childEntities,
@@ -165,7 +166,7 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
           );
         if (widget.forPage == 'FavSearch') backRoute = FavsListPage();
         if (widget.forPage == 'FavChild')
-          backRoute = SearchChildEntityOldPage(
+          backRoute = SearchChildEntityPage(
             pageName: "Favs",
             parentName: parentEntity.name,
             childList: parentEntity.childEntities,
@@ -177,7 +178,7 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
           home: WillPopScope(
             child: Scaffold(
               drawer: CustomDrawer(
-                phone: _state.currentUser.ph,
+                phone: _state.getCurrentUser().ph,
               ),
               appBar: CustomAppBarWithBackButton(
                   titleTxt: _storeName, backRoute: backRoute),

@@ -657,9 +657,9 @@ class _ManageChildEntityDetailsPageState
     if (_serviceDetailsFormKey.currentState.validate() && isContactValid) {
       _serviceDetailsFormKey.currentState.save();
       print("Saved formmmmmmm");
+      serviceEntity.regNum = _regNumController.text;
       EntityService()
-          .upsertChildEntityToParent(
-              serviceEntity, serviceEntity.parentId, _regNumController.text)
+          .upsertChildEntityToParent(serviceEntity, serviceEntity.parentId)
           .then((value) {
         if (value) {
           Navigator.push(
@@ -1505,10 +1505,9 @@ class _ManageChildEntityDetailsPageState
             true);
 
         _serviceDetailsFormKey.currentState.save();
-
+        serviceEntity.regNum = _regNumController.text;
         EntityService()
-            .upsertChildEntityToParent(
-                serviceEntity, serviceEntity.parentId, _regNumController.text)
+            .upsertChildEntityToParent(serviceEntity, serviceEntity.parentId)
             .then((value) {
           if (value) {
             // Assign admins to newly upserted entity

@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:noq/db/db_model/address.dart';
 import 'package:noq/global_state.dart';
+import 'package:noq/pages/favs_list_page.dart';
 import 'package:noq/services/auth_service.dart';
 import 'package:noq/style.dart';
 import 'package:noq/widget/weekday_selector.dart';
@@ -13,6 +14,7 @@ import 'package:noq/widget/widgets.dart';
 import 'package:share/share.dart';
 
 import 'constants.dart';
+import 'db/db_model/entity.dart';
 
 class Utils {
   static String getDayOfWeek(DateTime date) {
@@ -219,6 +221,39 @@ class Utils {
       hr = '0' + hr;
     }
     return hr;
+  }
+
+  static void addEntityToFavs(BuildContext context, String id) async {
+    Utils.showMyFlushbar(context, Icons.info, Duration(seconds: 3),
+        "Adding the Place to your Favourites...", "Hold on!");
+
+    GlobalState gs = await GlobalState.getGlobalState();
+    Entity entity;
+
+    gs.getEntity(id).then((value) {
+      if (value == null)
+        Utils.showMyFlushbar(context, Icons.info, Duration(seconds: 3),
+            "The place does not exists!", "");
+
+      entity = value.item1;
+
+      gs.addFavourite(entity.getMetaEntity()).then((value) {
+        if (value) {
+          Utils.showMyFlushbar(context, Icons.info, Duration(seconds: 3),
+              "Added to your favorites.", "");
+
+          Navigator.pushReplacement(
+              context, MaterialPageRoute(builder: (context) => FavsListPage()));
+        } else {
+          Utils.showMyFlushbar(
+              context,
+              Icons.info,
+              Duration(seconds: 3),
+              "Oops!! Could not add this place to your favorites.",
+              "Try again later!");
+        }
+      });
+    });
   }
 
   static Future<Position> getCurrLocation() async {

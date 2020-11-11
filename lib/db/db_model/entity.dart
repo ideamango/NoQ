@@ -47,7 +47,7 @@ class Entity {
   String entityId;
   String name;
   String description;
-  //String regNum;
+  String regNum;
   Address address;
   int advanceDays;
   bool isPublic;

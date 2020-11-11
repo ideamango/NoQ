@@ -111,14 +111,14 @@ class _ManageEntityListPageState extends State<ManageEntityListPage> {
   initialize() async {
     await getGlobalState();
     metaEntitiesList = List<MetaEntity>();
-    if (!Utils.isNullOrEmpty(_state.currentUser.entities)) {
+    if (!Utils.isNullOrEmpty(_state.getCurrentUser().entities)) {
 //Check if entity is child and parent os same entity is also enlisted in entities then dont show child.
 // Show only first level entities to user.
-      for (int i = 0; i < _state.currentUser.entities.length; i++) {
-        MetaEntity m = _state.currentUser.entities[i];
+      for (int i = 0; i < _state.getCurrentUser().entities.length; i++) {
+        MetaEntity m = _state.getCurrentUser().entities[i];
         bool isAdminOfParent = false;
         if (m.parentId != null) {
-          for (MetaEntity parent in _state.currentUser.entities) {
+          for (MetaEntity parent in _state.getCurrentUser().entities) {
             if (parent.entityId == m.parentId) {
               isAdminOfParent = true;
               continue;
@@ -140,21 +140,21 @@ class _ManageEntityListPageState extends State<ManageEntityListPage> {
   void _addNewServiceRow() {
     var uuid = new Uuid();
     String _entityId = uuid.v1();
-    entity = createEntity(_entityId, _entityType);
+    createEntity(_entityId, _entityType).then((entity) {
+      MetaEntity metaEn = entity.getMetaEntity();
 
-    MetaEntity metaEn = entity.getMetaEntity();
+      setState(() {
+        metaEntitiesList.add(metaEn);
+      });
+      _state.addEntity(metaEn);
 
-    setState(() {
-      metaEntitiesList.add(metaEn);
+      _parentEntityMap[metaEn.entityId] = entity;
+      if (_scrollController.hasClients)
+        _scrollController.animateTo(
+            _scrollController.position.maxScrollExtent + itemSize,
+            curve: Curves.easeInToLinear,
+            duration: Duration(milliseconds: 200));
     });
-    _state.addEntity(metaEn);
-
-    _parentEntityMap[metaEn.entityId] = entity;
-    if (_scrollController.hasClients)
-      _scrollController.animateTo(
-          _scrollController.position.maxScrollExtent + itemSize,
-          curve: Curves.easeInToLinear,
-          duration: Duration(milliseconds: 200));
   }
 
   @override

@@ -13,8 +13,9 @@ import '../../constants.dart';
 import 'user_does_not_exists_exception.dart';
 
 class EntityService {
-  Future<bool> upsertEntity(Entity entity, String regNum) async {
+  Future<bool> upsertEntity(Entity entity) async {
     final fAuth.User fireUser = FirebaseAuth.instance.currentUser;
+    String regNum = entity.regNum;
 
     FirebaseFirestore fStore = FirebaseFirestore.instance;
     final DocumentReference entityRef =
@@ -344,12 +345,14 @@ class EntityService {
   }
 
   Future<bool> upsertChildEntityToParent(
-      Entity childEntity, String parentEntityId, String childRegNum) async {
+      Entity childEntity, String parentEntityId) async {
     //ChildEntity might already exists or can be new
     //ChildEntity Meta should be added in the parentEntity
     //ChildEntity should have parentEntityId set on the parentId attribute
     FirebaseFirestore fStore = FirebaseFirestore.instance;
     final User fireUser = FirebaseAuth.instance.currentUser;
+    String childRegNum = childEntity.regNum;
+
     final DocumentReference entityRef =
         fStore.doc('entities/' + parentEntityId);
 
