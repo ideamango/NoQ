@@ -70,7 +70,7 @@ class _SearchEntityPageState extends State<SearchEntityPage>
           children: <Widget>[
             Container(
                 padding: EdgeInsets.all(0),
-                //  width: MediaQuery.of(context).size.width * .15,
+                width: MediaQuery.of(context).size.width * .15,
                 height: MediaQuery.of(context).size.width * .15,
                 child: image),
             Text(
@@ -219,7 +219,7 @@ class _SearchEntityPageState extends State<SearchEntityPage>
   }
 
   bool isFavourite(MetaEntity en) {
-    List<MetaEntity> favs = _state.currentUser.favourites;
+    List<MetaEntity> favs = _state.getCurrentUser().favourites;
     if (Utils.isNullOrEmpty(favs)) return false;
 
     for (int i = 0; i < favs.length; i++) {
@@ -249,11 +249,9 @@ class _SearchEntityPageState extends State<SearchEntityPage>
   }
 
   Future<void> generateLinkAndShareWithParams(
-      String entityId, String name) async {
-    String msgTitle = entityShareByUserHeading + name;
-    String msgBody = entityShareMessage;
-    var dynamicLink =
-        await Utils.createDynamicLinkWithParams(entityId, msgTitle, msgBody);
+      String entityId, String entityName) async {
+    var dynamicLink = await Utils.createDynamicLinkWithParams(
+        entityId, entityShareByUserHeading + entityName, entityShareMessage);
     print("Dynamic Link: $dynamicLink");
 
     _dynamicLink =
@@ -283,26 +281,10 @@ class _SearchEntityPageState extends State<SearchEntityPage>
                   children: <Widget>[
                     SizedBox(height: MediaQuery.of(context).size.height * .1),
                     Container(
-                      height: MediaQuery.of(context).size.height * .3,
+                      height: MediaQuery.of(context).size.height * .4,
                       decoration: BoxDecoration(
                         image: DecorationImage(
                             image: AssetImage("assets/notFound.png"),
-                            fit: BoxFit.cover),
-                      ),
-                    ),
-                    Container(
-                      height: MediaQuery.of(context).size.height * .15,
-                      decoration: BoxDecoration(
-                        image: DecorationImage(
-                            image: AssetImage("assets/notFound1.png"),
-                            fit: BoxFit.cover),
-                      ),
-                    ),
-                    Container(
-                      height: MediaQuery.of(context).size.height * .15,
-                      decoration: BoxDecoration(
-                        image: DecorationImage(
-                            image: AssetImage("assets/notFound2.png"),
                             fit: BoxFit.cover),
                       ),
                     ),
@@ -955,18 +937,31 @@ class _SearchEntityPageState extends State<SearchEntityPage>
               crossAxisAlignment: CrossAxisAlignment.start,
               // mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
-                new Container(
+                Container(
+                  padding: EdgeInsets.all(4),
                   width: MediaQuery.of(context).size.width * .1,
-                  // margin: EdgeInsets.all(
-                  //   MediaQuery.of(context).size.width * .01,
-                  // ),
-                  padding: EdgeInsets.only(
-                      top: MediaQuery.of(context).size.width * .02),
-                  // decoration: ShapeDecoration(
-                  //   shape: CircleBorder(),
-                  //   //color: primaryIcon,
-                  // ),
-                  child: entityImageIcon(str.type),
+                  child: new Container(
+                    height: MediaQuery.of(context).size.width * .095,
+                    width: MediaQuery.of(context).size.width * .095,
+                    // margin: EdgeInsets.fromLTRB(
+                    //     MediaQuery.of(context).size.width * .01,
+                    //     MediaQuery.of(context).size.width * .01,
+                    //     MediaQuery.of(context).size.width * .005,
+                    //     MediaQuery.of(context).size.width * .005),
+                    padding:
+                        EdgeInsets.all(MediaQuery.of(context).size.width * .02),
+                    decoration: ShapeDecoration(
+                      shape: CircleBorder(),
+                      color: primaryIcon,
+                    ),
+                    child: Container(
+                        padding: EdgeInsets.zero,
+                        margin: EdgeInsets.zero,
+                        alignment: Alignment.center,
+                        height: MediaQuery.of(context).size.width * .09,
+                        width: MediaQuery.of(context).size.width * .09,
+                        child: entityImageIcon(str.type)),
+                  ),
                 ),
                 Container(
                   width: MediaQuery.of(context).size.width * .8,

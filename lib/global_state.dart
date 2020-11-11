@@ -18,23 +18,38 @@ import 'events/events.dart';
 import 'package:timezone/timezone.dart' as tz;
 
 class GlobalState {
-  AppUser currentUser;
+  AppUser _currentUser;
   Configurations conf;
   List<UserToken> bookings;
   List<Entity> pastSearches;
   Map<String, Entity> _entities;
   Map<String, bool> _entityState;
+  EntityService _entityService;
+  UserService _userService;
+  TokenService _tokenService;
 
   static GlobalState _gs;
 
   GlobalState._();
 
-  GlobalState.withValues(
-      {this.currentUser, this.conf, this.bookings, this.pastSearches});
+  // GlobalState.withValues(
+  //     {this._currentUser, this.conf, this.bookings, this.pastSearches});
 
   static Future<GlobalState> getGlobalState() async {
     if (_gs == null) {
       _gs = new GlobalState._();
+    }
+
+    if (_gs._entityService == null) {
+      _gs._entityService = new EntityService();
+    }
+
+    if (_gs._userService == null) {
+      _gs._userService = new UserService();
+    }
+
+    if (_gs._tokenService == null) {
+      _gs._tokenService = new TokenService();
     }
 
     if (_gs._entities == null) {
@@ -42,11 +57,11 @@ class GlobalState {
       _gs._entityState = new Map<String, bool>();
     }
 
-    if (_gs.currentUser == null) {
+    if (_gs._currentUser == null) {
       try {
-        _gs.currentUser = await UserService().getCurrentUser();
-        if (Utils.isNullOrEmpty(_gs.currentUser.favourites))
-          _gs.currentUser.favourites = new List<MetaEntity>();
+        _gs._currentUser = await _gs._userService.getCurrentUser();
+        if (Utils.isNullOrEmpty(_gs._currentUser.favourites))
+          _gs._currentUser.favourites = new List<MetaEntity>();
       } catch (e) {
         print(
             "Error initializing GlobalState, User details could not be fetched from server..");
@@ -66,10 +81,14 @@ class GlobalState {
       DateTime toDate = DateTime.now().add(new Duration(days: 30));
 
       _gs.bookings =
-          await TokenService().getAllTokensForCurrentUser(fromDate, toDate);
+          await _gs._tokenService.getAllTokensForCurrentUser(fromDate, toDate);
     }
 
     return _gs;
+  }
+
+  AppUser getCurrentUser() {
+    return _currentUser;
   }
 
   Future<Tuple<Entity, bool>> getEntity(String id) async {
@@ -77,7 +96,7 @@ class GlobalState {
       return new Tuple(item1: _entities[id], item2: _entityState[id]);
     } else {
       //load from server
-      Entity ent = await EntityService().getEntity(id);
+      Entity ent = await _entityService.getEntity(id);
       if (ent == null) {
         return null;
       }
@@ -90,7 +109,7 @@ class GlobalState {
   }
 
   Future<bool> deleteEntity(String id) async {
-    bool isDeleted = await EntityService().deleteEntity(id);
+    bool isDeleted = await _entityService.deleteEntity(id);
     if (isDeleted) {
       _entities.remove(id);
       _entityState.remove(id);
@@ -102,7 +121,7 @@ class GlobalState {
   Future<bool> putEntity(Entity entity, bool saveOnServer) async {
     _entities[entity.entityId] = entity;
     if (saveOnServer) {
-      if (await EntityService().upsertEntity(entity)) {
+      if (await _entityService.upsertEntity(entity)) {
         _entityState[entity.entityId] = true;
         return true;
       } else {
@@ -141,36 +160,60 @@ class GlobalState {
     return newBookings;
   }
 
-  Future<bool> addFavourite(MetaEntity me) async {
-    _gs.currentUser.favourites.add(me);
-    // saveGlobalState();
-    return true;
+  Future<bool> addFavourite(MetaEntity newMe) async {
+    for (MetaEntity me in _currentUser.favourites) {
+      if (me.entityId == newMe.entityId) {
+        return true;
+      }
+    }
+
+    bool isSuccess = await _entityService.addEntityToUserFavourite(newMe);
+
+    if (isSuccess) {
+      _currentUser.favourites.add(newMe);
+
+      return true;
+    }
+    return false;
   }
 
   Future<bool> removeFavourite(MetaEntity me) async {
-    _gs.currentUser.favourites
-        .removeWhere((element) => element.entityId == me.entityId);
-    //  saveGlobalState();
+    bool isRemoved = false;
+    for (MetaEntity meta in _currentUser.favourites) {
+      if (meta.entityId == me.entityId) {
+        isRemoved =
+            await _entityService.removeEntityFromUserFavourite(me.entityId);
+
+        if (isRemoved) {
+          _currentUser.favourites
+              .removeWhere((element) => element.entityId == me.entityId);
+          return true;
+        } else {
+          return false;
+        }
+      }
+    }
+
     return true;
   }
 
   Future<bool> addEntity(MetaEntity me) async {
-    _gs.currentUser.entities.add(me);
+    _currentUser.entities.add(me);
     // saveGlobalState();
     return true;
   }
 
   Future<bool> removeEntity(String entityId) async {
-    _gs.currentUser.entities
+    _currentUser.entities
         .removeWhere((element) => element.entityId == entityId);
     //  saveGlobalState();
     return true;
   }
 
   Future<bool> updateMetaEntity(MetaEntity metaEntity) async {
-    for (int i = 0; i < _gs.currentUser.entities.length; i++) {
-      if (_gs.currentUser.entities[i].entityId == metaEntity.entityId) {
-        _gs.currentUser.entities[i] = metaEntity;
+    for (int i = 0; i < _currentUser.entities.length; i++) {
+      if (_currentUser.entities[i].entityId == metaEntity.entityId) {
+        _currentUser.entities[i] = metaEntity;
       }
     }
     return true;
@@ -198,22 +241,22 @@ class GlobalState {
   }
 
   Map<String, dynamic> toJson() => {
-        'currentUser': currentUser.toJson(),
+        'currentUser': _currentUser.toJson(),
         'conf': conf.toJson(),
         'bookings': convertBookingsListToJson(this.bookings),
         'pastSearches': convertPastSearchesListToJson(this.pastSearches)
       };
 
-  static Future<GlobalState> fromJson(Map<String, dynamic> json) async {
-    if (json == null) return null;
+  // static Future<GlobalState> fromJson(Map<String, dynamic> json) async {
+  //   if (json == null) return null;
 
-    return new GlobalState.withValues(
-      currentUser: AppUser.fromJson(json['currentUser']),
-      conf: Configurations.fromJson(json['conf']),
-      bookings: convertToBookingsFromJson(json['bookings']),
-      pastSearches: convertToSearchListFromJson(json['pastSearches']),
-    );
-  }
+  //   return new GlobalState.withValues(
+  //     _currentUser: AppUser.fromJson(json['currentUser']),
+  //     conf: Configurations.fromJson(json['conf']),
+  //     bookings: convertToBookingsFromJson(json['bookings']),
+  //     pastSearches: convertToSearchListFromJson(json['pastSearches']),
+  //   );
+  // }
 
   List<dynamic> convertBookingsListToJson(List<UserToken> tokens) {
     List<dynamic> bookingListJson = new List<dynamic>();

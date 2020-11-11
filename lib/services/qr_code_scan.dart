@@ -26,7 +26,7 @@ class QrCodeScanner {
         List<String> url = scanResult.rawContent.split('entityId');
         String entityId = url[1];
 
-        addEntityToFavs(context, entityId.substring(3));
+        Utils.addEntityToFavs(context, entityId.substring(3));
       } else if (scanResult.type == ResultType.Cancelled) {
         Utils.showMyFlushbar(context, Icons.info, Duration(seconds: 3),
             "QR scan is cancelled by you..", "Try again!!");
@@ -52,51 +52,6 @@ class QrCodeScanner {
     } catch (e) {
       Utils.showMyFlushbar(context, Icons.info, Duration(seconds: 5),
           "Something went wrong..", "Unable to process");
-    }
-  }
-
-  static void addEntityToFavs(BuildContext context, String id) async {
-    Entity entity = await getEntity(id);
-    if (entity != null) {
-      GlobalState gs = await GlobalState.getGlobalState();
-
-      bool entityContains = false;
-      for (int i = 0; i < gs.currentUser.favourites.length; i++) {
-        if (gs.currentUser.favourites[i].entityId == id) {
-          entityContains = true;
-          break;
-        } else
-          continue;
-      }
-      if (!entityContains) {
-        Utils.showMyFlushbar(context, Icons.info, Duration(seconds: 3),
-            "Adding to your Favourites..", "");
-        EntityService()
-            .addEntityToUserFavourite(entity.getMetaEntity())
-            .then((value) {
-          if (value) {
-            gs.currentUser.favourites.add(entity.getMetaEntity());
-            Navigator.pushReplacement(context,
-                MaterialPageRoute(builder: (context) => FavsListPage()));
-          } else {
-            Utils.showMyFlushbar(
-                context,
-                Icons.info,
-                Duration(seconds: 3),
-                "The place can't be added to your Favourites",
-                "Try again later");
-          }
-        }).catchError((onError) {
-          Utils.showMyFlushbar(
-              context, Icons.info, Duration(seconds: 3), "Oops error...", "");
-        });
-      } else {
-        Utils.showMyFlushbar(
-            context, Icons.info, Duration(seconds: 3), entityAlreadyInFav, "");
-      }
-    } else {
-      Utils.showMyFlushbar(
-          context, Icons.info, Duration(seconds: 3), "Oops error...", "");
     }
   }
 

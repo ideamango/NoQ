@@ -676,7 +676,8 @@ class _UserAccountPageState extends State<UserAccountPage> {
                                           children: <TextSpan>[
                                         TextSpan(text: userAccountHeadingTxt),
                                         TextSpan(text: "\n"),
-                                        TextSpan(text: _state.currentUser.ph),
+                                        TextSpan(
+                                            text: _state.getCurrentUser().ph),
                                       ])),
                                 ],
                               ),

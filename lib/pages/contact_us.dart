@@ -209,7 +209,7 @@ class _ContactUsPageState extends State<ContactUsPage> {
         home: WillPopScope(
           child: Scaffold(
             drawer: CustomDrawer(
-              phone: _state.currentUser.ph,
+              phone: _state.getCurrentUser().ph,
             ),
             appBar: CustomAppBarWithBackButton(
               backRoute: UserHomePage(),

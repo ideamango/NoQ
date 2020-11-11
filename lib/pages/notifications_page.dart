@@ -60,7 +60,7 @@ class _UserNotificationsPageState extends State<UserNotificationsPage> {
       home: WillPopScope(
         child: Scaffold(
           drawer: CustomDrawer(
-            phone: _state.currentUser.ph,
+            phone: _state.getCurrentUser().ph,
           ),
           appBar: CustomAppBar(
             titleTxt: title,
@@ -96,7 +96,7 @@ class _UserNotificationsPageState extends State<UserNotificationsPage> {
       theme: ThemeData.light().copyWith(),
       home: Scaffold(
         drawer: CustomDrawer(
-          phone: _state.currentUser.ph,
+          phone: _state.getCurrentUser().ph,
         ),
         appBar: CustomAppBar(
           titleTxt: title,

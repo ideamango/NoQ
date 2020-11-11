@@ -8,7 +8,7 @@ import 'package:noq/db/db_model/meta_entity.dart';
 import 'package:noq/db/db_model/user_token.dart';
 import 'package:noq/db/db_service/entity_service.dart';
 import 'package:noq/global_state.dart';
-import 'package:noq/pages/search_child_entity_page_old.dart';
+
 import 'package:noq/pages/show_slots_page.dart';
 import 'package:noq/services/circular_progress.dart';
 import 'package:noq/services/url_services.dart';
@@ -111,7 +111,7 @@ class _ExplorePageState extends State<ExplorePage> {
   }
 
   bool isFavourite(MetaEntity en) {
-    List<MetaEntity> favs = _state.currentUser.favourites;
+    List<MetaEntity> favs = _state.getCurrentUser().favourites;
     if (Utils.isNullOrEmpty(favs)) return false;
 
     for (int i = 0; i < favs.length; i++) {
@@ -409,7 +409,7 @@ class _ExplorePageState extends State<ExplorePage> {
     if (_isSearching == "initial" && _searchText.isEmpty && _entityType == null)
       return MaterialApp(
         routes: <String, WidgetBuilder>{
-          '/childSearch': (BuildContext context) => SearchChildEntityOldPage(),
+          //'/childSearch': (BuildContext context) => SearchChildEntityOldPage(),
           '/mainSearch': (BuildContext context) => SearchEntityPage(),
         },
         theme: ThemeData.light().copyWith(),
@@ -472,7 +472,7 @@ class _ExplorePageState extends State<ExplorePage> {
       print("Came in isSearching");
       return MaterialApp(
         routes: <String, WidgetBuilder>{
-          '/childSearch': (BuildContext context) => SearchChildEntityOldPage(),
+          //'/childSearch': (BuildContext context) => SearchChildEntityOldPage(),
           '/mainSearch': (BuildContext context) => SearchEntityPage(),
         },
         theme: ThemeData.light().copyWith(),
@@ -545,33 +545,7 @@ class _ExplorePageState extends State<ExplorePage> {
     //_buildDateGridItems(str.id);
     print('after buildDateGrid called');
     return GestureDetector(
-      onTap: () {
-        print("Container clicked");
-        //TODO: If entity has child then fecth them from server show in next screen
-        if (str.childEntities.length != 0) {
-          Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => SearchChildEntityOldPage(
-                        pageName: "Search",
-                        childList: str.childEntities,
-                        parentName: str.name,
-                        parentId: str.entityId,
-                      )));
-        }
-
-        // if (child.length != 0) {
-        //   Navigator.push(
-        //       context,
-        //       MaterialPageRoute(
-        //           builder: (context) => SearchStoresPage(forPage: "Child")));
-
-        //   // Navigator.push(
-        //   //     context,
-        //   //     MaterialPageRoute(
-        //   //         builder: (context) => EntityServicesListPage(entity: str)));
-        // }
-      },
+      onTap: () {},
       child: Card(
         elevation: 10,
         child: Column(
@@ -984,16 +958,7 @@ class _ExplorePageState extends State<ExplorePage> {
                             //         color: Colors.blueGrey[200]),
                             //     borderRadius: BorderRadius.all(
                             //         Radius.circular(2.0))),
-                            onPressed: () {
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) =>
-                                          SearchChildEntityOldPage(
-                                              pageName: "Search",
-                                              childList: str.childEntities,
-                                              parentName: str.name)));
-                            },
+                            onPressed: () {},
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: <Widget>[
