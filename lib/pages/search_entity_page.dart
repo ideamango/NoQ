@@ -281,19 +281,35 @@ class _SearchEntityPageState extends State<SearchEntityPage>
               if (messageTitle == "NotFound")
                 Column(
                   children: <Widget>[
-                    SizedBox(height: MediaQuery.of(context).size.height * .1),
+                    //SizedBox(height: MediaQuery.of(context).size.height * .1),
                     Container(
-                      height: MediaQuery.of(context).size.height * .4,
+                      height: MediaQuery.of(context).size.height * .3,
                       decoration: BoxDecoration(
                         image: DecorationImage(
                             image: AssetImage("assets/notFound.png"),
                             fit: BoxFit.cover),
                       ),
                     ),
-                    Padding(
-                      padding: EdgeInsets.all(5),
-                      child: _msgOnboard,
+                    Container(
+                      height: MediaQuery.of(context).size.height * .1,
+                      decoration: BoxDecoration(
+                        image: DecorationImage(
+                            image: AssetImage("assets/notFound1.png"),
+                            fit: BoxFit.cover),
+                      ),
                     ),
+                    Container(
+                      height: MediaQuery.of(context).size.height * .1,
+                      decoration: BoxDecoration(
+                        image: DecorationImage(
+                            image: AssetImage("assets/notFound2.png"),
+                            fit: BoxFit.cover),
+                      ),
+                    ),
+                    // Padding(
+                    //   padding: EdgeInsets.all(5),
+                    //   child: _msgOnboard,
+                    // ),
                   ],
                 ),
               if (messageTitle != "NotFound")

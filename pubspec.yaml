@@ -128,6 +128,9 @@ flutter:
     - defaultSearchCategoryImg.png
     - search_home.png
     - user_account.png
+    - notFound1.png
+    - notFound2.png
+
   #  - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see
