@@ -197,16 +197,54 @@ class GlobalState {
     return true;
   }
 
-  Future<bool> addEntity(MetaEntity me) async {
-    _currentUser.entities.add(me);
-    // saveGlobalState();
+  Future<Entity> createEntity(String entityId, String entityType,
+      [String parentId]) async {
+    Entity entity = new Entity(
+        entityId: entityId,
+        name: null,
+        address: null,
+        advanceDays: null,
+        isPublic: false,
+        //geo: geoPoint,
+        maxAllowed: null,
+        slotDuration: null,
+        closedOn: [],
+        breakStartHour: null,
+        breakStartMinute: null,
+        breakEndHour: null,
+        breakEndMinute: null,
+        startTimeHour: null,
+        startTimeMinute: null,
+        endTimeHour: null,
+        endTimeMinute: null,
+        parentId: parentId,
+        type: entityType,
+        isBookable: false,
+        isActive: false,
+        coordinates: null);
+
+    await putEntity(entity, false);
+
+    return entity;
+  }
+
+  Future<bool> addEntityToCurrentUser(Entity entity, bool saveOnServer) async {
+    for (MetaEntity mEnt in _currentUser.entities) {
+      if (mEnt.entityId == entity.entityId) {
+        return true;
+      }
+    }
+
+    _currentUser.entities.add(entity.getMetaEntity());
+    await putEntity(entity, saveOnServer);
+
     return true;
   }
 
   Future<bool> removeEntity(String entityId) async {
     _currentUser.entities
         .removeWhere((element) => element.entityId == entityId);
-    //  saveGlobalState();
+
     return true;
   }
 

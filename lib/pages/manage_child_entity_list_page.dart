@@ -21,6 +21,8 @@ import 'package:noq/events/events.dart';
 import 'package:eventify/eventify.dart' as Eventify;
 import 'package:noq/widget/widgets.dart';
 
+import '../tuple.dart';
+
 class ManageChildEntityListPage extends StatefulWidget {
   final Entity entity;
   ManageChildEntityListPage({Key key, @required this.entity}) : super(key: key);
@@ -148,23 +150,27 @@ class _ManageChildEntityListPageState extends State<ManageChildEntityListPage> {
   void _addNewServiceRow() {
     var uuid = new Uuid();
     String serviceId = uuid.v1();
-    Entity en = new Entity();
-    en.type = _subEntityType;
-    en.entityId = serviceId;
-    en.parentId = parentEntity.entityId;
-    MetaEntity meta;
-    setState(() {
-      _entityMap[en.entityId] = en;
-      meta = en.getMetaEntity();
-      servicesList.add(meta);
-      _count = _count + 1;
+    _state
+        .createEntity(serviceId, _subEntityType, parentEntity.entityId)
+        .then((value) {
+      Entity en = value;
+      // en.type = _subEntityType;
+      // en.entityId = serviceId;
+      // en.parentId = parentEntity.entityId;
+      MetaEntity meta;
+      setState(() {
+        _entityMap[en.entityId] = en;
+        meta = en.getMetaEntity();
+        servicesList.add(meta);
+        _count = _count + 1;
+      });
+      _state.addEntityToCurrentUser(en, false);
+      if (_childScrollController.hasClients)
+        _childScrollController.animateTo(
+            _childScrollController.position.maxScrollExtent + itemSize,
+            curve: Curves.easeInToLinear,
+            duration: Duration(milliseconds: 200));
     });
-    _state.addEntity(meta);
-    if (_childScrollController.hasClients)
-      _childScrollController.animateTo(
-          _childScrollController.position.maxScrollExtent + itemSize,
-          curve: Curves.easeInToLinear,
-          duration: Duration(milliseconds: 200));
   }
 
   // Widget _buildServiceItem(MetaEntity childEntity) {
