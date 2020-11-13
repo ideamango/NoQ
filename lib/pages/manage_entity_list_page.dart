@@ -30,7 +30,7 @@ class _ManageEntityListPageState extends State<ManageEntityListPage> {
   List<String> entityTypes;
   GlobalState _state;
   bool stateInitFinished = false;
-  Map<String, Entity> _parentEntityMap = Map<String, Entity>();
+
   bool _initCompleted = false;
   String categoryType;
   PersistentBottomSheetController bottomSheetController;
@@ -140,15 +140,14 @@ class _ManageEntityListPageState extends State<ManageEntityListPage> {
   void _addNewServiceRow() {
     var uuid = new Uuid();
     String _entityId = uuid.v1();
-    createEntity(_entityId, _entityType).then((entity) {
+    _state.createEntity(_entityId, _entityType).then((entity) {
       MetaEntity metaEn = entity.getMetaEntity();
 
       setState(() {
         metaEntitiesList.add(metaEn);
       });
-      _state.addEntity(metaEn);
+      _state.addEntityToCurrentUser(entity, false);
 
-      _parentEntityMap[metaEn.entityId] = entity;
       if (_scrollController.hasClients)
         _scrollController.animateTo(
             _scrollController.position.maxScrollExtent + itemSize,
@@ -253,8 +252,8 @@ class _ManageEntityListPageState extends State<ManageEntityListPage> {
                           itemBuilder: (BuildContext context, int index) {
                             return Container(
                               child: EntityRow(
-                                  entity: metaEntitiesList[index],
-                                  parentEntityMap: _parentEntityMap),
+                                entity: metaEntitiesList[index],
+                              ),
                             );
                           },
                           itemCount: metaEntitiesList.length,

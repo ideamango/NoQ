@@ -14,11 +14,12 @@ import 'package:noq/utils.dart';
 import 'package:noq/widget/widgets.dart';
 import 'package:share/share.dart';
 
+import '../global_state.dart';
+
 class EntityRow extends StatefulWidget {
   final MetaEntity entity;
-  final Map<String, Entity> parentEntityMap;
-  EntityRow({Key key, @required this.entity, this.parentEntityMap})
-      : super(key: key);
+
+  EntityRow({Key key, @required this.entity}) : super(key: key);
   @override
   State<StatefulWidget> createState() => new EntityRowState();
 }
@@ -27,42 +28,31 @@ class EntityRowState extends State<EntityRow> {
   MetaEntity _metaEntity;
   Entity entity;
   bool getEntityDone = false;
-  Map<String, Entity> _parentEntityMap;
+
+  GlobalState _state;
+  bool _initCompleted = false;
 
   @override
   void initState() {
     super.initState();
-    _metaEntity = widget.entity;
-    _parentEntityMap = widget.parentEntityMap;
-  }
+    GlobalState.getGlobalState().then((value) {
+      _state = value;
+      _metaEntity = widget.entity;
 
-  Future<void> getEntity(String entityId) async {
-    if (_parentEntityMap != null) {
-      if (_parentEntityMap.length != 0) {
-        if (_parentEntityMap.containsKey(entityId))
-          entity = _parentEntityMap[entityId];
-        else {
-          try {
-            entity = await EntityService().getEntity(entityId);
-          } catch (e) {
-            print(e);
-          }
-        }
+      if (this.mounted) {
+        setState(() {
+          _initCompleted = true;
+        });
+      } else {
+        _initCompleted = true;
       }
-    }
-    if (entity == null) {
-      try {
-        entity = await EntityService().getEntity(entityId);
-      } catch (e) {
-        print(e);
-      }
-    }
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     showServiceForm() {
-      getEntity(_metaEntity.entityId).then((value) {
+      _state.getEntity(_metaEntity.entityId).then((value) {
         if (entity == null) {
           Utils.showMyFlushbar(context, Icons.info, Duration(seconds: 2),
               "Couldnt fetch details of this entity. Try again later.", "");

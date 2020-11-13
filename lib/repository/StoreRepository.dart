@@ -23,37 +23,6 @@ Future<Tuple<Entity, bool>> getEntity(String entityId) async {
   return await gs.getEntity(entityId);
 }
 
-Future<Entity> createEntity(String entityId, String entityType) async {
-  Entity entity = new Entity(
-      entityId: entityId,
-      name: null,
-      address: null,
-      advanceDays: null,
-      isPublic: false,
-      //geo: geoPoint,
-      maxAllowed: null,
-      slotDuration: null,
-      closedOn: [],
-      breakStartHour: null,
-      breakStartMinute: null,
-      breakEndHour: null,
-      breakEndMinute: null,
-      startTimeHour: null,
-      startTimeMinute: null,
-      endTimeHour: null,
-      endTimeMinute: null,
-      parentId: null,
-      type: entityType,
-      isBookable: false,
-      isActive: false,
-      coordinates: null);
-
-  GlobalState gs = await GlobalState.getGlobalState();
-  await gs.putEntity(entity, false);
-
-  return entity;
-}
-
 Future<bool> assignAdminsFromList(
     String entityId, List<String> adminsList) async {
   //TODO Smita - Get all admins and check which entries already exists in DB
