@@ -38,9 +38,12 @@ class _ContactUsPageState extends State<ContactUsPage> {
   void initState() {
     super.initState();
     getGlobalState().whenComplete(() {
-      setState(() {
+      if (this.mounted) {
+        setState(() {
+          initCompleted = true;
+        });
+      } else
         initCompleted = true;
-      });
     });
   }
 

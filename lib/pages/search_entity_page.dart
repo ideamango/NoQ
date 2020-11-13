@@ -134,9 +134,12 @@ class _SearchEntityPageState extends State<SearchEntityPage>
       fetchPastSearchesList();
 
       searchTypes = _state.conf.entityTypes;
-      setState(() {
+      if (this.mounted) {
+        setState(() {
+          initCompleted = true;
+        });
+      } else
         initCompleted = true;
-      });
     });
 
     registerCategorySelectEvent();

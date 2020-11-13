@@ -60,10 +60,10 @@ class _UserAccountPageState extends State<UserAccountPage> {
     super.initState();
     if (!kIsWeb) _setTargetPlatformForDesktop();
     _pageController = PageController(initialPage: 8);
-    setState(() {
-      _upcomingBkgStatus = 'Loading';
-      _pastBkgStatus = 'Loading';
-    });
+
+    _upcomingBkgStatus = 'Loading';
+    _pastBkgStatus = 'Loading';
+
     getGlobalState().whenComplete(() {
       AppReview.getAppID.then((onValue) {
         setState(() {

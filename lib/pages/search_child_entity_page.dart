@@ -156,9 +156,12 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
     getGlobalState().whenComplete(() {
       searchTypes = _state.conf.entityTypes;
       getEntitiesList().whenComplete(() {
-        setState(() {
+        if (this.mounted) {
+          setState(() {
+            initCompleted = true;
+          });
+        } else
           initCompleted = true;
-        });
       });
 
       registerCategorySelectEvent();

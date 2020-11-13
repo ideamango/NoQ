@@ -73,9 +73,12 @@ class _UserHomePageState extends State<UserHomePage> {
     super.initState();
     getGlobalState().whenComplete(() {
       _loadBookings();
-      setState(() {
+      if (this.mounted) {
+        setState(() {
+          _initCompleted = true;
+        });
+      } else
         _initCompleted = true;
-      });
     });
   }
 
