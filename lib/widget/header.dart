@@ -61,7 +61,9 @@ class _CustomDrawerState extends State<CustomDrawer> {
       {
         "icon": Icons.contact_mail,
         "name": "Contact Us",
-        "pageRoute": ContactUsPage(),
+        "pageRoute": ContactUsPage(
+          showAppBar: true,
+        ),
       },
       {
         "icon": Icons.share,

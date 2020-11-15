@@ -1,3 +1,4 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -952,7 +953,7 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
     return GestureDetector(
       onTap: () {},
       child: Card(
-        margin: EdgeInsets.only(top: 12),
+        margin: EdgeInsets.fromLTRB(8, 12, 8, 0),
         elevation: 10,
         child: Column(
           children: <Widget>[
@@ -961,38 +962,32 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
               // mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
                 Container(
+                  padding: EdgeInsets.all(4),
                   width: MediaQuery.of(context).size.width * .1,
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: <Widget>[
-                      new Container(
-                        height: MediaQuery.of(context).size.width * .095,
-                        width: MediaQuery.of(context).size.width * .095,
-                        // margin: EdgeInsets.fromLTRB(
-                        //     MediaQuery.of(context).size.width * .01,
-                        //     MediaQuery.of(context).size.width * .01,
-                        //     MediaQuery.of(context).size.width * .005,
-                        //     MediaQuery.of(context).size.width * .005),
-                        // padding: EdgeInsets.all(
-                        //     MediaQuery.of(context).size.width * .02),
+                  child: new Container(
+                    height: MediaQuery.of(context).size.width * .095,
+                    width: MediaQuery.of(context).size.width * .095,
+                    // margin: EdgeInsets.fromLTRB(
+                    //     MediaQuery.of(context).size.width * .01,
+                    //     MediaQuery.of(context).size.width * .01,
+                    //     MediaQuery.of(context).size.width * .005,
+                    //     MediaQuery.of(context).size.width * .005),
+                    padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
+                    // decoration: ShapeDecoration(
+                    //   shape: CircleBorder(),
+                    //   color: Colors.transparent,
+                    // ),
+                    child: Container(
+                        padding: EdgeInsets.zero,
+                        margin: EdgeInsets.zero,
                         alignment: Alignment.center,
-                        decoration: ShapeDecoration(
-                          shape: CircleBorder(),
-                          color: primaryIcon,
-                        ),
-                        child: Container(
-                          alignment: Alignment.center,
-                          height: MediaQuery.of(context).size.width * .06,
-                          width: MediaQuery.of(context).size.width * .06,
-                          child: entityImageIcon(str.type),
-                        ),
-                      ),
-                      verticalSpacer,
-                    ],
+                        height: MediaQuery.of(context).size.width * .09,
+                        width: MediaQuery.of(context).size.width * .09,
+                        child: entityImageIcon(str.type)),
                   ),
                 ),
                 Container(
-                  width: MediaQuery.of(context).size.width * .82,
+                  width: MediaQuery.of(context).size.width * .8,
                   padding: EdgeInsets.all(2),
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
@@ -1000,22 +995,30 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
                       Container(
-                        width: MediaQuery.of(context).size.width * .78,
-                        padding: EdgeInsets.all(0),
+                        width: MediaQuery.of(context).size.width * .83,
+                        padding: EdgeInsets.zero,
+                        margin: EdgeInsets.zero,
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: <Widget>[
                             Container(
-                              width: MediaQuery.of(context).size.width * .5,
+                              width: MediaQuery.of(context).size.width * .6,
                               padding: EdgeInsets.all(0),
                               child: Row(
                                 // mainAxisAlignment: Mai1nAxisAlignment.spaceBetween,
                                 // crossAxisAlignment: CrossAxisAlignment.center,
                                 children: <Widget>[
-                                  Text(
-                                    (str.name) ?? str.name.toString(),
-                                    style: TextStyle(fontSize: 17),
-                                    overflow: TextOverflow.ellipsis,
+                                  Container(
+                                    padding: EdgeInsets.zero,
+                                    width:
+                                        MediaQuery.of(context).size.width * .46,
+                                    child: AutoSizeText(
+                                      (str.name) ?? str.name.toString(),
+                                      style: TextStyle(fontSize: 17),
+                                      maxLines: 1,
+                                      minFontSize: 14,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
                                   ),
                                   (str.verificationStatus ==
                                           VERIFICATION_VERIFIED)
@@ -1081,7 +1084,7 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
                             ),
                             if (str.startTimeHour != null)
                               Container(
-                                width: MediaQuery.of(context).size.width * .2,
+                                width: MediaQuery.of(context).size.width * .18,
                                 padding: EdgeInsets.all(0),
                                 child: Row(
                                   children: <Widget>[
@@ -1119,21 +1122,16 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
                           ],
                         ),
                       ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: <Widget>[
-                          Container(
-                            width: MediaQuery.of(context).size.width * .75,
-                            child: Text(
-                              (Utils.getFormattedAddress(str.address) != "")
-                                  ? Utils.getFormattedAddress(str.address)
-                                  : "No Address found",
-                              overflow: TextOverflow.ellipsis,
-                              style: labelSmlTextStyle,
-                            ),
-                          ),
-                        ],
+                      Container(
+                        padding: EdgeInsets.only(top: 3),
+                        width: MediaQuery.of(context).size.width * .78,
+                        child: Text(
+                          (Utils.getFormattedAddress(str.address) != "")
+                              ? Utils.getFormattedAddress(str.address)
+                              : "No Address found",
+                          overflow: TextOverflow.ellipsis,
+                          style: labelSmlTextStyle,
+                        ),
                       ),
                       SizedBox(height: 5),
                       if (str.isBookable != null && str.isActive != null)
@@ -1754,7 +1752,9 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
                         Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => ContactUsPage()));
+                                builder: (context) => ContactUsPage(
+                                      showAppBar: false,
+                                    )));
                       }),
               ]));
         });

@@ -13,6 +13,9 @@ import 'package:noq/widget/widgets.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class ContactUsPage extends StatefulWidget {
+  final bool showAppBar;
+  ContactUsPage({Key key, @required this.showAppBar}) : super(key: key);
+
   @override
   _ContactUsPageState createState() => _ContactUsPageState();
 }
@@ -208,62 +211,71 @@ class _ContactUsPageState extends State<ContactUsPage> {
 
       String title = "Contact Us";
       return MaterialApp(
+        debugShowCheckedModeBanner: false,
         theme: ThemeData.light().copyWith(),
         home: WillPopScope(
           child: Scaffold(
             drawer: CustomDrawer(
               phone: _state.getCurrentUser().ph,
             ),
-            appBar: CustomAppBarWithBackButton(
-              backRoute: UserHomePage(),
-              titleTxt: title,
-            ),
+            appBar: widget.showAppBar
+                ? CustomAppBarWithBackButton(
+                    backRoute: UserHomePage(),
+                    titleTxt: title,
+                  )
+                : null,
             body: Center(
                 child: Container(
-                    margin: EdgeInsets.fromLTRB(10, 10, 10, 10),
+                    height: MediaQuery.of(context).size.height * .85,
+                    margin: EdgeInsets.fromLTRB(
+                        MediaQuery.of(context).size.width * .05,
+                        MediaQuery.of(context).size.width * .04,
+                        MediaQuery.of(context).size.width * .05,
+                        MediaQuery.of(context).size.width * .04),
                     child: ListView(
+                      padding: EdgeInsets.zero,
                       children: <Widget>[
                         Text(
                           'Your Feedback is Appreciated',
-                          style: highlightMedBoldTextStyle,
+                          style: TextStyle(
+                              color: Colors.blueGrey[800],
+                              fontFamily: 'RalewayRegular',
+                              fontSize: 17.0),
                         ),
                         verticalSpacer,
                         RichText(
                             text: TextSpan(
                                 style: TextStyle(
+                                    height: 1.3,
                                     color: Colors.blueGrey[800],
-                                    fontFamily: 'Montserrat',
+                                    fontFamily: 'RalewayRegular',
                                     fontSize: 13.0),
                                 children: <TextSpan>[
                               //TextSpan(text: contactUsPageHeadline),
+                              TextSpan(text: contactUsLine1),
                               TextSpan(
-                                  text:
-                                      "Did you like what we did?  What else can we do?  How can we improve?"),
-                              TextSpan(
-                                  text: "  We would love to hear from you!!",
+                                  text: contactUsLine2,
                                   style: TextStyle(
-                                    fontSize: 15,
+                                    fontSize: 13,
                                     fontWeight: FontWeight.w600,
                                   )),
-                              TextSpan(text: "\nA simple"),
+                              TextSpan(text: contactUsLine3),
                               TextSpan(
-                                  text: " kudos, clap",
+                                  text: contactUsLine4,
                                   style: TextStyle(
-                                    fontSize: 15,
+                                    fontSize: 13,
                                     fontStyle: FontStyle.italic,
                                     fontWeight: FontWeight.w600,
                                   )),
-                              TextSpan(text: " or just a"),
+                              TextSpan(text: contactUsLine5),
                               TextSpan(
-                                  text: " Hello",
+                                  text: contactUsLine6,
                                   style: TextStyle(
-                                    fontSize: 15,
+                                    fontSize: 13,
                                     fontStyle: FontStyle.italic,
                                     fontWeight: FontWeight.w600,
                                   )),
-                              TextSpan(
-                                  text:
-                                      " from you would be a great motivation for our team :)"),
+                              TextSpan(text: contactUsLine7),
                             ])),
                         new ListTile(
                           leading: Container(
@@ -327,95 +339,118 @@ class _ContactUsPageState extends State<ContactUsPage> {
                           ),
                         ),
                         verticalSpacer,
-                        new RaisedButton(
-                          elevation: 5,
-                          color: btnColor,
-                          textColor: Colors.white,
-                          shape: RoundedRectangleBorder(
-                              side: BorderSide(color: Colors.blueGrey[200]),
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(5.0))),
-                          splashColor: highlightColor,
-                          onPressed: () {
-                            setState(() {
-                              _errMsg = validateText(_msgController.text);
-                            });
-
-                            // setState(() {
-                            //   _msgController.text.isEmpty
-                            //       ? _validate = true
-                            //       : _validate = false;
-                            // });
-                            String subjectOfMail = (_reasonType != null)
-                                ? _reasonType
-                                : 'Write what\s this about';
-                            if (_errMsg == null) {
-                              if (_mailBody == null) _mailBody = "";
-                              _launchURL(_state.conf.contactEmail,
-                                  subjectOfMail, _mailBody);
-                            }
-                          },
-                          child: new Text('Send an Email'),
-                        ),
-                        verticalSpacer,
-                        Container(
-                          padding: EdgeInsets.all(0),
-                          margin: EdgeInsets.all(0),
-                          height: 35.0,
-                          width: 45.0,
-                          child: RaisedButton(
-                            textColor: btnColor,
-                            elevation: 5,
-                            padding: EdgeInsets.all(5),
-                            // alignment: Alignment.center,
-                            shape: RoundedRectangleBorder(
-                                side: BorderSide(color: Colors.blueGrey[200]),
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(5.0))),
-                            color: Colors.white,
-                            splashColor: highlightColor,
-                            child: Container(
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: <Widget>[
-                                  Text("Say 'Hi' to us on "),
-                                  ImageIcon(
-                                    AssetImage('assets/whatsapp.png'),
-                                    size: 30,
-                                    color: Colors.greenAccent[700],
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: <Widget>[
+                            Container(
+                              padding: EdgeInsets.all(0),
+                              margin: EdgeInsets.all(0),
+                              height: 35.0,
+                              width: MediaQuery.of(context).size.width * .41,
+                              child: RaisedButton(
+                                textColor: btnColor,
+                                elevation: 5,
+                                padding: EdgeInsets.all(5),
+                                // alignment: Alignment.center,
+                                shape: RoundedRectangleBorder(
+                                    side:
+                                        BorderSide(color: Colors.blueGrey[200]),
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(5.0))),
+                                color: btnColor,
+                                splashColor: highlightColor,
+                                child: Container(
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceEvenly,
+                                    children: <Widget>[
+                                      Text(
+                                        "WhatsApp Us ",
+                                        style: TextStyle(color: Colors.white),
+                                      ),
+                                      ImageIcon(
+                                        AssetImage('assets/whatsapp.png'),
+                                        size: 28,
+                                        color: Colors.lightGreenAccent[700],
+                                      ),
+                                    ],
                                   ),
-                                ],
+                                ),
+
+                                onPressed: () {
+                                  if (_state.conf.whatsappPhone != null &&
+                                      _state.conf.whatsappPhone != "") {
+                                    try {
+                                      launchWhatsApp(
+                                          message: whatsappContactUsMsg,
+                                          phone: _state.conf.whatsappPhone);
+                                    } catch (error) {
+                                      Utils.showMyFlushbar(
+                                          context,
+                                          Icons.error,
+                                          Duration(seconds: 5),
+                                          "Could not connect to the Whatsapp number ${_state.conf.whatsappPhone} !!",
+                                          "Try again later");
+                                    }
+                                  } else {
+                                    Utils.showMyFlushbar(
+                                        context,
+                                        Icons.info,
+                                        Duration(seconds: 5),
+                                        "Whatsapp contact information not found!!",
+                                        "");
+                                  }
+
+                                  // callPhone('+919611009823');
+                                  //callPhone(str.);
+                                },
                               ),
                             ),
+                            Container(
+                              padding: EdgeInsets.all(0),
+                              margin: EdgeInsets.all(0),
+                              height: 35.0,
+                              width: MediaQuery.of(context).size.width * .41,
+                              child: RaisedButton(
+                                elevation: 5,
+                                color: btnColor,
+                                textColor: Colors.white,
+                                shape: RoundedRectangleBorder(
+                                    side:
+                                        BorderSide(color: Colors.blueGrey[200]),
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(5.0))),
+                                splashColor: highlightColor,
+                                onPressed: () {
+                                  setState(() {
+                                    _errMsg = validateText(_msgController.text);
+                                  });
 
-                            onPressed: () {
-                              if (_state.conf.whatsappPhone != null &&
-                                  _state.conf.whatsappPhone != "") {
-                                try {
-                                  launchWhatsApp(
-                                      message: whatsappContactUsMsg,
-                                      phone: _state.conf.whatsappPhone);
-                                } catch (error) {
-                                  Utils.showMyFlushbar(
-                                      context,
-                                      Icons.error,
-                                      Duration(seconds: 5),
-                                      "Could not connect to the Whatsapp number ${_state.conf.whatsappPhone} !!",
-                                      "Try again later");
-                                }
-                              } else {
-                                Utils.showMyFlushbar(
-                                    context,
-                                    Icons.info,
-                                    Duration(seconds: 5),
-                                    "Whatsapp contact information not found!!",
-                                    "");
-                              }
-
-                              // callPhone('+919611009823');
-                              //callPhone(str.);
-                            },
-                          ),
+                                  // setState(() {
+                                  //   _msgController.text.isEmpty
+                                  //       ? _validate = true
+                                  //       : _validate = false;
+                                  // });
+                                  String subjectOfMail = (_reasonType != null)
+                                      ? _reasonType
+                                      : 'Write what\s this about';
+                                  if (_errMsg == null) {
+                                    if (_mailBody == null) _mailBody = "";
+                                    _launchURL(_state.conf.contactEmail,
+                                        subjectOfMail, _mailBody);
+                                  }
+                                },
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceEvenly,
+                                  children: <Widget>[
+                                    new Text('Email Us'),
+                                    Icon(Icons.mail)
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
                       ],
                     ))),

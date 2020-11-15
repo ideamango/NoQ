@@ -49,6 +49,7 @@ class _SearchEntityPageState extends State<SearchEntityPage>
   bool searchBoxClicked = false;
   bool fetchFromServer = false;
   PersistentBottomSheetController bottomSheetController;
+  PersistentBottomSheetController contactUsSheetController;
   bool showFab = true;
   String categoryType;
   Widget _msgOnboard;
@@ -317,10 +318,12 @@ class _SearchEntityPageState extends State<SearchEntityPage>
                       ),
                       onTap: () {
                         _searchTextController.text = "";
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => ContactUsPage()));
+
+                        showContactUsSheet();
+                        // Navigator.push(
+                        //     context,
+                        //     MaterialPageRoute(
+                        //         builder: (context) => ContactUsPage()));
                       },
                     ),
                     // Padding(
@@ -353,6 +356,66 @@ class _SearchEntityPageState extends State<SearchEntityPage>
         ),
       ),
     );
+  }
+
+  showContactUsSheet() {
+    contactUsSheetController = key.currentState.showBottomSheet<Null>(
+      (context) => Container(
+        color: Colors.cyan[100],
+        height: MediaQuery.of(context).size.height * .87,
+        child: Column(
+          children: <Widget>[
+            Row(
+              children: <Widget>[
+                Container(
+                  padding: EdgeInsets.all(0),
+                  width: MediaQuery.of(context).size.width * .1,
+                  height: MediaQuery.of(context).size.width * .1,
+                  child: IconButton(
+                      padding: EdgeInsets.all(0),
+                      icon: Icon(
+                        Icons.cancel,
+                        color: btnDisabledolor,
+                      ),
+                      onPressed: () {
+                        contactUsSheetController.close();
+                        contactUsSheetController = null;
+                        // Navigator.of(context).pop();
+                      }),
+                ),
+                Container(
+                    alignment: Alignment.center,
+                    width: MediaQuery.of(context).size.width * .8,
+                    child: Text(
+                      "Contact Us",
+                      style: TextStyle(
+                          color: Colors.blueGrey[800],
+                          fontFamily: 'RalewayRegular',
+                          fontSize: 19.0),
+                    )),
+              ],
+            ),
+            Divider(
+              height: 1,
+              color: primaryDarkColor,
+            ),
+            Expanded(
+              child: ContactUsPage(showAppBar: false),
+            ),
+          ],
+        ),
+      ),
+      elevation: 30,
+      clipBehavior: Clip.hardEdge,
+      shape: RoundedRectangleBorder(
+          side: BorderSide(color: Colors.blueGrey[200]),
+          borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(20.0), topRight: Radius.circular(20.0))),
+    );
+    showFoatingActionButton(false);
+    contactUsSheetController.closed.then((value) {
+      showFoatingActionButton(true);
+    });
   }
 
   Widget _listSearchResults() {
@@ -571,7 +634,7 @@ class _SearchEntityPageState extends State<SearchEntityPage>
         padding: EdgeInsets.all(0),
         child: RichText(
             overflow: TextOverflow.visible,
-            maxLines: 2,
+            maxLines: 1,
             text: TextSpan(
                 style: TextStyle(color: Colors.blueGrey, fontSize: 12),
                 children: <TextSpan>[
@@ -828,7 +891,7 @@ class _SearchEntityPageState extends State<SearchEntityPage>
                   bottomSheetController =
                       key.currentState.showBottomSheet<Null>(
                     (context) => Container(
-                      color: Colors.cyan[50],
+                      color: Colors.cyan[100],
                       height: MediaQuery.of(context).size.height * .7,
                       child: Column(
                         children: <Widget>[
@@ -855,7 +918,10 @@ class _SearchEntityPageState extends State<SearchEntityPage>
                                   width: MediaQuery.of(context).size.width * .8,
                                   child: Text(
                                     SELECT_TYPE_OF_PLACE,
-                                    style: textInputTextStyle,
+                                    style: TextStyle(
+                                        color: Colors.blueGrey[800],
+                                        fontFamily: 'RalewayRegular',
+                                        fontSize: 19.0),
                                   )),
                             ],
                           ),
@@ -865,6 +931,7 @@ class _SearchEntityPageState extends State<SearchEntityPage>
                           ),
                           Expanded(
                             child: Container(
+                              color: Colors.white,
                               padding: EdgeInsets.all(0),
                               child: new GridView.builder(
                                 padding: EdgeInsets.all(0),
@@ -921,6 +988,10 @@ class _SearchEntityPageState extends State<SearchEntityPage>
     if (bottomSheetController != null) {
       bottomSheetController.close();
       bottomSheetController = null;
+      return false;
+    } else if (contactUsSheetController != null) {
+      contactUsSheetController.close();
+      contactUsSheetController = null;
       return false;
     } else {
       //Navigator.of(context).pop();
@@ -981,12 +1052,11 @@ class _SearchEntityPageState extends State<SearchEntityPage>
                     //     MediaQuery.of(context).size.width * .01,
                     //     MediaQuery.of(context).size.width * .005,
                     //     MediaQuery.of(context).size.width * .005),
-                    padding:
-                        EdgeInsets.all(MediaQuery.of(context).size.width * .02),
-                    decoration: ShapeDecoration(
-                      shape: CircleBorder(),
-                      color: primaryIcon,
-                    ),
+                    padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
+                    // decoration: ShapeDecoration(
+                    //   shape: CircleBorder(),
+                    //   color: Colors.transparent,
+                    // ),
                     child: Container(
                         padding: EdgeInsets.zero,
                         margin: EdgeInsets.zero,
@@ -1092,37 +1162,43 @@ class _SearchEntityPageState extends State<SearchEntityPage>
                                 ],
                               ),
                             ),
-                            Container(
-                              width: MediaQuery.of(context).size.width * .18,
-                              padding: EdgeInsets.all(0),
-                              child: Row(
-                                children: <Widget>[
-                                  Text(
-                                      Utils.formatTime(
-                                              str.startTimeHour.toString()) +
-                                          ':' +
-                                          Utils.formatTime(
-                                              str.startTimeMinute.toString()),
-                                      style: TextStyle(
-                                          color: Colors.green[600],
-                                          fontFamily: 'Monsterrat',
-                                          letterSpacing: 0.5,
-                                          fontSize: 10.0)),
-                                  Text(' - '),
-                                  Text(
-                                      Utils.formatTime(
-                                              str.endTimeHour.toString()) +
-                                          ':' +
-                                          Utils.formatTime(
-                                              str.endTimeMinute.toString()),
-                                      style: TextStyle(
-                                          color: Colors.red[900],
-                                          fontFamily: 'Monsterrat',
-                                          letterSpacing: 0.5,
-                                          fontSize: 10.0)),
-                                ],
+                            if (str.startTimeHour != null)
+                              Container(
+                                width: MediaQuery.of(context).size.width * .18,
+                                padding: EdgeInsets.all(0),
+                                child: Row(
+                                  children: <Widget>[
+                                    Text(
+                                        Utils.formatTime(
+                                                str.startTimeHour.toString()) +
+                                            ':' +
+                                            Utils.formatTime(
+                                                str.startTimeMinute.toString()),
+                                        style: TextStyle(
+                                            color: Colors.green[600],
+                                            fontFamily: 'Monsterrat',
+                                            letterSpacing: 0.5,
+                                            fontSize: 10.0)),
+                                    Text(' - '),
+                                    Text(
+                                        Utils.formatTime(
+                                                str.endTimeHour.toString()) +
+                                            ':' +
+                                            Utils.formatTime(
+                                                str.endTimeMinute.toString()),
+                                        style: TextStyle(
+                                            color: Colors.red[900],
+                                            fontFamily: 'Monsterrat',
+                                            letterSpacing: 0.5,
+                                            fontSize: 10.0)),
+                                  ],
+                                ),
                               ),
-                            ),
+                            if (str.startTimeHour == null)
+                              Container(
+                                width: MediaQuery.of(context).size.width * .2,
+                                child: Text(""),
+                              ),
                           ],
                         ),
                       ),
@@ -1746,7 +1822,9 @@ class _SearchEntityPageState extends State<SearchEntityPage>
                           Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => ContactUsPage()));
+                                  builder: (context) => ContactUsPage(
+                                        showAppBar: false,
+                                      )));
                         }),
                 ]));
           });
