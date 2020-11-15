@@ -133,7 +133,6 @@ class _SearchEntityPageState extends State<SearchEntityPage>
     _isSearching = "initial";
     getGlobalState().whenComplete(() {
       fetchPastSearchesList();
-
       searchTypes = _state.conf.entityTypes;
       if (this.mounted) {
         setState(() {
@@ -195,11 +194,16 @@ class _SearchEntityPageState extends State<SearchEntityPage>
   void fetchPastSearchesList() {
     //Load details from local files
 
-    if (!Utils.isNullOrEmpty(_state.pastSearches)) {
+    if (!Utils.isNullOrEmpty(_state.lastSearchResults)) {
       setState(() {
-        _pastSearches = _state.pastSearches;
+        _stores = _state.lastSearchResults;
+        _searchText = _state.lastSearchName;
+        _searchTextController.text = _searchText;
+        _entityType = _state.lastSearchType;
+        _isSearching = "done";
+        //  _stores = _pastSearches;
       });
-    } else if (_state.pastSearches != null && _state.pastSearches.length == 0)
+    } else
       messageTitle = "No previous searches!!";
   }
 
@@ -421,7 +425,8 @@ class _SearchEntityPageState extends State<SearchEntityPage>
   Widget _listSearchResults() {
     if (_stores.length != 0) {
       //Add search results to past searches.
-      _state.pastSearches = _stores;
+      _state.setPastSearch(_stores, _searchText, _entityType);
+      // _state.pastSearches = _stores;
       return Center(
         child: Column(
           children: <Widget>[
@@ -635,7 +640,7 @@ class _SearchEntityPageState extends State<SearchEntityPage>
         padding: EdgeInsets.all(0),
         child: RichText(
             overflow: TextOverflow.visible,
-            maxLines: 1,
+            maxLines: 2,
             text: TextSpan(
                 style: TextStyle(color: Colors.blueGrey, fontSize: 12),
                 children: <TextSpan>[

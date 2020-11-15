@@ -189,7 +189,7 @@ class _ExplorePageState extends State<ExplorePage> {
   Widget _listSearchResults() {
     if (_stores.length != 0) {
       //Add search results to past searches.
-      _state.pastSearches = _stores;
+      _state.lastSearchResults = _stores;
       return Center(
         child: Column(
           children: <Widget>[

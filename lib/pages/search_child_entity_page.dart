@@ -242,11 +242,11 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
   void fetchPastSearchesList() {
     //Load details from local files
 
-    if (!Utils.isNullOrEmpty(_state.pastSearches)) {
+    if (!Utils.isNullOrEmpty(_state.lastSearchResults)) {
       setState(() {
-        _pastSearches = _state.pastSearches;
+        _pastSearches = _state.lastSearchResults;
       });
-    } else if (_state.pastSearches != null && _state.pastSearches.length == 0)
+    } else if (_state.lastSearchResults != null && _state.lastSearchResults.length == 0)
       messageTitle = "No previous searches!!";
   }
 
@@ -459,7 +459,7 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
   Widget _listSearchResults() {
     if (_stores.length != 0) {
       //Add search results to past searches.
-      _state.pastSearches = _stores;
+      _state.lastSearchResults = _stores;
       return Center(
         child: Column(
           children: <Widget>[

@@ -21,9 +21,9 @@ class GlobalState {
   AppUser _currentUser;
   Configurations conf;
   List<UserToken> bookings;
-  String pastSearchName;
-  String pastSearchType;
-  List<Entity> pastSearches;
+  String lastSearchName;
+  String lastSearchType;
+  List<Entity> lastSearchResults;
   Map<String, Entity> _entities;
   Map<String, bool> _entityState;
   EntityService _entityService;
@@ -133,6 +133,13 @@ class GlobalState {
       _entityState[entity.entityId] = false;
     }
     return false;
+  }
+
+  void setPastSearch(List<Entity> entityList, String name, String type) {
+    _gs.lastSearchResults = entityList;
+    _gs.lastSearchName = name;
+    _gs.lastSearchType = type;
+    return;
   }
 
   List<UserToken> getPastBookings() {
@@ -260,7 +267,7 @@ class GlobalState {
   }
 
   Future<bool> updateSearchResults(List<Entity> list) async {
-    _gs.pastSearches = list;
+    _gs.lastSearchResults = list;
     return true;
   }
 
@@ -284,7 +291,7 @@ class GlobalState {
         'currentUser': _currentUser.toJson(),
         'conf': conf.toJson(),
         'bookings': convertBookingsListToJson(this.bookings),
-        'pastSearches': convertPastSearchesListToJson(this.pastSearches)
+        'pastSearches': convertPastSearchesListToJson(this.lastSearchResults)
       };
 
   // static Future<GlobalState> fromJson(Map<String, dynamic> json) async {
