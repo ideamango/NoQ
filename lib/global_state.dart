@@ -4,6 +4,7 @@ import 'package:noq/db/db_model/configurations.dart';
 import 'package:noq/db/db_model/entity.dart';
 import 'package:noq/db/db_model/meta_entity.dart';
 import 'package:noq/db/db_model/app_user.dart';
+import 'package:noq/db/db_model/slot.dart';
 import 'package:noq/db/db_model/user_token.dart';
 import 'package:noq/db/db_service/configurations_service.dart';
 import 'package:noq/db/db_service/entity_service.dart';
@@ -262,17 +263,22 @@ class GlobalState {
     return true;
   }
 
-  Future<bool> addBooking(UserToken token) async {
-    _gs.bookings.add(token);
-    //  saveGlobalState();
-    return true;
+  Future<UserToken> addBooking(MetaEntity meta, Slot slot) async {
+    UserToken token;
+    token = await _tokenService.generateToken(meta, slot.dateTime);
+    if (token != null) {
+      bookings.add(token);
+    }
+    return token;
   }
 
   static resetGlobalState() {
     _gs = null;
   }
 
-  cancelBooking() async {}
+  Future<bool> cancelBooking(String tokenId) async {
+    return await TokenService().cancelToken(tokenId);
+  }
 
   static Future<void> saveGlobalState() async {
     // writeData(_gs.toJson());
