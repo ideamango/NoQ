@@ -130,25 +130,6 @@ class TokenService {
           // Save the EntitySlots using set method
           tx.set(entitySlotsRef, es.toJson());
 
-          // Map<String, dynamic> tokenJson = <String, dynamic>{
-          //   'slotId': slotId,
-          //   'entityId': metaEntity.entityId,
-          //   'userId': userPhone,
-          //   'number': newNumber,
-          //   'dateTime': dateTime.millisecondsSinceEpoch,
-          //   'maxAllowed': maxAllowed,
-          //   'slotDuration': metaEntity.slotDuration,
-          //   'entityName': metaEntity.name,
-          //   'lat': metaEntity.lat,
-          //   'lon': metaEntity.lon,
-          //   'entityWhatsApp': metaEntity.whatsapp,
-          //   'gpay': metaEntity.gpay,
-          //   'paytm': metaEntity.paytm,
-          //   'applepay': metaEntity.applepay,
-          //   'order': null,
-          //   'phone': metaEntity.phone
-          // };
-
           UserToken tok = new UserToken(
               slotId: slotId,
               entityId: metaEntity.entityId,

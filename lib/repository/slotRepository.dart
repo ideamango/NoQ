@@ -13,6 +13,7 @@ import 'package:noq/db/db_service/token_service.dart';
 import 'package:noq/events/event_bus.dart';
 import 'package:noq/events/events.dart';
 import 'package:noq/events/local_notification_data.dart';
+import 'package:noq/global_state.dart';
 
 Future<List<Slot>> getSlotsListForStore(
     Entity entity, DateTime dateTime) async {
@@ -98,13 +99,9 @@ Slot checkIfSlotExists(EntitySlots entitySlots, DateTime dt) {
 
 Future<UserToken> bookSlotForStore(MetaEntity meta, Slot slot) async {
 //TODO: Have Entity object here, either pass entity object to generateToken() or create metaEntity and pass to this method.
-  UserToken token;
-  try {
-    token = await TokenService().generateToken(meta, slot.dateTime);
-    print("Token Booked: $token");
-  } catch (e) {
-    throw e;
-  }
+
+  GlobalState gs = await GlobalState.getGlobalState();
+  UserToken token = await gs.addBooking(meta, slot);
 
   DateTime dt1Hour = token.dateTime.subtract(new Duration(hours: 1));
   DateTime dt15Minutes = token.dateTime.subtract(new Duration(minutes: 15));
@@ -139,7 +136,9 @@ Future<UserToken> bookSlotForStore(MetaEntity meta, Slot slot) async {
 }
 
 Future<bool> cancelToken(UserToken token) async {
-  bool returnVal = await TokenService().cancelToken(token.getTokenId());
+  GlobalState gs = await GlobalState.getGlobalState();
+
+  bool returnVal = await gs.cancelBooking(token.getTokenId());
 
   DateTime dt1Hour = token.dateTime.subtract(new Duration(hours: 1));
 

@@ -542,7 +542,6 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
         return;
       } else {
         //update in global State
-        _state.addBooking(value);
         selectedSlot.currentNumber++;
       }
       _token = value.getDisplayName();
