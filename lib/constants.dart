@@ -65,6 +65,14 @@ String locationMarkingActiveInfo =
 String contactUsPageHeadline =
     'We would be happy to help you. Just drop a message to us and we will try our best to address that at the earliest.';
 
+String contactUsLine1 =
+    "Did you like what we did?  What else can we do?  How can we improve?";
+String contactUsLine2 = "  We would love to hear from you!";
+String contactUsLine3 = "\nA simple";
+String contactUsLine4 = " kudos, clap";
+String contactUsLine5 = " or just a";
+String contactUsLine6 = " Hello";
+String contactUsLine7 = " from you would be a great motivation for our team :)";
 String homeScreenMsgTxt2 = "Avoid rush hours";
 String homeScreenMsgTxt3 = "Be Safe | Save time.";
 

@@ -86,7 +86,9 @@ class _HelpPageState extends State<HelpPage> {
                                               context,
                                               MaterialPageRoute(
                                                   builder: (context) =>
-                                                      ContactUsPage())),
+                                                      ContactUsPage(
+                                                        showAppBar: true,
+                                                      ))),
                                       ),
                                       // TextSpan(
                                       //     text:
