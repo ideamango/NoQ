@@ -21,6 +21,8 @@ class GlobalState {
   AppUser _currentUser;
   Configurations conf;
   List<UserToken> bookings;
+  String pastSearchName;
+  String pastSearchType;
   List<Entity> pastSearches;
   Map<String, Entity> _entities;
   Map<String, bool> _entityState;

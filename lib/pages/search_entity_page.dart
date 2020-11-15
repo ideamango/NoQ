@@ -54,6 +54,33 @@ class _SearchEntityPageState extends State<SearchEntityPage>
   String categoryType;
   Widget _msgOnboard;
   List<String> searchTypes = new List<String>();
+  final compareDateFormat = new DateFormat('YYYYMMDD');
+  List<DateTime> _dateList = new List<DateTime>();
+
+  Icon actionIcon = new Icon(
+    Icons.search,
+    color: Colors.white,
+  );
+  final key = new GlobalKey<ScaffoldState>();
+  TextEditingController _searchTextController;
+
+  List<Entity> _list;
+  //"initial, searching,done"
+  String _isSearching = "initial";
+  String _searchText = "";
+  String searchType = "";
+  String pageName;
+  GlobalState _state;
+  bool stateInitFinished = false;
+  String messageTitle;
+  String messageSubTitle;
+  String _dynamicLink;
+  Eventify.Listener _eventListener;
+
+  ScrollController _selectCategoryBtnController;
+
+  AnimationController controller;
+  Animation<Offset> offset;
 
   Widget _buildCategoryItem(BuildContext context, int index) {
     String name = searchTypes[index];
@@ -83,34 +110,6 @@ class _SearchEntityPageState extends State<SearchEntityPage>
         ));
   }
 
-  final compareDateFormat = new DateFormat('YYYYMMDD');
-  List<DateTime> _dateList = new List<DateTime>();
-
-  Icon actionIcon = new Icon(
-    Icons.search,
-    color: Colors.white,
-  );
-  final key = new GlobalKey<ScaffoldState>();
-  static final TextEditingController _searchTextController =
-      new TextEditingController();
-  List<Entity> _list;
-  //"initial, searching,done"
-  String _isSearching = "initial";
-  String _searchText = "";
-  String searchType = "";
-  String pageName;
-  GlobalState _state;
-  bool stateInitFinished = false;
-  String messageTitle;
-  String messageSubTitle;
-  String _dynamicLink;
-  Eventify.Listener _eventListener;
-
-  ScrollController _selectCategoryBtnController;
-
-  AnimationController controller;
-  Animation<Offset> offset;
-
   //List<String> searchTypes;
   void showFoatingActionButton(bool value) {
     setState(() {
@@ -121,6 +120,7 @@ class _SearchEntityPageState extends State<SearchEntityPage>
   @override
   void dispose() {
     super.dispose();
+    _searchTextController.dispose();
     EventBus.unregisterEvent(_eventListener);
     _selectCategoryBtnController.dispose();
     print("Search page dispose called...");
@@ -129,7 +129,7 @@ class _SearchEntityPageState extends State<SearchEntityPage>
   @override
   void initState() {
     super.initState();
-
+    _searchTextController = new TextEditingController();
     _isSearching = "initial";
     getGlobalState().whenComplete(() {
       fetchPastSearchesList();

@@ -111,8 +111,7 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
     color: Colors.white,
   );
   final keyChildSearch = new GlobalKey<ScaffoldState>();
-  static final TextEditingController _searchTextController =
-      new TextEditingController();
+  TextEditingController _searchTextController;
   List<Entity> _list;
   //"initial, searching,done"
   String _isSearching = "initial";
@@ -151,6 +150,7 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
   @override
   void initState() {
     super.initState();
+    _searchTextController = new TextEditingController();
     _isSearching = "initial";
     _fromPage = widget.pageName;
     _isSearching = "initial";
