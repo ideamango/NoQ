@@ -431,7 +431,8 @@ class _SearchEntityPageState extends State<SearchEntityPage>
                   itemCount: 1,
                   itemBuilder: (BuildContext context, int index) {
                     return Container(
-                      margin: EdgeInsets.fromLTRB(10, 0, 10, 25),
+                      margin: EdgeInsets.fromLTRB(
+                          10, 0, 10, MediaQuery.of(context).size.height * .15),
                       child: new Column(
                         children: showSearchResults(),
                       ),
@@ -1042,30 +1043,12 @@ class _SearchEntityPageState extends State<SearchEntityPage>
               // mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
                 Container(
-                  padding: EdgeInsets.all(4),
-                  width: MediaQuery.of(context).size.width * .1,
-                  child: new Container(
-                    height: MediaQuery.of(context).size.width * .095,
-                    width: MediaQuery.of(context).size.width * .095,
-                    // margin: EdgeInsets.fromLTRB(
-                    //     MediaQuery.of(context).size.width * .01,
-                    //     MediaQuery.of(context).size.width * .01,
-                    //     MediaQuery.of(context).size.width * .005,
-                    //     MediaQuery.of(context).size.width * .005),
-                    padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
-                    // decoration: ShapeDecoration(
-                    //   shape: CircleBorder(),
-                    //   color: Colors.transparent,
-                    // ),
-                    child: Container(
-                        padding: EdgeInsets.zero,
-                        margin: EdgeInsets.zero,
-                        alignment: Alignment.center,
-                        height: MediaQuery.of(context).size.width * .09,
-                        width: MediaQuery.of(context).size.width * .09,
-                        child: entityImageIcon(str.type)),
-                  ),
-                ),
+                    padding: EdgeInsets.zero,
+                    margin: EdgeInsets.zero,
+                    alignment: Alignment.center,
+                    height: MediaQuery.of(context).size.width * .09,
+                    width: MediaQuery.of(context).size.width * .09,
+                    child: entityImageIcon(str.type)),
                 Container(
                   width: MediaQuery.of(context).size.width * .8,
                   padding: EdgeInsets.all(2),

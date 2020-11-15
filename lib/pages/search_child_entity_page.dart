@@ -57,6 +57,7 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
   bool searchBoxClicked = false;
   bool fetchFromServer = false;
   PersistentBottomSheetController childBottomSheetController;
+  PersistentBottomSheetController childContactUsSheetController;
 
   bool showFab = true;
   String categoryType;
@@ -86,7 +87,8 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
         child: Column(
           children: <Widget>[
             Container(
-                padding: EdgeInsets.all(0),
+                padding: EdgeInsets.zero,
+                margin: EdgeInsets.zero,
                 width: MediaQuery.of(context).size.width * .15,
                 height: MediaQuery.of(context).size.width * .15,
                 child: image),
@@ -332,18 +334,48 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
               if (messageTitle == "NotFound")
                 Column(
                   children: <Widget>[
-                    SizedBox(height: MediaQuery.of(context).size.height * .1),
+                    //SizedBox(height: MediaQuery.of(context).size.height * .1),
                     Container(
-                      height: MediaQuery.of(context).size.height * .4,
+                      height: MediaQuery.of(context).size.height * .3,
                       decoration: BoxDecoration(
                         image: DecorationImage(
                             image: AssetImage("assets/notFound.png"),
                             fit: BoxFit.cover),
                       ),
                     ),
-                    Padding(
-                      padding: EdgeInsets.all(5),
-                      child: _msgOnboard,
+                    InkWell(
+                      child: Container(
+                        height: MediaQuery.of(context).size.height * .1,
+                        decoration: BoxDecoration(
+                          image: DecorationImage(
+                              image: AssetImage("assets/notFound1.png"),
+                              fit: BoxFit.cover),
+                        ),
+                      ),
+                      onTap: () {
+                        _searchTextController.text = "";
+                        Utils.generateLinkAndShare(
+                            appShareWithOwnerHeading, appShareWithOwnerMessage);
+                      },
+                    ),
+                    InkWell(
+                      child: Container(
+                        height: MediaQuery.of(context).size.height * .1,
+                        decoration: BoxDecoration(
+                          image: DecorationImage(
+                              image: AssetImage("assets/notFound2.png"),
+                              fit: BoxFit.cover),
+                        ),
+                      ),
+                      onTap: () {
+                        _searchTextController.text = "";
+
+                        showContactUsSheet();
+                        // Navigator.push(
+                        //     context,
+                        //     MaterialPageRoute(
+                        //         builder: (context) => ContactUsPage()));
+                      },
                     ),
                   ],
                 ),
@@ -363,6 +395,67 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
     );
   }
 
+  showContactUsSheet() {
+    childContactUsSheetController =
+        keyChildSearch.currentState.showBottomSheet<Null>(
+      (context) => Container(
+        color: Colors.cyan[100],
+        height: MediaQuery.of(context).size.height * .87,
+        child: Column(
+          children: <Widget>[
+            Row(
+              children: <Widget>[
+                Container(
+                  padding: EdgeInsets.all(0),
+                  width: MediaQuery.of(context).size.width * .1,
+                  height: MediaQuery.of(context).size.width * .1,
+                  child: IconButton(
+                      padding: EdgeInsets.all(0),
+                      icon: Icon(
+                        Icons.cancel,
+                        color: btnDisabledolor,
+                      ),
+                      onPressed: () {
+                        childContactUsSheetController.close();
+                        childContactUsSheetController = null;
+                        // Navigator.of(context).pop();
+                      }),
+                ),
+                Container(
+                    alignment: Alignment.center,
+                    width: MediaQuery.of(context).size.width * .8,
+                    child: Text(
+                      "Contact Us",
+                      style: TextStyle(
+                          color: Colors.blueGrey[800],
+                          fontFamily: 'RalewayRegular',
+                          fontSize: 19.0),
+                    )),
+              ],
+            ),
+            Divider(
+              height: 1,
+              color: primaryDarkColor,
+            ),
+            Expanded(
+              child: ContactUsPage(showAppBar: false),
+            ),
+          ],
+        ),
+      ),
+      elevation: 30,
+      clipBehavior: Clip.hardEdge,
+      shape: RoundedRectangleBorder(
+          side: BorderSide(color: Colors.blueGrey[200]),
+          borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(20.0), topRight: Radius.circular(20.0))),
+    );
+    showFoatingActionButton(false);
+    childContactUsSheetController.closed.then((value) {
+      showFoatingActionButton(true);
+    });
+  }
+
   Widget _listSearchResults() {
     if (_stores.length != 0) {
       //Add search results to past searches.
@@ -376,7 +469,8 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
                   itemCount: 1,
                   itemBuilder: (BuildContext context, int index) {
                     return Container(
-                      margin: EdgeInsets.fromLTRB(10, 10, 10, 25),
+                      margin: EdgeInsets.fromLTRB(
+                          10, 10, 10, MediaQuery.of(context).size.height * .15),
                       child: new Column(
                         children: showSearchResults(),
                       ),
@@ -580,7 +674,7 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
         padding: EdgeInsets.all(0),
         child: RichText(
             overflow: TextOverflow.visible,
-            maxLines: 2,
+            maxLines: 1,
             text: TextSpan(
                 style: TextStyle(color: Colors.grey, fontSize: 12),
                 children: <TextSpan>[
@@ -834,7 +928,7 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
                   childBottomSheetController =
                       keyChildSearch.currentState.showBottomSheet<Null>(
                     (context) => Container(
-                      color: Colors.cyan[50],
+                      color: Colors.cyan[100],
                       height: MediaQuery.of(context).size.height * .7,
                       child: Column(
                         children: <Widget>[
@@ -861,7 +955,10 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
                                   width: MediaQuery.of(context).size.width * .8,
                                   child: Text(
                                     SELECT_TYPE_OF_PLACE,
-                                    style: textInputTextStyle,
+                                    style: TextStyle(
+                                        color: Colors.blueGrey[800],
+                                        fontFamily: 'RalewayRegular',
+                                        fontSize: 19.0),
                                   )),
                             ],
                           ),
@@ -871,6 +968,7 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
                           ),
                           Expanded(
                             child: Container(
+                              color: Colors.white,
                               padding: EdgeInsets.all(0),
                               child: new GridView.builder(
                                 padding: EdgeInsets.all(0),
@@ -931,6 +1029,10 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
       childBottomSheetController.close();
       childBottomSheetController = null;
       return false;
+    } else if (childContactUsSheetController != null) {
+      childContactUsSheetController.close();
+      childContactUsSheetController = null;
+      return false;
     } else {
       //Navigator.of(context).pop();
       Navigator.push(
@@ -941,7 +1043,7 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
 
   Widget entityImageIcon(String type) {
     Widget imgWidget;
-    imgWidget = Utils.getEntityTypeImage(type, 20);
+    imgWidget = Utils.getEntityTypeImage(type, 30);
     return imgWidget;
   }
 
@@ -961,31 +1063,13 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
               crossAxisAlignment: CrossAxisAlignment.start,
               // mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
-                Container(
-                  padding: EdgeInsets.all(4),
-                  width: MediaQuery.of(context).size.width * .1,
-                  child: new Container(
-                    height: MediaQuery.of(context).size.width * .095,
-                    width: MediaQuery.of(context).size.width * .095,
-                    // margin: EdgeInsets.fromLTRB(
-                    //     MediaQuery.of(context).size.width * .01,
-                    //     MediaQuery.of(context).size.width * .01,
-                    //     MediaQuery.of(context).size.width * .005,
-                    //     MediaQuery.of(context).size.width * .005),
-                    padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
-                    // decoration: ShapeDecoration(
-                    //   shape: CircleBorder(),
-                    //   color: Colors.transparent,
-                    // ),
-                    child: Container(
-                        padding: EdgeInsets.zero,
-                        margin: EdgeInsets.zero,
-                        alignment: Alignment.center,
-                        height: MediaQuery.of(context).size.width * .09,
-                        width: MediaQuery.of(context).size.width * .09,
-                        child: entityImageIcon(str.type)),
-                  ),
-                ),
+                new Container(
+                    height: MediaQuery.of(context).size.width * .1,
+                    width: MediaQuery.of(context).size.width * .1,
+                    padding: EdgeInsets.zero,
+                    margin: EdgeInsets.zero,
+                    alignment: Alignment.center,
+                    child: entityImageIcon(str.type)),
                 Container(
                   width: MediaQuery.of(context).size.width * .8,
                   padding: EdgeInsets.all(2),
