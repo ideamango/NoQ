@@ -246,8 +246,9 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
       setState(() {
         _pastSearches = _state.lastSearchResults;
       });
-    } else if (_state.lastSearchResults != null && _state.lastSearchResults.length == 0)
+    } else {
       messageTitle = "No previous searches!!";
+    }
   }
 
   Future<void> getGlobalState() async {
