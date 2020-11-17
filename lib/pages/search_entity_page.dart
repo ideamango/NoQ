@@ -365,39 +365,42 @@ class _SearchEntityPageState extends State<SearchEntityPage>
   showContactUsSheet() {
     contactUsSheetController = key.currentState.showBottomSheet<Null>(
       (context) => Container(
-        color: Colors.cyan[100],
+        color: Colors.cyan[50],
         height: MediaQuery.of(context).size.height * .87,
         child: Column(
           children: <Widget>[
-            Row(
-              children: <Widget>[
-                Container(
-                  padding: EdgeInsets.all(0),
-                  width: MediaQuery.of(context).size.width * .1,
-                  height: MediaQuery.of(context).size.width * .1,
-                  child: IconButton(
-                      padding: EdgeInsets.all(0),
-                      icon: Icon(
-                        Icons.cancel,
-                        color: btnDisabledolor,
-                      ),
-                      onPressed: () {
-                        contactUsSheetController.close();
-                        contactUsSheetController = null;
-                        // Navigator.of(context).pop();
-                      }),
-                ),
-                Container(
-                    alignment: Alignment.center,
-                    width: MediaQuery.of(context).size.width * .8,
-                    child: Text(
-                      "Contact Us",
-                      style: TextStyle(
-                          color: Colors.blueGrey[800],
-                          fontFamily: 'RalewayRegular',
-                          fontSize: 19.0),
-                    )),
-              ],
+            Container(
+              color: Colors.cyan[200],
+              child: Row(
+                children: <Widget>[
+                  Container(
+                    padding: EdgeInsets.all(0),
+                    width: MediaQuery.of(context).size.width * .1,
+                    height: MediaQuery.of(context).size.width * .1,
+                    child: IconButton(
+                        padding: EdgeInsets.all(0),
+                        icon: Icon(
+                          Icons.cancel,
+                          color: headerBarColor,
+                        ),
+                        onPressed: () {
+                          contactUsSheetController.close();
+                          contactUsSheetController = null;
+                          // Navigator.of(context).pop();
+                        }),
+                  ),
+                  Container(
+                      alignment: Alignment.center,
+                      width: MediaQuery.of(context).size.width * .8,
+                      child: Text(
+                        "Contact Us",
+                        style: TextStyle(
+                            color: Colors.blueGrey[800],
+                            fontFamily: 'RalewayRegular',
+                            fontSize: 19.0),
+                      )),
+                ],
+              ),
             ),
             Divider(
               height: 1,
@@ -897,39 +900,44 @@ class _SearchEntityPageState extends State<SearchEntityPage>
                   bottomSheetController =
                       key.currentState.showBottomSheet<Null>(
                     (context) => Container(
-                      color: Colors.cyan[100],
+                      color: Colors.cyan[50],
                       height: MediaQuery.of(context).size.height * .7,
                       child: Column(
                         children: <Widget>[
-                          Row(
-                            children: <Widget>[
-                              Container(
-                                padding: EdgeInsets.all(0),
-                                width: MediaQuery.of(context).size.width * .1,
-                                height: MediaQuery.of(context).size.width * .1,
-                                child: IconButton(
-                                    padding: EdgeInsets.all(0),
-                                    icon: Icon(
-                                      Icons.cancel,
-                                      color: btnDisabledolor,
-                                    ),
-                                    onPressed: () {
-                                      bottomSheetController.close();
-                                      bottomSheetController = null;
-                                      // Navigator.of(context).pop();
-                                    }),
-                              ),
-                              Container(
-                                  alignment: Alignment.center,
-                                  width: MediaQuery.of(context).size.width * .8,
-                                  child: Text(
-                                    SELECT_TYPE_OF_PLACE,
-                                    style: TextStyle(
-                                        color: Colors.blueGrey[800],
-                                        fontFamily: 'RalewayRegular',
-                                        fontSize: 19.0),
-                                  )),
-                            ],
+                          Container(
+                            color: Colors.cyan[200],
+                            child: Row(
+                              children: <Widget>[
+                                Container(
+                                  padding: EdgeInsets.all(0),
+                                  width: MediaQuery.of(context).size.width * .1,
+                                  height:
+                                      MediaQuery.of(context).size.width * .1,
+                                  child: IconButton(
+                                      padding: EdgeInsets.all(0),
+                                      icon: Icon(
+                                        Icons.cancel,
+                                        color: headerBarColor,
+                                      ),
+                                      onPressed: () {
+                                        bottomSheetController.close();
+                                        bottomSheetController = null;
+                                        // Navigator.of(context).pop();
+                                      }),
+                                ),
+                                Container(
+                                    alignment: Alignment.center,
+                                    width:
+                                        MediaQuery.of(context).size.width * .8,
+                                    child: Text(
+                                      SELECT_TYPE_OF_PLACE,
+                                      style: TextStyle(
+                                          color: Colors.blueGrey[800],
+                                          fontFamily: 'RalewayRegular',
+                                          fontSize: 19.0),
+                                    )),
+                              ],
+                            ),
                           ),
                           Divider(
                             height: 1,
@@ -937,7 +945,7 @@ class _SearchEntityPageState extends State<SearchEntityPage>
                           ),
                           Expanded(
                             child: Container(
-                              color: Colors.white,
+                              color: Colors.cyan[50],
                               padding: EdgeInsets.all(0),
                               child: new GridView.builder(
                                 padding: EdgeInsets.all(0),
