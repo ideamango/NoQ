@@ -244,16 +244,12 @@ class _SearchEntityPageState extends State<SearchEntityPage>
     MetaEntity en = strData.getMetaEntity();
     isFav = isFavourite(en);
     if (isFav) {
-      EntityService().removeEntityFromUserFavourite(en.entityId);
-      setState(() {
-        _state.removeFavourite(en);
-      });
+      _state.removeFavourite(en).then((value) => setState(() {}));
     } else {
-      EntityService().addEntityToUserFavourite(en);
-      setState(() {
-        _state.addFavourite(en);
-      });
+      _state.addFavourite(en).then((value) => setState(() {}));
     }
+
+    print("toggle done");
   }
 
   Future<void> generateLinkAndShareWithParams(
@@ -1411,7 +1407,9 @@ class _SearchEntityPageState extends State<SearchEntityPage>
                           borderRadius: BorderRadius.all(Radius.circular(5.0))),
                       color: Colors.white,
                       splashColor: highlightColor,
-                      onPressed: () => toggleFavorite(str),
+                      onPressed: () {
+                        toggleFavorite(str);
+                      },
                       highlightColor: Colors.orange[300],
                       child: isFavourite(str.getMetaEntity())
                           ? Icon(Icons.favorite,

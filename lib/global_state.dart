@@ -181,7 +181,7 @@ class GlobalState {
 
     if (isSuccess) {
       _currentUser.favourites.add(newMe);
-
+      print("added");
       return true;
     }
     return false;

@@ -288,12 +288,10 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
     MetaEntity en = strData.getMetaEntity();
     isFav = isFavourite(en);
     if (isFav) {
-      EntityService().removeEntityFromUserFavourite(en.entityId);
       setState(() {
         _state.removeFavourite(en);
       });
     } else {
-      EntityService().addEntityToUserFavourite(en);
       setState(() {
         _state.addFavourite(en);
       });
@@ -937,13 +935,14 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
                       child: Column(
                         children: <Widget>[
                           Container(
-                                color: Colors.cyan[200],s
+                            color: Colors.cyan[200],
                             child: Row(
                               children: <Widget>[
                                 Container(
                                   padding: EdgeInsets.all(0),
                                   width: MediaQuery.of(context).size.width * .1,
-                                  height: MediaQuery.of(context).size.width * .1,
+                                  height:
+                                      MediaQuery.of(context).size.width * .1,
                                   child: IconButton(
                                       padding: EdgeInsets.all(0),
                                       icon: Icon(
@@ -958,7 +957,8 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
                                 ),
                                 Container(
                                     alignment: Alignment.center,
-                                    width: MediaQuery.of(context).size.width * .8,
+                                    width:
+                                        MediaQuery.of(context).size.width * .8,
                                     child: Text(
                                       SELECT_TYPE_OF_PLACE,
                                       style: TextStyle(
@@ -975,7 +975,6 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
                           ),
                           Expanded(
                             child: Container(
-                            
                               padding: EdgeInsets.all(0),
                               child: new GridView.builder(
                                 padding: EdgeInsets.all(0),
