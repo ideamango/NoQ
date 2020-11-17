@@ -300,17 +300,6 @@ class GlobalState {
         'pastSearches': convertPastSearchesListToJson(this.lastSearchResults)
       };
 
-  // static Future<GlobalState> fromJson(Map<String, dynamic> json) async {
-  //   if (json == null) return null;
-
-  //   return new GlobalState.withValues(
-  //     _currentUser: AppUser.fromJson(json['currentUser']),
-  //     conf: Configurations.fromJson(json['conf']),
-  //     bookings: convertToBookingsFromJson(json['bookings']),
-  //     pastSearches: convertToSearchListFromJson(json['pastSearches']),
-  //   );
-  // }
-
   List<dynamic> convertBookingsListToJson(List<UserToken> tokens) {
     List<dynamic> bookingListJson = new List<dynamic>();
     if (tokens == null) return bookingListJson;
