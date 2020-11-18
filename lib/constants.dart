@@ -221,7 +221,7 @@ String entityShareByOwnerHeading =
     " is inviting you to pre-book the time-slot for your next visit.";
 
 String entityShareMessage =
-    "Now you don't have to worry about Safety \nat crowded place or tiring wait time due to long queues. \n\nBook your slot when the crowd is less. \nDownload Sukoon app and start booking your peace of mind!!";
+    "Now you don't have to worry about Safety \nat crowded place or tiring wait time due to long queues.\n\nBook your slot when the crowd is less. \nDownload Sukoon app and start booking your peace of mind!!\n";
 
 String faqHead1 = "How Sukoon helps bring Sukoon to your life?";
 String faqHead1Sub1 = "Lets look at the problems first..";
