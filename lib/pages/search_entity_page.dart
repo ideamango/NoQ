@@ -245,8 +245,10 @@ class _SearchEntityPageState extends State<SearchEntityPage>
     isFav = isFavourite(en);
     if (isFav) {
       _state.removeFavourite(en).then((value) => setState(() {}));
+      setState(() {});
     } else {
       _state.addFavourite(en).then((value) => setState(() {}));
+      setState(() {});
     }
 
     print("toggle done");
