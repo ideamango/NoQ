@@ -168,6 +168,14 @@ final labelSmlTextStyle = TextStyle(
   fontSize: 13.0,
   //height: 2,
 );
+final labelXSmlTextStyle = TextStyle(
+  color: Colors.blueGrey[700],
+  // fontWeight: FontWeight.w800,
+  fontFamily: 'Monsterrat',
+  letterSpacing: 0.5,
+  fontSize: 11.0,
+  //height: 2,
+);
 final labelMedTextStyle = TextStyle(
   color: Colors.grey[700],
   fontFamily: 'Monsterrat',
@@ -203,6 +211,7 @@ final Color btnColor = Colors.cyan[600];
 final Color borderColor = Colors.blueGrey[800];
 
 final Color primaryAccentColor = Colors.cyanAccent[400];
+final Color primaryDoneColor = Colors.green[300];
 final Color primaryDarkColor = Colors.cyan[800];
 
 final Color gradientDarkColor = Colors.blueGrey[600];
