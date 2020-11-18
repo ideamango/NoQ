@@ -288,12 +288,10 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
     MetaEntity en = strData.getMetaEntity();
     isFav = isFavourite(en);
     if (isFav) {
-      EntityService().removeEntityFromUserFavourite(en.entityId);
       setState(() {
         _state.removeFavourite(en);
       });
     } else {
-      EntityService().addEntityToUserFavourite(en);
       setState(() {
         _state.addFavourite(en);
       });
@@ -400,39 +398,42 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
     childContactUsSheetController =
         keyChildSearch.currentState.showBottomSheet<Null>(
       (context) => Container(
-        color: Colors.cyan[100],
+        color: Colors.cyan[50],
         height: MediaQuery.of(context).size.height * .87,
         child: Column(
           children: <Widget>[
-            Row(
-              children: <Widget>[
-                Container(
-                  padding: EdgeInsets.all(0),
-                  width: MediaQuery.of(context).size.width * .1,
-                  height: MediaQuery.of(context).size.width * .1,
-                  child: IconButton(
-                      padding: EdgeInsets.all(0),
-                      icon: Icon(
-                        Icons.cancel,
-                        color: btnDisabledolor,
-                      ),
-                      onPressed: () {
-                        childContactUsSheetController.close();
-                        childContactUsSheetController = null;
-                        // Navigator.of(context).pop();
-                      }),
-                ),
-                Container(
-                    alignment: Alignment.center,
-                    width: MediaQuery.of(context).size.width * .8,
-                    child: Text(
-                      "Contact Us",
-                      style: TextStyle(
-                          color: Colors.blueGrey[800],
-                          fontFamily: 'RalewayRegular',
-                          fontSize: 19.0),
-                    )),
-              ],
+            Container(
+              color: Colors.cyan[200],
+              child: Row(
+                children: <Widget>[
+                  Container(
+                    padding: EdgeInsets.all(0),
+                    width: MediaQuery.of(context).size.width * .1,
+                    height: MediaQuery.of(context).size.width * .1,
+                    child: IconButton(
+                        padding: EdgeInsets.all(0),
+                        icon: Icon(
+                          Icons.cancel,
+                          color: headerBarColor,
+                        ),
+                        onPressed: () {
+                          childContactUsSheetController.close();
+                          childContactUsSheetController = null;
+                          // Navigator.of(context).pop();
+                        }),
+                  ),
+                  Container(
+                      alignment: Alignment.center,
+                      width: MediaQuery.of(context).size.width * .8,
+                      child: Text(
+                        "Contact Us",
+                        style: TextStyle(
+                            color: Colors.blueGrey[800],
+                            fontFamily: 'RalewayRegular',
+                            fontSize: 19.0),
+                      )),
+                ],
+              ),
             ),
             Divider(
               height: 1,
@@ -929,39 +930,44 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
                   childBottomSheetController =
                       keyChildSearch.currentState.showBottomSheet<Null>(
                     (context) => Container(
-                      color: Colors.cyan[100],
+                      color: Colors.cyan[50],
                       height: MediaQuery.of(context).size.height * .7,
                       child: Column(
                         children: <Widget>[
-                          Row(
-                            children: <Widget>[
-                              Container(
-                                padding: EdgeInsets.all(0),
-                                width: MediaQuery.of(context).size.width * .1,
-                                height: MediaQuery.of(context).size.width * .1,
-                                child: IconButton(
-                                    padding: EdgeInsets.all(0),
-                                    icon: Icon(
-                                      Icons.cancel,
-                                      color: btnDisabledolor,
-                                    ),
-                                    onPressed: () {
-                                      childBottomSheetController.close();
-                                      childBottomSheetController = null;
-                                      //Navigator.of(context).pop();
-                                    }),
-                              ),
-                              Container(
-                                  alignment: Alignment.center,
-                                  width: MediaQuery.of(context).size.width * .8,
-                                  child: Text(
-                                    SELECT_TYPE_OF_PLACE,
-                                    style: TextStyle(
-                                        color: Colors.blueGrey[800],
-                                        fontFamily: 'RalewayRegular',
-                                        fontSize: 19.0),
-                                  )),
-                            ],
+                          Container(
+                            color: Colors.cyan[200],
+                            child: Row(
+                              children: <Widget>[
+                                Container(
+                                  padding: EdgeInsets.all(0),
+                                  width: MediaQuery.of(context).size.width * .1,
+                                  height:
+                                      MediaQuery.of(context).size.width * .1,
+                                  child: IconButton(
+                                      padding: EdgeInsets.all(0),
+                                      icon: Icon(
+                                        Icons.cancel,
+                                        color: headerBarColor,
+                                      ),
+                                      onPressed: () {
+                                        childBottomSheetController.close();
+                                        childBottomSheetController = null;
+                                        //Navigator.of(context).pop();
+                                      }),
+                                ),
+                                Container(
+                                    alignment: Alignment.center,
+                                    width:
+                                        MediaQuery.of(context).size.width * .8,
+                                    child: Text(
+                                      SELECT_TYPE_OF_PLACE,
+                                      style: TextStyle(
+                                          color: Colors.blueGrey[800],
+                                          fontFamily: 'RalewayRegular',
+                                          fontSize: 19.0),
+                                    )),
+                              ],
+                            ),
                           ),
                           Divider(
                             height: 1,
@@ -969,7 +975,6 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
                           ),
                           Expanded(
                             child: Container(
-                              color: Colors.white,
                               padding: EdgeInsets.all(0),
                               child: new GridView.builder(
                                 padding: EdgeInsets.all(0),

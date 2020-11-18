@@ -244,16 +244,12 @@ class _SearchEntityPageState extends State<SearchEntityPage>
     MetaEntity en = strData.getMetaEntity();
     isFav = isFavourite(en);
     if (isFav) {
-      EntityService().removeEntityFromUserFavourite(en.entityId);
-      setState(() {
-        _state.removeFavourite(en);
-      });
+      _state.removeFavourite(en).then((value) => setState(() {}));
     } else {
-      EntityService().addEntityToUserFavourite(en);
-      setState(() {
-        _state.addFavourite(en);
-      });
+      _state.addFavourite(en).then((value) => setState(() {}));
     }
+
+    print("toggle done");
   }
 
   Future<void> generateLinkAndShareWithParams(
@@ -365,39 +361,42 @@ class _SearchEntityPageState extends State<SearchEntityPage>
   showContactUsSheet() {
     contactUsSheetController = key.currentState.showBottomSheet<Null>(
       (context) => Container(
-        color: Colors.cyan[100],
+        color: Colors.cyan[50],
         height: MediaQuery.of(context).size.height * .87,
         child: Column(
           children: <Widget>[
-            Row(
-              children: <Widget>[
-                Container(
-                  padding: EdgeInsets.all(0),
-                  width: MediaQuery.of(context).size.width * .1,
-                  height: MediaQuery.of(context).size.width * .1,
-                  child: IconButton(
-                      padding: EdgeInsets.all(0),
-                      icon: Icon(
-                        Icons.cancel,
-                        color: btnDisabledolor,
-                      ),
-                      onPressed: () {
-                        contactUsSheetController.close();
-                        contactUsSheetController = null;
-                        // Navigator.of(context).pop();
-                      }),
-                ),
-                Container(
-                    alignment: Alignment.center,
-                    width: MediaQuery.of(context).size.width * .8,
-                    child: Text(
-                      "Contact Us",
-                      style: TextStyle(
-                          color: Colors.blueGrey[800],
-                          fontFamily: 'RalewayRegular',
-                          fontSize: 19.0),
-                    )),
-              ],
+            Container(
+              color: Colors.cyan[200],
+              child: Row(
+                children: <Widget>[
+                  Container(
+                    padding: EdgeInsets.all(0),
+                    width: MediaQuery.of(context).size.width * .1,
+                    height: MediaQuery.of(context).size.width * .1,
+                    child: IconButton(
+                        padding: EdgeInsets.all(0),
+                        icon: Icon(
+                          Icons.cancel,
+                          color: headerBarColor,
+                        ),
+                        onPressed: () {
+                          contactUsSheetController.close();
+                          contactUsSheetController = null;
+                          // Navigator.of(context).pop();
+                        }),
+                  ),
+                  Container(
+                      alignment: Alignment.center,
+                      width: MediaQuery.of(context).size.width * .8,
+                      child: Text(
+                        "Contact Us",
+                        style: TextStyle(
+                            color: Colors.blueGrey[800],
+                            fontFamily: 'RalewayRegular',
+                            fontSize: 19.0),
+                      )),
+                ],
+              ),
             ),
             Divider(
               height: 1,
@@ -897,39 +896,44 @@ class _SearchEntityPageState extends State<SearchEntityPage>
                   bottomSheetController =
                       key.currentState.showBottomSheet<Null>(
                     (context) => Container(
-                      color: Colors.cyan[100],
+                      color: Colors.cyan[50],
                       height: MediaQuery.of(context).size.height * .7,
                       child: Column(
                         children: <Widget>[
-                          Row(
-                            children: <Widget>[
-                              Container(
-                                padding: EdgeInsets.all(0),
-                                width: MediaQuery.of(context).size.width * .1,
-                                height: MediaQuery.of(context).size.width * .1,
-                                child: IconButton(
-                                    padding: EdgeInsets.all(0),
-                                    icon: Icon(
-                                      Icons.cancel,
-                                      color: btnDisabledolor,
-                                    ),
-                                    onPressed: () {
-                                      bottomSheetController.close();
-                                      bottomSheetController = null;
-                                      // Navigator.of(context).pop();
-                                    }),
-                              ),
-                              Container(
-                                  alignment: Alignment.center,
-                                  width: MediaQuery.of(context).size.width * .8,
-                                  child: Text(
-                                    SELECT_TYPE_OF_PLACE,
-                                    style: TextStyle(
-                                        color: Colors.blueGrey[800],
-                                        fontFamily: 'RalewayRegular',
-                                        fontSize: 19.0),
-                                  )),
-                            ],
+                          Container(
+                            color: Colors.cyan[200],
+                            child: Row(
+                              children: <Widget>[
+                                Container(
+                                  padding: EdgeInsets.all(0),
+                                  width: MediaQuery.of(context).size.width * .1,
+                                  height:
+                                      MediaQuery.of(context).size.width * .1,
+                                  child: IconButton(
+                                      padding: EdgeInsets.all(0),
+                                      icon: Icon(
+                                        Icons.cancel,
+                                        color: headerBarColor,
+                                      ),
+                                      onPressed: () {
+                                        bottomSheetController.close();
+                                        bottomSheetController = null;
+                                        // Navigator.of(context).pop();
+                                      }),
+                                ),
+                                Container(
+                                    alignment: Alignment.center,
+                                    width:
+                                        MediaQuery.of(context).size.width * .8,
+                                    child: Text(
+                                      SELECT_TYPE_OF_PLACE,
+                                      style: TextStyle(
+                                          color: Colors.blueGrey[800],
+                                          fontFamily: 'RalewayRegular',
+                                          fontSize: 19.0),
+                                    )),
+                              ],
+                            ),
                           ),
                           Divider(
                             height: 1,
@@ -937,7 +941,7 @@ class _SearchEntityPageState extends State<SearchEntityPage>
                           ),
                           Expanded(
                             child: Container(
-                              color: Colors.white,
+                              color: Colors.cyan[50],
                               padding: EdgeInsets.all(0),
                               child: new GridView.builder(
                                 padding: EdgeInsets.all(0),
@@ -1017,6 +1021,154 @@ class _SearchEntityPageState extends State<SearchEntityPage>
     return imgWidget;
   }
 
+  showDialogForPlaceDetails(Entity str, BuildContext context) {
+    showDialog(
+        barrierDismissible: true,
+        context: context,
+        builder: (_) => AlertDialog(
+              titlePadding: EdgeInsets.zero,
+              contentPadding: EdgeInsets.all(0),
+              actionsPadding: EdgeInsets.all(5),
+              //buttonPadding: EdgeInsets.all(0),
+              title: Container(
+                height: MediaQuery.of(context).size.height * .065,
+                color: Colors.cyan[200],
+                child: Row(
+                  children: <Widget>[
+                    Container(
+                      width: MediaQuery.of(context).size.width * .1,
+                      padding: EdgeInsets.all(5),
+                      child: IconButton(
+                          padding: EdgeInsets.all(0),
+                          icon: Icon(
+                            Icons.cancel,
+                            color: headerBarColor,
+                          ),
+                          onPressed: () {
+                            Navigator.of(context, rootNavigator: true)
+                                .pop('dialog');
+                          }),
+                    ),
+                    Container(
+                        width: MediaQuery.of(context).size.width * .6,
+                        alignment: Alignment.center,
+                        child: Text(
+                          str.name,
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                              color: Colors.blueGrey[800],
+                              fontFamily: 'RalewayRegular',
+                              fontSize: 19.0),
+                        )),
+                  ],
+                ),
+              ),
+
+              content: Container(
+                color: Colors.cyan[50],
+                width: double.maxFinite,
+                child: ListView(
+                  children: <Widget>[
+                    Divider(
+                      height: 1,
+                      color: primaryDarkColor,
+                    ),
+                    Container(
+                        padding: EdgeInsets.all(8),
+                        child: Text(
+                          "Welcome to the world of ${str.name}.",
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                              color: Colors.blueGrey[800],
+                              fontFamily: 'RalewayRegular',
+                              fontSize: 14.0),
+                        )),
+                    Container(
+                      height: MediaQuery.of(context).size.height * .2,
+                      margin: EdgeInsets.zero,
+                      padding: EdgeInsets.all(5),
+                      child: Image(image: AssetImage('assets/6.jpg')),
+                    ),
+                    verticalSpacer,
+                    Container(
+                        padding: EdgeInsets.symmetric(horizontal: 8),
+                        child: Text(
+                          "Welcome to the world of ${str.name}.",
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                              color: Colors.blueGrey[800],
+                              fontFamily: 'RalewayRegular',
+                              fontSize: 14.0),
+                        )),
+                    verticalSpacer,
+                    Container(
+                      height: MediaQuery.of(context).size.height * .2,
+                      margin: EdgeInsets.zero,
+                      padding: EdgeInsets.all(5),
+                      child: Image(image: AssetImage('assets/regain.jpg')),
+                    ),
+                    verticalSpacer,
+                    Container(
+                        padding: EdgeInsets.symmetric(horizontal: 8),
+                        child: Text(
+                          "Welcome to the world of ${str.name}.",
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                              color: Colors.blueGrey[800],
+                              fontFamily: 'RalewayRegular',
+                              fontSize: 14.0),
+                        )),
+                    verticalSpacer,
+                    Container(
+                      height: MediaQuery.of(context).size.height * .2,
+                      margin: EdgeInsets.zero,
+                      padding: EdgeInsets.all(5),
+                      child: Image(image: AssetImage('assets/1.jpg')),
+                    ),
+                  ],
+                ),
+              ),
+
+              //content: Text('This is my content'),
+              actions: <Widget>[
+                SizedBox(
+                  height: 24,
+                  child: RaisedButton(
+                    elevation: 0,
+                    color: Colors.transparent,
+                    splashColor: highlightColor.withOpacity(.8),
+                    textColor: Colors.orange,
+                    shape: RoundedRectangleBorder(
+                        side: BorderSide(color: Colors.orange)),
+                    child: Text('Book now and avail offers!!'),
+                    onPressed: () {
+                      Navigator.of(context, rootNavigator: true).pop('dialog');
+                    },
+                  ),
+                ),
+                // SizedBox(
+                //   height: 24,
+                //   child: RaisedButton(
+                //     elevation: 20,
+                //     autofocus: true,
+                //     focusColor: highlightColor,
+                //     splashColor: highlightColor,
+                //     color: Colors.white,
+                //     textColor: Colors.orange,
+                //     shape: RoundedRectangleBorder(
+                //         side: BorderSide(color: Colors.orange)),
+                //     child: Text('No'),
+                //     onPressed: () {
+                //       print("Do nothing");
+                //       Navigator.of(context, rootNavigator: true).pop();
+                //       // Navigator.of(context, rootNavigator: true).pop('dialog');
+                //     },
+                //   ),
+                // ),
+              ],
+            ));
+  }
+
   Widget _buildItem(Entity str) {
     _prepareDateList();
 
@@ -1025,18 +1177,20 @@ class _SearchEntityPageState extends State<SearchEntityPage>
     return GestureDetector(
       onTap: () {
         print("Container clicked");
-        //TODO: If entity has child then fetch them from server show in next screen
-        if (str.childEntities.length != 0) {
-          Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => SearchChildEntityPage(
-                        pageName: "Search",
-                        childList: str.childEntities,
-                        parentName: str.name,
-                        parentId: str.entityId,
-                      )));
-        }
+        //DONT DELETE - Right now commented: If entity has child then fetch them from server show in next screen
+        // if (str.childEntities.length != 0) {
+        //   Navigator.push(
+        //       context,
+        //       MaterialPageRoute(
+        //           builder: (context) => SearchChildEntityPage(
+        //                 pageName: "Search",
+        //                 childList: str.childEntities,
+        //                 parentName: str.name,
+        //                 parentId: str.entityId,
+        //               )));
+        // }
+        //DONT DELETE - End
+        showDialogForPlaceDetails(str, context);
       },
       child: Card(
         margin: EdgeInsets.fromLTRB(8, 12, 8, 0),
@@ -1082,7 +1236,8 @@ class _SearchEntityPageState extends State<SearchEntityPage>
                                         MediaQuery.of(context).size.width * .46,
                                     child: AutoSizeText(
                                       (str.name) ?? str.name.toString(),
-                                      style: TextStyle(fontSize: 17),
+                                      style: TextStyle(
+                                          fontSize: 17, color: Colors.blue),
                                       maxLines: 1,
                                       minFontSize: 14,
                                       overflow: TextOverflow.ellipsis,
@@ -1200,7 +1355,7 @@ class _SearchEntityPageState extends State<SearchEntityPage>
                           maxLines: 1,
                           minFontSize: 12,
                           overflow: TextOverflow.ellipsis,
-                          style: labelSmlTextStyle,
+                          style: labelXSmlTextStyle,
                         ),
                       ),
                       SizedBox(height: 5),
@@ -1213,6 +1368,45 @@ class _SearchEntityPageState extends State<SearchEntityPage>
                                 children: _buildDateGridItems(str, str.entityId,
                                     str.name, str.closedOn, str.advanceDays),
                               )),
+                      Container(
+                        padding: EdgeInsets.all(0),
+                        width: MediaQuery.of(context).size.width * .78,
+                        child: Row(
+                          children: [
+                            Container(
+                              padding: EdgeInsets.only(top: 3),
+                              width: MediaQuery.of(context).size.width * .78,
+                              child: AutoSizeText(
+                                Utils.isNotNullOrEmpty(str.offer?.message)
+                                    ? str.offer.message
+                                    : "Currently no active offers",
+                                maxLines: 1,
+                                minFontSize: 12,
+                                overflow: TextOverflow.ellipsis,
+                                style: labelSmlTextStyle,
+                              ),
+                            ),
+                            // Utils.isNotNullOrEmpty(str.description)
+                            //     ? RichText(
+                            //         text: TextSpan(
+                            //             style: highlightSubTextStyle,
+                            //             children: <TextSpan>[
+                            //             TextSpan(
+                            //               text: ' More info',
+                            //               style: TextStyle(color: Colors.blue),
+                            //               recognizer: new TapGestureRecognizer()
+                            //                 ..onTap = () =>
+                            //                     showDialogForPlaceDetails(
+                            //                         str, context),
+                            //             ),
+                            //             // TextSpan(
+                            //             //     text:
+                            //             //         ' We will try our best to address that at earliest.'),
+                            //           ]))
+                            //     : Text(""),
+                          ],
+                        ),
+                      ),
                     ],
                   ),
                 ),
@@ -1403,7 +1597,9 @@ class _SearchEntityPageState extends State<SearchEntityPage>
                           borderRadius: BorderRadius.all(Radius.circular(5.0))),
                       color: Colors.white,
                       splashColor: highlightColor,
-                      onPressed: () => toggleFavorite(str),
+                      onPressed: () {
+                        toggleFavorite(str);
+                      },
                       highlightColor: Colors.orange[300],
                       child: isFavourite(str.getMetaEntity())
                           ? Icon(Icons.favorite,
@@ -1575,8 +1771,8 @@ class _SearchEntityPageState extends State<SearchEntityPage>
                 : (!isBookingAllowed
                     ? disabledColor
                     : (dateBooked
-                        ? primaryAccentColor
-                        : primaryDarkColor)), // button color
+                        ? Colors.green[400]
+                        : Colors.green[200])), // button color
             child: InkWell(
               splashColor: (isClosed || !isBookingAllowed)
                   ? null

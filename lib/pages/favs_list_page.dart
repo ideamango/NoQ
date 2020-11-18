@@ -133,28 +133,17 @@ class _FavsListPageState extends State<FavsListPage> {
   }
 
   void toggleFavorite(Entity strData) {
-//Check if its already User fav
-    bool isFav = false;
+//Removes favorite from User-Favorites and update favs list being displayed.
+//If nothing in list then displays message.
     MetaEntity metaEn = strData.getMetaEntity();
-
-    if (updateFavourite(metaEn)) {
-      isFav = true;
-      EntityService().removeEntityFromUserFavourite(strData.entityId);
-    } else {
-      EntityService().addEntityToUserFavourite(metaEn);
-    }
-
-    setState(() {
-      // strData.isFavourite = !strData.isFavourite;
-
-      _stores.remove(strData);
-    });
-
-    if ((_stores.length == 0)) {
+    _state.removeFavourite(metaEn).then((value) {
       setState(() {
-        _stores = null;
+        _stores.remove(strData);
       });
-    }
+      if ((_stores.length == 0)) {
+        _stores = null;
+      }
+    });
   }
 
   generateLinkAndShareWithParams(String entityId, String name) async {
@@ -302,31 +291,12 @@ class _FavsListPageState extends State<FavsListPage> {
               // mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
                 Container(
-                  padding: EdgeInsets.all(4),
-                  width: MediaQuery.of(context).size.width * .1,
-                  child: new Container(
-                    height: MediaQuery.of(context).size.width * .095,
-                    width: MediaQuery.of(context).size.width * .095,
-                    // margin: EdgeInsets.fromLTRB(
-                    //     MediaQuery.of(context).size.width * .01,
-                    //     MediaQuery.of(context).size.width * .01,
-                    //     MediaQuery.of(context).size.width * .005,
-                    //     MediaQuery.of(context).size.width * .005),
-                    padding:
-                        EdgeInsets.all(MediaQuery.of(context).size.width * .02),
-                    decoration: ShapeDecoration(
-                      shape: CircleBorder(),
-                      color: primaryIcon,
-                    ),
-                    child: Container(
-                        padding: EdgeInsets.zero,
-                        margin: EdgeInsets.zero,
-                        alignment: Alignment.center,
-                        height: MediaQuery.of(context).size.width * .09,
-                        width: MediaQuery.of(context).size.width * .09,
-                        child: entityImageIcon(str.type)),
-                  ),
-                ),
+                    padding: EdgeInsets.zero,
+                    margin: EdgeInsets.zero,
+                    alignment: Alignment.center,
+                    height: MediaQuery.of(context).size.width * .09,
+                    width: MediaQuery.of(context).size.width * .09,
+                    child: entityImageIcon(str.type)),
                 Container(
                   width: MediaQuery.of(context).size.width * .8,
                   padding: EdgeInsets.all(2),
@@ -457,10 +427,8 @@ class _FavsListPageState extends State<FavsListPage> {
                               ),
                             if (str.startTimeHour == null)
                               Container(
-                                width: MediaQuery.of(context).size.width * .18,
-                                child: Text(
-                                  "",
-                                ),
+                                width: MediaQuery.of(context).size.width * .2,
+                                child: Text(""),
                               ),
                           ],
                         ),
