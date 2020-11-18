@@ -177,28 +177,35 @@ class GlobalState {
       }
     }
 
+    //add first and then make the server call, this is to improve the responsiveness
+    _currentUser.favourites.add(newMe);
+
     bool isSuccess = await _entityService.addEntityToUserFavourite(newMe);
 
     if (isSuccess) {
-      _currentUser.favourites.add(newMe);
-
       return true;
+    } else {
+      _currentUser.favourites
+          .removeWhere((element) => element.entityId == newMe.entityId);
+      return false;
     }
-    return false;
   }
 
   Future<bool> removeFavourite(MetaEntity me) async {
     bool isRemoved = false;
     for (MetaEntity meta in _currentUser.favourites) {
       if (meta.entityId == me.entityId) {
+        _currentUser.favourites
+            .removeWhere((element) => element.entityId == me.entityId);
+
         isRemoved =
             await _entityService.removeEntityFromUserFavourite(me.entityId);
 
         if (isRemoved) {
-          _currentUser.favourites
-              .removeWhere((element) => element.entityId == me.entityId);
           return true;
         } else {
+          //as it could not be removed on server, add it back
+          _currentUser.favourites.add(me);
           return false;
         }
       }
