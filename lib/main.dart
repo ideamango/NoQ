@@ -35,11 +35,11 @@ void main() {
         .then((value) {
       FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterError;
     });
-  });
 
-  SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp])
-      .then((_) {
-    runApp(new MyHome());
+    SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp])
+        .then((_) {
+      runApp(new MyHome());
+    });
   });
 }
 

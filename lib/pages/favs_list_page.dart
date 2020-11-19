@@ -137,13 +137,10 @@ class _FavsListPageState extends State<FavsListPage> {
 //If nothing in list then displays message.
     MetaEntity metaEn = strData.getMetaEntity();
     _state.removeFavourite(metaEn).then((value) {
-      setState(() {
-        _stores.remove(strData);
-      });
-      if ((_stores.length == 0)) {
-        _stores = null;
-      }
+      _stores?.remove(strData);
+      setState(() {});
     });
+    setState(() {});
   }
 
   generateLinkAndShareWithParams(String entityId, String name) async {
@@ -166,8 +163,12 @@ class _FavsListPageState extends State<FavsListPage> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
-          Text(txtMsg, style: highlightTextStyle),
-          Text(defaultSearchSubMsg, style: highlightSubTextStyle),
+          Image.asset(
+            'assets/noFavourites.png',
+            width: MediaQuery.of(context).size.width * .8,
+          ),
+          // Text(txtMsg, style: highlightTextStyle),
+          // Text(defaultSearchSubMsg, style: highlightSubTextStyle),
         ],
       ),
     );
@@ -290,12 +291,12 @@ class _FavsListPageState extends State<FavsListPage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               // mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
-                Container(
+                new Container(
+                    height: MediaQuery.of(context).size.width * .1,
+                    width: MediaQuery.of(context).size.width * .1,
                     padding: EdgeInsets.zero,
                     margin: EdgeInsets.zero,
                     alignment: Alignment.center,
-                    height: MediaQuery.of(context).size.width * .09,
-                    width: MediaQuery.of(context).size.width * .09,
                     child: entityImageIcon(str.type)),
                 Container(
                   width: MediaQuery.of(context).size.width * .8,
@@ -427,7 +428,7 @@ class _FavsListPageState extends State<FavsListPage> {
                               ),
                             if (str.startTimeHour == null)
                               Container(
-                                width: MediaQuery.of(context).size.width * .2,
+                                width: MediaQuery.of(context).size.width * .18,
                                 child: Text(""),
                               ),
                           ],
@@ -436,25 +437,31 @@ class _FavsListPageState extends State<FavsListPage> {
                       Container(
                         padding: EdgeInsets.only(top: 3),
                         width: MediaQuery.of(context).size.width * .78,
-                        child: AutoSizeText(
+                        child: Text(
                           (Utils.getFormattedAddress(str.address) != "")
                               ? Utils.getFormattedAddress(str.address)
                               : "No Address found",
-                          maxLines: 1,
-                          minFontSize: 12,
                           overflow: TextOverflow.ellipsis,
                           style: labelSmlTextStyle,
                         ),
                       ),
                       SizedBox(height: 5),
-                      if (str.isBookable != null && str.isActive != null)
-                        if (str.isBookable && str.isActive)
+                      if (str.isBookable != null)
+                        if (str.isBookable)
                           Container(
                               width: MediaQuery.of(context).size.width * .78,
                               //padding: EdgeInsets.fromLTRB(0, 5, 5, 5),
                               child: Row(
-                                children: _buildDateGridItems(str, str.entityId,
-                                    str.name, str.closedOn, str.advanceDays),
+                                children: <Widget>[
+                                  Row(
+                                    children: _buildDateGridItems(
+                                        str,
+                                        str.entityId,
+                                        str.name,
+                                        str.closedOn,
+                                        str.advanceDays),
+                                  ),
+                                ],
                               )),
                     ],
                   ),

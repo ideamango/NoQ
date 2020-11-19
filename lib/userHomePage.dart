@@ -345,6 +345,18 @@ class _UserHomePageState extends State<UserHomePage> {
                           child: Image(image: AssetImage('assets/6.jpg')),
                         ),
                       ),
+                      verticalSpacer,
+                      Card(
+                        margin: EdgeInsets.zero,
+                        elevation: 20,
+                        child: Container(
+                          width: MediaQuery.of(context).size.width * .92,
+                          margin: EdgeInsets.zero,
+                          padding: EdgeInsets.all(0),
+                          child: Image(
+                              image: AssetImage('assets/infoCustomer.png')),
+                        ),
+                      ),
                     ],
                   ),
                 ),

@@ -26,6 +26,8 @@ class GlobalState {
   String lastSearchType;
   List<Entity> lastSearchResults;
   Map<String, Entity> _entities;
+
+  //true is entity is saved on server and false if it is a new entity
   Map<String, bool> _entityState;
   EntityService _entityService;
   UserService _userService;
@@ -112,6 +114,12 @@ class GlobalState {
   }
 
   Future<bool> deleteEntity(String id) async {
+    if (!_entityState[id]) {
+      _entities.remove(id);
+      _entityState.remove(id);
+      return true;
+    }
+
     bool isDeleted = await _entityService.deleteEntity(id);
     if (isDeleted) {
       _entities.remove(id);
@@ -221,7 +229,7 @@ class GlobalState {
         name: null,
         address: null,
         advanceDays: null,
-        isPublic: false,
+
         //geo: geoPoint,
         maxAllowed: null,
         slotDuration: null,
@@ -236,7 +244,8 @@ class GlobalState {
         endTimeMinute: null,
         parentId: parentId,
         type: entityType,
-        isBookable: false,
+        isPublic: true,
+        isBookable: true,
         isActive: false,
         coordinates: null);
 
