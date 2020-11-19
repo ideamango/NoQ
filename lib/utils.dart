@@ -12,6 +12,7 @@ import 'package:noq/style.dart';
 import 'package:noq/widget/weekday_selector.dart';
 import 'package:noq/widget/widgets.dart';
 import 'package:share/share.dart';
+import 'package:uuid/uuid.dart';
 
 import 'constants.dart';
 import 'db/db_model/entity.dart';
@@ -254,6 +255,37 @@ class Utils {
         }
       });
     });
+  }
+
+  static Entity createEntity(String entityType, [String parentId]) {
+    var uuid = new Uuid();
+    String entityId = uuid.v1();
+
+    Entity entity = new Entity(
+        entityId: entityId,
+        name: null,
+        address: null,
+        advanceDays: null,
+        isPublic: false,
+        //geo: geoPoint,
+        maxAllowed: null,
+        slotDuration: null,
+        closedOn: [],
+        breakStartHour: null,
+        breakStartMinute: null,
+        breakEndHour: null,
+        breakEndMinute: null,
+        startTimeHour: null,
+        startTimeMinute: null,
+        endTimeHour: null,
+        endTimeMinute: null,
+        parentId: parentId,
+        type: entityType,
+        isBookable: false,
+        isActive: false,
+        coordinates: null);
+
+    return entity;
   }
 
   static Future<Position> getCurrLocation() async {

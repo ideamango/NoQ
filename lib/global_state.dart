@@ -94,46 +94,66 @@ class GlobalState {
     return _currentUser;
   }
 
-  Future<Tuple<Entity, bool>> getEntity(String id) async {
+  Future<Tuple<Entity, bool>> getEntity(String id,
+      [bool fetchFromServer = true]) async {
     if (_entities.containsKey(id)) {
       return new Tuple(item1: _entities[id], item2: _entityState[id]);
     } else {
       //load from server
-      Entity ent = await _entityService.getEntity(id);
-      if (ent == null) {
+      if (fetchFromServer) {
+        Entity ent = await _entityService.getEntity(id);
+        if (ent == null) {
+          return null;
+        }
+
+        _entities[id] = ent;
+        _entityState[id] = true;
+
+        return new Tuple(item1: ent, item2: true);
+      } else {
         return null;
       }
-
-      _entities[id] = ent;
-      _entityState[id] = true;
-
-      return new Tuple(item1: ent, item2: true);
     }
   }
 
-  Future<bool> deleteEntity(String id) async {
+  Future<bool> removeEntity(String id) async {
     bool isDeleted = await _entityService.deleteEntity(id);
+
     if (isDeleted) {
+      _currentUser.entities.removeWhere((element) => element.entityId == id);
       _entities.remove(id);
       _entityState.remove(id);
-      return true;
     }
-    return false;
+    return isDeleted;
   }
 
-  Future<bool> putEntity(Entity entity, bool saveOnServer) async {
+  Future<bool> putEntity(Entity entity, bool saveOnServer,
+      [String parentId]) async {
     _entities[entity.entityId] = entity;
-    if (saveOnServer) {
-      if (await _entityService.upsertEntity(entity)) {
-        _entityState[entity.entityId] = true;
-        return true;
-      } else {
-        _entityState[entity.entityId] = false;
+
+    bool existsInUser = false;
+    for (MetaEntity mEnt in _currentUser.entities) {
+      if (mEnt.entityId == entity.entityId) {
+        existsInUser = true;
       }
-    } else {
-      _entityState[entity.entityId] = false;
     }
-    return false;
+
+    if (!existsInUser) {
+      _currentUser.entities.add(entity.getMetaEntity());
+    }
+
+    bool saved = false;
+    if (saveOnServer) {
+      if (Utils.isNotNullOrEmpty(parentId)) {
+        saved = await _entityService.upsertEntity(entity);
+      } else {
+        saved =
+            await _entityService.upsertChildEntityToParent(entity, parentId);
+      }
+
+      _entityState[entity.entityId] = saved;
+    }
+    return saved;
   }
 
   void setPastSearch(List<Entity> entityList, String name, String type) {
@@ -214,56 +234,25 @@ class GlobalState {
     return true;
   }
 
-  Future<Entity> createEntity(String entityId, String entityType,
-      [String parentId]) async {
-    Entity entity = new Entity(
-        entityId: entityId,
-        name: null,
-        address: null,
-        advanceDays: null,
-        isPublic: false,
-        //geo: geoPoint,
-        maxAllowed: null,
-        slotDuration: null,
-        closedOn: [],
-        breakStartHour: null,
-        breakStartMinute: null,
-        breakEndHour: null,
-        breakEndMinute: null,
-        startTimeHour: null,
-        startTimeMinute: null,
-        endTimeHour: null,
-        endTimeMinute: null,
-        parentId: parentId,
-        type: entityType,
-        isBookable: false,
-        isActive: false,
-        coordinates: null);
+  // Future<bool> addEntityToCurrentUser(Entity entity, bool saveOnServer) async {
+  //   for (MetaEntity mEnt in _currentUser.entities) {
+  //     if (mEnt.entityId == entity.entityId) {
+  //       return true;
+  //     }
+  //   }
 
-    await putEntity(entity, false);
+  //   _currentUser.entities.add(entity.getMetaEntity());
+  //   await putEntity(entity, saveOnServer);
 
-    return entity;
-  }
+  //   return true;
+  // }
 
-  Future<bool> addEntityToCurrentUser(Entity entity, bool saveOnServer) async {
-    for (MetaEntity mEnt in _currentUser.entities) {
-      if (mEnt.entityId == entity.entityId) {
-        return true;
-      }
-    }
+  // Future<bool> removeEntity(String entityId) async {
+  //   _currentUser.entities
+  //       .removeWhere((element) => element.entityId == entityId);
 
-    _currentUser.entities.add(entity.getMetaEntity());
-    await putEntity(entity, saveOnServer);
-
-    return true;
-  }
-
-  Future<bool> removeEntity(String entityId) async {
-    _currentUser.entities
-        .removeWhere((element) => element.entityId == entityId);
-
-    return true;
-  }
+  //   return true;
+  // }
 
   Future<bool> updateMetaEntity(MetaEntity metaEntity) async {
     for (int i = 0; i < _currentUser.entities.length; i++) {

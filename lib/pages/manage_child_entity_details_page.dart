@@ -658,8 +658,9 @@ class _ManageChildEntityDetailsPageState
       _serviceDetailsFormKey.currentState.save();
       print("Saved formmmmmmm");
       serviceEntity.regNum = _regNumController.text;
-      EntityService()
-          .upsertChildEntityToParent(serviceEntity, serviceEntity.parentId)
+
+      _gState
+          .putEntity(serviceEntity, true, serviceEntity.parentId)
           .then((value) {
         if (value) {
           Navigator.push(
@@ -1425,41 +1426,6 @@ class _ManageChildEntityDetailsPageState
     saveRoute() {
       print("saving ");
 
-      // String addressStr1;
-
-      // addressStr1 =
-      //     (_localityController.text != null) ? _localityController.text : "";
-      // String addressStr2 =
-      //     (_cityController.text != null) ? _cityController.text : "";
-
-      // String addressStr3 =
-      //     _stateController.text != null ? _stateController.text : "";
-      // String addressStr4 =
-      //     _countryController.text != null ? _countryController.text : "";
-      // String finalAddressStr;
-      // if (addressStr2 != "" && addressStr3 != "" && addressStr4 != "")
-      //   finalAddressStr = addressStr1 +
-      //       ", " +
-      //       addressStr2 +
-      //       ", " +
-      //       addressStr3 +
-      //       ", " +
-      //       addressStr4;
-      //List<Placemark> placemark;
-      // double lat;
-      // double long;
-      // Geolocator().placemarkFromAddress(finalAddressStr).then((value) {
-      //   placemark = value;
-      //   lat = placemark[0].position.latitude;
-      //   print(lat);
-      //   long = placemark[0].position.longitude;
-      //   print(long);
-      //   MyGeoFirePoint geoPoint = new MyGeoFirePoint(lat, long);
-      //   serviceEntity.coordinates = geoPoint;
-      // });
-
-      //print(placemark);
-
       String validationPh1;
       String validationPh2;
       bool isContactValid = true;
@@ -1506,8 +1472,8 @@ class _ManageChildEntityDetailsPageState
 
         _serviceDetailsFormKey.currentState.save();
         serviceEntity.regNum = _regNumController.text;
-        EntityService()
-            .upsertChildEntityToParent(serviceEntity, serviceEntity.parentId)
+        _gState
+            .putEntity(serviceEntity, true, serviceEntity.parentId)
             .then((value) {
           if (value) {
             // Assign admins to newly upserted entity

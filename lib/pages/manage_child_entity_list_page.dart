@@ -148,29 +148,21 @@ class _ManageChildEntityListPageState extends State<ManageChildEntityListPage> {
   }
 
   void _addNewServiceRow() {
-    var uuid = new Uuid();
-    String serviceId = uuid.v1();
-    _state
-        .createEntity(serviceId, _subEntityType, parentEntity.entityId)
-        .then((value) {
-      Entity en = value;
-      // en.type = _subEntityType;
-      // en.entityId = serviceId;
-      // en.parentId = parentEntity.entityId;
-      MetaEntity meta;
-      setState(() {
-        _entityMap[en.entityId] = en;
-        meta = en.getMetaEntity();
-        servicesList.add(meta);
-        _count = _count + 1;
-      });
-      _state.addEntityToCurrentUser(en, false);
-      if (_childScrollController.hasClients)
-        _childScrollController.animateTo(
-            _childScrollController.position.maxScrollExtent + itemSize,
-            curve: Curves.easeInToLinear,
-            duration: Duration(milliseconds: 200));
+    Entity en = Utils.createEntity(_subEntityType, parentEntity.entityId);
+    _state.putEntity(en, false, parentEntity.entityId);
+    MetaEntity meta;
+    setState(() {
+      _entityMap[en.entityId] = en;
+      meta = en.getMetaEntity();
+      servicesList.add(meta);
+      _count = _count + 1;
     });
+
+    if (_childScrollController.hasClients)
+      _childScrollController.animateTo(
+          _childScrollController.position.maxScrollExtent + itemSize,
+          curve: Curves.easeInToLinear,
+          duration: Duration(milliseconds: 200));
   }
 
   // Widget _buildServiceItem(MetaEntity childEntity) {

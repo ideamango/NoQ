@@ -81,16 +81,20 @@ class EntityRowState extends State<EntityRow> {
     }
 
     showChildListPage() {
-      EntityService().getEntity(_metaEntity.entityId).then((value) {
-        //If no entity in DB then it means no entity created yet, only meta.
-        //So then msg to user to create entity first before adding children.
-        // Else Entity is present then take to child list page
+      _state.getEntity(_metaEntity.entityId).then((value) {
+        bool isSavedOnServer = false;
+        Entity ent;
         if (value != null) {
+          isSavedOnServer = value.item2;
+          ent = value.item1;
+        }
+
+        if (isSavedOnServer) {
           Navigator.push(
               context,
               MaterialPageRoute(
                   builder: (context) =>
-                      ManageChildEntityListPage(entity: value)));
+                      ManageChildEntityListPage(entity: ent)));
         } else {
           //No entity created yet.. show msg to create entity first.
 
@@ -100,17 +104,22 @@ class EntityRowState extends State<EntityRow> {
               Duration(
                 seconds: 6,
               ),
-              "Important details about your place is missing, Click on 'Add details' to add now!",
-              "You need to add those before adding child places.");
+              "Important details about your place are missing or unsaved ",
+              "Please SAVE before adding child places.");
         }
       });
     }
 
     share() {
       Entity en;
-      EntityService().getEntity(_metaEntity.entityId).then((value) {
-        en = value;
-        if (en == null) {
+      _state.getEntity(_metaEntity.entityId, false).then((value) {
+        bool isSavedOnServer = true;
+        if (value != null) {
+          en = value.item1;
+          isSavedOnServer = value.item2;
+        }
+
+        if (!isSavedOnServer) {
           Utils.showMyFlushbar(
               context,
               Icons.info,
@@ -125,9 +134,14 @@ class EntityRowState extends State<EntityRow> {
 
     shareQr() {
       Entity en;
-      EntityService().getEntity(_metaEntity.entityId).then((value) {
-        en = value;
-        if (en == null) {
+      _state.getEntity(_metaEntity.entityId, false).then((value) {
+        bool isSavedOnServer = true;
+        if (value != null) {
+          en = value.item1;
+          isSavedOnServer = value.item2;
+        }
+
+        if (!isSavedOnServer) {
           Utils.showMyFlushbar(
               context,
               Icons.info,
