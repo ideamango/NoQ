@@ -45,6 +45,7 @@ class ChildEntityRowState extends State<ChildEntityRow> {
     }
     if (entity == null) {
       entity = await EntityService().getEntity(entityId);
+      print(entity.name);
     }
   }
 
@@ -54,6 +55,7 @@ class ChildEntityRowState extends State<ChildEntityRow> {
       //get Entity for this metaEntity
       // if Entity is inentityMap it means its a new entity and is not created yet,
       // else fetch from DB.
+      //TODO Sumant - use state for entity get, put
       getEntity(_metaEntity.entityId).then((value) {
         Navigator.of(context).pop();
         Navigator.push(

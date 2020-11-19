@@ -26,6 +26,8 @@ class GlobalState {
   String lastSearchType;
   List<Entity> lastSearchResults;
   Map<String, Entity> _entities;
+
+  //true is entity is saved on server and false if it is a new entity
   Map<String, bool> _entityState;
   EntityService _entityService;
   UserService _userService;

@@ -130,6 +130,8 @@ flutter:
     - user_account.png
     - notFound1.png
     - notFound2.png
+    - noFavourites.png
+    - infoCustomer.png
 
   #  - images/a_dot_ham.jpeg
 

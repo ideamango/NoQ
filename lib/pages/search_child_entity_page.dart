@@ -50,7 +50,7 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
   SharedPreferences _prefs;
   GlobalState _globalState;
   List<Entity> _stores = new List<Entity>();
-  List<Entity> _pastSearches = new List<Entity>();
+  //List<Entity> _pastSearches = new List<Entity>();
   List<Entity> _searchResultstores = new List<Entity>();
   String _entityType;
   String _searchInAll = 'Search in All';
@@ -213,13 +213,13 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
         Entity entity = value.item1;
 
         if (value != null) {
-          enList.add(entity);
+          if (entity.isActive != null) if (entity.isActive) enList.add(entity);
         }
       }
     }
     setState(() {
       _stores.addAll(enList);
-      _pastSearches.addAll(enList);
+      // _pastSearches.addAll(enList);
     });
   }
 
@@ -239,17 +239,17 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
     });
   }
 
-  void fetchPastSearchesList() {
-    //Load details from local files
+  // void fetchPastSearchesList() {
+  //   //Load details from local files
 
-    if (!Utils.isNullOrEmpty(_state.lastSearchResults)) {
-      setState(() {
-        _pastSearches = _state.lastSearchResults;
-      });
-    } else {
-      messageTitle = "No previous searches!!";
-    }
-  }
+  //   if (!Utils.isNullOrEmpty(_state.lastSearchResults)) {
+  //     setState(() {
+  //       _pastSearches = _state.lastSearchResults;
+  //     });
+  //   } else {
+  //     messageTitle = "No previous searches!!";
+  //   }
+  // }
 
   Future<void> getGlobalState() async {
     _state = await GlobalState.getGlobalState();
@@ -288,14 +288,14 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
     MetaEntity en = strData.getMetaEntity();
     isFav = isFavourite(en);
     if (isFav) {
-      setState(() {
-        _state.removeFavourite(en);
-      });
+      _state.removeFavourite(en).then((value) => setState(() {}));
+      setState(() {});
     } else {
-      setState(() {
-        _state.addFavourite(en);
-      });
+      _state.addFavourite(en).then((value) => setState(() {}));
+      setState(() {});
     }
+
+    print("toggle done");
   }
 
   generateLinkAndShareWithParams(String entityId, String name) async {
@@ -461,7 +461,7 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
   Widget _listSearchResults() {
     if (_stores.length != 0) {
       //Add search results to past searches.
-      _state.lastSearchResults = _stores;
+      _state.setPastSearch(_stores, _searchText, _entityType);
       return Center(
         child: Column(
           children: <Widget>[
@@ -676,7 +676,7 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
         padding: EdgeInsets.all(0),
         child: RichText(
             overflow: TextOverflow.visible,
-            maxLines: 1,
+            maxLines: 2,
             text: TextSpan(
                 style: TextStyle(color: Colors.grey, fontSize: 12),
                 children: <TextSpan>[
@@ -803,7 +803,7 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
                 body: Column(
                   children: <Widget>[
                     filterBar,
-                    (!Utils.isNullOrEmpty(_pastSearches))
+                    (!Utils.isNullOrEmpty(_stores))
                         ? Expanded(
                             child: ListView.builder(
                                 controller: _selectCategoryBtnController,
@@ -811,9 +811,9 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
                                 itemBuilder: (BuildContext context, int index) {
                                   return Container(
                                     margin: EdgeInsets.fromLTRB(10, 0, 10, 25),
-                                    child: new Column(
-                                      children: showPastSearches(),
-                                    ),
+                                    child: new Column(children: <Widget>[
+                                      Expanded(child: _listSearchResults()),
+                                    ]),
                                   );
                                 }),
                           )
@@ -1206,7 +1206,7 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
                               ),
                             if (str.startTimeHour == null)
                               Container(
-                                width: MediaQuery.of(context).size.width * .2,
+                                width: MediaQuery.of(context).size.width * .18,
                                 child: Text(""),
                               ),
                           ],
@@ -1224,8 +1224,8 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
                         ),
                       ),
                       SizedBox(height: 5),
-                      if (str.isBookable != null && str.isActive != null)
-                        if (str.isBookable && str.isActive)
+                      if (str.isBookable != null)
+                        if (str.isBookable)
                           Container(
                               width: MediaQuery.of(context).size.width * .78,
                               //padding: EdgeInsets.fromLTRB(0, 5, 5, 5),
@@ -1654,14 +1654,8 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
     return dtItem;
   }
 
-  List<Widget> showPastSearches() {
-    return _pastSearches.map(_buildItem).toList();
-    // return _stores.map((contact) => new ChildItem(contact.name)).toList();
-  }
-
   List<Widget> showSearchResults() {
     return _stores.map(_buildItem).toList();
-    // return _stores.map((contact) => new ChildItem(contact.name)).toList();
   }
 
   Future<void> showLocationAccessDialog() async {
@@ -1742,42 +1736,42 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
     }
   }
 
-  Future<List<Entity>> getSearchEntitiesList() async {
-    double lat = 0;
-    double lon = 0;
-    int pageNumber = 0;
-    int pageSize = 0;
+  // Future<List<Entity>> getSearchEntitiesList() async {
+  //   double lat = 0;
+  //   double lon = 0;
+  //   int pageNumber = 0;
+  //   int pageSize = 0;
 
-    Position pos;
-    try {
-      pos = await Utils.getCurrLocation();
-    } catch (e) {
-      showLocationAccessDialog();
-    }
-    if (pos == null) {
-      throw new Exception("UserLocationOff");
-    }
-    lat = pos.latitude;
-    lon = pos.longitude;
-    //TODO: comment - only for testing
-    //lat = 12.960632;
-    //lon = 77.641603;
+  //   Position pos;
+  //   try {
+  //     pos = await Utils.getCurrLocation();
+  //   } catch (e) {
+  //     showLocationAccessDialog();
+  //   }
+  //   if (pos == null) {
+  //     throw new Exception("UserLocationOff");
+  //   }
+  //   lat = pos.latitude;
+  //   lon = pos.longitude;
+  //   //TODO: comment - only for testing
+  //   //lat = 12.960632;
+  //   //lon = 77.641603;
 
-    //TODO: comment - only for testing
-    String entityTypeForSearch;
-    entityTypeForSearch = (_entityType == _searchInAll) ? null : _entityType;
+  //   //TODO: comment - only for testing
+  //   String entityTypeForSearch;
+  //   entityTypeForSearch = (_entityType == _searchInAll) ? null : _entityType;
 
-    List<Entity> searchEntityList = await EntityService().search(
-        _searchText.toLowerCase(),
-        entityTypeForSearch,
-        lat,
-        lon,
-        _state.conf.searchRadius,
-        pageNumber,
-        pageSize);
+  //   List<Entity> searchEntityList = await EntityService().search(
+  //       _searchText.toLowerCase(),
+  //       entityTypeForSearch,
+  //       lat,
+  //       lon,
+  //       _state.conf.searchRadius,
+  //       pageNumber,
+  //       pageSize);
 
-    return searchEntityList;
-  }
+  //   return searchEntityList;
+  // }
 
   Future<void> _buildSearchList() async {
     List<Entity> searchList = new List<Entity>();
