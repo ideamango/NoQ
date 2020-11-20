@@ -146,7 +146,7 @@ class _UserHomePageState extends State<UserHomePage> {
     Item4(),
     Item5(),
     Item6(),
-    Item7()
+    //  Item7()
   ];
   List<T> map<T>(List list, Function handler) {
     List<T> result = [];
@@ -210,8 +210,10 @@ class _UserHomePageState extends State<UserHomePage> {
                                                   .size
                                                   .height *
                                               0.40,
-                                          width:
-                                              MediaQuery.of(context).size.width,
+                                          width: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                              .9,
                                           child: Card(
                                             color: primaryAccentColor,
                                             child: card,
@@ -335,17 +337,20 @@ class _UserHomePageState extends State<UserHomePage> {
                           ),
                         ),
                       verticalSpacer,
-                      Card(
-                        margin: EdgeInsets.zero,
-                        elevation: 20,
-                        child: Container(
-                          height: MediaQuery.of(context).size.height * .18,
-                          margin: EdgeInsets.zero,
-                          padding: EdgeInsets.all(0),
-                          child: Image(image: AssetImage('assets/6.jpg')),
-                        ),
-                      ),
-                      verticalSpacer,
+                      // Card(
+                      //   margin: EdgeInsets.zero,
+                      //   elevation: 20,
+                      //   child: Container(
+                      //     height: MediaQuery.of(context).size.height * .2,
+                      //     margin: EdgeInsets.zero,
+                      //     padding: EdgeInsets.all(0),
+                      //     child: Image(
+                      //       image: AssetImage('assets/6.jpg'),
+                      //       fit: BoxFit.fitHeight,
+                      //     ),
+                      //   ),
+                      // ),
+                      // verticalSpacer,
                       Card(
                         margin: EdgeInsets.zero,
                         elevation: 20,

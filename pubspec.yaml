@@ -82,11 +82,9 @@ flutter:
   uses-material-design: true
 
   # To add assets to your application, add an assets section, like this:
-  assets:
-    - logo.png
-    - logo_new.png
+  assets:    
     - logo_icon.png
-    - login_subheading.png
+    - sukoon_subheading.png
     - background.png   
     - ticket.jpg
     - 1.jpg
@@ -94,10 +92,8 @@ flutter:
     - 3.jpg
     - 4.jpg
     - 5.jpg
-    - 6.jpg
-    - 7.jpg
-    - whatsapp.png
-    - shoppingList.png   
+    - 6.jpg    
+    - whatsapp.png    
     - paytm.svg
     - gpay.png
     - gpay_icon.png
@@ -109,29 +105,22 @@ flutter:
     - sales.jpg
     - notFound.png
     - regain.jpg
-    - school.png
-    - mall.png
-    - medicalStore.png
-    - superMarket.png
+    - school.png    
     - popShop.png
-    - salon.png
-    - apartment.png
+    - salon.png    
     - placeOfWorship.png
     - restaurant.png
     - sportsCenter.png
     - gym.png
-    - office.png
-    - shop.png
-    - hospital.png
-    - bank.png
-    - others.png
-    - defaultSearchCategoryImg.png
+    - office.png   
+    - hospital.png  
     - search_home.png
     - user_account.png
     - notFound1.png
     - notFound2.png
     - noFavourites.png
-    - infoCustomer.png
+    - infoCustomer.png   
+    - sukoon.png
 
   #  - images/a_dot_ham.jpeg
 

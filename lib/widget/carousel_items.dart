@@ -11,7 +11,7 @@ class Item1 extends StatelessWidget {
           Image.asset(
             'assets/1.jpg',
             height: 140.0,
-            fit: BoxFit.fitHeight,
+            fit: BoxFit.cover,
           )
         ],
       ),
@@ -30,7 +30,7 @@ class Item2 extends StatelessWidget {
           Image.asset(
             'assets/2.jpg',
             height: 140.0,
-            fit: BoxFit.fitHeight,
+            fit: BoxFit.cover,
           )
         ],
       ),
@@ -64,7 +64,7 @@ class Item3 extends StatelessWidget {
           Image.asset(
             'assets/3.jpg',
             height: 140.0,
-            fit: BoxFit.fitHeight,
+            fit: BoxFit.cover,
           )
         ],
       ),
@@ -83,7 +83,7 @@ class Item4 extends StatelessWidget {
           Image.asset(
             'assets/4.jpg',
             height: 140.0,
-            fit: BoxFit.fitHeight,
+            fit: BoxFit.cover,
           )
         ],
       ),
@@ -100,9 +100,9 @@ class Item5 extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
           Image.asset(
-            'assets/regain.jpg',
+            'assets/5.jpg',
             height: 140.0,
-            fit: BoxFit.fitHeight,
+            fit: BoxFit.cover,
           )
         ],
       ),
@@ -121,7 +121,7 @@ class Item6 extends StatelessWidget {
           Image.asset(
             'assets/6.jpg',
             height: 140.0,
-            fit: BoxFit.fitHeight,
+            fit: BoxFit.cover,
           )
         ],
       ),
@@ -140,7 +140,7 @@ class Item7 extends StatelessWidget {
           Image.asset(
             'assets/7.jpg',
             height: 140.0,
-            fit: BoxFit.fitHeight,
+            fit: BoxFit.cover,
           )
         ],
       ),

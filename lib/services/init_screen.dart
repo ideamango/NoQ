@@ -55,13 +55,17 @@ class SplashState extends State<SplashScreen> {
                 SizedBox(height: MediaQuery.of(context).size.height * .1),
                 SizedBox(
                   height: MediaQuery.of(context).size.height * .15,
-                  child: Text(
-                    "Sukoon",
-                    style: TextStyle(
-                        fontFamily: "AnandaNamaste",
-                        fontSize: 90,
-                        color: primaryAccentColor),
+                  child: Image.asset(
+                    "assets/sukoon.png",
+                    fit: BoxFit.contain,
                   ),
+                  // child: Text(
+                  //   "Sukoon",
+                  //   style: TextStyle(
+                  //       fontFamily: "AnandaNamaste",
+                  //       fontSize: 90,
+                  //       color: primaryAccentColor),
+                  // ),
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -70,7 +74,7 @@ class SplashState extends State<SplashScreen> {
                         height: MediaQuery.of(context).size.height * .07,
                         width: MediaQuery.of(context).size.width * .7,
                         child: Image.asset(
-                          "assets/login_subheading.png",
+                          "assets/sukoon_subheading.png",
                           fit: BoxFit.contain,
                         )),
                   ],

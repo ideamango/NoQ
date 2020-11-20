@@ -165,7 +165,7 @@ class _FavsListPageState extends State<FavsListPage> {
         children: <Widget>[
           Image.asset(
             'assets/noFavourites.png',
-            width: MediaQuery.of(context).size.width * .8,
+            width: MediaQuery.of(context).size.width * .9,
           ),
           // Text(txtMsg, style: highlightTextStyle),
           // Text(defaultSearchSubMsg, style: highlightSubTextStyle),
