@@ -15,7 +15,7 @@ Future<bool> upsertEntity(Entity entity, String regNum) async {
 
 Future<bool> deleteEntity(String entityId) async {
   GlobalState gs = await GlobalState.getGlobalState();
-  return await gs.deleteEntity(entityId);
+  return await gs.removeEntity(entityId);
 }
 
 Future<Tuple<Entity, bool>> getEntity(String entityId) async {

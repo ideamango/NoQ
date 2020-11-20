@@ -131,6 +131,13 @@ class _ManageEntityListPageState extends State<ManageEntityListPage> {
       }
     }
 
+    // _state
+    //                           .getCurrentUser()
+    //                           .entities
+    //                           .where((element) => element.parentId != null)
+    //                           .toList()
+    //                           .length,
+
     entityTypes = _state.conf.entityTypes;
     setState(() {
       stateInitFinished = true;
@@ -138,22 +145,19 @@ class _ManageEntityListPageState extends State<ManageEntityListPage> {
   }
 
   void _addNewServiceRow() {
-    var uuid = new Uuid();
-    String _entityId = uuid.v1();
-    _state.createEntity(_entityId, _entityType).then((entity) {
-      MetaEntity metaEn = entity.getMetaEntity();
+    Entity entity = Utils.createEntity(_entityType);
+    _state.putEntity(entity, false);
+    MetaEntity metaEn = entity.getMetaEntity();
 
-      setState(() {
-        metaEntitiesList.add(metaEn);
-      });
-      _state.addEntityToCurrentUser(entity, false);
-
-      if (_scrollController.hasClients)
-        _scrollController.animateTo(
-            _scrollController.position.maxScrollExtent + itemSize,
-            curve: Curves.easeInToLinear,
-            duration: Duration(milliseconds: 200));
+    setState(() {
+      metaEntitiesList.add(metaEn);
     });
+
+    if (_scrollController.hasClients)
+      _scrollController.animateTo(
+          _scrollController.position.maxScrollExtent + itemSize,
+          curve: Curves.easeInToLinear,
+          duration: Duration(milliseconds: 200));
   }
 
   @override

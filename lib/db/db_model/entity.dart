@@ -82,6 +82,7 @@ class Entity {
   String applepay;
   Offer offer;
   String phone;
+  MetaEntity _meta;
 
   Map<String, dynamic> toJson() => {
         'entityId': entityId,
@@ -240,39 +241,74 @@ class Entity {
   }
 
   MetaEntity getMetaEntity() {
-    MetaEntity meta = new MetaEntity(
-        entityId: entityId,
-        name: name,
-        type: type,
-        advanceDays: advanceDays,
-        isPublic: isPublic,
-        closedOn: closedOn,
-        breakStartHour: breakStartHour,
-        breakStartMinute: breakStartMinute,
-        breakEndHour: breakEndHour,
-        breakEndMinute: breakEndMinute,
-        startTimeHour: startTimeHour,
-        startTimeMinute: startTimeMinute,
-        endTimeHour: endTimeHour,
-        endTimeMinute: endTimeMinute,
-        isActive: isActive,
-        lat: (coordinates != null) ? coordinates.geopoint.latitude : null,
-        lon: (coordinates != null) ? coordinates.geopoint.longitude : null,
-        slotDuration: slotDuration,
-        maxAllowed: maxAllowed,
-        distance: distance,
-        whatsapp: whatsapp,
-        parentId: parentId,
-        gpay: gpay,
-        paytm: paytm,
-        applepay: applepay,
-        offer: offer,
-        phone: phone,
-        address: (address != null) ? Utils.getFormattedAddress(address) : null,
-        hasChildren:
-            (childEntities != null && childEntities.length > 0) ? true : false);
+    if (_meta == null) {
+      _meta = new MetaEntity(
+          entityId: entityId,
+          name: name,
+          type: type,
+          advanceDays: advanceDays,
+          isPublic: isPublic,
+          closedOn: closedOn,
+          breakStartHour: breakStartHour,
+          breakStartMinute: breakStartMinute,
+          breakEndHour: breakEndHour,
+          breakEndMinute: breakEndMinute,
+          startTimeHour: startTimeHour,
+          startTimeMinute: startTimeMinute,
+          endTimeHour: endTimeHour,
+          endTimeMinute: endTimeMinute,
+          isActive: isActive,
+          lat: (coordinates != null) ? coordinates.geopoint.latitude : null,
+          lon: (coordinates != null) ? coordinates.geopoint.longitude : null,
+          slotDuration: slotDuration,
+          maxAllowed: maxAllowed,
+          distance: distance,
+          whatsapp: whatsapp,
+          parentId: parentId,
+          gpay: gpay,
+          paytm: paytm,
+          applepay: applepay,
+          offer: offer,
+          phone: phone,
+          address:
+              (address != null) ? Utils.getFormattedAddress(address) : null,
+          hasChildren: (childEntities != null && childEntities.length > 0)
+              ? true
+              : false);
+    } else {
+      _meta.name = name;
+      _meta.type = type;
+      _meta.advanceDays = advanceDays;
+      _meta.isPublic = isPublic;
+      _meta.closedOn = closedOn;
 
-    return meta;
+      _meta.breakStartHour = breakStartHour;
+      _meta.breakStartMinute = breakStartMinute;
+      _meta.breakEndHour = breakEndHour;
+      _meta.breakEndMinute = breakEndMinute;
+      _meta.startTimeHour = startTimeHour;
+      _meta.startTimeMinute = startTimeMinute;
+      _meta.endTimeHour = endTimeHour;
+      _meta.endTimeMinute = endTimeMinute;
+      _meta.isActive = isActive;
+      _meta.lat = (coordinates != null) ? coordinates.geopoint.latitude : null;
+      _meta.lon = (coordinates != null) ? coordinates.geopoint.longitude : null;
+      _meta.slotDuration = slotDuration;
+      _meta.maxAllowed = maxAllowed;
+      _meta.distance = distance;
+      _meta.whatsapp = whatsapp;
+      _meta.parentId = parentId;
+      _meta.gpay = gpay;
+      _meta.paytm = paytm;
+      _meta.applepay = applepay;
+      _meta.offer = offer;
+      _meta.phone = phone;
+      _meta.address =
+          (address != null) ? Utils.getFormattedAddress(address) : null;
+      _meta.hasChildren =
+          (childEntities != null && childEntities.length > 0) ? true : false;
+    }
+    return _meta;
   }
 
   List<String> constructQueriableList(String string) {
