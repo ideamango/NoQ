@@ -1103,7 +1103,8 @@ class _SearchEntityPageState extends State<SearchEntityPage>
                                     child: AutoSizeText(
                                       (str.name) ?? str.name.toString(),
                                       style: TextStyle(
-                                          fontSize: 17, color: btnColor),
+                                          fontSize: fontSize * .045,
+                                          color: btnColor),
                                       maxLines: 1,
                                       minFontSize: 14,
                                       overflow: TextOverflow.ellipsis,
@@ -1188,8 +1189,7 @@ class _SearchEntityPageState extends State<SearchEntityPage>
                                         style: TextStyle(
                                             color: Colors.green[600],
                                             fontFamily: 'Monsterrat',
-                                            letterSpacing: 0.5,
-                                            fontSize: fontSize * .025)),
+                                            fontSize: fontSize * .022)),
                                     Text(' - '),
                                     Text(
                                         Utils.formatTime(
@@ -1200,8 +1200,7 @@ class _SearchEntityPageState extends State<SearchEntityPage>
                                         style: TextStyle(
                                             color: Colors.red[900],
                                             fontFamily: 'Monsterrat',
-                                            letterSpacing: 0.5,
-                                            fontSize: fontSize * .025)),
+                                            fontSize: fontSize * .022)),
                                   ],
                                 ),
                               ),
