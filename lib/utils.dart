@@ -576,7 +576,7 @@ class Utils {
                       Navigator.of(context, rootNavigator: true).pop();
                       Future.delayed(Duration(seconds: 2)).then((value) {
                         AuthService().signOut(context);
-                        GlobalState.resetGlobalState();
+                        GlobalState.clearGlobalState();
                       });
                     },
                   ),
