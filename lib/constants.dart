@@ -209,7 +209,7 @@ String tryAgainToBook = "Please try again or choose a different time or date.";
 String appShareHeading =
     "Book your peace of mind with Sukoon, a Universal Booking App.";
 String appShareMessage =
-    "Worried about your Safety in the crowded place OR Tired of long waiting in the Queue? \n\nSukoon helps you to Book a Time-Slot when the rush is less. \nDownload and start booking your peace of mind!!";
+    "Worried about your Safety in the crowded place OR Tired of long waiting in the Queue? \n\nSukoon helps you to Book a Time-Slot when the rush is less. \nDownload and start booking your peace of mind!!\n";
 String appShareWithOwnerHeading = "Message title to business owner from Sukoon";
 String appShareWithOwnerMessage = "Message body to business owner from Sukoon";
 //append place name in the last
@@ -221,7 +221,7 @@ String entityShareByOwnerHeading =
     " is inviting you to pre-book the time-slot for your next visit.";
 
 String entityShareMessage =
-    "Now you don't have to worry about Safety \nat crowded place or tiring wait time due to long queues. \n\nBook your slot when the crowd is less. \nDownload Sukoon app and start booking your peace of mind!!";
+    "Now you don't have to worry about Safety \nat crowded place or tiring wait time due to long queues.\n\nBook your slot when the crowd is less. \nDownload Sukoon app and start booking your peace of mind!!\n";
 
 String faqHead1 = "How Sukoon helps bring Sukoon to your life?";
 String faqHead1Sub1 = "Lets look at the problems first..";

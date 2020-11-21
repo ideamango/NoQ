@@ -263,7 +263,13 @@ class _SearchEntityPageState extends State<SearchEntityPage>
     _dynamicLink =
         Uri.https(dynamicLink.authority, dynamicLink.path).toString();
     // dynamicLink has been generated. share it with others to use it accordingly.
-    Share.share(dynamicLink.toString());
+    Share.share(
+        entityShareByUserHeading +
+            entityName +
+            '\n' +
+            entityShareMessage +
+            dynamicLink.toString(),
+        subject: entityShareByUserHeading + entityName);
   }
 
   Widget _emptySearchPage() {
