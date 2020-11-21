@@ -1189,7 +1189,7 @@ class _SearchEntityPageState extends State<SearchEntityPage>
                                             color: Colors.green[600],
                                             fontFamily: 'Monsterrat',
                                             letterSpacing: 0.5,
-                                            fontSize: 10.0)),
+                                            fontSize: fontSize * .025)),
                                     Text(' - '),
                                     Text(
                                         Utils.formatTime(
@@ -1201,7 +1201,7 @@ class _SearchEntityPageState extends State<SearchEntityPage>
                                             color: Colors.red[900],
                                             fontFamily: 'Monsterrat',
                                             letterSpacing: 0.5,
-                                            fontSize: 10.0)),
+                                            fontSize: fontSize * .025)),
                                   ],
                                 ),
                               ),
