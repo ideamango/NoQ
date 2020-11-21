@@ -279,7 +279,27 @@ class GlobalState {
     return token;
   }
 
-  static resetGlobalState() {
+  static clearGlobalState() {
+    // Configurations conf;
+
+    // String lastSearchName;
+    // String lastSearchType;
+
+    if (_gs != null) {
+      _gs._entityState.clear();
+      _gs._entities.clear();
+      _gs.lastSearchResults.clear();
+      _gs.bookings.clear();
+
+      _gs._tokenService = null;
+      _gs._userService = null;
+      _gs._entityService = null;
+      _gs._currentUser = null;
+      _gs.conf = null;
+      _gs.lastSearchName = "";
+      _gs.lastSearchType = "";
+    }
+
     _gs = null;
   }
 
