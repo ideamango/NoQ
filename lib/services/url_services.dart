@@ -9,8 +9,7 @@ import 'package:url_launcher/url_launcher.dart' as UrlLauncher;
 import 'package:url_launcher/url_launcher.dart';
 import 'package:http/http.dart' as http;
 
-launchURL(String tit, String addr, double lat, double long) async {
-  final title = tit;
+launchURL(String title, String addr, double lat, double long) async {
   final description = addr;
   final coords = Coords(lat, long);
   final availableMaps = await MapLauncher.installedMaps;
@@ -21,7 +20,7 @@ launchURL(String tit, String addr, double lat, double long) async {
       await MapLauncher.launchMap(
         mapType: MapType.google,
         coords: coords,
-        title: "",
+        title: title,
         description:
             "", //in Iphone not opening with lat,lon but instead with the name
       );

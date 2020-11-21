@@ -280,11 +280,6 @@ class GlobalState {
   }
 
   static clearGlobalState() {
-    // Configurations conf;
-
-    // String lastSearchName;
-    // String lastSearchType;
-
     if (_gs != null) {
       _gs._entityState.clear();
       _gs._entities.clear();
