@@ -76,11 +76,10 @@ class _SearchEntityPageState extends State<SearchEntityPage>
   String messageSubTitle;
   String _dynamicLink;
   Eventify.Listener _eventListener;
-
   ScrollController _selectCategoryBtnController;
-
   AnimationController controller;
   Animation<Offset> offset;
+  double fontSize;
 
   Widget _buildCategoryItem(BuildContext context, int index) {
     String name = searchTypes[index];
@@ -129,6 +128,7 @@ class _SearchEntityPageState extends State<SearchEntityPage>
   @override
   void initState() {
     super.initState();
+
     _searchTextController = new TextEditingController();
     _isSearching = "initial";
     getGlobalState().whenComplete(() {
@@ -461,6 +461,8 @@ class _SearchEntityPageState extends State<SearchEntityPage>
 
   @override
   Widget build(BuildContext context) {
+    fontSize = MediaQuery.of(context).size.width;
+    print("Font size" + fontSize.toString());
 // build widget only after init has completed, till then show progress indicator.
     if (!initCompleted) {
       return MaterialApp(
@@ -1073,21 +1075,23 @@ class _SearchEntityPageState extends State<SearchEntityPage>
                 Container(
                   width: MediaQuery.of(context).size.width * .8,
                   padding: EdgeInsets.all(2),
+                  margin: EdgeInsets.zero,
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
                       Container(
-                        width: MediaQuery.of(context).size.width * .83,
+                        width: MediaQuery.of(context).size.width * .78,
                         padding: EdgeInsets.zero,
                         margin: EdgeInsets.zero,
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: <Widget>[
                             Container(
-                              width: MediaQuery.of(context).size.width * .6,
+                              width: MediaQuery.of(context).size.width * .59,
                               padding: EdgeInsets.all(0),
+                              margin: EdgeInsets.zero,
                               child: Row(
                                 // mainAxisAlignment: Mai1nAxisAlignment.spaceBetween,
                                 // crossAxisAlignment: CrossAxisAlignment.center,
@@ -1169,8 +1173,9 @@ class _SearchEntityPageState extends State<SearchEntityPage>
                             ),
                             if (str.startTimeHour != null)
                               Container(
-                                width: MediaQuery.of(context).size.width * .18,
+                                width: MediaQuery.of(context).size.width * .19,
                                 padding: EdgeInsets.all(0),
+                                margin: EdgeInsets.all(0),
                                 child: Row(
                                   mainAxisAlignment: MainAxisAlignment.end,
                                   children: <Widget>[
@@ -1209,13 +1214,14 @@ class _SearchEntityPageState extends State<SearchEntityPage>
                         ),
                       ),
                       Container(
-                        width: MediaQuery.of(context).size.width * .83,
+                        width: MediaQuery.of(context).size.width * .78,
                         padding: EdgeInsets.zero,
                         margin: EdgeInsets.zero,
                         child: Row(
                           children: [
                             Container(
                               padding: EdgeInsets.only(top: 3),
+                              margin: EdgeInsets.zero,
                               width: MediaQuery.of(context).size.width * .65,
                               child: AutoSizeText(
                                 (Utils.getFormattedAddress(str.address) != "")
@@ -1261,7 +1267,7 @@ class _SearchEntityPageState extends State<SearchEntityPage>
             Container(
               padding: EdgeInsets.all(0),
               margin: EdgeInsets.zero,
-              width: MediaQuery.of(context).size.width * .9,
+              width: MediaQuery.of(context).size.width * .89,
               child: Row(
                 children: [
                   if (Utils.isNotNullOrEmpty(str.offer?.message))
