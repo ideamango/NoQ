@@ -1089,7 +1089,7 @@ class _SearchEntityPageState extends State<SearchEntityPage>
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: <Widget>[
                             Container(
-                              width: MediaQuery.of(context).size.width * .59,
+                              width: MediaQuery.of(context).size.width * .6,
                               padding: EdgeInsets.all(0),
                               margin: EdgeInsets.zero,
                               child: Row(
@@ -1173,7 +1173,7 @@ class _SearchEntityPageState extends State<SearchEntityPage>
                             ),
                             if (str.startTimeHour != null)
                               Container(
-                                width: MediaQuery.of(context).size.width * .19,
+                                width: MediaQuery.of(context).size.width * .18,
                                 padding: EdgeInsets.all(0),
                                 margin: EdgeInsets.all(0),
                                 child: Row(
