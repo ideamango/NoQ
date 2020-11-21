@@ -236,26 +236,6 @@ class GlobalState {
     return true;
   }
 
-  // Future<bool> addEntityToCurrentUser(Entity entity, bool saveOnServer) async {
-  //   for (MetaEntity mEnt in _currentUser.entities) {
-  //     if (mEnt.entityId == entity.entityId) {
-  //       return true;
-  //     }
-  //   }
-
-  //   _currentUser.entities.add(entity.getMetaEntity());
-  //   await putEntity(entity, saveOnServer);
-
-  //   return true;
-  // }
-
-  // Future<bool> removeEntity(String entityId) async {
-  //   _currentUser.entities
-  //       .removeWhere((element) => element.entityId == entityId);
-
-  //   return true;
-  // }
-
   Future<bool> updateMetaEntity(MetaEntity metaEntity) async {
     for (int i = 0; i < _currentUser.entities.length; i++) {
       if (_currentUser.entities[i].entityId == metaEntity.entityId) {
