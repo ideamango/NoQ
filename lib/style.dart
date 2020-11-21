@@ -172,7 +172,7 @@ final labelXSmlTextStyle = TextStyle(
   color: Colors.blueGrey[700],
   // fontWeight: FontWeight.w800,
   fontFamily: 'Monsterrat',
-  letterSpacing: 0.5,
+
   fontSize: 11.0,
   //height: 2,
 );

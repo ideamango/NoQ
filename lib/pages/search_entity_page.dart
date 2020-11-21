@@ -1099,7 +1099,7 @@ class _SearchEntityPageState extends State<SearchEntityPage>
                                     child: AutoSizeText(
                                       (str.name) ?? str.name.toString(),
                                       style: TextStyle(
-                                          fontSize: 17, color: Colors.blue),
+                                          fontSize: 17, color: btnColor),
                                       maxLines: 1,
                                       minFontSize: 14,
                                       overflow: TextOverflow.ellipsis,
@@ -1172,6 +1172,7 @@ class _SearchEntityPageState extends State<SearchEntityPage>
                                 width: MediaQuery.of(context).size.width * .18,
                                 padding: EdgeInsets.all(0),
                                 child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.end,
                                   children: <Widget>[
                                     Text(
                                         Utils.formatTime(
@@ -1208,16 +1209,37 @@ class _SearchEntityPageState extends State<SearchEntityPage>
                         ),
                       ),
                       Container(
-                        padding: EdgeInsets.only(top: 3),
-                        width: MediaQuery.of(context).size.width * .78,
-                        child: AutoSizeText(
-                          (Utils.getFormattedAddress(str.address) != "")
-                              ? Utils.getFormattedAddress(str.address)
-                              : "No Address found",
-                          maxLines: 1,
-                          minFontSize: 12,
-                          overflow: TextOverflow.ellipsis,
-                          style: labelXSmlTextStyle,
+                        width: MediaQuery.of(context).size.width * .83,
+                        padding: EdgeInsets.zero,
+                        margin: EdgeInsets.zero,
+                        child: Row(
+                          children: [
+                            Container(
+                              padding: EdgeInsets.only(top: 3),
+                              width: MediaQuery.of(context).size.width * .65,
+                              child: AutoSizeText(
+                                (Utils.getFormattedAddress(str.address) != "")
+                                    ? Utils.getFormattedAddress(str.address)
+                                    : "No Address found",
+                                maxLines: 1,
+                                minFontSize: 12,
+                                overflow: TextOverflow.ellipsis,
+                                style: labelXSmlTextStyle,
+                              ),
+                            ),
+                            Container(
+                                padding: EdgeInsets.only(top: 3),
+                                width: MediaQuery.of(context).size.width * .13,
+                                child: Text(
+                                  str.distance.toStringAsFixed(1) + ' Km',
+                                  textAlign: TextAlign.right,
+                                  style: TextStyle(
+                                    color: btnColor,
+                                    fontFamily: 'Monsterrat',
+                                    fontSize: 10.0,
+                                  ),
+                                )),
+                          ],
                         ),
                       ),
                       SizedBox(height: 5),
@@ -1230,51 +1252,59 @@ class _SearchEntityPageState extends State<SearchEntityPage>
                                 children: _buildDateGridItems(str, str.entityId,
                                     str.name, str.closedOn, str.advanceDays),
                               )),
-                      Container(
-                        padding: EdgeInsets.all(0),
-                        width: MediaQuery.of(context).size.width * .78,
-                        child: Row(
-                          children: [
-                            Container(
-                              padding: EdgeInsets.only(top: 3),
-                              width: MediaQuery.of(context).size.width * .78,
-                              child: AutoSizeText(
-                                Utils.isNotNullOrEmpty(str.offer?.message)
-                                    ? str.offer.message
-                                    : "Currently no active offers",
-                                maxLines: 1,
-                                minFontSize: 12,
-                                overflow: TextOverflow.ellipsis,
-                                style: labelSmlTextStyle,
-                              ),
-                            ),
-                            // Utils.isNotNullOrEmpty(str.description)
-                            //     ? RichText(
-                            //         text: TextSpan(
-                            //             style: highlightSubTextStyle,
-                            //             children: <TextSpan>[
-                            //             TextSpan(
-                            //               text: ' More info',
-                            //               style: TextStyle(color: Colors.blue),
-                            //               recognizer: new TapGestureRecognizer()
-                            //                 ..onTap = () =>
-                            //                     showDialogForPlaceDetails(
-                            //                         str, context),
-                            //             ),
-                            //             // TextSpan(
-                            //             //     text:
-                            //             //         ' We will try our best to address that at earliest.'),
-                            //           ]))
-                            //     : Text(""),
-                          ],
-                        ),
-                      ),
                     ],
                   ),
                 ),
               ],
             ),
             SizedBox(height: 3),
+            Container(
+              padding: EdgeInsets.all(0),
+              margin: EdgeInsets.zero,
+              width: MediaQuery.of(context).size.width * .9,
+              child: Row(
+                children: [
+                  if (Utils.isNotNullOrEmpty(str.offer?.message))
+                    Container(
+                      padding: EdgeInsets.all(0),
+                      width: MediaQuery.of(context).size.width * .07,
+                      child: Image.asset(
+                        'assets/offers_icon.png',
+                      ),
+                      //  color: Colors.amber,
+                    ),
+                  if (!Utils.isNotNullOrEmpty(str.offer?.message))
+                    Container(
+                      padding: EdgeInsets.all(0),
+                      width: MediaQuery.of(context).size.width * .07,
+                      child: Image.asset('assets/offers_icon.png',
+                          color: disabledColor),
+                      //  color: Colors.amber,
+                    ),
+                  Container(
+                    padding: EdgeInsets.only(left: 3),
+                    width: MediaQuery.of(context).size.width * .82,
+                    child: Utils.isNotNullOrEmpty(str.offer?.message)
+                        ? Text(
+                            str.offer.message,
+                            maxLines: 1,
+                            //  minFontSize: 12,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                              color: Colors.blueGrey[900],
+                            ),
+                          )
+                        : Text(
+                            "No active offers",
+                            maxLines: 1,
+                            // minFontSize: 12,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(color: Colors.blueGrey[300]),
+                          ),
+                  ),
+                ],
+              ),
+            ),
             new Divider(
               color: Colors.blueGrey[500],
               height: 2,
@@ -1671,7 +1701,7 @@ class _SearchEntityPageState extends State<SearchEntityPage>
                       style: TextStyle(
                           fontSize: 15,
                           color: (isClosed
-                              ? Colors.red
+                              ? Colors.grey[500]
                               : (!isBookingAllowed
                                   ? Colors.grey[500]
                                   : Colors.white)))),
@@ -1679,7 +1709,7 @@ class _SearchEntityPageState extends State<SearchEntityPage>
                       style: TextStyle(
                           fontSize: 8,
                           color: (isClosed
-                              ? Colors.red
+                              ? Colors.grey[500]
                               : (!isBookingAllowed
                                   ? Colors.grey[500]
                                   : Colors.white)))), // text
