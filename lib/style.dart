@@ -210,7 +210,7 @@ final Color btnColor = Colors.cyan[600];
 
 final Color borderColor = Colors.blueGrey[800];
 
-final Color primaryAccentColor = Colors.cyanAccent[400];
+final Color primaryAccentColor = Colors.cyanAccent;
 final Color primaryDoneColor = Colors.green[300];
 final Color primaryDarkColor = Colors.cyan[800];
 

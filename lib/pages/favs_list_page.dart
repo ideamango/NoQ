@@ -860,8 +860,8 @@ class _FavsListPageState extends State<FavsListPage> {
                 : (!isBookingAllowed
                     ? disabledColor
                     : (dateBooked
-                        ? primaryAccentColor
-                        : primaryDarkColor)), // button color
+                        ? Colors.greenAccent[700]
+                        : Colors.cyan[50])), // button color
             child: InkWell(
               splashColor: (isClosed || !isBookingAllowed)
                   ? null
@@ -897,19 +897,25 @@ class _FavsListPageState extends State<FavsListPage> {
                   Text(dtFormat.format(dt),
                       style: TextStyle(
                           fontSize: 15,
+                          fontWeight: FontWeight.bold,
                           color: (isClosed
-                              ? Colors.red
+                              ? Colors.grey[500]
                               : (!isBookingAllowed
                                   ? Colors.grey[500]
-                                  : Colors.white)))),
+                                  : (dateBooked
+                                      ? Colors.white
+                                      : primaryDarkColor))))),
                   Text(dayOfWeek,
                       style: TextStyle(
                           fontSize: 8,
+                          fontWeight: FontWeight.bold,
                           color: (isClosed
-                              ? Colors.red
+                              ? Colors.grey[500]
                               : (!isBookingAllowed
                                   ? Colors.grey[500]
-                                  : Colors.white)))), // text
+                                  : (dateBooked
+                                      ? Colors.white
+                                      : primaryDarkColor))))), // text
                 ],
               ),
             ),

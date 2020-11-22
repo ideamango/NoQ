@@ -439,7 +439,7 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
     Slot sl = _slotList[index];
     String hrs = Utils.formatTime(sl.dateTime.hour.toString());
     String mnts = Utils.formatTime(sl.dateTime.minute.toString());
-
+    bool isBookedFlg = isBooked(sl.dateTime, entity.entityId);
     return Column(
       children: <Widget>[
         RaisedButton(
@@ -451,7 +451,9 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
             hrs + ':' + mnts,
             style: TextStyle(
               fontSize: 12,
-              color: isDisabled(sl.dateTime) ? Colors.grey[500] : Colors.white,
+              color: isDisabled(sl.dateTime)
+                  ? Colors.grey[500]
+                  : (isBookedFlg ? Colors.white : primaryDarkColor),
               // textDirection: TextDirection.ltr,
               // textAlign: TextAlign.center,
             ),
@@ -460,12 +462,12 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
           autofocus: false,
           color: (isDisabled(sl.dateTime))
               ? disabledColor
-              : ((isBooked(sl.dateTime, entity.entityId) == true)
-                  ? Colors.cyan[300]
+              : ((isBookedFlg)
+                  ? Colors.greenAccent[700]
                   : ((sl.isFull != true && isSelected(sl.dateTime) == true)
                       ? highlightColor
                       : (sl.isFull == false)
-                          ? primaryDarkColor
+                          ? Colors.cyan[50]
                           : btnDisabledolor)),
 
           disabledColor: Colors.grey[200],
