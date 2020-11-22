@@ -296,61 +296,51 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
             mainAxisAlignment: MainAxisAlignment.center,
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
-              if (messageTitle == "NotFound")
-                Column(
-                  children: <Widget>[
-                    SizedBox(height: MediaQuery.of(context).size.height * .1),
-                    Container(
-                      height: MediaQuery.of(context).size.height * .2,
+              Column(
+                children: <Widget>[
+                  SizedBox(height: MediaQuery.of(context).size.height * .1),
+                  Container(
+                    height: MediaQuery.of(context).size.height * .2,
+                    decoration: BoxDecoration(
+                      image: DecorationImage(
+                          image: AssetImage("assets/notFound.png"),
+                          fit: BoxFit.cover),
+                    ),
+                  ),
+                  verticalSpacer,
+                  verticalSpacer,
+                  InkWell(
+                    child: Container(
+                      height: MediaQuery.of(context).size.height * .1,
                       decoration: BoxDecoration(
                         image: DecorationImage(
-                            image: AssetImage("assets/notFound.png"),
+                            image: AssetImage("assets/notFound1.png"),
                             fit: BoxFit.cover),
                       ),
                     ),
-                    verticalSpacer,
-                    verticalSpacer,
-                    InkWell(
-                      child: Container(
-                        height: MediaQuery.of(context).size.height * .1,
-                        decoration: BoxDecoration(
-                          image: DecorationImage(
-                              image: AssetImage("assets/notFound1.png"),
-                              fit: BoxFit.cover),
-                        ),
+                    onTap: () {
+                      _searchTextController.text = "";
+                      Utils.generateLinkAndShare(
+                          appShareWithOwnerHeading, appShareWithOwnerMessage);
+                    },
+                  ),
+                  InkWell(
+                    child: Container(
+                      height: MediaQuery.of(context).size.height * .1,
+                      decoration: BoxDecoration(
+                        image: DecorationImage(
+                            image: AssetImage("assets/notFound2.png"),
+                            fit: BoxFit.cover),
                       ),
-                      onTap: () {
-                        _searchTextController.text = "";
-                        Utils.generateLinkAndShare(
-                            appShareWithOwnerHeading, appShareWithOwnerMessage);
-                      },
                     ),
-                    InkWell(
-                      child: Container(
-                        height: MediaQuery.of(context).size.height * .1,
-                        decoration: BoxDecoration(
-                          image: DecorationImage(
-                              image: AssetImage("assets/notFound2.png"),
-                              fit: BoxFit.cover),
-                        ),
-                      ),
-                      onTap: () {
-                        _searchTextController.text = "";
+                    onTap: () {
+                      _searchTextController.text = "";
 
-                        showContactUsSheet();
-                      },
-                    ),
-                  ],
-                ),
-              if (messageTitle != "NotFound")
-                Column(children: <Widget>[
-                  SizedBox(height: MediaQuery.of(context).size.height * .02),
-                  Container(
-                      color: Colors.transparent,
-                      child: Image(
-                        image: AssetImage('assets/search_home.png'),
-                      )),
-                ]),
+                      showContactUsSheet();
+                    },
+                  ),
+                ],
+              ),
             ],
           ),
         ),
@@ -755,7 +745,7 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
                         Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => UserHomePage()));
+                                builder: (context) => SearchEntityPage()));
                       }),
                   title: Text(
                     title,
@@ -1092,7 +1082,10 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
                                             color: Colors.green[600],
                                             fontFamily: 'Monsterrat',
                                             fontSize: fontSize * .022)),
-                                    Text(' - '),
+                                    Text(' - ',
+                                        style: TextStyle(
+                                            color: primaryDarkColor,
+                                            fontSize: fontSize * .022)),
                                     Text(
                                         Utils.formatTime(
                                                 str.endTimeHour.toString()) +
@@ -1176,7 +1169,7 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
                   children: [
                     Container(
                       padding: EdgeInsets.all(0),
-                      width: MediaQuery.of(context).size.width * .07,
+                      width: MediaQuery.of(context).size.width * .05,
                       child: Image.asset(
                         'assets/offers_icon.png',
                       ),
@@ -1540,9 +1533,9 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
         child: ClipOval(
           child: Material(
             color: isClosed
-                ? disabledColor
+                ? Colors.grey[300]
                 : (!isBookingAllowed
-                    ? disabledColor
+                    ? Colors.grey[300]
                     : (dateBooked ? Colors.greenAccent[700] : Colors.cyan[50])),
 
             /// button color

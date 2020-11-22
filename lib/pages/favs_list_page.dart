@@ -420,7 +420,10 @@ class _FavsListPageState extends State<FavsListPage> {
                                             color: Colors.green[600],
                                             fontFamily: 'Monsterrat',
                                             fontSize: fontSize * .022)),
-                                    Text(' - '),
+                                    Text(' - ',
+                                        style: TextStyle(
+                                            color: primaryDarkColor,
+                                            fontSize: fontSize * .022)),
                                     Text(
                                         Utils.formatTime(
                                                 str.endTimeHour.toString()) +
@@ -504,7 +507,7 @@ class _FavsListPageState extends State<FavsListPage> {
                   children: [
                     Container(
                       padding: EdgeInsets.all(0),
-                      width: MediaQuery.of(context).size.width * .07,
+                      width: MediaQuery.of(context).size.width * .05,
                       child: Image.asset(
                         'assets/offers_icon.png',
                       ),
@@ -856,9 +859,9 @@ class _FavsListPageState extends State<FavsListPage> {
         child: ClipOval(
           child: Material(
             color: isClosed
-                ? disabledColor
+                ? Colors.grey[300]
                 : (!isBookingAllowed
-                    ? disabledColor
+                    ? Colors.grey[300]
                     : (dateBooked
                         ? Colors.greenAccent[700]
                         : Colors.cyan[50])), // button color
