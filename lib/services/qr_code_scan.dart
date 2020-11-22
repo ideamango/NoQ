@@ -24,9 +24,18 @@ class QrCodeScanner {
 
       if (scanResult.rawContent.contains('entityId')) {
         List<String> url = scanResult.rawContent.split('entityId');
-        String entityId = url[1];
+        String entityId;
+        String afterEntityId = url[1];
+        int amperIndex = afterEntityId.indexOf('&');
+        if (amperIndex > -1) {Í
+          //this is to cover the Full QR code link generated on IOS
+          entityId = afterEntityId.substring(3, amperIndex);
+        } else {
+          //this condition is for the QR code link generated from the Android
+          entityId = afterEntityId.substring(3);
+        }
 
-        Utils.addEntityToFavs(context, entityId.substring(3));
+        Utils.addEntityToFavs(context, entityId);
       } else if (scanResult.type == ResultType.Cancelled) {
         Utils.showMyFlushbar(context, Icons.info, Duration(seconds: 3),
             "QR scan is cancelled by you..", "Try again!!");

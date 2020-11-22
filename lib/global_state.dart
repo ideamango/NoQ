@@ -236,26 +236,6 @@ class GlobalState {
     return true;
   }
 
-  // Future<bool> addEntityToCurrentUser(Entity entity, bool saveOnServer) async {
-  //   for (MetaEntity mEnt in _currentUser.entities) {
-  //     if (mEnt.entityId == entity.entityId) {
-  //       return true;
-  //     }
-  //   }
-
-  //   _currentUser.entities.add(entity.getMetaEntity());
-  //   await putEntity(entity, saveOnServer);
-
-  //   return true;
-  // }
-
-  // Future<bool> removeEntity(String entityId) async {
-  //   _currentUser.entities
-  //       .removeWhere((element) => element.entityId == entityId);
-
-  //   return true;
-  // }
-
   Future<bool> updateMetaEntity(MetaEntity metaEntity) async {
     for (int i = 0; i < _currentUser.entities.length; i++) {
       if (_currentUser.entities[i].entityId == metaEntity.entityId) {
@@ -281,10 +261,14 @@ class GlobalState {
 
   static clearGlobalState() {
     if (_gs != null) {
-      _gs._entityState.clear();
-      _gs._entities.clear();
-      _gs.lastSearchResults.clear();
-      _gs.bookings.clear();
+      // ignore: unnecessary_statements
+      _gs._entityState != null ? _gs._entityState.clear() : null;
+      // ignore: unnecessary_statements
+      _gs._entities != null ? _gs._entities.clear() : null;
+      // ignore: unnecessary_statements
+      _gs.lastSearchResults != null ? _gs.lastSearchResults.clear() : null;
+      // ignore: unnecessary_statements
+      _gs.bookings != null ? _gs.bookings.clear() : null;
 
       _gs._tokenService = null;
       _gs._userService = null;

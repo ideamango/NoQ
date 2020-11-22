@@ -73,7 +73,7 @@ class GenerateScreenState extends State<GenerateScreen> {
         home: WillPopScope(
           child: Scaffold(
             appBar: CustomAppBar(
-              titleTxt: "Generate Qr",
+              titleTxt: "Generate QR",
             ),
             body: Center(
               child: Column(
