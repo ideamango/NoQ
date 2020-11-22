@@ -65,44 +65,6 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
   double fontSize;
 
   List<String> searchTypes = new List<String>();
-  // @override
-  // void initState() {
-  //   super.initState();
-  //   GlobalState.getGlobalState().then((value) {
-  //     searchTypes = value.conf.entityTypes;
-  //     buildCategoryList();
-  //   });
-  // }
-
-  Widget _buildCategoryItem(BuildContext context, int index) {
-    String name = searchTypes[index];
-    Widget image = Utils.getEntityTypeImage(name, 30);
-
-    return GestureDetector(
-        onTap: () {
-          categoryType = name;
-          childBottomSheetController.close();
-          childBottomSheetController = null;
-          EventBus.fireEvent(SEARCH_CATEGORY_SELECTED, null, categoryType);
-        },
-        child: Column(
-          children: <Widget>[
-            Container(
-                padding: EdgeInsets.zero,
-                margin: EdgeInsets.zero,
-                width: MediaQuery.of(context).size.width * .15,
-                height: MediaQuery.of(context).size.width * .15,
-                child: image),
-            Text(
-              name,
-              textAlign: TextAlign.center,
-              style: textBotSheetTextStyle,
-            ),
-          ],
-        ));
-  }
-
-  // bool searchDone = false;
 
   final compareDateFormat = new DateFormat('YYYYMMDD');
   List<DateTime> _dateList = new List<DateTime>();
@@ -134,19 +96,6 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
   Eventify.Listener _eventListener;
 
   //List<String> searchTypes;
-  void showFoatingActionButton(bool value) {
-    setState(() {
-      showFab = value;
-    });
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-    _selectCategoryBtnController.dispose();
-    EventBus.unregisterEvent(_eventListener);
-    print("Search page dispose called...");
-  }
 
   @override
   void initState() {
@@ -202,6 +151,48 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
     });
   }
 
+  @override
+  void dispose() {
+    super.dispose();
+    _selectCategoryBtnController.dispose();
+    EventBus.unregisterEvent(_eventListener);
+    print("Search page dispose called...");
+  }
+
+  void showFoatingActionButton(bool value) {
+    setState(() {
+      showFab = value;
+    });
+  }
+
+  Widget _buildCategoryItem(BuildContext context, int index) {
+    String name = searchTypes[index];
+    Widget image = Utils.getEntityTypeImage(name, 30);
+
+    return GestureDetector(
+        onTap: () {
+          categoryType = name;
+          childBottomSheetController.close();
+          childBottomSheetController = null;
+          EventBus.fireEvent(SEARCH_CATEGORY_SELECTED, null, categoryType);
+        },
+        child: Column(
+          children: <Widget>[
+            Container(
+                padding: EdgeInsets.zero,
+                margin: EdgeInsets.zero,
+                width: MediaQuery.of(context).size.width * .15,
+                height: MediaQuery.of(context).size.width * .15,
+                child: image),
+            Text(
+              name,
+              textAlign: TextAlign.center,
+              style: textBotSheetTextStyle,
+            ),
+          ],
+        ));
+  }
+
   Future<void> getEntitiesList() async {
     if (!Utils.isNullOrEmpty(widget.childList)) {
       for (int i = 0; i < widget.childList.length; i++) {
@@ -239,27 +230,12 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
       });
     });
   }
-
-  // void fetchPastSearchesList() {
-  //   //Load details from local files
-
-  //   if (!Utils.isNullOrEmpty(_state.lastSearchResults)) {
-  //     setState(() {
-  //       _pastSearches = _state.lastSearchResults;
-  //     });
-  //   } else {
-  //     messageTitle = "No previous searches!!";
-  //   }
-  // }
-
+ 
   Future<void> getGlobalState() async {
     _state = await GlobalState.getGlobalState();
   }
 
-  void getChildStoresList() async {
-    _list = _stores;
-  }
-
+  
   void _prepareDateList() {
     _dateList.clear();
     _dateList.add(dateTime);
