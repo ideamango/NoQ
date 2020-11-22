@@ -273,12 +273,6 @@ class _SearchEntityPageState extends State<SearchEntityPage>
   }
 
   Widget _emptySearchPage() {
-    String txtMsg = (Utils.isNotNullOrEmpty(messageTitle)
-        ? messageTitle
-        : defaultSearchMsg);
-    String txtSubMsg = (Utils.isNotNullOrEmpty(messageSubTitle)
-        ? messageSubTitle
-        : defaultSearchSubMsg);
     return Center(
       child: Container(
         height: MediaQuery.of(context).size.height * .6,
@@ -330,16 +324,8 @@ class _SearchEntityPageState extends State<SearchEntityPage>
                         _searchTextController.text = "";
 
                         showContactUsSheet();
-                        // Navigator.push(
-                        //     context,
-                        //     MaterialPageRoute(
-                        //         builder: (context) => ContactUsPage()));
                       },
                     ),
-                    // Padding(
-                    //   padding: EdgeInsets.all(5),
-                    //   child: _msgOnboard,
-                    // ),
                   ],
                 ),
               if (messageTitle != "NotFound")
@@ -350,16 +336,6 @@ class _SearchEntityPageState extends State<SearchEntityPage>
                       child: Image(
                         image: AssetImage('assets/search_home.png'),
                       )),
-                  // Text(
-                  //   txtMsg,
-                  //   style: highlightTextStyle,
-                  //   textAlign: TextAlign.center,
-                  // ),
-                  // Text(
-                  //   txtSubMsg,
-                  //   style: highlightSubTextStyle,
-                  //   textAlign: TextAlign.center,
-                  // ),
                 ]),
             ],
           ),
@@ -1265,13 +1241,13 @@ class _SearchEntityPageState extends State<SearchEntityPage>
               ],
             ),
             SizedBox(height: 3),
-            Container(
-              padding: EdgeInsets.all(0),
-              margin: EdgeInsets.zero,
-              width: MediaQuery.of(context).size.width * .89,
-              child: Row(
-                children: [
-                  if (Utils.isNotNullOrEmpty(str.offer?.message))
+            if (Utils.isNotNullOrEmpty(str.offer?.message))
+              Container(
+                padding: EdgeInsets.all(0),
+                margin: EdgeInsets.zero,
+                width: MediaQuery.of(context).size.width * .89,
+                child: Row(
+                  children: [
                     Container(
                       padding: EdgeInsets.all(0),
                       width: MediaQuery.of(context).size.width * .07,
@@ -1280,38 +1256,21 @@ class _SearchEntityPageState extends State<SearchEntityPage>
                       ),
                       //  color: Colors.amber,
                     ),
-                  if (!Utils.isNotNullOrEmpty(str.offer?.message))
                     Container(
-                      padding: EdgeInsets.all(0),
-                      width: MediaQuery.of(context).size.width * .07,
-                      child: Image.asset('assets/offers_icon.png',
-                          color: disabledColor),
-                      //  color: Colors.amber,
-                    ),
-                  Container(
-                    padding: EdgeInsets.only(left: 3),
-                    width: MediaQuery.of(context).size.width * .82,
-                    child: Utils.isNotNullOrEmpty(str.offer?.message)
-                        ? Text(
-                            str.offer.message,
-                            maxLines: 1,
-                            //  minFontSize: 12,
-                            overflow: TextOverflow.ellipsis,
-                            style: TextStyle(
-                              color: Colors.blueGrey[900],
-                            ),
-                          )
-                        : Text(
-                            "No active offers",
-                            maxLines: 1,
-                            // minFontSize: 12,
-                            overflow: TextOverflow.ellipsis,
-                            style: TextStyle(color: Colors.blueGrey[300]),
+                        padding: EdgeInsets.only(left: 3),
+                        width: MediaQuery.of(context).size.width * .82,
+                        child: Text(
+                          str.offer.message,
+                          maxLines: 1,
+                          //  minFontSize: 12,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            color: Colors.blueGrey[900],
                           ),
-                  ),
-                ],
+                        )),
+                  ],
+                ),
               ),
-            ),
             new Divider(
               color: Colors.blueGrey[500],
               height: 2,
@@ -1670,8 +1629,8 @@ class _SearchEntityPageState extends State<SearchEntityPage>
                 : (!isBookingAllowed
                     ? disabledColor
                     : (dateBooked
-                        ? Colors.green[400]
-                        : Colors.green[200])), // button color
+                        ? Colors.greenAccent[700]
+                        : Colors.cyan[50])), // button color
             child: InkWell(
               splashColor: (isClosed || !isBookingAllowed)
                   ? null
@@ -1707,19 +1666,25 @@ class _SearchEntityPageState extends State<SearchEntityPage>
                   Text(dtFormat.format(dt),
                       style: TextStyle(
                           fontSize: 15,
+                          fontWeight: FontWeight.bold,
                           color: (isClosed
                               ? Colors.grey[500]
                               : (!isBookingAllowed
                                   ? Colors.grey[500]
-                                  : Colors.white)))),
+                                  : (dateBooked
+                                      ? Colors.white
+                                      : primaryDarkColor))))),
                   Text(dayOfWeek,
                       style: TextStyle(
                           fontSize: 8,
+                          fontWeight: FontWeight.bold,
                           color: (isClosed
                               ? Colors.grey[500]
                               : (!isBookingAllowed
                                   ? Colors.grey[500]
-                                  : Colors.white)))), // text
+                                  : (dateBooked
+                                      ? Colors.white
+                                      : primaryDarkColor))))), // text
                 ],
               ),
             ),
