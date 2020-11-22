@@ -436,7 +436,9 @@ class Utils {
     // dynamicLink has been generated. share it with others to use it accordingly.
     Share.share(
         msgTitle +
+            "\n\n" +
             msgBody +
+            "\n" +
             Uri.https(dynamicLink.authority, dynamicLink.path).toString(),
         subject: msgTitle);
   }

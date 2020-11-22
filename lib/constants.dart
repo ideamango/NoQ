@@ -207,11 +207,13 @@ String bookingExpired = "This booking token has already expired!!";
 String tryAgainToBook = "Please try again or choose a different time or date.";
 
 String appShareHeading =
-    "Book your peace of mind with Sukoon, a Universal Booking App.";
+    "Are you worried about your Safety while stepping out or fed up with waiting in long queues?";
 String appShareMessage =
-    "Worried about your Safety in the crowded place OR Tired of long waiting in the Queue? \n\nSukoon helps you to Book a Time-Slot when the rush is less. \nDownload and start booking your peace of mind!!\n";
+    "Book your appointment well in advance and visit when the crowd is less.\n\nDownload the Sukoon app today - A universal booking solution and start booking your peace of mind!";
+
 String appShareWithOwnerHeading = "Message title to business owner from Sukoon";
 String appShareWithOwnerMessage = "Message body to business owner from Sukoon";
+
 //append place name in the last
 String entityShareByUserHeading = "Book your time-slot on your next visit to ";
 String entityShareByOwnerMailSubject =
