@@ -27,7 +27,7 @@ class QrCodeScanner {
         String entityId;
         String afterEntityId = url[1];
         int amperIndex = afterEntityId.indexOf('&');
-        if (amperIndex > -1) {Í
+        if (amperIndex > -1) {
           //this is to cover the Full QR code link generated on IOS
           entityId = afterEntityId.substring(3, amperIndex);
         } else {
