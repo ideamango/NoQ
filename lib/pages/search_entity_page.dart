@@ -1236,7 +1236,9 @@ class _SearchEntityPageState extends State<SearchEntityPage>
                                 padding: EdgeInsets.only(top: 3),
                                 width: MediaQuery.of(context).size.width * .13,
                                 child: Text(
-                                  str.distance.toStringAsFixed(1) + ' Km',
+                                  (str.distance != null)
+                                      ? str.distance.toStringAsFixed(1) + ' Km'
+                                      : "",
                                   textAlign: TextAlign.right,
                                   style: TextStyle(
                                     color: btnColor,

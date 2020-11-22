@@ -59,7 +59,7 @@ class _FavsListPageState extends State<FavsListPage> {
   GlobalState _state;
   bool stateInitFinished = false;
   String emptyPageMsg;
-
+  double fontSize;
   @override
   void initState() {
     super.initState();
@@ -176,6 +176,8 @@ class _FavsListPageState extends State<FavsListPage> {
 
   @override
   Widget build(BuildContext context) {
+    fontSize = MediaQuery.of(context).size.width;
+    print("Font size" + fontSize.toString());
 // build widget only after init has completed, till then show progress indicator.
     if (!initCompleted) {
       return MaterialApp(
@@ -281,7 +283,9 @@ class _FavsListPageState extends State<FavsListPage> {
     //_buildDateGridItems(str.id);
     print('after buildDateGrid called');
     return GestureDetector(
-      onTap: () {},
+      onTap: () {
+        showDialogForPlaceDetails(str, context);
+      },
       child: Card(
         margin: EdgeInsets.fromLTRB(8, 12, 8, 0),
         elevation: 10,
@@ -291,23 +295,24 @@ class _FavsListPageState extends State<FavsListPage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               // mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
-                new Container(
-                    height: MediaQuery.of(context).size.width * .1,
-                    width: MediaQuery.of(context).size.width * .1,
+                Container(
                     padding: EdgeInsets.zero,
                     margin: EdgeInsets.zero,
                     alignment: Alignment.center,
+                    height: MediaQuery.of(context).size.width * .09,
+                    width: MediaQuery.of(context).size.width * .09,
                     child: entityImageIcon(str.type)),
                 Container(
                   width: MediaQuery.of(context).size.width * .8,
                   padding: EdgeInsets.all(2),
+                  margin: EdgeInsets.zero,
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
                       Container(
-                        width: MediaQuery.of(context).size.width * .83,
+                        width: MediaQuery.of(context).size.width * .78,
                         padding: EdgeInsets.zero,
                         margin: EdgeInsets.zero,
                         child: Row(
@@ -316,6 +321,7 @@ class _FavsListPageState extends State<FavsListPage> {
                             Container(
                               width: MediaQuery.of(context).size.width * .6,
                               padding: EdgeInsets.all(0),
+                              margin: EdgeInsets.zero,
                               child: Row(
                                 // mainAxisAlignment: Mai1nAxisAlignment.spaceBetween,
                                 // crossAxisAlignment: CrossAxisAlignment.center,
@@ -326,7 +332,9 @@ class _FavsListPageState extends State<FavsListPage> {
                                         MediaQuery.of(context).size.width * .46,
                                     child: AutoSizeText(
                                       (str.name) ?? str.name.toString(),
-                                      style: TextStyle(fontSize: 17),
+                                      style: TextStyle(
+                                          fontSize: fontSize * .045,
+                                          color: btnColor),
                                       maxLines: 1,
                                       minFontSize: 14,
                                       overflow: TextOverflow.ellipsis,
@@ -398,7 +406,9 @@ class _FavsListPageState extends State<FavsListPage> {
                               Container(
                                 width: MediaQuery.of(context).size.width * .18,
                                 padding: EdgeInsets.all(0),
+                                margin: EdgeInsets.all(0),
                                 child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.end,
                                   children: <Widget>[
                                     Text(
                                         Utils.formatTime(
@@ -409,8 +419,7 @@ class _FavsListPageState extends State<FavsListPage> {
                                         style: TextStyle(
                                             color: Colors.green[600],
                                             fontFamily: 'Monsterrat',
-                                            letterSpacing: 0.5,
-                                            fontSize: 10.0)),
+                                            fontSize: fontSize * .022)),
                                     Text(' - '),
                                     Text(
                                         Utils.formatTime(
@@ -421,8 +430,7 @@ class _FavsListPageState extends State<FavsListPage> {
                                         style: TextStyle(
                                             color: Colors.red[900],
                                             fontFamily: 'Monsterrat',
-                                            letterSpacing: 0.5,
-                                            fontSize: 10.0)),
+                                            fontSize: fontSize * .022)),
                                   ],
                                 ),
                               ),
@@ -435,33 +443,51 @@ class _FavsListPageState extends State<FavsListPage> {
                         ),
                       ),
                       Container(
-                        padding: EdgeInsets.only(top: 3),
                         width: MediaQuery.of(context).size.width * .78,
-                        child: Text(
-                          (Utils.getFormattedAddress(str.address) != "")
-                              ? Utils.getFormattedAddress(str.address)
-                              : "No Address found",
-                          overflow: TextOverflow.ellipsis,
-                          style: labelSmlTextStyle,
+                        padding: EdgeInsets.zero,
+                        margin: EdgeInsets.zero,
+                        child: Row(
+                          children: [
+                            Container(
+                              padding: EdgeInsets.only(top: 3),
+                              margin: EdgeInsets.zero,
+                              width: MediaQuery.of(context).size.width * .65,
+                              child: AutoSizeText(
+                                (Utils.getFormattedAddress(str.address) != "")
+                                    ? Utils.getFormattedAddress(str.address)
+                                    : "No Address found",
+                                maxLines: 1,
+                                minFontSize: 12,
+                                overflow: TextOverflow.ellipsis,
+                                style: labelXSmlTextStyle,
+                              ),
+                            ),
+                            Container(
+                                padding: EdgeInsets.only(top: 3),
+                                width: MediaQuery.of(context).size.width * .13,
+                                child: Text(
+                                  (str.distance != null)
+                                      ? str.distance.toStringAsFixed(1) + ' Km'
+                                      : "",
+                                  textAlign: TextAlign.right,
+                                  style: TextStyle(
+                                    color: btnColor,
+                                    fontFamily: 'Monsterrat',
+                                    fontSize: 10.0,
+                                  ),
+                                )),
+                          ],
                         ),
                       ),
                       SizedBox(height: 5),
-                      if (str.isBookable != null)
-                        if (str.isBookable)
+                      if (str.isBookable != null && str.isActive != null)
+                        if (str.isBookable && str.isActive)
                           Container(
                               width: MediaQuery.of(context).size.width * .78,
                               //padding: EdgeInsets.fromLTRB(0, 5, 5, 5),
                               child: Row(
-                                children: <Widget>[
-                                  Row(
-                                    children: _buildDateGridItems(
-                                        str,
-                                        str.entityId,
-                                        str.name,
-                                        str.closedOn,
-                                        str.advanceDays),
-                                  ),
-                                ],
+                                children: _buildDateGridItems(str, str.entityId,
+                                    str.name, str.closedOn, str.advanceDays),
                               )),
                     ],
                   ),
@@ -469,6 +495,45 @@ class _FavsListPageState extends State<FavsListPage> {
               ],
             ),
             SizedBox(height: 3),
+            if (Utils.isNotNullOrEmpty(str.offer?.message))
+              Container(
+                padding: EdgeInsets.all(0),
+                margin: EdgeInsets.zero,
+                width: MediaQuery.of(context).size.width * .89,
+                child: Row(
+                  children: [
+                    Container(
+                      padding: EdgeInsets.all(0),
+                      width: MediaQuery.of(context).size.width * .07,
+                      child: Image.asset(
+                        'assets/offers_icon.png',
+                      ),
+                      //  color: Colors.amber,
+                    ),
+                    // if (!Utils.isNotNullOrEmpty(str.offer?.message))
+                    //   Container(
+                    //     padding: EdgeInsets.all(0),
+                    //     width: MediaQuery.of(context).size.width * .07,
+                    //     child: Image.asset('assets/offers_icon.png',
+                    //         color: disabledColor),
+                    //     //  color: Colors.amber,
+                    //   ),
+                    Container(
+                      padding: EdgeInsets.only(left: 3),
+                      width: MediaQuery.of(context).size.width * .82,
+                      child: Text(
+                        str.offer.message,
+                        maxLines: 1,
+                        //  minFontSize: 12,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                          color: Colors.blueGrey[900],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
             new Divider(
               color: Colors.blueGrey[500],
               height: 2,

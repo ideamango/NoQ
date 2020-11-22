@@ -62,6 +62,7 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
   bool showFab = true;
   String categoryType;
   // Map<String, String> categoryList = new Map<String, String>();
+  double fontSize;
 
   List<String> searchTypes = new List<String>();
   // @override
@@ -489,6 +490,8 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
 
   @override
   Widget build(BuildContext context) {
+    fontSize = MediaQuery.of(context).size.width;
+    print("Font size" + fontSize.toString());
 // build widget only after init has completed, till then show progress indicator.
     if (!initCompleted) {
       return MaterialApp(
@@ -812,7 +815,7 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
                                   return Container(
                                     margin: EdgeInsets.fromLTRB(10, 0, 10, 25),
                                     child: new Column(children: <Widget>[
-                                      Expanded(child: _listSearchResults()),
+//TODO Smita - show results
                                     ]),
                                   );
                                 }),
@@ -1055,11 +1058,11 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
 
   Widget _buildItem(Entity str) {
     _prepareDateList();
-
-    //_buildDateGridItems(str.id);
     print('after buildDateGrid called');
     return GestureDetector(
-      onTap: () {},
+      onTap: () {
+        //showDialogForPlaceDetails(str, context);
+      },
       child: Card(
         margin: EdgeInsets.fromLTRB(8, 12, 8, 0),
         elevation: 10,
