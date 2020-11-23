@@ -82,6 +82,12 @@ class _UserHomePageState extends State<UserHomePage> {
     });
   }
 
+  @override
+  void dispose() {
+    super.dispose();
+    _state = null;
+  }
+
   Future<void> getGlobalState() async {
     _state = await GlobalState.getGlobalState();
   }
@@ -210,10 +216,8 @@ class _UserHomePageState extends State<UserHomePage> {
                                                   .size
                                                   .height *
                                               0.40,
-                                          width: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
-                                              .9,
+                                          width:
+                                              MediaQuery.of(context).size.width,
                                           child: Card(
                                             color: primaryAccentColor,
                                             child: card,
@@ -322,7 +326,7 @@ class _UserHomePageState extends State<UserHomePage> {
                           ),
                         ),
                       ),
-                      if (_state.getCurrentUser().ph == '+919999999999')
+                      if (_state?.getCurrentUser()?.ph == '+919999999999')
                         Container(
                           height: 30,
                           width: 60,
@@ -384,7 +388,7 @@ class _UserHomePageState extends State<UserHomePage> {
               floatingActionButtonLocation:
                   FloatingActionButtonLocation.centerDocked,
               drawer: CustomDrawer(
-                phone: _state.getCurrentUser().ph,
+                phone: _state?.getCurrentUser()?.ph,
               ),
               bottomNavigationBar: CustomBottomBar(
                 barIndex: 0,

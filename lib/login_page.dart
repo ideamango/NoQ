@@ -6,7 +6,7 @@ import 'package:noq/events/auto_verification_completed_data.dart';
 import 'package:noq/events/event_bus.dart';
 import 'package:noq/events/events.dart';
 import 'package:noq/pages/search_entity_page.dart';
-import 'package:noq/pages/explore_page.dart';
+import 'package:noq/pages/explore_page_for_user.dart';
 import 'package:noq/pages/otpdialog.dart';
 import 'package:noq/pages/terms_of_use.dart';
 import 'package:noq/userHomePage.dart';
@@ -193,7 +193,7 @@ class _LoginPageState extends State<LoginPage> {
                   loginButon,
                   verticalSpacer,
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
                     //mainAxisSize: MainAxisSize.min,
                     children: <Widget>[
                       Container(
@@ -207,13 +207,58 @@ class _LoginPageState extends State<LoginPage> {
                             Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (context) => ExplorePage()));
+                                    builder: (context) => ExplorePageForUser()));
                           },
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: <Widget>[
                               Text(
-                                "Explore now",
+                                "Explore as a place owner",
+                                style: subHeadingTextStyle,
+                              ),
+                              Container(
+                                padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
+                                transform: Matrix4.translationValues(5.0, 0, 0),
+                                child: Icon(
+                                  Icons.arrow_forward_ios,
+                                  color: Colors.cyan[400],
+                                  size: 18,
+                                  // color: Colors.white38,
+                                ),
+                              ),
+                              Container(
+                                padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
+                                transform:
+                                    Matrix4.translationValues(-8.0, 0, 0),
+                                child: Icon(
+                                  Icons.arrow_forward_ios,
+                                  color: primaryDarkColor,
+                                  size: 20,
+                                  // color: Colors.white,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      Container(
+                        padding: EdgeInsets.all(0),
+                        margin: EdgeInsets.all(0),
+                        child: FlatButton(
+                          padding: EdgeInsets.all(0),
+                          color: Colors.transparent,
+                          splashColor: highlightColor.withOpacity(.8),
+                          onPressed: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => ExplorePageForUser()));
+                          },
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: <Widget>[
+                              Text(
+                                "Explore as a user",
                                 style: subHeadingTextStyle,
                               ),
                               Container(
