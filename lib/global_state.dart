@@ -147,10 +147,10 @@ class GlobalState {
     bool saved = false;
     if (saveOnServer) {
       if (Utils.isNotNullOrEmpty(parentId)) {
-        saved = await _entityService.upsertEntity(entity);
-      } else {
         saved =
             await _entityService.upsertChildEntityToParent(entity, parentId);
+      } else {
+        saved = await _entityService.upsertEntity(entity);
       }
 
       _entityState[entity.entityId] = saved;

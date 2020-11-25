@@ -266,11 +266,61 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
                         ),
                       ),
                       Container(
-                        height: MediaQuery.of(context).size.width * .22,
+                        height: MediaQuery.of(context).size.height * .17,
                         padding: EdgeInsets.all(4),
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.end,
                           children: <Widget>[
+                            //TODO Smita - This is for taking no. of users accompanying in one booking.
+                            //DONT DELETE
+                            // Row(
+                            //   mainAxisAlignment: MainAxisAlignment.center,
+                            //   crossAxisAlignment: CrossAxisAlignment.center,
+                            //   children: <Widget>[
+                            //     SizedBox(
+                            //       width:
+                            //           MediaQuery.of(context).size.width * .06,
+                            //       height:
+                            //           MediaQuery.of(context).size.width * .06,
+                            //       child: IconButton(
+                            //           padding: EdgeInsets.zero,
+                            //           icon: Icon(Icons.add),
+                            //           alignment: Alignment.center,
+                            //           onPressed: null),
+                            //     ),
+                            //     SizedBox(
+                            //       width:
+                            //           MediaQuery.of(context).size.width * .68,
+                            //       height:
+                            //           MediaQuery.of(context).size.width * .06,
+                            //       child: RaisedButton(
+                            //         // elevation: 10.0,
+                            //         color: Colors.white,
+                            //         splashColor: Colors.orangeAccent[700],
+                            //         textColor: Colors.white,
+                            //         child: Text(
+                            //           'Kitne aadmi hai Sambha!!',
+                            //           style: TextStyle(fontSize: 20),
+                            //         ),
+                            //         onPressed: () {},
+                            //       ),
+                            //     ),
+                            //     SizedBox(
+                            //       width:
+                            //           MediaQuery.of(context).size.width * .06,
+                            //       height:
+                            //           MediaQuery.of(context).size.width * .06,
+                            //       child: IconButton(
+                            //           padding: EdgeInsets.zero,
+                            //           icon: Icon(Icons.remove),
+                            //           alignment: Alignment.center,
+                            //           onPressed: null),
+                            //     ),
+                            //   ],
+                            // ),
+                            // SizedBox(
+                            //   height: 10,
+                            // ),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: <Widget>[
@@ -334,7 +384,7 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
                                 horizontalSpacer,
                                 Row(children: <Widget>[
                                   Icon(Icons.label,
-                                      color: Colors.cyan[300], size: 15),
+                                      color: greenColor, size: 15),
                                   Text(" Existing Booking",
                                       style: TextStyle(
                                         color: Colors.blueGrey[900],

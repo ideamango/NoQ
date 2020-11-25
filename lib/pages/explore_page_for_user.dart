@@ -28,19 +28,15 @@ class _ExplorePageForUserState extends State<ExplorePageForUser> {
       theme: ThemeData.light().copyWith(),
       home: WillPopScope(
         child: Scaffold(
-          resizeToAvoidBottomInset: false,
-          body: Center(
+          resizeToAvoidBottomInset: true,
+          body: SingleChildScrollView(
             child: Container(
-              margin: EdgeInsets.fromLTRB(
-                  10,
-                  MediaQuery.of(context).size.width * .5,
-                  10,
-                  MediaQuery.of(context).size.width * .5),
+              margin: EdgeInsets.fromLTRB(10, 10, 10, 10),
               child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.start,
                 children: <Widget>[
                   Card(
-                    margin: EdgeInsets.zero,
+                    margin: EdgeInsets.all(8),
                     elevation: 20,
                     child: Container(
                       width: MediaQuery.of(context).size.width * .92,
@@ -55,7 +51,7 @@ class _ExplorePageForUserState extends State<ExplorePageForUser> {
                     margin: EdgeInsets.all(0),
                     child: FlatButton(
                       padding: EdgeInsets.all(0),
-                      color: Colors.transparent,
+                      color: btnColor,
                       splashColor: highlightColor.withOpacity(.8),
                       onPressed: () {
                         Navigator.push(
@@ -81,13 +77,13 @@ class _ExplorePageForUserState extends State<ExplorePageForUser> {
                             transform: Matrix4.translationValues(-8.0, 0, 0),
                             child: Icon(
                               Icons.arrow_back_ios,
-                              color: primaryDarkColor,
+                              color: Colors.white,
                               size: 20,
                               // color: Colors.white,
                             ),
                           ),
                           Text(
-                            "Explore as a user",
+                            "Go back & Register",
                             style: subHeadingTextStyle,
                           ),
                         ],
