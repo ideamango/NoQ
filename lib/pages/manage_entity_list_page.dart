@@ -112,16 +112,15 @@ class _ManageEntityListPageState extends State<ManageEntityListPage> {
     await getGlobalState();
     metaEntitiesList = List<MetaEntity>();
     if (!Utils.isNullOrEmpty(_state.getCurrentUser().entities)) {
-//Check if entity is child and parent os same entity is also enlisted in entities then dont show child.
-// Show only first level entities to user.
-      for (int i = 0; i < _state.getCurrentUser().entities.length; i++) {
-        MetaEntity m = _state.getCurrentUser().entities[i];
+      //Check if entity is child and parent os same entity is also enlisted in entities then dont show child.
+      // Show only first level entities to user.
+      for (MetaEntity m in _state.getCurrentUser().entities) {
         bool isAdminOfParent = false;
         if (m.parentId != null) {
           for (MetaEntity parent in _state.getCurrentUser().entities) {
             if (parent.entityId == m.parentId) {
               isAdminOfParent = true;
-              continue;
+              break;
             }
           }
         }
@@ -130,13 +129,6 @@ class _ManageEntityListPageState extends State<ManageEntityListPage> {
         }
       }
     }
-
-    // _state
-    //                           .getCurrentUser()
-    //                           .entities
-    //                           .where((element) => element.parentId != null)
-    //                           .toList()
-    //                           .length,
 
     entityTypes = _state.conf.entityTypes;
     setState(() {
