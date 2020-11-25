@@ -47,7 +47,17 @@ class _ManageEntityListPageState extends State<ManageEntityListPage> {
           bottomSheetController.close();
           bottomSheetController = null;
           //   Navigator.of(context).pop();
-          EventBus.fireEvent(SEARCH_CATEGORY_SELECTED, null, categoryType);
+          setState(() {
+            _entityType = categoryType;
+          });
+          //If user has selected any type then add a row else show msg to user
+          if (_entityType != null) {
+            _addNewServiceRow();
+          } else {
+            //Utils.showMyFlushbar(context, icon, duration, title, msg)
+            print("Select sth ");
+          }
+          // EventBus.fireEvent(SEARCH_CATEGORY_SELECTED, null, categoryType);
         },
         child: Column(
           children: <Widget>[
@@ -101,7 +111,7 @@ class _ManageEntityListPageState extends State<ManageEntityListPage> {
       });
     });
     entityTypes = new List<String>();
-    registerCategorySelectEvent();
+    // registerCategorySelectEvent();
   }
 
   Future<void> getGlobalState() async {
