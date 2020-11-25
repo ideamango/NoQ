@@ -290,38 +290,24 @@ class _UserHomePageState extends State<UserHomePage> {
                             ),
                             children: <Widget>[
                               if (_upcomingBkgStatus == 'Success')
-                                ConstrainedBox(
-                                  constraints: new BoxConstraints(
-                                    maxHeight:
-                                        MediaQuery.of(context).size.height * .4,
-                                    maxWidth: MediaQuery.of(context).size.width,
-                                  ),
-                                  child: Scrollbar(
-                                    child: ListView.builder(
-                                      shrinkWrap: true,
-                                      //scrollDirection: Axis.vertical,
-                                      itemBuilder:
-                                          (BuildContext context, int index) {
-                                        return Container(
-                                          // padding: EdgeInsets.symmetric(
-                                          //   horizontal: 8,
-                                          // ),
-                                          child: new Column(
-                                              children: _newBookingsList
-                                                  .map(_buildItem)
-                                                  .toList()),
-                                          //children: <Widget>[firstRow, secondRow],
-                                        );
-                                      },
-                                      itemCount: 1,
-                                    ),
-                                  ),
+                                ListView.builder(
+                                  shrinkWrap: true,
+                                  scrollDirection: Axis.vertical,
+                                  physics: ClampingScrollPhysics(),
+                                  itemBuilder:
+                                      (BuildContext context, int index) {
+                                    return Container(
+                                      child: new Column(
+                                          children: _newBookingsList
+                                              .map(_buildItem)
+                                              .toList()),
+                                    );
+                                  },
+                                  itemCount: 1,
                                 ),
                               if (_upcomingBkgStatus == 'NoBookings')
                                 _emptyStorePage("No bookings yet.. ",
                                     "Book now to save time later!! "),
-                              // if (_upcomingBkgStatus == 'Loading')
-                              //   showCircularProgress(),
                             ],
                           ),
                         ),

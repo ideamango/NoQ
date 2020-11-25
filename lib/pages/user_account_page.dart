@@ -796,36 +796,22 @@ class _UserAccountPageState extends State<UserAccountPage> {
                                 ),
                                 children: <Widget>[
                                   if (_upcomingBkgStatus == 'Success')
-                                    ConstrainedBox(
-                                      constraints: new BoxConstraints(
-                                        maxHeight:
-                                            MediaQuery.of(context).size.height *
-                                                .35,
-                                        maxWidth:
-                                            MediaQuery.of(context).size.width,
-                                      ),
-
-                                      // decoration: BoxDecoration(
-                                      //     shape: BoxShape.rectangle,
-                                      //     borderRadius: BorderRadius.all(Radius.circular(8.0))),
-                                      // height: MediaQuery.of(context).size.height * .6,
-                                      // margin: EdgeInsets.fromLTRB(10, 10, 10, 10),
-                                      child: Scrollbar(
-                                        child: ListView.builder(
-                                          shrinkWrap: true,
-                                          //scrollDirection: Axis.vertical,
-                                          itemBuilder: (BuildContext context,
-                                              int index) {
-                                            return Container(
-                                              child: new Column(
-                                                  children: _newBookingsList
-                                                      .map(_buildItem)
-                                                      .toList()),
-                                              //children: <Widget>[firstRow, secondRow],
-                                            );
-                                          },
-                                          itemCount: 1,
-                                        ),
+                                    Scrollbar(
+                                      child: ListView.builder(
+                                        shrinkWrap: true,
+                                        scrollDirection: Axis.vertical,
+                                        physics: ClampingScrollPhysics(),
+                                        itemBuilder:
+                                            (BuildContext context, int index) {
+                                          return Container(
+                                            child: new Column(
+                                                children: _newBookingsList
+                                                    .map(_buildItem)
+                                                    .toList()),
+                                            //children: <Widget>[firstRow, secondRow],
+                                          );
+                                        },
+                                        itemCount: 1,
                                       ),
                                     ),
                                   if (_upcomingBkgStatus == 'NoBookings')
@@ -865,32 +851,21 @@ class _UserAccountPageState extends State<UserAccountPage> {
                                   Column(
                                     children: <Widget>[
                                       if (_pastBkgStatus == "Success")
-                                        ConstrainedBox(
-                                          constraints: new BoxConstraints(
-                                            maxHeight: MediaQuery.of(context)
-                                                    .size
-                                                    .height *
-                                                .35,
-                                          ),
-                                          child: Scrollbar(
-                                            child: ListView.builder(
-                                              shrinkWrap: true,
-                                              scrollDirection: Axis.vertical,
-                                              itemBuilder:
-                                                  (BuildContext context,
-                                                      int index) {
-                                                return Container(
-                                                  child: new Column(
-                                                      children:
-                                                          _pastBookingsList
-                                                              .map(_buildItem)
-                                                              .toList()),
-                                                  //children: <Widget>[firstRow, secondRow],
-                                                );
-                                              },
-                                              itemCount: 1,
-                                            ),
-                                          ),
+                                        ListView.builder(
+                                          shrinkWrap: true,
+                                          scrollDirection: Axis.vertical,
+                                          physics: ClampingScrollPhysics(),
+                                          itemBuilder: (BuildContext context,
+                                              int index) {
+                                            return Container(
+                                              child: new Column(
+                                                  children: _pastBookingsList
+                                                      .map(_buildItem)
+                                                      .toList()),
+                                              //children: <Widget>[firstRow, secondRow],
+                                            );
+                                          },
+                                          itemCount: 1,
                                         ),
                                       if (_pastBkgStatus == 'NoBookings')
                                         _emptyStorePage("No bookings in past..",
