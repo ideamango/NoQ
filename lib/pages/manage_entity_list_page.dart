@@ -35,7 +35,7 @@ class _ManageEntityListPageState extends State<ManageEntityListPage> {
   String categoryType;
   PersistentBottomSheetController bottomSheetController;
   final manageEntityListPagekey = new GlobalKey<ScaffoldState>();
-  Eventify.Listener _eventListener;
+  //Eventify.Listener _eventListener;
 
   Widget _buildCategoryItem(BuildContext context, int index) {
     String name = entityTypes[index];
@@ -75,30 +75,30 @@ class _ManageEntityListPageState extends State<ManageEntityListPage> {
         ));
   }
 
-  void registerCategorySelectEvent() {
-    _eventListener =
-        EventBus.registerEvent(SEARCH_CATEGORY_SELECTED, null, (event, arg) {
-      if (event == null) {
-        return;
-      }
-      String categoryType = event.eventData;
-      setState(() {
-        _entityType = categoryType;
-      });
-      //If user has selected any type then add a row else show msg to user
-      if (_entityType != null) {
-        _addNewServiceRow();
-      } else {
-        //Utils.showMyFlushbar(context, icon, duration, title, msg)
-        print("Select sth ");
-      }
-    });
-  }
+  // void registerCategorySelectEvent() {
+  //   _eventListener =
+  //       EventBus.registerEvent(SEARCH_CATEGORY_SELECTED, null, (event, arg) {
+  //     if (event == null) {
+  //       return;
+  //     }
+  //     String categoryType = event.eventData;
+  //     setState(() {
+  //       _entityType = categoryType;
+  //     });
+  //     //If user has selected any type then add a row else show msg to user
+  //     if (_entityType != null) {
+  //       _addNewServiceRow();
+  //     } else {
+  //       //Utils.showMyFlushbar(context, icon, duration, title, msg)
+  //       print("Select sth ");
+  //     }
+  //   });
+  // }
 
   @override
   void dispose() {
     super.dispose();
-    EventBus.unregisterEvent(_eventListener);
+    //EventBus.unregisterEvent(_eventListener);
   }
 
   @override
@@ -164,42 +164,43 @@ class _ManageEntityListPageState extends State<ManageEntityListPage> {
 
   @override
   Widget build(BuildContext context) {
-    final subEntityType = new FormField(
-      builder: (FormFieldState state) {
-        return InputDecorator(
-          decoration: InputDecoration(
-            enabledBorder: InputBorder.none,
-            focusedBorder: InputBorder.none,
-            labelText: 'Type of Place',
-          ),
-          child: new DropdownButtonHideUnderline(
-            child: new DropdownButton(
-              hint: new Text("Select Type of Place"),
-              value: _entityType,
-              isDense: true,
-              onChanged: (newValue) {
-                setState(() {
-                  _entityType = newValue;
-                  state.didChange(newValue);
-                });
-              },
-              items: entityTypes.map((type) {
-                return DropdownMenuItem(
-                  value: type,
-                  child: new Text(
-                    type.toString(),
-                    style: textInputTextStyle,
-                  ),
-                );
-              }).toList(),
-            ),
-          ),
-        );
-      },
-      onSaved: (String value) {
-        _entityType = value;
-      },
-    );
+    // final subEntityType = new FormField(
+    //   builder: (FormFieldState state) {
+    //     return InputDecorator(
+    //       decoration: InputDecoration(
+    //         enabledBorder: InputBorder.none,
+    //         focusedBorder: InputBorder.none,
+    //         labelText: 'Type of Place',
+    //       ),
+    //       child: new DropdownButtonHideUnderline(
+    //         child: new DropdownButton(
+    //           hint: new Text("Select Type of Place"),
+    //           value: _entityType,
+    //           isDense: true,
+    //           onChanged: (newValue) {
+    //             setState(() {
+    //               _entityType = newValue;
+    //               state.didChange(newValue);
+    //             });
+    //           },
+    //           items: entityTypes.map((type) {
+    //             return DropdownMenuItem(
+    //               value: type,
+    //               child: new Text(
+    //                 type.toString(),
+    //                 style: textInputTextStyle,
+    //               ),
+    //             );
+    //           }).toList(),
+    //         ),
+    //       ),
+    //     );
+    //   },
+    //   onSaved: (String value) {
+    //     _entityType = value;
+    //   },
+    // );
+
     String title = pageTitleManageEntityList;
     if (_initCompleted) {
       return MaterialApp(
