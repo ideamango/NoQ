@@ -347,7 +347,7 @@ class Utils {
   }
 
   static Future<Uri> createDynamicLinkWithParams(
-      String entityId, String msgTitle, String msgBody) async {
+      String entityId, String msgTitle) async {
     final DynamicLinkParameters parameters = DynamicLinkParameters(
       // This should match firebase but without the username query param
       uriPrefix: shareURLPrefix,
@@ -369,7 +369,6 @@ class Utils {
         title: msgTitle,
         imageUrl: Uri.parse(
             "https://firebasestorage.googleapis.com/v0/b/awesomenoq.appspot.com/o/logo_icon.png?alt=media&token=d0bb835d-e569-4f38-ad6e-fa0fed822cc7"),
-        // description: msgBody,
       ),
     );
     final link = await parameters.buildUrl();
@@ -380,59 +379,10 @@ class Utils {
     return shortenedLink.shortUrl;
   }
 
-  // static Future<Uri> createDynamicLink() async {
-  //   final DynamicLinkParameters parameters = DynamicLinkParameters(
-  //       // This should match firebase but without the username query param
-  //       uriPrefix: shareURLPrefix,
-  //       // This can be whatever you want for the uri, https://yourapp.com/groupinvite?username=$userName
-  //       link: Uri.parse(shareURLPrefix),
-  //       androidParameters: AndroidParameters(
-  //         packageName: bundleId,
-  //         minimumVersion: 1,
-  //       ),
-  //       iosParameters: IosParameters(
-  //         //TODO: For testing - Smita
-
-  //         bundleId: bundleId,
-  //         minimumVersion: '1',
-  //         appStoreId: appStoreId,
-  //       ),
-  //       socialMetaTagParameters: SocialMetaTagParameters(
-  //         title: appShareHeading,
-  //         description: appShareMessage,
-  //       ));
-  //   final link = await parameters.buildUrl();
-  //   final ShortDynamicLink shortenedLink = await parameters.buildShortLink();
-  //   print(shortenedLink.shortUrl);
-  //   print(link.authority);
-  //   return shortenedLink.shortUrl;
-  // }
-
-  // static Map<String, String> buildCategoryList() {
-  //   Map<String, String> categoryList = new Map<String, String>();
-  //   categoryList["Mall"] = "mall.png";
-  //   categoryList["Super Market"] = "superMarket.png";
-  //   categoryList["Apartment"] = "apartment.png";
-  //   categoryList["Medical Store"] = "medicalStore.png";
-  //   categoryList["Shop"] = "shop.png";
-  //   categoryList["Pop Shop"] = "popShop.png";
-  //   categoryList["Salon"] = "salon.png";
-  //   categoryList["School"] = "school.png";
-  //   categoryList["Place of Worship"] = "placeOfWorship.png";
-  //   categoryList["Restaurant"] = "restaurant.png";
-  //   categoryList["Sports Center"] = "sportsCenter.png";
-  //   categoryList["Gym"] = "gym.png";
-  //   categoryList["Office"] = "office.png";
-  //   categoryList["Others"] = "others.png";
-  //   categoryList["Bank"] = "bank.png";
-  //   categoryList["Hospital"] = "hospital.png";
-  //   return categoryList;
-  // }
-
   static generateLinkAndShare(
       String entityId, String msgTitle, String msgBody) async {
     var dynamicLink =
-        await Utils.createDynamicLinkWithParams(entityId, msgTitle, msgBody);
+        await Utils.createDynamicLinkWithParams(entityId, msgTitle);
     Share.share(
         msgBody +
             "\n" +

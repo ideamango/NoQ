@@ -5,7 +5,6 @@ import 'package:noq/style.dart';
 import 'package:noq/userHomePage.dart';
 import 'package:noq/utils.dart';
 import 'package:noq/widget/appbar.dart';
-import 'package:noq/widget/bottom_nav_bar.dart';
 import 'package:noq/widget/header.dart';
 import 'package:noq/widget/widgets.dart';
 import 'package:share/share.dart';
@@ -18,24 +17,17 @@ class ShareAppPage extends StatefulWidget {
 class _ShareAppPageState extends State<ShareAppPage> {
   Uri dynamicLink;
   String inviteText;
-  String message;
+
   String inviteSubject = "Invite friends via..";
   bool _initCompleted = false;
   @override
   void initState() {
     super.initState();
-    Utils.createDynamicLinkWithParams(null, appShareHeading, appShareMessage)
-        .then((value) {
+    Utils.createDynamicLinkWithParams(null, appShareHeading).then((value) {
       setState(() {
         _initCompleted = true;
         dynamicLink = value;
-        message = 'Hey,' +
-            appName +
-            ' is simple and fast way that\n'
-                'I use to book appointment for the\n'
-                'places I wish to go. It helps to \n'
-                'avoid waiting and crowd. Check it out.';
-        inviteText = dynamicLink.toString();
+        inviteText = appShareMessage + "\n" + dynamicLink.toString();
       });
     });
   }
@@ -52,10 +44,10 @@ class _ShareAppPageState extends State<ShareAppPage> {
       theme: ThemeData.light().copyWith(),
       home: WillPopScope(
         child: Scaffold(
-          drawer: CustomDrawer(
-            //TODO: provide phone of user here
-            phone: null,
-          ),
+          // drawer: CustomDrawer(
+          //   //TODO: provide phone of user here
+          //   phone: null,
+          // ),
           appBar: CustomAppBarWithBackButton(
             backRoute: UserHomePage(),
             titleTxt: title,

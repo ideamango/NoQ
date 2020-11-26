@@ -147,19 +147,6 @@ class _FavsListPageState extends State<FavsListPage> {
     String msgBody = entityShareMessage;
 
     Utils.generateLinkAndShare(entityId, msgTitle, msgBody);
-    // var dynamicLink =
-    //     await Utils.createDynamicLinkWithParams(entityId, msgTitle, msgBody);
-    // print("Dynamic Link: ${dynamicLink.authority}");
-    // print("Dynamic Link: ${dynamicLink.path}");
-
-    // // dynamicLink has been generated. share it with others to use it accordingly.
-    // Share.share(
-    //     // msgTitle +
-    //     //     "\n\n" +
-    //     msgBody +
-    //         "\n" +
-    //         Uri.https(dynamicLink.authority, dynamicLink.path).toString(),
-    //     subject: msgTitle);
   }
 
   Widget _emptyFavsPage() {
