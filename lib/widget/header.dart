@@ -5,6 +5,7 @@ import 'package:noq/pages/help_page.dart';
 import 'package:noq/pages/manage_entity_list_page.dart';
 import 'package:noq/pages/notifications_page.dart';
 import 'package:noq/pages/contact_us.dart';
+import 'package:noq/pages/privacy_policy.dart';
 import 'package:noq/pages/share_app_page.dart';
 import 'package:noq/pages/terms_of_use.dart';
 import 'package:noq/pages/user_account_page.dart';
@@ -73,7 +74,12 @@ class _CustomDrawerState extends State<CustomDrawer> {
 
       {
         "icon": Icons.description,
-        "name": "Privacy Policy/Terms of Use",
+        "name": "Privacy Policy",
+        "pageRoute": PrivacyPolicyPage(),
+      },
+      {
+        "icon": Icons.description,
+        "name": "Terms of use",
         "pageRoute": TermsOfUsePage(),
       },
       {

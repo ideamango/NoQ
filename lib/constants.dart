@@ -272,6 +272,62 @@ Please carefully read the Terms of Use of the Application (here) and Privacy Pol
 
 By clicking on the ‘I Accept & Sign up’ button at the end of this page or accessing or using this Application, you hereby accept the Terms of Use (as amended from time to time) and the Privacy Policy (as amended from time to time) and agree to be bound by their terms.
 
+If you do not agree to be the Terms of Use of the Application (here) and Privacy Policy (here)
+
+By clicking on the ‘I Accept & Sign up’ button at the end of this page or accessing or using this Application, you hereby accept the Terms of Use (as amended from time to time) and the Privacy Policy (as amended from time to time) and agree to be bound by their terms.
+
+If you do not agree to be the Terms of Use of the Application (here) and Privacy Policy (here)
+
+By clicking on the ‘I Accept & Sign up’  the Terms of Use of the Application (here) and Privacy Policy (here)
+
+By clicking on the ‘I Accept & Sign up’ button at the end of this page or accessing or using this Application, you hereby accept the Terms of Use (as amended from time to time) and the Privacy Policy (as amended from time to time) and agree to be bound by their terms.
+
+If you do not agree to be the Terms of Use of the Application (here) and Privacy Policy (here)
+
+By clicking on the ‘I Accept & Sign up’ button at the end of this page or accessing or using this Application, you hereby accept the Terms of Use (as amended from time to time) and the Privacy Policy (as amended from time to time) and agree to be bound by their terms.
+
+If you do not agree to be the Terms of Use of the Application (here) and Privacy Policy (here)
+
+By clicking on the ‘I Accept & Sign up’ button at the end of this page or accessing or using this Application, you hereby accept the Terms of Use (as amended from time to time) and the Privacy Policy (as amended from time to time) and agree to be bound by their terms.
+
+If you do not agree to be the Terms of Use of the Application (here) and Privacy Policy (here)
+
+By clicking on the ‘I Accept & Sign up’ button at the end of this page or accessing or using this Application, you hereby accept the Terms of Use (as amended from time to time) and the Privacy Policy (as amended from time to time) and agree to be bound by their terms.
+
+If you do not agree to be the Terms of Use of the Application (here) and Privacy Policy (here)
+
+By clicking on the ‘I Accept & Sign up’ button at the end of this page or accessing or using this Application, you hereby accept the Terms of Use (as amended from time to time) and the Privacy Policy (as amended from time to time) and agree to be bound by their terms.
+
+If you do not agree to be the Terms of Use of the Application (here) and Privacy Policy (here)
+
+By clicking on the ‘I Accept & Sign up’ button at the end of this page or accessing or using this Application, you hereby accept the Terms of Use (as amended from time to time) and the Privacy Policy (as amended from time to time) and agree to be bound by their terms.
+
+If you do not agree to be the Terms of Use of the Application (here) and Privacy Policy (here)
+
+By clicking on the ‘I Accept & Sign up’ button at the end of this page or accessing or using this Application, you hereby accept the Terms of Use (as amended from time to time) and the Privacy Policy (as amended from time to time) and agree to be bound by their terms.
+
+If you do not agree to be the Terms of Use of the Application (here) and Privacy Policy (here)
+
+By clicking on the ‘I Accept & Sign up’ button at the end of this page or accessing or using this Application, you hereby accept the Terms of Use (as amended from time to time) and the Privacy Policy (as amended from time to time) and agree to be bound by their terms.
+
+If you do not agree to be the Terms of Use of the Application (here) and Privacy Policy (here)
+
+By clicking on the ‘I Accept & Sign up’ button at the end of this page or accessing or using this Application, you hereby accept the Terms of Use (as amended from time to time) and the Privacy Policy (as amended from time to time) and agree to be bound by their terms.
+
+If you do not agree to bebutton at the end of this page or accessing or using this Application, you hereby accept the Terms of Use (as amended from time to time) and the Privacy Policy (as amended from time to time) and agree to be bound by their terms.
+
+If you do not agree to be the Terms of Use of the Application (here) and Privacy Policy (here)
+
+By clicking on the ‘I Accept & Sign up’ button at the end of this page or accessing or using this Application, you hereby accept the Terms of Use (as amended from time to time) and the Privacy Policy (as amended from time to time) and agree to be bound by their terms.
+
+If you do not agree to be the Terms of Use of the Application (here) and Privacy Policy (here)
+
+By clicking on the ‘I Accept & Sign up’ button at the end of this page or accessing or using this Application, you hereby accept the Terms of Use (as amended from time to time) and the Privacy Policy (as amended from time to time) and agree to be bound by their terms.
+
+If you do not agree to be the Terms of Use of the Application (here) and Privacy Policy (here)
+
+By clicking on the ‘I Accept & Sign up’ button at the end of this page or accessing or using this Application, you hereby accept the Terms of Use (as amended from time to time) and the Privacy Policy (as amended from time to time) and agree to be bound by their terms.
+
 If you do not agree to be bound by their terms, then please do not access or use the Application.
 
 Further, by clicking on the ‘I Accept & Sign up’ button, you hereby consent to the collection, storage, use, processing, disclosure and transfer of your personal information in accordance with the provisions of the Privacy Policy (as amended from time to time).
