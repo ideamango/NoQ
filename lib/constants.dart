@@ -209,22 +209,26 @@ String tryAgainToBook = "Please try again or choose a different time or date.";
 String appShareHeading =
     "Are you worried about your Safety while stepping out or fed up with waiting in long queues?";
 String appShareMessage =
-    "Book your appointment well in advance and visit when the crowd is less.\n\nDownload the Sukoon app today - A universal booking solution and start booking your peace of mind!";
+    "Fix your appointment well in advance and visit places when the crowd is less.\n\nDownload the Sukoon app today and save lives!";
 
 String appShareWithOwnerHeading = "Message title to business owner from Sukoon";
 String appShareWithOwnerMessage = "Message body to business owner from Sukoon";
 
 //append place name in the last
 String entityShareByUserHeading =
-    "Book time in advance for your next visit to ";
+    "Don't compromise with your safety while stepping out. \n\nFix your appointment, when the crowd is less for your next visit to ";
+
+String entityShareByUserMessage =
+    "Download the Sukoon app and start booking your peace of mind!";
+
 String entityShareByOwnerMailSubject =
     " is inviting you to use SUKOON to Book your peace of mind!!";
 //append place name in start of string
 String entityShareByOwnerHeading =
-    " is inviting you to pre-book the time-slot for your next visit. ";
+    "You Safety and Convenience is our top priority!";
 
 String entityShareMessage =
-    "Your Safety and Convenience is our top priority! \n\nBook your appointment & visit us when the crowd is less.\n\nDownload the Sukoon app today - A universal booking solution and start booking your peace of mind!";
+    "Fix your appointment well in advance & Visit us when the crowd is less.\n\nDownload the Sukoon app and start booking your peace of mind!";
 
 String faqHead1 = "How Sukoon helps bring Sukoon to your life?";
 String faqHead1Sub1 = "Lets look at the problems first..";

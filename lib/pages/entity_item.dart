@@ -68,7 +68,7 @@ class EntityRowState extends State<EntityRow> {
     }
 
     generateLinkAndShareWithParams(String entityId, String name) async {
-      String msgTitle = name + entityShareByOwnerHeading;
+      String msgTitle = entityShareByOwnerHeading + " - " + name;
       String msgBody = entityShareMessage;
       var dynamicLink =
           await Utils.createDynamicLinkWithParams(entityId, msgTitle, msgBody);
