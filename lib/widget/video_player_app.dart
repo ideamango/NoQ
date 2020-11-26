@@ -3,6 +3,8 @@ import 'dart:io' show Platform;
 import 'package:flutter/foundation.dart';
 import 'package:app_review/app_review.dart';
 import 'package:flutter/material.dart';
+import 'package:noq/style.dart';
+
 import 'package:video_player/video_player.dart';
 
 class VideoPlayerApp extends StatelessWidget {
@@ -46,9 +48,18 @@ class _ButterFlyAssetVideoState extends State<_ButterFlyAssetVideo> {
       child: Column(
         children: <Widget>[
           Container(
-            padding: const EdgeInsets.only(top: 20.0),
+            padding: const EdgeInsets.only(top: 30.0),
           ),
-          const Text('How Sukoon helps?'),
+          const Text(
+            'How Sukoon helps?',
+            style: TextStyle(
+              color: Colors.indigo,
+              // fontWeight: FontWeight.w800,
+              fontFamily: 'RalewayRegular',
+              fontWeight: FontWeight.bold,
+              fontSize: 25.0,
+            ),
+          ),
           Container(
             padding: const EdgeInsets.all(20),
             child: AspectRatio(
@@ -58,7 +69,12 @@ class _ButterFlyAssetVideoState extends State<_ButterFlyAssetVideo> {
                 children: <Widget>[
                   VideoPlayer(_controller),
                   _ControlsOverlay(controller: _controller),
-                  VideoProgressIndicator(_controller, allowScrubbing: true),
+                  VideoProgressIndicator(
+                    _controller,
+                    allowScrubbing: true,
+                    colors:
+                        VideoProgressColors(playedColor: primaryAccentColor),
+                  ),
                 ],
               ),
             ),
@@ -135,7 +151,7 @@ class _ControlsOverlay extends StatelessWidget {
                 vertical: 12,
                 horizontal: 16,
               ),
-              child: Text('${controller.value.playbackSpeed}x'),
+              // child: Text('${controller.value.playbackSpeed}x'),
             ),
           ),
         ),
