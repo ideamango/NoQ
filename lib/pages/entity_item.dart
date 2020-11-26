@@ -78,7 +78,8 @@ class EntityRowState extends State<EntityRow> {
           Uri.https(dynamicLink.authority, dynamicLink.path).toString();
       // dynamicLink has been generated. share it with others to use it accordingly.
       String shareStr = _dynamicLink.toString();
-      Share.share(msgTitle + msgBody + shareStr, subject: msgTitle);
+      Share.share(msgTitle + "\n\n" + msgBody + '\n' + shareStr,
+          subject: msgTitle);
     }
 
     showChildListPage() {

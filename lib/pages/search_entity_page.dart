@@ -266,8 +266,9 @@ class _SearchEntityPageState extends State<SearchEntityPage>
     Share.share(
         entityShareByUserHeading +
             entityName +
-            '\n' +
+            '\n\n' +
             entityShareMessage +
+            "\n" +
             dynamicLink.toString(),
         subject: entityShareByUserHeading + entityName);
   }

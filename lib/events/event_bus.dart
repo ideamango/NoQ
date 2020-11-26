@@ -20,6 +20,8 @@ class EventBus extends EventEmitter {
   }
 
   static void unregisterEvent(Listener l) {
-    EventBus.getInstance().off(l);
+    if (l != null) {
+      EventBus.getInstance().off(l);
+    }
   }
 }
