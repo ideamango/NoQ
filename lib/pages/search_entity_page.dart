@@ -256,20 +256,14 @@ class _SearchEntityPageState extends State<SearchEntityPage>
 
   Future<void> generateLinkAndShareWithParams(
       String entityId, String entityName) async {
-    var dynamicLink = await Utils.createDynamicLinkWithParams(
-        entityId, entityShareByUserHeading + entityName, entityShareMessage);
+    var dynamicLink = await Utils.createDynamicLinkWithParams(entityId,
+        entityShareByUserHeading + entityName, entityShareByUserMessage);
     print("Dynamic Link: $dynamicLink");
 
     _dynamicLink =
         Uri.https(dynamicLink.authority, dynamicLink.path).toString();
     // dynamicLink has been generated. share it with others to use it accordingly.
-    Share.share(
-        entityShareByUserHeading +
-            entityName +
-            '\n\n' +
-            entityShareMessage +
-            "\n" +
-            dynamicLink.toString(),
+    Share.share(dynamicLink.toString(),
         subject: entityShareByUserHeading + entityName);
   }
 
