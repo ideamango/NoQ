@@ -18,7 +18,7 @@ import 'package:noq/widget/bottom_nav_bar.dart';
 import 'package:uuid/uuid.dart';
 import 'package:noq/events/event_bus.dart';
 import 'package:noq/events/events.dart';
-import 'package:eventify/eventify.dart' as Eventify;
+//import 'package:eventify/eventify.dart' as Eventify;
 import 'package:noq/widget/widgets.dart';
 
 import '../tuple.dart';
@@ -52,7 +52,7 @@ class _ManageChildEntityListPageState extends State<ManageChildEntityListPage> {
   String categoryType;
   PersistentBottomSheetController childBottomSheetController;
   final manageChildEntityListPagekey = new GlobalKey<ScaffoldState>();
-  Eventify.Listener _eventListener;
+  // Eventify.Listener _eventListener;
 
   Widget _buildCategoryItem(BuildContext context, int index) {
     String name = subEntityTypes[index];
@@ -82,30 +82,30 @@ class _ManageChildEntityListPageState extends State<ManageChildEntityListPage> {
         ));
   }
 
-  void registerCategorySelectEvent() {
-    _eventListener =
-        EventBus.registerEvent(SEARCH_CATEGORY_SELECTED, null, (event, arg) {
-      if (event == null) {
-        return;
-      }
-      String categoryType = event.eventData;
-      setState(() {
-        _subEntityType = categoryType;
-      });
-      //If user has selected any type then add a row else show msg to user
-      if (_subEntityType != null) {
-        _addNewServiceRow();
-      } else {
-        //Utils.showMyFlushbar(context, icon, duration, title, msg)
-        print("Select sth ");
-      }
-    });
-  }
+  // void registerCategorySelectEvent() {
+  //  // _eventListener =
+  //       EventBus.registerEvent(SEARCH_CATEGORY_SELECTED, null, (event, arg) {
+  //     if (event == null) {
+  //       return;
+  //     }
+  //     String categoryType = event.eventData;
+  //     setState(() {
+  //       _subEntityType = categoryType;
+  //     });
+  //     //If user has selected any type then add a row else show msg to user
+  //     if (_subEntityType != null) {
+  //       _addNewServiceRow();
+  //     } else {
+  //       //Utils.showMyFlushbar(context, icon, duration, title, msg)
+  //       print("Select sth ");
+  //     }
+  //   });
+  // }
 
   @override
   void dispose() {
     super.dispose();
-    EventBus.unregisterEvent(_eventListener);
+    //EventBus.unregisterEvent(_eventListener);
   }
 
   Future<Entity> getEntityById(String id) async {
@@ -134,7 +134,7 @@ class _ManageChildEntityListPageState extends State<ManageChildEntityListPage> {
         _initCompleted = true;
       });
     });
-    registerCategorySelectEvent();
+    // registerCategorySelectEvent();
     // subEntityTypes = new List<String>();
   }
 
@@ -171,49 +171,50 @@ class _ManageChildEntityListPageState extends State<ManageChildEntityListPage> {
 
   @override
   Widget build(BuildContext context) {
-    final subEntityType = new FormField(
-      builder: (FormFieldState state) {
-        return InputDecorator(
-          decoration: InputDecoration(
-            enabledBorder: InputBorder.none,
-            focusedBorder: InputBorder.none,
-            //  icon: const Icon(Icons.person),
-            labelText: 'Type of Place',
-          ),
-          child: new DropdownButtonHideUnderline(
-            child: new DropdownButton(
-              hint: new Text("Select type of Place"),
-              value: _subEntityType,
-              isDense: true,
-              onChanged: (newValue) {
-                setState(() {
-                  _subEntityType = newValue;
-                  state.didChange(newValue);
-                });
-              },
-              items: subEntityTypes.map((type) {
-                return DropdownMenuItem(
-                  value: type,
-                  child: new Text(
-                    type.toString(),
-                    style: textInputTextStyle,
-                  ),
-                );
-              }).toList(),
-            ),
-          ),
-        );
-      },
-      onSaved: (String value) {
-        _subEntityType = value;
-        // setState(() {
-        //   _msg = null;
-        // });
-        // entity.childCollection
-        //    .add(new ChildEntityAppData.cType(value, entity.id));
-        //   saveEntityDetails(entity);
-      },
-    );
+    // final subEntityType = new FormField(
+    //   builder: (FormFieldState state) {
+    //     return InputDecorator(
+    //       decoration: InputDecoration(
+    //         enabledBorder: InputBorder.none,
+    //         focusedBorder: InputBorder.none,
+    //         //  icon: const Icon(Icons.person),
+    //         labelText: 'Type of Place',
+    //       ),
+    //       child: new DropdownButtonHideUnderline(
+    //         child: new DropdownButton(
+    //           hint: new Text("Select type of Place"),
+    //           value: _subEntityType,
+    //           isDense: true,
+    //           onChanged: (newValue) {
+    //             setState(() {
+    //               _subEntityType = newValue;
+    //               state.didChange(newValue);
+    //             });
+    //           },
+    //           items: subEntityTypes.map((type) {
+    //             return DropdownMenuItem(
+    //               value: type,
+    //               child: new Text(
+    //                 type.toString(),
+    //                 style: textInputTextStyle,
+    //               ),
+    //             );
+    //           }).toList(),
+    //         ),
+    //       ),
+    //     );
+    //   },
+    //   onSaved: (String value) {
+    //     _subEntityType = value;
+    //     // setState(() {
+    //     //   _msg = null;
+    //     // });
+    //     // entity.childCollection
+    //     //    .add(new ChildEntityAppData.cType(value, entity.id));
+    //     //   saveEntityDetails(entity);
+    //   },
+    // );
+
     String title = "Manage child Places";
     if (_initCompleted) {
       return MaterialApp(

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:noq/login_page.dart';
 import 'package:noq/style.dart';
+import 'package:noq/widget/video_player_app.dart';
 
 class ExplorePageForBusiness extends StatefulWidget {
   //final String forPage;
@@ -35,6 +36,16 @@ class _ExplorePageForBusinessState extends State<ExplorePageForBusiness> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: <Widget>[
+                  Card(
+                    margin: EdgeInsets.all(8),
+                    elevation: 20,
+                    child: Container(
+                      width: MediaQuery.of(context).size.width * .92,
+                      margin: EdgeInsets.zero,
+                      padding: EdgeInsets.all(0),
+                      child: VideoPlayerApp(),
+                    ),
+                  ),
                   Card(
                     margin: EdgeInsets.all(8),
                     elevation: 20,
