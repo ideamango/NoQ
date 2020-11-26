@@ -910,7 +910,9 @@ class _UserAccountPageState extends State<UserAccountPage> {
             ),
           ),
           onWillPop: () async {
-            return true;
+            Navigator.push(context,
+                MaterialPageRoute(builder: (context) => UserHomePage()));
+            return false;
           },
         ),
       );

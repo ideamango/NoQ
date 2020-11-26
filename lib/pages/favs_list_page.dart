@@ -261,7 +261,9 @@ class _FavsListPageState extends State<FavsListPage> {
             // drawer: CustomDrawer(),
           ),
           onWillPop: () async {
-            return true;
+            Navigator.push(context,
+                MaterialPageRoute(builder: (context) => UserHomePage()));
+            return false;
           },
         ),
       );

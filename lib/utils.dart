@@ -430,7 +430,8 @@ class Utils {
   static generateLinkAndShare(String msgTitle, String msgBody) async {
     var dynamicLink =
         await Utils.createDynamicLinkWithParams(null, msgTitle, msgBody);
-    print("Dynamic Link: $dynamicLink");
+    print("Dynamic Link: ${dynamicLink.authority}");
+    print("Dynamic Link: ${dynamicLink.path}");
     // _dynamicLink =
     //     Uri.https(dynamicLink.authority, dynamicLink.path).toString();
     // dynamicLink has been generated. share it with others to use it accordingly.

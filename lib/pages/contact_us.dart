@@ -111,7 +111,9 @@ class _ContactUsPageState extends State<ContactUsPage> {
             //bottomNavigationBar: CustomBottomBar(barIndex: 0),
           ),
           onWillPop: () async {
-            return true;
+            Navigator.push(context,
+                MaterialPageRoute(builder: (context) => UserHomePage()));
+            return false;
           },
         ),
       );
