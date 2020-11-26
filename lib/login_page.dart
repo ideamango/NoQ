@@ -207,7 +207,8 @@ class _LoginPageState extends State<LoginPage> {
                             Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (context) => ExplorePageForUser()));
+                                    builder: (context) =>
+                                        ExplorePageForUser()));
                           },
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
@@ -252,7 +253,8 @@ class _LoginPageState extends State<LoginPage> {
                             Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (context) => ExplorePageForUser()));
+                                    builder: (context) =>
+                                        ExplorePageForUser()));
                           },
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,

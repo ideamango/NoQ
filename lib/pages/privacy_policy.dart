@@ -5,12 +5,12 @@ import 'package:noq/login_page.dart';
 import 'package:noq/style.dart';
 import 'package:noq/userHomePage.dart';
 
-class TermsOfUsePage extends StatefulWidget {
+class PrivacyPolicyPage extends StatefulWidget {
   @override
-  _TermsOfUsePageState createState() => _TermsOfUsePageState();
+  _PrivacyPolicyPageState createState() => _PrivacyPolicyPageState();
 }
 
-class _TermsOfUsePageState extends State<TermsOfUsePage> {
+class _PrivacyPolicyPageState extends State<PrivacyPolicyPage> {
   Future<bool> userAlreadyLoggedIn() async {
     final User fireUser = FirebaseAuth.instance.currentUser;
     if (fireUser == null) {
@@ -51,7 +51,7 @@ class _TermsOfUsePageState extends State<TermsOfUsePage> {
               },
             ),
             title: Text(
-              "Terms of Use",
+              "Privacy Policy",
               style: drawerdefaultTextStyle,
               overflow: TextOverflow.ellipsis,
             ),
@@ -65,7 +65,7 @@ class _TermsOfUsePageState extends State<TermsOfUsePage> {
                   text: TextSpan(
                       style: highlightSubTextStyle,
                       children: <TextSpan>[
-                        TextSpan(text: agreement),
+                        TextSpan(text: privacyPolicy),
                       ]),
                 ),
               ],
