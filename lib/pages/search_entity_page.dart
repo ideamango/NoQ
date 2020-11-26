@@ -256,15 +256,19 @@ class _SearchEntityPageState extends State<SearchEntityPage>
 
   Future<void> generateLinkAndShareWithParams(
       String entityId, String entityName) async {
-    var dynamicLink = await Utils.createDynamicLinkWithParams(entityId,
-        entityShareByUserHeading + entityName, entityShareByUserMessage);
-    print("Dynamic Link: $dynamicLink");
+    // var dynamicLink = await Utils.createDynamicLinkWithParams(entityId,
+    //     entityShareByUserHeading + entityName, entityShareByUserMessage);
+    // print("Dynamic Link: $dynamicLink");
 
-    _dynamicLink =
-        Uri.https(dynamicLink.authority, dynamicLink.path).toString();
-    // dynamicLink has been generated. share it with others to use it accordingly.
-    Share.share(dynamicLink.toString(),
-        subject: entityShareByUserHeading + entityName);
+    // _dynamicLink =
+    //     Uri.https(dynamicLink.authority, dynamicLink.path).toString();
+    // // dynamicLink has been generated. share it with others to use it accordingly.
+    // Share.share(entityShareByUserMessage + "\n" + _dynamicLink.toString(),
+    //     subject: entityShareByUserHeading + entityName);
+
+    String appShareHeading = entityShareByUserHeading + entityName;
+    String appShareMessage = entityShareByUserMessage;
+    Utils.generateLinkAndShare(entityId, appShareHeading, appShareMessage);
   }
 
   Widget _emptySearchPage() {
@@ -302,7 +306,7 @@ class _SearchEntityPageState extends State<SearchEntityPage>
                       ),
                       onTap: () {
                         _searchTextController.text = "";
-                        Utils.generateLinkAndShare(
+                        Utils.generateLinkAndShare(null,
                             appShareWithOwnerHeading, appShareWithOwnerMessage);
                       },
                     ),
@@ -1853,7 +1857,7 @@ class _SearchEntityPageState extends State<SearchEntityPage>
                     recognizer: new TapGestureRecognizer()
                       ..onTap = () {
                         _searchTextController.text = "";
-                        Utils.generateLinkAndShare(
+                        Utils.generateLinkAndShare(null,
                             appShareWithOwnerHeading, appShareWithOwnerMessage);
                       },
                   ),

@@ -69,14 +69,16 @@ class ChildEntityRowState extends State<ChildEntityRow> {
     generateLinkAndShareWithParams(String entityId, String name) async {
       String msgTitle = name + entityShareByOwnerHeading;
       String msgBody = entityShareMessage;
-      var dynamicLink =
-          await Utils.createDynamicLinkWithParams(entityId, msgTitle, msgBody);
-      print("Dynamic Link: $dynamicLink");
 
-      String _dynamicLink =
-          Uri.https(dynamicLink.authority, dynamicLink.path).toString();
-      // dynamicLink has been generated. share it with others to use it accordingly.
-      Share.share(dynamicLink.toString());
+      Utils.generateLinkAndShare(entityId, msgTitle, msgBody);
+      // var dynamicLink =
+      //     await Utils.createDynamicLinkWithParams(entityId, msgTitle, msgBody);
+      // print("Dynamic Link: $dynamicLink");
+
+      // String _dynamicLink =
+      //     Uri.https(dynamicLink.authority, dynamicLink.path).toString();
+      // // dynamicLink has been generated. share it with others to use it accordingly.
+      // Share.share(dynamicLink.toString());
     }
 
     share() {

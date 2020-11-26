@@ -45,7 +45,6 @@ class _FavsListPageState extends State<FavsListPage> {
 
   final compareDateFormat = new DateFormat('YYYYMMDD');
   List<DateTime> _dateList = new List<DateTime>();
-  String _dynamicLink;
 
   Icon actionIcon = new Icon(
     Icons.search,
@@ -146,15 +145,21 @@ class _FavsListPageState extends State<FavsListPage> {
   generateLinkAndShareWithParams(String entityId, String name) async {
     String msgTitle = entityShareByUserHeading + name;
     String msgBody = entityShareMessage;
-    var dynamicLink =
-        await Utils.createDynamicLinkWithParams(entityId, msgTitle, msgBody);
-    print("Dynamic Link: $dynamicLink");
-    print("Dynamic Link: $dynamicLink");
 
-    _dynamicLink =
-        Uri.https(dynamicLink.authority, dynamicLink.path).toString();
-    // dynamicLink has been generated. share it with others to use it accordingly.
-    Share.share(dynamicLink.toString());
+    Utils.generateLinkAndShare(entityId, msgTitle, msgBody);
+    // var dynamicLink =
+    //     await Utils.createDynamicLinkWithParams(entityId, msgTitle, msgBody);
+    // print("Dynamic Link: ${dynamicLink.authority}");
+    // print("Dynamic Link: ${dynamicLink.path}");
+
+    // // dynamicLink has been generated. share it with others to use it accordingly.
+    // Share.share(
+    //     // msgTitle +
+    //     //     "\n\n" +
+    //     msgBody +
+    //         "\n" +
+    //         Uri.https(dynamicLink.authority, dynamicLink.path).toString(),
+    //     subject: msgTitle);
   }
 
   Widget _emptyFavsPage() {

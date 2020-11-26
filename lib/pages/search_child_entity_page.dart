@@ -276,14 +276,15 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
   generateLinkAndShareWithParams(String entityId, String name) async {
     String msgTitle = entityShareByUserHeading + name;
     String msgBody = entityShareMessage;
-    var dynamicLink =
-        await Utils.createDynamicLinkWithParams(entityId, msgTitle, msgBody);
-    print("Dynamic Link: $dynamicLink");
+    Utils.generateLinkAndShare(entityId, msgTitle, msgBody);
+    // var dynamicLink =
+    //     await Utils.createDynamicLinkWithParams(entityId, msgTitle, msgBody);
+    // print("Dynamic Link: $dynamicLink");
 
-    _dynamicLink =
-        Uri.https(dynamicLink.authority, dynamicLink.path).toString();
-    // dynamicLink has been generated. share it with others to use it accordingly.
-    Share.share(dynamicLink.toString());
+    // _dynamicLink =
+    //     Uri.https(dynamicLink.authority, dynamicLink.path).toString();
+    // // dynamicLink has been generated. share it with others to use it accordingly.
+    // Share.share(dynamicLink.toString());
   }
 
   Widget _emptySearchPage() {
@@ -320,8 +321,8 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
                     ),
                     onTap: () {
                       _searchTextController.text = "";
-                      Utils.generateLinkAndShare(
-                          appShareWithOwnerHeading, appShareWithOwnerMessage);
+                      Utils.generateLinkAndShare(null, appShareWithOwnerHeading,
+                          appShareWithOwnerMessage);
                     },
                   ),
                   InkWell(
@@ -1770,8 +1771,8 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
                   recognizer: new TapGestureRecognizer()
                     ..onTap = () {
                       _searchTextController.text = "";
-                      Utils.generateLinkAndShare(
-                          appShareWithOwnerHeading, appShareWithOwnerMessage);
+                      Utils.generateLinkAndShare(null, appShareWithOwnerHeading,
+                          appShareWithOwnerMessage);
                     },
                 ),
                 TextSpan(text: notFoundMsg5),

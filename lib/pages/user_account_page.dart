@@ -751,6 +751,7 @@ class _UserAccountPageState extends State<UserAccountPage> {
                                                     context.findRenderObject();
 
                                                 Utils.generateLinkAndShare(
+                                                    null,
                                                     appShareHeading,
                                                     appShareMessage);
                                               },

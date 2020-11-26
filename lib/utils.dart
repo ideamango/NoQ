@@ -367,7 +367,9 @@ class Utils {
       ),
       socialMetaTagParameters: SocialMetaTagParameters(
         title: msgTitle,
-        description: msgBody,
+        imageUrl: Uri.parse(
+            "https://firebasestorage.googleapis.com/v0/b/awesomenoq.appspot.com/o/logo_icon.png?alt=media&token=d0bb835d-e569-4f38-ad6e-fa0fed822cc7"),
+        // description: msgBody,
       ),
     );
     final link = await parameters.buildUrl();
@@ -427,18 +429,12 @@ class Utils {
   //   return categoryList;
   // }
 
-  static generateLinkAndShare(String msgTitle, String msgBody) async {
+  static generateLinkAndShare(
+      String entityId, String msgTitle, String msgBody) async {
     var dynamicLink =
-        await Utils.createDynamicLinkWithParams(null, msgTitle, msgBody);
-    print("Dynamic Link: ${dynamicLink.authority}");
-    print("Dynamic Link: ${dynamicLink.path}");
-    // _dynamicLink =
-    //     Uri.https(dynamicLink.authority, dynamicLink.path).toString();
-    // dynamicLink has been generated. share it with others to use it accordingly.
+        await Utils.createDynamicLinkWithParams(entityId, msgTitle, msgBody);
     Share.share(
-        msgTitle +
-            "\n\n" +
-            msgBody +
+        msgBody +
             "\n" +
             Uri.https(dynamicLink.authority, dynamicLink.path).toString(),
         subject: msgTitle);
