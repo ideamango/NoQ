@@ -108,197 +108,211 @@ class _LoginPageState extends State<LoginPage> {
       ),
     );
 
-    return Scaffold(
-      resizeToAvoidBottomInset: false,
-      backgroundColor: Colors.grey[850],
-      body: Container(
-        height: double.infinity,
-        decoration: BoxDecoration(
-            image: DecorationImage(
-                image: AssetImage("assets/background.png"), fit: BoxFit.cover)),
-        //color: Colors.white,
-        margin: new EdgeInsets.fromLTRB(10, 5.0, 10, 5),
-        child: SafeArea(
-          child: new Form(
-            key: _loginPageFormKey,
-            autovalidate: _autoValidate,
-            child: SingleChildScrollView(
-              child: new Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  SizedBox(height: MediaQuery.of(context).size.height * .1),
-                  SizedBox(
-                    height: MediaQuery.of(context).size.height * .15,
-                    child: Image.asset(
-                      "assets/sukoon.png",
-                      fit: BoxFit.contain,
+    return WillPopScope(
+      child: Scaffold(
+        resizeToAvoidBottomInset: false,
+        backgroundColor: Colors.grey[850],
+        body: Container(
+          height: double.infinity,
+          decoration: BoxDecoration(
+              image: DecorationImage(
+                  image: AssetImage("assets/background.png"),
+                  fit: BoxFit.cover)),
+          //color: Colors.white,
+          margin: new EdgeInsets.fromLTRB(10, 5.0, 10, 5),
+          child: SafeArea(
+            child: new Form(
+              key: _loginPageFormKey,
+              autovalidate: _autoValidate,
+              child: SingleChildScrollView(
+                child: new Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    SizedBox(height: MediaQuery.of(context).size.height * .1),
+                    SizedBox(
+                      height: MediaQuery.of(context).size.height * .15,
+                      child: Image.asset(
+                        "assets/sukoon.png",
+                        fit: BoxFit.contain,
+                      ),
+                      // child: Text(
+                      //   "Sukoon",
+                      //   style: TextStyle(
+                      //       fontFamily: "AnandaNamaste",
+                      //       fontSize: 90,
+                      //       color: primaryAccentColor),
+                      // ),
                     ),
-                    // child: Text(
-                    //   "Sukoon",
-                    //   style: TextStyle(
-                    //       fontFamily: "AnandaNamaste",
-                    //       fontSize: 90,
-                    //       color: primaryAccentColor),
-                    // ),
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      SizedBox(
-                          height: MediaQuery.of(context).size.height * .07,
-                          width: MediaQuery.of(context).size.width * .7,
-                          child: Image.asset(
-                            "assets/sukoon_subheading.png",
-                            fit: BoxFit.contain,
-                          )),
-                    ],
-                  ),
-                  SizedBox(height: MediaQuery.of(context).size.height * .1),
-                  verticalSpacer,
-                  phNumField,
-                  verticalSpacer,
-                  Container(
-                    child: Row(
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
-                        RichText(
-                          text: TextSpan(
-                            style: subHeadingTextStyle,
-                            children: <TextSpan>[
-                              TextSpan(
-                                  text:
-                                      "By clicking Continue, I agree to the "),
-                              TextSpan(
-                                text: 'Terms of Use',
-                                style: new TextStyle(
-                                    color: primaryAccentColor,
-                                    //decoration: TextDecoration.underline,
-                                    decorationColor: primaryDarkColor),
-                                recognizer: new TapGestureRecognizer()
-                                  ..onTap = () {
-                                    Navigator.pop(context);
-                                    Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) =>
-                                                TermsOfUsePage()));
-                                  },
-                              ),
-                            ],
+                        SizedBox(
+                            height: MediaQuery.of(context).size.height * .07,
+                            width: MediaQuery.of(context).size.width * .7,
+                            child: Image.asset(
+                              "assets/sukoon_subheading.png",
+                              fit: BoxFit.contain,
+                            )),
+                      ],
+                    ),
+                    SizedBox(height: MediaQuery.of(context).size.height * .1),
+                    phNumField,
+                    verticalSpacer,
+                    Container(
+                      height: MediaQuery.of(context).size.height * .05,
+                      child: Row(
+                        children: <Widget>[
+                          RichText(
+                            text: TextSpan(
+                              style: subHeadingTextStyle,
+                              children: <TextSpan>[
+                                TextSpan(
+                                    text:
+                                        "By clicking Continue, I agree to the "),
+                                TextSpan(
+                                  text: 'Terms of Use',
+                                  style: new TextStyle(
+                                      color: Colors.cyan[400],
+                                      //decoration: TextDecoration.underline,
+                                      decorationColor: primaryDarkColor),
+                                  recognizer: new TapGestureRecognizer()
+                                    ..onTap = () {
+                                      Navigator.pop(context);
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  TermsOfUsePage()));
+                                    },
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    verticalSpacer,
+                    loginButon,
+                    SizedBox(
+                      height: MediaQuery.of(context).size.height * .2,
+                    ),
+                    (_errorMsg != null
+                        ? Text('$_errorMsg', style: errorTextStyle)
+                        : Container()),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      //mainAxisSize: MainAxisSize.min,
+                      children: <Widget>[
+                        Container(
+                          padding: EdgeInsets.all(0),
+                          margin: EdgeInsets.all(0),
+                          height: MediaQuery.of(context).size.height * .1,
+                          child: FlatButton(
+                            padding: EdgeInsets.all(0),
+                            color: Colors.transparent,
+                            splashColor: highlightColor.withOpacity(.8),
+                            onPressed: () {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          ExplorePageForUser()));
+                            },
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: <Widget>[
+                                Text(
+                                  "Explore as a place owner",
+                                  style: TextStyle(
+                                    color: Colors.cyan[400],
+                                  ),
+                                ),
+                                // Container(
+                                //   padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
+                                //   transform: Matrix4.translationValues(5.0, 0, 0),
+                                //   child: Icon(
+                                //     Icons.arrow_forward_ios,
+                                //     color: Colors.cyan[400],
+                                //     size: 18,
+                                //     // color: Colors.white38,
+                                //   ),
+                                // ),
+                                // Container(
+                                //   padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
+                                //   transform:
+                                //       Matrix4.translationValues(-8.0, 0, 0),
+                                //   child: Icon(
+                                //     Icons.arrow_forward_ios,
+                                //     color: primaryDarkColor,
+                                //     size: 20,
+                                //     // color: Colors.white,
+                                //   ),
+                                // ),
+                              ],
+                            ),
+                          ),
+                        ),
+                        Container(
+                          padding: EdgeInsets.all(0),
+                          margin: EdgeInsets.all(0),
+                          height: MediaQuery.of(context).size.height * .1,
+                          child: FlatButton(
+                            padding: EdgeInsets.all(0),
+                            color: Colors.transparent,
+                            splashColor: highlightColor.withOpacity(.8),
+                            onPressed: () {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          ExplorePageForUser()));
+                            },
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: <Widget>[
+                                Text(
+                                  "Explore as a user",
+                                  style: TextStyle(
+                                    color: Colors.cyan[400],
+                                  ),
+                                ),
+                                // Container(
+                                //   padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
+                                //   transform: Matrix4.translationValues(5.0, 0, 0),
+                                //   child: Icon(
+                                //     Icons.arrow_forward_ios,
+                                //     color: Colors.cyan[400],
+                                //     size: 18,
+                                //     // color: Colors.white38,
+                                //   ),
+                                // ),
+                                // Container(
+                                //   padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
+                                //   transform:
+                                //       Matrix4.translationValues(-8.0, 0, 0),
+                                //   child: Icon(
+                                //     Icons.arrow_forward_ios,
+                                //     color: primaryDarkColor,
+                                //     size: 20,
+                                //     // color: Colors.white,
+                                //   ),
+                                // ),
+                              ],
+                            ),
                           ),
                         ),
                       ],
                     ),
-                  ),
-                  verticalSpacer,
-                  loginButon,
-                  verticalSpacer,
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    //mainAxisSize: MainAxisSize.min,
-                    children: <Widget>[
-                      Container(
-                        padding: EdgeInsets.all(0),
-                        margin: EdgeInsets.all(0),
-                        child: FlatButton(
-                          padding: EdgeInsets.all(0),
-                          color: Colors.transparent,
-                          splashColor: highlightColor.withOpacity(.8),
-                          onPressed: () {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) =>
-                                        ExplorePageForUser()));
-                          },
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: <Widget>[
-                              Text(
-                                "Explore as a place owner",
-                                style: subHeadingTextStyle,
-                              ),
-                              Container(
-                                padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
-                                transform: Matrix4.translationValues(5.0, 0, 0),
-                                child: Icon(
-                                  Icons.arrow_forward_ios,
-                                  color: Colors.cyan[400],
-                                  size: 18,
-                                  // color: Colors.white38,
-                                ),
-                              ),
-                              Container(
-                                padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
-                                transform:
-                                    Matrix4.translationValues(-8.0, 0, 0),
-                                child: Icon(
-                                  Icons.arrow_forward_ios,
-                                  color: primaryDarkColor,
-                                  size: 20,
-                                  // color: Colors.white,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                      Container(
-                        padding: EdgeInsets.all(0),
-                        margin: EdgeInsets.all(0),
-                        child: FlatButton(
-                          padding: EdgeInsets.all(0),
-                          color: Colors.transparent,
-                          splashColor: highlightColor.withOpacity(.8),
-                          onPressed: () {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) =>
-                                        ExplorePageForUser()));
-                          },
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: <Widget>[
-                              Text(
-                                "Explore as a user",
-                                style: subHeadingTextStyle,
-                              ),
-                              Container(
-                                padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
-                                transform: Matrix4.translationValues(5.0, 0, 0),
-                                child: Icon(
-                                  Icons.arrow_forward_ios,
-                                  color: Colors.cyan[400],
-                                  size: 18,
-                                  // color: Colors.white38,
-                                ),
-                              ),
-                              Container(
-                                padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
-                                transform:
-                                    Matrix4.translationValues(-8.0, 0, 0),
-                                child: Icon(
-                                  Icons.arrow_forward_ios,
-                                  color: primaryDarkColor,
-                                  size: 20,
-                                  // color: Colors.white,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  (_errorMsg != null
-                      ? Text('$_errorMsg', style: errorTextStyle)
-                      : Container()),
-                ],
+                  ],
+                ),
               ),
             ),
           ),
         ),
       ),
+      onWillPop: () async {
+        return true;
+      },
     );
   }
 
@@ -357,17 +371,16 @@ class _LoginPageState extends State<LoginPage> {
       final PhoneVerificationFailed verificationFailed =
           (FirebaseAuthException authException) {
         setState(() {
+          _errorMsg = '${authException.message}';
           if (Utils.isNotNullOrEmpty(_errorMsg)) {
-            _errorMsg = '${authException.message}';
             print("Error message: " + _errorMsg);
             if (authException.message.contains('not authorized'))
-              _errorMsg = 'Something has gone wrong, please try later';
-            else if (authException.message.contains('Network'))
-              _errorMsg = 'Please check your internet connection and try again';
-            else if (authException.message.contains('Network'))
-              _errorMsg = 'The phone number is not correct, try again.';
-            else
-              _errorMsg = '$_errorMsg';
+              _errorMsg = 'Something has gone wrong, please try again later.';
+            else if (authException.message.contains('network'))
+              _errorMsg =
+                  'Please check your internet connection and try again.';
+            // else if (authException.message.contains(''))
+            //   _errorMsg = 'The phone number is not correct, try again.';
           } else
             _errorMsg =
                 'We are trying to figure out what went wrong, Please check the Phone Number and try again.';
@@ -717,7 +730,7 @@ class _LoginPageState extends State<LoginPage> {
                               // // print(onError.toString());
                               // handleError(onError);
                               switch (onError.code) {
-                                case 'ERROR_INVALID_VERIFICATION_CODE':
+                                case 'invalid-verification-code':
                                   // FocusScope.of(context).requestFocus(new FocusNode());
                                   setState(() {
                                     _errorMessage =
@@ -786,5 +799,21 @@ class _LoginPageState extends State<LoginPage> {
 
         break;
     }
+
+    //  _errorMsg = '${authException.message}';
+    //       if (Utils.isNotNullOrEmpty(_errorMsg)) {
+    //         print("Error message: " + _errorMsg);
+    //         if (authException.message.contains('not authorized'))
+    //           _errorMsg = 'Something has gone wrong, please try later';
+    //         else if (authException.message.contains('network'))
+    //           _errorMsg =
+    //               'Please check your internet connection and try again.';
+    //         else if (authException.message.contains(''))
+    //           _errorMsg = 'The phone number is not correct, try again.';
+    //         else
+    //           _errorMsg = '$_errorMsg';
+    //       } else
+    //         _errorMsg =
+    //             'We are trying to figure out what went wrong, Please check the Phone Number and try again.';
   }
 }
