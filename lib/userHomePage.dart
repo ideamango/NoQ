@@ -341,16 +341,41 @@ class _UserHomePageState extends State<UserHomePage> {
                       //   ),
                       // ),
                       // verticalSpacer,
-                      Card(
-                        margin: EdgeInsets.zero,
-                        elevation: 20,
-                        child: Container(
-                          width: MediaQuery.of(context).size.width * .92,
-                          margin: EdgeInsets.zero,
-                          padding: EdgeInsets.all(0),
-                          child: Image(
-                              image: AssetImage('assets/infoCustomer.png')),
-                        ),
+                      Column(
+                        children: [
+                          GestureDetector(
+                            onTap: () {
+                              //User clicked on show how, lets show them.
+                              print("Showing how to book time-slot");
+                            },
+                            child: Container(
+                              width: MediaQuery.of(context).size.width,
+                              margin: EdgeInsets.zero,
+                              padding: EdgeInsets.all(0),
+                              alignment: Alignment.topLeft,
+                              child: Image(
+                                image:
+                                    AssetImage('assets/how_to_book_slot.png'),
+                              ),
+                            ),
+                          ),
+                          GestureDetector(
+                            onTap: () {
+                              //User clicked on show how, lets show them.
+                              print("Showing how to book time-slot");
+                            },
+                            child: Container(
+                              width: MediaQuery.of(context).size.width,
+                              margin: EdgeInsets.zero,
+                              padding: EdgeInsets.all(0),
+                              alignment: Alignment.topLeft,
+                              child: Image(
+                                image:
+                                    AssetImage('assets/how_to_book_slot.png'),
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                     ],
                   ),

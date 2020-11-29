@@ -194,114 +194,93 @@ class _LoginPageState extends State<LoginPage> {
                     verticalSpacer,
                     loginButon,
                     SizedBox(
-                      height: MediaQuery.of(context).size.height * .2,
+                      height: MediaQuery.of(context).size.height * .17,
                     ),
                     (_errorMsg != null
                         ? Text('$_errorMsg', style: errorTextStyle)
                         : Container()),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      //mainAxisSize: MainAxisSize.min,
-                      children: <Widget>[
-                        Container(
-                          padding: EdgeInsets.all(0),
-                          margin: EdgeInsets.all(0),
-                          height: MediaQuery.of(context).size.height * .1,
-                          child: FlatButton(
+                    Container(
+                      padding: EdgeInsets.all(5),
+                      alignment: Alignment.center,
+                      width: MediaQuery.of(context).size.width * .8,
+                      child: Text(
+                        "To know more how Sukoon help Save Lives",
+                        style: TextStyle(
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                    Container(
+                      alignment: Alignment.center,
+                      width: MediaQuery.of(context).size.width * .8,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        //mainAxisSize: MainAxisSize.min,
+                        children: <Widget>[
+                          Container(
+                            //alignment: Alignment.centerLeft,
                             padding: EdgeInsets.all(0),
-                            color: Colors.transparent,
-                            splashColor: highlightColor.withOpacity(.8),
-                            onPressed: () {
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) =>
-                                          ExplorePageForUser()));
-                            },
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: <Widget>[
-                                Text(
-                                  "Explore as a place owner",
-                                  style: TextStyle(
-                                    color: Colors.cyan[400],
-                                  ),
+                            margin: EdgeInsets.all(0),
+                            height: MediaQuery.of(context).size.height * .05,
+                            width: MediaQuery.of(context).size.width * .4,
+                            child: RaisedButton(
+                              elevation: 20,
+                              shape: RoundedRectangleBorder(
+                                  side: BorderSide(color: Colors.blueGrey[600]),
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(5.0))),
+                              padding: EdgeInsets.all(0),
+                              color: Colors.transparent,
+                              splashColor: highlightColor.withOpacity(.8),
+                              onPressed: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            ExplorePageForUser()));
+                              },
+                              child: Text(
+                                "Business Owners",
+                                style: TextStyle(
+                                  color: highlightColor,
                                 ),
-                                // Container(
-                                //   padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
-                                //   transform: Matrix4.translationValues(5.0, 0, 0),
-                                //   child: Icon(
-                                //     Icons.arrow_forward_ios,
-                                //     color: Colors.cyan[400],
-                                //     size: 18,
-                                //     // color: Colors.white38,
-                                //   ),
-                                // ),
-                                // Container(
-                                //   padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
-                                //   transform:
-                                //       Matrix4.translationValues(-8.0, 0, 0),
-                                //   child: Icon(
-                                //     Icons.arrow_forward_ios,
-                                //     color: primaryDarkColor,
-                                //     size: 20,
-                                //     // color: Colors.white,
-                                //   ),
-                                // ),
-                              ],
+                              ),
                             ),
                           ),
-                        ),
-                        Container(
-                          padding: EdgeInsets.all(0),
-                          margin: EdgeInsets.all(0),
-                          height: MediaQuery.of(context).size.height * .1,
-                          child: FlatButton(
+                          //horizontalSpacer,
+                          Container(
+                            //  alignment: Alignment.centerRight,
                             padding: EdgeInsets.all(0),
-                            color: Colors.transparent,
-                            splashColor: highlightColor.withOpacity(.8),
-                            onPressed: () {
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) =>
-                                          ExplorePageForUser()));
-                            },
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: <Widget>[
-                                Text(
-                                  "Explore as a user",
-                                  style: TextStyle(
-                                    color: Colors.cyan[400],
-                                  ),
+                            margin: EdgeInsets.all(0),
+                            height: MediaQuery.of(context).size.height * .05,
+                            width: MediaQuery.of(context).size.width * .4,
+                            child: RaisedButton(
+                              elevation: 20,
+                              shape: RoundedRectangleBorder(
+                                  side: BorderSide(color: Colors.blueGrey[600]),
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(5.0))),
+                              padding: EdgeInsets.all(0),
+                              color: Colors.transparent,
+                              splashColor: highlightColor.withOpacity(.8),
+                              onPressed: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            ExplorePageForUser()));
+                              },
+                              child: Text(
+                                "Users",
+                                textAlign: TextAlign.right,
+                                style: TextStyle(
+                                  color: highlightColor,
                                 ),
-                                // Container(
-                                //   padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
-                                //   transform: Matrix4.translationValues(5.0, 0, 0),
-                                //   child: Icon(
-                                //     Icons.arrow_forward_ios,
-                                //     color: Colors.cyan[400],
-                                //     size: 18,
-                                //     // color: Colors.white38,
-                                //   ),
-                                // ),
-                                // Container(
-                                //   padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
-                                //   transform:
-                                //       Matrix4.translationValues(-8.0, 0, 0),
-                                //   child: Icon(
-                                //     Icons.arrow_forward_ios,
-                                //     color: primaryDarkColor,
-                                //     size: 20,
-                                //     // color: Colors.white,
-                                //   ),
-                                // ),
-                              ],
+                              ),
                             ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ],
                 ),
