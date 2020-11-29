@@ -2985,7 +2985,11 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
                                                 color: Colors.white,
                                                 fontSize: 15),
                                           ),
-                                          SizedBox(width: 180),
+                                          SizedBox(
+                                              width: MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                  0.5),
                                           InkWell(
                                             child: Text(
                                               "Clear",
