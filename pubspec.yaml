@@ -48,7 +48,7 @@ dependencies:
  #Added for QR code scan and generate
   barcode_scan: ^3.0.1
   qr_flutter: ^3.2.0
-  share: ^0.6.5+3 
+  share: ^0.6.5+4 
   #Flushbar
   flushbar: ^1.10.4
   #forcarousel
@@ -124,6 +124,7 @@ flutter:
     - sukoon.png
     - offers_icon.png
     - userInfo.mp4
+    - how_to_book_slot.png
 
   #  - images/a_dot_ham.jpeg
 

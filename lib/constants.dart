@@ -41,8 +41,12 @@ String whatsappContactUsMsg = "Hey!!";
 String whatsappMessageToPlaceOwner = "Hey there! My Sukoon Token number is ";
 String whatsappMessage =
     "Hey!! Are you worried about safety in the crowded place or long waiting in queues? \nNo worries, book your peace of mind with Sukoon mobile app. \nBook your slot when it's Less crowded and Stay Safe!!";
+
+String qrCodeShareHeading = "You Safety and Convenience is our top priority!";
+
 String qrCodeShareMessage =
-    "Hey!! Are you worried about safety in the crowded place or long waiting in queues? \nNo worries, book your peace of mind with Sukoon mobile app. \nBook your slot when it's Less crowded and Stay Safe!!.\n\nJust scan the QR code of the place you want to visit and start booking..";
+    "For your next visit, book an appointment when the crowd is less.\n\nScan the QR to Download the Sukoon app and start booking your peace of mind!";
+
 String locationPermissionMsg =
     'To find nearby places we need access to your current location. Open Settings and give permission to "Sukoon" to access your location.';
 String locationAccessDeniedStr =
@@ -61,7 +65,7 @@ String whyLocationIsRequired =
 String userCurrentLoc = 'Use Current Location';
 String userAccountHeadingTxt = "You have logged in with ";
 String locationMarkingActiveInfo =
-    'Note: Users will be able to search/discover your Facility/Establishment based on this location, so ensure that this is correctly saved before you make it "Active"';
+    'Note: Users will be able to search/discover your Business/Place based on this location, so ensure that this is correctly saved before you make it "Active"';
 String contactUsPageHeadline =
     'We would be happy to help you. Just drop a message to us and we will try our best to address that at the earliest.';
 
@@ -213,8 +217,11 @@ String appShareHeading =
 String appShareMessage =
     "Fix your appointment well in advance and visit places when the crowd is less.\n\nDownload the Sukoon app today and save lives!";
 
-String appShareWithOwnerHeading = "Message title to business owner from Sukoon";
-String appShareWithOwnerMessage = "Message body to business owner from Sukoon";
+String appShareWithOwnerHeading =
+    "Protect your Customers to Protect your Business!\nProvide Safety and Convenience to regain the confidence of your customers.";
+
+String appShareWithOwnerMessage =
+    "Register your Business or Place with Sukoon app at absolutely no cost and grow your business.";
 
 //append place name in the last
 String entityShareByUserHeading =
@@ -224,7 +231,7 @@ String entityShareByUserMessage =
     "Download the Sukoon app and start booking your peace of mind!";
 
 String entityShareByOwnerMailSubject =
-    " is inviting you to use SUKOON to Book your peace of mind!!";
+    " is inviting you to use Sukoon app to Book your peace of mind!";
 //append place name in start of string
 String entityShareByOwnerHeading =
     "You Safety and Convenience is our top priority!";

@@ -144,7 +144,7 @@ class _FavsListPageState extends State<FavsListPage> {
 
   generateLinkAndShareWithParams(String entityId, String name) async {
     String msgTitle = entityShareByUserHeading + name;
-    String msgBody = entityShareMessage;
+    String msgBody = entityShareByUserMessage;
 
     Utils.generateLinkAndShare(entityId, msgTitle, msgBody);
   }
