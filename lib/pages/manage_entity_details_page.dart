@@ -1400,9 +1400,7 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
         maxLines: 1,
         onChanged: (String value) {
           isOfferMessage = true;
-          print(value);
           insertOffer.message = value;
-          print("insertOffer" + insertOffer.message);
           checkOfferDetailsFilled();
         },
         onSaved: (String value) {
