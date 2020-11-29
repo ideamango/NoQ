@@ -354,11 +354,12 @@ class _UserHomePageState extends State<UserHomePage> {
                               padding: EdgeInsets.all(0),
                               alignment: Alignment.topLeft,
                               child: Image(
-                                image:
-                                    AssetImage('assets/how_to_book_slot.png'),
+                                image: AssetImage(
+                                    'assets/how_to_register_business.png'),
                               ),
                             ),
                           ),
+                          verticalSpacer,
                           GestureDetector(
                             onTap: () {
                               //User clicked on show how, lets show them.
@@ -374,6 +375,9 @@ class _UserHomePageState extends State<UserHomePage> {
                                     AssetImage('assets/how_to_book_slot.png'),
                               ),
                             ),
+                          ),
+                          Container(
+                            height: MediaQuery.of(context).size.height * .06,
                           ),
                         ],
                       ),
