@@ -56,7 +56,6 @@ class GenerateScreenState extends State<GenerateScreen> {
       var _dynamicLink = uriLink;
       _dataString = _dynamicLink.toString();
       _inputErrorText = null;
-      _saveImage();
       setState(() {
         _initCompleted = true;
       });
@@ -94,19 +93,11 @@ class GenerateScreenState extends State<GenerateScreen> {
       );
   }
 
-  Future<void> _saveImage() async {
-    try {
-      final tempDir = await getTemporaryDirectory();
-    } catch (e) {
-      print(e.toString());
-    }
-  }
-
   Future<void> _loadImage() async {
     try {
       //Dynamic Link Text
       //'SUKOON ~ Book your peace of mind!!'
-      String msgTitle = widget.entityName + entityShareByOwnerMailSubject;
+      String msgTitle = qrCodeShareHeading + " - " + widget.entityName;
       String msgBody = qrCodeShareMessage;
 
       RenderRepaintBoundary boundary =
@@ -124,8 +115,14 @@ class GenerateScreenState extends State<GenerateScreen> {
       final RenderBox box = context.findRenderObject();
       Share.shareFiles(['${tempDir.path}/qrcodeForShare.png'],
           subject: msgTitle,
-          text: msgBody,
+          text: msgTitle + '\n\n' + msgBody,
           sharePositionOrigin: box.localToGlobal(Offset.zero) & box.size);
+      if (Platform.isIOS) {
+        Share.shareFiles(['${tempDir.path}/qrcodeForShare.png'],
+            //subject: msgTitle,
+            //text: msgBody,
+            sharePositionOrigin: box.localToGlobal(Offset.zero) & box.size);
+      }
     } catch (e) {
       print(e.toString());
     }
