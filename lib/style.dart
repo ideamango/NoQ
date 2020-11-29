@@ -128,6 +128,14 @@ final errorTextStyleWithUnderLine = TextStyle(
     decoration: TextDecoration.underline,
     fontSize: 11);
 
+final offerClearTextStyleWithUnderLine = TextStyle(
+    color: Colors.white,
+    letterSpacing: 0.5,
+    //fontWeight: FontWeight.w500,
+    fontFamily: 'Monsterrat',
+    decoration: TextDecoration.underline,
+    fontSize: 14);
+
 final lightSubTextStyle = TextStyle(
   color: Colors.blueGrey[700],
   // fontWeight: FontWeight.w800,
