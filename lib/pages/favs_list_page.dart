@@ -37,7 +37,7 @@ class _FavsListPageState extends State<FavsListPage> {
   final dtFormat = new DateFormat('dd');
   SharedPreferences _prefs;
 
-  List<Entity> _stores = new List<Entity>();
+  List<MetaEntity> _stores = new List<MetaEntity>();
 
   String _entityType;
 
@@ -52,7 +52,7 @@ class _FavsListPageState extends State<FavsListPage> {
   );
   final key = new GlobalKey<ScaffoldState>();
 
-  List<Entity> _list;
+  List<MetaEntity> _list;
 
   String pageName;
   GlobalState _state;
@@ -75,19 +75,17 @@ class _FavsListPageState extends State<FavsListPage> {
   }
 
   Future<void> fetchFavStoresList() async {
-    List<Entity> newList = new List<Entity>();
+    //List<MetaEntity> newList = new List<MetaEntity>();
     Entity e;
     //if (initCompleted) {
     print(_state.getCurrentUser().favourites);
-
+    _stores.clear();
     if (!Utils.isNullOrEmpty(_state.getCurrentUser().favourites)) {
       for (MetaEntity fs in _state.getCurrentUser().favourites) {
-        e = await EntityService().getEntity(fs.entityId);
-        newList.add(e);
+        //e = await EntityService().getEntity(fs.entityId);
+        _stores.add(fs);
       }
-      setState(() {
-        _stores = newList;
-      });
+      setState(() {});
     }
     // }
   }
@@ -131,10 +129,10 @@ class _FavsListPageState extends State<FavsListPage> {
     }
   }
 
-  void toggleFavorite(Entity strData) {
+  void toggleFavorite(MetaEntity strData) {
 //Removes favorite from User-Favorites and update favs list being displayed.
 //If nothing in list then displays message.
-    MetaEntity metaEn = strData.getMetaEntity();
+    MetaEntity metaEn = strData;
     _state.removeFavourite(metaEn).then((value) {
       _stores?.remove(strData);
       setState(() {});
@@ -272,7 +270,7 @@ class _FavsListPageState extends State<FavsListPage> {
     return imgWidget;
   }
 
-  Widget _buildItem(Entity str) {
+  Widget _buildItem(MetaEntity str) {
     _prepareDateList();
     //_buildDateGridItems(str.id);
     print('after buildDateGrid called');
@@ -334,36 +332,36 @@ class _FavsListPageState extends State<FavsListPage> {
                                       overflow: TextOverflow.ellipsis,
                                     ),
                                   ),
-                                  (str.verificationStatus ==
-                                          VERIFICATION_VERIFIED)
-                                      ? new Container(
-                                          width: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
-                                              .06,
-                                          height: MediaQuery.of(context)
-                                                  .size
-                                                  .height *
-                                              .03,
-                                          child: IconButton(
-                                            padding:
-                                                EdgeInsets.fromLTRB(1, 1, 0, 2),
-                                            icon: Icon(
-                                              Icons.verified_user,
-                                              color: Colors.green,
-                                              size: 15,
-                                            ),
-                                            onPressed: () {
-                                              Utils.showMyFlushbar(
-                                                  context,
-                                                  Icons.info,
-                                                  Duration(seconds: 5),
-                                                  VERIFICATION_VERIFIED,
-                                                  "");
-                                            },
-                                          ),
-                                        )
-                                      : Container(),
+                                  // (str.verificationStatus ==
+                                  //         VERIFICATION_VERIFIED)
+                                  //     ? new Container(
+                                  //         width: MediaQuery.of(context)
+                                  //                 .size
+                                  //                 .width *
+                                  //             .06,
+                                  //         height: MediaQuery.of(context)
+                                  //                 .size
+                                  //                 .height *
+                                  //             .03,
+                                  //         child: IconButton(
+                                  //           padding:
+                                  //               EdgeInsets.fromLTRB(1, 1, 0, 2),
+                                  //           icon: Icon(
+                                  //             Icons.verified_user,
+                                  //             color: Colors.green,
+                                  //             size: 15,
+                                  //           ),
+                                  //           onPressed: () {
+                                  //             Utils.showMyFlushbar(
+                                  //                 context,
+                                  //                 Icons.info,
+                                  //                 Duration(seconds: 5),
+                                  //                 VERIFICATION_VERIFIED,
+                                  //                 "");
+                                  //           },
+                                  //         ),
+                                  //       )
+                                  //     : Container(),
                                   (str.isPublic != true)
                                       ? Container(
                                           width: MediaQuery.of(context)
@@ -450,8 +448,8 @@ class _FavsListPageState extends State<FavsListPage> {
                               margin: EdgeInsets.zero,
                               width: MediaQuery.of(context).size.width * .65,
                               child: AutoSizeText(
-                                (Utils.getFormattedAddress(str.address) != "")
-                                    ? Utils.getFormattedAddress(str.address)
+                                (Utils.isNotNullOrEmpty(str.address))
+                                    ? str.address
                                     : "No Address found",
                                 maxLines: 1,
                                 minFontSize: 12,
@@ -658,12 +656,9 @@ class _FavsListPageState extends State<FavsListPage> {
                           ),
                           onPressed: () {
                             try {
-                              if (str.coordinates.geopoint.latitude != null)
+                              if (str.lat != null)
                                 launchURL(
-                                    str.name,
-                                    Utils.getFormattedAddress(str.address),
-                                    str.coordinates.geopoint.latitude,
-                                    str.coordinates.geopoint.longitude);
+                                    str.name, str.address, str.lat, str.lon);
                               else {
                                 Utils.showMyFlushbar(context, Icons.error,
                                     Duration(seconds: 5), locationNotFound, "");
@@ -714,7 +709,7 @@ class _FavsListPageState extends State<FavsListPage> {
                         splashColor: highlightColor,
                         onPressed: () => toggleFavorite(str),
                         highlightColor: Colors.orange[300],
-                        child: isFavourite(str.getMetaEntity())
+                        child: isFavourite(str)
                             ? Icon(
                                 Icons.favorite,
                                 color: Colors.red[800],
@@ -729,7 +724,7 @@ class _FavsListPageState extends State<FavsListPage> {
                         mainAxisAlignment: MainAxisAlignment.start,
                         mainAxisSize: MainAxisSize.min,
                         children: <Widget>[
-                          if (str.childEntities.length != 0)
+                          if (str.hasChildren)
                             Container(
                               padding: EdgeInsets.all(0),
                               margin: EdgeInsets.all(0),
@@ -774,7 +769,7 @@ class _FavsListPageState extends State<FavsListPage> {
                                 ),
                               ),
                             ),
-                          if (str.childEntities.length == 0)
+                          if (!str.hasChildren)
                             Container(
                               width: 40,
                               height: 40,
@@ -788,7 +783,7 @@ class _FavsListPageState extends State<FavsListPage> {
     );
   }
 
-  void showSlots(Entity store, DateTime dateTime) {
+  void showSlots(MetaEntity store, DateTime dateTime) {
     Navigator.push(
         context,
         MaterialPageRoute(
@@ -799,7 +794,7 @@ class _FavsListPageState extends State<FavsListPage> {
                 )));
   }
 
-  List<Widget> _buildDateGridItems(Entity store, String sid, String sname,
+  List<Widget> _buildDateGridItems(MetaEntity store, String sid, String sname,
       List<String> daysClosed, int advanceDays) {
     bool isClosed = false;
     bool isBookingAllowed = false;
@@ -832,8 +827,15 @@ class _FavsListPageState extends State<FavsListPage> {
     return dateWidgets;
   }
 
-  Widget buildDateItem(Entity store, String sid, String sname, bool isClosed,
-      bool isBookingAllowed, int advanceDays, DateTime dt, String dayOfWeek) {
+  Widget buildDateItem(
+      MetaEntity store,
+      String sid,
+      String sname,
+      bool isClosed,
+      bool isBookingAllowed,
+      int advanceDays,
+      DateTime dt,
+      String dayOfWeek) {
     bool dateBooked = false;
     // UserAppData user = _userProfile;
 

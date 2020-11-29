@@ -25,7 +25,7 @@ import 'package:intl/intl.dart';
 import 'package:noq/constants.dart';
 
 class ShowSlotsPage extends StatefulWidget {
-  final Entity entity;
+  final MetaEntity entity;
   final DateTime dateTime;
   final String forPage;
 
@@ -61,7 +61,7 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
   GlobalState _state;
   bool _gStateInitFinished = false;
   MetaEntity metaEn;
-  Entity entity;
+  MetaEntity entity;
   Entity parentEntity;
   DateTime currDateTime = DateTime.now();
 
@@ -586,7 +586,7 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
       print("alreaddyyyyyyy booked, go back");
     }
 
-    MetaEntity meta = entity.getMetaEntity();
+    MetaEntity meta = entity;
 
     bookSlotForStore(meta, selectedSlot).then((value) {
       if (value == null) {

@@ -274,7 +274,8 @@ class Entity {
               (address != null) ? Utils.getFormattedAddress(address) : null,
           hasChildren: (childEntities != null && childEntities.length > 0)
               ? true
-              : false);
+              : false,
+          isBookable: isBookable);
     } else {
       _meta.name = name;
       _meta.type = type;
@@ -307,6 +308,7 @@ class Entity {
           (address != null) ? Utils.getFormattedAddress(address) : null;
       _meta.hasChildren =
           (childEntities != null && childEntities.length > 0) ? true : false;
+      _meta.isBookable = isBookable;
     }
     return _meta;
   }

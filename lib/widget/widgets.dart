@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:noq/db/db_model/entity.dart';
+import 'package:noq/db/db_model/meta_entity.dart';
 import 'package:noq/style.dart';
 
 Divider myDivider = new Divider(
@@ -18,7 +19,7 @@ Divider myLightDivider = new Divider(
 SizedBox verticalSpacer = new SizedBox(height: 10);
 SizedBox horizontalSpacer = new SizedBox(width: 10);
 
-showDialogForPlaceDetails(Entity str, BuildContext context) {
+showDialogForPlaceDetails(MetaEntity str, BuildContext context) {
   showDialog(
       barrierDismissible: true,
       context: context,

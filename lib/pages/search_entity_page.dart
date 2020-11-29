@@ -1029,7 +1029,7 @@ class _SearchEntityPageState extends State<SearchEntityPage>
         //               )));
         // }
         //DONT DELETE - End
-        showDialogForPlaceDetails(str, context);
+        showDialogForPlaceDetails(str.getMetaEntity(), context);
       },
       child: Card(
         margin: EdgeInsets.fromLTRB(8, 12, 8, 0),
@@ -1561,7 +1561,7 @@ class _SearchEntityPageState extends State<SearchEntityPage>
         context,
         MaterialPageRoute(
             builder: (context) => ShowSlotsPage(
-                  entity: store,
+                  entity: store.getMetaEntity(),
                   dateTime: dateTime,
                   forPage: 'MainSearch',
                 )));
