@@ -3,6 +3,7 @@ import 'package:noq/constants.dart';
 import 'package:noq/db/db_model/entity.dart';
 import 'package:noq/db/db_model/meta_entity.dart';
 import 'package:noq/db/db_service/entity_service.dart';
+import 'package:noq/global_state.dart';
 import 'package:noq/pages/manage_child_entity_details_page.dart';
 import 'package:noq/services/qr_code_generate.dart';
 import 'package:noq/style.dart';
@@ -13,10 +14,8 @@ import 'package:share/share.dart';
 
 class ChildEntityRow extends StatefulWidget {
   final MetaEntity childEntity;
-  final Map<String, Entity> entityMap;
-  ChildEntityRow(
-      {Key key, @required this.childEntity, @required this.entityMap})
-      : super(key: key);
+
+  ChildEntityRow({Key key, @required this.childEntity}) : super(key: key);
   @override
   State<StatefulWidget> createState() => new ChildEntityRowState();
 }
@@ -24,29 +23,41 @@ class ChildEntityRow extends StatefulWidget {
 class ChildEntityRowState extends State<ChildEntityRow> {
   Entity entity;
   MetaEntity _metaEntity;
-  Map<String, Entity> _entityMap;
+  GlobalState _state;
+  bool _initCompleted = false;
+  // Map<String, Entity> _entityMap;
 
   @override
   void initState() {
     super.initState();
     _metaEntity = widget.childEntity;
-    _entityMap = widget.entityMap;
+    // _entityMap = widget.entityMap;
+    GlobalState.getGlobalState().then((value) {
+      _state = value;
+      if (this.mounted) {
+        setState(() {
+          _initCompleted = true;
+        });
+      } else {
+        _initCompleted = false;
+      }
+    });
   }
 
   Future<void> getEntity(String entityId) async {
-    if (_entityMap != null) {
-      if (_entityMap.length != 0) {
-        if (_entityMap.containsKey(entityId))
-          entity = _entityMap[entityId];
-        else {
-          entity = await EntityService().getEntity(entityId);
-        }
-      }
-    }
-    if (entity == null) {
-      entity = await EntityService().getEntity(entityId);
-      print(entity.name);
-    }
+    // if (_entityMap != null) {
+    //   if (_entityMap.length != 0) {
+    //     if (_entityMap.containsKey(entityId))
+    //       entity = _entityMap[entityId];
+    //     else {
+    //       entity = await EntityService().getEntity(entityId);
+    //     }
+    //   }
+    // }
+    // if (entity == null) {
+    //   entity = await EntityService().getEntity(entityId);
+    //   print(entity.name);
+    // }
   }
 
   @override
@@ -56,13 +67,13 @@ class ChildEntityRowState extends State<ChildEntityRow> {
       // if Entity is inentityMap it means its a new entity and is not created yet,
       // else fetch from DB.
       //TODO Sumant - use state for entity get, put
-      getEntity(_metaEntity.entityId).then((value) {
+      _state.getEntity(_metaEntity.entityId).then((value) {
         Navigator.of(context).pop();
         Navigator.push(
             context,
             MaterialPageRoute(
                 builder: (context) =>
-                    ManageChildEntityDetailsPage(childEntity: this.entity)));
+                    ManageChildEntityDetailsPage(childEntity: value.item1)));
       });
     }
 

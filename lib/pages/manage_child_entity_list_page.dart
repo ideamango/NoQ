@@ -38,7 +38,7 @@ class _ManageChildEntityListPageState extends State<ManageChildEntityListPage> {
   ScrollController _childScrollController;
   final itemSize = 100.0;
   final String title = "Child Amenities Details Form";
-  Map<String, Entity> _entityMap = Map<String, Entity>();
+ // Map<String, Entity> _entityMap = Map<String, Entity>();
 
   Entity parentEntity;
   String _subEntityType;
@@ -162,7 +162,7 @@ class _ManageChildEntityListPageState extends State<ManageChildEntityListPage> {
     _state.putEntity(en, false, parentEntity.entityId);
     MetaEntity meta;
     setState(() {
-      _entityMap[en.entityId] = en;
+     // _entityMap[en.entityId] = en;
       meta = en.getMetaEntity();
       servicesList.add(meta);
       _count = _count + 1;
@@ -286,8 +286,8 @@ class _ManageChildEntityListPageState extends State<ManageChildEntityListPage> {
                             return Container(
                               //  height: MediaQuery.of(context).size.height * .3,
                               child: ChildEntityRow(
-                                  childEntity: servicesList[index],
-                                  entityMap: _entityMap),
+                                  childEntity: servicesList[index]
+                                ),
                             );
                           },
                           itemCount: servicesList.length,
