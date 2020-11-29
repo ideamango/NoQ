@@ -64,6 +64,16 @@ class _ManageChildEntityListPageState extends State<ManageChildEntityListPage> {
           childBottomSheetController.close();
           childBottomSheetController = null;
           //   Navigator.of(context).pop();
+          setState(() {
+            _subEntityType = categoryType;
+          });
+          //If user has selected any type then add a row else show msg to user
+          if (_subEntityType != null) {
+            _addNewServiceRow();
+          } else {
+            //Utils.showMyFlushbar(context, icon, duration, title, msg)
+            print("Select sth ");
+          }
           EventBus.fireEvent(SEARCH_CATEGORY_SELECTED, null, categoryType);
         },
         child: Column(
