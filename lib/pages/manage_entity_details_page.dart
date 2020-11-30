@@ -12,6 +12,7 @@ import 'package:noq/db/db_model/meta_entity.dart';
 import 'package:noq/db/db_model/my_geo_fire_point.dart';
 import 'package:noq/db/db_model/app_user.dart';
 import 'package:noq/db/db_service/user_service.dart';
+import 'package:noq/db/db_model/offer.dart';
 import 'package:noq/enum/EntityTypes.dart';
 import 'package:noq/events/event_bus.dart';
 import 'package:noq/events/events.dart';
@@ -73,6 +74,15 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
 
   String flushStatus = "Empty";
 
+  DateTime startPickedDate = DateTime.now();
+  DateTime endPickedDate = DateTime.now();
+  String dateString = "Start Date";
+  bool isStartDate = false;
+  bool isEndDate = false;
+  bool isOfferMessage = false;
+  bool isOfferCoupon = false;
+  Offer insertOffer = new Offer();
+
 //Basic Details
   bool validateField = false;
   TextEditingController _nameController = TextEditingController();
@@ -89,6 +99,11 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
 
   TextEditingController _gpayPhoneController = TextEditingController();
   TextEditingController _paytmPhoneController = TextEditingController();
+
+  TextEditingController _offerMessageController = TextEditingController();
+  TextEditingController _offerCouponController = TextEditingController();
+  TextEditingController _startDateController = TextEditingController();
+  TextEditingController _endDateController = TextEditingController();
 
   TextEditingController _slotDurationController = TextEditingController();
   TextEditingController _advBookingInDaysController = TextEditingController();
@@ -602,21 +617,27 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
       isPublic = (entity.isPublic) ?? false;
       isBookable = (entity.isBookable) ?? false;
       isActive = (entity.isActive) ?? false;
-      var entitytype = entity.type.toString();
-      if (entitytype == EntityTypes.Mall) {
-        //is Public and Not bookable
-        isPublic = true;
-        isBookable = false;
-      } else if (entitytype == EntityTypes.Apartment ||
-          entitytype == EntityTypes.School ||
-          entitytype == EntityTypes.Office) {
-        // is Private and Not bookable
-        isPublic = false;
-        isBookable = false;
-      } else {
-        // is public and bookable
-        isPublic = true;
-        isBookable = true;
+
+      if (entity.offer != null) {
+        _offerMessageController.text =
+            entity.offer.message != null ? entity.offer.message.toString() : "";
+        _offerCouponController.text =
+            entity.offer.coupon != null ? entity.offer.coupon.toString() : "";
+
+        _startDateController.text = entity.offer.startDateTime != null
+            ? entity.offer.startDateTime.day.toString() +
+                " / " +
+                entity.offer.startDateTime.month.toString() +
+                " / " +
+                entity.offer.startDateTime.year.toString()
+            : "";
+        _endDateController.text = entity.offer.endDateTime != null
+            ? entity.offer.endDateTime.day.toString() +
+                " / " +
+                entity.offer.endDateTime.month.toString() +
+                " / " +
+                entity.offer.endDateTime.year.toString()
+            : "";
       }
 
       if (isActive) {
@@ -1332,6 +1353,194 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
         onSaved: (String value) {
           if (value != "") entity.gpay = _phCountryCode + (value);
           print("GPay Number");
+        },
+      );
+
+      checkOfferDetailsFilled() {
+        if (isOfferCoupon || isOfferMessage || isStartDate || isEndDate) {
+          insertOffer.message = isOfferMessage ? insertOffer.message : null;
+          insertOffer.coupon = isOfferCoupon ? insertOffer.coupon : null;
+          insertOffer.startDateTime =
+              isStartDate ? insertOffer.startDateTime : null;
+          insertOffer.endDateTime = isEndDate ? insertOffer.endDateTime : null;
+          entity.offer = insertOffer;
+        } else
+          entity.offer = null;
+      }
+
+      clearOfferDetail() {
+        isOfferCoupon = false;
+        isOfferMessage = false;
+        isStartDate = false;
+        isEndDate = false;
+        insertOffer = null;
+        entity.offer = null;
+        _offerCouponController.text = "";
+        _offerMessageController.text = "";
+        _startDateController.text = "";
+        _endDateController.text = "";
+      }
+
+      final messageField = TextFormField(
+        obscureText: false,
+        //minLines: 1,
+        style: textInputTextStyle,
+        controller: _offerMessageController,
+        decoration: CommonStyle.textFieldStyle(
+          labelTextStr: "Offer Message",
+        ),
+        validator: (value) {
+          if (!validateField)
+            return validateText(value);
+          else
+            return null;
+        },
+        keyboardType: TextInputType.multiline,
+        maxLength: null,
+        maxLines: 1,
+        onChanged: (String value) {
+          isOfferMessage = true;
+          insertOffer.message = value;
+          checkOfferDetailsFilled();
+        },
+        onSaved: (String value) {
+          isOfferMessage = true;
+          insertOffer.message = value;
+          checkOfferDetailsFilled();
+        },
+      );
+
+      final couponField = TextFormField(
+        obscureText: false,
+        //minLines: 1,
+        style: textInputTextStyle,
+        controller: _offerCouponController,
+        decoration: CommonStyle.textFieldStyle(labelTextStr: "Coupon"),
+        validator: (value) {
+          if (!validateField)
+            return validateText(value);
+          else
+            return null;
+        },
+        keyboardType: TextInputType.multiline,
+        maxLength: null,
+        maxLines: 1,
+        onChanged: (String value) {
+          isOfferCoupon = true;
+          insertOffer.coupon = value;
+          checkOfferDetailsFilled();
+        },
+        onSaved: (String value) {
+          isOfferCoupon = true;
+          insertOffer.coupon = value;
+          checkOfferDetailsFilled();
+        },
+      );
+
+      Future<Null> startPickDate(BuildContext context) async {
+        DateTime date = await showDatePicker(
+          context: context,
+          firstDate: DateTime(DateTime.now().day),
+          lastDate: DateTime(DateTime.now().year + 2),
+          initialDate: startPickedDate,
+        );
+        if (date != null) {
+          setState(() {
+            startPickedDate = date;
+            dateString = startPickedDate.day.toString() +
+                " / " +
+                startPickedDate.month.toString() +
+                " / " +
+                startPickedDate.year.toString();
+            _startDateController.text = dateString;
+            isStartDate = true;
+            // print(startPickedDate.toString());
+          });
+        }
+      }
+
+      Future<Null> endPickDate(BuildContext context) async {
+        DateTime date = await showDatePicker(
+          context: context,
+          firstDate: DateTime(DateTime.now().day),
+          lastDate: DateTime(DateTime.now().year + 2),
+          initialDate: endPickedDate,
+        );
+        if (date != null) {
+          setState(() {
+            endPickedDate = date;
+            dateString = endPickedDate.day.toString() +
+                " / " +
+                endPickedDate.month.toString() +
+                " / " +
+                endPickedDate.year.toString();
+            _endDateController.text = dateString;
+            isEndDate = true;
+            // print(endPickedDate.toString());
+          });
+        }
+      }
+
+      final startDateField = TextFormField(
+        obscureText: false,
+        //minLines: 1,
+        style: textInputTextStyle,
+        controller: _startDateController,
+        decoration: CommonStyle.textFieldStyle(
+            labelTextStr: "Start Date", hintTextStr: ""),
+        // validator: (value) {
+        //   if (!validateField)
+        //     return validateText(value);
+        //   else
+        //     return null;
+        // },
+        onTap: () {
+          setState(() {
+            startPickDate(context);
+          });
+        },
+        maxLength: null,
+        maxLines: 1,
+        onChanged: (String value) {
+          insertOffer.startDateTime = startPickedDate;
+          checkOfferDetailsFilled();
+        },
+        onSaved: (String value) {
+          insertOffer.startDateTime = startPickedDate;
+          checkOfferDetailsFilled();
+        },
+      );
+
+      final endDateField = TextFormField(
+        obscureText: false,
+        //minLines: 1,
+        style: textInputTextStyle,
+        controller: _endDateController,
+        decoration: CommonStyle.textFieldStyle(
+            labelTextStr: "End Date", hintTextStr: ""),
+        validator: (value) {
+          if (isStartDate && isEndDate) {
+            if (startPickedDate.isBefore(endPickedDate)) {
+              return null;
+            } else
+              return "End Date should be after Start Date";
+          } else
+            return null;
+        },
+        onTap: () {
+          setState(() {
+            endPickDate(context);
+          });
+        },
+        maxLength: null,
+        maxLines: 1,
+        onChanged: (String value) {
+          insertOffer.endDateTime = endPickedDate;
+          checkOfferDetailsFilled();
+        },
+        onSaved: (String value) {
+          insertOffer.endDateTime = endPickedDate;
+          checkOfferDetailsFilled();
         },
       );
 
@@ -2738,6 +2947,108 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
                                   paytmPhone,
                                 ],
                               ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      SizedBox(
+                        height: 7,
+                      ),
+                      Container(
+                        decoration: BoxDecoration(
+                            border: Border.all(color: containerColor),
+                            color: Colors.grey[50],
+                            shape: BoxShape.rectangle,
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(5.0))),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            Column(
+                              children: <Widget>[
+                                Container(
+                                  //padding: EdgeInsets.only(left: 5),
+                                  decoration: darkContainer,
+                                  child: Theme(
+                                    data: ThemeData(
+                                      unselectedWidgetColor: Colors.white,
+                                      accentColor: Colors.grey[50],
+                                    ),
+                                    child: CustomExpansionTile(
+                                      //key: PageStorageKey(this.widget.headerTitle),
+                                      initiallyExpanded: false,
+                                      title: Row(
+                                        children: <Widget>[
+                                          Text(
+                                            "Offer Details",
+                                            style: TextStyle(
+                                                color: Colors.white,
+                                                fontSize: 15),
+                                          ),
+                                          SizedBox(
+                                              width: MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                  0.5),
+                                          InkWell(
+                                            child: Text(
+                                              "Clear",
+                                              style:
+                                                  offerClearTextStyleWithUnderLine,
+                                            ),
+                                            onTap: () {
+                                              setState(() {
+                                                clearOfferDetail();
+                                              });
+                                            },
+                                          ),
+                                          // RaisedButton.icon(
+                                          //   onPressed: clearOfferDetail,
+                                          //   icon: Icon(Icons.clear_sharp,
+                                          //       size: 15.0),
+                                          //   label: Text("Clear"),
+                                          // )
+                                        ],
+                                      ),
+                                      backgroundColor: Colors.blueGrey[500],
+
+                                      children: <Widget>[
+                                        new Container(
+                                          width: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                              .94,
+                                          decoration: darkContainer,
+                                          padding: EdgeInsets.all(2.0),
+                                          child: Row(
+                                            children: <Widget>[
+                                              Expanded(
+                                                child: Text(offerInfoStr,
+                                                    style: buttonXSmlTextStyle),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                                Container(
+                                  padding: EdgeInsets.only(left: 5.0, right: 5),
+                                  child: Column(
+                                    children: <Widget>[
+                                      messageField,
+                                      couponField,
+                                      Row(
+                                        children: <Widget>[
+                                          Expanded(child: startDateField),
+                                          Expanded(child: endDateField),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
                             ),
                           ],
                         ),
