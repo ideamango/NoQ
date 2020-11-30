@@ -1056,19 +1056,7 @@ class _SearchEntityPageState extends State<SearchEntityPage>
                                 GestureDetector(
                                   onTap: () {
                                     print("Container clicked");
-                                    //DONT DELETE - Right now commented: If entity has child then fetch them from server show in next screen
-                                    // if (str.childEntities.length != 0) {
-                                    //   Navigator.push(
-                                    //       context,
-                                    //       MaterialPageRoute(
-                                    //           builder: (context) => SearchChildEntityPage(
-                                    //                 pageName: "Search",
-                                    //                 childList: str.childEntities,
-                                    //                 parentName: str.name,
-                                    //                 parentId: str.entityId,
-                                    //               )));
-                                    // }
-                                    //DONT DELETE - End
+
                                     showDialogForPlaceDetails(
                                         str.getMetaEntity(), context);
                                   },
