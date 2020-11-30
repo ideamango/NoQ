@@ -123,6 +123,8 @@ String addressInfoStr =
 String locationInfoStr = 'Current location details.';
 String paymentInfoStr = 'Payments details.';
 
+String offerInfoStr = 'Offer details.';
+
 String missingInfoStr = "Some fields are either empty or have invalid details.";
 String missingInfoSubStr =
     "Please verify all the information provided and try again.";
