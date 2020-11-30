@@ -816,8 +816,8 @@ class _UserAccountPageState extends State<UserAccountPage> {
                                       ),
                                     ),
                                   if (_upcomingBkgStatus == 'NoBookings')
-                                    _emptyStorePage("No bookings yet.. ",
-                                        "Book now to save time later!! "),
+                                    _emptyStorePage(
+                                        "No bookings yet.. ", bookNowMsg),
                                   if (_upcomingBkgStatus == 'Loading')
                                     showCircularProgress(),
                                 ],
@@ -870,7 +870,7 @@ class _UserAccountPageState extends State<UserAccountPage> {
                                         ),
                                       if (_pastBkgStatus == 'NoBookings')
                                         _emptyStorePage("No bookings in past..",
-                                            "Book now to save time later!! "),
+                                            bookNowMsg),
                                       if (_pastBkgStatus == 'Loading')
                                         showCircularProgress(),
                                     ],

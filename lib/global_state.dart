@@ -96,6 +96,10 @@ class GlobalState {
     return _currentUser;
   }
 
+  static Future<String> getCountry() async {
+    return "IN";
+  }
+
   Future<Tuple<Entity, bool>> getEntity(String id,
       [bool fetchFromServer = true]) async {
     if (_entities.containsKey(id)) {

@@ -306,26 +306,13 @@ class _UserHomePageState extends State<UserHomePage> {
                                   itemCount: 1,
                                 ),
                               if (_upcomingBkgStatus == 'NoBookings')
-                                _emptyStorePage("No bookings yet.. ",
-                                    "Book now to save time later!! "),
+                                _emptyStorePage(
+                                    "No bookings yet.. ", bookNowMsg),
                             ],
                           ),
                         ),
                       ),
-                      if (_state?.getCurrentUser()?.ph == '+919999999999')
-                        Container(
-                          height: 30,
-                          width: 60,
-                          child: RaisedButton(
-                            color: btnColor,
-                            onPressed: () {
-                              print("testing");
-                              DBTest().dbCall();
-                              print("testing updated");
-                            },
-                            child: Text("Run test"),
-                          ),
-                        ),
+
                       verticalSpacer,
                       // Card(
                       //   margin: EdgeInsets.zero,
@@ -381,6 +368,20 @@ class _UserHomePageState extends State<UserHomePage> {
                           ),
                         ],
                       ),
+                      if (_state?.getCurrentUser()?.ph == '+919999999999')
+                        Container(
+                          height: 30,
+                          width: 60,
+                          child: RaisedButton(
+                            color: btnColor,
+                            onPressed: () {
+                              print("testing");
+                              DBTest().dbCall();
+                              print("testing updated");
+                            },
+                            child: Text("Run test"),
+                          ),
+                        ),
                     ],
                   ),
                 ),
