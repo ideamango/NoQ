@@ -50,6 +50,7 @@ class _SearchEntityPageState extends State<SearchEntityPage>
   bool fetchFromServer = false;
   PersistentBottomSheetController bottomSheetController;
   PersistentBottomSheetController contactUsSheetController;
+  PersistentBottomSheetController placeDetailsSheetController;
   bool showFab = true;
   String categoryType;
   Widget _msgOnboard;
@@ -80,7 +81,7 @@ class _SearchEntityPageState extends State<SearchEntityPage>
   AnimationController controller;
   Animation<Offset> offset;
   double fontSize;
-
+  bool isLoading = false;
   Widget _buildCategoryItem(BuildContext context, int index) {
     String name = searchTypes[index];
     Widget image = Utils.getEntityTypeImage(name, 30);
@@ -341,6 +342,72 @@ class _SearchEntityPageState extends State<SearchEntityPage>
         ),
       ),
     );
+  }
+
+  showPlaceDetailsSheet(Entity str) {
+    placeDetailsSheetController = key.currentState.showBottomSheet<Null>(
+      (context) => Container(
+        color: Colors.cyan[50],
+        height: MediaQuery.of(context).size.height * .87,
+        child: Column(
+          children: <Widget>[
+            Container(
+              color: Colors.cyan[200],
+              child: Row(
+                children: <Widget>[
+                  Container(
+                    padding: EdgeInsets.all(0),
+                    width: MediaQuery.of(context).size.width * .1,
+                    height: MediaQuery.of(context).size.width * .1,
+                    child: IconButton(
+                        padding: EdgeInsets.all(0),
+                        icon: Icon(
+                          Icons.cancel,
+                          color: headerBarColor,
+                        ),
+                        onPressed: () {
+                          placeDetailsSheetController.close();
+                          placeDetailsSheetController = null;
+                          // Navigator.of(context).pop();
+                        }),
+                  ),
+                  Container(
+                      alignment: Alignment.center,
+                      width: MediaQuery.of(context).size.width * .8,
+                      child: Text(
+                        str.name,
+                        style: TextStyle(
+                            color: Colors.blueGrey[800],
+                            fontFamily: 'RalewayRegular',
+                            fontSize: 19.0),
+                      )),
+                ],
+              ),
+            ),
+            Divider(
+              height: 1,
+              color: primaryDarkColor,
+            ),
+            Expanded(
+              child: PlaceDetailsPage(entity: str),
+            ),
+          ],
+        ),
+      ),
+      elevation: 30,
+      clipBehavior: Clip.hardEdge,
+      shape: RoundedRectangleBorder(
+          side: BorderSide(color: Colors.blueGrey[200]),
+          borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(20.0), topRight: Radius.circular(20.0))),
+    );
+    showFoatingActionButton(false);
+    placeDetailsSheetController.closed.then((value) {
+      showFoatingActionButton(true);
+    });
+
+    print(isLoading);
+    // });
   }
 
   showContactUsSheet() {
@@ -817,29 +884,43 @@ class _SearchEntityPageState extends State<SearchEntityPage>
                       style: TextStyle(color: Colors.white, fontSize: 16),
                       overflow: TextOverflow.ellipsis,
                     )),
-                body: Column(
+                body: Stack(
                   children: <Widget>[
-                    filterBar,
-                    (_isSearching == "done")
-                        ? ((_stores.length == 0)
-                            ? _emptySearchPage()
-                            : Expanded(child: _listSearchResults()))
-                        //Else could be one when isSearching is 'searching', show circular progress.
-                        : Center(
-                            child: Container(
-                              height: MediaQuery.of(context).size.height * .35,
-                              alignment: Alignment.bottomCenter,
-                              child: SingleChildScrollView(
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: <Widget>[
-                                    showCircularProgress(),
-                                  ],
+                    Column(
+                      children: <Widget>[
+                        filterBar,
+                        (_isSearching == "done")
+                            ? ((_stores.length == 0)
+                                ? _emptySearchPage()
+                                : Expanded(child: _listSearchResults()))
+                            //Else could be one when isSearching is 'searching', show circular progress.
+                            : Center(
+                                child: Container(
+                                  height:
+                                      MediaQuery.of(context).size.height * .35,
+                                  alignment: Alignment.bottomCenter,
+                                  child: SingleChildScrollView(
+                                    child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: <Widget>[
+                                        showCircularProgress(),
+                                      ],
+                                    ),
+                                  ),
                                 ),
                               ),
-                            ),
-                          ),
+                      ],
+                    ),
+                    // isLoading
+                    //     ? Container(
+                    //         color: Colors.black.withOpacity(0.5),
+                    //         child: Center(
+                    //           child: CircularProgressIndicator(),
+                    //         ),
+                    //       )
+                    //     : Container()
                   ],
                 ),
                 // drawer: CustomDrawer(),
@@ -990,6 +1071,10 @@ class _SearchEntityPageState extends State<SearchEntityPage>
       contactUsSheetController.close();
       contactUsSheetController = null;
       return false;
+    } else if (placeDetailsSheetController != null) {
+      placeDetailsSheetController.close();
+      placeDetailsSheetController = null;
+      return false;
     } else {
       //Navigator.of(context).pop();
       Navigator.push(
@@ -1056,9 +1141,14 @@ class _SearchEntityPageState extends State<SearchEntityPage>
                                 GestureDetector(
                                   onTap: () {
                                     print("Container clicked");
-
-                                    showDialogForPlaceDetails(
-                                        str.getMetaEntity(), context);
+                                    showPlaceDetailsSheet(str);
+                                    // Navigator.push(
+                                    //     context,
+                                    //     MaterialPageRoute(
+                                    //         builder: (context) =>
+                                    //             PlaceDetailsPage()));
+                                    // showDialogForPlaceDetails(
+                                    //     null, str, context);
                                   },
                                   child: Container(
                                     padding: EdgeInsets.zero,
@@ -1476,7 +1566,7 @@ class _SearchEntityPageState extends State<SearchEntityPage>
                                 context,
                                 MaterialPageRoute(
                                     builder: (context) => SearchChildEntityPage(
-                                        pageName: "Search",
+                                        pageName: "ChildSearch",
                                         childList: str.childEntities,
                                         parentName: str.name)));
                           },
@@ -1918,5 +2008,63 @@ class _SearchEntityPageState extends State<SearchEntityPage>
         //     }),
       ],
     );
+  }
+}
+
+class PlaceDetailsPage extends StatefulWidget {
+  final Entity entity;
+  PlaceDetailsPage({Key key, @required this.entity}) : super(key: key);
+  @override
+  _PlaceDetailsPageState createState() => _PlaceDetailsPageState();
+}
+
+class _PlaceDetailsPageState extends State<PlaceDetailsPage> {
+  Entity entity;
+  @override
+  Widget build(BuildContext context) {
+    entity = widget.entity;
+    return Container(
+        padding: EdgeInsets.all(10),
+        height: MediaQuery.of(context).size.height * .7,
+        width: MediaQuery.of(context).size.width,
+        child: Column(
+          children: [
+            Card(
+              child: Container(
+                  height: MediaQuery.of(context).size.height * .08,
+                  width: MediaQuery.of(context).size.width,
+                  alignment: Alignment.center,
+                  child: (Text("Description"))),
+            ),
+            Card(
+              child: Container(
+                  height: MediaQuery.of(context).size.height * .08,
+                  width: MediaQuery.of(context).size.width,
+                  alignment: Alignment.center,
+                  child: (Text("Safety Practises we follow"))),
+            ),
+            Card(
+              child: Container(
+                  height: MediaQuery.of(context).size.height * .08,
+                  width: MediaQuery.of(context).size.width,
+                  alignment: Alignment.center,
+                  child: (Text("Timings , Map"))),
+            ),
+            Card(
+              child: Container(
+                  height: MediaQuery.of(context).size.height * .08,
+                  width: MediaQuery.of(context).size.width,
+                  alignment: Alignment.center,
+                  child: (Text("Offers"))),
+            ),
+            Card(
+              child: Container(
+                  height: MediaQuery.of(context).size.height * .08,
+                  width: MediaQuery.of(context).size.width,
+                  alignment: Alignment.center,
+                  child: (Text("Contact details"))),
+            ),
+          ],
+        ));
   }
 }

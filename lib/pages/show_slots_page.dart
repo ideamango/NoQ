@@ -164,14 +164,14 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
             childList: parentEntity.childEntities,
             parentId: parentEntity.entityId,
           );
-        if (widget.forPage == 'FavSearch') backRoute = FavsListPage();
-        if (widget.forPage == 'FavChild')
+        if (widget.forPage == 'FavsSearch')
           backRoute = SearchChildEntityPage(
-            pageName: "Favs",
+            pageName: "FavsSearch",
             parentName: parentEntity.name,
             childList: parentEntity.childEntities,
             parentId: parentEntity.entityId,
           );
+        if (widget.forPage == 'FavsList') backRoute = FavsListPage();
 
         return MaterialApp(
           theme: ThemeData.light().copyWith(),

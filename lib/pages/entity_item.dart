@@ -53,10 +53,14 @@ class EntityRowState extends State<EntityRow> {
   Widget build(BuildContext context) {
     showServiceForm() {
       _state.getEntity(_metaEntity.entityId).then((value) {
-        entity = value.item1;
+        entity = value?.item1;
         if (entity == null) {
-          Utils.showMyFlushbar(context, Icons.info, Duration(seconds: 2),
-              "Couldnt fetch details of this entity. Try again later.", "");
+          Utils.showMyFlushbar(
+              context,
+              Icons.info,
+              Duration(seconds: 4),
+              "Oops! Couldn't fetch details of this entity now. Please try again later.",
+              "");
         } else {
           Navigator.push(
               context,

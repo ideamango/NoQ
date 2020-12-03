@@ -208,7 +208,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
                             // Navigator.pop(context);
                             Navigator.pushReplacementNamed(
                                 context, subItem['pageRoute']);
-                            Navigator.pop(context);
+                            // Navigator.pop(context);
                           },
                         );
                       },

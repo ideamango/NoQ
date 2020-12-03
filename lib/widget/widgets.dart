@@ -2,6 +2,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:noq/db/db_model/entity.dart';
 import 'package:noq/db/db_model/meta_entity.dart';
+import 'package:noq/global_state.dart';
 import 'package:noq/style.dart';
 
 Divider myDivider = new Divider(
@@ -20,7 +21,17 @@ Divider myLightDivider = new Divider(
 SizedBox verticalSpacer = new SizedBox(height: 10);
 SizedBox horizontalSpacer = new SizedBox(width: 10);
 
-showDialogForPlaceDetails(MetaEntity str, BuildContext context) {
+showDialogForPlaceDetails(
+    MetaEntity metaEntity, Entity entity, BuildContext context) {
+  GlobalState state;
+//Fetch Entity
+  if (entity == null) {
+    GlobalState.getGlobalState().then((value) {
+      state = value;
+      state.getEntity(metaEntity.entityId);
+    });
+  }
+
   showDialog(
       barrierDismissible: true,
       context: context,
@@ -52,7 +63,7 @@ showDialogForPlaceDetails(MetaEntity str, BuildContext context) {
                       width: MediaQuery.of(context).size.width * .6,
                       alignment: Alignment.center,
                       child: Text(
-                        str.name,
+                        entity.name,
                         textAlign: TextAlign.center,
                         style: TextStyle(
                             color: Colors.blueGrey[800],
@@ -75,7 +86,7 @@ showDialogForPlaceDetails(MetaEntity str, BuildContext context) {
                   Container(
                       padding: EdgeInsets.all(8),
                       child: Text(
-                        "Welcome to ${str.name}.",
+                        "Welcome to ${entity.name}.",
                         textAlign: TextAlign.center,
                         style: TextStyle(
                             color: Colors.blueGrey[800],
@@ -117,7 +128,7 @@ showDialogForPlaceDetails(MetaEntity str, BuildContext context) {
                         children: <TextSpan>[
                           TextSpan(text: 'Timings - '),
                           TextSpan(
-                            text: '${str.startTimeHour}',
+                            text: '${entity.startTimeHour}',
                           ),
                         ],
                       ),
