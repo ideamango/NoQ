@@ -222,7 +222,7 @@ class _ManageEntityListPageState extends State<ManageEntityListPage> {
                     child: Container(
                       padding: EdgeInsets.all(5),
                       decoration: BoxDecoration(
-                          border: Border.all(color: borderColor),
+                          border: Border.all(color: highlightColor),
                           color: Colors.white,
                           shape: BoxShape.rectangle,
                           borderRadius: BorderRadius.all(Radius.circular(5.0))),

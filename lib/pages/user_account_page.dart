@@ -650,7 +650,7 @@ class _UserAccountPageState extends State<UserAccountPage> {
                         //  mainAxisSize: MainAxisSize.max,
                         // mainAxisAlignment: MainAxisAlignment.start,
                         children: <Widget>[
-                          verticalSpacer,
+                          //verticalSpacer,
                           Card(
                             margin: EdgeInsets.zero,
                             elevation: 20,

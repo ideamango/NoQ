@@ -21,12 +21,15 @@ import 'package:noq/style.dart';
 import 'package:noq/utils.dart';
 import 'package:noq/widget/appbar.dart';
 import 'package:noq/widget/bottom_nav_bar.dart';
+import 'package:noq/widget/page_animation.dart';
 import 'package:noq/widget/widgets.dart';
 import 'package:share/share.dart';
 
 import '../userHomePage.dart';
 import 'package:eventify/eventify.dart' as Eventify;
 import 'package:auto_size_text/auto_size_text.dart';
+
+import 'place_details_page.dart';
 
 class SearchEntityPage extends StatefulWidget {
   //final String forPage;
@@ -585,14 +588,15 @@ class _SearchEntityPageState extends State<SearchEntityPage>
       Widget searchInputText = Container(
         width: MediaQuery.of(context).size.width * .95,
         height: MediaQuery.of(context).size.width * .12,
+        margin: EdgeInsets.only(top: 8),
         decoration: new BoxDecoration(
           shape: BoxShape.rectangle,
           color: Colors.white,
           // color: Colors.white,
           borderRadius: BorderRadius.all(Radius.circular(5.0)),
           border: new Border.all(
-            color: Colors.blueGrey[400],
-            width: 0.5,
+            color: highlightColor,
+            width: 1,
           ),
         ),
         alignment: Alignment.center,
@@ -690,7 +694,7 @@ class _SearchEntityPageState extends State<SearchEntityPage>
       Widget searchResultText = Container(
         width: MediaQuery.of(context).size.width * .85,
         //height: MediaQuery.of(context).size.height * .03,
-        padding: EdgeInsets.all(0),
+        padding: EdgeInsets.only(bottom: 3),
         child: RichText(
             overflow: TextOverflow.visible,
             maxLines: 2,
@@ -739,7 +743,8 @@ class _SearchEntityPageState extends State<SearchEntityPage>
           children: <Widget>[
             // categoryDropDown,
             searchInputText,
-            verticalSpacer,
+            SizedBox(height: 12),
+
             Container(
               width: MediaQuery.of(context).size.width * .95,
               child: Row(
@@ -1556,19 +1561,15 @@ class _SearchEntityPageState extends State<SearchEntityPage>
                           padding: EdgeInsets.all(0),
                           color: Colors.white,
                           splashColor: highlightColor.withOpacity(.8),
-                          // shape: RoundedRectangleBorder(
-                          //     side: BorderSide(
-                          //         color: Colors.blueGrey[200]),
-                          //     borderRadius: BorderRadius.all(
-                          //         Radius.circular(2.0))),
                           onPressed: () {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => SearchChildEntityPage(
-                                        pageName: "ChildSearch",
-                                        childList: str.childEntities,
-                                        parentName: str.name)));
+                            dynamic route = SearchChildEntityPage(
+                                pageName: "Search",
+                                childList: str.childEntities,
+                                parentName: str.name);
+                            Navigator.of(context)
+                                .push(PageAnimation.createRoute(route));
+                            // Navigator.push(context,
+                            //     MaterialPageRoute(builder: (context) => route));
                           },
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
@@ -1583,16 +1584,6 @@ class _SearchEntityPageState extends State<SearchEntityPage>
                                   // color: Colors.white38,
                                 ),
                               ),
-                              // Container(
-                              //   transform: Matrix4.translationValues(
-                              //       5.0, 0, 0),
-                              //   child: Icon(
-                              //     Icons.arrow_forward_ios,
-                              //     color: Colors.cyan[600],
-                              //     size: 10,
-                              //     // color: Colors.white70,
-                              //   ),
-                              // ),
                               Container(
                                 padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
                                 transform:
@@ -2008,63 +1999,5 @@ class _SearchEntityPageState extends State<SearchEntityPage>
         //     }),
       ],
     );
-  }
-}
-
-class PlaceDetailsPage extends StatefulWidget {
-  final Entity entity;
-  PlaceDetailsPage({Key key, @required this.entity}) : super(key: key);
-  @override
-  _PlaceDetailsPageState createState() => _PlaceDetailsPageState();
-}
-
-class _PlaceDetailsPageState extends State<PlaceDetailsPage> {
-  Entity entity;
-  @override
-  Widget build(BuildContext context) {
-    entity = widget.entity;
-    return Container(
-        padding: EdgeInsets.all(10),
-        height: MediaQuery.of(context).size.height * .7,
-        width: MediaQuery.of(context).size.width,
-        child: Column(
-          children: [
-            Card(
-              child: Container(
-                  height: MediaQuery.of(context).size.height * .08,
-                  width: MediaQuery.of(context).size.width,
-                  alignment: Alignment.center,
-                  child: (Text("Description"))),
-            ),
-            Card(
-              child: Container(
-                  height: MediaQuery.of(context).size.height * .08,
-                  width: MediaQuery.of(context).size.width,
-                  alignment: Alignment.center,
-                  child: (Text("Safety Practises we follow"))),
-            ),
-            Card(
-              child: Container(
-                  height: MediaQuery.of(context).size.height * .08,
-                  width: MediaQuery.of(context).size.width,
-                  alignment: Alignment.center,
-                  child: (Text("Timings , Map"))),
-            ),
-            Card(
-              child: Container(
-                  height: MediaQuery.of(context).size.height * .08,
-                  width: MediaQuery.of(context).size.width,
-                  alignment: Alignment.center,
-                  child: (Text("Offers"))),
-            ),
-            Card(
-              child: Container(
-                  height: MediaQuery.of(context).size.height * .08,
-                  width: MediaQuery.of(context).size.width,
-                  alignment: Alignment.center,
-                  child: (Text("Contact details"))),
-            ),
-          ],
-        ));
   }
 }

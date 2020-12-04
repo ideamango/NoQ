@@ -10,6 +10,7 @@ import 'package:noq/db/db_model/meta_entity.dart';
 import 'package:noq/db/db_model/user_token.dart';
 import 'package:noq/db/db_service/entity_service.dart';
 import 'package:noq/global_state.dart';
+import 'package:noq/pages/place_details_page.dart';
 import 'package:noq/pages/search_child_entity_page.dart';
 
 import 'package:noq/pages/show_slots_page.dart';
@@ -839,6 +840,7 @@ class _FavsListPageState extends State<FavsListPage> {
   }
 
   void showSlots(MetaEntity store, DateTime dateTime) {
+    //Check INTERNET connection first.
     Navigator.push(
         context,
         MaterialPageRoute(
@@ -982,89 +984,5 @@ class _FavsListPageState extends State<FavsListPage> {
 
   List<Widget> showFavourites() {
     return _stores.map(_buildItem).toList();
-  }
-}
-
-class PlaceDetailsPage extends StatefulWidget {
-  final Entity entity;
-  PlaceDetailsPage({Key key, @required this.entity}) : super(key: key);
-  @override
-  _PlaceDetailsPageState createState() => _PlaceDetailsPageState();
-}
-
-class _PlaceDetailsPageState extends State<PlaceDetailsPage> {
-  Entity entity;
-  bool initCompleted = false;
-
-  @override
-  void initState() {
-    super.initState();
-    GlobalState.getGlobalState().whenComplete(() {
-      //I am here,
-      setState(() {
-        initCompleted = true;
-      });
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    entity = widget.entity;
-    if (initCompleted)
-      return Container(
-          padding: EdgeInsets.all(10),
-          height: MediaQuery.of(context).size.height * .7,
-          width: MediaQuery.of(context).size.width,
-          child: Column(
-            children: [
-              Card(
-                child: Container(
-                    height: MediaQuery.of(context).size.height * .08,
-                    width: MediaQuery.of(context).size.width,
-                    alignment: Alignment.center,
-                    child: (Text("Description"))),
-              ),
-              Card(
-                child: Container(
-                    height: MediaQuery.of(context).size.height * .08,
-                    width: MediaQuery.of(context).size.width,
-                    alignment: Alignment.center,
-                    child: (Text("Safety Practises we follow"))),
-              ),
-              Card(
-                child: Container(
-                    height: MediaQuery.of(context).size.height * .08,
-                    width: MediaQuery.of(context).size.width,
-                    alignment: Alignment.center,
-                    child: (Text("Timings , Map"))),
-              ),
-              Card(
-                child: Container(
-                    height: MediaQuery.of(context).size.height * .08,
-                    width: MediaQuery.of(context).size.width,
-                    alignment: Alignment.center,
-                    child: (Text("Offers"))),
-              ),
-              Card(
-                child: Container(
-                    height: MediaQuery.of(context).size.height * .08,
-                    width: MediaQuery.of(context).size.width,
-                    alignment: Alignment.center,
-                    child: (Text("Contact details"))),
-              ),
-            ],
-          ));
-    else {
-      return Container(
-        margin: EdgeInsets.fromLTRB(10, MediaQuery.of(context).size.width * .5,
-            10, MediaQuery.of(context).size.width * .5),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            showCircularProgress(),
-          ],
-        ),
-      );
-    }
   }
 }
