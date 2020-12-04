@@ -4,6 +4,7 @@ import 'package:noq/services/auth_service.dart';
 import 'package:noq/style.dart';
 import 'package:noq/userHomePage.dart';
 import 'package:noq/utils.dart';
+import 'package:noq/widget/page_animation.dart';
 import 'package:noq/widget/widgets.dart';
 
 class CustomAppBar extends StatefulWidget implements PreferredSizeWidget {
@@ -233,8 +234,8 @@ class _CustomAppBarWithBackButtonState
           color: Colors.white,
           onPressed: () {
             Navigator.of(context).pop();
-            Navigator.push(context,
-                MaterialPageRoute(builder: (context) => widget.backRoute));
+            Navigator.of(context)
+                .push(PageAnimation.createRoute(widget.backRoute));
           }),
 
       actions: <Widget>[

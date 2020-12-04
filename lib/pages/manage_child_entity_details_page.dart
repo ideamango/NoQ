@@ -31,6 +31,7 @@ import 'package:noq/style.dart';
 import 'package:noq/utils.dart';
 import 'package:noq/widget/bottom_nav_bar.dart';
 import 'package:noq/widget/custom_expansion_tile.dart';
+import 'package:noq/widget/page_animation.dart';
 import 'package:noq/widget/weekday_selector.dart';
 import 'package:flutter/foundation.dart';
 import 'package:geolocator/geolocator.dart';
@@ -704,11 +705,8 @@ class _ManageChildEntityDetailsPageState
           .putEntity(serviceEntity, true, serviceEntity.parentId)
           .then((value) {
         if (value) {
-          Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) =>
-                      ManageChildEntityListPage(entity: this.serviceEntity)));
+          Navigator.of(context).push(PageAnimation.createRoute(
+              ManageChildEntityListPage(entity: this.serviceEntity)));
         }
       });
     } else {

@@ -18,6 +18,7 @@ import 'package:noq/widget/appbar.dart';
 import 'package:noq/widget/bottom_nav_bar.dart';
 import 'package:noq/widget/carousel_items.dart';
 import 'package:noq/widget/header.dart';
+import 'package:noq/widget/page_animation.dart';
 import 'package:noq/widget/widgets.dart';
 import 'package:share/share.dart';
 import 'package:package_info/package_info.dart';
@@ -160,12 +161,9 @@ class _UserAccountPageState extends State<UserAccountPage> {
   }
 
   void showShoppingList(UserToken booking) {
-    Navigator.push(
-        context,
-        MaterialPageRoute(
-            builder: (context) => ShoppingList(
-                  token: booking,
-                )));
+    Navigator.of(context).push(PageNoAnimation.createRoute(ShoppingList(
+      token: booking,
+    )));
   }
 
   Widget _emptyStorePage(String msg1, String msg2) {
@@ -911,8 +909,8 @@ class _UserAccountPageState extends State<UserAccountPage> {
             ),
           ),
           onWillPop: () async {
-            Navigator.push(context,
-                MaterialPageRoute(builder: (context) => UserHomePage()));
+            Navigator.of(context)
+                .push(PageAnimation.createRoute(UserHomePage()));
             return false;
           },
         ),

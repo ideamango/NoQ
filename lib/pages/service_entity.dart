@@ -9,6 +9,7 @@ import 'package:noq/services/qr_code_generate.dart';
 import 'package:noq/style.dart';
 import 'package:flutter/foundation.dart';
 import 'package:noq/utils.dart';
+import 'package:noq/widget/page_animation.dart';
 import 'package:noq/widget/widgets.dart';
 import 'package:share/share.dart';
 
@@ -69,11 +70,8 @@ class ChildEntityRowState extends State<ChildEntityRow> {
       //TODO Sumant - use state for entity get, put
       _state.getEntity(_metaEntity.entityId).then((value) {
         Navigator.of(context).pop();
-        Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) =>
-                    ManageChildEntityDetailsPage(childEntity: value.item1)));
+        Navigator.of(context).push(PageAnimation.createRoute(
+            ManageChildEntityDetailsPage(childEntity: value.item1)));
       });
     }
 
@@ -113,12 +111,8 @@ class ChildEntityRowState extends State<ChildEntityRow> {
           Utils.showMyFlushbar(context, Icons.info, Duration(seconds: 4),
               missingInfoForShareStr, missingInfoForShareSubStr);
         } else
-          Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => GenerateScreen(
-                      entityId: _metaEntity.entityId,
-                      entityName: _metaEntity.name)));
+          Navigator.of(context).push(PageAnimation.createRoute(GenerateScreen(
+              entityId: _metaEntity.entityId, entityName: _metaEntity.name)));
       });
     }
 

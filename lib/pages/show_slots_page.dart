@@ -42,6 +42,7 @@ class ShowSlotsPage extends StatefulWidget {
 
 class _ShowSlotsPageState extends State<ShowSlotsPage> {
   bool _initCompleted = false;
+  String errMsg;
   String _storeId;
   String _token;
   String _errorMessage;
@@ -91,6 +92,23 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
 
         _initCompleted = true;
       });
+    }).catchError((onError) {
+      switch (onError.code) {
+        case 'unavailable':
+          setState(() {
+            _initCompleted = true;
+            errMsg = "No Internet Connection. Please check and try again.";
+          });
+          break;
+
+        default:
+          setState(() {
+            _initCompleted = true;
+            errMsg =
+                'Oops, something went wrong. Check your internet connection and try again.';
+          });
+          break;
+      }
     });
   }
 
@@ -99,7 +117,7 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
     _gStateInitFinished = true;
   }
 
-  Widget _noSlotsPage() {
+  Widget _noSlotsPage(String msg) {
     return MaterialApp(
       theme: ThemeData.light().copyWith(),
       home: WillPopScope(
@@ -114,7 +132,7 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
               child: Center(
                   child: Container(
             margin: EdgeInsets.fromLTRB(10, 10, 10, 10),
-            child: Text(allSlotsBookedForDate),
+            child: (msg != null) ? Text(msg) : Text(allSlotsBookedForDate),
           ))),
           // bottomNavigationBar: CustomBottomBar(
           //   barIndex: 3,
@@ -137,7 +155,7 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
   Widget build(BuildContext context) {
     if (_initCompleted) {
       if (Utils.isNullOrEmpty(_slotList))
-        return _noSlotsPage();
+        return _noSlotsPage(errMsg);
       else {
         Widget pageHeader = Text(
           _storeName,

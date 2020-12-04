@@ -25,6 +25,7 @@ import 'package:noq/style.dart';
 import 'package:noq/utils.dart';
 import 'package:noq/widget/bottom_nav_bar.dart';
 import 'package:noq/widget/custom_expansion_tile.dart';
+import 'package:noq/widget/page_animation.dart';
 import 'package:noq/widget/weekday_selector.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
@@ -1987,13 +1988,8 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
       }
 
       backRoute() {
-        // saveFormDetails();
-        // upsertEntity(entity).then((value) {
-        //   if (value) {
-        Navigator.push(context,
-            MaterialPageRoute(builder: (context) => ManageEntityListPage()));
-        //                }
-        // });
+        Navigator.of(context)
+            .push(PageAnimation.createRoute(ManageEntityListPage()));
       }
 
       processSaveWithTimer() async {
@@ -3697,11 +3693,9 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
                                                     _gState.removeEntity(
                                                         entity.entityId);
                                                     Navigator.pop(context);
-                                                    Navigator.push(
-                                                        context,
-                                                        MaterialPageRoute(
-                                                            builder: (context) =>
-                                                                ManageEntityListPage()));
+                                                    Navigator.of(context).push(
+                                                        PageAnimation.createRoute(
+                                                            ManageEntityListPage()));
                                                   });
                                                 } else {
                                                   setState(() {

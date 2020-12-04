@@ -11,6 +11,7 @@ import 'package:noq/pages/terms_of_use.dart';
 import 'package:noq/pages/user_account_page.dart';
 import 'package:noq/style.dart';
 import 'package:intl/intl.dart';
+import 'package:noq/widget/page_animation.dart';
 
 class CustomDrawer extends StatefulWidget {
   final String phone;
@@ -206,8 +207,9 @@ class _CustomDrawerState extends State<CustomDrawer> {
                           onTap: () {
                             //_pageController.jumpToPage(pageIndex);
                             // Navigator.pop(context);
-                            Navigator.pushReplacementNamed(
-                                context, subItem['pageRoute']);
+                            Navigator.of(context).push(
+                                PageNoAnimation.createRoute(
+                                    subItem['pageRoute']));
                             // Navigator.pop(context);
                           },
                         );
@@ -234,10 +236,8 @@ class _CustomDrawerState extends State<CustomDrawer> {
                   onTap: () {
                     // _pageController.jumpToPage(index);
                     //Navigator.pop(context);
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => item['pageRoute']));
+                    Navigator.of(context)
+                        .push(PageNoAnimation.createRoute(item['pageRoute']));
                   },
                 );
               }

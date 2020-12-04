@@ -22,6 +22,7 @@ import 'package:noq/style.dart';
 import 'package:noq/utils.dart';
 import 'package:noq/widget/appbar.dart';
 import 'package:noq/widget/bottom_nav_bar.dart';
+import 'package:noq/widget/page_animation.dart';
 import 'package:noq/widget/widgets.dart';
 import 'package:share/share.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -233,8 +234,7 @@ class _FavsListPageState extends State<FavsListPage> {
       return false;
     } else {
       //Navigator.of(context).pop();
-      Navigator.push(
-          context, MaterialPageRoute(builder: (context) => UserHomePage()));
+      Navigator.of(context).push(PageAnimation.createRoute(UserHomePage()));
       return false;
     }
   }
@@ -286,10 +286,8 @@ class _FavsListPageState extends State<FavsListPage> {
                     color: Colors.white,
                     onPressed: () {
                       //  Navigator.of(context).pop();
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => UserHomePage()));
+                      Navigator.of(context)
+                          .push(PageAnimation.createRoute(UserHomePage()));
                     }),
                 title: Text(
                   title,
@@ -324,8 +322,8 @@ class _FavsListPageState extends State<FavsListPage> {
             // drawer: CustomDrawer(),
           ),
           onWillPop: () async {
-            Navigator.push(context,
-                MaterialPageRoute(builder: (context) => UserHomePage()));
+            Navigator.of(context)
+                .push(PageAnimation.createRoute(UserHomePage()));
             return false;
           },
         ),
@@ -775,27 +773,23 @@ class _FavsListPageState extends State<FavsListPage> {
                               onPressed: () {
                                 //Load child page.
 
-                                _state.getEntity(str.entityId).then((value) => {
-                                      if (value != null)
-                                        Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                                builder: (context) =>
-                                                    SearchChildEntityPage(
-                                                        pageName: "FavsSearch",
-                                                        childList: value.item1
-                                                            .childEntities,
-                                                        parentName: str.name)))
-                                      else
-                                        {
-                                          Utils.showMyFlushbar(
-                                              context,
-                                              Icons.info,
-                                              Duration(seconds: 4),
-                                              "Oops! Could not load the details of this place",
-                                              "Please try again later.")
-                                        }
-                                    });
+                                _state.getEntity(str.entityId).then((value) {
+                                  if (value != null) {
+                                    dynamic route = SearchChildEntityPage(
+                                        pageName: "FavsSearch",
+                                        childList: value.item1.childEntities,
+                                        parentName: str.name);
+                                    Navigator.of(context)
+                                        .push(PageAnimation.createRoute(route));
+                                  } else {
+                                    Utils.showMyFlushbar(
+                                        context,
+                                        Icons.info,
+                                        Duration(seconds: 4),
+                                        "Oops! Could not load the details of this place",
+                                        "Please try again later.");
+                                  }
+                                });
                               },
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
@@ -841,14 +835,12 @@ class _FavsListPageState extends State<FavsListPage> {
 
   void showSlots(MetaEntity store, DateTime dateTime) {
     //Check INTERNET connection first.
-    Navigator.push(
-        context,
-        MaterialPageRoute(
-            builder: (context) => ShowSlotsPage(
-                  entity: store,
-                  dateTime: dateTime,
-                  forPage: 'FavsList',
-                )));
+
+    Navigator.of(context).push(PageAnimation.createRoute(ShowSlotsPage(
+      entity: store,
+      dateTime: dateTime,
+      forPage: 'FavsList',
+    )));
   }
 
   List<Widget> _buildDateGridItems(MetaEntity store, String sid, String sname,
