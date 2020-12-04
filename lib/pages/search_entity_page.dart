@@ -21,12 +21,15 @@ import 'package:noq/style.dart';
 import 'package:noq/utils.dart';
 import 'package:noq/widget/appbar.dart';
 import 'package:noq/widget/bottom_nav_bar.dart';
+import 'package:noq/widget/page_animation.dart';
 import 'package:noq/widget/widgets.dart';
 import 'package:share/share.dart';
 
 import '../userHomePage.dart';
 import 'package:eventify/eventify.dart' as Eventify;
 import 'package:auto_size_text/auto_size_text.dart';
+
+import 'place_details_page.dart';
 
 class SearchEntityPage extends StatefulWidget {
   //final String forPage;
@@ -50,6 +53,7 @@ class _SearchEntityPageState extends State<SearchEntityPage>
   bool fetchFromServer = false;
   PersistentBottomSheetController bottomSheetController;
   PersistentBottomSheetController contactUsSheetController;
+  PersistentBottomSheetController placeDetailsSheetController;
   bool showFab = true;
   String categoryType;
   Widget _msgOnboard;
@@ -80,7 +84,7 @@ class _SearchEntityPageState extends State<SearchEntityPage>
   AnimationController controller;
   Animation<Offset> offset;
   double fontSize;
-
+  bool isLoading = false;
   Widget _buildCategoryItem(BuildContext context, int index) {
     String name = searchTypes[index];
     Widget image = Utils.getEntityTypeImage(name, 30);
@@ -343,6 +347,72 @@ class _SearchEntityPageState extends State<SearchEntityPage>
     );
   }
 
+  showPlaceDetailsSheet(Entity str) {
+    placeDetailsSheetController = key.currentState.showBottomSheet<Null>(
+      (context) => Container(
+        color: Colors.cyan[50],
+        height: MediaQuery.of(context).size.height * .87,
+        child: Column(
+          children: <Widget>[
+            Container(
+              color: Colors.cyan[200],
+              child: Row(
+                children: <Widget>[
+                  Container(
+                    padding: EdgeInsets.all(0),
+                    width: MediaQuery.of(context).size.width * .1,
+                    height: MediaQuery.of(context).size.width * .1,
+                    child: IconButton(
+                        padding: EdgeInsets.all(0),
+                        icon: Icon(
+                          Icons.cancel,
+                          color: headerBarColor,
+                        ),
+                        onPressed: () {
+                          placeDetailsSheetController.close();
+                          placeDetailsSheetController = null;
+                          // Navigator.of(context).pop();
+                        }),
+                  ),
+                  Container(
+                      alignment: Alignment.center,
+                      width: MediaQuery.of(context).size.width * .8,
+                      child: Text(
+                        str.name,
+                        style: TextStyle(
+                            color: Colors.blueGrey[800],
+                            fontFamily: 'RalewayRegular',
+                            fontSize: 19.0),
+                      )),
+                ],
+              ),
+            ),
+            Divider(
+              height: 1,
+              color: primaryDarkColor,
+            ),
+            Expanded(
+              child: PlaceDetailsPage(entity: str),
+            ),
+          ],
+        ),
+      ),
+      elevation: 30,
+      clipBehavior: Clip.hardEdge,
+      shape: RoundedRectangleBorder(
+          side: BorderSide(color: Colors.blueGrey[200]),
+          borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(20.0), topRight: Radius.circular(20.0))),
+    );
+    showFoatingActionButton(false);
+    placeDetailsSheetController.closed.then((value) {
+      showFoatingActionButton(true);
+    });
+
+    print(isLoading);
+    // });
+  }
+
   showContactUsSheet() {
     contactUsSheetController = key.currentState.showBottomSheet<Null>(
       (context) => Container(
@@ -518,14 +588,15 @@ class _SearchEntityPageState extends State<SearchEntityPage>
       Widget searchInputText = Container(
         width: MediaQuery.of(context).size.width * .95,
         height: MediaQuery.of(context).size.width * .12,
+        margin: EdgeInsets.only(top: 8),
         decoration: new BoxDecoration(
           shape: BoxShape.rectangle,
           color: Colors.white,
           // color: Colors.white,
           borderRadius: BorderRadius.all(Radius.circular(5.0)),
           border: new Border.all(
-            color: Colors.blueGrey[400],
-            width: 0.5,
+            color: highlightColor,
+            width: 1,
           ),
         ),
         alignment: Alignment.center,
@@ -623,7 +694,7 @@ class _SearchEntityPageState extends State<SearchEntityPage>
       Widget searchResultText = Container(
         width: MediaQuery.of(context).size.width * .85,
         //height: MediaQuery.of(context).size.height * .03,
-        padding: EdgeInsets.all(0),
+        padding: EdgeInsets.only(bottom: 3),
         child: RichText(
             overflow: TextOverflow.visible,
             maxLines: 2,
@@ -672,7 +743,8 @@ class _SearchEntityPageState extends State<SearchEntityPage>
           children: <Widget>[
             // categoryDropDown,
             searchInputText,
-            verticalSpacer,
+            SizedBox(height: 12),
+
             Container(
               width: MediaQuery.of(context).size.width * .95,
               child: Row(
@@ -817,29 +889,43 @@ class _SearchEntityPageState extends State<SearchEntityPage>
                       style: TextStyle(color: Colors.white, fontSize: 16),
                       overflow: TextOverflow.ellipsis,
                     )),
-                body: Column(
+                body: Stack(
                   children: <Widget>[
-                    filterBar,
-                    (_isSearching == "done")
-                        ? ((_stores.length == 0)
-                            ? _emptySearchPage()
-                            : Expanded(child: _listSearchResults()))
-                        //Else could be one when isSearching is 'searching', show circular progress.
-                        : Center(
-                            child: Container(
-                              height: MediaQuery.of(context).size.height * .35,
-                              alignment: Alignment.bottomCenter,
-                              child: SingleChildScrollView(
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: <Widget>[
-                                    showCircularProgress(),
-                                  ],
+                    Column(
+                      children: <Widget>[
+                        filterBar,
+                        (_isSearching == "done")
+                            ? ((_stores.length == 0)
+                                ? _emptySearchPage()
+                                : Expanded(child: _listSearchResults()))
+                            //Else could be one when isSearching is 'searching', show circular progress.
+                            : Center(
+                                child: Container(
+                                  height:
+                                      MediaQuery.of(context).size.height * .35,
+                                  alignment: Alignment.bottomCenter,
+                                  child: SingleChildScrollView(
+                                    child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: <Widget>[
+                                        showCircularProgress(),
+                                      ],
+                                    ),
+                                  ),
                                 ),
                               ),
-                            ),
-                          ),
+                      ],
+                    ),
+                    // isLoading
+                    //     ? Container(
+                    //         color: Colors.black.withOpacity(0.5),
+                    //         child: Center(
+                    //           child: CircularProgressIndicator(),
+                    //         ),
+                    //       )
+                    //     : Container()
                   ],
                 ),
                 // drawer: CustomDrawer(),
@@ -990,6 +1076,10 @@ class _SearchEntityPageState extends State<SearchEntityPage>
       contactUsSheetController.close();
       contactUsSheetController = null;
       return false;
+    } else if (placeDetailsSheetController != null) {
+      placeDetailsSheetController.close();
+      placeDetailsSheetController = null;
+      return false;
     } else {
       //Navigator.of(context).pop();
       Navigator.push(
@@ -1056,21 +1146,14 @@ class _SearchEntityPageState extends State<SearchEntityPage>
                                 GestureDetector(
                                   onTap: () {
                                     print("Container clicked");
-                                    //DONT DELETE - Right now commented: If entity has child then fetch them from server show in next screen
-                                    // if (str.childEntities.length != 0) {
-                                    //   Navigator.push(
-                                    //       context,
-                                    //       MaterialPageRoute(
-                                    //           builder: (context) => SearchChildEntityPage(
-                                    //                 pageName: "Search",
-                                    //                 childList: str.childEntities,
-                                    //                 parentName: str.name,
-                                    //                 parentId: str.entityId,
-                                    //               )));
-                                    // }
-                                    //DONT DELETE - End
-                                    showDialogForPlaceDetails(
-                                        str.getMetaEntity(), context);
+                                    showPlaceDetailsSheet(str);
+                                    // Navigator.push(
+                                    //     context,
+                                    //     MaterialPageRoute(
+                                    //         builder: (context) =>
+                                    //             PlaceDetailsPage()));
+                                    // showDialogForPlaceDetails(
+                                    //     null, str, context);
                                   },
                                   child: Container(
                                     padding: EdgeInsets.zero,
@@ -1478,19 +1561,15 @@ class _SearchEntityPageState extends State<SearchEntityPage>
                           padding: EdgeInsets.all(0),
                           color: Colors.white,
                           splashColor: highlightColor.withOpacity(.8),
-                          // shape: RoundedRectangleBorder(
-                          //     side: BorderSide(
-                          //         color: Colors.blueGrey[200]),
-                          //     borderRadius: BorderRadius.all(
-                          //         Radius.circular(2.0))),
                           onPressed: () {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => SearchChildEntityPage(
-                                        pageName: "Search",
-                                        childList: str.childEntities,
-                                        parentName: str.name)));
+                            dynamic route = SearchChildEntityPage(
+                                pageName: "Search",
+                                childList: str.childEntities,
+                                parentName: str.name);
+                            Navigator.of(context)
+                                .push(PageAnimation.createRoute(route));
+                            // Navigator.push(context,
+                            //     MaterialPageRoute(builder: (context) => route));
                           },
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
@@ -1505,16 +1584,6 @@ class _SearchEntityPageState extends State<SearchEntityPage>
                                   // color: Colors.white38,
                                 ),
                               ),
-                              // Container(
-                              //   transform: Matrix4.translationValues(
-                              //       5.0, 0, 0),
-                              //   child: Icon(
-                              //     Icons.arrow_forward_ios,
-                              //     color: Colors.cyan[600],
-                              //     size: 10,
-                              //     // color: Colors.white70,
-                              //   ),
-                              // ),
                               Container(
                                 padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
                                 transform:

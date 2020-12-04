@@ -5,6 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:noq/db/db_model/address.dart';
+import 'package:noq/enum/EntityTypes.dart';
 import 'package:noq/global_state.dart';
 import 'package:noq/pages/favs_list_page.dart';
 import 'package:noq/services/auth_service.dart';
@@ -339,13 +340,30 @@ class Utils {
   static Entity createEntity(String entityType, [String parentId]) {
     var uuid = new Uuid();
     String entityId = uuid.v1();
+    var isPublic = true;
+    var isBookable = true;
+    if (entityType == EntityTypes.Mall) {
+      //is Public and Not bookable
+      isPublic = true;
+      isBookable = false;
+    } else if (entityType == EntityTypes.Apartment ||
+        entityType == EntityTypes.School ||
+        entityType == EntityTypes.Office) {
+      // is Private and Not bookable
+      isPublic = false;
+      isBookable = false;
+    } else {
+      // is public and bookable
+      isPublic = true;
+      isBookable = true;
+    }
 
     Entity entity = new Entity(
         entityId: entityId,
         name: null,
         address: null,
         advanceDays: null,
-        isPublic: false,
+        isPublic: isPublic,
         //geo: geoPoint,
         maxAllowed: null,
         slotDuration: null,
@@ -360,9 +378,10 @@ class Utils {
         endTimeMinute: null,
         parentId: parentId,
         type: entityType,
-        isBookable: false,
+        isBookable: isBookable,
         isActive: false,
-        coordinates: null);
+        coordinates: null,
+        offer: null);
 
     return entity;
   }

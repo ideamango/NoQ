@@ -4,6 +4,7 @@ import 'package:noq/pages/favs_list_page.dart';
 import 'package:noq/pages/user_account_page.dart';
 import 'package:noq/style.dart';
 import 'package:noq/userHomePage.dart';
+import 'package:noq/widget/page_animation.dart';
 
 class CustomBottomBar extends StatefulWidget {
   final int barIndex;
@@ -64,32 +65,32 @@ class _CustomBottomBarState extends State<CustomBottomBar> {
       switch (index) {
         case 0:
           {
-            Navigator.push(context,
-                MaterialPageRoute(builder: (context) => UserHomePage()));
+            Navigator.of(context)
+                .push(PageNoAnimation.createRoute(UserHomePage()));
           }
           break;
         case 1:
           {
             // Navigator.push(context,
             //  MaterialPageRoute(builder: (context) => UserHomePage()));
-            Navigator.push(context,
-                MaterialPageRoute(builder: (context) => SearchEntityPage()));
+            Navigator.of(context)
+                .push(PageNoAnimation.createRoute(SearchEntityPage()));
           }
           break;
         case 2:
           {
             //  Navigator.push(context,
             //   MaterialPageRoute(builder: (context) => UserHomePage()));
-            Navigator.push(context,
-                MaterialPageRoute(builder: (context) => FavsListPage()));
+            Navigator.of(context)
+                .push(PageNoAnimation.createRoute(FavsListPage()));
           }
           break;
         case 3:
           {
             // Navigator.push(context,
             //   MaterialPageRoute(builder: (context) => UserHomePage()));
-            Navigator.push(context,
-                MaterialPageRoute(builder: (context) => UserAccountPage()));
+            Navigator.of(context)
+                .push(PageNoAnimation.createRoute(UserAccountPage()));
           }
           break;
 

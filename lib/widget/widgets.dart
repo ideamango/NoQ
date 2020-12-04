@@ -1,6 +1,8 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:noq/db/db_model/entity.dart';
 import 'package:noq/db/db_model/meta_entity.dart';
+import 'package:noq/global_state.dart';
 import 'package:noq/style.dart';
 
 Divider myDivider = new Divider(
@@ -19,7 +21,17 @@ Divider myLightDivider = new Divider(
 SizedBox verticalSpacer = new SizedBox(height: 10);
 SizedBox horizontalSpacer = new SizedBox(width: 10);
 
-showDialogForPlaceDetails(MetaEntity str, BuildContext context) {
+showDialogForPlaceDetails(
+    MetaEntity metaEntity, Entity entity, BuildContext context) {
+  GlobalState state;
+//Fetch Entity
+  if (entity == null) {
+    GlobalState.getGlobalState().then((value) {
+      state = value;
+      state.getEntity(metaEntity.entityId);
+    });
+  }
+
   showDialog(
       barrierDismissible: true,
       context: context,
@@ -51,7 +63,7 @@ showDialogForPlaceDetails(MetaEntity str, BuildContext context) {
                       width: MediaQuery.of(context).size.width * .6,
                       alignment: Alignment.center,
                       child: Text(
-                        str.name,
+                        entity.name,
                         textAlign: TextAlign.center,
                         style: TextStyle(
                             color: Colors.blueGrey[800],
@@ -74,7 +86,7 @@ showDialogForPlaceDetails(MetaEntity str, BuildContext context) {
                   Container(
                       padding: EdgeInsets.all(8),
                       child: Text(
-                        "Welcome to the world of ${str.name}.",
+                        "Welcome to ${entity.name}.",
                         textAlign: TextAlign.center,
                         style: TextStyle(
                             color: Colors.blueGrey[800],
@@ -85,44 +97,68 @@ showDialogForPlaceDetails(MetaEntity str, BuildContext context) {
                     height: MediaQuery.of(context).size.height * .2,
                     margin: EdgeInsets.zero,
                     padding: EdgeInsets.all(5),
-                    child: Image(image: AssetImage('assets/6.jpg')),
+                    child: RichText(
+                      text: TextSpan(
+                        style: subHeadingTextStyle,
+                        children: <TextSpan>[
+                          TextSpan(text: 'Description - '),
+                          // TextSpan(
+                          //   text: 'Terms of Use',
+                          //   style: new TextStyle(
+                          //       color: Colors.cyan[400],
+                          //       //decoration: TextDecoration.underline,
+                          //       decorationColor: primaryDarkColor),
+                          //   recognizer: new TapGestureRecognizer()
+                          //     ..onTap = () {
+                          //       Navigator.pop(context);
+                          //     },
+                          // ),
+                        ],
+                      ),
+                    ),
                   ),
-                  verticalSpacer,
-                  Container(
-                      padding: EdgeInsets.symmetric(horizontal: 8),
-                      child: Text(
-                        "Welcome to the world of ${str.name}.",
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                            color: Colors.blueGrey[800],
-                            fontFamily: 'RalewayRegular',
-                            fontSize: 14.0),
-                      )),
                   verticalSpacer,
                   Container(
                     height: MediaQuery.of(context).size.height * .2,
                     margin: EdgeInsets.zero,
                     padding: EdgeInsets.all(5),
-                    child: Image(image: AssetImage('assets/regain.jpg')),
+                    child: RichText(
+                      text: TextSpan(
+                        style: subHeadingTextStyle,
+                        children: <TextSpan>[
+                          TextSpan(text: 'Timings - '),
+                          TextSpan(
+                            text: '${entity.startTimeHour}',
+                          ),
+                        ],
+                      ),
+                    ),
                   ),
                   verticalSpacer,
-                  Container(
-                      padding: EdgeInsets.symmetric(horizontal: 8),
-                      child: Text(
-                        "Welcome to the world of ${str.name}.",
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                            color: Colors.blueGrey[800],
-                            fontFamily: 'RalewayRegular',
-                            fontSize: 14.0),
-                      )),
-                  verticalSpacer,
-                  Container(
-                    height: MediaQuery.of(context).size.height * .2,
-                    margin: EdgeInsets.zero,
-                    padding: EdgeInsets.all(5),
-                    child: Image(image: AssetImage('assets/1.jpg')),
-                  ),
+                  // Container(
+                  //   height: MediaQuery.of(context).size.height * .2,
+                  //   margin: EdgeInsets.zero,
+                  //   padding: EdgeInsets.all(5),
+                  //   child: Image(image: AssetImage('assets/regain.jpg')),
+                  // ),
+                  // verticalSpacer,
+                  // Container(
+                  //     padding: EdgeInsets.symmetric(horizontal: 8),
+                  //     child: Text(
+                  //       "Welcome to the world of ${str.name}.",
+                  //       textAlign: TextAlign.center,
+                  //       style: TextStyle(
+                  //           color: Colors.blueGrey[800],
+                  //           fontFamily: 'RalewayRegular',
+                  //           fontSize: 14.0),
+                  //     )),
+                  // verticalSpacer,
+                  // Container(
+                  //   height: MediaQuery.of(context).size.height * .2,
+                  //   margin: EdgeInsets.zero,
+                  //   padding: EdgeInsets.all(5),
+                  //   child: Image(image: AssetImage('assets/1.jpg')),
+                  // ),
                 ],
               ),
             ),

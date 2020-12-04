@@ -11,6 +11,7 @@ import 'package:noq/style.dart';
 import 'package:flutter/foundation.dart';
 import 'package:noq/pages/manage_child_entity_list_page.dart';
 import 'package:noq/utils.dart';
+import 'package:noq/widget/page_animation.dart';
 import 'package:noq/widget/widgets.dart';
 import 'package:share/share.dart';
 
@@ -53,16 +54,17 @@ class EntityRowState extends State<EntityRow> {
   Widget build(BuildContext context) {
     showServiceForm() {
       _state.getEntity(_metaEntity.entityId).then((value) {
-        entity = value.item1;
+        entity = value?.item1;
         if (entity == null) {
-          Utils.showMyFlushbar(context, Icons.info, Duration(seconds: 2),
-              "Couldnt fetch details of this entity. Try again later.", "");
-        } else {
-          Navigator.push(
+          Utils.showMyFlushbar(
               context,
-              MaterialPageRoute(
-                  builder: (context) =>
-                      ManageEntityDetailsPage(entity: entity)));
+              Icons.info,
+              Duration(seconds: 4),
+              "Oops! Couldn't fetch details of this entity now. Please try again later.",
+              "");
+        } else {
+          Navigator.of(context).push(PageAnimation.createRoute(
+              ManageEntityDetailsPage(entity: entity)));
         }
       });
     }
@@ -83,11 +85,8 @@ class EntityRowState extends State<EntityRow> {
         }
 
         if (isSavedOnServer) {
-          Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) =>
-                      ManageChildEntityListPage(entity: ent)));
+          Navigator.of(context).push(PageAnimation.createRoute(
+              ManageChildEntityListPage(entity: ent)));
         } else {
           //No entity created yet.. show msg to create entity first.
 
@@ -142,12 +141,8 @@ class EntityRowState extends State<EntityRow> {
               "Important details are missing in entity, Please fill those first.",
               "Save Entity and then Share!!");
         } else
-          Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => GenerateScreen(
-                      entityId: _metaEntity.entityId,
-                      entityName: _metaEntity.name)));
+          Navigator.of(context).push(PageAnimation.createRoute(GenerateScreen(
+              entityId: _metaEntity.entityId, entityName: _metaEntity.name)));
       });
     }
 

@@ -4,6 +4,7 @@ import 'package:noq/constants.dart';
 import 'package:noq/login_page.dart';
 import 'package:noq/style.dart';
 import 'package:noq/userHomePage.dart';
+import 'package:noq/widget/page_animation.dart';
 
 class PrivacyPolicyPage extends StatefulWidget {
   @override
@@ -41,12 +42,12 @@ class _PrivacyPolicyPageState extends State<PrivacyPolicyPage> {
                 User value = FirebaseAuth.instance.currentUser;
                 if (value == null) {
                   print("No user");
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => LoginPage()));
+                  Navigator.of(context)
+                      .push(PageAnimation.createRoute(LoginPage()));
                 } else {
                   print("Go to dashboard");
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => UserHomePage()));
+                  Navigator.of(context)
+                      .push(PageAnimation.createRoute(UserHomePage()));
                 }
               },
             ),

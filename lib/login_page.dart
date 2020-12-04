@@ -11,6 +11,7 @@ import 'package:noq/pages/otpdialog.dart';
 import 'package:noq/pages/terms_of_use.dart';
 import 'package:noq/userHomePage.dart';
 import 'package:noq/utils.dart';
+import 'package:noq/widget/page_animation.dart';
 import 'package:noq/widget/widgets.dart';
 import 'package:pinput/pin_put/pin_put.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -233,11 +234,9 @@ class _LoginPageState extends State<LoginPage> {
                               color: Colors.transparent,
                               splashColor: highlightColor.withOpacity(.8),
                               onPressed: () {
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) =>
-                                            ExplorePageForUser()));
+                                Navigator.of(context).push(
+                                    PageAnimation.createRoute(
+                                        ExplorePageForUser()));
                               },
                               child: Text(
                                 "Business Owners",
@@ -264,11 +263,9 @@ class _LoginPageState extends State<LoginPage> {
                               color: Colors.transparent,
                               splashColor: highlightColor.withOpacity(.8),
                               onPressed: () {
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) =>
-                                            ExplorePageForUser()));
+                                Navigator.of(context).push(
+                                    PageAnimation.createRoute(
+                                        ExplorePageForUser()));
                               },
                               child: Text(
                                 "Users",

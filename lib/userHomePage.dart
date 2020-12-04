@@ -13,6 +13,8 @@ import 'package:noq/db/db_service/entity_service.dart';
 import 'package:noq/db/db_service/token_service.dart';
 import 'package:noq/db/db_service/user_service.dart';
 import 'package:noq/global_state.dart';
+import 'package:noq/pages/how_to_reg_for_business.dart';
+import 'package:noq/pages/how_to_reg_for_users.dart';
 import 'package:noq/pages/search_entity_page.dart';
 import 'package:noq/pages/db_test.dart';
 import 'package:noq/pages/shopping_list.dart';
@@ -29,6 +31,7 @@ import 'package:noq/widget/appbar.dart';
 import 'package:noq/widget/bottom_nav_bar.dart';
 import 'package:noq/widget/carousel_items.dart';
 import 'package:noq/widget/header.dart';
+import 'package:noq/widget/page_animation.dart';
 import 'package:noq/widget/widgets.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:barcode_scan/barcode_scan.dart';
@@ -334,6 +337,9 @@ class _UserHomePageState extends State<UserHomePage> {
                             onTap: () {
                               //User clicked on show how, lets show them.
                               print("Showing how to book time-slot");
+                              Navigator.of(context).push(
+                                  PageAnimation.createRoute(
+                                      HowToRegForBusiness()));
                             },
                             child: Container(
                               width: MediaQuery.of(context).size.width,
@@ -351,6 +357,9 @@ class _UserHomePageState extends State<UserHomePage> {
                             onTap: () {
                               //User clicked on show how, lets show them.
                               print("Showing how to book time-slot");
+                              Navigator.of(context).push(
+                                  PageAnimation.createRoute(
+                                      HowToRegForUsers()));
                             },
                             child: Container(
                               width: MediaQuery.of(context).size.width,

@@ -15,6 +15,7 @@ import 'package:noq/userHomePage.dart';
 import 'package:noq/utils.dart';
 import 'package:noq/widget/appbar.dart';
 import 'package:noq/widget/bottom_nav_bar.dart';
+import 'package:noq/widget/page_animation.dart';
 import 'package:uuid/uuid.dart';
 import 'package:noq/events/event_bus.dart';
 import 'package:noq/events/events.dart';
@@ -38,7 +39,7 @@ class _ManageChildEntityListPageState extends State<ManageChildEntityListPage> {
   ScrollController _childScrollController;
   final itemSize = 100.0;
   final String title = "Child Amenities Details Form";
- // Map<String, Entity> _entityMap = Map<String, Entity>();
+  // Map<String, Entity> _entityMap = Map<String, Entity>();
 
   Entity parentEntity;
   String _subEntityType;
@@ -162,7 +163,7 @@ class _ManageChildEntityListPageState extends State<ManageChildEntityListPage> {
     _state.putEntity(en, false, parentEntity.entityId);
     MetaEntity meta;
     setState(() {
-     // _entityMap[en.entityId] = en;
+      // _entityMap[en.entityId] = en;
       meta = en.getMetaEntity();
       servicesList.add(meta);
       _count = _count + 1;
@@ -286,8 +287,7 @@ class _ManageChildEntityListPageState extends State<ManageChildEntityListPage> {
                             return Container(
                               //  height: MediaQuery.of(context).size.height * .3,
                               child: ChildEntityRow(
-                                  childEntity: servicesList[index]
-                                ),
+                                  childEntity: servicesList[index]),
                             );
                           },
                           itemCount: servicesList.length,
@@ -307,10 +307,8 @@ class _ManageChildEntityListPageState extends State<ManageChildEntityListPage> {
               return false;
             } else {
               //Navigator.of(context).pop();
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => ManageEntityListPage()));
+              Navigator.of(context)
+                  .push(PageAnimation.createRoute(ManageEntityListPage()));
               return false;
             }
           },

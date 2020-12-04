@@ -12,6 +12,7 @@ import 'package:noq/style.dart';
 import 'package:noq/userHomePage.dart';
 import 'package:noq/utils.dart';
 import 'package:noq/widget/appbar.dart';
+import 'package:noq/widget/page_animation.dart';
 import 'package:noq/widget/widgets.dart';
 import 'package:uuid/uuid.dart';
 import 'package:eventify/eventify.dart' as Eventify;
@@ -104,6 +105,7 @@ class _ManageEntityListPageState extends State<ManageEntityListPage> {
   @override
   void initState() {
     _scrollController = ScrollController();
+
     super.initState();
     initialize().whenComplete(() {
       setState(() {
@@ -222,7 +224,7 @@ class _ManageEntityListPageState extends State<ManageEntityListPage> {
                     child: Container(
                       padding: EdgeInsets.all(5),
                       decoration: BoxDecoration(
-                          border: Border.all(color: borderColor),
+                          border: Border.all(color: highlightColor),
                           color: Colors.white,
                           shape: BoxShape.rectangle,
                           borderRadius: BorderRadius.all(Radius.circular(5.0))),
@@ -280,8 +282,8 @@ class _ManageEntityListPageState extends State<ManageEntityListPage> {
               return false;
             } else {
               //Navigator.of(context).pop();
-              Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => UserHomePage()));
+              Navigator.of(context)
+                  .push(PageAnimation.createRoute(UserHomePage()));
               return false;
             }
           },
