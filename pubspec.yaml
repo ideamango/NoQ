@@ -60,7 +60,7 @@ dependencies:
   flutter_local_notifications: ^2.0.1+1
   flutter_native_timezone: ^1.0.4
   app_review: ^2.0.1
-  permission_handler: ^5.0.1+1
+  # permission_handler: ^5.0.1+1
   auto_size_text: ^2.1.0
   video_player: ^1.0.1
 
