@@ -424,95 +424,96 @@ class _ManageChildEntityDetailsPageState
     return null;
   }
 
-  Future<void> showLocationAccessDialog() async {
-    bool returnVal = await showDialog(
-        barrierDismissible: false,
-        context: context,
-        builder: (_) => AlertDialog(
-              titlePadding: EdgeInsets.fromLTRB(5, 10, 0, 0),
-              contentPadding: EdgeInsets.all(0),
-              actionsPadding: EdgeInsets.all(0),
-              //buttonPadding: EdgeInsets.all(0),
-              title: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Text(
-                    locationPermissionMsg,
-                    style: TextStyle(
-                      fontSize: 15,
-                      color: Colors.blueGrey[600],
-                    ),
-                  ),
-                  verticalSpacer,
-                  Text(
-                    'Are you sure you make this Place Bookable?',
-                    style: TextStyle(
-                      fontSize: 15,
-                      color: Colors.blueGrey[600],
-                    ),
-                  ),
-                  verticalSpacer,
-                  // myDivider,
-                ],
-              ),
-              content: Divider(
-                color: Colors.blueGrey[400],
-                height: 1,
-                //indent: 40,
-                //endIndent: 30,
-              ),
+  // Future<void> showLocationAccessDialog() async {
+  //   bool returnVal = await showDialog(
+  //       barrierDismissible: false,
+  //       context: context,
+  //       builder: (_) => AlertDialog(
+  //             titlePadding: EdgeInsets.fromLTRB(5, 10, 0, 0),
+  //             contentPadding: EdgeInsets.all(0),
+  //             actionsPadding: EdgeInsets.all(0),
+  //             //buttonPadding: EdgeInsets.all(0),
+  //             title: Column(
+  //               crossAxisAlignment: CrossAxisAlignment.start,
+  //               children: <Widget>[
+  //                 Text(
+  //                   locationPermissionMsg,
+  //                   style: TextStyle(
+  //                     fontSize: 15,
+  //                     color: Colors.blueGrey[600],
+  //                   ),
+  //                 ),
+  //                 verticalSpacer,
+  //                 Text(
+  //                   'Are you sure you make this Place Bookable?',
+  //                   style: TextStyle(
+  //                     fontSize: 15,
+  //                     color: Colors.blueGrey[600],
+  //                   ),
+  //                 ),
+  //                 verticalSpacer,
+  //                 // myDivider,
+  //               ],
+  //             ),
+  //             content: Divider(
+  //               color: Colors.blueGrey[400],
+  //               height: 1,
+  //               //indent: 40,
+  //               //endIndent: 30,
+  //             ),
 
-              //content: Text('This is my content'),
-              actions: <Widget>[
-                SizedBox(
-                  height: 24,
-                  child: RaisedButton(
-                    elevation: 0,
-                    color: Colors.transparent,
-                    splashColor: highlightColor.withOpacity(.8),
-                    textColor: Colors.orange,
-                    shape: RoundedRectangleBorder(
-                        side: BorderSide(color: Colors.orange)),
-                    child: Text('Yes'),
-                    onPressed: () {
-                      Navigator.of(_).pop(true);
-                    },
-                  ),
-                ),
-                SizedBox(
-                  height: 24,
-                  child: RaisedButton(
-                    elevation: 20,
-                    autofocus: true,
-                    focusColor: highlightColor,
-                    splashColor: highlightColor,
-                    color: Colors.white,
-                    textColor: Colors.orange,
-                    shape: RoundedRectangleBorder(
-                        side: BorderSide(color: Colors.orange)),
-                    child: Text('No'),
-                    onPressed: () {
-                      Navigator.of(_).pop(false);
-                    },
-                  ),
-                ),
-              ],
-            ));
+  //             //content: Text('This is my content'),
+  //             actions: <Widget>[
+  //               SizedBox(
+  //                 height: 24,
+  //                 child: RaisedButton(
+  //                   elevation: 0,
+  //                   color: Colors.transparent,
+  //                   splashColor: highlightColor.withOpacity(.8),
+  //                   textColor: Colors.orange,
+  //                   shape: RoundedRectangleBorder(
+  //                       side: BorderSide(color: Colors.orange)),
+  //                   child: Text('Yes'),
+  //                   onPressed: () {
+  //                     Navigator.of(_).pop(true);
+  //                   },
+  //                 ),
+  //               ),
+  //               SizedBox(
+  //                 height: 24,
+  //                 child: RaisedButton(
+  //                   elevation: 20,
+  //                   autofocus: true,
+  //                   focusColor: highlightColor,
+  //                   splashColor: highlightColor,
+  //                   color: Colors.white,
+  //                   textColor: Colors.orange,
+  //                   shape: RoundedRectangleBorder(
+  //                       side: BorderSide(color: Colors.orange)),
+  //                   child: Text('No'),
+  //                   onPressed: () {
+  //                     Navigator.of(_).pop(false);
+  //                   },
+  //                 ),
+  //               ),
+  //             ],
+  //           ));
 
-    if (returnVal) {
-      print("in true, opening app settings");
-      Utils.openAppSettings();
-    } else {
-      print("nothing to do, user denied location access");
-      print(returnVal);
-    }
-  }
+  //   if (returnVal) {
+  //     print("in true, opening app settings");
+  //     Utils.openAppSettings();
+  //   } else {
+  //     print("nothing to do, user denied location access");
+  //     print(returnVal);
+  //   }
+  // }
 
   void useCurrLocation() {
     Position pos;
     Utils.getCurrLocation().then((value) {
       pos = value;
-      if (pos == null) showLocationAccessDialog();
+      if (pos == null)
+        Utils.showLocationAccessDialog(context, locationPermissionMsg);
       _getAddressFromLatLng(pos);
     });
   }

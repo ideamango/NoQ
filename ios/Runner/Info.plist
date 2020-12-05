@@ -15,7 +15,7 @@
 		<key>CFBundlePackageType</key>
 		<string>APPL</string>
 		<key>CFBundleShortVersionString</key>
-		<string>$(FLUTTER_BUILD_NAME)</string>
+		<string>$(MARKETING_VERSION)</string>
 		<key>CFBundleSignature</key>
 		<string>????</string>
 		<key>CFBundleURLTypes</key>
@@ -40,7 +40,7 @@
 			</dict>
 		</array>
 		<key>CFBundleVersion</key>
-		<string>$(FLUTTER_BUILD_NUMBER)</string>
+		<string>$(CURRENT_PROJECT_VERSION)</string>
 		<key>EnableBackgroundLocationUpdates</key>
 		<true />
 		<key>LSApplicationQueriesSchemes</key>
@@ -55,7 +55,7 @@
 		<true />
 		<key>NSCameraUsageDescription</key>
 		<string>This app needs permission to use Camera for QR code scanning.</string>
-		<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+		<key>NSLocationAlwaysUsageDescription</key>
 		<string>This app needs location turned on to work properly. We'll access your location only when we really need it.</string>
 		<key>NSLocationWhenInUseUsageDescription</key>
 		<string>This app needs location turned on to work properly. We'll access your location only when we really need it.</string>

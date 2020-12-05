@@ -1678,83 +1678,83 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
     return _stores.map(_buildItem).toList();
   }
 
-  Future<void> showLocationAccessDialog() async {
-    print("SHOW Dialog called");
-    bool returnVal = await showDialog(
-        barrierDismissible: false,
-        context: context,
-        builder: (_) => AlertDialog(
-              titlePadding: EdgeInsets.fromLTRB(5, 10, 0, 0),
-              contentPadding: EdgeInsets.all(0),
-              actionsPadding: EdgeInsets.all(0),
-              //buttonPadding: EdgeInsets.all(0),
-              title: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Text(
-                    locationPermissionMsg,
-                    style: TextStyle(
-                      fontSize: 15,
-                      color: Colors.blueGrey[600],
-                    ),
-                  ),
-                  verticalSpacer,
-                  // myDivider,
-                ],
-              ),
-              content: Divider(
-                color: Colors.blueGrey[400],
-                height: 1,
-                //indent: 40,
-                //endIndent: 30,
-              ),
+  // Future<void> showLocationAccessDialog() async {
+  //   print("SHOW Dialog called");
+  //   bool returnVal = await showDialog(
+  //       barrierDismissible: false,
+  //       context: context,
+  //       builder: (_) => AlertDialog(
+  //             titlePadding: EdgeInsets.fromLTRB(5, 10, 0, 0),
+  //             contentPadding: EdgeInsets.all(0),
+  //             actionsPadding: EdgeInsets.all(0),
+  //             //buttonPadding: EdgeInsets.all(0),
+  //             title: Column(
+  //               crossAxisAlignment: CrossAxisAlignment.start,
+  //               children: <Widget>[
+  //                 Text(
+  //                   locationPermissionMsg,
+  //                   style: TextStyle(
+  //                     fontSize: 15,
+  //                     color: Colors.blueGrey[600],
+  //                   ),
+  //                 ),
+  //                 verticalSpacer,
+  //                 // myDivider,
+  //               ],
+  //             ),
+  //             content: Divider(
+  //               color: Colors.blueGrey[400],
+  //               height: 1,
+  //               //indent: 40,
+  //               //endIndent: 30,
+  //             ),
 
-              //content: Text('This is my content'),
-              actions: <Widget>[
-                SizedBox(
-                  height: 24,
-                  child: RaisedButton(
-                    elevation: 5,
-                    focusColor: highlightColor,
-                    splashColor: highlightColor,
-                    color: Colors.white,
-                    textColor: Colors.orange,
-                    shape: RoundedRectangleBorder(
-                        side: BorderSide(color: Colors.orange)),
-                    child: Text('No'),
-                    onPressed: () {
-                      Navigator.of(_).pop(false);
-                    },
-                  ),
-                ),
-                SizedBox(
-                  height: 24,
-                  child: RaisedButton(
-                    elevation: 10,
-                    color: btnColor,
-                    splashColor: highlightColor.withOpacity(.8),
-                    textColor: Colors.white,
-                    shape: RoundedRectangleBorder(
-                        side: BorderSide(color: Colors.orange)),
-                    child: Text('Yes'),
-                    onPressed: () {
-                      Navigator.of(_).pop(true);
-                    },
-                  ),
-                ),
-              ],
-            ));
+  //             //content: Text('This is my content'),
+  //             actions: <Widget>[
+  //               SizedBox(
+  //                 height: 24,
+  //                 child: RaisedButton(
+  //                   elevation: 5,
+  //                   focusColor: highlightColor,
+  //                   splashColor: highlightColor,
+  //                   color: Colors.white,
+  //                   textColor: Colors.orange,
+  //                   shape: RoundedRectangleBorder(
+  //                       side: BorderSide(color: Colors.orange)),
+  //                   child: Text('No'),
+  //                   onPressed: () {
+  //                     Navigator.of(_).pop(false);
+  //                   },
+  //                 ),
+  //               ),
+  //               SizedBox(
+  //                 height: 24,
+  //                 child: RaisedButton(
+  //                   elevation: 10,
+  //                   color: btnColor,
+  //                   splashColor: highlightColor.withOpacity(.8),
+  //                   textColor: Colors.white,
+  //                   shape: RoundedRectangleBorder(
+  //                       side: BorderSide(color: Colors.orange)),
+  //                   child: Text('Yes'),
+  //                   onPressed: () {
+  //                     Navigator.of(_).pop(true);
+  //                   },
+  //                 ),
+  //               ),
+  //             ],
+  //           ));
 
-    if (returnVal) {
-      print("in true, opening app settings");
-      Utils.openAppSettings();
-    } else {
-      print("nothing to do, user denied location access");
-      Utils.showMyFlushbar(context, Icons.info, Duration(seconds: 3),
-          locationAccessDeniedStr, locationAccessDeniedSubStr);
-      print(returnVal);
-    }
-  }
+  //   if (returnVal) {
+  //     print("in true, opening app settings");
+  //     Utils.openAppSettings();
+  //   } else {
+  //     print("nothing to do, user denied location access");
+  //     Utils.showMyFlushbar(context, Icons.info, Duration(seconds: 3),
+  //         locationAccessDeniedStr, locationAccessDeniedSubStr);
+  //     print(returnVal);
+  //   }
+  // }
 
   // Future<List<Entity>> getSearchEntitiesList() async {
   //   double lat = 0;

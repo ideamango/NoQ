@@ -1,14 +1,7 @@
 import 'dart:async';
-import 'dart:io' show Platform;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:noq/constants.dart';
-import 'package:noq/db/db_model/entity.dart';
-import 'package:noq/db/db_service/entity_service.dart';
-import 'package:noq/global_state.dart';
-import 'package:noq/pages/favs_list_page.dart';
-import 'package:noq/repository/StoreRepository.dart';
-import 'package:permission_handler/permission_handler.dart';
 
 import 'package:noq/style.dart';
 
@@ -52,7 +45,7 @@ class QrCodeScanner {
       if (e.code == BarcodeScanner.cameraAccessDenied) {
         Utils.showMyFlushbar(context, Icons.info, Duration(seconds: 5),
             cameraAccess, openCameraAccessSetting);
-        openAppSettings();
+        Utils.showLocationAccessDialog(context, openCameraAccessSetting);
       } else {
         result.rawContent = 'Unknown error: $e';
       }
