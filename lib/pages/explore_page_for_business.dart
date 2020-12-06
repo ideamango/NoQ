@@ -43,7 +43,10 @@ class _ExplorePageForBusinessState extends State<ExplorePageForBusiness> {
                       width: MediaQuery.of(context).size.width * .92,
                       margin: EdgeInsets.zero,
                       padding: EdgeInsets.all(0),
-                      child: VideoPlayerApp(),
+                      child: VideoPlayerApp(
+                        videoNwLink:
+                            'https://firebasestorage.googleapis.com/v0/b/awesomenoq.appspot.com/o/business_info.mp4?alt=media&token=382d4df1-d167-4554-abf3-926257b095eb',
+                      ),
                     ),
                   ),
                   Card(

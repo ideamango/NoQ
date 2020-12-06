@@ -52,7 +52,10 @@ class _HowToRegForBusinessState extends State<HowToRegForBusiness> {
                       width: MediaQuery.of(context).size.width * .92,
                       margin: EdgeInsets.zero,
                       padding: EdgeInsets.all(0),
-                      child: VideoPlayerApp(),
+                      child: VideoPlayerApp(
+                        videoNwLink:
+                            'https://firebasestorage.googleapis.com/v0/b/awesomenoq.appspot.com/o/how_to_guide_business.mp4?alt=media&token=92785687-36a9-4548-987b-11b943e23685',
+                      ),
                     ),
                   ),
                   Container(

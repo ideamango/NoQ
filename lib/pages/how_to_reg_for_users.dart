@@ -51,7 +51,10 @@ class _HowToRegForUsersState extends State<HowToRegForUsers> {
                       width: MediaQuery.of(context).size.width * .92,
                       margin: EdgeInsets.zero,
                       padding: EdgeInsets.all(0),
-                      child: VideoPlayerApp(),
+                      child: VideoPlayerApp(
+                        videoNwLink:
+                            'https://firebasestorage.googleapis.com/v0/b/awesomenoq.appspot.com/o/how_to_guide_user.mp4?alt=media&token=53bf4d71-9163-40cc-9afb-40c7d45a56a5',
+                      ),
                     ),
                   ),
                   Container(

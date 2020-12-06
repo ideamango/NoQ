@@ -7,26 +7,20 @@ import 'package:noq/style.dart';
 
 import 'package:video_player/video_player.dart';
 
-class VideoPlayerApp extends StatelessWidget {
+class VideoPlayerApp extends StatefulWidget {
+  final String videoNwLink;
+  VideoPlayerApp({Key key, @required this.videoNwLink}) : super(key: key);
   @override
-  Widget build(BuildContext context) {
-    return Center(child: _ButterFlyAssetVideo());
-  }
+  _VideoPlayerAppState createState() => _VideoPlayerAppState();
 }
 
-class _ButterFlyAssetVideo extends StatefulWidget {
-  @override
-  _ButterFlyAssetVideoState createState() => _ButterFlyAssetVideoState();
-}
-
-class _ButterFlyAssetVideoState extends State<_ButterFlyAssetVideo> {
+class _VideoPlayerAppState extends State<VideoPlayerApp> {
   VideoPlayerController _controller;
 
   @override
   void initState() {
     super.initState();
-    _controller = VideoPlayerController.network(
-        'https://firebasestorage.googleapis.com/v0/b/awesomenoq.appspot.com/o/userInfo.mp4?alt=media&token=20b91719-c9a5-496b-9ad2-cb3b1268a29c');
+    _controller = VideoPlayerController.network(widget.videoNwLink);
 
     _controller.addListener(() {
       setState(() {});
