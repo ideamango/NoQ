@@ -620,6 +620,7 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
       isActive = (entity.isActive) ?? false;
 
       if (entity.offer != null) {
+        insertOffer = entity.offer;
         _offerMessageController.text =
             entity.offer.message != null ? entity.offer.message.toString() : "";
         _offerCouponController.text =
@@ -1441,21 +1442,35 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
       Future<Null> startPickDate(BuildContext context) async {
         DateTime date = await showDatePicker(
           context: context,
-          firstDate: DateTime(DateTime.now().day),
-          lastDate: DateTime(DateTime.now().year + 2),
-          initialDate: startPickedDate,
+          firstDate: DateTime.now(),
+          lastDate: DateTime(DateTime.now().year + 2, DateTime.now().month,
+              DateTime.now().day),
+          initialDate: insertOffer.startDateTime != null
+              ? insertOffer.startDateTime.isBefore(DateTime.now())
+                  ? DateTime.now()
+                  : insertOffer.startDateTime
+              : DateTime.now(),
+          builder: (BuildContext context, Widget child) {
+            return Theme(
+              data: ThemeData.dark().copyWith(
+                colorScheme: ColorScheme.light(
+                  primary: Colors.cyanAccent.shade700,
+                ),
+                dialogBackgroundColor: Colors.white,
+              ),
+              child: child,
+            );
+          },
         );
         if (date != null) {
           setState(() {
-            startPickedDate = date;
-            dateString = startPickedDate.day.toString() +
+            insertOffer.startDateTime = date;
+            dateString = date.day.toString() +
                 " / " +
-                startPickedDate.month.toString() +
+                date.month.toString() +
                 " / " +
-                startPickedDate.year.toString();
+                date.year.toString();
             _startDateController.text = dateString;
-            isStartDate = true;
-            // print(startPickedDate.toString());
           });
         }
       }
@@ -1463,21 +1478,41 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
       Future<Null> endPickDate(BuildContext context) async {
         DateTime date = await showDatePicker(
           context: context,
-          firstDate: DateTime(DateTime.now().day),
-          lastDate: DateTime(DateTime.now().year + 2),
-          initialDate: endPickedDate,
+          firstDate: insertOffer.startDateTime != null
+              ? insertOffer.startDateTime.isBefore(DateTime.now())
+                  ? DateTime.now()
+                  : insertOffer.startDateTime
+              : DateTime.now(),
+          lastDate: DateTime(DateTime.now().year + 2, DateTime.now().month,
+              DateTime.now().day),
+          initialDate: insertOffer.endDateTime != null
+              ? insertOffer.endDateTime.isBefore(DateTime.now())
+                  ? insertOffer.startDateTime.isBefore(DateTime.now())
+                      ? DateTime.now()
+                      : insertOffer.startDateTime
+                  : DateTime.now()
+              : DateTime.now(),
+          builder: (BuildContext context, Widget child) {
+            return Theme(
+              data: ThemeData.dark().copyWith(
+                colorScheme: ColorScheme.light(
+                  primary: Colors.cyanAccent.shade700,
+                ),
+                dialogBackgroundColor: Colors.white,
+              ),
+              child: child,
+            );
+          },
         );
         if (date != null) {
           setState(() {
-            endPickedDate = date;
-            dateString = endPickedDate.day.toString() +
+            insertOffer.endDateTime = date;
+            dateString = date.day.toString() +
                 " / " +
-                endPickedDate.month.toString() +
+                date.month.toString() +
                 " / " +
-                endPickedDate.year.toString();
+                date.year.toString();
             _endDateController.text = dateString;
-            isEndDate = true;
-            // print(endPickedDate.toString());
           });
         }
       }
@@ -1489,12 +1524,12 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
         controller: _startDateController,
         decoration: CommonStyle.textFieldStyle(
             labelTextStr: "Start Date", hintTextStr: ""),
-        // validator: (value) {
-        //   if (!validateField)
-        //     return validateText(value);
-        //   else
-        //     return null;
-        // },
+        validator: (value) {
+          if (!validateField)
+            return validateText(value);
+          else
+            return null;
+        },
         onTap: () {
           setState(() {
             startPickDate(context);
@@ -1503,11 +1538,9 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
         maxLength: null,
         maxLines: 1,
         onChanged: (String value) {
-          insertOffer.startDateTime = startPickedDate;
           checkOfferDetailsFilled();
         },
         onSaved: (String value) {
-          insertOffer.startDateTime = startPickedDate;
           checkOfferDetailsFilled();
         },
       );
@@ -1536,11 +1569,9 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
         maxLength: null,
         maxLines: 1,
         onChanged: (String value) {
-          insertOffer.endDateTime = endPickedDate;
           checkOfferDetailsFilled();
         },
         onSaved: (String value) {
-          insertOffer.endDateTime = endPickedDate;
           checkOfferDetailsFilled();
         },
       );
