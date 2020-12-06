@@ -43,7 +43,10 @@ class _ExplorePageForUserState extends State<ExplorePageForUser> {
                       width: MediaQuery.of(context).size.width * .92,
                       margin: EdgeInsets.zero,
                       padding: EdgeInsets.all(0),
-                      child: VideoPlayerApp(),
+                      child: VideoPlayerApp(
+                        videoNwLink:
+                            'https://firebasestorage.googleapis.com/v0/b/awesomenoq.appspot.com/o/user_info.mp4?alt=media&token=2836f21c-4217-4303-a41b-bb95d9899c12',
+                      ),
                     ),
                   ),
                   Card(
