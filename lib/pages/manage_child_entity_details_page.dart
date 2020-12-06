@@ -80,14 +80,9 @@ class _ManageChildEntityDetailsPageState
   bool _bookExpandClick = false;
   final String title = "Managers Form";
 
-  DateTime startPickedDate = DateTime.now();
-  DateTime endPickedDate = DateTime.now();
   String dateString = "Start Date";
-  bool isStartDate = false;
-  bool isEndDate = false;
-  bool isOfferMessage = false;
-  bool isOfferCoupon = false;
   Offer insertOffer = new Offer();
+  bool offerFieldStatus = false;
 
   bool validateField = false;
   TextEditingController _nameController = TextEditingController();
@@ -248,6 +243,31 @@ class _ManageChildEntityDetailsPageState
       if (isActive) {
         validateField = true;
         _autoValidate = true;
+      }
+
+      if (serviceEntity.offer != null) {
+        insertOffer = serviceEntity.offer;
+        _offerMessageController.text = serviceEntity.offer.message != null
+            ? serviceEntity.offer.message.toString()
+            : "";
+        _offerCouponController.text = serviceEntity.offer.coupon != null
+            ? serviceEntity.offer.coupon.toString()
+            : "";
+
+        _startDateController.text = serviceEntity.offer.startDateTime != null
+            ? serviceEntity.offer.startDateTime.day.toString() +
+                " / " +
+                serviceEntity.offer.startDateTime.month.toString() +
+                " / " +
+                serviceEntity.offer.startDateTime.year.toString()
+            : "";
+        _endDateController.text = serviceEntity.offer.endDateTime != null
+            ? serviceEntity.offer.endDateTime.day.toString() +
+                " / " +
+                serviceEntity.offer.endDateTime.month.toString() +
+                " / " +
+                serviceEntity.offer.endDateTime.year.toString()
+            : "";
       }
 
       _nameController.text = (serviceEntity.name);
@@ -1261,24 +1281,19 @@ class _ManageChildEntityDetailsPageState
     );
 
     checkOfferDetailsFilled() {
-      if (isOfferCoupon || isOfferMessage || isStartDate || isEndDate) {
-        insertOffer.message = isOfferMessage ? insertOffer.message : null;
-        insertOffer.coupon = isOfferCoupon ? insertOffer.coupon : null;
-        insertOffer.startDateTime =
-            isStartDate ? insertOffer.startDateTime : null;
-        insertOffer.endDateTime = isEndDate ? insertOffer.endDateTime : null;
+      if (insertOffer.message != null && insertOffer.message.isNotEmpty ||
+          insertOffer.coupon != null && insertOffer.coupon.isNotEmpty ||
+          insertOffer.startDateTime != null ||
+          insertOffer.endDateTime != null) {
         serviceEntity.offer = insertOffer;
       } else
         serviceEntity.offer = null;
     }
 
     clearOfferDetail() {
-      isOfferCoupon = false;
-      isOfferMessage = false;
-      isStartDate = false;
-      isEndDate = false;
-      insertOffer = null;
+      insertOffer = new Offer();
       serviceEntity.offer = null;
+      offerFieldStatus = false;
       _offerCouponController.text = "";
       _offerMessageController.text = "";
       _startDateController.text = "";
@@ -1294,22 +1309,25 @@ class _ManageChildEntityDetailsPageState
         labelTextStr: "Offer Message",
       ),
       validator: (value) {
-        if (!validateField)
-          return validateText(value);
-        else
+        if (offerFieldStatus) {
+          if (value == null || value == "") {
+            return 'Field is empty';
+          } else
+            return null;
+        } else
           return null;
       },
       keyboardType: TextInputType.multiline,
       maxLength: null,
       maxLines: 1,
       onChanged: (String value) {
-        isOfferMessage = true;
         insertOffer.message = value;
+        offerFieldStatus = true;
         checkOfferDetailsFilled();
       },
       onSaved: (String value) {
-        isOfferMessage = true;
         insertOffer.message = value;
+        offerFieldStatus = true;
         checkOfferDetailsFilled();
       },
     );
@@ -1321,22 +1339,25 @@ class _ManageChildEntityDetailsPageState
       controller: _offerCouponController,
       decoration: CommonStyle.textFieldStyle(labelTextStr: "Coupon"),
       validator: (value) {
-        if (!validateField)
-          return validateText(value);
-        else
+        if (offerFieldStatus) {
+          if (value == null || value == "") {
+            return 'Field is empty';
+          } else
+            return null;
+        } else
           return null;
       },
       keyboardType: TextInputType.multiline,
       maxLength: null,
       maxLines: 1,
       onChanged: (String value) {
-        isOfferCoupon = true;
         insertOffer.coupon = value;
+        offerFieldStatus = true;
         checkOfferDetailsFilled();
       },
       onSaved: (String value) {
-        isOfferCoupon = true;
         insertOffer.coupon = value;
+        offerFieldStatus = true;
         checkOfferDetailsFilled();
       },
     );
@@ -1344,21 +1365,37 @@ class _ManageChildEntityDetailsPageState
     Future<Null> startPickDate(BuildContext context) async {
       DateTime date = await showDatePicker(
         context: context,
-        firstDate: DateTime(DateTime.now().day),
-        lastDate: DateTime(DateTime.now().year + 2),
-        initialDate: startPickedDate,
+        firstDate: DateTime.now(),
+        lastDate: DateTime(
+            DateTime.now().year + 2, DateTime.now().month, DateTime.now().day),
+        initialDate: insertOffer.startDateTime != null
+            ? insertOffer.startDateTime.isBefore(DateTime.now())
+                ? DateTime.now()
+                : insertOffer.startDateTime
+            : DateTime.now(),
+        builder: (BuildContext context, Widget child) {
+          return Theme(
+            data: ThemeData.dark().copyWith(
+              colorScheme: ColorScheme.light(
+                primary: Colors.cyanAccent.shade700,
+              ),
+              dialogBackgroundColor: Colors.white,
+            ),
+            child: child,
+          );
+        },
       );
       if (date != null) {
         setState(() {
-          startPickedDate = date;
-          dateString = startPickedDate.day.toString() +
+          insertOffer.startDateTime = date;
+          dateString = date.day.toString() +
               " / " +
-              startPickedDate.month.toString() +
+              date.month.toString() +
               " / " +
-              startPickedDate.year.toString();
+              date.year.toString();
           _startDateController.text = dateString;
-          isStartDate = true;
-          // print(startPickedDate.toString());
+          checkOfferDetailsFilled();
+          offerFieldStatus = true;
         });
       }
     }
@@ -1366,21 +1403,46 @@ class _ManageChildEntityDetailsPageState
     Future<Null> endPickDate(BuildContext context) async {
       DateTime date = await showDatePicker(
         context: context,
-        firstDate: DateTime(DateTime.now().day),
-        lastDate: DateTime(DateTime.now().year + 2),
-        initialDate: endPickedDate,
+        firstDate: insertOffer.startDateTime != null
+            ? insertOffer.startDateTime.isBefore(DateTime.now())
+                ? DateTime.now()
+                : insertOffer.startDateTime
+            : DateTime.now(),
+        lastDate: DateTime(
+            DateTime.now().year + 2, DateTime.now().month, DateTime.now().day),
+        initialDate: insertOffer.endDateTime != null
+            ? insertOffer.endDateTime.isBefore(DateTime.now()) &&
+                    insertOffer.startDateTime.isBefore(DateTime.now())
+                ? DateTime.now()
+                : insertOffer.endDateTime.isAfter(insertOffer.startDateTime)
+                    ? insertOffer.endDateTime
+                    : insertOffer.startDateTime
+            : insertOffer.startDateTime != null
+                ? insertOffer.startDateTime
+                : DateTime.now(),
+        builder: (BuildContext context, Widget child) {
+          return Theme(
+            data: ThemeData.dark().copyWith(
+              colorScheme: ColorScheme.light(
+                primary: Colors.cyanAccent.shade700,
+              ),
+              dialogBackgroundColor: Colors.white,
+            ),
+            child: child,
+          );
+        },
       );
       if (date != null) {
         setState(() {
-          endPickedDate = date;
-          dateString = endPickedDate.day.toString() +
+          insertOffer.endDateTime = date;
+          dateString = date.day.toString() +
               " / " +
-              endPickedDate.month.toString() +
+              date.month.toString() +
               " / " +
-              endPickedDate.year.toString();
+              date.year.toString();
           _endDateController.text = dateString;
-          isEndDate = true;
-          // print(endPickedDate.toString());
+          checkOfferDetailsFilled();
+          offerFieldStatus = true;
         });
       }
     }
@@ -1392,12 +1454,18 @@ class _ManageChildEntityDetailsPageState
       controller: _startDateController,
       decoration: CommonStyle.textFieldStyle(
           labelTextStr: "Start Date", hintTextStr: ""),
-      // validator: (value) {
-      //   if (!validateField)
-      //     return validateText(value);
-      //   else
-      //     return null;
-      // },
+      validator: (value) {
+        if (offerFieldStatus) {
+          if (value != null && value != "") {
+            if (insertOffer.endDateTime == null)
+              return "End Date field is empty";
+            else
+              return null;
+          } else
+            return "Field is Empty";
+        } else
+          return null;
+      },
       onTap: () {
         setState(() {
           startPickDate(context);
@@ -1406,11 +1474,9 @@ class _ManageChildEntityDetailsPageState
       maxLength: null,
       maxLines: 1,
       onChanged: (String value) {
-        insertOffer.startDateTime = startPickedDate;
         checkOfferDetailsFilled();
       },
       onSaved: (String value) {
-        insertOffer.startDateTime = startPickedDate;
         checkOfferDetailsFilled();
       },
     );
@@ -1423,11 +1489,14 @@ class _ManageChildEntityDetailsPageState
       decoration:
           CommonStyle.textFieldStyle(labelTextStr: "End Date", hintTextStr: ""),
       validator: (value) {
-        if (isStartDate && isEndDate) {
-          if (startPickedDate.isBefore(endPickedDate)) {
-            return null;
+        if (offerFieldStatus) {
+          if (value != null && value != "") {
+            if (insertOffer.startDateTime == null)
+              return "Start Date Field is empty";
+            else
+              return null;
           } else
-            return "End Date should be after Start Date";
+            return "Field is Empty";
         } else
           return null;
       },
@@ -1439,11 +1508,9 @@ class _ManageChildEntityDetailsPageState
       maxLength: null,
       maxLines: 1,
       onChanged: (String value) {
-        insertOffer.endDateTime = endPickedDate;
         checkOfferDetailsFilled();
       },
       onSaved: (String value) {
-        insertOffer.endDateTime = endPickedDate;
         checkOfferDetailsFilled();
       },
     );

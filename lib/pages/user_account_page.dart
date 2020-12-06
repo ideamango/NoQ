@@ -242,7 +242,10 @@ class _UserAccountPageState extends State<UserAccountPage> {
                               0,
                               0),
                           child: Text(
-                            booking.entityName + ', ' + booking.address,
+                            booking.entityName +
+                                (booking.address != null
+                                    ? (', ' + booking.address)
+                                    : ''),
                             overflow: TextOverflow.ellipsis,
                             style: tokenDataTextStyle,
                           ),
