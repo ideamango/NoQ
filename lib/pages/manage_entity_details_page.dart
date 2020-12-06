@@ -75,14 +75,9 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
 
   String flushStatus = "Empty";
 
-  DateTime startPickedDate = DateTime.now();
-  DateTime endPickedDate = DateTime.now();
   String dateString = "Start Date";
-  bool isStartDate = false;
-  bool isEndDate = false;
-  bool isOfferMessage = false;
-  bool isOfferCoupon = false;
   Offer insertOffer = new Offer();
+  bool offerFieldStatus = false;
 
 //Basic Details
   bool validateField = false;
@@ -1359,24 +1354,19 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
       );
 
       checkOfferDetailsFilled() {
-        if (isOfferCoupon || isOfferMessage || isStartDate || isEndDate) {
-          insertOffer.message = isOfferMessage ? insertOffer.message : null;
-          insertOffer.coupon = isOfferCoupon ? insertOffer.coupon : null;
-          insertOffer.startDateTime =
-              isStartDate ? insertOffer.startDateTime : null;
-          insertOffer.endDateTime = isEndDate ? insertOffer.endDateTime : null;
+        if (insertOffer.message != null && insertOffer.message.isNotEmpty ||
+            insertOffer.coupon != null && insertOffer.coupon.isNotEmpty ||
+            insertOffer.startDateTime != null ||
+            insertOffer.endDateTime != null) {
           entity.offer = insertOffer;
         } else
           entity.offer = null;
       }
 
       clearOfferDetail() {
-        isOfferCoupon = false;
-        isOfferMessage = false;
-        isStartDate = false;
-        isEndDate = false;
-        insertOffer = null;
+        insertOffer = new Offer();
         entity.offer = null;
+        offerFieldStatus = false;
         _offerCouponController.text = "";
         _offerMessageController.text = "";
         _startDateController.text = "";
@@ -1392,22 +1382,25 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
           labelTextStr: "Offer Message",
         ),
         validator: (value) {
-          if (!validateField)
-            return validateText(value);
-          else
+          if (offerFieldStatus) {
+            if (value == null || value == "") {
+              return 'Field is empty';
+            } else
+              return null;
+          } else
             return null;
         },
         keyboardType: TextInputType.multiline,
         maxLength: null,
         maxLines: 1,
         onChanged: (String value) {
-          isOfferMessage = true;
           insertOffer.message = value;
+          offerFieldStatus = true;
           checkOfferDetailsFilled();
         },
         onSaved: (String value) {
-          isOfferMessage = true;
           insertOffer.message = value;
+          offerFieldStatus = true;
           checkOfferDetailsFilled();
         },
       );
@@ -1419,22 +1412,25 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
         controller: _offerCouponController,
         decoration: CommonStyle.textFieldStyle(labelTextStr: "Coupon"),
         validator: (value) {
-          if (!validateField)
-            return validateText(value);
-          else
+          if (offerFieldStatus) {
+            if (value == null || value == "") {
+              return 'Field is empty';
+            } else
+              return null;
+          } else
             return null;
         },
         keyboardType: TextInputType.multiline,
         maxLength: null,
         maxLines: 1,
         onChanged: (String value) {
-          isOfferCoupon = true;
           insertOffer.coupon = value;
+          offerFieldStatus = true;
           checkOfferDetailsFilled();
         },
         onSaved: (String value) {
-          isOfferCoupon = true;
           insertOffer.coupon = value;
+          offerFieldStatus = true;
           checkOfferDetailsFilled();
         },
       );
@@ -1471,6 +1467,8 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
                 " / " +
                 date.year.toString();
             _startDateController.text = dateString;
+            checkOfferDetailsFilled();
+            offerFieldStatus = true;
           });
         }
       }
@@ -1486,12 +1484,15 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
           lastDate: DateTime(DateTime.now().year + 2, DateTime.now().month,
               DateTime.now().day),
           initialDate: insertOffer.endDateTime != null
-              ? insertOffer.endDateTime.isBefore(DateTime.now())
-                  ? insertOffer.startDateTime.isBefore(DateTime.now())
-                      ? DateTime.now()
+              ? insertOffer.endDateTime.isBefore(DateTime.now()) &&
+                      insertOffer.startDateTime.isBefore(DateTime.now())
+                  ? DateTime.now()
+                  : insertOffer.endDateTime.isAfter(insertOffer.startDateTime)
+                      ? insertOffer.endDateTime
                       : insertOffer.startDateTime
-                  : DateTime.now()
-              : DateTime.now(),
+              : insertOffer.startDateTime != null
+                  ? insertOffer.startDateTime
+                  : DateTime.now(),
           builder: (BuildContext context, Widget child) {
             return Theme(
               data: ThemeData.dark().copyWith(
@@ -1513,6 +1514,8 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
                 " / " +
                 date.year.toString();
             _endDateController.text = dateString;
+            checkOfferDetailsFilled();
+            offerFieldStatus = true;
           });
         }
       }
@@ -1525,9 +1528,15 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
         decoration: CommonStyle.textFieldStyle(
             labelTextStr: "Start Date", hintTextStr: ""),
         validator: (value) {
-          if (!validateField)
-            return validateText(value);
-          else
+          if (offerFieldStatus) {
+            if (value != null && value != "") {
+              if (insertOffer.endDateTime == null)
+                return "End Date field is empty";
+              else
+                return null;
+            } else
+              return "Field is Empty";
+          } else
             return null;
         },
         onTap: () {
@@ -1553,11 +1562,14 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
         decoration: CommonStyle.textFieldStyle(
             labelTextStr: "End Date", hintTextStr: ""),
         validator: (value) {
-          if (isStartDate && isEndDate) {
-            if (startPickedDate.isBefore(endPickedDate)) {
-              return null;
+          if (offerFieldStatus) {
+            if (value != null && value != "") {
+              if (insertOffer.startDateTime == null)
+                return "Start Date Field is empty";
+              else
+                return null;
             } else
-              return "End Date should be after Start Date";
+              return "Field is Empty";
           } else
             return null;
         },
