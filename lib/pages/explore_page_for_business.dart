@@ -57,7 +57,7 @@ class _ExplorePageForBusinessState extends State<ExplorePageForBusiness> {
                       margin: EdgeInsets.zero,
                       padding: EdgeInsets.all(0),
                       child:
-                          Image(image: AssetImage('assets/infoCustomer.png')),
+                          Image(image: AssetImage('assets/infoBusiness.png')),
                     ),
                   ),
                   Container(

@@ -124,6 +124,7 @@ String locationInfoStr = 'Current location details.';
 String paymentInfoStr = 'Payments details.';
 
 String offerInfoStr = 'Offer details.';
+String placeDetailNoOffers = "No active offers currently.";
 
 String missingInfoStr = "Some fields are either empty or have invalid details.";
 String missingInfoSubStr =

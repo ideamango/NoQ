@@ -180,7 +180,6 @@ final labelXSmlTextStyle = TextStyle(
   color: Colors.blueGrey[700],
   // fontWeight: FontWeight.w800,
   fontFamily: 'Monsterrat',
-
   fontSize: 11.0,
   //height: 2,
 );
@@ -244,10 +243,14 @@ final userAccountHeadingTextStyle = TextStyle(
     fontFamily: 'Montserrat',
     fontSize: 15.0,
     height: 1.5);
+final placeDetailsHeadingTextStyle = TextStyle(
+    color: primaryDarkColor, fontFamily: 'Montserrat', fontSize: 14.0);
+final placeDetailsHeadingSml = TextStyle(
+    color: primaryDarkColor, fontFamily: 'Montserrat', fontSize: 11.0);
 final lightTextStyle =
     TextStyle(color: Colors.white, fontFamily: 'Montserrat', fontSize: 12.0);
 final linkTextStyle = TextStyle(
-    color: primaryAccentColor, fontFamily: 'Montserrat', fontSize: 12.0);
+    color: Colors.blue[700], fontFamily: 'Montserrat', fontSize: 12.0);
 
 final tokenTextStyle = TextStyle(
     color: highlightColor,

@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:noq/events/auto_verification_completed_data.dart';
 import 'package:noq/events/event_bus.dart';
 import 'package:noq/events/events.dart';
+import 'package:noq/pages/explore_page_for_business.dart';
 import 'package:noq/pages/search_entity_page.dart';
 import 'package:noq/pages/explore_page_for_user.dart';
 import 'package:noq/pages/otpdialog.dart';
@@ -236,7 +237,7 @@ class _LoginPageState extends State<LoginPage> {
                               onPressed: () {
                                 Navigator.of(context).push(
                                     PageAnimation.createRoute(
-                                        ExplorePageForUser()));
+                                        ExplorePageForBusiness()));
                               },
                               child: Text(
                                 "Business Owners",
