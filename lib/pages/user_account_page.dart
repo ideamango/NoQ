@@ -16,7 +16,7 @@ import 'package:noq/userHomePage.dart';
 import 'package:noq/utils.dart';
 import 'package:noq/widget/appbar.dart';
 import 'package:noq/widget/bottom_nav_bar.dart';
-import 'package:noq/widget/carousel_items.dart';
+import 'package:noq/widget/carousel_home_page.dart';
 import 'package:noq/widget/header.dart';
 import 'package:noq/widget/page_animation.dart';
 import 'package:noq/widget/widgets.dart';
@@ -632,6 +632,7 @@ class _UserAccountPageState extends State<UserAccountPage> {
     String title = "My Account";
     if (_initCompleted) {
       return MaterialApp(
+        debugShowCheckedModeBanner: false,
         theme: ThemeData.light().copyWith(),
         home: WillPopScope(
           child: Scaffold(
@@ -920,6 +921,7 @@ class _UserAccountPageState extends State<UserAccountPage> {
       );
     } else {
       return MaterialApp(
+        debugShowCheckedModeBanner: false,
         theme: ThemeData.light().copyWith(),
         home: WillPopScope(
           child: Scaffold(

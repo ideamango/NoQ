@@ -37,6 +37,7 @@ class _HelpPageState extends State<HelpPage> {
   Widget build(BuildContext context) {
     String title = "How can we help you?";
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       theme: ThemeData.light().copyWith(),
       home: WillPopScope(
         child: Scaffold(

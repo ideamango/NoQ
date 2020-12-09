@@ -26,6 +26,7 @@ class _ExplorePageForUserState extends State<ExplorePageForUser> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       theme: ThemeData.light().copyWith(),
       home: WillPopScope(
         child: Scaffold(

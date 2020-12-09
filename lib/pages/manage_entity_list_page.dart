@@ -63,7 +63,8 @@ class _ManageEntityListPageState extends State<ManageEntityListPage> {
         child: Column(
           children: <Widget>[
             Container(
-                padding: EdgeInsets.all(0),
+                padding: EdgeInsets.all(8),
+                margin: EdgeInsets.all(0),
                 width: MediaQuery.of(context).size.width * .15,
                 height: MediaQuery.of(context).size.width * .15,
                 child: image),
@@ -206,6 +207,7 @@ class _ManageEntityListPageState extends State<ManageEntityListPage> {
     String title = pageTitleManageEntityList;
     if (_initCompleted) {
       return MaterialApp(
+        debugShowCheckedModeBanner: false,
         theme: ThemeData.light().copyWith(),
         home: new WillPopScope(
           child: Scaffold(
@@ -291,6 +293,7 @@ class _ManageEntityListPageState extends State<ManageEntityListPage> {
       );
     } else {
       return MaterialApp(
+        debugShowCheckedModeBanner: false,
         theme: ThemeData.light().copyWith(),
         home: new WillPopScope(
           child: Scaffold(

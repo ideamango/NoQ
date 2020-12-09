@@ -47,7 +47,7 @@ class MyHome extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     //Firebase.initializeApp();
-    return MaterialApp(home: MyApp());
+    return MaterialApp(debugShowCheckedModeBanner: false, home: MyApp());
   }
 }
 

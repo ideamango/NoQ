@@ -24,6 +24,7 @@ class _HowToRegForBusinessState extends State<HowToRegForBusiness> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       theme: ThemeData.light().copyWith(),
       home: WillPopScope(
         child: Scaffold(

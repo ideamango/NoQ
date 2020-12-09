@@ -1450,7 +1450,7 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
             return Theme(
               data: ThemeData.dark().copyWith(
                 colorScheme: ColorScheme.light(
-                  primary: Colors.cyanAccent.shade700,
+                  primary: Colors.cyan,
                 ),
                 dialogBackgroundColor: Colors.white,
               ),
@@ -1497,7 +1497,7 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
             return Theme(
               data: ThemeData.dark().copyWith(
                 colorScheme: ColorScheme.light(
-                  primary: Colors.cyanAccent.shade700,
+                  primary: Colors.cyan,
                 ),
                 dialogBackgroundColor: Colors.white,
               ),
@@ -2290,6 +2290,7 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
       );
 
       return MaterialApp(
+        debugShowCheckedModeBanner: false,
         // title: 'Add child entities',
         theme: ThemeData.light().copyWith(),
         home: WillPopScope(
@@ -3781,6 +3782,7 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
       );
     } else
       return MaterialApp(
+        debugShowCheckedModeBanner: false,
         theme: ThemeData.light().copyWith(),
         home: WillPopScope(
           child: Scaffold(

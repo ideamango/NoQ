@@ -512,6 +512,7 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
 // build widget only after init has completed, till then show progress indicator.
     if (!initCompleted) {
       return MaterialApp(
+        debugShowCheckedModeBanner: false,
         theme: ThemeData.light().copyWith(),
         home: new WillPopScope(
           child: Scaffold(
@@ -786,6 +787,7 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
 
       print("Came in isSearching");
       return MaterialApp(
+        debugShowCheckedModeBanner: false,
         routes: <String, WidgetBuilder>{
           '/childSearch': (BuildContext context) => SearchChildEntityPage(),
           '/mainSearch': (BuildContext context) => SearchChildEntityPage(),

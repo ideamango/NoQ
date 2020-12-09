@@ -2002,6 +2002,7 @@ class _ManageChildEntityDetailsPageState
     );
 
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       title: 'Add child entities',
       theme: ThemeData.light().copyWith(),
       home: WillPopScope(

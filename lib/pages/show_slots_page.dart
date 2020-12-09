@@ -119,6 +119,7 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
 
   Widget _noSlotsPage(String msg) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       theme: ThemeData.light().copyWith(),
       home: WillPopScope(
         child: Scaffold(
@@ -192,6 +193,7 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
         if (widget.forPage == 'FavsList') backRoute = FavsListPage();
 
         return MaterialApp(
+          debugShowCheckedModeBanner: false,
           theme: ThemeData.light().copyWith(),
           home: WillPopScope(
             child: Scaffold(
@@ -445,6 +447,7 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
       }
     } else {
       return MaterialApp(
+        debugShowCheckedModeBanner: false,
         theme: ThemeData.light().copyWith(),
         home: WillPopScope(
           child: Scaffold(

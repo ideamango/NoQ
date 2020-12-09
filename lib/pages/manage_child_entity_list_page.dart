@@ -229,6 +229,7 @@ class _ManageChildEntityListPageState extends State<ManageChildEntityListPage> {
     String title = "Manage child Places";
     if (_initCompleted) {
       return MaterialApp(
+        debugShowCheckedModeBanner: false,
         title: 'Add a child Place',
         //theme: ThemeData.light().copyWith(),
         home: WillPopScope(
@@ -316,6 +317,7 @@ class _ManageChildEntityListPageState extends State<ManageChildEntityListPage> {
       );
     } else {
       return MaterialApp(
+        debugShowCheckedModeBanner: false,
         theme: ThemeData.light().copyWith(),
         home: WillPopScope(
           child: Scaffold(

@@ -247,6 +247,7 @@ class _ShoppingListState extends State<ShoppingList> {
     );
 
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       title: 'Notes',
       //theme: ThemeData.light().copyWith(),
       home: WillPopScope(

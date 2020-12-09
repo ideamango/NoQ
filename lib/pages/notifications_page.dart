@@ -56,6 +56,7 @@ class _UserNotificationsPageState extends State<UserNotificationsPage> {
   Widget _emptyPage() {
     String title = "Notifications";
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       theme: ThemeData.light().copyWith(),
       home: WillPopScope(
         child: Scaffold(
@@ -93,6 +94,7 @@ class _UserNotificationsPageState extends State<UserNotificationsPage> {
   Widget _buildNotificationPage() {
     String title = "My Notifications";
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       theme: ThemeData.light().copyWith(),
       home: Scaffold(
         drawer: CustomDrawer(

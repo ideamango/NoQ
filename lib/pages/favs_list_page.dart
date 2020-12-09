@@ -246,6 +246,7 @@ class _FavsListPageState extends State<FavsListPage> {
 // build widget only after init has completed, till then show progress indicator.
     if (!initCompleted) {
       return MaterialApp(
+        debugShowCheckedModeBanner: false,
         theme: ThemeData.light().copyWith(),
         home: WillPopScope(
           child: Scaffold(
@@ -270,6 +271,7 @@ class _FavsListPageState extends State<FavsListPage> {
     } else {
       String title = "My Favourites";
       return MaterialApp(
+        debugShowCheckedModeBanner: false,
         home: WillPopScope(
           child: Scaffold(
             key: key,

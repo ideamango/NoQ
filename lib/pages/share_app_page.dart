@@ -41,6 +41,7 @@ class _ShareAppPageState extends State<ShareAppPage> {
   Widget build(BuildContext context) {
     String title = "Share our App";
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       theme: ThemeData.light().copyWith(),
       home: WillPopScope(
         child: Scaffold(

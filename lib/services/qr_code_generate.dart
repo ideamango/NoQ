@@ -68,6 +68,7 @@ class GenerateScreenState extends State<GenerateScreen> {
       return _contentWidget();
     else
       return MaterialApp(
+        debugShowCheckedModeBanner: false,
         theme: ThemeData.light().copyWith(),
         home: WillPopScope(
           child: Scaffold(
@@ -152,6 +153,7 @@ class GenerateScreenState extends State<GenerateScreen> {
     //  MediaQuery.of(context).size.height -
     //     MediaQuery.of(context).viewInsets.bottom;
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       // title: 'Add child entities',
       theme: ThemeData.light().copyWith(),
       home: WillPopScope(

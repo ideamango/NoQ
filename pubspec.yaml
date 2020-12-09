@@ -126,6 +126,13 @@ flutter:
     - offers_icon.png    
     - how_to_book_slot.png
     - how_to_register_business.png
+    - screen_login1.png
+    - screen_login2.png    
+    - screen_homepage.png
+    - screen_search.png
+    - screen_view_list.png
+    - screen_view_slots.png
+    - screen_token.png
 
   #  - images/a_dot_ham.jpeg
 
