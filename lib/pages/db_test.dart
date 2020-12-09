@@ -306,11 +306,15 @@ class DBTest {
   }
 
   Future<void> securityPermissionTests() async {
+    print("Security permission test started.. ");
+
     updateEntity("Inorbit_AdminCheck");
     await EntityService().assignAdmin('Child101-1', "+913611009823");
     await EntityService().assignAdmin('Entity102', "+913611009823");
     await EntityService().removeAdmin('Entity102', "+913611009823");
     await EntityService().assignAdmin('Entity102', "+913611009823");
+
+    print("Security permission test completed.");
   }
 
   Future<void> tests() async {
@@ -826,6 +830,8 @@ class DBTest {
   }
 
   Future<void> createDummyPlaces() async {
+    print("Creating dummy places...");
+
     await createSportCenter();
     await createSportCenter2();
     await createSportCenter3();
@@ -836,6 +842,8 @@ class DBTest {
 
     await createGym();
     await createPrivateGym();
+
+    print("Dummy place creation completed.");
   }
 
   Future<void> createSportCenter() async {

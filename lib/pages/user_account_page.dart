@@ -679,7 +679,10 @@ class _UserAccountPageState extends State<UserAccountPage> {
                                         TextSpan(text: userAccountHeadingTxt),
                                         TextSpan(text: "\n"),
                                         TextSpan(
-                                            text: _state.getCurrentUser().ph),
+                                          text: _state.getCurrentUser() != null
+                                              ? _state.getCurrentUser().ph
+                                              : "",
+                                        )
                                       ])),
                                 ],
                               ),
