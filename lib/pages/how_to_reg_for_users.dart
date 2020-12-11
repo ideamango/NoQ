@@ -93,10 +93,7 @@ class _HowToRegForUsersState extends State<HowToRegForUsers> {
                                           MediaQuery.of(context).size.height *
                                               .75,
                                       width: MediaQuery.of(context).size.width,
-                                      child: Card(
-                                        color: Colors.white,
-                                        child: card,
-                                      ),
+                                      child: card,
                                     );
                                   });
                                 }).toList(),

@@ -133,6 +133,14 @@ flutter:
     - screen_view_list.png
     - screen_view_slots.png
     - screen_token.png
+    - bscreen_register.png
+    - bscreen_place_list.png
+    - bscreen_add_new_place.png
+    - bscreen_fill_details_general.png
+    - bscreen_fill_details_offer.png
+    - bscreen_fill_details_save.png
+   
+  
 
   #  - images/a_dot_ham.jpeg
 

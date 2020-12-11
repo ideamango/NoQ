@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:noq/style.dart';
+import 'package:noq/widget/widgets.dart';
 
-class Item1 extends StatelessWidget {
-  const Item1({Key key}) : super(key: key);
+class Item1_login extends StatelessWidget {
+  const Item1_login({Key key}) : super(key: key);
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -9,18 +11,23 @@ class Item1 extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
           Image.asset(
-            'assets/1.jpg',
-            height: MediaQuery.of(context).size.height * .24,
+            'assets/bscreen_register.png',
+            height: MediaQuery.of(context).size.height * .7,
             fit: BoxFit.cover,
-          )
+          ),
+          verticalSpacer,
+          Text(
+            "Login with Mobile Number",
+            style: homeMsgStyle2,
+          ),
         ],
       ),
     );
   }
 }
 
-class Item2 extends StatelessWidget {
-  const Item2({Key key}) : super(key: key);
+class Item2_login extends StatelessWidget {
+  const Item2_login({Key key}) : super(key: key);
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -28,8 +35,8 @@ class Item2 extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
           Image.asset(
-            'assets/2.jpg',
-            height: MediaQuery.of(context).size.height * .24,
+            'assets/bscreen_place_list.png',
+            height: MediaQuery.of(context).size.height * .7,
             fit: BoxFit.cover,
           )
         ],
@@ -53,8 +60,8 @@ class Item2 extends StatelessWidget {
   }
 }
 
-class Item3 extends StatelessWidget {
-  const Item3({Key key}) : super(key: key);
+class Item3_search extends StatelessWidget {
+  const Item3_search({Key key}) : super(key: key);
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -62,8 +69,8 @@ class Item3 extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
           Image.asset(
-            'assets/3.jpg',
-            height: MediaQuery.of(context).size.height * .24,
+            'assets/bscreen_add_new_place.png',
+            height: MediaQuery.of(context).size.height * .7,
             fit: BoxFit.cover,
           )
         ],
@@ -72,8 +79,8 @@ class Item3 extends StatelessWidget {
   }
 }
 
-class Item4 extends StatelessWidget {
-  const Item4({Key key}) : super(key: key);
+class Item4_ViewLists extends StatelessWidget {
+  const Item4_ViewLists({Key key}) : super(key: key);
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -81,8 +88,8 @@ class Item4 extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
           Image.asset(
-            'assets/4.jpg',
-            height: MediaQuery.of(context).size.height * .24,
+            'assets/bscreen_fill_details_general.png',
+            height: MediaQuery.of(context).size.height * .7,
             fit: BoxFit.cover,
           )
         ],
@@ -91,8 +98,8 @@ class Item4 extends StatelessWidget {
   }
 }
 
-class Item5 extends StatelessWidget {
-  const Item5({Key key}) : super(key: key);
+class Item5_BookSlots extends StatelessWidget {
+  const Item5_BookSlots({Key key}) : super(key: key);
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -100,8 +107,8 @@ class Item5 extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
           Image.asset(
-            'assets/5.jpg',
-            height: MediaQuery.of(context).size.height * .24,
+            'assets/bscreen_fill_details_offer.png',
+            height: MediaQuery.of(context).size.height * .7,
             fit: BoxFit.cover,
           )
         ],
@@ -110,8 +117,8 @@ class Item5 extends StatelessWidget {
   }
 }
 
-class Item6 extends StatelessWidget {
-  const Item6({Key key}) : super(key: key);
+class Item6_Token extends StatelessWidget {
+  const Item6_Token({Key key}) : super(key: key);
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -119,8 +126,8 @@ class Item6 extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
           Image.asset(
-            'assets/6.jpg',
-            height: MediaQuery.of(context).size.height * .24,
+            'assets/bscreen_fill_details_save.png',
+            height: MediaQuery.of(context).size.height * .7,
             fit: BoxFit.cover,
           )
         ],
@@ -129,21 +136,21 @@ class Item6 extends StatelessWidget {
   }
 }
 
-class Item7 extends StatelessWidget {
-  const Item7({Key key}) : super(key: key);
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          Image.asset(
-            'assets/7.jpg',
-            height: MediaQuery.of(context).size.height * .24,
-            fit: BoxFit.cover,
-          )
-        ],
-      ),
-    );
-  }
-}
+// class Item7_Notifications extends StatelessWidget {
+//   const Item7_Notifications({Key key}) : super(key: key);
+//   @override
+//   Widget build(BuildContext context) {
+//     return Container(
+//       child: Column(
+//         mainAxisAlignment: MainAxisAlignment.center,
+//         children: <Widget>[
+//           Image.asset(
+//             'assets/screen_notifications.png',
+//             height: 140.0,
+//             fit: BoxFit.cover,
+//           )
+//         ],
+//       ),
+//     );
+//   }
+// }

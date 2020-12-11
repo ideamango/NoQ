@@ -188,7 +188,7 @@ class _UserHomePageState extends State<UserHomePage> {
                         margin: EdgeInsets.zero,
                         elevation: 20,
                         child: Container(
-                          height: MediaQuery.of(context).size.height * .331,
+                          height: MediaQuery.of(context).size.height * .37,
                           padding: EdgeInsets.all(5),
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -197,7 +197,9 @@ class _UserHomePageState extends State<UserHomePage> {
                                 children: <Widget>[
                                   CarouselSlider(
                                     options: CarouselOptions(
-                                      height: 150.0,
+                                      height:
+                                          MediaQuery.of(context).size.height *
+                                              .255,
                                       autoPlay: true,
                                       autoPlayInterval: Duration(seconds: 3),
                                       autoPlayAnimationDuration:
@@ -219,7 +221,7 @@ class _UserHomePageState extends State<UserHomePage> {
                                           height: MediaQuery.of(context)
                                                   .size
                                                   .height *
-                                              0.40,
+                                              0.4,
                                           width:
                                               MediaQuery.of(context).size.width,
                                           child: Card(
