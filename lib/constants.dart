@@ -111,7 +111,8 @@ String drawerHeaderTxt41 = 'Save ';
 String drawerHeaderTxt42 = 'time !!';
 String bundleId = 'mobi.sukoon';
 String appStoreId = '962194608';
-String shareURLPrefix = 'https://sukoontest2.page.link';
+// String shareURLPrefix = 'https://sukoontest2.page.link';
+String shareURLPrefix = 'https://link.sukoon.mobi';
 String publicInfo =
     "Public: If this is off - it means your service/facility is restricted to only either your employees or residents. Example: Office or Apartment.";
 String activeDef =
