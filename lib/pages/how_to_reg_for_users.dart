@@ -22,6 +22,7 @@ class _HowToRegForUsersState extends State<HowToRegForUsers> {
     Item4_ViewLists(),
     Item5_BookSlots(),
     Item6_Token(),
+    Item7_Done()
     //  Item7()
   ];
   List<T> map<T>(List list, Function handler) {

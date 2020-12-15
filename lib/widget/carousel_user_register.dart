@@ -136,21 +136,21 @@ class Item6_Token extends StatelessWidget {
   }
 }
 
-// class Item7_Notifications extends StatelessWidget {
-//   const Item7_Notifications({Key key}) : super(key: key);
-//   @override
-//   Widget build(BuildContext context) {
-//     return Container(
-//       child: Column(
-//         mainAxisAlignment: MainAxisAlignment.center,
-//         children: <Widget>[
-//           Image.asset(
-//             'assets/screen_notifications.png',
-//             height: 140.0,
-//             fit: BoxFit.cover,
-//           )
-//         ],
-//       ),
-//     );
-//   }
-// }
+class Item7_Done extends StatelessWidget {
+  const Item7_Done({Key key}) : super(key: key);
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          Image.asset(
+            'assets/well_done.png',
+            height: 140.0,
+            fit: BoxFit.cover,
+          )
+        ],
+      ),
+    );
+  }
+}
