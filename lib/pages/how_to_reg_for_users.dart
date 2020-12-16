@@ -138,19 +138,19 @@ class _HowToRegForUsersState extends State<HowToRegForUsers> {
                     ),
                     //child: Image.asset('assets/noq_home.png'),
                   ),
-                  // Card(
-                  //   margin: EdgeInsets.all(8),
-                  //   elevation: 20,
-                  //   child: Container(
-                  //     width: MediaQuery.of(context).size.width * .92,
-                  //     margin: EdgeInsets.zero,
-                  //     padding: EdgeInsets.all(0),
-                  //     child: VideoPlayerApp(
-                  //       videoNwLink:
-                  //           'https://firebasestorage.googleapis.com/v0/b/awesomenoq.appspot.com/o/how_to_guide_user.mp4?alt=media&token=53bf4d71-9163-40cc-9afb-40c7d45a56a5',
-                  //     ),
-                  //   ),
-                  // ),
+                  Card(
+                    margin: EdgeInsets.all(8),
+                    elevation: 20,
+                    child: Container(
+                      width: MediaQuery.of(context).size.width * .92,
+                      margin: EdgeInsets.zero,
+                      padding: EdgeInsets.all(0),
+                      child: VideoPlayerApp(
+                        videoNwLink:
+                            'https://firebasestorage.googleapis.com/v0/b/awesomenoq.appspot.com/o/how_to_guide_user.mp4?alt=media&token=53bf4d71-9163-40cc-9afb-40c7d45a56a5',
+                      ),
+                    ),
+                  ),
                   Container(
                     padding: EdgeInsets.all(0),
                     margin: EdgeInsets.all(0),

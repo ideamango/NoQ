@@ -145,7 +145,7 @@ class Item7_Done extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
           Image.asset(
-            'assets/well_done.png',
+            'assets/animated_login.mp4',
             height: 140.0,
             fit: BoxFit.cover,
           )
