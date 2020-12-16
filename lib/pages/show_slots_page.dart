@@ -577,13 +577,13 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
               return null;
           },
         ),
-        Text(sl.currentNumber.toString() + ' booked',
+        Text(sl.currentNumber.toString() + ' Booked',
             style: TextStyle(
               color: Colors.black,
               // fontWeight: FontWeight.w800,
               //fontFamily: 'Roboto',
               letterSpacing: 0.5,
-              fontSize: 9.0,
+              fontSize: 11.0,
               //height: 2,
             )),
       ],

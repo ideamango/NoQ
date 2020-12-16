@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:noq/style.dart';
+import 'package:noq/widget/video_player_app.dart';
 import 'package:noq/widget/widgets.dart';
 
 class Item1_login extends StatelessWidget {
@@ -141,14 +142,13 @@ class Item7_Done extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
+      height: MediaQuery.of(context).size.height * .7,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
-          Image.asset(
-            'assets/animated_login.mp4',
-            height: 140.0,
-            fit: BoxFit.cover,
-          )
+          VideoPlayerApp(
+              videoNwLink:
+                  "https://firebasestorage.googleapis.com/v0/b/awesomenoq.appspot.com/o/animated_login.mp4?alt=media&token=9c640d2a-887c-41fd-9bd4-d288ef1e232d"),
         ],
       ),
     );
