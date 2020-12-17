@@ -147,9 +147,11 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
   }
 
   Future<Entity> getEntityDetails(String id) async {
-    Entity en;
-    en = await EntityService().getEntity(id);
-    return en;
+    var tup = await _state.getEntity(id);
+    if (tup != null) {
+      return tup.item1;
+    }
+    return null;
   }
 
   @override

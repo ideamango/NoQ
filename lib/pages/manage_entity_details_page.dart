@@ -713,7 +713,8 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
               contact: element, entity: entity, list: contactList));
         });
       }
-      AppUser currUser = await UserService().getCurrentUser();
+
+      AppUser currUser = _gState.getCurrentUser();
       Map<String, String> adminMap = Map<String, String>();
       EntityPrivate entityPrivateList;
       entityPrivateList = await fetchAdmins(entity.entityId);

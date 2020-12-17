@@ -384,7 +384,8 @@ class _ManageChildEntityDetailsPageState
           ));
         });
       }
-      AppUser currUser = await UserService().getCurrentUser();
+
+      AppUser currUser = _gState.getCurrentUser();
       Map<String, String> adminMap = Map<String, String>();
       EntityPrivate entityPrivateList;
       entityPrivateList = await fetchAdmins(serviceEntity.entityId);
@@ -1840,8 +1841,8 @@ class _ManageChildEntityDetailsPageState
     backRoute() {
       //Navigator.of(context).pop();
       Entity parentEn;
-      EntityService().getEntity(serviceEntity.parentId).then((value) {
-        parentEn = value;
+      _gState.getEntity(serviceEntity.parentId).then((value) {
+        parentEn = value.item1;
         if (parentEn != null)
           Navigator.push(
               context,

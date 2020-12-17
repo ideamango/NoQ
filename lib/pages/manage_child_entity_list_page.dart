@@ -120,8 +120,11 @@ class _ManageChildEntityListPageState extends State<ManageChildEntityListPage> {
   }
 
   Future<Entity> getEntityById(String id) async {
-    Entity e = await EntityService().getEntity(id);
-    return e;
+    var tup = await _state.getEntity(id);
+    if (tup != null) {
+      return tup.item1;
+    }
+    return null;
   }
 
   @override
