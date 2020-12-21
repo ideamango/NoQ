@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:app_review/app_review.dart';
 import 'package:flutter/material.dart';
 import 'package:noq/style.dart';
+import 'package:noq/userHomePage.dart';
 
 import 'package:video_player/video_player.dart';
 
@@ -42,16 +43,46 @@ class _VideoPlayerAppState extends State<VideoPlayerApp> {
       child: Column(
         children: <Widget>[
           Container(
-            padding: const EdgeInsets.only(top: 30.0),
-          ),
-          const Text(
-            'How Sukoon helps?',
-            style: TextStyle(
-              color: Colors.indigo,
-              // fontWeight: FontWeight.w800,
-              fontFamily: 'RalewayRegular',
-              fontWeight: FontWeight.bold,
-              fontSize: 25.0,
+            padding: EdgeInsets.all(0),
+            margin: EdgeInsets.all(5),
+            child: FlatButton(
+              padding: EdgeInsets.all(0),
+              color: Colors.grey[300],
+              splashColor: highlightColor.withOpacity(.8),
+              onPressed: () {
+                Navigator.of(context).pop();
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => UserHomePage()));
+              },
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Container(
+                    padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
+                    transform: Matrix4.translationValues(5.0, 0, 0),
+                    child: Icon(
+                      Icons.arrow_back_ios,
+                      color: Colors.cyan[400],
+                      size: 25,
+                      // color: Colors.white38,
+                    ),
+                  ),
+                  Container(
+                    padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
+                    transform: Matrix4.translationValues(-8.0, 0, 0),
+                    child: Icon(
+                      Icons.arrow_back_ios,
+                      color: Colors.grey[700],
+                      size: 25,
+                      // color: Colors.white,
+                    ),
+                  ),
+                  Text(
+                    "Back",
+                    style: textLabelTextStyle,
+                  ),
+                ],
+              ),
             ),
           ),
           Container(
