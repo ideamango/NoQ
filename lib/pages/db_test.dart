@@ -1154,7 +1154,7 @@ class DBTest {
 
     Offer offer = new Offer();
     offer.coupon = "Great Diwali Offer";
-    offer.message = "30% off for yearly subscription before Diwali 2021!!";
+    offer.message = "Couple discount, offer valid till 31st March!";
     offer.startDateTime = DateTime.now();
     offer.endDateTime = DateTime.utc(2021, 11, 4);
 
