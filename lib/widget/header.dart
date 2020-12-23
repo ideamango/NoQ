@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:noq/constants.dart';
 import 'package:noq/pages/about_page.dart';
+import 'package:noq/pages/business_info_page.dart';
 import 'package:noq/pages/help_page.dart';
 import 'package:noq/pages/manage_entity_list_page.dart';
 import 'package:noq/pages/notifications_page.dart';
@@ -51,9 +52,9 @@ class _CustomDrawerState extends State<CustomDrawer> {
         "pageRoute": ManageEntityListPage(),
       },
       // {
-      //   "icon": Icons.notifications,
-      //   "name": "Notifications",
-      //   "pageRoute": UserNotificationsPage(),
+      //   "icon": Icons.info_outline,
+      //   "name": "View Business Statistics",
+      //   "pageRoute": InfoPageForBusinesses(),
       // },
       {
         "icon": Icons.help_outline,
@@ -72,7 +73,6 @@ class _CustomDrawerState extends State<CustomDrawer> {
         "name": "Share",
         "pageRoute": ShareAppPage(),
       },
-
       {
         "icon": Icons.description,
         "name": "Privacy Policy",

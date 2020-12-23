@@ -3,6 +3,7 @@ import 'package:noq/constants.dart';
 import 'package:noq/db/db_model/entity.dart';
 import 'package:noq/db/db_model/meta_entity.dart';
 import 'package:noq/db/db_service/entity_service.dart';
+import 'package:noq/pages/business_info_page.dart';
 import 'package:noq/pages/manage_child_entity_details_page.dart';
 import 'package:noq/pages/manage_entity_details_page.dart';
 import 'package:noq/services/circular_progress.dart';
@@ -148,6 +149,7 @@ class EntityRowState extends State<EntityRow> {
 
     if (_initCompleted)
       return Container(
+        height: MediaQuery.of(context).size.height * .35,
         margin: EdgeInsets.all(5),
         padding: EdgeInsets.all(8),
         decoration: BoxDecoration(
@@ -241,6 +243,33 @@ class EntityRowState extends State<EntityRow> {
               ],
             ),
             horizontalSpacer,
+            Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                  Container(
+                    width: MediaQuery.of(context).size.width * .42,
+                    height: 30,
+                    child: RaisedButton(
+                      elevation: 7,
+                      color: Colors.white,
+                      splashColor: highlightColor.withOpacity(.8),
+                      shape: RoundedRectangleBorder(
+                          side: BorderSide(color: Colors.blueGrey[500]),
+                          borderRadius: BorderRadius.all(Radius.circular(5.0))),
+                      child: Text(
+                        'Manage Bookings',
+                        style: TextStyle(color: primaryDarkColor, fontSize: 13),
+                      ),
+                      onPressed: () {
+                        print("To manage bookings page");
+                        ManageBookings(
+                          entityId: entity.entityId,
+                        );
+                      },
+                    ),
+                  ),
+                ]),
+
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[

@@ -156,9 +156,8 @@ class GlobalState {
       } else {
         saved = await _entityService.upsertEntity(entity);
       }
-
-      _entityState[entity.entityId] = saved;
     }
+    _entityState[entity.entityId] = saved;
     return saved;
   }
 
