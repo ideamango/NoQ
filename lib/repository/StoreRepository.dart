@@ -27,9 +27,10 @@ Future<bool> assignAdminsFromList(
     String entityId, List<String> adminsList) async {
   //TODO Smita - Get all admins and check which entries already exists in DB
   // Add rest of admins then
+  GlobalState gs = await GlobalState.getGlobalState();
   try {
     for (int i = 0; i < adminsList.length; i++) {
-      await EntityService().assignAdmin(entityId, adminsList[i]);
+      await gs.getEntityService().assignAdmin(entityId, adminsList[i]);
     }
   } catch (e) {
     print(e);
@@ -40,22 +41,24 @@ Future<bool> assignAdminsFromList(
 }
 
 Future<EntityPrivate> fetchAdmins(String entityId) async {
+  GlobalState gs = await GlobalState.getGlobalState();
   EntityPrivate entityPrivateList =
-      await EntityService().getEntityPrivate(entityId);
+      await gs.getEntityService().getEntityPrivate(entityId);
 
   return entityPrivateList;
 }
 
 Future<bool> removeAdmin(String entityId, String phone) async {
-  bool status = await EntityService().removeAdmin(entityId, phone);
+  GlobalState gs = await GlobalState.getGlobalState();
+  bool status = await gs.getEntityService().removeAdmin(entityId, phone);
   return status;
 }
 
 Future<String> fetchRegNum(String entityId) async {
   String regNum;
-
+  GlobalState gs = await GlobalState.getGlobalState();
   EntityPrivate entityPrivateList =
-      await EntityService().getEntityPrivate(entityId);
+      await gs.getEntityService().getEntityPrivate(entityId);
   if (entityPrivateList != null) {
     regNum = entityPrivateList.registrationNumber;
   }

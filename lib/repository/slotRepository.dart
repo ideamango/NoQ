@@ -23,7 +23,9 @@ Future<List<Slot>> getSlotsListForStore(
   DateTime breakEndTime;
   DateTime dayStartTime;
   DateTime dayEndTime;
-  entitySlots = await TokenService().getEntitySlots(entity.entityId, dateTime);
+  GlobalState gs = await GlobalState.getGlobalState();
+  entitySlots =
+      await gs.getTokenService().getEntitySlots(entity.entityId, dateTime);
   dayStartTime = new DateTime(dateTime.year, dateTime.month, dateTime.day,
       entity.startTimeHour, entity.startTimeMinute);
   dayEndTime = new DateTime(dateTime.year, dateTime.month, dateTime.day,
@@ -162,9 +164,11 @@ Future<bool> cancelToken(UserToken token) async {
 }
 
 Future<bool> updateToken(UserToken token) async {
+  GlobalState gs = await GlobalState.getGlobalState();
+
   bool result;
   try {
-    result = await TokenService().updateToken(token);
+    result = await gs.getTokenService().updateToken(token);
     print('Updated token successfully');
   } catch (e) {
     print(e.toString());

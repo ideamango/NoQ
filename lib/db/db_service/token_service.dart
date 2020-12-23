@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:noq/db/db_model/entity_slots.dart';
 import 'package:noq/db/db_model/meta_entity.dart';
 
@@ -12,8 +13,27 @@ import 'package:noq/db/db_service/token_already_exists_exception.dart';
 import 'package:noq/db/db_service/token_not_exist_exception.dart';
 
 class TokenService {
+  FirebaseApp _fb;
+
+  TokenService(FirebaseApp firebaseApp) {
+    _fb = firebaseApp;
+  }
+
+  FirebaseFirestore getFirestore() {
+    if (_fb == null) {
+      return FirebaseFirestore.instance;
+    } else {
+      return FirebaseFirestore.instanceFor(app: _fb);
+    }
+  }
+
+  FirebaseAuth getFirebaseAuth() {
+    if (_fb == null) return FirebaseAuth.instance;
+    return FirebaseAuth.instanceFor(app: _fb);
+  }
+
   Future<EntitySlots> getEntitySlots(String entityId, DateTime date) async {
-    FirebaseFirestore fStore = FirebaseFirestore.instance;
+    FirebaseFirestore fStore = getFirestore();
 
     EntitySlots es;
 
@@ -41,8 +61,8 @@ class TokenService {
 
   Future<UserToken> generateToken(
       MetaEntity metaEntity, DateTime dateTime) async {
-    final User user = FirebaseAuth.instance.currentUser;
-    FirebaseFirestore fStore = FirebaseFirestore.instance;
+    final User user = getFirebaseAuth().currentUser;
+    FirebaseFirestore fStore = getFirestore();
     String userPhone = user.phoneNumber;
     Exception exception;
     SlotFullException slotFullException;
@@ -253,8 +273,8 @@ class TokenService {
     //get the slot from the token
     //increase the slot maxallowed by one
 
-    final User user = FirebaseAuth.instance.currentUser;
-    FirebaseFirestore fStore = FirebaseFirestore.instance;
+    final User user = getFirebaseAuth().currentUser;
+    FirebaseFirestore fStore = getFirestore();
     String userPhone = user.phoneNumber;
 
     bool isCancelled = false;
@@ -319,8 +339,9 @@ class TokenService {
   Future<List<UserToken>> getAllTokensForCurrentUser(
       DateTime from, DateTime to) async {
     List<UserToken> tokens = new List<UserToken>();
-    User user = FirebaseAuth.instance.currentUser;
-    FirebaseFirestore fStore = FirebaseFirestore.instance;
+    User user = getFirebaseAuth().currentUser;
+    if (user == null) return null;
+    FirebaseFirestore fStore = getFirestore();
 
     QuerySnapshot qs;
 
@@ -356,8 +377,8 @@ class TokenService {
   Future<List<UserToken>> getTokensForEntityBookedByCurrentUser(
       String entityId, DateTime date) async {
     List<UserToken> tokens = new List<UserToken>();
-    User user = FirebaseAuth.instance.currentUser;
-    FirebaseFirestore fStore = FirebaseFirestore.instance;
+    User user = getFirebaseAuth().currentUser;
+    FirebaseFirestore fStore = getFirestore();
     DateTime inputDate = new DateTime(date.year, date.month, date.day);
     DateTime nextDay = inputDate.add(new Duration(days: 1));
 
@@ -384,7 +405,7 @@ class TokenService {
 
   Future<bool> deleteSlot(String slotId) async {
     //this should be restricted on Server, only to be used for testcases
-    FirebaseFirestore fStore = FirebaseFirestore.instance;
+    FirebaseFirestore fStore = getFirestore();
 
     DocumentReference slotRef = fStore.doc('slots/' + slotId);
 
@@ -400,7 +421,7 @@ class TokenService {
 
   Future<bool> deleteToken(String tokenId) async {
     //this should be restricted on Server, only to be used for testcases
-    FirebaseFirestore fStore = FirebaseFirestore.instance;
+    FirebaseFirestore fStore = getFirestore();
 
     DocumentReference tokRef = fStore.doc('tokens/' + tokenId);
 
@@ -416,8 +437,8 @@ class TokenService {
 
   Future<bool> updateToken(UserToken token) async {
     //this should be restricted on Server, only to be used for testcases
-    final User user = FirebaseAuth.instance.currentUser;
-    FirebaseFirestore fStore = FirebaseFirestore.instance;
+    final User user = getFirebaseAuth().currentUser;
+    FirebaseFirestore fStore = getFirestore();
 
     DocumentReference tokRef = fStore.doc('tokens/' + token.getTokenId());
 

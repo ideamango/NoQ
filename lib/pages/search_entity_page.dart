@@ -1795,7 +1795,7 @@ class _SearchEntityPageState extends State<SearchEntityPage>
     String entityTypeForSearch;
     entityTypeForSearch = (_entityType == _searchInAll) ? null : _entityType;
 
-    List<Entity> searchEntityList = await EntityService().search(
+    List<Entity> searchEntityList = await _state.getEntityService().search(
         _searchText.toLowerCase(),
         entityTypeForSearch,
         lat,

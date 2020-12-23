@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:noq/events/auto_verification_completed_data.dart';
 import 'package:noq/events/event_bus.dart';
 import 'package:noq/events/events.dart';
+import 'package:noq/global_state.dart';
 import 'package:noq/pages/explore_page_for_business.dart';
 import 'package:noq/pages/search_entity_page.dart';
 import 'package:noq/pages/explore_page_for_user.dart';
@@ -36,6 +37,7 @@ class _LoginPageState extends State<LoginPage> {
   bool _autoValidate = false;
   bool isButtonPressed = false;
   String _errorMessage;
+  GlobalState _state;
   //METHODS
 
   //UI ELEMENTS
@@ -51,6 +53,14 @@ class _LoginPageState extends State<LoginPage> {
     textAlign: TextAlign.center,
     style: logoSubTextStyle,
   );
+
+  @override
+  void initState() {
+    super.initState();
+    GlobalState.getGlobalState().then((value) {
+      _state = value;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -298,7 +308,9 @@ class _LoginPageState extends State<LoginPage> {
       _errorMsg = null;
       _loginPageFormKey.currentState.save();
       codeSent
-          ? AuthService().signInWithOTP(smsCode, verificationId, context)
+          ? _state
+              .getAuthService()
+              .signInWithOTP(smsCode, verificationId, context)
           : verifyPhone(_mobile);
     } else {
       setState(() {
@@ -383,14 +395,14 @@ class _LoginPageState extends State<LoginPage> {
         print("Main - Time out");
       };
 
-      await FirebaseAuth.instance.verifyPhoneNumber(
-          phoneNumber: phoneNo,
-          timeout: Duration(seconds: 30),
-          verificationCompleted: phoneVerified,
-          verificationFailed: verificationFailed,
-          forceResendingToken: _forceResendingToken,
-          codeSent: otpSent,
-          codeAutoRetrievalTimeout: autoTimeout);
+      _state.getAuthService().verifyPhoneNumber(
+          phoneNo,
+          Duration(seconds: 30),
+          phoneVerified,
+          verificationFailed,
+          _forceResendingToken,
+          otpSent,
+          autoTimeout);
     } catch (e) {
       setState(() {
         _errorMsg = "Invalid phone number.";
@@ -671,7 +683,10 @@ class _LoginPageState extends State<LoginPage> {
                       _pin = _pinPutController.text;
 
                       try {
-                        User user = FirebaseAuth.instance.currentUser;
+                        User user = _state
+                            .getAuthService()
+                            .getFirebaseAuth()
+                            .currentUser;
 
                         if (user != null) {
                           Navigator.of(context).pop();
@@ -690,7 +705,9 @@ class _LoginPageState extends State<LoginPage> {
                                 PhoneAuthProvider.credential(
                                     verificationId: verificationId,
                                     smsCode: _pin);
-                            FirebaseAuth.instance
+                            _state
+                                .getAuthService()
+                                .getFirebaseAuth()
                                 .signInWithCredential(authCreds)
                                 .then((UserCredential authResult) {
                               // AuthService()

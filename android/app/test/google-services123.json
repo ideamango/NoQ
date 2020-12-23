@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "166667469482",
+    "firebase_url": "https://awesomenoq.firebaseio.com",
+    "project_id": "awesomenoq",
+    "storage_bucket": "awesomenoq.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:166667469482:android:f488ccf8299e9542e9c6d3",
+        "android_client_info": {
+          "package_name": "net.lesss"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "166667469482-300mgive3o8b5msd4urru1425vhbhi1i.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBvRdM2jfG54VzciJ3sfef4xq_TalMmOAM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "166667469482-300mgive3o8b5msd4urru1425vhbhi1i.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "166667469482-33b55aepe4s026tadg0ap7rtoug8gdh0.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "net.lesss",
+                "app_store_id": "962194608"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

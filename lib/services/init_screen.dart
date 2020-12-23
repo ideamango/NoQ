@@ -12,11 +12,16 @@ class SplashScreen extends StatefulWidget {
 }
 
 class SplashState extends State<SplashScreen> {
+  GlobalState _state;
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    startTime();
+    GlobalState.getGlobalState().then((value) {
+      _state = value;
+      startTime();
+    });
   }
 
   @override
@@ -35,7 +40,7 @@ class SplashState extends State<SplashScreen> {
     Navigator.pushReplacement(
         context,
         MaterialPageRoute(
-          builder: (context) => AuthService().handleAuth(),
+          builder: (context) => (_state.getAuthService()).handleAuth(),
         ));
   }
 

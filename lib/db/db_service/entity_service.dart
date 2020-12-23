@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart' as fAuth;
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:geoflutterfire/geoflutterfire.dart';
 import 'package:noq/db/db_model/app_user.dart';
 import 'package:noq/db/db_model/entity.dart';
@@ -13,11 +14,30 @@ import '../../constants.dart';
 import 'user_does_not_exists_exception.dart';
 
 class EntityService {
+  FirebaseApp _fb;
+
+  EntityService(FirebaseApp firebaseApp) {
+    _fb = firebaseApp;
+  }
+
+  FirebaseFirestore getFirestore() {
+    if (_fb == null) {
+      return FirebaseFirestore.instance;
+    } else {
+      return FirebaseFirestore.instanceFor(app: _fb);
+    }
+  }
+
+  FirebaseAuth getFirebaseAuth() {
+    if (_fb == null) return FirebaseAuth.instance;
+    return FirebaseAuth.instanceFor(app: _fb);
+  }
+
   Future<bool> upsertEntity(Entity entity) async {
-    final fAuth.User fireUser = FirebaseAuth.instance.currentUser;
+    final fAuth.User fireUser = getFirebaseAuth().currentUser;
     String regNum = entity.regNum;
 
-    FirebaseFirestore fStore = FirebaseFirestore.instance;
+    FirebaseFirestore fStore = getFirestore();
     final DocumentReference entityRef =
         fStore.doc('entities/' + entity.entityId);
 
@@ -111,7 +131,7 @@ class EntityService {
   }
 
   Future<Entity> getEntity(String entityId) async {
-    FirebaseFirestore fStore = FirebaseFirestore.instance;
+    FirebaseFirestore fStore = getFirestore();
     Entity entity;
 
     final DocumentReference entityRef = fStore.doc('entities/' + entityId);
@@ -127,7 +147,7 @@ class EntityService {
   }
 
   Future<EntityPrivate> getEntityPrivate(String entityId) async {
-    FirebaseFirestore fStore = FirebaseFirestore.instance;
+    FirebaseFirestore fStore = getFirestore();
     EntityPrivate entityPrivate;
 
     final DocumentReference entityPrivateRef =
@@ -144,8 +164,8 @@ class EntityService {
   }
 
   Future<bool> deleteEntity(String entityId) async {
-    final fAuth.User fireUser = FirebaseAuth.instance.currentUser;
-    FirebaseFirestore fStore = FirebaseFirestore.instance;
+    final fAuth.User fireUser = getFirebaseAuth().currentUser;
+    FirebaseFirestore fStore = getFirestore();
     bool isSuccess = false;
 
     //STEPS:
@@ -262,8 +282,8 @@ class EntityService {
   }
 
   Future<bool> assignAdmin(String entityId, String phone) async {
-    final User fireUser = FirebaseAuth.instance.currentUser;
-    FirebaseFirestore fStore = FirebaseFirestore.instance;
+    final User fireUser = getFirebaseAuth().currentUser;
+    FirebaseFirestore fStore = getFirestore();
 
     AppUser u;
     bool isSuccess = true;
@@ -349,8 +369,8 @@ class EntityService {
     //ChildEntity might already exists or can be new
     //ChildEntity Meta should be added in the parentEntity
     //ChildEntity should have parentEntityId set on the parentId attribute
-    FirebaseFirestore fStore = FirebaseFirestore.instance;
-    final User fireUser = FirebaseAuth.instance.currentUser;
+    FirebaseFirestore fStore = getFirestore();
+    final User fireUser = getFirebaseAuth().currentUser;
     String childRegNum = childEntity.regNum;
 
     final DocumentReference entityRef =
@@ -496,8 +516,8 @@ class EntityService {
     //check of the current user is admin
     //remove from the user.entities collection
     //remove from the entity.admin collection
-    final User fireUser = FirebaseAuth.instance.currentUser;
-    FirebaseFirestore fStore = FirebaseFirestore.instance;
+    final User fireUser = getFirebaseAuth().currentUser;
+    FirebaseFirestore fStore = getFirestore();
 
     AppUser u;
     bool isSuccess = true;
@@ -569,8 +589,8 @@ class EntityService {
   }
 
   Future<bool> addEntityToUserFavourite(MetaEntity me) async {
-    final User fireUser = FirebaseAuth.instance.currentUser;
-    FirebaseFirestore fStore = FirebaseFirestore.instance;
+    final User fireUser = getFirebaseAuth().currentUser;
+    FirebaseFirestore fStore = getFirestore();
 
     AppUser u;
     bool isSuccess = true;
@@ -614,8 +634,8 @@ class EntityService {
   }
 
   Future<bool> removeEntityFromUserFavourite(String entityId) async {
-    final User fireUser = FirebaseAuth.instance.currentUser;
-    FirebaseFirestore fStore = FirebaseFirestore.instance;
+    final User fireUser = getFirebaseAuth().currentUser;
+    FirebaseFirestore fStore = getFirestore();
 
     AppUser u;
     bool isSuccess = true;
@@ -662,7 +682,7 @@ class EntityService {
       int radius, int pageNumber, int pageSize) async {
     double rad = radius.toDouble();
     List<Entity> entities = new List<Entity>();
-    FirebaseFirestore fStore = FirebaseFirestore.instance;
+    FirebaseFirestore fStore = getFirestore();
     Geoflutterfire geo = Geoflutterfire();
     GeoFirePoint center = geo.point(latitude: lat, longitude: lon);
 

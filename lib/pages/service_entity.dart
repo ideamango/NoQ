@@ -92,8 +92,8 @@ class ChildEntityRowState extends State<ChildEntityRow> {
 
     share() {
       Entity en;
-      EntityService().getEntity(_metaEntity.entityId).then((value) {
-        en = value;
+      _state.getEntity(_metaEntity.entityId).then((value) {
+        en = value.item1;
         if (en == null) {
           Utils.showMyFlushbar(context, Icons.info, Duration(seconds: 4),
               missingInfoForShareStr, missingInfoForShareSubStr);
@@ -105,8 +105,9 @@ class ChildEntityRowState extends State<ChildEntityRow> {
 
     shareQr() {
       Entity en;
-      EntityService().getEntity(_metaEntity.entityId).then((value) {
-        en = value;
+
+      _state.getEntity(_metaEntity.entityId).then((value) {
+        en = value.item1;
         if (en == null) {
           Utils.showMyFlushbar(context, Icons.info, Duration(seconds: 4),
               missingInfoForShareStr, missingInfoForShareSubStr);

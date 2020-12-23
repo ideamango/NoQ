@@ -1,3 +1,7 @@
+import 'dart:async';
+import 'dart:io';
+
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 import 'package:noq/db/db_model/configurations.dart';
@@ -6,10 +10,12 @@ import 'package:noq/db/db_model/meta_entity.dart';
 import 'package:noq/db/db_model/app_user.dart';
 import 'package:noq/db/db_model/slot.dart';
 import 'package:noq/db/db_model/user_token.dart';
+
 import 'package:noq/db/db_service/configurations_service.dart';
 import 'package:noq/db/db_service/entity_service.dart';
 import 'package:noq/db/db_service/token_service.dart';
 import 'package:noq/events/local_notification_data.dart';
+import 'package:noq/services/auth_service.dart';
 import 'package:noq/tuple.dart';
 
 import 'package:noq/utils.dart';
@@ -26,35 +32,139 @@ class GlobalState {
   String lastSearchType;
   List<Entity> lastSearchResults;
   Map<String, Entity> _entities;
+  FirebaseApp _secondaryFirebaseApp;
 
   //true is entity is saved on server and false if it is a new entity
   Map<String, bool> _entityState;
   EntityService _entityService;
   UserService _userService;
   TokenService _tokenService;
+  AuthService _authService;
+  String _country;
+  static Future<Null> isWorking;
 
   static GlobalState _gs;
 
   GlobalState._();
 
-  // GlobalState.withValues(
-  //     {this._currentUser, this.conf, this.bookings, this.pastSearches});
+  Future<void> initSecondaryFirebaseApp() async {
+    String appId;
+    String apiKey;
+    String messagingSenderId;
+    String projectId;
+
+    for (FirebaseApp app in Firebase.apps) {
+      if (app.name == "SecondaryFirebaseApp") {
+        return;
+      }
+    }
+
+    if (_country == "India") {
+      appId = Platform.isAndroid
+          ? "1:643643889883:android:2c47f2ee29f66b35c594fe"
+          : "1:643643889883:ios:1e17e4f8114d5fd0c594fe";
+
+      apiKey = "AIzaSyDYo0KL7mzN9-0ghFsO4ydCLQYFXoWvujg";
+      messagingSenderId = "643643889883";
+      projectId = "sukoon-india";
+
+      await Firebase.initializeApp(
+          name: 'SecondaryFirebaseApp',
+          options: FirebaseOptions(
+              appId: appId,
+              apiKey: apiKey,
+              messagingSenderId: messagingSenderId,
+              projectId: projectId));
+    } else if (_country == "Test") {
+      appId = Platform.isAndroid
+          ? "1:166667469482:android:f488ccf8299e9542e9c6d3"
+          : "1:166667469482:ios:bcaebbe8fae4c8c2e9c6d3";
+
+      apiKey = "AIzaSyBvRdM2jfG54VzciJ3sfef4xq_TalMmOAM";
+      messagingSenderId = "166667469482";
+      projectId = "awesomenoq";
+
+      await Firebase.initializeApp(
+          name: 'SecondaryFirebaseApp',
+          options: FirebaseOptions(
+              appId: appId,
+              apiKey: apiKey,
+              messagingSenderId: messagingSenderId,
+              projectId: projectId));
+    } else if (_country == "US" || !Utils.isNotNullOrEmpty(_country)) {
+      // appId = Platform.isAndroid
+      //     ? "1:964237045237:android:dac9374ed36f850a5784bc"
+      //     : "1:964237045237:ios:458f3c6fc630f29c5784bc";
+
+      // apiKey = "AIzaSyCZlz1Cdyi2wjOvhuIFJmWTnc4m8eUuW34";
+      // messagingSenderId = "964237045237";
+      // projectId = "lesssusdefault";
+
+      // await Firebase.initializeApp(
+      //     name: 'SecondaryFirebaseApp',
+      //     options: FirebaseOptions(
+      //         appId: appId,
+      //         apiKey: apiKey,
+      //         messagingSenderId: messagingSenderId,
+      //         projectId: projectId));
+      _gs._secondaryFirebaseApp = Firebase.apps[0];
+    }
+
+    if (_gs._secondaryFirebaseApp == null) {
+      _gs._secondaryFirebaseApp = Firebase.app('SecondaryFirebaseApp');
+    }
+  }
 
   static Future<GlobalState> getGlobalState() async {
+    //automatically detect country
+    String country = "India";
+    return await GlobalState.getGlobalStateForCountry(country);
+  }
+
+  static Future<GlobalState> getGlobalStateForCountry(String country) async {
+    if (isWorking != null) {
+      await isWorking; // wait for future complete
+      return getGlobalStateForCountry(country);
+    }
+
+    //lock
+    var completer = new Completer<Null>();
+    isWorking = completer.future;
+
     if (_gs == null) {
       _gs = new GlobalState._();
     }
 
+    _gs.setCountry(country);
+
+    if (_gs._secondaryFirebaseApp == null) {
+      await _gs.initSecondaryFirebaseApp();
+    }
+
+    if (_gs._authService == null) {
+      _gs._authService = new AuthService(_gs._secondaryFirebaseApp);
+    }
+
     if (_gs._entityService == null) {
-      _gs._entityService = new EntityService();
+      _gs._entityService = new EntityService(_gs._secondaryFirebaseApp);
     }
 
     if (_gs._userService == null) {
-      _gs._userService = new UserService();
+      _gs._userService = new UserService(_gs._secondaryFirebaseApp);
     }
 
     if (_gs._tokenService == null) {
-      _gs._tokenService = new TokenService();
+      _gs._tokenService = new TokenService(_gs._secondaryFirebaseApp);
+    }
+
+    if (_gs.conf == null) {
+      try {
+        _gs.conf = await ConfigurationService(_gs._secondaryFirebaseApp)
+            .getConfigurations();
+      } catch (e) {
+        print(
+            "Error initializing GlobalState, Configuration could not be fetched from server..");
+      }
     }
 
     if (_gs._entities == null) {
@@ -65,7 +175,8 @@ class GlobalState {
     if (_gs._currentUser == null) {
       try {
         _gs._currentUser = await _gs._userService.getCurrentUser();
-        if (Utils.isNullOrEmpty(_gs._currentUser.favourites))
+        if (_gs._currentUser != null &&
+            Utils.isNullOrEmpty(_gs._currentUser.favourites))
           _gs._currentUser.favourites = new List<MetaEntity>();
       } catch (e) {
         print(
@@ -73,14 +184,6 @@ class GlobalState {
       }
     }
 
-    if (_gs.conf == null) {
-      try {
-        _gs.conf = await ConfigurationService().getConfigurations();
-      } catch (e) {
-        print(
-            "Error initializing GlobalState, Configuration could not be fetched from server..");
-      }
-    }
     if (_gs.bookings == null) {
       DateTime fromDate = DateTime.now().subtract(new Duration(days: 60));
       DateTime toDate = DateTime.now().add(new Duration(days: 30));
@@ -89,11 +192,35 @@ class GlobalState {
           await _gs._tokenService.getAllTokensForCurrentUser(fromDate, toDate);
     }
 
+    //unlock
+    completer.complete();
+    isWorking = null;
+
     return _gs;
+  }
+
+  void setCountry(String country) {
+    _country = country;
+  }
+
+  UserService getUserService() {
+    return _gs._userService;
+  }
+
+  EntityService getEntityService() {
+    return _gs._entityService;
+  }
+
+  TokenService getTokenService() {
+    return _gs._tokenService;
   }
 
   AppUser getCurrentUser() {
     return _currentUser;
+  }
+
+  AuthService getAuthService() {
+    return _authService;
   }
 
   static Future<String> getCountry() async {
@@ -284,13 +411,14 @@ class GlobalState {
       _gs.conf = null;
       _gs.lastSearchName = "";
       _gs.lastSearchType = "";
+      _gs._secondaryFirebaseApp = null;
     }
 
     _gs = null;
   }
 
   Future<bool> cancelBooking(String tokenId) async {
-    return await TokenService().cancelToken(tokenId);
+    return await _tokenService.cancelToken(tokenId);
   }
 
   static Future<void> saveGlobalState() async {

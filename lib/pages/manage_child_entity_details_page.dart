@@ -3521,10 +3521,11 @@ class _ManageChildEntityDetailsPageState
                                                 deleteEntity(
                                                         serviceEntity.entityId)
                                                     .whenComplete(() {
-                                                  EntityService()
+                                                  _gState
                                                       .getEntity(parentEntityId)
                                                       .then((value) => {
-                                                            parentEntity = value
+                                                            parentEntity =
+                                                                value.item1
                                                           })
                                                       .whenComplete(() {
                                                     _gState.removeEntity(

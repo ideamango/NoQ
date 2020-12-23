@@ -21,8 +21,15 @@ import 'package:noq/events/event_bus.dart';
 import 'package:noq/events/events.dart';
 import 'package:noq/events/local_notification_data.dart';
 import 'package:noq/constants.dart';
+import 'package:noq/global_state.dart';
 
 class DBTest {
+  GlobalState _gs;
+  DBTest() {
+    GlobalState.clearGlobalState();
+    GlobalState.getGlobalStateForCountry("Test").then((value) => _gs = value);
+  }
+
   Future<void> createEntity() async {
     Address adrs = new Address(
         city: "Hyderbad",
@@ -57,14 +64,14 @@ class DBTest {
 
     try {
       entity.regNum = "testReg";
-      await EntityService().upsertEntity(entity);
+      await _gs.getEntityService().upsertEntity(entity);
     } catch (e) {
       print("Exception occured " + e.toString());
     }
   }
 
   Future<void> updateChildEntityBataWithOfferAndManager() async {
-    Entity ent = await EntityService().getEntity("Child101-1");
+    Entity ent = await _gs.getEntityService().getEntity("Child101-1");
 
     Address adrs = new Address(
         city: "Hyderbad",
@@ -98,14 +105,14 @@ class DBTest {
 
     try {
       ent.regNum = "BataRegNumber";
-      await EntityService().upsertEntity(ent);
+      await _gs.getEntityService().upsertEntity(ent);
     } catch (e) {
       print("Exception occured " + e.toString());
     }
   }
 
   Future<void> updateEntity(String name) async {
-    Entity ent = await EntityService().getEntity("Entity101");
+    Entity ent = await _gs.getEntityService().getEntity("Entity101");
     ent.name = name;
 
     Address adrs = new Address(
@@ -115,7 +122,7 @@ class DBTest {
         address: "Shop 10, Gachibowli");
 
     try {
-      await EntityService().upsertEntity(ent);
+      await _gs.getEntityService().upsertEntity(ent);
     } catch (e) {
       print("Exception occured " + e.toString());
     }
@@ -155,8 +162,9 @@ class DBTest {
         coordinates: geoPoint);
     try {
       child1.regNum = "testregnum";
-      bool added =
-          await EntityService().upsertChildEntityToParent(child1, 'Entity101');
+      bool added = await _gs
+          .getEntityService()
+          .upsertChildEntityToParent(child1, 'Entity101');
     } catch (e) {
       print("Exception while creating Child101: " + e.toString());
       throw e;
@@ -234,7 +242,7 @@ class DBTest {
     // Employee manager1 = new Employee(name: "Rakesh", ph: "+91888888888", employeeId: "empyId", shiftStartHour: );
 
     try {
-      await EntityService().upsertEntity(entity);
+      await _gs.getEntityService().upsertEntity(entity);
     } catch (e) {
       print("Exception occured " + e.toString());
     }
@@ -262,32 +270,36 @@ class DBTest {
 
   Future<void> clearAll() async {
     try {
-      await EntityService().deleteEntity('SportsEntity103');
-      await EntityService().deleteEntity('SportsEntity104');
-      await EntityService().deleteEntity('SportsEntity105');
-      await EntityService().deleteEntity('BankEntity106');
-      await EntityService().deleteEntity('SalonEntity107');
-      await EntityService().deleteEntity('SalonEntity108');
-      await EntityService().deleteEntity('GymEntity109');
-      await EntityService().deleteEntity('GymEntity110');
+      await _gs.getEntityService().deleteEntity('SportsEntity103');
+      await _gs.getEntityService().deleteEntity('SportsEntity104');
+      await _gs.getEntityService().deleteEntity('SportsEntity105');
+      await _gs.getEntityService().deleteEntity('BankEntity106');
+      await _gs.getEntityService().deleteEntity('SalonEntity107');
+      await _gs.getEntityService().deleteEntity('SalonEntity108');
+      await _gs.getEntityService().deleteEntity('GymEntity109');
+      await _gs.getEntityService().deleteEntity('GymEntity110');
 
-      await TokenService().deleteSlot("Child101-1#2020~7~6");
-      await TokenService().deleteSlot("Child101-1#2020~7~7");
-      await TokenService().deleteSlot("Child101-1#2020~7~8");
+      await _gs.getTokenService().deleteSlot("Child101-1#2020~7~6");
+      await _gs.getTokenService().deleteSlot("Child101-1#2020~7~7");
+      await _gs.getTokenService().deleteSlot("Child101-1#2020~7~8");
 
-      await TokenService()
+      await _gs
+          .getTokenService()
           .deleteToken("Child101-1#2020~7~6#10~30#+919999999999");
-      await TokenService()
+      await _gs
+          .getTokenService()
           .deleteToken("Child101-1#2020~7~7#10~30#+919999999999");
-      await TokenService()
+      await _gs
+          .getTokenService()
           .deleteToken("Child101-1#2020~7~7#12~30#+919999999999");
-      await TokenService()
+      await _gs
+          .getTokenService()
           .deleteToken("Child101-1#2020~7~8#10~30#+919999999999");
-      await EntityService().deleteEntity('Entity101');
+      await _gs.getEntityService().deleteEntity('Entity101');
 
-      await EntityService().deleteEntity('Entity102');
+      await _gs.getEntityService().deleteEntity('Entity102');
       //delete user
-      await UserService().deleteCurrentUser();
+      await _gs.getUserService().deleteCurrentUser();
     } catch (e) {
       print("Error occurred in cleaning.. may be DB is already cleaned.");
     }
@@ -309,10 +321,10 @@ class DBTest {
     print("Security permission test started.. ");
 
     updateEntity("Inorbit_AdminCheck");
-    await EntityService().assignAdmin('Child101-1', "+913611009823");
-    await EntityService().assignAdmin('Entity102', "+913611009823");
-    await EntityService().removeAdmin('Entity102', "+913611009823");
-    await EntityService().assignAdmin('Entity102', "+913611009823");
+    await _gs.getEntityService().assignAdmin('Child101-1', "+913611009823");
+    await _gs.getEntityService().assignAdmin('Entity102', "+913611009823");
+    await _gs.getEntityService().removeAdmin('Entity102', "+913611009823");
+    await _gs.getEntityService().assignAdmin('Entity102', "+913611009823");
 
     print("Security permission test completed.");
   }
@@ -324,9 +336,9 @@ class DBTest {
     print(
         "<==================================TESTING STARTED==========================================>");
 
-    Configurations conf = await ConfigurationService().getConfigurations();
+    Configurations conf = await ConfigurationService(null).getConfigurations();
 
-    AppUser u = await UserService().getCurrentUser();
+    AppUser u = await _gs.getUserService().getCurrentUser();
 
     try {
       await createChildEntityAndAddToParent(
@@ -341,7 +353,7 @@ class DBTest {
 
     await createChildEntityAndAddToParent('Child101-1', "Bata", true);
 
-    await EntityService().assignAdmin('Child101-1', "+913611009823");
+    await _gs.getEntityService().assignAdmin('Child101-1', "+913611009823");
 
     await createChildEntityAndAddToParent('Child101-2', "Habinaro", true);
 
@@ -351,18 +363,18 @@ class DBTest {
 
     await updateEntity("Inorbit_Modified_Again");
 
-    Entity ent = await EntityService().getEntity('Entity101');
+    Entity ent = await _gs.getEntityService().getEntity('Entity101');
 
-    Entity child1 = await EntityService().getEntity('Child101-1');
+    Entity child1 = await _gs.getEntityService().getEntity('Child101-1');
 
-    Entity child2 = await EntityService().getEntity('Child101-2');
+    Entity child2 = await _gs.getEntityService().getEntity('Child101-2');
 
-    Entity child3 = await EntityService().getEntity('Child101-3');
+    Entity child3 = await _gs.getEntityService().getEntity('Child101-3');
 
     print("Token generation started..");
 
     try {
-      UserToken tok1 = await TokenService().generateToken(
+      UserToken tok1 = await _gs.getTokenService().generateToken(
           child1.getMetaEntity(), new DateTime(2020, 7, 6, 10, 30, 0, 0));
     } catch (e) {
       print("generate token threw Slotful exception");
@@ -370,22 +382,24 @@ class DBTest {
 
     print("Tok1 generated");
 
-    UserToken tok21 = await TokenService().generateToken(
+    UserToken tok21 = await _gs.getTokenService().generateToken(
         child1.getMetaEntity(), new DateTime(2020, 7, 7, 12, 30, 0, 0));
     print("Tok21 generated");
 
-    UserToken tok22 = await TokenService().generateToken(
+    UserToken tok22 = await _gs.getTokenService().generateToken(
         child1.getMetaEntity(), new DateTime(2020, 7, 7, 10, 30, 0, 0));
     print("Tok22 generated");
 
-    UserToken tok3 = await TokenService().generateToken(
+    UserToken tok3 = await _gs.getTokenService().generateToken(
         child1.getMetaEntity(), new DateTime(2020, 7, 8, 10, 30, 0, 0));
     print("Tok3 generated");
 
     print("Token generation ended.");
 
-    List<UserToken> toks = await TokenService().getAllTokensForCurrentUser(
-        new DateTime(2020, 7, 8), new DateTime(2020, 7, 9));
+    List<UserToken> toks = await _gs
+        .getTokenService()
+        .getAllTokensForCurrentUser(
+            new DateTime(2020, 7, 8), new DateTime(2020, 7, 9));
     print("Got the Tokens between 8th July and 9th July: " +
         toks.length.toString());
 
@@ -452,7 +466,8 @@ class DBTest {
           "TokenService.getAllTokensForCurrentUser -----------------------> FAILURE");
     }
 
-    List<UserToken> toksBetween6thAnd9th = await TokenService()
+    List<UserToken> toksBetween6thAnd9th = await _gs
+        .getTokenService()
         .getAllTokensForCurrentUser(
             new DateTime(2020, 7, 6), new DateTime(2020, 7, 9));
 
@@ -463,7 +478,8 @@ class DBTest {
           "TokenService.getAllTokensForCurrentUser -----------------------> FAILURE");
     }
 
-    List<UserToken> allToksFromToday = await TokenService()
+    List<UserToken> allToksFromToday = await _gs
+        .getTokenService()
         .getAllTokensForCurrentUser(new DateTime(2020, 7, 7), null);
 
     if (allToksFromToday != null && allToksFromToday.length >= 3) {
@@ -474,7 +490,8 @@ class DBTest {
           "TokenService.getAllTokensForCurrentUser -----------------------> FAILURE");
     }
 
-    EntitySlots es = await TokenService()
+    EntitySlots es = await _gs
+        .getTokenService()
         .getEntitySlots('Child101-1', new DateTime(2020, 7, 7));
 
     if (es != null && es.slots.length == 2) {
@@ -483,7 +500,8 @@ class DBTest {
       print("TokenService.getEntitySlots -----------------------> FAILURE");
     }
 
-    List<UserToken> toksForDayForEntity = await TokenService()
+    List<UserToken> toksForDayForEntity = await _gs
+        .getTokenService()
         .getTokensForEntityBookedByCurrentUser(
             'Child101-1', new DateTime(2020, 7, 7));
 
@@ -494,14 +512,16 @@ class DBTest {
           "TokenService.getTokensForEntityBookedByCurrentUser ------------------------> FAILURE");
     }
 
-    bool isTokenCancelled = await TokenService()
+    bool isTokenCancelled = await _gs
+        .getTokenService()
         .cancelToken("Child101-1#2020~7~7#10~30#+919999999999");
 
     if (!isTokenCancelled) {
       print("TokenService.cancelToken ------> FAILURE");
     }
 
-    List<UserToken> toksForDayForEntityAfterCancellation = await TokenService()
+    List<UserToken> toksForDayForEntityAfterCancellation = await _gs
+        .getTokenService()
         .getTokensForEntityBookedByCurrentUser(
             'Child101-1', new DateTime(2020, 7, 7));
     for (UserToken tokenOnSeventh in toksForDayForEntityAfterCancellation) {
@@ -515,7 +535,8 @@ class DBTest {
       }
     }
 
-    EntitySlots esWithCancelledSlot = await TokenService()
+    EntitySlots esWithCancelledSlot = await _gs
+        .getTokenService()
         .getEntitySlots('Child101-1', new DateTime(2020, 7, 7));
 
     if (esWithCancelledSlot != null && esWithCancelledSlot.slots.length == 2) {
@@ -537,8 +558,9 @@ class DBTest {
 
     print("----------Search Only Type--with Name null ----------");
 
-    List<Entity> entitiesByTypeAndNameNull =
-        await EntityService().search(null, "Shop", 17.4338, 78.3321, 2, 1, 2);
+    List<Entity> entitiesByTypeAndNameNull = await _gs
+        .getEntityService()
+        .search(null, "Shop", 17.4338, 78.3321, 2, 1, 2);
 
     for (Entity me in entitiesByTypeAndNameNull) {
       print(me.name + ":" + me.distance.toString());
@@ -553,8 +575,9 @@ class DBTest {
 
     print("----------Search Only Partial Name-- Type null-----------");
 
-    List<Entity> entitiesByTypeNullAndName =
-        await EntityService().search("Habi", "", 17.4338, 78.3321, 2, 1, 2);
+    List<Entity> entitiesByTypeNullAndName = await _gs
+        .getEntityService()
+        .search("Habi", "", 17.4338, 78.3321, 2, 1, 2);
 
     for (Entity me in entitiesByTypeNullAndName) {
       print(me.name + ":" + me.distance.toString());
@@ -569,8 +592,9 @@ class DBTest {
 
     print("---------Search By Partial Name and Type --------------");
 
-    List<Entity> entitiesByTypeAndName =
-        await EntityService().search("Bat", "Shop", 17.4338, 78.3321, 2, 1, 2);
+    List<Entity> entitiesByTypeAndName = await _gs
+        .getEntityService()
+        .search("Bat", "Shop", 17.4338, 78.3321, 2, 1, 2);
 
     for (Entity me in entitiesByTypeAndName) {
       print(me.name + ":" + me.distance.toString());
@@ -585,7 +609,8 @@ class DBTest {
     print(
         "---------Search By Name and Type again for 2 Habi but of different type--------------");
 
-    List<Entity> entitiesByTypeAndNameAgain = await EntityService()
+    List<Entity> entitiesByTypeAndNameAgain = await _gs
+        .getEntityService()
         .search("Habina", "Shop", 17.4338, 78.3321, 2, 1, 2);
 
     for (Entity me in entitiesByTypeAndNameAgain) {
@@ -602,7 +627,8 @@ class DBTest {
     print(
         "---------Search By Name and Type Store (no intersection) --------------");
 
-    List<Entity> noIntersection = await EntityService()
+    List<Entity> noIntersection = await _gs
+        .getEntityService()
         .search("Bata", "Store", 17.4338, 78.3321, 2, 1, 2);
 
     for (Entity me in noIntersection) {
@@ -615,9 +641,9 @@ class DBTest {
       print("EntityService.search -----------------------> FAILURE");
     }
 
-    await EntityService().removeAdmin('Child101-1', "+913611009823");
+    await _gs.getEntityService().removeAdmin('Child101-1', "+913611009823");
 
-    Entity child101 = await EntityService().getEntity('Child101-1');
+    Entity child101 = await _gs.getEntityService().getEntity('Child101-1');
 
     bool isAdminRemovedFromEntity = true;
     // for (MetaUser me in child101.admins) {
@@ -674,9 +700,11 @@ class DBTest {
 
     //----------
 
-    await EntityService().addEntityToUserFavourite(child101.getMetaEntity());
+    await _gs
+        .getEntityService()
+        .addEntityToUserFavourite(child101.getMetaEntity());
 
-    AppUser curUser = await UserService().getCurrentUser();
+    AppUser curUser = await _gs.getUserService().getCurrentUser();
 
     bool isEntityAddedToCurrentUser = false;
 
@@ -698,9 +726,9 @@ class DBTest {
           "EntityService.addEntityToUserFavourite -----------------------> FAILURE");
     }
 
-    await EntityService().removeEntityFromUserFavourite("Child101-1");
+    await _gs.getEntityService().removeEntityFromUserFavourite("Child101-1");
 
-    curUser = await UserService().getCurrentUser();
+    curUser = await _gs.getUserService().getCurrentUser();
 
     bool isEntityRemovedFromCurrentUser = true;
 
@@ -725,7 +753,7 @@ class DBTest {
     //---- Update child entity with upsertChild method which should update the metaEntity in the parentEntity and Admin user
     await updateChild101();
 
-    Entity parentEnt = await EntityService().getEntity('Entity101');
+    Entity parentEnt = await _gs.getEntityService().getEntity('Entity101');
     bool metaNameChangedInParent = false;
     for (MetaEntity me in parentEnt.childEntities) {
       if (me.name == "Bata updated") {
@@ -742,7 +770,7 @@ class DBTest {
           "EntityService.upsertChildEntityToParent (metaEntity updated in the Parent) --> Failure");
     }
 
-    AppUser user = await UserService().getCurrentUser();
+    AppUser user = await _gs.getUserService().getCurrentUser();
 
     bool metaNameChangedInAdminUser = false;
 
@@ -763,7 +791,7 @@ class DBTest {
 
     await updateChildEntityBataWithOfferAndManager();
 
-    Entity bata = await EntityService().getEntity('Child101-1');
+    Entity bata = await _gs.getEntityService().getEntity('Child101-1');
 
     if (bata.offer != null &&
         bata.offer.coupon == "Coup10" &&
@@ -776,7 +804,7 @@ class DBTest {
     }
 
     bool admin6955 =
-        await EntityService().assignAdmin("Child101-3", "+919611006955");
+        await _gs.getEntityService().assignAdmin("Child101-3", "+919611006955");
 
     print(
         "+919611006955 added as an admin to the Child101-3, check on the real device");
@@ -823,7 +851,9 @@ class DBTest {
 
     try {
       entity.regNum = "SampleChildRegNum";
-      await EntityService().upsertChildEntityToParent(entity, "Entity101");
+      await _gs
+          .getEntityService()
+          .upsertChildEntityToParent(entity, "Entity101");
     } catch (e) {
       print("Exception occured " + e.toString());
     }
@@ -890,7 +920,7 @@ class DBTest {
 
     try {
       entity.regNum = "testReg111";
-      await EntityService().upsertEntity(entity);
+      await _gs.getEntityService().upsertEntity(entity);
     } catch (e) {
       print("Exception occured " + e.toString());
     }
@@ -935,9 +965,9 @@ class DBTest {
 
     try {
       entity.regNum = "testReg111";
-      await EntityService().upsertEntity(
-        entity,
-      );
+      await _gs.getEntityService().upsertEntity(
+            entity,
+          );
     } catch (e) {
       print("Exception occured " + e.toString());
     }
@@ -986,7 +1016,7 @@ class DBTest {
 
     try {
       entity.regNum = "testReg111";
-      await EntityService().upsertEntity(entity);
+      await _gs.getEntityService().upsertEntity(entity);
     } catch (e) {
       print("Exception occured " + e.toString());
     }
@@ -1035,7 +1065,7 @@ class DBTest {
 
     try {
       entity.regNum = "testReg111";
-      await EntityService().upsertEntity(entity);
+      await _gs.getEntityService().upsertEntity(entity);
     } catch (e) {
       print("Exception occured " + e.toString());
     }
@@ -1087,7 +1117,7 @@ class DBTest {
 
     try {
       entity.regNum = "testReg111";
-      await EntityService().upsertEntity(entity);
+      await _gs.getEntityService().upsertEntity(entity);
     } catch (e) {
       print("Exception occured " + e.toString());
     }
@@ -1139,7 +1169,7 @@ class DBTest {
 
     try {
       entity.regNum = "testReg111";
-      await EntityService().upsertEntity(entity);
+      await _gs.getEntityService().upsertEntity(entity);
     } catch (e) {
       print("Exception occured " + e.toString());
     }
@@ -1190,7 +1220,7 @@ class DBTest {
 
     try {
       entity.regNum = "testReg111";
-      await EntityService().upsertEntity(entity);
+      await _gs.getEntityService().upsertEntity(entity);
     } catch (e) {
       print("Exception occured " + e.toString());
     }
@@ -1241,7 +1271,7 @@ class DBTest {
 
     try {
       entity.regNum = "testReg111";
-      await EntityService().upsertEntity(entity);
+      await _gs.getEntityService().upsertEntity(entity);
     } catch (e) {
       print("Exception occured " + e.toString());
     }

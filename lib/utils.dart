@@ -622,8 +622,10 @@ class Utils {
                           "Hope to see you soon!!");
                       Navigator.of(context, rootNavigator: true).pop();
                       Future.delayed(Duration(seconds: 2)).then((value) {
-                        AuthService().signOut(context);
-                        GlobalState.clearGlobalState();
+                        GlobalState.getGlobalState().then((value) {
+                          value.getAuthService().signOut(context);
+                          GlobalState.clearGlobalState();
+                        });
                       });
                     },
                   ),
