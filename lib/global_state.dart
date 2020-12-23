@@ -138,6 +138,9 @@ class GlobalState {
     _entities[entity.entityId] = entity;
 
     bool existsInUser = false;
+    if (Utils.isNullOrEmpty(_currentUser.entities)) {
+      _currentUser.entities = new List<MetaEntity>();
+    }
     for (MetaEntity mEnt in _currentUser.entities) {
       if (mEnt.entityId == entity.entityId) {
         existsInUser = true;
