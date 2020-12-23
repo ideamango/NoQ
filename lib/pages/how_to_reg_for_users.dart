@@ -1,8 +1,4 @@
-import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
-import 'package:noq/constants.dart';
-import 'package:noq/style.dart';
-import 'package:noq/widget/carousel_user_register.dart';
 import 'package:noq/widget/video_player_app.dart';
 
 class HowToRegForUsers extends StatefulWidget {
@@ -11,28 +7,6 @@ class HowToRegForUsers extends StatefulWidget {
 }
 
 class _HowToRegForUsersState extends State<HowToRegForUsers> {
-  bool initCompleted = false;
-
-  //For Carousel
-  int _currentIndex = 0;
-  List cardList = [
-    Item1_login(),
-    Item2_login(),
-    Item3_search(),
-    Item4_ViewLists(),
-    Item5_BookSlots(),
-    Item6_Token(),
-    Item7_Done()
-    //  Item7()
-  ];
-  List<T> map<T>(List list, Function handler) {
-    List<T> result = [];
-    for (var i = 0; i < list.length; i++) {
-      result.add(handler(i, list[i]));
-    }
-    return result;
-  }
-
   @override
   void initState() {
     super.initState();
@@ -72,47 +46,6 @@ class _HowToRegForUsersState extends State<HowToRegForUsers> {
                       ),
                     ),
                   ),
-                  // Container(
-                  //   padding: EdgeInsets.all(0),
-                  //   margin: EdgeInsets.all(0),
-                  //   child: FlatButton(
-                  //     padding: EdgeInsets.all(0),
-                  //     color: btnColor,
-                  //     splashColor: highlightColor.withOpacity(.8),
-                  //     onPressed: () {
-                  //       Navigator.of(context).pop();
-                  //     },
-                  //     child: Row(
-                  //       mainAxisAlignment: MainAxisAlignment.center,
-                  //       children: <Widget>[
-                  //         Container(
-                  //           padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
-                  //           transform: Matrix4.translationValues(5.0, 0, 0),
-                  //           child: Icon(
-                  //             Icons.arrow_back_ios,
-                  //             color: Colors.cyan[400],
-                  //             size: 18,
-                  //             // color: Colors.white38,
-                  //           ),
-                  //         ),
-                  //         Container(
-                  //           padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
-                  //           transform: Matrix4.translationValues(-8.0, 0, 0),
-                  //           child: Icon(
-                  //             Icons.arrow_back_ios,
-                  //             color: Colors.white,
-                  //             size: 20,
-                  //             // color: Colors.white,
-                  //           ),
-                  //         ),
-                  //         Text(
-                  //           "Go back & Register",
-                  //           style: subHeadingTextStyle,
-                  //         ),
-                  //       ],
-                  //     ),
-                  //   ),
-                  // ),
                 ],
               ),
             ),
