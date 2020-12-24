@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:noq/db/db_model/address.dart';
 import 'package:noq/db/db_model/configurations.dart';
@@ -27,7 +28,7 @@ class DBTest {
   GlobalState _gs;
   DBTest() {
     GlobalState.clearGlobalState();
-    GlobalState.getGlobalStateForCountry("Test").then((value) => _gs = value);
+    GlobalState.getGlobalState().then((value) => _gs = value);
   }
 
   Future<void> createEntity() async {
@@ -270,6 +271,7 @@ class DBTest {
 
   Future<void> clearAll() async {
     try {
+      _gs = await GlobalState.getGlobalState();
       await _gs.getEntityService().deleteEntity('SportsEntity103');
       await _gs.getEntityService().deleteEntity('SportsEntity104');
       await _gs.getEntityService().deleteEntity('SportsEntity105');
@@ -330,13 +332,16 @@ class DBTest {
   }
 
   Future<void> tests() async {
-    final User fireUser = FirebaseAuth.instance.currentUser;
-    FirebaseFirestore fStore = FirebaseFirestore.instance;
+    final User fireUser = _gs.getAuthService().getFirebaseAuth().currentUser;
+
+    FirebaseApp secondaryApp = await _gs.initSecondaryFirebaseApp();
+
+    FirebaseFirestore fStore = FirebaseFirestore.instanceFor(app: secondaryApp);
 
     print(
         "<==================================TESTING STARTED==========================================>");
 
-    Configurations conf = await ConfigurationService(null).getConfigurations();
+    Configurations conf = _gs.getConfigurations();
 
     AppUser u = await _gs.getUserService().getCurrentUser();
 

@@ -158,7 +158,7 @@ class _ManageChildEntityListPageState extends State<ManageChildEntityListPage> {
 
   initialize() async {
     await getGlobalState();
-    subEntityTypes = _state.conf.entityTypes;
+    subEntityTypes = _state.getConfigurations().entityTypes;
   }
 
   void _addNewServiceRow() {

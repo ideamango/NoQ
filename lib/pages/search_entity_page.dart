@@ -137,7 +137,7 @@ class _SearchEntityPageState extends State<SearchEntityPage>
     _isSearching = "initial";
     getGlobalState().whenComplete(() {
       fetchPastSearchesList();
-      searchTypes = _state.conf.entityTypes;
+      searchTypes = _state.getConfigurations().entityTypes;
       if (this.mounted) {
         setState(() {
           initCompleted = true;
@@ -1800,7 +1800,7 @@ class _SearchEntityPageState extends State<SearchEntityPage>
         entityTypeForSearch,
         lat,
         lon,
-        _state.conf.searchRadius,
+        _state.getConfigurations().searchRadius,
         pageNumber,
         pageSize);
 

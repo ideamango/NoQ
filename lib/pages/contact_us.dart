@@ -381,18 +381,26 @@ class _ContactUsPageState extends State<ContactUsPage> {
                                 ),
 
                                 onPressed: () {
-                                  if (_state.conf.whatsappPhone != null &&
-                                      _state.conf.whatsappPhone != "") {
+                                  if (_state
+                                              .getConfigurations()
+                                              .whatsappPhone !=
+                                          null &&
+                                      _state
+                                              .getConfigurations()
+                                              .whatsappPhone !=
+                                          "") {
                                     try {
                                       launchWhatsApp(
                                           message: whatsappContactUsMsg,
-                                          phone: _state.conf.whatsappPhone);
+                                          phone: _state
+                                              .getConfigurations()
+                                              .whatsappPhone);
                                     } catch (error) {
                                       Utils.showMyFlushbar(
                                           context,
                                           Icons.error,
                                           Duration(seconds: 5),
-                                          "Could not connect to the Whatsapp number ${_state.conf.whatsappPhone} !!",
+                                          "Could not connect to the Whatsapp number ${_state.getConfigurations().whatsappPhone} !!",
                                           "Try again later");
                                     }
                                   } else {
@@ -439,8 +447,10 @@ class _ContactUsPageState extends State<ContactUsPage> {
                                       : 'Write what\s this about';
                                   if (_errMsg == null) {
                                     if (_mailBody == null) _mailBody = "";
-                                    _launchURL(_state.conf.contactEmail,
-                                        subjectOfMail, _mailBody);
+                                    _launchURL(
+                                        _state.getConfigurations().contactEmail,
+                                        subjectOfMail,
+                                        _mailBody);
                                   }
                                 },
                                 child: Row(

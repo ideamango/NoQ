@@ -148,109 +148,168 @@ class EntityRowState extends State<EntityRow> {
     }
 
     if (_initCompleted)
-      return Container(
-        height: MediaQuery.of(context).size.height * .35,
-        margin: EdgeInsets.all(5),
-        padding: EdgeInsets.all(8),
-        decoration: BoxDecoration(
-            border: Border.all(color: borderColor),
-            color: Colors.white,
-            shape: BoxShape.rectangle,
-            borderRadius: BorderRadius.all(Radius.circular(5.0))),
-        // padding: EdgeInsets.all(5.0),
+      return Card(
+        elevation: 10,
+        child: Container(
+          //height: MediaQuery.of(context).size.height * .3,
+          // margin: EdgeInsets.all(5),
+          padding: EdgeInsets.all(8),
+          decoration: BoxDecoration(
+              border: Border.all(color: borderColor),
+              color: Colors.white,
+              shape: BoxShape.rectangle,
+              borderRadius: BorderRadius.all(Radius.circular(5.0))),
+          // padding: EdgeInsets.all(5.0),
 
-        child: Column(
-          //  mainAxisSize: MainAxisSize.max,
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: <Widget>[
-            // Icon(
-            //   Icons.business,
-            //   color: primaryIcon,
-            // ),
-            Row(
-              children: <Widget>[
-                GestureDetector(
-                  onTap: () {
-                    print("Opening manage details on container click");
-                    showServiceForm();
-                  },
-                  child: Container(
-                    width: MediaQuery.of(context).size.width * .5,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        Text(
-                          (_metaEntity?.name != null)
-                              ? _metaEntity.name
-                              : "Untitled",
-                          overflow: TextOverflow.ellipsis,
-                          style: TextStyle(
-                              color: Colors.blueGrey[700], fontSize: 17),
-                        ),
-                        Text(
-                          _metaEntity.type,
-                          style: labelTextStyle,
-                        ),
-                      ],
+          child: Column(
+            //  mainAxisSize: MainAxisSize.max,
+            // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: <Widget>[
+              // Icon(
+              //   Icons.business,
+              //   color: primaryIcon,
+              // ),
+              Row(
+                children: <Widget>[
+                  GestureDetector(
+                    onTap: () {
+                      print("Opening manage details on container click");
+                      showServiceForm();
+                    },
+                    child: Container(
+                      width: MediaQuery.of(context).size.width * .5,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Text(
+                            (_metaEntity?.name != null)
+                                ? _metaEntity.name
+                                : "Untitled",
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                                color: Colors.blueGrey[700], fontSize: 17),
+                          ),
+                          Text(
+                            _metaEntity.type,
+                            style: labelTextStyle,
+                          ),
+                        ],
+                      ),
                     ),
                   ),
-                ),
-                Container(
-                    padding: EdgeInsets.zero,
-                    margin: EdgeInsets.zero,
-                    width: MediaQuery.of(context).size.width * .36,
-                    // height: MediaQuery.of(context).size.width * .08,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: <Widget>[
-                        Container(
-                          padding: EdgeInsets.all(0),
-                          margin: EdgeInsets.all(5),
-                          height: 28.0,
-                          width: 28.0,
-                          child: IconButton(
-                              padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
-                              alignment: Alignment.center,
-                              highlightColor: Colors.orange[300],
-                              icon: ImageIcon(
-                                AssetImage('assets/qrcode.png'),
-                                size: 25,
-                                color: primaryIcon,
-                              ),
-                              onPressed: () {
-                                shareQr();
-                              }),
-                        ),
-                        horizontalSpacer,
-                        Container(
-                            padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
-                            margin: EdgeInsets.fromLTRB(0, 0, 0, 0),
-                            height: 25.0,
+                  Container(
+                      padding: EdgeInsets.zero,
+                      margin: EdgeInsets.zero,
+                      width: MediaQuery.of(context).size.width * .36,
+                      // height: MediaQuery.of(context).size.width * .08,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: <Widget>[
+                          Container(
+                            padding: EdgeInsets.all(0),
+                            margin: EdgeInsets.all(5),
+                            height: 28.0,
                             width: 28.0,
                             child: IconButton(
+                                padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
+                                alignment: Alignment.center,
+                                highlightColor: Colors.orange[300],
+                                icon: ImageIcon(
+                                  AssetImage('assets/qrcode.png'),
+                                  size: 25,
+                                  color: primaryIcon,
+                                ),
+                                onPressed: () {
+                                  shareQr();
+                                }),
+                          ),
+                          horizontalSpacer,
+                          Container(
                               padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
-                              alignment: Alignment.center,
-                              highlightColor: Colors.orange[300],
-                              icon: Icon(Icons.share),
-                              color: primaryDarkColor,
-                              iconSize: 25,
-                              onPressed: () {
-                                share();
-                              },
-                            )),
-                      ],
-                    )),
-              ],
-            ),
-            horizontalSpacer,
-            Row(
+                              margin: EdgeInsets.fromLTRB(0, 0, 0, 0),
+                              height: 25.0,
+                              width: 28.0,
+                              child: IconButton(
+                                padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
+                                alignment: Alignment.center,
+                                highlightColor: Colors.orange[300],
+                                icon: Icon(Icons.share),
+                                color: primaryDarkColor,
+                                iconSize: 25,
+                                onPressed: () {
+                                  share();
+                                },
+                              )),
+                        ],
+                      )),
+                ],
+              ),
+              verticalSpacer,
+              Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    Container(
+                      height: MediaQuery.of(context).size.height * .04,
+                      width: MediaQuery.of(context).size.width * .884,
+                      child: FlatButton(
+                        // elevation: 7,
+                        color: Colors.white,
+                        textColor: Colors.white,
+                        shape: RoundedRectangleBorder(
+                            side: BorderSide(color: Colors.blueGrey[500]),
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(5.0))),
+                        splashColor: highlightColor,
+                        child: Text(
+                          'Manage Details',
+                          style:
+                              TextStyle(color: primaryDarkColor, fontSize: 13),
+                        ),
+                        // Text(
+                        //   (_metaEntity.name != null)
+                        //       ? (_metaEntity.name)
+                        //       : (_metaEntity.type),
+                        //   style: labelTextStyle,
+                        // ),
+
+                        //Icon(Icons.arrow_forward),
+
+                        onPressed: () {
+                          print("To Add details page");
+                          showServiceForm();
+                        },
+                      ),
+                    ),
+                  ]),
+              SizedBox(height: 5),
+              Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
                   Container(
                     width: MediaQuery.of(context).size.width * .42,
-                    height: 30,
-                    child: RaisedButton(
-                      elevation: 7,
+                    height: MediaQuery.of(context).size.height * .04,
+                    child: FlatButton(
+                      // elevation: 7,
+                      color: Colors.white,
+                      splashColor: highlightColor.withOpacity(.8),
+                      shape: RoundedRectangleBorder(
+                          side: BorderSide(color: Colors.blueGrey[500]),
+                          borderRadius: BorderRadius.all(Radius.circular(5.0))),
+                      child: Text(
+                        'Child Places',
+                        style: TextStyle(color: primaryDarkColor, fontSize: 13),
+                      ),
+                      onPressed: () {
+                        print("To child list page");
+                        showChildListPage();
+                      },
+                    ),
+                  ),
+                  Container(
+                    width: MediaQuery.of(context).size.width * .42,
+                    height: MediaQuery.of(context).size.height * .04,
+                    child: FlatButton(
+                      // elevation: 7,
                       color: Colors.white,
                       splashColor: highlightColor.withOpacity(.8),
                       shape: RoundedRectangleBorder(
@@ -262,71 +321,18 @@ class EntityRowState extends State<EntityRow> {
                       ),
                       onPressed: () {
                         print("To manage bookings page");
-                        ManageBookings(
-                          entityId: entity.entityId,
-                        );
+                        Navigator.of(context)
+                            .push(PageAnimation.createRoute(ManageBookings(
+                          entityId: _metaEntity.entityId,
+                        )));
                       },
                     ),
                   ),
-                ]),
-
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: <Widget>[
-                Container(
-                  width: MediaQuery.of(context).size.width * .42,
-                  height: 30,
-                  child: RaisedButton(
-                    elevation: 7,
-                    color: Colors.white,
-                    splashColor: highlightColor.withOpacity(.8),
-                    shape: RoundedRectangleBorder(
-                        side: BorderSide(color: Colors.blueGrey[500]),
-                        borderRadius: BorderRadius.all(Radius.circular(5.0))),
-                    child: Text(
-                      'Child Places',
-                      style: TextStyle(color: primaryDarkColor, fontSize: 13),
-                    ),
-                    onPressed: () {
-                      print("To child list page");
-                      showChildListPage();
-                    },
-                  ),
-                ),
-                verticalSpacer,
-                Container(
-                  height: 30,
-                  width: MediaQuery.of(context).size.width * .42,
-                  child: RaisedButton(
-                    elevation: 7,
-                    color: btnColor,
-                    textColor: Colors.white,
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(5.0))),
-                    splashColor: highlightColor,
-                    child: Text(
-                      'Manage Details',
-                      style: TextStyle(color: Colors.white, fontSize: 13),
-                    ),
-                    // Text(
-                    //   (_metaEntity.name != null)
-                    //       ? (_metaEntity.name)
-                    //       : (_metaEntity.type),
-                    //   style: labelTextStyle,
-                    // ),
-
-                    //Icon(Icons.arrow_forward),
-
-                    onPressed: () {
-                      print("To Add details page");
-                      showServiceForm();
-                    },
-                  ),
-                ),
-              ],
-            )
-            // backgroundColor: Colors.white,
-          ],
+                ],
+              )
+              // backgroundColor: Colors.white,
+            ],
+          ),
         ),
       );
     else

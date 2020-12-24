@@ -231,7 +231,7 @@ class _ManageChildEntityDetailsPageState
 
   Future<void> getGlobalState() async {
     _gState = await GlobalState.getGlobalState();
-    _phCountryCode = _gState.conf.phCountryCode;
+    _phCountryCode = _gState.getConfigurations().phCountryCode;
   }
 
   initializeEntity() async {

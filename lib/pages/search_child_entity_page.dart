@@ -109,7 +109,7 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
 
     title = "Places inside " + widget.parentName;
     getGlobalState().whenComplete(() {
-      searchTypes = _state.conf.entityTypes;
+      searchTypes = _state.getConfigurations().entityTypes;
       getEntitiesList().whenComplete(() {
         if (this.mounted) {
           setState(() {
@@ -1788,7 +1788,7 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
   //       entityTypeForSearch,
   //       lat,
   //       lon,
-  //       _state.conf.searchRadius,
+  //       _state.getConfigurations().searchRadius,
   //       pageNumber,
   //       pageSize);
 

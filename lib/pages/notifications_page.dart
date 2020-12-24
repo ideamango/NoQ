@@ -37,7 +37,7 @@ class _UserNotificationsPageState extends State<UserNotificationsPage> {
   void _loadNotifications() async {
     setState(() {
       //TODO: SMita - no logic for notifications
-      _notificationsFlg = (_state.conf != null) ? true : false;
+      _notificationsFlg = (_state.getConfigurations() != null) ? true : false;
     });
   }
 

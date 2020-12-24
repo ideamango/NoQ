@@ -26,7 +26,7 @@ import 'package:timezone/timezone.dart' as tz;
 
 class GlobalState {
   AppUser _currentUser;
-  Configurations conf;
+  Configurations _conf;
   List<UserToken> bookings;
   String lastSearchName;
   String lastSearchType;
@@ -47,7 +47,7 @@ class GlobalState {
 
   GlobalState._();
 
-  Future<void> initSecondaryFirebaseApp() async {
+  Future<FirebaseApp> initSecondaryFirebaseApp() async {
     String appId;
     String apiKey;
     String messagingSenderId;
@@ -55,7 +55,8 @@ class GlobalState {
 
     for (FirebaseApp app in Firebase.apps) {
       if (app.name == "SecondaryFirebaseApp") {
-        return;
+        _gs._secondaryFirebaseApp = app;
+        return app;
       }
     }
 
@@ -113,6 +114,12 @@ class GlobalState {
     if (_gs._secondaryFirebaseApp == null) {
       _gs._secondaryFirebaseApp = Firebase.app('SecondaryFirebaseApp');
     }
+
+    return _gs._secondaryFirebaseApp;
+  }
+
+  Configurations getConfigurations() {
+    return _conf;
   }
 
   static Future<GlobalState> getGlobalState() async {
@@ -157,9 +164,9 @@ class GlobalState {
       _gs._tokenService = new TokenService(_gs._secondaryFirebaseApp);
     }
 
-    if (_gs.conf == null) {
+    if (_gs._conf == null) {
       try {
-        _gs.conf = await ConfigurationService(_gs._secondaryFirebaseApp)
+        _gs._conf = await ConfigurationService(_gs._secondaryFirebaseApp)
             .getConfigurations();
       } catch (e) {
         print(
@@ -407,7 +414,7 @@ class GlobalState {
       _gs._userService = null;
       _gs._entityService = null;
       _gs._currentUser = null;
-      _gs.conf = null;
+      _gs._conf = null;
       _gs.lastSearchName = "";
       _gs.lastSearchType = "";
       _gs._secondaryFirebaseApp = null;
@@ -426,7 +433,7 @@ class GlobalState {
 
   Map<String, dynamic> toJson() => {
         'currentUser': _currentUser.toJson(),
-        'conf': conf.toJson(),
+        'conf': _conf.toJson(),
         'bookings': convertBookingsListToJson(this.bookings),
         'pastSearches': convertPastSearchesListToJson(this.lastSearchResults)
       };

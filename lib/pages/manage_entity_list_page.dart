@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:flutter/material.dart';
 import 'package:noq/constants.dart';
 import 'package:noq/db/db_model/entity.dart';
@@ -27,7 +29,7 @@ class _ManageEntityListPageState extends State<ManageEntityListPage> {
   Entity entity;
   String _entityType;
   ScrollController _scrollController;
-  final itemSize = 100.0;
+  double itemSize = 100.00;
   List<String> entityTypes;
   GlobalState _state;
   bool stateInitFinished = false;
@@ -143,7 +145,7 @@ class _ManageEntityListPageState extends State<ManageEntityListPage> {
       }
     }
 
-    entityTypes = _state.conf.entityTypes;
+    entityTypes = _state.getConfigurations().entityTypes;
     setState(() {
       stateInitFinished = true;
     });
@@ -261,7 +263,9 @@ class _ManageEntityListPageState extends State<ManageEntityListPage> {
                           shrinkWrap: true,
                           itemExtent: itemSize,
                           itemBuilder: (BuildContext context, int index) {
+                            itemSize = MediaQuery.of(context).size.height * .21;
                             return Container(
+                              margin: EdgeInsets.only(bottom: 5),
                               child: EntityRow(
                                 entity: metaEntitiesList[index],
                               ),
