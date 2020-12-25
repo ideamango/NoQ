@@ -292,6 +292,18 @@ final BoxDecoration soildLightContainer = new BoxDecoration(
     color: Colors.teal[200],
     borderRadius: BorderRadius.only(
         topLeft: Radius.circular(4.0), topRight: Radius.circular(4.0)));
+final BoxDecoration lightTealContainer = new BoxDecoration(
+    border: Border.all(color: Colors.teal[100]),
+    shape: BoxShape.rectangle,
+    color: Colors.teal[100],
+    borderRadius: BorderRadius.only(
+        topLeft: Radius.circular(4.0), topRight: Radius.circular(4.0)));
+final BoxDecoration lightAmberContainer = new BoxDecoration(
+    border: Border.all(color: Colors.teal[200]),
+    shape: BoxShape.rectangle,
+    color: Colors.teal[200],
+    borderRadius: BorderRadius.only(
+        topLeft: Radius.circular(4.0), topRight: Radius.circular(4.0)));
 final BoxDecoration btnColorContainer = new BoxDecoration(
     border: Border.all(color: btnColor),
     shape: BoxShape.rectangle,

@@ -10,6 +10,7 @@ import 'package:noq/utils.dart';
 import 'package:noq/widget/appbar.dart';
 import 'package:noq/widget/custom_expansion_tile.dart';
 import 'package:noq/widget/header.dart';
+import 'package:noq/widget/page_animation.dart';
 import 'package:noq/widget/widgets.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -104,45 +105,54 @@ class _ManageBookingsState extends State<ManageBookings> {
     return Container(
       child: Timeline(
         children: <Widget>[
-          Column(
-            children: [
-              Expanded(
-                child: CustomExpansionTile(
-                  initiallyExpanded: false,
-                  title: Row(
-                    children: <Widget>[
-                      Text(
-                        "Basic Details",
-                        style: TextStyle(color: Colors.black, fontSize: 15),
-                      ),
-                      SizedBox(width: 5),
-                    ],
+          Container(
+            color: Colors.cyan[100],
+            child: Column(
+              children: [
+                Theme(
+                  data: ThemeData(
+                    unselectedWidgetColor: Colors.grey[600],
+                    accentColor: btnColor,
                   ),
-                  backgroundColor: Colors.blueGrey[500],
-                  children: <Widget>[
-                    new Container(
-                      width: MediaQuery.of(context).size.width * .94,
-                      decoration: darkContainer,
-                      padding: EdgeInsets.all(2.0),
-                      child: Expanded(
-                        child: Column(
-                          children: [
-                            Text(basicInfoStr, style: buttonXSmlTextStyle),
-                            Text(basicInfoStr, style: buttonXSmlTextStyle),
-                            Text(basicInfoStr, style: buttonXSmlTextStyle),
-                            Text(basicInfoStr, style: buttonXSmlTextStyle),
-                          ],
-                        ),
+                  child: Expanded(
+                    child: ExpansionTile(
+                      initiallyExpanded: false,
+                      title: Row(
+                        children: <Widget>[
+                          Text(
+                            "Basic Details",
+                            style: TextStyle(color: Colors.black, fontSize: 15),
+                          ),
+                          SizedBox(width: 5),
+                        ],
                       ),
+                      backgroundColor: Colors.cyan[100],
+                      children: <Widget>[
+                        new Container(
+                          width: MediaQuery.of(context).size.width * .94,
+                          decoration: lightTealContainer,
+                          padding: EdgeInsets.all(2.0),
+                          child: Expanded(
+                            child: Column(
+                              children: [
+                                Text(basicInfoStr, style: buttonXSmlTextStyle),
+                                Text(basicInfoStr, style: buttonXSmlTextStyle),
+                                Text(basicInfoStr, style: buttonXSmlTextStyle),
+                                Text(basicInfoStr, style: buttonXSmlTextStyle),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
-                  ],
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
-          Container(height: 50, color: Colors.blue),
-          Container(height: 200, color: Colors.pink),
-          Container(height: 100, color: Colors.blue),
+          Container(height: 50, color: Colors.amber[100]),
+          Container(height: 50, color: Colors.cyan[100]),
+          Container(height: 50, color: Colors.amber[100]),
         ],
         indicators: <Widget>[
           Icon(Icons.access_alarm),
@@ -170,16 +180,18 @@ class _ManageBookingsState extends State<ManageBookings> {
         theme: ThemeData.light().copyWith(),
         home: WillPopScope(
           child: Scaffold(
-            appBar: CustomAppBar(
+            appBar: CustomAppBarWithBackButton(
               titleTxt: "Manage Bookings",
+              backRoute: UserHomePage(),
             ),
             body: Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  showCircularProgress(),
-                ],
-              ),
+              child: Text("Loading"),
+              // child: Column(
+              //   mainAxisAlignment: MainAxisAlignment.center,
+              //   children: <Widget>[
+              //     showCircularProgress(),
+              //   ],
+              // ),
             ),
             //drawer: CustomDrawer(),
             //bottomNavigationBar: CustomBottomBar(barIndex: 0),
@@ -196,9 +208,17 @@ class _ManageBookingsState extends State<ManageBookings> {
         debugShowCheckedModeBanner: false,
         theme: ThemeData.light().copyWith(),
         home: DefaultTabController(
-          length: 3,
+          length: 2,
           child: Scaffold(
             appBar: AppBar(
+              leading: IconButton(
+                  icon: Icon(Icons.arrow_back_ios),
+                  color: Colors.white,
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                    Navigator.of(context)
+                        .push(PageAnimation.createRoute(UserHomePage()));
+                  }),
               flexibleSpace: Container(
                 decoration: gradientBackground,
               ),
@@ -212,18 +232,21 @@ class _ManageBookingsState extends State<ManageBookings> {
               ],
               bottom: TabBar(
                 tabs: [
-                  Tab(icon: Icon(Icons.arrow_back_ios), child: Text("Prev")),
-                  Tab(icon: Icon(Icons.date_range), child: Text("Today")),
+                  //  Tab(icon: Icon(Icons.arrow_back_ios), child: Text("Prev")),
                   Tab(
-                      icon: Icon(Icons.arrow_forward_ios_outlined),
-                      child: Text("Next")),
+                      icon: Icon(Icons.date_range),
+                      iconMargin: EdgeInsets.zero,
+                      child: Text("Today")),
+                  Tab(
+                      icon: Icon(Icons.select_all),
+                      iconMargin: EdgeInsets.zero,
+                      child: Text("Pick date")),
                 ],
               ),
               title: Text('View Bookings'),
             ),
             body: TabBarView(
               children: [
-                getPastBookings(),
                 getCurrentDayBooking(),
                 getUpcomingBookings(),
               ],
