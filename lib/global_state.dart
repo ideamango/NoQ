@@ -15,7 +15,9 @@ import 'package:noq/db/db_service/configurations_service.dart';
 import 'package:noq/db/db_service/entity_service.dart';
 import 'package:noq/db/db_service/token_service.dart';
 import 'package:noq/events/local_notification_data.dart';
+import 'package:noq/location.dart';
 import 'package:noq/services/auth_service.dart';
+import 'package:noq/services/location_util.dart';
 import 'package:noq/tuple.dart';
 
 import 'package:noq/utils.dart';
@@ -40,8 +42,8 @@ class GlobalState {
   UserService _userService;
   TokenService _tokenService;
   AuthService _authService;
-  String _country;
   static Future<Null> isWorking;
+  Location _locData;
 
   static GlobalState _gs;
 
@@ -60,7 +62,7 @@ class GlobalState {
       }
     }
 
-    if (_country == "India") {
+    if (_locData.countryCode == "IN") {
       appId = Platform.isAndroid
           ? "1:643643889883:android:2c47f2ee29f66b35c594fe"
           : "1:643643889883:ios:1e17e4f8114d5fd0c594fe";
@@ -76,7 +78,7 @@ class GlobalState {
               apiKey: apiKey,
               messagingSenderId: messagingSenderId,
               projectId: projectId));
-    } else if (_country == "Test") {
+    } else if (_loc == "Test") {
       appId = Platform.isAndroid
           ? "1:166667469482:android:f488ccf8299e9542e9c6d3"
           : "1:166667469482:ios:bcaebbe8fae4c8c2e9c6d3";
@@ -92,7 +94,10 @@ class GlobalState {
               apiKey: apiKey,
               messagingSenderId: messagingSenderId,
               projectId: projectId));
-    } else if (_country == "US" || !Utils.isNotNullOrEmpty(_country)) {
+    } else if (_locData.isEU) {
+      //firebase project with location as EU, not handled yet
+
+    } else if (_locData.countryCode == "US") {
       // appId = Platform.isAndroid
       //     ? "1:964237045237:android:dac9374ed36f850a5784bc"
       //     : "1:964237045237:ios:458f3c6fc630f29c5784bc";
@@ -122,16 +127,21 @@ class GlobalState {
     return _conf;
   }
 
-  static Future<GlobalState> getGlobalState() async {
-    //automatically detect country
-    String country = "India";
-    return await GlobalState.getGlobalStateForCountry(country);
+  Location getLocation() {
+    return _locData;
   }
 
-  static Future<GlobalState> getGlobalStateForCountry(String country) async {
+  static Future<GlobalState> getGlobalState() async {
+    //automatically detect country
+    Location loc = await LocationUtil.getLocation();
+
+    return await GlobalState.getGlobalStateForCountry(loc);
+  }
+
+  static Future<GlobalState> getGlobalStateForCountry(Location location) async {
     if (isWorking != null) {
       await isWorking; // wait for future complete
-      return getGlobalStateForCountry(country);
+      return getGlobalStateForCountry(location);
     }
 
     //lock
@@ -142,7 +152,7 @@ class GlobalState {
       _gs = new GlobalState._();
     }
 
-    _gs.setCountry(country);
+    _gs._locData = location;
 
     if (_gs._secondaryFirebaseApp == null) {
       await _gs.initSecondaryFirebaseApp();
