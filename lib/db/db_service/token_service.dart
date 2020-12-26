@@ -336,6 +336,32 @@ class TokenService {
     return isCancelled;
   }
 
+  Future<List<UserToken>> getAllTokensForSlot(String slotId) async {
+    List<UserToken> tokens = new List<UserToken>();
+    User user = getFirebaseAuth().currentUser;
+    if (user == null) return null;
+    FirebaseFirestore fStore = getFirestore();
+
+    QuerySnapshot qs;
+
+    try {
+      qs = await fStore
+          .collection('tokens')
+          .where("slotId", isEqualTo: slotId)
+          .get();
+
+      for (DocumentSnapshot ds in qs.docs) {
+        UserToken tok = UserToken.fromJson(ds.data());
+        tokens.add(tok);
+      }
+    } catch (e) {
+      print(
+          "Error while fetching all tokens for a given slot: " + e.toString());
+    }
+
+    return tokens;
+  }
+
   Future<List<UserToken>> getAllTokensForCurrentUser(
       DateTime from, DateTime to) async {
     List<UserToken> tokens = new List<UserToken>();

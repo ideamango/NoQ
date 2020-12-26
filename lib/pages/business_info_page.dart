@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:noq/constants.dart';
+import 'package:noq/db/db_model/entity_slots.dart';
 import 'package:noq/db/db_service/token_service.dart';
 import 'package:noq/global_state.dart';
 import 'package:noq/services/timeline_view.dart';
@@ -99,6 +100,8 @@ class _ManageBookingsState extends State<ManageBookings> {
     getTokenService().getEntitySlots(widget.entityId, currentDate);
     return List<String>();
   }
+
+  Widget buildItem(EntitySlots slots) {}
 
   Widget getCurrentDayBooking() {
     getData(currentDate);

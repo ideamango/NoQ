@@ -814,6 +814,17 @@ class DBTest {
     print(
         "+919611006955 added as an admin to the Child101-3, check on the real device");
 
+    List<UserToken> tokens = await _gs
+        .getTokenService()
+        .getAllTokensForSlot("Child101-1#2020~7~7#10~30");
+
+    if (tokens.length == 1) {
+      print("TokenService.getAllTokensForSlot --> SUCCESS");
+    } else {
+      print(
+          "TokenService.getAllTokensForSlot -----------------------------------> failure");
+    }
+
     print(
         "<==========================================TESTING DONE=========================================>");
 

@@ -124,7 +124,7 @@ class GlobalState {
 
   static Future<GlobalState> getGlobalState() async {
     //automatically detect country
-    String country = "India";
+    String country = "Test";
     return await GlobalState.getGlobalStateForCountry(country);
   }
 
