@@ -140,7 +140,8 @@ flutter:
     - bscreen_fill_details_general.png
     - bscreen_fill_details_offer.png
     - bscreen_fill_details_save.png
-    - well_done.png  
+    - well_done.png
+    - calling_codes.json 
    
   
 

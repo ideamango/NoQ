@@ -1,6 +1,8 @@
+import 'package:flutter/material.dart';
 import 'package:noq/location.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:flutter/services.dart';
 
 class LocationUtil {
   static Future<Location> getLocation() async {
@@ -12,8 +14,19 @@ class LocationUtil {
     } else {
       //fallback to ip-api.com
       IPAPILocation ipAPILocation = await _callIPAPI();
-      if (ipAPILocation != null) locData = _convertFromIPAPI(ipAPILocation);
+      if (ipAPILocation != null) {
+        locData = _convertFromIPAPI(ipAPILocation);
+      }
     }
+
+    if (locData == null) {
+      //just to avoid failures and user can set the calling code while login
+      locData = new Location();
+    }
+
+    String data = await rootBundle.loadString("assets/calling_codes.json");
+    locData.allCallingCodes = json.decode(data);
+    locData.callingCode = locData.allCallingCodes[locData.countryCode];
 
     return locData;
   }
@@ -53,7 +66,7 @@ class LocationUtil {
     loc.city = ipstackLoc.city;
     loc.country = ipstackLoc.country_name;
     loc.countryCode = ipstackLoc.country_code;
-    loc.isEU = ipstackLoc.is_eu;
+    loc.isEU = ipstackLoc.continent_code == "EU" ? true : false;
     loc.region = ipstackLoc.region_name;
     loc.regionCode = ipstackLoc.region_code;
     loc.timezone = null;
@@ -62,6 +75,8 @@ class LocationUtil {
     loc.lon = ipstackLoc.longitude;
     loc.continent = ipstackLoc.continent_name; //"Europe"
     loc.continentCode = ipstackLoc.continent_code; //"EU"
+
+    return loc;
   }
 
   static Location _convertFromIPAPI(IPAPILocation ipAPILocation) {

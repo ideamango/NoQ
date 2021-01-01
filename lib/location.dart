@@ -10,4 +10,7 @@ class Location {
   String callingCode;
   double lat;
   double lon;
+  String continent;
+  String continentCode;
+  Map allCallingCodes;
 }
