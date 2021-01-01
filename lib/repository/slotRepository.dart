@@ -15,7 +15,7 @@ import 'package:noq/events/events.dart';
 import 'package:noq/events/local_notification_data.dart';
 import 'package:noq/global_state.dart';
 
-Future<List<Slot>> getSlotsListForStore(
+Future<List<Slot>> getSlotsListForEntity(
     MetaEntity entity, DateTime dateTime) async {
   EntitySlots entitySlots;
   List<Slot> slotList = new List<Slot>();

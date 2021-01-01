@@ -11,7 +11,9 @@ class Configurations {
       this.supportReasons,
       this.enableDonation,
       this.phCountryCode,
-      this.searchRadius});
+      this.searchRadius,
+      this.bookingDataFromDays,
+      this.bookingDataToDays});
 
   List<String> entityTypes;
   List<String> messages;
@@ -23,6 +25,8 @@ class Configurations {
   bool enableDonation;
   String phCountryCode;
   int searchRadius;
+  int bookingDataFromDays;
+  int bookingDataToDays;
 
   Map<String, dynamic> toJson() => {
         'entityTypes': entityTypes,
@@ -34,22 +38,27 @@ class Configurations {
         'supportReasons': supportReasons,
         'enableDonation': enableDonation,
         'phCountryCode': phCountryCode,
-        'searchRadius': searchRadius
+        'searchRadius': searchRadius,
+        'bookingDataFromDays': bookingDataFromDays,
+        'bookingDataToDays': bookingDataToDays
       };
 
   static Configurations fromJson(Map<String, dynamic> json) {
     if (json == null) return null;
     return new Configurations(
-        entityTypes: convertToStringsArrayFromJson(json['entityTypes']),
-        messages: convertToStringsArrayFromJson(json['messages']),
-        keyMessage: json['keyMessage'],
-        contactEmail: json['contactEmail'],
-        contactPhone: json['contactPhone'],
-        whatsappPhone: json['whatsappPhone'],
-        supportReasons: convertToStringsArrayFromJson(json['supportReasons']),
-        enableDonation: json['enableDonation'],
-        phCountryCode: json['phCountryCode'],
-        searchRadius: json['searchRadius']);
+      entityTypes: convertToStringsArrayFromJson(json['entityTypes']),
+      messages: convertToStringsArrayFromJson(json['messages']),
+      keyMessage: json['keyMessage'],
+      contactEmail: json['contactEmail'],
+      contactPhone: json['contactPhone'],
+      whatsappPhone: json['whatsappPhone'],
+      supportReasons: convertToStringsArrayFromJson(json['supportReasons']),
+      enableDonation: json['enableDonation'],
+      phCountryCode: json['phCountryCode'],
+      searchRadius: json['searchRadius'],
+      bookingDataFromDays: json['bookingDataFromDays'],
+      bookingDataToDays: json['bookingDataToDays']
+    );
   }
 
   static List<String> convertToStringsArrayFromJson(List<dynamic> json) {

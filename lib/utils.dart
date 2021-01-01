@@ -92,6 +92,28 @@ class Utils {
       return null;
   }
 
+  static Future<DateTime> pickDate(
+      BuildContext context, DateTime firstDate, DateTime lastDate) async {
+    DateTime date = await showDatePicker(
+      context: context,
+      firstDate: firstDate,
+      lastDate: lastDate,
+      initialDate: DateTime.now(),
+      builder: (BuildContext context, Widget child) {
+        return Theme(
+          data: ThemeData.dark().copyWith(
+            colorScheme: ColorScheme.light(
+              primary: Colors.cyan,
+            ),
+            dialogBackgroundColor: Colors.white,
+          ),
+          child: child,
+        );
+      },
+    );
+    return date;
+  }
+
   static Future<void> showLocationAccessDialog(
       BuildContext bc, String msg) async {
     print("SHOW Dialog called");

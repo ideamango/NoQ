@@ -1,5 +1,6 @@
 import 'package:noq/db/db_model/address.dart';
 import 'package:noq/db/db_model/employee.dart';
+import 'package:noq/db/db_model/form.dart';
 import 'package:noq/db/db_model/meta_entity.dart';
 import 'package:noq/db/db_model/meta_user.dart';
 import 'package:noq/db/db_model/my_geo_fire_point.dart';
@@ -83,6 +84,7 @@ class Entity {
   Offer offer;
   String phone;
   MetaEntity _meta;
+  Form form;
 
   Map<String, dynamic> toJson() => {
         'entityId': entityId,

@@ -86,7 +86,7 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
     _dateFormatted = dtFormat.format(_date);
 
     //Fetch details from server
-    getSlotsListForStore(entity, _date).then((slotList) {
+    getSlotsListForEntity(entity, _date).then((slotList) {
       setState(() {
         _slotList = slotList;
 

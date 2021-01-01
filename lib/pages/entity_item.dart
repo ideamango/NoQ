@@ -323,7 +323,7 @@ class EntityRowState extends State<EntityRow> {
                         print("To manage bookings page");
                         Navigator.of(context)
                             .push(PageAnimation.createRoute(ManageBookings(
-                          entityId: _metaEntity.entityId,
+                          metaEntity: _metaEntity,
                         )));
                       },
                     ),
