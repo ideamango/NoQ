@@ -19,7 +19,7 @@ class FormInputFieldText extends Field {
   String label;
   bool isMandatory;
   String infoMessage;
-  String maxLength;
+  int maxLength;
   FormInputFieldText(
       {@required this.label,
       @required this.isMandatory,
@@ -31,8 +31,8 @@ class FormInputFieldNumber extends Field {
   String label;
   bool isMandatory;
   String infoMessage;
-  String maxValue;
-  String minValue;
+  double maxValue;
+  double minValue;
   FormInputFieldNumber(
       {@required this.label,
       @required this.isMandatory,
