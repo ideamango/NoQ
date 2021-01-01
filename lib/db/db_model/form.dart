@@ -5,14 +5,25 @@ class Form {
   List<Field> formFieldList;
 }
 
-class Field {
-  String label;
-  bool isMandatory;
-  String infoMessage;
-}
+class Field {}
 
 class FormInputFieldText extends Field {
   String maxLength;
+  String label;
+  bool isMandatory;
+  String infoMessage;
+
+  Map<String, dynamic> toJson() => {
+        'maxLength': maxLength,
+        'label': label,
+        'isMandatory': isMandatory,
+        "infoMessage": infoMessage
+      };
+
+  static FormInputFieldText fromJson(Map<String, dynamic> json) {
+    if (json == null) return null;
+    return new FormInputFieldText();
+  }
 }
 
 class FormInputFieldNumber extends Field {
