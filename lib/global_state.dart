@@ -15,7 +15,9 @@ import 'package:noq/db/db_service/configurations_service.dart';
 import 'package:noq/db/db_service/entity_service.dart';
 import 'package:noq/db/db_service/token_service.dart';
 import 'package:noq/events/local_notification_data.dart';
+import 'package:noq/location.dart';
 import 'package:noq/services/auth_service.dart';
+import 'package:noq/services/location_util.dart';
 import 'package:noq/tuple.dart';
 
 import 'package:noq/utils.dart';
@@ -40,8 +42,8 @@ class GlobalState {
   UserService _userService;
   TokenService _tokenService;
   AuthService _authService;
-  String _country;
   static Future<Null> isWorking;
+  Location _locData;
 
   static GlobalState _gs;
 
@@ -52,6 +54,9 @@ class GlobalState {
     String apiKey;
     String messagingSenderId;
     String projectId;
+    String clientId;
+    String storageBucket;
+    String dbUrl;
 
     for (FirebaseApp app in Firebase.apps) {
       if (app.name == "SecondaryFirebaseApp") {
@@ -60,7 +65,36 @@ class GlobalState {
       }
     }
 
-    if (_country == "India") {
+    if (_locData.countryCode == "Test") {
+      appId = Platform.isAndroid
+          ? "1:166667469482:android:f488ccf8299e9542e9c6d3"
+          : "1:166667469482:ios:bcaebbe8fae4c8c2e9c6d3";
+
+      apiKey = "AIzaSyBvRdM2jfG54VzciJ3sfef4xq_TalMmOAM";
+      messagingSenderId = "166667469482";
+      projectId = "awesomenoq";
+      clientId =
+          "166667469482-fjai5a1piepdp0tlr05hqrhl7clrq727.apps.googleusercontent.com";
+      storageBucket = 'awesomenoq.appspot.com';
+      dbUrl = 'https: //awesomenoq.firebaseio.com';
+      await Firebase.initializeApp(
+          name: 'SecondaryFirebaseApp',
+          options: FirebaseOptions(
+              appId: appId,
+              apiKey: apiKey,
+              bundleID: 'net.lesss',
+              gcmSenderID: messagingSenderId,
+              googleAppID: appId,
+              iosBundleId: "net.lesss",
+              iosClientId: clientId,
+              messagingSenderId: messagingSenderId,
+              projectId: projectId,
+              storageBucket: storageBucket,
+              databaseURL: dbUrl));
+    } else if (_locData.isEU) {
+      //firebase project with location as EU, not handled yet
+
+    } else if (_locData.countryCode == "IN") {
       appId = Platform.isAndroid
           ? "1:643643889883:android:2c47f2ee29f66b35c594fe"
           : "1:643643889883:ios:1e17e4f8114d5fd0c594fe";
@@ -75,24 +109,14 @@ class GlobalState {
               appId: appId,
               apiKey: apiKey,
               messagingSenderId: messagingSenderId,
-              projectId: projectId));
-    } else if (_country == "Test") {
-      appId = Platform.isAndroid
-          ? "1:166667469482:android:f488ccf8299e9542e9c6d3"
-          : "1:166667469482:ios:bcaebbe8fae4c8c2e9c6d3";
-
-      apiKey = "AIzaSyBvRdM2jfG54VzciJ3sfef4xq_TalMmOAM";
-      messagingSenderId = "166667469482";
-      projectId = "awesomenoq";
-
-      await Firebase.initializeApp(
-          name: 'SecondaryFirebaseApp',
-          options: FirebaseOptions(
-              appId: appId,
-              apiKey: apiKey,
-              messagingSenderId: messagingSenderId,
-              projectId: projectId));
-    } else if (_country == "US" || !Utils.isNotNullOrEmpty(_country)) {
+              projectId: projectId,
+              iosBundleId: "net.lesss",
+              trackingId: "",
+              iosClientId:
+                  "643643889883-dffliinmljkuoh98r25fqt5c2up4rq9r.apps.googleusercontent.com",
+              storageBucket: "gs://sukoon-india.appspot.com",
+              databaseURL: "https://sukoon-india.firebaseio.com"));
+    } else if (_locData.countryCode == "US") {
       // appId = Platform.isAndroid
       //     ? "1:964237045237:android:dac9374ed36f850a5784bc"
       //     : "1:964237045237:ios:458f3c6fc630f29c5784bc";
@@ -109,6 +133,9 @@ class GlobalState {
       //         messagingSenderId: messagingSenderId,
       //         projectId: projectId));
       _gs._secondaryFirebaseApp = Firebase.apps[0];
+    } else {
+      //for all countries store in Default-US
+      _gs._secondaryFirebaseApp = Firebase.apps[0];
     }
 
     if (_gs._secondaryFirebaseApp == null) {
@@ -122,16 +149,22 @@ class GlobalState {
     return _conf;
   }
 
-  static Future<GlobalState> getGlobalState() async {
-    //automatically detect country
-    String country = "Test";
-    return await GlobalState.getGlobalStateForCountry(country);
+  Location getLocation() {
+    return _locData;
   }
 
-  static Future<GlobalState> getGlobalStateForCountry(String country) async {
+  static Future<GlobalState> getGlobalState() async {
+    //automatically detect country
+    Location loc = await LocationUtil.getLocation();
+    loc.countryCode = "Test";
+
+    return await GlobalState.getGlobalStateForCountry(loc);
+  }
+
+  static Future<GlobalState> getGlobalStateForCountry(Location location) async {
     if (isWorking != null) {
       await isWorking; // wait for future complete
-      return getGlobalStateForCountry(country);
+      return getGlobalStateForCountry(location);
     }
 
     //lock
@@ -142,7 +175,7 @@ class GlobalState {
       _gs = new GlobalState._();
     }
 
-    _gs.setCountry(country);
+    _gs._locData = location;
 
     if (_gs._secondaryFirebaseApp == null) {
       await _gs.initSecondaryFirebaseApp();
@@ -204,10 +237,6 @@ class GlobalState {
     isWorking = null;
 
     return _gs;
-  }
-
-  void setCountry(String country) {
-    _country = country;
   }
 
   UserService getUserService() {

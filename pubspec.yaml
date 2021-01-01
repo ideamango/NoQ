@@ -63,6 +63,7 @@ dependencies:
   # permission_handler: ^5.0.1+1
   auto_size_text: ^2.1.0
   video_player: ^1.0.1
+  http: ^0.12.2
 
 dev_dependencies:
   flutter_test:
@@ -139,7 +140,8 @@ flutter:
     - bscreen_fill_details_general.png
     - bscreen_fill_details_offer.png
     - bscreen_fill_details_save.png
-    - well_done.png  
+    - well_done.png
+    - calling_codes.json 
    
   
 

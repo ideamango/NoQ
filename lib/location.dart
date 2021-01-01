@@ -2,10 +2,15 @@ class Location {
   String country;
   String countryCode;
   String region;
-  String regionName;
+  String regionCode;
   String city;
   String zip;
   String timezone;
   bool isEU;
   String callingCode;
+  double lat;
+  double lon;
+  String continent;
+  String continentCode;
+  Map allCallingCodes;
 }

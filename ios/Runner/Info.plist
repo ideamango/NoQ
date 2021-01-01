@@ -23,6 +23,8 @@
 		<key>CFBundleURLTypes</key>
 		<array>
 			<dict>
+				<key>CFBundleIdentifier</key>
+				<string></string>
 				<key>CFBundleTypeRole</key>
 				<string>Editor</string>
 				<key>CFBundleURLName</key>
@@ -30,6 +32,26 @@
 				<key>CFBundleURLSchemes</key>
 				<array>
 					<string>com.googleusercontent.apps.964237045237-mtcled3g06soi7np0i7a1vbk2elt8ldi</string>
+				</array>
+			</dict>
+			<dict>
+				<key>CFBundleTypeRole</key>
+				<string>Editor</string>
+				<key>CFBundleURLName</key>
+				<string>net.lesss</string>
+				<key>CFBundleURLSchemes</key>
+				<array>
+					<string>com.googleusercontent.apps.643643889883-dffliinmljkuoh98r25fqt5c2up4rq9r</string>
+				</array>
+			</dict>
+			<dict>
+				<key>CFBundleTypeRole</key>
+				<string>Editor</string>
+				<key>CFBundleURLName</key>
+				<string>net.lesss</string>
+				<key>CFBundleURLSchemes</key>
+				<array>
+					<string>com.googleusercontent.apps.166667469482-fjai5a1piepdp0tlr05hqrhl7clrq727</string>
 				</array>
 			</dict>
 		</array>
@@ -75,6 +97,8 @@
 			<string>UIInterfaceOrientationLandscapeRight</string>
 		</array>
 		<key>UIViewControllerBasedStatusBarAppearance</key>
+		<false />
+		<key>FirebaseAppDelegateProxyEnabled</key>
 		<false />
 	</dict>
 </plist>
