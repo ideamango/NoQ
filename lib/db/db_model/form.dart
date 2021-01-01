@@ -1,4 +1,6 @@
-class Form {
+import 'package:flutter/material.dart';
+
+class EntityForm {
   String formName;
   String headerMsg;
   String footerMsg;
@@ -9,18 +11,47 @@ class Field {
   String label;
   bool isMandatory;
   String infoMessage;
+
+  Field({@required this.label, @required this.isMandatory, this.infoMessage});
 }
 
 class FormInputFieldText extends Field {
+  String label;
+  bool isMandatory;
+  String infoMessage;
   String maxLength;
+  FormInputFieldText(
+      {@required this.label,
+      @required this.isMandatory,
+      this.infoMessage,
+      @required this.maxLength});
 }
 
 class FormInputFieldNumber extends Field {
-  String minValue;
+  String label;
+  bool isMandatory;
+  String infoMessage;
   String maxValue;
+  String minValue;
+  FormInputFieldNumber(
+      {@required this.label,
+      @required this.isMandatory,
+      this.infoMessage,
+      this.maxValue,
+      this.minValue});
 }
 
 class FormInputFieldOptions extends Field {
+  String label;
+  bool isMandatory;
+  String infoMessage;
   List<String> values;
   bool isMultiSelect;
+
+  FormInputFieldOptions(
+      {@required this.label,
+      @required this.isMandatory,
+      @required this.infoMessage,
+      @required this.values,
+      @required this.isMultiSelect});
 }
