@@ -84,7 +84,7 @@ class Entity {
   Offer offer;
   String phone;
   MetaEntity _meta;
-  Form form;
+  EntityForm form;
 
   Map<String, dynamic> toJson() => {
         'entityId': entityId,
