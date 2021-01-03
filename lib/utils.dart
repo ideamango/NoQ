@@ -364,13 +364,13 @@ class Utils {
     String entityId = uuid.v1();
     var isPublic = true;
     var isBookable = true;
-    if (entityType == EntityTypes.Mall) {
+    if (entityType == EntityTypes.PLACE_TYPE_MALL) {
       //is Public and Not bookable
       isPublic = true;
       isBookable = false;
-    } else if (entityType == EntityTypes.Apartment ||
-        entityType == EntityTypes.School ||
-        entityType == EntityTypes.Office) {
+    } else if (entityType == EntityTypes.PLACE_TYPE_APARTMENT ||
+        entityType == EntityTypes.PLACE_TYPE_SCHOOL ||
+        entityType == EntityTypes.PLACE_TYPE_OFFICE) {
       // is Private and Not bookable
       isPublic = false;
       isBookable = false;
@@ -516,6 +516,9 @@ class Utils {
     String image;
 
     switch (type) {
+      case PLACE_TYPE_COVID19_VACCINATION_CENTER:
+        icon = Icons.local_hospital;
+        break;
       case PLACE_TYPE_MALL:
         icon = Icons.business;
         break;

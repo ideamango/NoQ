@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:noq/db/db_model/address.dart';
+import 'package:noq/db/db_model/booking_form.dart';
 import 'package:noq/db/db_model/configurations.dart';
 import 'package:noq/db/db_model/employee.dart';
 import 'package:noq/db/db_model/entity.dart';
@@ -18,6 +19,7 @@ import 'package:noq/db/db_service/configurations_service.dart';
 import 'package:noq/db/db_service/entity_service.dart';
 import 'package:noq/db/db_service/token_service.dart';
 import 'package:noq/db/db_service/user_service.dart';
+import 'package:noq/enum/EntityTypes.dart';
 import 'package:noq/events/event_bus.dart';
 import 'package:noq/events/events.dart';
 import 'package:noq/events/local_notification_data.dart';
@@ -58,7 +60,7 @@ class DBTest {
         endTimeHour: 21,
         endTimeMinute: 0,
         parentId: null,
-        type: "Mall",
+        type: EntityTypes.PLACE_TYPE_MALL.toString(),
         isBookable: false,
         isActive: true,
         coordinates: geoPoint);
@@ -157,7 +159,7 @@ class DBTest {
         endTimeHour: 21,
         endTimeMinute: 0,
         parentId: null,
-        type: "Shop",
+        type: EntityTypes.PLACE_TYPE_SHOP.toString(),
         isBookable: true,
         isActive: isActive,
         coordinates: geoPoint);
@@ -201,7 +203,7 @@ class DBTest {
         endTimeHour: 21,
         endTimeMinute: 0,
         parentId: null,
-        type: "Shop",
+        type: EntityTypes.PLACE_TYPE_SHOP.toString(),
         isBookable: true,
         isActive: true,
         coordinates: geoPoint);
@@ -235,7 +237,7 @@ class DBTest {
         endTimeHour: 21,
         endTimeMinute: 0,
         parentId: null,
-        type: "Store",
+        type: EntityTypes.PLACE_TYPE_RESTAURANT.toString(),
         isBookable: false,
         isActive: true,
         coordinates: geoPoint);
@@ -858,7 +860,7 @@ class DBTest {
         endTimeHour: 21,
         endTimeMinute: 0,
         parentId: 'Entity101',
-        type: "Shop",
+        type: EntityTypes.PLACE_TYPE_SHOP.toString(),
         isBookable: false,
         isActive: true,
         coordinates: geoPoint,
@@ -888,6 +890,8 @@ class DBTest {
 
     await createGym();
     await createPrivateGym();
+
+    await testCovidCenterWithForm();
 
     print("Dummy place creation completed.");
   }
@@ -923,7 +927,7 @@ class DBTest {
         endTimeHour: 21,
         endTimeMinute: 0,
         parentId: null,
-        type: PLACE_TYPE_SPORTS,
+        type: EntityTypes.PLACE_TYPE_SPORTS.toString(),
         isBookable: true,
         isActive: true,
         verificationStatus: VERIFICATION_VERIFIED,
@@ -968,7 +972,7 @@ class DBTest {
         endTimeHour: 21,
         endTimeMinute: 0,
         parentId: null,
-        type: PLACE_TYPE_SPORTS,
+        type: EntityTypes.PLACE_TYPE_SPORTS.toString(),
         isBookable: true,
         isActive: true,
         verificationStatus: VERIFICATION_PENDING,
@@ -1019,7 +1023,7 @@ class DBTest {
         endTimeHour: 21,
         endTimeMinute: 0,
         parentId: null,
-        type: PLACE_TYPE_SPORTS,
+        type: EntityTypes.PLACE_TYPE_SPORTS.toString(),
         isBookable: true,
         isActive: true,
         verificationStatus: VERIFICATION_REJECTED,
@@ -1068,7 +1072,7 @@ class DBTest {
         endTimeHour: 21,
         endTimeMinute: 0,
         parentId: null,
-        type: PLACE_TYPE_BANK,
+        type: EntityTypes.PLACE_TYPE_BANK.toString(),
         isBookable: true,
         isActive: true,
         verificationStatus: VERIFICATION_PENDING,
@@ -1120,7 +1124,7 @@ class DBTest {
         endTimeHour: 21,
         endTimeMinute: 0,
         parentId: null,
-        type: PLACE_TYPE_SALON,
+        type: EntityTypes.PLACE_TYPE_SALON.toString(),
         isBookable: true,
         isActive: true,
         verificationStatus: VERIFICATION_PENDING,
@@ -1172,7 +1176,7 @@ class DBTest {
         endTimeHour: 21,
         endTimeMinute: 0,
         parentId: null,
-        type: PLACE_TYPE_SALON,
+        type: EntityTypes.PLACE_TYPE_SALON.toString(),
         isBookable: true,
         isActive: true,
         verificationStatus: VERIFICATION_PENDING,
@@ -1223,7 +1227,7 @@ class DBTest {
         endTimeHour: 21,
         endTimeMinute: 0,
         parentId: null,
-        type: PLACE_TYPE_GYM,
+        type: EntityTypes.PLACE_TYPE_GYM.toString(),
         isBookable: true,
         isActive: true,
         verificationStatus: VERIFICATION_VERIFIED,
@@ -1274,7 +1278,7 @@ class DBTest {
         endTimeHour: 21,
         endTimeMinute: 0,
         parentId: null,
-        type: PLACE_TYPE_GYM,
+        type: EntityTypes.PLACE_TYPE_GYM.toString(),
         isBookable: true,
         isActive: true,
         verificationStatus: VERIFICATION_VERIFIED,
@@ -1284,6 +1288,99 @@ class DBTest {
         phone: "+918328592031",
         gpay: "+919611009823",
         whatsapp: "+918328592031");
+
+    try {
+      entity.regNum = "testReg111";
+      await _gs.getEntityService().upsertEntity(entity);
+    } catch (e) {
+      print("Exception occured " + e.toString());
+    }
+  }
+
+  testCovidCenterWithForm() async {
+    Address adrs = new Address(
+        city: "Hyderbad",
+        state: "Telangana",
+        country: "India",
+        address: "Shop 61, Towli Chowk Bazar, Gachibowli");
+
+    List<Field> fields = List<Field>();
+
+    FormInputFieldText nameInput = FormInputFieldText(
+        isMandatory: true,
+        label: "Name",
+        infoMessage: "Please enter your name as per Government ID proof",
+        maxLength: 50);
+
+    fields.add(nameInput);
+
+    FormInputFieldNumber ageInput = FormInputFieldNumber(
+        isMandatory: true,
+        label: "Age",
+        infoMessage: "Please enter your age",
+        minValue: 0,
+        maxValue: 120);
+
+    fields.add(ageInput);
+
+    FormInputFieldOptions healthDetailsInput = FormInputFieldOptions(
+        isMandatory: true,
+        label: "Age",
+        infoMessage: "Please select all known medical conditions you have",
+        isMultiSelect: true,
+        values: [
+          'Chronic kidney disease',
+          'Chronic lung disease',
+          'Diabetes',
+          'Heart Conditions',
+          'Other Cardiovascular and Cerebrovascular Diseases',
+          "Hemoglobin disorders",
+          "HIV or weakened Immune System",
+          "Liver disease",
+          "Neurologic conditions such as dementia",
+          "Overweight and Severe Obesity",
+          "Pregnancy"
+        ]);
+
+    fields.add(healthDetailsInput);
+
+    BookingForm bf = new BookingForm(
+        formName: "Covid-19 Vacination Applicant Details",
+        headerMsg:
+            "You request will be approved based on the information provided by you.",
+        footerMsg: "",
+        formFieldList: null);
+
+    MyGeoFirePoint geoPoint = new MyGeoFirePoint(17.444317, 78.355321);
+    Entity entity = new Entity(
+      entityId: "Selenium Covid Vacination Center",
+      name: "Place Great Tyson Gymkhana",
+      address: adrs,
+      advanceDays: 7,
+      isPublic: true,
+      maxAllowed: 60,
+      slotDuration: 60,
+      closedOn: [WEEK_DAY_MONDAY],
+      breakStartHour: 13,
+      breakStartMinute: 30,
+      breakEndHour: 14,
+      breakEndMinute: 30,
+      startTimeHour: 10,
+      startTimeMinute: 30,
+      endTimeHour: 21,
+      endTimeMinute: 0,
+      parentId: null,
+      type: EntityTypes.PLACE_TYPE_COVID19_VACCINATION_CENTER.toString(),
+      isBookable: true,
+      isActive: true,
+      verificationStatus: VERIFICATION_VERIFIED,
+      coordinates: geoPoint,
+      offer: null,
+      paytm: "+919611009823",
+      phone: "+918328592031",
+      gpay: "+919611009823",
+      whatsapp: "+918328592031",
+    );
 
     try {
       entity.regNum = "testReg111";

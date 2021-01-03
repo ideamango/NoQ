@@ -36,7 +36,7 @@ class EntitySlots {
   static EntitySlots fromJson(Map<String, dynamic> json) {
     if (json == null) return null;
     return new EntitySlots(
-        entityId: json['entityId'].toString(),
+        entityId: json['entityId'],
         maxAllowed: json['maxAllowed'],
         date: new DateTime.fromMillisecondsSinceEpoch(
             json['date'].seconds * 1000),

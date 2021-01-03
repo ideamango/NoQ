@@ -9,21 +9,21 @@ import Firebase
     _ application: UIApplication,
     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
   ) -> Bool {
-    // FirebaseApp.configure()
+    FirebaseApp.configure()
 
     // FirebaseApp.app()?.delete({ (success) in
 
     // })
 
-    let filePath = Bundle.main.path(forResource: "GoogleService-Info-Test", ofType: "plist")
-    guard let fileopts = FirebaseOptions(contentsOfFile: filePath!)
-      else { assert(false, "Couldn't load config file") }
-    FirebaseApp.configure(name: "SecondaryFirebaseApp", options: fileopts)
-    // [END default_configure_file   
+    // let filePath = Bundle.main.path(forResource: "GoogleService-Info-Test", ofType: "plist")
+    // guard let fileopts = FirebaseOptions(contentsOfFile: filePath!)
+    //   else { assert(false, "Couldn't load config file") }
+    // FirebaseApp.configure(name: "SecondaryFirebaseApp", options: fileopts)
+    // // [END default_configure_file   
   
 
-    guard let defapp = FirebaseApp.app(name: "SecondaryFirebaseApp")
-      else { assert(false, "Could not retrieve default app") }
+    // guard let defapp = FirebaseApp.app(name: "SecondaryFirebaseApp")
+    //   else { assert(false, "Could not retrieve default app") }
 
     if #available(iOS 10.0, *) {
       UNUserNotificationCenter.current().delegate = self 
