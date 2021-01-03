@@ -5,7 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:noq/db/db_model/address.dart';
-import 'package:noq/enum/entity_types.dart';
+import 'package:noq/enum/entity_type.dart';
 import 'package:noq/global_state.dart';
 import 'package:noq/pages/favs_list_page.dart';
 import 'package:noq/services/auth_service.dart';
@@ -359,18 +359,18 @@ class Utils {
     });
   }
 
-  static Entity createEntity(String entityType, [String parentId]) {
+  static Entity createEntity(EntityType entityType, [String parentId]) {
     var uuid = new Uuid();
     String entityId = uuid.v1();
     var isPublic = true;
     var isBookable = true;
-    if (entityType == EntityTypes.PLACE_TYPE_MALL) {
+    if (entityType == EntityType.PLACE_TYPE_MALL) {
       //is Public and Not bookable
       isPublic = true;
       isBookable = false;
-    } else if (entityType == EntityTypes.PLACE_TYPE_APARTMENT ||
-        entityType == EntityTypes.PLACE_TYPE_SCHOOL ||
-        entityType == EntityTypes.PLACE_TYPE_OFFICE) {
+    } else if (entityType == EntityType.PLACE_TYPE_APARTMENT ||
+        entityType == EntityType.PLACE_TYPE_SCHOOL ||
+        entityType == EntityType.PLACE_TYPE_OFFICE) {
       // is Private and Not bookable
       isPublic = false;
       isBookable = false;
@@ -510,61 +510,61 @@ class Utils {
         subject: msgTitle);
   }
 
-  static Widget getEntityTypeImage(String type, double size) {
+  static Widget getEntityTypeImage(EntityType type, double size) {
     Widget entityImageWidget;
     IconData icon;
     String image;
 
     switch (type) {
-      case PLACE_TYPE_COVID19_VACCINATION_CENTER:
+      case EntityType.PLACE_TYPE_COVID19_VACCINATION_CENTER:
         icon = Icons.local_hospital;
         break;
-      case PLACE_TYPE_MALL:
+      case EntityType.PLACE_TYPE_MALL:
         icon = Icons.business;
         break;
-      case PLACE_TYPE_SUPERMARKET:
+      case EntityType.PLACE_TYPE_SUPERMARKET:
         icon = Icons.local_convenience_store;
         break;
-      case PLACE_TYPE_APARTMENT:
+      case EntityType.PLACE_TYPE_APARTMENT:
         icon = Icons.location_city;
         break;
-      case PLACE_TYPE_MEDICAL:
+      case EntityType.PLACE_TYPE_MEDICAL:
         icon = Icons.local_pharmacy;
         break;
-      case PLACE_TYPE_RESTAURANT:
+      case EntityType.PLACE_TYPE_RESTAURANT:
         icon = Icons.restaurant_menu;
         break;
-      case PLACE_TYPE_SALON:
+      case EntityType.PLACE_TYPE_SALON:
         image = "salon.png";
         break;
-      case PLACE_TYPE_SHOP:
+      case EntityType.PLACE_TYPE_SHOP:
         icon = Icons.store;
         break;
-      case PLACE_TYPE_WORSHIP:
+      case EntityType.PLACE_TYPE_WORSHIP:
         image = "placeOfWorship.png";
         break;
-      case PLACE_TYPE_SCHOOL:
+      case EntityType.PLACE_TYPE_SCHOOL:
         icon = Icons.school;
         break;
-      case PLACE_TYPE_OFFICE:
+      case EntityType.PLACE_TYPE_OFFICE:
         icon = Icons.work;
         break;
-      case PLACE_TYPE_GYM:
+      case EntityType.PLACE_TYPE_GYM:
         image = "gym.png";
         break;
-      case PLACE_TYPE_SPORTS:
+      case EntityType.PLACE_TYPE_SPORTS:
         image = "sportsCenter.png";
         break;
-      case PLACE_TYPE_POPSHOP:
+      case EntityType.PLACE_TYPE_POPSHOP:
         icon = Icons.local_offer;
         break;
-      case PLACE_TYPE_BANK:
+      case EntityType.PLACE_TYPE_BANK:
         icon = Icons.account_balance;
         break;
-      case PLACE_TYPE_HOSPITAL:
+      case EntityType.PLACE_TYPE_HOSPITAL:
         icon = Icons.local_hospital;
         break;
-      case PLACE_TYPE_OTHERS:
+      case EntityType.PLACE_TYPE_OTHERS:
         icon = Icons.add_shopping_cart;
         break;
     }
@@ -587,6 +587,65 @@ class Utils {
         color: borderColor,
       );
     return entityImageWidget;
+  }
+
+  static String getEntityTypeDisplayName(EntityType type) {
+    String displayName;
+
+    switch (type) {
+      case EntityType.PLACE_TYPE_COVID19_VACCINATION_CENTER:
+        displayName = PLACE_TYPE_COVID19_VACCINATION_CENTER;
+        break;
+      case EntityType.PLACE_TYPE_MALL:
+        displayName = PLACE_TYPE_MALL;
+        break;
+      case EntityType.PLACE_TYPE_SUPERMARKET:
+        displayName = PLACE_TYPE_SUPERMARKET;
+        break;
+      case EntityType.PLACE_TYPE_APARTMENT:
+        displayName = PLACE_TYPE_APARTMENT;
+        break;
+      case EntityType.PLACE_TYPE_MEDICAL:
+        displayName = PLACE_TYPE_MEDICAL;
+        break;
+      case EntityType.PLACE_TYPE_RESTAURANT:
+        displayName = PLACE_TYPE_RESTAURANT;
+        break;
+      case EntityType.PLACE_TYPE_SALON:
+        displayName = PLACE_TYPE_SALON;
+        break;
+      case EntityType.PLACE_TYPE_SHOP:
+        displayName = PLACE_TYPE_SHOP;
+        break;
+      case EntityType.PLACE_TYPE_WORSHIP:
+        displayName = PLACE_TYPE_WORSHIP;
+        break;
+      case EntityType.PLACE_TYPE_SCHOOL:
+        displayName = PLACE_TYPE_SCHOOL;
+        break;
+      case EntityType.PLACE_TYPE_OFFICE:
+        displayName = PLACE_TYPE_OFFICE;
+        break;
+      case EntityType.PLACE_TYPE_GYM:
+        displayName = PLACE_TYPE_GYM;
+        break;
+      case EntityType.PLACE_TYPE_SPORTS:
+        displayName = PLACE_TYPE_SPORTS;
+        break;
+      case EntityType.PLACE_TYPE_POPSHOP:
+        displayName = PLACE_TYPE_POPSHOP;
+        break;
+      case EntityType.PLACE_TYPE_BANK:
+        displayName = PLACE_TYPE_BANK;
+        break;
+      case EntityType.PLACE_TYPE_HOSPITAL:
+        displayName = PLACE_TYPE_HOSPITAL;
+        break;
+      case EntityType.PLACE_TYPE_OTHERS:
+        displayName = PLACE_TYPE_OTHERS;
+        break;
+    }
+    return displayName;
   }
 
   static void logout(BuildContext context) {

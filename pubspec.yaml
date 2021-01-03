@@ -64,6 +64,7 @@ dependencies:
   auto_size_text: ^2.1.0
   video_player: ^1.0.1
   http: ^0.12.2
+  enum_to_string: ^1.0.14
 
 dev_dependencies:
   flutter_test:

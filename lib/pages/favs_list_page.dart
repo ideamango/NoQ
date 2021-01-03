@@ -9,6 +9,7 @@ import 'package:noq/db/db_model/entity.dart';
 import 'package:noq/db/db_model/meta_entity.dart';
 import 'package:noq/db/db_model/user_token.dart';
 import 'package:noq/db/db_service/entity_service.dart';
+import 'package:noq/enum/entity_type.dart';
 import 'package:noq/global_state.dart';
 import 'package:noq/pages/place_details_page.dart';
 import 'package:noq/pages/search_child_entity_page.dart';
@@ -333,7 +334,7 @@ class _FavsListPageState extends State<FavsListPage> {
     }
   }
 
-  Widget entityImageIcon(String type) {
+  Widget entityImageIcon(EntityType type) {
     // String imgName;
     Widget imgWidget;
     //  imgName = Utils.getEntityTypeImage(type);

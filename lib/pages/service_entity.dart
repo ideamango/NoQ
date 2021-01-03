@@ -153,7 +153,7 @@ class ChildEntityRowState extends State<ChildEntityRow> {
                             color: Colors.blueGrey[700], fontSize: 17),
                       ),
                       Text(
-                        _metaEntity.type,
+                        Utils.getEntityTypeDisplayName(_metaEntity.type),
                         style: labelTextStyle,
                       ),
                     ],

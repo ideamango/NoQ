@@ -31,13 +31,27 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
         formName: "Basic Details",
         footerMsg: "Footer",
         headerMsg: "header",
-        formFieldList: listOfFields,
+        formFields: listOfFields,
         autoApproved: true);
   }
 
   Widget buildChildItem(Field field, int index) {
     if (!listOfControllers.containsKey(field.label)) {
       listOfControllers[field.label] = new TextEditingController();
+    }
+    switch (field.type) {
+      case "TEXT":
+        {}
+        break;
+      case "NUMBER":
+        {}
+        break;
+      case "OPTIONS":
+        {}
+        break;
+      default:
+        {}
+        break;
     }
 
     return Container(
@@ -101,10 +115,10 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
                     //   // },
                     // ),
                     child:
-                        buildChildItem(dummyForm.formFieldList[index], index),
+                        buildChildItem(dummyForm.formFields[index], index),
                   );
                 },
-                itemCount: dummyForm.formFieldList.length,
+                itemCount: dummyForm.formFields.length,
               ),
               Text(dummyForm.formName),
               Text(dummyForm.headerMsg),

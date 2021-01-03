@@ -14,6 +14,7 @@ import 'package:noq/db/db_model/user_token.dart';
 import 'package:noq/db/db_service/configurations_service.dart';
 import 'package:noq/db/db_service/entity_service.dart';
 import 'package:noq/db/db_service/token_service.dart';
+import 'package:noq/enum/entity_type.dart';
 import 'package:noq/events/local_notification_data.dart';
 import 'package:noq/location.dart';
 import 'package:noq/services/auth_service.dart';
@@ -31,7 +32,7 @@ class GlobalState {
   Configurations _conf;
   List<UserToken> bookings;
   String lastSearchName;
-  String lastSearchType;
+  EntityType lastSearchType;
   List<Entity> lastSearchResults;
   Map<String, Entity> _entities;
   FirebaseApp _secondaryFirebaseApp;
@@ -327,7 +328,7 @@ class GlobalState {
     return saved;
   }
 
-  void setPastSearch(List<Entity> entityList, String name, String type) {
+  void setPastSearch(List<Entity> entityList, String name, EntityType type) {
     _gs.lastSearchResults = entityList;
     _gs.lastSearchName = name;
     _gs.lastSearchType = type;
@@ -445,7 +446,7 @@ class GlobalState {
       _gs._currentUser = null;
       _gs._conf = null;
       _gs.lastSearchName = "";
-      _gs.lastSearchType = "";
+      _gs.lastSearchType = null;
       _gs._secondaryFirebaseApp = null;
     }
 

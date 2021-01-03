@@ -1,14 +1,11 @@
-import 'package:json_annotation/json_annotation.dart';
+import 'package:enum_to_string/enum_to_string.dart';
 import 'package:noq/db/db_model/offer.dart';
+import 'package:noq/enum/entity_type.dart';
 
 /// This allows the `User` class to access private members in
 /// the generated file. The value for this is *.g.dart, where
 /// the star denotes the source file name.
-part 'meta_entity.g.dart';
 
-/// An annotation for the code generator to know that this class needs the
-/// JSON serialization logic to be generated.
-@JsonSerializable()
 class MetaEntity {
   MetaEntity(
       {this.entityId,
@@ -47,7 +44,7 @@ class MetaEntity {
   //SlotDocumentId is entityID#20~06~01 it is not auto-generated, will help in not duplicating the record
   String entityId;
   String name;
-  String type;
+  EntityType type;
   int advanceDays;
   bool isPublic;
   List<String> closedOn;
@@ -82,7 +79,7 @@ class MetaEntity {
     return new MetaEntity(
         entityId: json['entityId'],
         name: json['name'],
-        type: json['type'],
+        type: EnumToString.fromString(EntityType.values, json['type']),
         advanceDays: json['advanceDays'],
         isPublic: json['isPublic'],
         closedOn: convertToClosedOnArrayFromJson(json['closedOn']),
@@ -122,7 +119,7 @@ class MetaEntity {
   Map<String, dynamic> toJson() => {
         'entityId': entityId,
         'name': name,
-        'type': type,
+        'type': EnumToString.convertToString(type),
         'advanceDays': advanceDays,
         'isPublic': isPublic,
         'startTimeHour': startTimeHour,

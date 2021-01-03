@@ -9,6 +9,7 @@ import 'package:noq/db/db_model/entity_private.dart';
 import 'package:noq/db/db_model/meta_entity.dart';
 import 'package:noq/db/db_service/access_denied_exception.dart';
 import 'package:noq/db/db_service/entity_does_not_exists_exception.dart';
+import 'package:noq/enum/entity_type.dart';
 
 import '../../constants.dart';
 import 'user_does_not_exists_exception.dart';
@@ -678,8 +679,8 @@ class EntityService {
     return isSuccess;
   }
 
-  Future<List<Entity>> search(String name, String type, double lat, double lon,
-      int radius, int pageNumber, int pageSize) async {
+  Future<List<Entity>> search(String name, EntityType entityType, double lat,
+      double lon, int radius, int pageNumber, int pageSize) async {
     double rad = radius.toDouble();
     List<Entity> entities = new List<Entity>();
     FirebaseFirestore fStore = getFirestore();
@@ -688,6 +689,13 @@ class EntityService {
 
     if (name != null && name != "") {
       name = name.toLowerCase();
+    }
+
+    String type;
+    if (entityType != null) {
+      type = entityType
+          .toString()
+          .substring(entityType.toString().indexOf('.') + 1);
     }
 
     var collectionReference;

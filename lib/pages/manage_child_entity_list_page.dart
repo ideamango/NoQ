@@ -4,6 +4,7 @@ import 'package:noq/constants.dart';
 import 'package:noq/db/db_model/entity.dart';
 import 'package:noq/db/db_model/meta_entity.dart';
 import 'package:noq/db/db_service/entity_service.dart';
+import 'package:noq/enum/entity_type.dart';
 import 'package:noq/global_state.dart';
 import 'package:noq/pages/manage_entity_list_page.dart';
 import 'package:noq/pages/service_entity.dart';
@@ -42,7 +43,7 @@ class _ManageChildEntityListPageState extends State<ManageChildEntityListPage> {
   // Map<String, Entity> _entityMap = Map<String, Entity>();
 
   Entity parentEntity;
-  String _subEntityType;
+  EntityType _subEntityType;
   bool _initCompleted = false;
   List<String> subEntityTypes;
   GlobalState _state;
@@ -50,18 +51,18 @@ class _ManageChildEntityListPageState extends State<ManageChildEntityListPage> {
 //Add service Row
 
   int _count = 0;
-  String categoryType;
+  EntityType categoryType;
   PersistentBottomSheetController childBottomSheetController;
   final manageChildEntityListPagekey = new GlobalKey<ScaffoldState>();
   // Eventify.Listener _eventListener;
 
-  Widget _buildCategoryItem(BuildContext context, int index) {
-    String name = subEntityTypes[index];
-    Widget image = Utils.getEntityTypeImage(name, 30);
+  Widget _buildCategoryItem(BuildContext context, EntityType type) {
+    String name = Utils.getEntityTypeDisplayName(type);
+    Widget image = Utils.getEntityTypeImage(type, 30);
 
     return GestureDetector(
         onTap: () {
-          categoryType = name;
+          categoryType = type;
           childBottomSheetController.close();
           childBottomSheetController = null;
           //   Navigator.of(context).pop();
@@ -395,7 +396,7 @@ class _ManageChildEntityListPageState extends State<ManageChildEntityListPage> {
                   padding: EdgeInsets.all(0),
                   scrollDirection: Axis.vertical,
                   shrinkWrap: true,
-                  itemCount: subEntityTypes.length,
+                  itemCount: EntityType.values.length,
                   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: 4,
                       crossAxisSpacing: 10.0,
@@ -408,7 +409,8 @@ class _ManageChildEntityListPageState extends State<ManageChildEntityListPage> {
                         // decoration:
                         //     BoxDecoration(border: Border.all(color: Colors.black, width: 0.5)),
                         child: Center(
-                          child: _buildCategoryItem(context, index),
+                          child: _buildCategoryItem(
+                              context, EntityType.values[index]),
                         ),
                       ),
                     );

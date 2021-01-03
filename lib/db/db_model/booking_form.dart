@@ -4,26 +4,27 @@ class BookingForm {
   String formName;
   String headerMsg;
   String footerMsg;
-  List<Field> formFieldList;
-  bool autoApproved;
+  List<Field> formFields;
+  bool autoApproved = true;
 
   BookingForm(
       {@required this.formName,
       @required this.headerMsg,
       this.footerMsg,
-      @required this.formFieldList,
+      @required this.formFields,
       this.autoApproved});
 
   Map<String, dynamic> toJson() => {
         'formName': formName,
         'headerMsg': headerMsg,
         'footerMsg': footerMsg,
-        'formFieldList': formFieldsToJson(formFieldList),
+        'formFieldList': formFieldsToJson(formFields),
         'autoApproved': autoApproved
       };
 
   List<dynamic> formFieldsToJson(List<Field> fields) {
     List<dynamic> fieldsJson = new List<dynamic>();
+    if (fields == null) return null;
     for (Field sl in fields) {
       fieldsJson.add(sl.toJson());
     }
@@ -36,20 +37,20 @@ class BookingForm {
         formName: json['formName'],
         headerMsg: json['headerMsg'],
         footerMsg: json['footerMsg'],
-        formFieldList: convertToOptionValuesFromJson(json['formFieldList']),
+        formFields: convertToOptionValuesFromJson(json['formFieldList']),
         autoApproved: json['autoApproved']);
   }
 
   static List<Field> convertToOptionValuesFromJson(List<dynamic> fieldsJson) {
     List<Field> values = new List<Field>();
-    if (fieldsJson == null) return values;
+    if (fieldsJson == null) return null;
 
     for (Map<String, dynamic> value in fieldsJson) {
-      if (value.containsKey("TEXT")) {
+      if (value["type"] == "TEXT") {
         values.add(FormInputFieldText.fromJson(value));
-      } else if (value.containsKey("NUMBER")) {
+      } else if (value["type"] == "NUMBER") {
         values.add(FormInputFieldNumber.fromJson(value));
-      } else if (value.containsKey("OPTIONS")) {
+      } else if (value["type"] == "OPTIONS") {
         values.add(FormInputFieldOptions.fromJson(value));
       }
     }
@@ -61,6 +62,7 @@ class Field {
   String label;
   bool isMandatory;
   String infoMessage;
+  String type;
   Map<String, dynamic> toJson() => {
         //action implementation is in the derived classes
       };
@@ -68,7 +70,6 @@ class Field {
 
 class FormInputFieldText extends Field {
   int maxLength;
-  String type = "TEXT";
 
   FormInputFieldText(
       String label, bool isMandatory, String infoMessage, int maxLength) {
@@ -76,6 +77,7 @@ class FormInputFieldText extends Field {
     this.isMandatory = isMandatory;
     this.infoMessage = infoMessage;
     this.maxLength = maxLength;
+    this.type = "TEXT";
   }
 
   Map<String, dynamic> toJson() => {
@@ -96,7 +98,6 @@ class FormInputFieldText extends Field {
 class FormInputFieldNumber extends Field {
   double maxValue;
   double minValue;
-  String type = "NUMBER";
 
   FormInputFieldNumber(String label, bool isMandatory, String infoMessage,
       double minValue, double maxValue) {
@@ -105,6 +106,7 @@ class FormInputFieldNumber extends Field {
     this.minValue = minValue;
     this.infoMessage = infoMessage;
     this.maxValue = maxValue;
+    this.type = "NUMBER";
   }
   Map<String, dynamic> toJson() => {
         'label': label,
@@ -123,12 +125,8 @@ class FormInputFieldNumber extends Field {
 }
 
 class FormInputFieldOptions extends Field {
-  String label;
-  bool isMandatory;
-  String infoMessage;
   List<String> values;
   bool isMultiSelect;
-  String type = "OPTIONS";
 
   FormInputFieldOptions(String label, bool isMandatory, String infoMessage,
       List<String> values, bool isMultiSelect) {
@@ -137,6 +135,7 @@ class FormInputFieldOptions extends Field {
     this.infoMessage = infoMessage;
     this.values = values;
     this.isMultiSelect = isMultiSelect;
+    this.type = "OPTIONS";
   }
 
   Map<String, dynamic> toJson() => {
@@ -154,7 +153,7 @@ class FormInputFieldOptions extends Field {
         json['label'],
         json['isMandatory'],
         json['infoMessage'],
-        convertToOptionValuesFromJson(json['maxValue']),
+        convertToOptionValuesFromJson(json['values']),
         json['isMultiSelect']);
   }
 
