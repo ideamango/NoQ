@@ -40,7 +40,8 @@ class MetaEntity {
       this.offer,
       this.phone,
       this.hasChildren,
-      this.isBookable});
+      this.isBookable,
+      this.hasForm});
   MetaEntity.withValues({this.entityId, this.type});
 
   //SlotDocumentId is entityID#20~06~01 it is not auto-generated, will help in not duplicating the record
@@ -74,6 +75,7 @@ class MetaEntity {
   String phone;
   bool hasChildren;
   bool isBookable;
+  bool hasForm;
 
   static MetaEntity fromJson(Map<String, dynamic> json) {
     if (json == null) return null;
@@ -103,7 +105,8 @@ class MetaEntity {
         offer: Offer.fromJson(json['offer']),
         phone: json['phone'],
         hasChildren: json['hasChildren'],
-        isBookable: json['isBookable']);
+        isBookable: json['isBookable'],
+        hasForm: json['hasForm']);
   }
 
   static List<String> convertToClosedOnArrayFromJson(List<dynamic> daysJson) {
@@ -140,7 +143,8 @@ class MetaEntity {
         'offer': offer != null ? offer.toJson() : null,
         'phone': phone,
         'hasChildren': hasChildren,
-        'isBookable': isBookable
+        'isBookable': isBookable,
+        'hasForm': hasForm
       };
 
   bool isEqual(MetaEntity metaEnt) {
@@ -164,7 +168,8 @@ class MetaEntity {
         metaEnt.whatsapp == this.whatsapp &&
         metaEnt.gpay == this.gpay &&
         metaEnt.applepay == this.applepay &&
-        metaEnt.isBookable == this.isBookable) {
+        metaEnt.isBookable == this.isBookable &&
+        metaEnt.hasForm == this.hasForm) {
       if (this.closedOn != null && metaEnt.closedOn != null) {
         int matchCount = 0;
 

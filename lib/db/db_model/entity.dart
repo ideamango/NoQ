@@ -1,6 +1,6 @@
 import 'package:noq/db/db_model/address.dart';
 import 'package:noq/db/db_model/employee.dart';
-import 'package:noq/db/db_model/form.dart';
+import 'package:noq/db/db_model/booking_form.dart';
 import 'package:noq/db/db_model/meta_entity.dart';
 import 'package:noq/db/db_model/meta_user.dart';
 import 'package:noq/db/db_model/my_geo_fire_point.dart';
@@ -42,7 +42,8 @@ class Entity {
       this.paytm,
       this.applepay,
       this.offer,
-      this.phone});
+      this.phone,
+      this.tokenBookingForm});
 
   //SlotDocumentId is entityID#20~06~01 it is not auto-generated, will help in not duplicating the record
   String entityId;
@@ -84,7 +85,7 @@ class Entity {
   Offer offer;
   String phone;
   MetaEntity _meta;
-  EntityForm form;
+  BookingForm tokenBookingForm;
 
   Map<String, dynamic> toJson() => {
         'entityId': entityId,
@@ -123,7 +124,9 @@ class Entity {
         'paytm': paytm,
         'applepay': applepay,
         'offer': offer != null ? offer.toJson() : null,
-        'phone': phone
+        'phone': phone,
+        'tokenBookingForm':
+            tokenBookingForm != null ? tokenBookingForm.toJson() : null
       };
 
   List<dynamic> usersToJson(List<MetaUser> users) {
@@ -191,7 +194,8 @@ class Entity {
         paytm: json['paytm'],
         applepay: json['applepay'],
         offer: Offer.fromJson(json['offer']),
-        phone: json['phone']);
+        phone: json['phone'],
+        tokenBookingForm: BookingForm.fromJson(json['tokenBookingForm']));
   }
 
   static Address convertToAddressFromJson(Map<String, dynamic> json) {
@@ -277,7 +281,8 @@ class Entity {
           hasChildren: (childEntities != null && childEntities.length > 0)
               ? true
               : false,
-          isBookable: isBookable);
+          isBookable: isBookable,
+          hasForm: tokenBookingForm != null ? true : false);
     } else {
       _meta.name = name;
       _meta.type = type;
@@ -311,6 +316,7 @@ class Entity {
       _meta.hasChildren =
           (childEntities != null && childEntities.length > 0) ? true : false;
       _meta.isBookable = isBookable;
+      _meta.hasForm = tokenBookingForm != null ? true : false;
     }
     return _meta;
   }

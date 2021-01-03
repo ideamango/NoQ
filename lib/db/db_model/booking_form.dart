@@ -1,19 +1,74 @@
 import 'package:flutter/material.dart';
 
-class EntityForm {
+class BookingForm {
   String formName;
   String headerMsg;
   String footerMsg;
   List<Field> formFieldList;
+  bool autoApproved;
+
+  BookingForm(
+      {@required this.formName,
+      @required this.headerMsg,
+      this.footerMsg,
+      @required this.formFieldList,
+      this.autoApproved});
+
+  Map<String, dynamic> toJson() => {
+        'formName': formName,
+        'headerMsg': headerMsg,
+        'footerMsg': footerMsg,
+        'formFieldList': formFieldsToJson(formFieldList),
+        'autoApproved': autoApproved
+      };
+
+  List<dynamic> formFieldsToJson(List<Field> fields) {
+    List<dynamic> fieldsJson = new List<dynamic>();
+    for (Field sl in fields) {
+      fieldsJson.add(sl.toJson());
+    }
+    return fieldsJson;
+  }
+
+  static BookingForm fromJson(Map<String, dynamic> json) {
+    if (json == null) return null;
+    return new BookingForm(
+        formName: json['formName'],
+        headerMsg: json['headerMsg'],
+        footerMsg: json['footerMsg'],
+        formFieldList: convertToOptionValuesFromJson(json['formFieldList']),
+        autoApproved: json['autoApproved']);
+  }
+
+  static List<Field> convertToOptionValuesFromJson(List<dynamic> fieldsJson) {
+    List<Field> values = new List<Field>();
+    if (fieldsJson == null) return values;
+
+    for (Map<String, dynamic> value in fieldsJson) {
+      if (value.containsKey("TEXT")) {
+        values.add(FormInputFieldText.fromJson(value));
+      } else if (value.containsKey("NUMBER")) {
+        values.add(FormInputFieldNumber.fromJson(value));
+      } else if (value.containsKey("OPTIONS")) {
+        values.add(FormInputFieldOptions.fromJson(value));
+      }
+    }
+    return values;
+  }
 }
 
-class Field {}
+class Field {
+  Map<String, dynamic> toJson() => {
+        //action implementation is in the derived classes
+      };
+}
 
 class FormInputFieldText extends Field {
   String label;
   bool isMandatory;
   String infoMessage;
   int maxLength;
+  String type = "TEXT";
 
   FormInputFieldText(
       {@required this.label,
@@ -25,7 +80,8 @@ class FormInputFieldText extends Field {
         'maxLength': maxLength,
         'label': label,
         'isMandatory': isMandatory,
-        "infoMessage": infoMessage
+        "infoMessage": infoMessage,
+        "type": type
       };
 
   static FormInputFieldText fromJson(Map<String, dynamic> json) {
@@ -44,6 +100,7 @@ class FormInputFieldNumber extends Field {
   String infoMessage;
   double maxValue;
   double minValue;
+  String type = "NUMBER";
 
   FormInputFieldNumber(
       {@required this.label,
@@ -57,7 +114,8 @@ class FormInputFieldNumber extends Field {
         'isMandatory': isMandatory,
         "infoMessage": infoMessage,
         'maxValue': maxValue,
-        'minValue': minValue
+        'minValue': minValue,
+        'type': type
       };
 
   static FormInputFieldNumber fromJson(Map<String, dynamic> json) {
@@ -77,6 +135,7 @@ class FormInputFieldOptions extends Field {
   String infoMessage;
   List<String> values;
   bool isMultiSelect;
+  String type = "OPTIONS";
 
   FormInputFieldOptions(
       {@required this.label,
@@ -90,7 +149,8 @@ class FormInputFieldOptions extends Field {
         'isMandatory': isMandatory,
         "infoMessage": infoMessage,
         'values': values,
-        'isMultiSelect': isMultiSelect
+        'isMultiSelect': isMultiSelect,
+        'type': type
       };
 
   static FormInputFieldOptions fromJson(Map<String, dynamic> json) {
