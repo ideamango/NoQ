@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:noq/db/db_model/form.dart';
+import 'package:noq/db/db_model/booking_form.dart';
+
 import 'package:noq/style.dart';
 
 class CreateFormFields extends StatefulWidget {
@@ -14,39 +15,29 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
 
   final GlobalKey<FormState> _bookingFormKey = new GlobalKey<FormState>();
   List<TextEditingController> _controllers = new List();
-  EntityForm dummyForm;
+  BookingForm dummyForm;
   final itemSize = 100.0;
   List<String> dumList = new List<String>();
 
   createDummyData() {
-    dummyForm = new EntityForm();
-    dummyForm.formName = "Basic Details";
-    dummyForm.footerMsg = "Footer";
-    dummyForm.headerMsg = "header";
     List<Field> listOfFields = new List<Field>();
-    FormInputFieldText f1 = new FormInputFieldText(
-        label: "Name",
-        isMandatory: true,
-        maxLength: 20,
-        infoMessage: "Enter name of person");
+    FormInputFieldText f1 =
+        new FormInputFieldText("Name", true, "Enter name of person", 20);
     FormInputFieldText f2 = new FormInputFieldText(
-        label: "Purpose of visit",
-        isMandatory: true,
-        maxLength: 30,
-        infoMessage: "Enter purpose of visit");
+        "Purpose of visit", true, "Enter purpose of visit", 30);
     listOfFields.add(f1);
     listOfFields.add(f2);
-    dummyForm.formFieldList = listOfFields;
-
-    dumList.add("Smita");
-    dumList.add("Sumant");
+    dummyForm = new BookingForm(
+        formName: "Basic Details",
+        footerMsg: "Footer",
+        headerMsg: "header",
+        formFieldList: listOfFields,
+        autoApproved: true);
   }
 
   Widget buildChildItem(Field field, int index) {
-    if (listOfControllers.containsKey(field.label)) {
-      
-    } else {
-      listOfControllers[field.label]= new TextEditingController();
+    if (!listOfControllers.containsKey(field.label)) {
+      listOfControllers[field.label] = new TextEditingController();
     }
 
     return Container(
@@ -57,7 +48,7 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
         minLines: 1,
         style: textInputTextStyle,
         keyboardType: TextInputType.text,
-        controller: _controllers[index],
+        controller: listOfControllers[field.label],
         decoration:
             CommonStyle.textFieldStyle(labelTextStr: "you", hintTextStr: ""),
         onChanged: (String value) {
@@ -113,7 +104,7 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
                         buildChildItem(dummyForm.formFieldList[index], index),
                   );
                 },
-                itemCount: dumList.length,
+                itemCount: dummyForm.formFieldList.length,
               ),
               Text(dummyForm.formName),
               Text(dummyForm.headerMsg),

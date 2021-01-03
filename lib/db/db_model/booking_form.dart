@@ -58,23 +58,25 @@ class BookingForm {
 }
 
 class Field {
+  String label;
+  bool isMandatory;
+  String infoMessage;
   Map<String, dynamic> toJson() => {
         //action implementation is in the derived classes
       };
 }
 
 class FormInputFieldText extends Field {
-  String label;
-  bool isMandatory;
-  String infoMessage;
   int maxLength;
   String type = "TEXT";
 
   FormInputFieldText(
-      {@required this.label,
-      @required this.isMandatory,
-      this.infoMessage,
-      @required this.maxLength});
+      String label, bool isMandatory, String infoMessage, int maxLength) {
+    this.label = label;
+    this.isMandatory = isMandatory;
+    this.infoMessage = infoMessage;
+    this.maxLength = maxLength;
+  }
 
   Map<String, dynamic> toJson() => {
         'maxLength': maxLength,
@@ -86,46 +88,37 @@ class FormInputFieldText extends Field {
 
   static FormInputFieldText fromJson(Map<String, dynamic> json) {
     if (json == null) return null;
-    return new FormInputFieldText(
-        label: json['label'],
-        isMandatory: json['isMandatory'],
-        infoMessage: json['infoMessage'],
-        maxLength: json['maxLength']);
+    return new FormInputFieldText(json['label'], json['isMandatory'],
+        json['infoMessage'], json['maxLength']);
   }
 }
 
 class FormInputFieldNumber extends Field {
-  String label;
-  bool isMandatory;
-  String infoMessage;
   double maxValue;
   double minValue;
   String type = "NUMBER";
 
-  FormInputFieldNumber(
-      {@required this.label,
-      @required this.isMandatory,
-      this.infoMessage,
-      this.maxValue,
-      this.minValue});
-
+  FormInputFieldNumber(String label, bool isMandatory, String infoMessage,
+      double minValue, double maxValue) {
+    this.label = label;
+    this.isMandatory = isMandatory;
+    this.minValue = minValue;
+    this.infoMessage = infoMessage;
+    this.maxValue = maxValue;
+  }
   Map<String, dynamic> toJson() => {
         'label': label,
         'isMandatory': isMandatory,
         "infoMessage": infoMessage,
-        'maxValue': maxValue,
         'minValue': minValue,
+        'maxValue': maxValue,
         'type': type
       };
 
   static FormInputFieldNumber fromJson(Map<String, dynamic> json) {
     if (json == null) return null;
-    return new FormInputFieldNumber(
-        label: json['label'],
-        isMandatory: json['isMandatory'],
-        infoMessage: json['infoMessage'],
-        maxValue: json['maxValue'],
-        minValue: json['minValue']);
+    return new FormInputFieldNumber(json['label'], json['isMandatory'],
+        json['infoMessage'], json['minValue'], json['maxValue']);
   }
 }
 
@@ -137,12 +130,14 @@ class FormInputFieldOptions extends Field {
   bool isMultiSelect;
   String type = "OPTIONS";
 
-  FormInputFieldOptions(
-      {@required this.label,
-      @required this.isMandatory,
-      @required this.infoMessage,
-      @required this.values,
-      @required this.isMultiSelect});
+  FormInputFieldOptions(String label, bool isMandatory, String infoMessage,
+      List<String> values, bool isMultiSelect) {
+    this.label = label;
+    this.isMandatory = isMandatory;
+    this.infoMessage = infoMessage;
+    this.values = values;
+    this.isMultiSelect = isMultiSelect;
+  }
 
   Map<String, dynamic> toJson() => {
         'label': label,
@@ -156,11 +151,11 @@ class FormInputFieldOptions extends Field {
   static FormInputFieldOptions fromJson(Map<String, dynamic> json) {
     if (json == null) return null;
     return new FormInputFieldOptions(
-        label: json['label'],
-        isMandatory: json['isMandatory'],
-        infoMessage: json['infoMessage'],
-        values: convertToOptionValuesFromJson(json['maxValue']),
-        isMultiSelect: json['isMultiSelect']);
+        json['label'],
+        json['isMandatory'],
+        json['infoMessage'],
+        convertToOptionValuesFromJson(json['maxValue']),
+        json['isMultiSelect']);
   }
 
   static List<String> convertToOptionValuesFromJson(List<dynamic> valuesJson) {

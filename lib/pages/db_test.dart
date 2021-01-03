@@ -567,7 +567,8 @@ class DBTest {
 
     List<Entity> entitiesByTypeAndNameNull = await _gs
         .getEntityService()
-        .search(null, "Shop", 17.4338, 78.3321, 2, 1, 2);
+        .search(null, EntityTypes.PLACE_TYPE_SHOP.toString(), 17.4338, 78.3321,
+            2, 1, 2);
 
     for (Entity me in entitiesByTypeAndNameNull) {
       print(me.name + ":" + me.distance.toString());
@@ -577,7 +578,7 @@ class DBTest {
         entitiesByTypeAndNameNull.length >= 2) {
       print("EntityService.search --> SUCCESS");
     } else {
-      print("EntityService.search -----------------------> FAILURE");
+      print("EntityService.search ------------------------> FAILURE");
     }
 
     print("----------Search Only Partial Name-- Type null-----------");
@@ -594,14 +595,20 @@ class DBTest {
         entitiesByTypeNullAndName.length == 2) {
       print("EntityService.search --> SUCCESS");
     } else {
-      print("EntityService.search -----------------------> FAILURE");
+      print(
+          "EntityService.search -----------------------------------------------> FAILURE");
     }
 
     print("---------Search By Partial Name and Type --------------");
 
-    List<Entity> entitiesByTypeAndName = await _gs
-        .getEntityService()
-        .search("Bat", "Shop", 17.4338, 78.3321, 2, 1, 2);
+    List<Entity> entitiesByTypeAndName = await _gs.getEntityService().search(
+        "Bat",
+        EntityTypes.PLACE_TYPE_SHOP.toString(),
+        17.4338,
+        78.3321,
+        2,
+        1,
+        2);
 
     for (Entity me in entitiesByTypeAndName) {
       print(me.name + ":" + me.distance.toString());
@@ -610,7 +617,8 @@ class DBTest {
     if (entitiesByTypeAndName != null && entitiesByTypeAndName.length == 1) {
       print("EntityService.search --> SUCCESS");
     } else {
-      print("EntityService.search -----------------------> FAILURE");
+      print(
+          "EntityService.search -----------------------------------------> FAILURE");
     }
 
     print(
@@ -618,7 +626,8 @@ class DBTest {
 
     List<Entity> entitiesByTypeAndNameAgain = await _gs
         .getEntityService()
-        .search("Habina", "Shop", 17.4338, 78.3321, 2, 1, 2);
+        .search("Habina", EntityTypes.PLACE_TYPE_SHOP.toString(), 17.4338,
+            78.3321, 2, 1, 2);
 
     for (Entity me in entitiesByTypeAndNameAgain) {
       print(me.name + ":" + me.distance.toString());
@@ -628,15 +637,14 @@ class DBTest {
         entitiesByTypeAndNameAgain.length == 1) {
       print("EntityService.search --> SUCCESS");
     } else {
-      print("EntityService.search -----------------------> FAILURE");
+      print("EntityService.search ---------------------------------> FAILURE");
     }
 
     print(
         "---------Search By Name and Type Store (no intersection) --------------");
 
-    List<Entity> noIntersection = await _gs
-        .getEntityService()
-        .search("Bata", "Store", 17.4338, 78.3321, 2, 1, 2);
+    List<Entity> noIntersection = await _gs.getEntityService().search("Bata",
+        EntityTypes.PLACE_TYPE_SHOP.toString(), 17.4338, 78.3321, 2, 1, 2);
 
     for (Entity me in noIntersection) {
       print(me.name + ":" + me.distance.toString());
@@ -645,7 +653,7 @@ class DBTest {
     if (noIntersection != null && noIntersection.length == 0) {
       print("EntityService.search --> SUCCESS");
     } else {
-      print("EntityService.search -----------------------> FAILURE");
+      print("EntityService.search --------------------------> FAILURE");
     }
 
     await _gs.getEntityService().removeAdmin('Child101-1', "+913611009823");
@@ -1307,28 +1315,20 @@ class DBTest {
     List<Field> fields = List<Field>();
 
     FormInputFieldText nameInput = FormInputFieldText(
-        isMandatory: true,
-        label: "Name",
-        infoMessage: "Please enter your name as per Government ID proof",
-        maxLength: 50);
+        "Name", true, "Please enter your name as per Government ID proof", 50);
 
     fields.add(nameInput);
 
-    FormInputFieldNumber ageInput = FormInputFieldNumber(
-        isMandatory: true,
-        label: "Age",
-        infoMessage: "Please enter your age",
-        minValue: 0,
-        maxValue: 120);
+    FormInputFieldNumber ageInput =
+        FormInputFieldNumber("Age", true, "Please enter your age", 0, 120);
 
     fields.add(ageInput);
 
     FormInputFieldOptions healthDetailsInput = FormInputFieldOptions(
-        isMandatory: true,
-        label: "Age",
-        infoMessage: "Please select all known medical conditions you have",
-        isMultiSelect: true,
-        values: [
+        "Age",
+        true,
+        "Please select all known medical conditions you have",
+        [
           'Chronic kidney disease',
           'Chronic lung disease',
           'Diabetes',
@@ -1340,7 +1340,8 @@ class DBTest {
           "Neurologic conditions such as dementia",
           "Overweight and Severe Obesity",
           "Pregnancy"
-        ]);
+        ],
+        true);
 
     fields.add(healthDetailsInput);
 
