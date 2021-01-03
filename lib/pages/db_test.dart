@@ -19,7 +19,7 @@ import 'package:noq/db/db_service/configurations_service.dart';
 import 'package:noq/db/db_service/entity_service.dart';
 import 'package:noq/db/db_service/token_service.dart';
 import 'package:noq/db/db_service/user_service.dart';
-import 'package:noq/enum/EntityTypes.dart';
+import 'package:noq/enum/entity_types.dart';
 import 'package:noq/events/event_bus.dart';
 import 'package:noq/events/events.dart';
 import 'package:noq/events/local_notification_data.dart';

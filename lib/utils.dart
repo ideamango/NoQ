@@ -5,7 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:noq/db/db_model/address.dart';
-import 'package:noq/enum/EntityTypes.dart';
+import 'package:noq/enum/entity_types.dart';
 import 'package:noq/global_state.dart';
 import 'package:noq/pages/favs_list_page.dart';
 import 'package:noq/services/auth_service.dart';
