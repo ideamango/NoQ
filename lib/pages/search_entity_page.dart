@@ -14,6 +14,7 @@ import 'package:noq/events/events.dart';
 import 'package:noq/global_state.dart';
 import 'package:noq/pages/contact_us.dart';
 import 'package:noq/pages/search_child_entity_page.dart';
+import 'package:noq/pages/show_booking_form.dart';
 import 'package:noq/pages/show_slots_page.dart';
 import 'package:noq/services/circular_progress.dart';
 import 'package:noq/services/url_services.dart';
@@ -1621,13 +1622,17 @@ class _SearchEntityPageState extends State<SearchEntityPage>
     //_prefs = await SharedPreferences.getInstance();
 
     Navigator.push(
-        context,
-        MaterialPageRoute(
-            builder: (context) => ShowSlotsPage(
-                  entity: store.getMetaEntity(),
-                  dateTime: dateTime,
-                  forPage: 'MainSearch',
-                )));
+        context, MaterialPageRoute(builder: (context) => ShowBookingForm()));
+
+    // print('After showDialog:');
+    // Navigator.push(
+    //     context,
+    //     MaterialPageRoute(
+    //         builder: (context) => ShowSlotsPage(
+    //               entity: store.getMetaEntity(),
+    //               dateTime: dateTime,
+    //               forPage: 'MainSearch',
+    //             )));
 
     print('After showDialog:');
     // });
