@@ -13,7 +13,7 @@ import 'package:noq/db/db_model/my_geo_fire_point.dart';
 import 'package:noq/db/db_model/app_user.dart';
 import 'package:noq/db/db_service/user_service.dart';
 import 'package:noq/db/db_model/offer.dart';
-import 'package:noq/enum/EntityTypes.dart';
+import 'package:noq/enum/entity_types.dart';
 import 'package:noq/events/event_bus.dart';
 import 'package:noq/events/events.dart';
 import 'package:noq/global_state.dart';
