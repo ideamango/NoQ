@@ -14,6 +14,7 @@ import 'package:noq/events/event_bus.dart';
 import 'package:noq/events/events.dart';
 import 'package:noq/global_state.dart';
 import 'package:noq/pages/contact_us.dart';
+import 'package:noq/pages/covid_token_booking_form.dart';
 import 'package:noq/pages/search_child_entity_page.dart';
 import 'package:noq/pages/show_booking_form.dart';
 import 'package:noq/pages/show_slots_page.dart';
@@ -1606,11 +1607,13 @@ class _SearchEntityPageState extends State<SearchEntityPage>
     );
   }
 
-  void showSlots(Entity store, DateTime dateTime) {
+  void showSlots(Entity entity, DateTime dateTime) {
     //_prefs = await SharedPreferences.getInstance();
 
-    Navigator.push(
-        context, MaterialPageRoute(builder: (context) => ShowBookingForm()));
+    // Navigator.push(
+    //     context,
+    //     MaterialPageRoute(
+    //         builder: (context) => CovidTokenBookingFormPage(entity: entity)));
 
     // print('After showDialog:');
     // Navigator.push(
