@@ -25,43 +25,45 @@ class _GridItemState extends State<GridItem> {
           widget.isSelected(isSelected);
         });
       },
-      child: Stack(
-        children: <Widget>[
-          Container(
-            decoration: new BoxDecoration(
-                border: Border.all(color: Colors.blueGrey[200]),
-                shape: BoxShape.rectangle,
-                color: Colors.cyan[50],
-                borderRadius: BorderRadius.all(Radius.circular(4.0))),
-            padding: EdgeInsets.all(8),
-            margin: EdgeInsets.all(8),
-            height: 40,
-            //width: double.infinity,
-            child: Text(
-              widget.item.text,
-              style: textInputTextStyle,
+      child: Container(
+      //  width: 100,
+        child: Stack(
+          fit: StackFit.loose,
+          children: <Widget>[
+            Container(
+              decoration: new BoxDecoration(
+                  border: Border.all(color: Colors.blueGrey[200]),
+                  shape: BoxShape.rectangle,
+                  color: Colors.cyan[50],
+                  borderRadius: BorderRadius.all(Radius.circular(0.0))),
+              padding: EdgeInsets.all(0),
+              margin: EdgeInsets.all(0),
+              height: 10,
+              //width: double.infinity,
+              child: Text(
+                widget.item.text,
+                style: textInputTextStyle,
+              ),
+              // Image.asset(
+              //   widget.item.text,
+              //   color: Colors.black.withOpacity(isSelected ? 0.9 : 0),
+              //   colorBlendMode: BlendMode.color,
+              // ),
             ),
-            // Image.asset(
-            //   widget.item.text,
-            //   color: Colors.black.withOpacity(isSelected ? 0.9 : 0),
-            //   colorBlendMode: BlendMode.color,
-            // ),
-          ),
-          isSelected
-              ? Align(
-                  alignment: Alignment.topRight,
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Icon(
-                      Icons.check_circle,
-                      color: Colors.orangeAccent[700].withOpacity(.7),
+            isSelected
+                ? Align(
+                    alignment: Alignment.topLeft,
+                    child: Padding(
+                      padding: const EdgeInsets.all(0.0),
+                      child: Icon(
+                        Icons.check_circle,
+                        color: Colors.orangeAccent[700].withOpacity(.7),
+                      ),
                     ),
-                  ),
-                )
-              : Container(
-                  height: 10,
-                )
-        ],
+                  )
+                : Container()
+          ],
+        ),
       ),
     );
   }

@@ -21,7 +21,27 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
   final itemSize = 100.0;
   List<String> dumList = new List<String>();
   List<Item> selectedList = new List<Item>();
+  List<Item> list = List();
 
+  @override
+  void initState() {
+    super.initState();
+    selectedList = List();
+    list.add(Item("Diabetes1", true));
+    list.add(Item("Diabetes2", true));
+    list.add(Item("Diabetes3", true));
+    list.add(Item("Heart", true));
+    list.add(Item("Lungs", false));
+    list.add(Item("Kidney", false));
+    list.add(Item("Asthma", true));
+    list.add(Item("Blood Pressure", false));
+    list.add(Item("Hyper Tension", false));
+    list.add(Item("Thyroid", false));
+  }
+
+  // double _height = 0;
+  // double _width = 0;
+  // bool _isExpanded = false;
   createDummyData() {
     List<Field> listOfFields = new List<Field>();
     FormInputFieldText f1 =
@@ -109,19 +129,6 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
         break;
       case "OPTIONS":
         {
-          List<Item> list = List();
-          selectedList = List();
-          list.add(Item("Diabetes1", 1));
-          list.add(Item("Diabetes2", 2));
-          list.add(Item("Diabetes3", 3));
-          list.add(Item("Heart", 4));
-          list.add(Item("Lungs", 5));
-          list.add(Item("Kidney", 6));
-          list.add(Item("Asthma", 7));
-          list.add(Item("Blood Pressure", 8));
-          list.add(Item("Hyper Tension", 9));
-          list.add(Item("Thyroid", 10));
-
           // list.add("Diabetes");
           // list.add("Asthma");
           // list.add("Blood Pressure");
@@ -130,105 +137,34 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
           // list.add("Thyroid");
           //Implicit type cast of type Field to  type Options field
           //  FormInputFieldOptions optionField = field;
-          newField = Container(
-            color: Colors.amber,
-            //    height: MediaQuery.of(context).size.height * .01,
-            width: MediaQuery.of(context).size.width * .9,
-            padding: EdgeInsets.all(8),
-            child: Wrap(
-              children: <Widget>[
-                new Container(
-                    decoration: new BoxDecoration(
-                        border: Border.all(color: Colors.blueGrey[200]),
-                        shape: BoxShape.rectangle,
-                        color: Colors.cyan[50],
-                        borderRadius: BorderRadius.all(Radius.circular(15.0))),
-                    padding: EdgeInsets.all(8),
-                    margin: EdgeInsets.all(8),
-                    // color: Colors.orange,
-                    child: Text('Foo')),
-                new Container(
-                    decoration: new BoxDecoration(
-                        border: Border.all(color: Colors.blueGrey[200]),
-                        shape: BoxShape.rectangle,
-                        color: Colors.cyan[50],
-                        borderRadius: BorderRadius.all(Radius.circular(15.0))),
-                    padding: EdgeInsets.all(8),
-                    margin: EdgeInsets.all(8),
-                    child: Text('Foo Bar')),
-                new Container(
-                    decoration: new BoxDecoration(
-                        border: Border.all(color: Colors.blueGrey[200]),
-                        shape: BoxShape.rectangle,
-                        color: Colors.cyan[50],
-                        borderRadius: BorderRadius.all(Radius.circular(15.0))),
-                    padding: EdgeInsets.all(8),
-                    margin: EdgeInsets.all(8),
-                    child: Text('Foo Bar Bas')),
-                new Container(
-                    decoration: new BoxDecoration(
-                        border: Border.all(color: Colors.blueGrey[200]),
-                        shape: BoxShape.rectangle,
-                        color: Colors.cyan[50],
-                        borderRadius: BorderRadius.all(Radius.circular(15.0))),
-                    padding: EdgeInsets.all(8),
-                    margin: EdgeInsets.all(8),
-                    child: Text('F')),
-                new Container(
-                    decoration: new BoxDecoration(
-                        border: Border.all(color: Colors.blueGrey[200]),
-                        shape: BoxShape.rectangle,
-                        color: Colors.cyan[50],
-                        borderRadius: BorderRadius.all(Radius.circular(15.0))),
-                    padding: EdgeInsets.all(8),
-                    margin: EdgeInsets.all(8),
-                    child: Text('B')),
-              ],
-            ),
 
-            // StaggeredGridView.countBuilder(
-            //   crossAxisCount: 4,
-            //   itemCount: list.length,
-            //   itemBuilder: (BuildContext context, int index) => Card(
-            //     child:
-            //         // GridItem(
-            //         Center(child: Text(list[index].text)),
-            //     //     item: list[index],
-            //     //     isSelected: (bool value) {
-            //     //       setState(() {
-            //     //         if (value) {
-            //     //           selectedList.add(list[index]);
-            //     //         } else {
-            //     //           selectedList.remove(list[index]);
-            //     //         }
-            //     //       });
-            //     //       print("$index : $value");
-            //     //     },
-            //     //     key: Key(list[index].rank.toString())),
-            //     // Text("Some text"),
-            //   ),
-            //   staggeredTileBuilder: (int index) =>
-            //       new StaggeredTile.count(2, index.isEven ? 2 : 1),
-            //   mainAxisSpacing: 4.0,
-            //   crossAxisSpacing: 4.0,
-            // ),
-            // ListView.builder(
-            //     itemCount: list.length,
-            //     itemBuilder: (context, index) {
-            //       return GridItem(
-            //           item: list[index],
-            //           isSelected: (bool value) {
-            //             setState(() {
-            //               if (value) {
-            //                 selectedList.add(list[index]);
-            //               } else {
-            //                 selectedList.remove(list[index]);
-            //               }
-            //             });
-            //             print("$index : $value");
-            //           },
-            //           key: Key(list[index].rank.toString()));
-            //     })
+          newField = Column(
+            children: [
+              Wrap(
+                children: list
+                    .map((item) => GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            item.isSelected = !item.isSelected;
+                          });
+                        },
+                        child: Container(
+                            decoration: new BoxDecoration(
+                                border: Border.all(color: Colors.blueGrey[200]),
+                                shape: BoxShape.rectangle,
+                                color: (item.isSelected)
+                                    ? Colors.cyan[50]
+                                    : highlightColor,
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(15.0))),
+                            padding: EdgeInsets.all(8),
+                            margin: EdgeInsets.all(8),
+                            // color: Colors.orange,
+                            child: Text(item.text))))
+                    .toList()
+                    .cast<Widget>(),
+              ),
+            ],
           );
         }
         break;
@@ -272,7 +208,7 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
               ListView.builder(
                 padding:
                     EdgeInsets.all(MediaQuery.of(context).size.width * .026),
-                itemExtent: itemSize,
+                // itemExtent: itemSize,
                 // reverse: true,
                 shrinkWrap: true,
                 //scrollDirection: Axis.vertical,
@@ -280,7 +216,7 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
                   _controllers.add(new TextEditingController());
                   return Container(
                     //color: Colors.grey,
-                    height: MediaQuery.of(context).size.height * .55,
+                    //   height: MediaQuery.of(context).size.height * .55,
                     width: MediaQuery.of(context).size.width * .95,
                     child: buildChildItem(dummyForm.formFields[index], index),
                   );
@@ -317,6 +253,6 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
 
 class Item {
   String text;
-  int rank;
-  Item(this.text, this.rank);
+  bool isSelected;
+  Item(this.text, this.isSelected);
 }
