@@ -36,19 +36,19 @@ class _CustomBottomBarState extends State<CustomBottomBar> {
       items: const <BottomNavigationBarItem>[
         BottomNavigationBarItem(
           icon: Icon(Icons.home),
-          label: 'Home',
+          title: Text('Home'),
         ),
         BottomNavigationBarItem(
           icon: Icon(Icons.search),
-          label: 'Search',
+          title: Text('Search'),
         ),
         BottomNavigationBarItem(
           icon: Icon(Icons.favorite),
-          label: 'My Favourites',
+          title: Text('My Favourites'),
         ),
         BottomNavigationBarItem(
           icon: Icon(Icons.account_circle),
-          label: 'My Account',
+          title: Text('My Account'),
         ),
       ],
       unselectedItemColor: unselectedColor,
