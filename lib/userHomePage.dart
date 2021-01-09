@@ -34,7 +34,7 @@ import 'package:noq/widget/header.dart';
 import 'package:noq/widget/page_animation.dart';
 import 'package:noq/widget/widgets.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:barcode_scan/barcode_scan.dart';
+//import 'package:barcode_scan/barcode_scan.dart';
 import 'package:flutter/services.dart';
 
 import 'db/db_model/configurations.dart';
@@ -67,7 +67,7 @@ class _UserHomePageState extends State<UserHomePage> {
   bool isUpcomingSet = false;
   bool isPastSet = false;
 //Qr code scan result
-  ScanResult scanResult;
+  //ScanResult scanResult;
   GlobalState _state;
   bool _initCompleted = false;
 
@@ -96,28 +96,28 @@ class _UserHomePageState extends State<UserHomePage> {
   }
 
   Future scan() async {
-    try {
-      var result = await BarcodeScanner.scan();
+    // try {
+    //   var result = await BarcodeScanner.scan();
 
-      setState(() => scanResult = result);
-    } on PlatformException catch (e) {
-      var result = ScanResult(
-        type: ResultType.Error,
-        format: BarcodeFormat.unknown,
-      );
+    //   setState(() => scanResult = result);
+    // } on PlatformException catch (e) {
+    //   var result = ScanResult(
+    //     type: ResultType.Error,
+    //     format: BarcodeFormat.unknown,
+    //   );
 
-      if (e.code == BarcodeScanner.cameraAccessDenied) {
-        setState(() {
-          result.rawContent = 'The user did not grant the camera permission!';
-        });
-      } else {
-        result.rawContent = 'Unknown error: $e';
-      }
-      setState(() {
-        scanResult = result;
-        print(scanResult);
-      });
-    }
+    //   if (e.code == BarcodeScanner.cameraAccessDenied) {
+    //     setState(() {
+    //       result.rawContent = 'The user did not grant the camera permission!';
+    //     });
+    //   } else {
+    //     result.rawContent = 'Unknown error: $e';
+    //   }
+    //   setState(() {
+    //     scanResult = result;
+    //     print(scanResult);
+    //   });
+    // }
   }
 
   void fetchDataFromGlobalState() {
@@ -410,7 +410,7 @@ class _UserHomePageState extends State<UserHomePage> {
                     ),
                     backgroundColor: primaryAccentColor,
                     onPressed: () {
-                      QrCodeScanner.scan(context);
+                      //QrCodeScanner.scan(context);
                     }),
               ),
               floatingActionButtonLocation:

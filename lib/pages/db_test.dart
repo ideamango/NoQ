@@ -19,7 +19,7 @@ import 'package:noq/db/db_service/configurations_service.dart';
 import 'package:noq/db/db_service/entity_service.dart';
 import 'package:noq/db/db_service/token_service.dart';
 import 'package:noq/db/db_service/user_service.dart';
-import 'package:noq/enum/entity_types.dart';
+import 'package:noq/enum/entity_type.dart';
 import 'package:noq/events/event_bus.dart';
 import 'package:noq/events/events.dart';
 import 'package:noq/events/local_notification_data.dart';
@@ -60,7 +60,7 @@ class DBTest {
         endTimeHour: 21,
         endTimeMinute: 0,
         parentId: null,
-        type: EntityTypes.PLACE_TYPE_MALL.toString(),
+        type: EntityType.PLACE_TYPE_MALL,
         isBookable: false,
         isActive: true,
         coordinates: geoPoint);
@@ -159,7 +159,7 @@ class DBTest {
         endTimeHour: 21,
         endTimeMinute: 0,
         parentId: null,
-        type: EntityTypes.PLACE_TYPE_SHOP.toString(),
+        type: EntityType.PLACE_TYPE_SHOP,
         isBookable: true,
         isActive: isActive,
         coordinates: geoPoint);
@@ -203,7 +203,7 @@ class DBTest {
         endTimeHour: 21,
         endTimeMinute: 0,
         parentId: null,
-        type: EntityTypes.PLACE_TYPE_SHOP.toString(),
+        type: EntityType.PLACE_TYPE_SHOP,
         isBookable: true,
         isActive: true,
         coordinates: geoPoint);
@@ -237,7 +237,7 @@ class DBTest {
         endTimeHour: 21,
         endTimeMinute: 0,
         parentId: null,
-        type: EntityTypes.PLACE_TYPE_RESTAURANT.toString(),
+        type: EntityType.PLACE_TYPE_RESTAURANT,
         isBookable: false,
         isActive: true,
         coordinates: geoPoint);
@@ -282,6 +282,9 @@ class DBTest {
       await _gs.getEntityService().deleteEntity('SalonEntity108');
       await _gs.getEntityService().deleteEntity('GymEntity109');
       await _gs.getEntityService().deleteEntity('GymEntity110');
+      await _gs
+          .getEntityService()
+          .deleteEntity("Selenium-Covid-Vacination-Center");
 
       await _gs.getTokenService().deleteSlot("Child101-1#2020~7~6");
       await _gs.getTokenService().deleteSlot("Child101-1#2020~7~7");
@@ -567,8 +570,7 @@ class DBTest {
 
     List<Entity> entitiesByTypeAndNameNull = await _gs
         .getEntityService()
-        .search(null, EntityTypes.PLACE_TYPE_SHOP.toString(), 17.4338, 78.3321,
-            2, 1, 2);
+        .search(null, EntityType.PLACE_TYPE_SHOP, 17.4338, 78.3321, 2, 1, 2);
 
     for (Entity me in entitiesByTypeAndNameNull) {
       print(me.name + ":" + me.distance.toString());
@@ -585,7 +587,7 @@ class DBTest {
 
     List<Entity> entitiesByTypeNullAndName = await _gs
         .getEntityService()
-        .search("Habi", "", 17.4338, 78.3321, 2, 1, 2);
+        .search("Habi", null, 17.4338, 78.3321, 2, 1, 2);
 
     for (Entity me in entitiesByTypeNullAndName) {
       print(me.name + ":" + me.distance.toString());
@@ -601,14 +603,9 @@ class DBTest {
 
     print("---------Search By Partial Name and Type --------------");
 
-    List<Entity> entitiesByTypeAndName = await _gs.getEntityService().search(
-        "Bat",
-        EntityTypes.PLACE_TYPE_SHOP.toString(),
-        17.4338,
-        78.3321,
-        2,
-        1,
-        2);
+    List<Entity> entitiesByTypeAndName = await _gs
+        .getEntityService()
+        .search("Bat", EntityType.PLACE_TYPE_SHOP, 17.4338, 78.3321, 2, 1, 2);
 
     for (Entity me in entitiesByTypeAndName) {
       print(me.name + ":" + me.distance.toString());
@@ -626,8 +623,8 @@ class DBTest {
 
     List<Entity> entitiesByTypeAndNameAgain = await _gs
         .getEntityService()
-        .search("Habina", EntityTypes.PLACE_TYPE_SHOP.toString(), 17.4338,
-            78.3321, 2, 1, 2);
+        .search(
+            "Habina", EntityType.PLACE_TYPE_SHOP, 17.4338, 78.3321, 2, 1, 2);
 
     for (Entity me in entitiesByTypeAndNameAgain) {
       print(me.name + ":" + me.distance.toString());
@@ -643,8 +640,8 @@ class DBTest {
     print(
         "---------Search By Name and Type Store (no intersection) --------------");
 
-    List<Entity> noIntersection = await _gs.getEntityService().search("Bata",
-        EntityTypes.PLACE_TYPE_SHOP.toString(), 17.4338, 78.3321, 2, 1, 2);
+    List<Entity> noIntersection = await _gs.getEntityService().search(
+        "Bata", EntityType.PLACE_TYPE_POPSHOP, 17.4338, 78.3321, 2, 1, 2);
 
     for (Entity me in noIntersection) {
       print(me.name + ":" + me.distance.toString());
@@ -868,7 +865,7 @@ class DBTest {
         endTimeHour: 21,
         endTimeMinute: 0,
         parentId: 'Entity101',
-        type: EntityTypes.PLACE_TYPE_SHOP.toString(),
+        type: EntityType.PLACE_TYPE_SHOP,
         isBookable: false,
         isActive: true,
         coordinates: geoPoint,
@@ -935,7 +932,7 @@ class DBTest {
         endTimeHour: 21,
         endTimeMinute: 0,
         parentId: null,
-        type: EntityTypes.PLACE_TYPE_SPORTS.toString(),
+        type: EntityType.PLACE_TYPE_SPORTS,
         isBookable: true,
         isActive: true,
         verificationStatus: VERIFICATION_VERIFIED,
@@ -980,7 +977,7 @@ class DBTest {
         endTimeHour: 21,
         endTimeMinute: 0,
         parentId: null,
-        type: EntityTypes.PLACE_TYPE_SPORTS.toString(),
+        type: EntityType.PLACE_TYPE_SPORTS,
         isBookable: true,
         isActive: true,
         verificationStatus: VERIFICATION_PENDING,
@@ -1031,7 +1028,7 @@ class DBTest {
         endTimeHour: 21,
         endTimeMinute: 0,
         parentId: null,
-        type: EntityTypes.PLACE_TYPE_SPORTS.toString(),
+        type: EntityType.PLACE_TYPE_SPORTS,
         isBookable: true,
         isActive: true,
         verificationStatus: VERIFICATION_REJECTED,
@@ -1080,7 +1077,7 @@ class DBTest {
         endTimeHour: 21,
         endTimeMinute: 0,
         parentId: null,
-        type: EntityTypes.PLACE_TYPE_BANK.toString(),
+        type: EntityType.PLACE_TYPE_BANK,
         isBookable: true,
         isActive: true,
         verificationStatus: VERIFICATION_PENDING,
@@ -1132,7 +1129,7 @@ class DBTest {
         endTimeHour: 21,
         endTimeMinute: 0,
         parentId: null,
-        type: EntityTypes.PLACE_TYPE_SALON.toString(),
+        type: EntityType.PLACE_TYPE_SALON,
         isBookable: true,
         isActive: true,
         verificationStatus: VERIFICATION_PENDING,
@@ -1184,7 +1181,7 @@ class DBTest {
         endTimeHour: 21,
         endTimeMinute: 0,
         parentId: null,
-        type: EntityTypes.PLACE_TYPE_SALON.toString(),
+        type: EntityType.PLACE_TYPE_SALON,
         isBookable: true,
         isActive: true,
         verificationStatus: VERIFICATION_PENDING,
@@ -1235,7 +1232,7 @@ class DBTest {
         endTimeHour: 21,
         endTimeMinute: 0,
         parentId: null,
-        type: EntityTypes.PLACE_TYPE_GYM.toString(),
+        type: EntityType.PLACE_TYPE_GYM,
         isBookable: true,
         isActive: true,
         verificationStatus: VERIFICATION_VERIFIED,
@@ -1286,7 +1283,7 @@ class DBTest {
         endTimeHour: 21,
         endTimeMinute: 0,
         parentId: null,
-        type: EntityTypes.PLACE_TYPE_GYM.toString(),
+        type: EntityType.PLACE_TYPE_GYM,
         isBookable: true,
         isActive: true,
         verificationStatus: VERIFICATION_VERIFIED,
@@ -1325,7 +1322,7 @@ class DBTest {
     fields.add(ageInput);
 
     FormInputFieldOptions healthDetailsInput = FormInputFieldOptions(
-        "Age",
+        "Medical Conditions",
         true,
         "Please select all known medical conditions you have",
         [
@@ -1350,44 +1347,60 @@ class DBTest {
         headerMsg:
             "You request will be approved based on the information provided by you.",
         footerMsg: "",
-        formFieldList: null);
+        formFields: fields,
+        autoApproved: true);
 
     MyGeoFirePoint geoPoint = new MyGeoFirePoint(17.444317, 78.355321);
     Entity entity = new Entity(
-      entityId: "Selenium Covid Vacination Center",
-      name: "Place Great Tyson Gymkhana",
-      address: adrs,
-      advanceDays: 7,
-      isPublic: true,
-      maxAllowed: 60,
-      slotDuration: 60,
-      closedOn: [WEEK_DAY_MONDAY],
-      breakStartHour: 13,
-      breakStartMinute: 30,
-      breakEndHour: 14,
-      breakEndMinute: 30,
-      startTimeHour: 10,
-      startTimeMinute: 30,
-      endTimeHour: 21,
-      endTimeMinute: 0,
-      parentId: null,
-      type: EntityTypes.PLACE_TYPE_COVID19_VACCINATION_CENTER.toString(),
-      isBookable: true,
-      isActive: true,
-      verificationStatus: VERIFICATION_VERIFIED,
-      coordinates: geoPoint,
-      offer: null,
-      paytm: "+919611009823",
-      phone: "+918328592031",
-      gpay: "+919611009823",
-      whatsapp: "+918328592031",
-    );
+        entityId: "Selenium-Covid-Vacination-Center",
+        name: "Selenium Covid Vacination Center",
+        address: adrs,
+        advanceDays: 7,
+        isPublic: true,
+        maxAllowed: 60,
+        slotDuration: 60,
+        closedOn: [WEEK_DAY_MONDAY],
+        breakStartHour: 13,
+        breakStartMinute: 30,
+        breakEndHour: 14,
+        breakEndMinute: 30,
+        startTimeHour: 10,
+        startTimeMinute: 30,
+        endTimeHour: 21,
+        endTimeMinute: 0,
+        parentId: null,
+        type: EntityType.PLACE_TYPE_COVID19_VACCINATION_CENTER,
+        isBookable: true,
+        isActive: true,
+        verificationStatus: VERIFICATION_VERIFIED,
+        coordinates: geoPoint,
+        offer: null,
+        paytm: "+919611009823",
+        phone: "+918328592031",
+        gpay: "+919611009823",
+        whatsapp: "+918328592031",
+        tokenBookingForm: bf);
 
     try {
       entity.regNum = "testReg111";
       await _gs.getEntityService().upsertEntity(entity);
     } catch (e) {
       print("Exception occured " + e.toString());
+    }
+
+    Entity seleniumVacCenter = await _gs
+        .getEntityService()
+        .getEntity("Selenium-Covid-Vacination-Center");
+
+    FormInputFieldOptions options =
+        seleniumVacCenter.tokenBookingForm.formFields[2];
+
+    if (seleniumVacCenter.tokenBookingForm.formFields.length == 3 &&
+        options.values.length == 11) {
+      print("Token Booking Form Fields tested --> SUCCESS");
+    } else {
+      print(
+          "Token Booking Form Fields tested -----------------------> FAILURE");
     }
   }
 }

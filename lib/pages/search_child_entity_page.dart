@@ -9,6 +9,7 @@ import 'package:noq/db/db_model/entity.dart';
 import 'package:noq/db/db_model/meta_entity.dart';
 import 'package:noq/db/db_model/user_token.dart';
 import 'package:noq/db/db_service/entity_service.dart';
+import 'package:noq/enum/entity_type.dart';
 import 'package:noq/events/event_bus.dart';
 import 'package:noq/events/events.dart';
 import 'package:noq/global_state.dart';
@@ -167,9 +168,9 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
     });
   }
 
-  Widget _buildCategoryItem(BuildContext context, int index) {
-    String name = searchTypes[index];
-    Widget image = Utils.getEntityTypeImage(name, 30);
+  Widget _buildCategoryItem(BuildContext context, EntityType type) {
+    String name = Utils.getEntityTypeDisplayName(type);
+    Widget image = Utils.getEntityTypeImage(type, 30);
 
     return GestureDetector(
         onTap: () {
@@ -948,7 +949,7 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
                                 padding: EdgeInsets.all(0),
                                 scrollDirection: Axis.vertical,
                                 shrinkWrap: true,
-                                itemCount: searchTypes.length,
+                                itemCount: EntityType.values.length,
                                 gridDelegate:
                                     SliverGridDelegateWithFixedCrossAxisCount(
                                         crossAxisCount: 4,
@@ -964,8 +965,8 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
                                       // decoration:
                                       //     BoxDecoration(border: Border.all(color: Colors.black, width: 0.5)),
                                       child: Center(
-                                        child:
-                                            _buildCategoryItem(context, index),
+                                        child: _buildCategoryItem(
+                                            context, EntityType.values[index]),
                                       ),
                                     ),
                                   );
@@ -1019,12 +1020,6 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
     }
   }
 
-  Widget entityImageIcon(String type) {
-    Widget imgWidget;
-    imgWidget = Utils.getEntityTypeImage(type, 30);
-    return imgWidget;
-  }
-
   Widget _buildItem(Entity str) {
     _prepareDateList();
     print('after buildDateGrid called');
@@ -1043,7 +1038,7 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
                   alignment: Alignment.center,
                   height: MediaQuery.of(context).size.width * .09,
                   width: MediaQuery.of(context).size.width * .09,
-                  child: entityImageIcon(str.type)),
+                  child: Utils.getEntityTypeImage(str.type, 30)),
               Container(
                 width: MediaQuery.of(context).size.width * .8,
                 padding: EdgeInsets.all(2),

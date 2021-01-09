@@ -1,29 +1,32 @@
 import 'package:flutter/material.dart';
+import 'package:uuid/uuid.dart';
 
 class BookingForm {
+  String id = Uuid().v1();
   String formName;
   String headerMsg;
   String footerMsg;
-  List<Field> formFieldList;
-  bool autoApproved;
+  List<Field> formFields;
+  bool autoApproved = true;
 
   BookingForm(
       {@required this.formName,
       @required this.headerMsg,
       this.footerMsg,
-      @required this.formFieldList,
+      @required this.formFields,
       this.autoApproved});
 
   Map<String, dynamic> toJson() => {
         'formName': formName,
         'headerMsg': headerMsg,
         'footerMsg': footerMsg,
-        'formFieldList': formFieldsToJson(formFieldList),
+        'formFieldList': formFieldsToJson(formFields),
         'autoApproved': autoApproved
       };
 
   List<dynamic> formFieldsToJson(List<Field> fields) {
     List<dynamic> fieldsJson = new List<dynamic>();
+    if (fields == null) return null;
     for (Field sl in fields) {
       fieldsJson.add(sl.toJson());
     }
@@ -36,20 +39,20 @@ class BookingForm {
         formName: json['formName'],
         headerMsg: json['headerMsg'],
         footerMsg: json['footerMsg'],
-        formFieldList: convertToOptionValuesFromJson(json['formFieldList']),
+        formFields: convertToOptionValuesFromJson(json['formFieldList']),
         autoApproved: json['autoApproved']);
   }
 
   static List<Field> convertToOptionValuesFromJson(List<dynamic> fieldsJson) {
     List<Field> values = new List<Field>();
-    if (fieldsJson == null) return values;
+    if (fieldsJson == null) return null;
 
     for (Map<String, dynamic> value in fieldsJson) {
-      if (value.containsKey("TEXT")) {
+      if (value["type"] == "TEXT") {
         values.add(FormInputFieldText.fromJson(value));
-      } else if (value.containsKey("NUMBER")) {
+      } else if (value["type"] == "NUMBER") {
         values.add(FormInputFieldNumber.fromJson(value));
-      } else if (value.containsKey("OPTIONS")) {
+      } else if (value["type"] == "OPTIONS") {
         values.add(FormInputFieldOptions.fromJson(value));
       }
     }
@@ -58,9 +61,11 @@ class BookingForm {
 }
 
 class Field {
+  String id = Uuid().v1();
   String label;
   bool isMandatory;
   String infoMessage;
+  String type;
   Map<String, dynamic> toJson() => {
         //action implementation is in the derived classes
       };
@@ -68,7 +73,7 @@ class Field {
 
 class FormInputFieldText extends Field {
   int maxLength;
-  String type = "TEXT";
+  String response;
 
   FormInputFieldText(
       String label, bool isMandatory, String infoMessage, int maxLength) {
@@ -76,27 +81,37 @@ class FormInputFieldText extends Field {
     this.isMandatory = isMandatory;
     this.infoMessage = infoMessage;
     this.maxLength = maxLength;
+    this.type = "TEXT";
   }
 
   Map<String, dynamic> toJson() => {
+        'id': id,
         'maxLength': maxLength,
         'label': label,
         'isMandatory': isMandatory,
         "infoMessage": infoMessage,
-        "type": type
+        "type": type,
+        'response': response
       };
 
   static FormInputFieldText fromJson(Map<String, dynamic> json) {
     if (json == null) return null;
-    return new FormInputFieldText(json['label'], json['isMandatory'],
-        json['infoMessage'], json['maxLength']);
+
+    FormInputFieldText textField = FormInputFieldText(json['label'],
+        json['isMandatory'], json['infoMessage'], json['maxLength']);
+
+    textField.id = json["id"];
+    textField.response = json['response'];
+
+    return textField;
   }
 }
 
 class FormInputFieldNumber extends Field {
   double maxValue;
   double minValue;
-  String type = "NUMBER";
+
+  double response;
 
   FormInputFieldNumber(String label, bool isMandatory, String infoMessage,
       double minValue, double maxValue) {
@@ -105,30 +120,40 @@ class FormInputFieldNumber extends Field {
     this.minValue = minValue;
     this.infoMessage = infoMessage;
     this.maxValue = maxValue;
+    this.type = "NUMBER";
   }
+
   Map<String, dynamic> toJson() => {
+        'id': id,
         'label': label,
         'isMandatory': isMandatory,
         "infoMessage": infoMessage,
         'minValue': minValue,
         'maxValue': maxValue,
-        'type': type
+        'type': type,
+        'response': response
       };
 
   static FormInputFieldNumber fromJson(Map<String, dynamic> json) {
     if (json == null) return null;
-    return new FormInputFieldNumber(json['label'], json['isMandatory'],
-        json['infoMessage'], json['minValue'], json['maxValue']);
+    FormInputFieldNumber numberField = FormInputFieldNumber(
+        json['label'],
+        json['isMandatory'],
+        json['infoMessage'],
+        json['minValue'],
+        json['maxValue']);
+
+    numberField.id = json['id'];
+    numberField.response = json['response'];
+
+    return numberField;
   }
 }
 
 class FormInputFieldOptions extends Field {
-  String label;
-  bool isMandatory;
-  String infoMessage;
   List<String> values;
   bool isMultiSelect;
-  String type = "OPTIONS";
+  List<String> responseValues;
 
   FormInputFieldOptions(String label, bool isMandatory, String infoMessage,
       List<String> values, bool isMultiSelect) {
@@ -137,9 +162,11 @@ class FormInputFieldOptions extends Field {
     this.infoMessage = infoMessage;
     this.values = values;
     this.isMultiSelect = isMultiSelect;
+    this.type = "OPTIONS";
   }
 
   Map<String, dynamic> toJson() => {
+        'id': id,
         'label': label,
         'isMandatory': isMandatory,
         "infoMessage": infoMessage,
@@ -150,12 +177,15 @@ class FormInputFieldOptions extends Field {
 
   static FormInputFieldOptions fromJson(Map<String, dynamic> json) {
     if (json == null) return null;
-    return new FormInputFieldOptions(
+    FormInputFieldOptions optionsField = FormInputFieldOptions(
         json['label'],
         json['isMandatory'],
         json['infoMessage'],
-        convertToOptionValuesFromJson(json['maxValue']),
+        convertToOptionValuesFromJson(json['values']),
         json['isMultiSelect']);
+
+    optionsField.id = json['id'];
+    return optionsField;
   }
 
   static List<String> convertToOptionValuesFromJson(List<dynamic> valuesJson) {
@@ -166,5 +196,109 @@ class FormInputFieldOptions extends Field {
       values.add(value);
     }
     return values;
+  }
+}
+
+class FormInputFieldAttachment extends Field {
+  String responseFilePath;
+
+  FormInputFieldAttachment(
+    String label,
+    bool isMandatory,
+    String infoMessage,
+  ) {
+    this.label = label;
+    this.isMandatory = isMandatory;
+    this.infoMessage = infoMessage;
+    this.type = "ATTACHMENT";
+  }
+
+  Map<String, dynamic> toJson() => {
+        'id': id,
+        'label': label,
+        'isMandatory': isMandatory,
+        "infoMessage": infoMessage,
+        'type': type,
+        'responseFilePath': responseFilePath
+      };
+
+  static FormInputFieldAttachment fromJson(Map<String, dynamic> json) {
+    if (json == null) return null;
+    FormInputFieldAttachment numberField = FormInputFieldAttachment(
+        json['label'], json['isMandatory'], json['infoMessage']);
+
+    numberField.id = json['id'];
+    numberField.responseFilePath = json['responseFilePath'];
+
+    return numberField;
+  }
+}
+
+class FormInputFieldDateTime extends Field {
+  DateTime responseDateTime;
+
+  FormInputFieldDateTime(
+    String label,
+    bool isMandatory,
+    String infoMessage,
+  ) {
+    this.label = label;
+    this.isMandatory = isMandatory;
+    this.infoMessage = infoMessage;
+    this.type = "DATETIME";
+  }
+
+  Map<String, dynamic> toJson() => {
+        'id': id,
+        'label': label,
+        'isMandatory': isMandatory,
+        "infoMessage": infoMessage,
+        'type': type,
+        'responseDateTime': responseDateTime.millisecondsSinceEpoch
+      };
+
+  static FormInputFieldDateTime fromJson(Map<String, dynamic> json) {
+    if (json == null) return null;
+    FormInputFieldDateTime numberField = FormInputFieldDateTime(
+        json['label'], json['isMandatory'], json['infoMessage']);
+
+    numberField.id = json['id'];
+    numberField.responseDateTime =
+        DateTime.fromMillisecondsSinceEpoch(json['responseDateTime']);
+
+    return numberField;
+  }
+}
+
+class FormInputFieldPhone extends Field {
+  String responsePhone;
+  String
+      countryCode; //e.g. +91, this is to be set while creating the field in the booking form
+
+  FormInputFieldPhone(String label, bool isMandatory, String infoMessage) {
+    this.label = label;
+    this.isMandatory = isMandatory;
+    this.infoMessage = infoMessage;
+    this.type = "DATETIME";
+  }
+
+  Map<String, dynamic> toJson() => {
+        'id': id,
+        'label': label,
+        'isMandatory': isMandatory,
+        "infoMessage": infoMessage,
+        'type': type,
+        'responsePhone': responsePhone
+      };
+
+  static FormInputFieldPhone fromJson(Map<String, dynamic> json) {
+    if (json == null) return null;
+    FormInputFieldPhone numberField = FormInputFieldPhone(
+        json['label'], json['isMandatory'], json['infoMessage']);
+
+    numberField.id = json['id'];
+    numberField.responsePhone = json['responsePhone'];
+
+    return numberField;
   }
 }

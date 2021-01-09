@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:noq/constants.dart';
 import 'package:noq/db/db_model/entity.dart';
 import 'package:noq/db/db_model/meta_entity.dart';
+import 'package:noq/enum/entity_type.dart';
 import 'package:noq/events/event_bus.dart';
 import 'package:noq/events/events.dart';
 import 'package:noq/global_state.dart';
@@ -27,7 +28,7 @@ class ManageEntityListPage extends StatefulWidget {
 class _ManageEntityListPageState extends State<ManageEntityListPage> {
   List<MetaEntity> metaEntitiesList;
   Entity entity;
-  String _entityType;
+  EntityType _entityType;
   ScrollController _scrollController;
   double itemSize = 100.00;
   List<String> entityTypes;
@@ -35,23 +36,23 @@ class _ManageEntityListPageState extends State<ManageEntityListPage> {
   bool stateInitFinished = false;
 
   bool _initCompleted = false;
-  String categoryType;
+  EntityType categoryType;
   PersistentBottomSheetController bottomSheetController;
   final manageEntityListPagekey = new GlobalKey<ScaffoldState>();
   //Eventify.Listener _eventListener;
 
-  Widget _buildCategoryItem(BuildContext context, int index) {
-    String name = entityTypes[index];
-    Widget image = Utils.getEntityTypeImage(name, 30);
+  Widget _buildCategoryItem(BuildContext context, EntityType type) {
+    String name = Utils.getEntityTypeDisplayName(type);
+    Widget image = Utils.getEntityTypeImage(type, 30);
 
     return GestureDetector(
         onTap: () {
-          categoryType = name;
+          categoryType = type;
           bottomSheetController.close();
           bottomSheetController = null;
           //   Navigator.of(context).pop();
           setState(() {
-            _entityType = categoryType;
+            _entityType = type;
           });
           //If user has selected any type then add a row else show msg to user
           if (_entityType != null) {
@@ -375,7 +376,7 @@ class _ManageEntityListPageState extends State<ManageEntityListPage> {
                   padding: EdgeInsets.all(0),
                   scrollDirection: Axis.vertical,
                   shrinkWrap: true,
-                  itemCount: entityTypes.length,
+                  itemCount: EntityType.values.length,
                   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: 4,
                       crossAxisSpacing: 10.0,
@@ -388,7 +389,8 @@ class _ManageEntityListPageState extends State<ManageEntityListPage> {
                         // decoration:
                         //     BoxDecoration(border: Border.all(color: Colors.black, width: 0.5)),
                         child: Center(
-                          child: _buildCategoryItem(context, index),
+                          child: _buildCategoryItem(
+                              context, EntityType.values[index]),
                         ),
                       ),
                     );

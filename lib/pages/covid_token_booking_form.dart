@@ -1,10 +1,15 @@
 import 'dart:async';
+import 'dart:io';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:noq/constants.dart';
 import 'package:noq/db/db_model/address.dart';
+import 'package:noq/db/db_model/booking_form.dart';
 import 'package:noq/db/db_model/employee.dart';
 import 'package:noq/db/db_model/entity.dart';
 import 'package:noq/db/db_model/entity_private.dart';
@@ -19,6 +24,7 @@ import 'package:noq/events/events.dart';
 import 'package:noq/global_state.dart';
 import 'package:noq/pages/contact_item.dart';
 import 'package:noq/pages/manage_entity_list_page.dart';
+import 'package:noq/pages/search_entity_page.dart';
 import 'package:noq/repository/StoreRepository.dart';
 import 'package:noq/services/circular_progress.dart';
 import 'package:noq/style.dart';
@@ -34,29 +40,24 @@ import 'package:noq/widget/widgets.dart';
 import 'package:uuid/uuid.dart';
 import 'package:eventify/eventify.dart' as Eventify;
 
-class ManageEntityDetailsPage extends StatefulWidget {
+class CovidTokenBookingFormPage extends StatefulWidget {
   final Entity entity;
-  ManageEntityDetailsPage({Key key, @required this.entity}) : super(key: key);
+  CovidTokenBookingFormPage({Key key, @required this.entity}) : super(key: key);
   @override
-  _ManageEntityDetailsPageState createState() =>
-      _ManageEntityDetailsPageState();
+  _CovidTokenBookingFormPageState createState() =>
+      _CovidTokenBookingFormPageState();
 }
 
-class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
+class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage> {
   bool _autoValidate = false;
-  final GlobalKey<FormState> _entityDetailsFormKey = new GlobalKey<FormState>();
-  final GlobalKey<FormFieldState> adminPhoneKey =
-      new GlobalKey<FormFieldState>();
+  final GlobalKey<FormState> _tokenBookingDetailsFormKey =
+      new GlobalKey<FormState>();
+
   final GlobalKey<FormFieldState> whatsappPhoneKey =
       new GlobalKey<FormFieldState>();
   final GlobalKey<FormFieldState> contactPhoneKey =
       new GlobalKey<FormFieldState>();
-  final GlobalKey<FormFieldState> gpayPhoneKey =
-      new GlobalKey<FormFieldState>();
-  final GlobalKey<FormFieldState> paytmPhoneKey =
-      new GlobalKey<FormFieldState>();
-  final GlobalKey<FormFieldState> newAdminRowItemKey =
-      new GlobalKey<FormFieldState>();
+  List<String> saveData = List<String>();
 
   //Fields used in info - animated container
   double _width = 0;
@@ -90,8 +91,8 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
   TextEditingController _breakEndController = TextEditingController();
 
   TextEditingController _maxPeopleController = TextEditingController();
-  TextEditingController _whatsappPhoneController = TextEditingController();
-  TextEditingController _contactPhoneController = TextEditingController();
+  TextEditingController _primaryPhoneController = TextEditingController();
+  TextEditingController _alternatePhoneController = TextEditingController();
 
   TextEditingController _gpayPhoneController = TextEditingController();
   TextEditingController _paytmPhoneController = TextEditingController();
@@ -184,6 +185,15 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
   Entity _entity;
   List<Employee> _list;
   Eventify.Listener removeManagerListener;
+  List<String> idProofTypesStrList = List<String>();
+  List<Item> idProofTypes = List<Item>();
+  List<String> medConditionsStrList = List<String>();
+  List<Item> medConditions = List<Item>();
+  List<File> _images = [];
+  File _image; // Used only if you need a single picture
+  String _downloadUrl;
+  BookingForm bookingForm;
+  FormInputFieldText nameInput;
 
   ///end of fields from contact page
 
@@ -191,6 +201,36 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
   void initState() {
     _scrollController = ScrollController();
     super.initState();
+
+    initBookingForm();
+    idProofTypesStrList.add('Passport');
+    idProofTypesStrList.add('Driving License');
+    idProofTypesStrList.add('Aadhar');
+    idProofTypesStrList.add('PAN');
+    idProofTypesStrList.forEach((element) {
+      idProofTypes.add(Item(element, false));
+    });
+    medConditionsStrList.add('Chronic Kidney Disease');
+    medConditionsStrList.add('Liver Disease');
+    medConditionsStrList.add('Overweight and Severe Obesity');
+    medConditionsStrList
+        .add('Other Cardiovascular and Cerebrovascular Diseases');
+    medConditionsStrList.add('Haemoglobin Disorders');
+    medConditionsStrList.add('Pregnancy');
+    medConditionsStrList.add('Heart Conditions');
+    medConditionsStrList.add('Chronic Lung Disease');
+    medConditionsStrList.add('HIV or Weakened Immune System');
+
+    medConditionsStrList.add('Neurologic Conditions such as Dementia');
+
+    medConditionsStrList.add('Diabetes');
+
+    medConditionsStrList.add('Others (Specify below)');
+
+    medConditionsStrList.forEach((element) {
+      medConditions.add(Item(element, false));
+    });
+
     entity = this.widget.entity;
     getGlobalState().whenComplete(() {
       initializeEntity().whenComplete(() {
@@ -204,12 +244,110 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
         MANAGER_REMOVED_EVENT, null, this.refreshOnManagerRemove);
   }
 
+  initBookingForm() {
+    List<Field> fields = List<Field>();
+
+    nameInput = FormInputFieldText(
+        "Name", true, "Please enter your name as per Government ID proof", 50);
+
+    fields.add(nameInput);
+
+    FormInputFieldNumber ageInput =
+        FormInputFieldNumber("Age", true, "Please enter your age", 0, 120);
+
+    fields.add(ageInput);
+
+    FormInputFieldOptions healthDetailsInput = FormInputFieldOptions(
+        "Medical Conditions",
+        true,
+        "Please select all known medical conditions you have",
+        [
+          'Chronic kidney disease',
+          'Chronic lung disease',
+          'Diabetes',
+          'Heart Conditions',
+          'Other Cardiovascular and Cerebrovascular Diseases',
+          "Hemoglobin disorders",
+          "HIV or weakened Immune System",
+          "Liver disease",
+          "Neurologic conditions such as dementia",
+          "Overweight and Severe Obesity",
+          "Pregnancy"
+        ],
+        true);
+
+    fields.add(healthDetailsInput);
+
+    bookingForm = new BookingForm(
+        formName: "Covid-19 Vacination Applicant Details",
+        headerMsg:
+            "You request will be approved based on the information provided by you.",
+        footerMsg: "",
+        formFields: fields,
+        autoApproved: true);
+  }
+
   @override
   void dispose() {
     super.dispose();
     print("dispose called for child entity");
     EventBus.unregisterEvent(removeManagerListener);
   }
+
+  String validateMandatoryFields(String value) {
+    String retVal;
+    if (value == null || value == "") {
+      retVal = 'Field is empty';
+    } else
+      retVal = null;
+    return retVal;
+  }
+
+  Future getImage(bool gallery) async {
+    ImagePicker picker = ImagePicker();
+    PickedFile pickedFile;
+    // Let user select photo from gallery
+    if (gallery) {
+      pickedFile = await picker.getImage(
+        source: ImageSource.gallery,
+      );
+    }
+    // Otherwise open camera to get new photo
+    else {
+      pickedFile = await picker.getImage(
+        source: ImageSource.camera,
+      );
+    }
+
+    setState(() {
+      if (pickedFile != null) {
+        //_images.add(File(pickedFile.path));
+        _image = File(pickedFile.path);
+        uploadFile(_image).then((value) {
+          print(value);
+          setState(() {
+            _downloadUrl = value;
+          });
+        });
+        print("before i think");
+      } else {
+        print('No image selected.');
+      }
+    });
+  }
+
+  Future<String> uploadFile(File image) async {
+    Reference ref = _gState.firebaseStorage.ref().child('idProofs/');
+
+    await ref.putFile(_image);
+
+    print('File Uploaded');
+
+    return await ref.getDownloadURL();
+  }
+  // variable to hold image to be displayed
+
+//method to load image and update `uploadedImage`
 
   void refreshOnManagerRemove(event, args) {
     setState(() {
@@ -680,10 +818,10 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
       if (entity.maxAllowed != null)
         _maxPeopleController.text =
             (entity.maxAllowed != null) ? entity.maxAllowed.toString() : "";
-      _whatsappPhoneController.text = entity.whatsapp != null
+      _primaryPhoneController.text = entity.whatsapp != null
           ? entity.whatsapp.toString().substring(3)
           : "";
-      _contactPhoneController.text =
+      _alternatePhoneController.text =
           entity.phone != null ? entity.phone.toString().substring(3) : "";
       _gpayPhoneController.text =
           entity.gpay != null ? entity.gpay.toString().substring(3) : "";
@@ -841,13 +979,14 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
         controller: _nameController,
         keyboardType: TextInputType.text,
         decoration: CommonStyle.textFieldStyle(
-            labelTextStr: "Name of Establishment", hintTextStr: ""),
+            labelTextStr: "Name of Person", hintTextStr: ""),
         validator: validateText,
         onChanged: (String value) {
-          entity.name = value;
+          //SAVEDATA
+          //  entity.name = value;
         },
         onSaved: (String value) {
-          entity.name = value;
+          // nameInput.response = value;
         },
       );
 
@@ -857,7 +996,7 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
         style: textInputTextStyle,
         controller: _descController,
         decoration: CommonStyle.textFieldStyle(
-            labelTextStr: "Description (optional)", hintTextStr: ""),
+            labelTextStr: "Notes (optional)", hintTextStr: ""),
         validator: (value) {
           if (!validateField)
             return validateText(value);
@@ -874,370 +1013,150 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
           entity.description = value;
         },
       );
-      final regNumField = TextFormField(
+      final idTypeField = Column(
+        children: [
+          Row(
+            children: [
+              // Container(
+              //     width: MediaQuery.of(context).size.width * .2,
+              //     child: Text(
+              //       "Type of ID Proof",
+              //       style: textInputTextStyle,
+              //     )),
+              Expanded(
+                child: Wrap(
+                  children: idProofTypes
+                      .map((item) => GestureDetector(
+                          onTap: () {
+                            bool newSelectionValue = !(item.isSelected);
+
+                            idProofTypes.forEach((element) {
+                              element.isSelected = false;
+                            });
+
+                            setState(() {
+                              item.isSelected = newSelectionValue;
+                            });
+                          },
+                          child: Container(
+                              decoration: new BoxDecoration(
+                                  border:
+                                      Border.all(color: Colors.blueGrey[200]),
+                                  shape: BoxShape.rectangle,
+                                  color: (!item.isSelected)
+                                      ? Colors.cyan[50]
+                                      : highlightColor,
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(30.0))),
+                              padding: EdgeInsets.fromLTRB(8, 5, 8, 5),
+                              margin: EdgeInsets.all(8),
+                              // color: Colors.orange,
+                              child: Text(item.text))))
+                      .toList()
+                      .cast<Widget>(),
+                ),
+              ),
+            ],
+          ),
+          Divider(
+            thickness: 1.5,
+          )
+        ],
+      );
+      final selectFileBtn = IconButton(
+          padding: EdgeInsets.zero,
+          icon: Icon(
+            Icons.camera_alt_rounded,
+            color: primaryDarkColor,
+          ),
+          onPressed: () {
+            getImage(false);
+          });
+
+      final clickPicForUploadBtn = IconButton(
+          padding: EdgeInsets.zero,
+          icon: Icon(
+            Icons.attach_file,
+            color: primaryDarkColor,
+          ),
+          onPressed: () {
+            getImage(true);
+          });
+      //  fillColor: Theme.of(context).accentColor,
+
+      final medicalConditionsField = Column(
+        children: [
+          Row(
+            children: [
+              // Container(
+              //     width: MediaQuery.of(context).size.width * .2,
+              //     child: Text(
+              //       "Medical Conditions (If any)",
+              //       style: textInputTextStyle,
+              //     )),
+              Expanded(
+                child: Wrap(
+                  alignment: WrapAlignment.center,
+                  children: medConditions
+                      .map((item) => GestureDetector(
+                          onTap: () {
+                            bool newSelectionValue = !(item.isSelected);
+
+                            // medConditions.forEach((element) {
+                            //   element.isSelected = false;
+                            // });
+
+                            setState(() {
+                              item.isSelected = newSelectionValue;
+                            });
+                          },
+                          child: Container(
+                              decoration: new BoxDecoration(
+                                  border:
+                                      Border.all(color: Colors.blueGrey[200]),
+                                  shape: BoxShape.rectangle,
+                                  color: (!item.isSelected)
+                                      ? Colors.cyan[50]
+                                      : highlightColor,
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(30.0))),
+                              padding: EdgeInsets.fromLTRB(8, 5, 8, 5),
+                              margin: EdgeInsets.all(8),
+                              // color: Colors.orange,
+                              child: Text(item.text))))
+                      .toList()
+                      .cast<Widget>(),
+                ),
+              ),
+            ],
+          ),
+          Divider(
+            thickness: 1.5,
+          )
+        ],
+      );
+      final medicalConditionsDescField = TextFormField(
         obscureText: false,
-        maxLines: 1,
-        minLines: 1,
+        //minLines: 1,
         style: textInputTextStyle,
-        keyboardType: TextInputType.text,
-        controller: _regNumController,
+        controller: _descController,
         decoration: CommonStyle.textFieldStyle(
-            labelTextStr: "Registration Number", hintTextStr: ""),
+            labelTextStr: "Description of above condition (optional)",
+            hintTextStr: ""),
         validator: (value) {
           if (!validateField)
             return validateText(value);
           else
             return null;
         },
-        onSaved: (String value) {
-          //TODO: test if regNum is getting saved
-          //entity.regNum = value;
-        },
-      );
-
-      final opensTimeField = TextFormField(
-        obscureText: false,
-        maxLines: 1,
-        readOnly: true,
-        minLines: 1,
-        style: textInputTextStyle,
-        onTap: () {
-          DatePicker.showTimePicker(context,
-              showTitleActions: true,
-              showSecondsColumn: false, onChanged: (date) {
-            print('change $date in time zone ' +
-                date.timeZoneOffset.inHours.toString());
-          }, onConfirm: (date) {
-            print('confirm $date');
-            //  String time = "${date.hour}:${date.minute} ${date.";
-
-            String time = DateFormat.Hm().format(date);
-            print(time);
-
-            _openTimeController.text = time.toLowerCase();
-            if (_openTimeController.text != "") {
-              List<String> time = _openTimeController.text.split(':');
-              entity.startTimeHour = int.parse(time[0]);
-
-              entity.startTimeMinute = int.parse(time[1]);
-            }
-          }, currentTime: DateTime.now());
-        },
-        controller: _openTimeController,
-        keyboardType: TextInputType.text,
-        decoration: InputDecoration(
-            // suffixIcon: IconButton(
-            //   icon: Icon(Icons.schedule),
-            //   onPressed: () {
-            //     DatePicker.showTime12hPicker(context, showTitleActions: true,
-            //         onChanged: (date) {
-            //       print('change $date in time zone ' +
-            //           date.timeZoneOffset.inHours.toString());
-            //     }, onConfirm: (date) {
-            //       print('confirm $date');
-            //       //  String time = "${date.hour}:${date.minute} ${date.";
-
-            //       String time = DateFormat.Hm().format(date);
-            //       print(time);
-
-            //       _openTimeController.text = time.toLowerCase();
-            //     }, currentTime: DateTime.now());
-            //   },
-            // ),
-            labelText: "Opening time",
-            hintText: "hh:mm 24 hour time format",
-            enabledBorder: UnderlineInputBorder(
-                borderSide: BorderSide(color: Colors.grey)),
-            focusedBorder: UnderlineInputBorder(
-                borderSide: BorderSide(color: Colors.orange))),
-        validator: validateTime,
+        keyboardType: TextInputType.multiline,
+        maxLength: null,
+        maxLines: 3,
         onChanged: (String value) {
-          //TODO: test the values
-          if (value != "") {
-            List<String> time = value.split(':');
-            entity.startTimeHour = int.parse(time[0]);
-
-            entity.startTimeMinute = int.parse(time[1]);
-          }
-        },
-        onSaved: (String value) {},
-      );
-      final closeTimeField = TextFormField(
-        enabled: true,
-        obscureText: false,
-        readOnly: true,
-        maxLines: 1,
-        minLines: 1,
-        controller: _closeTimeController,
-        style: textInputTextStyle,
-        onTap: () {
-          DatePicker.showTimePicker(context,
-              showTitleActions: true,
-              showSecondsColumn: false, onChanged: (date) {
-            print('change $date in time zone ' +
-                date.timeZoneOffset.inHours.toString());
-          }, onConfirm: (date) {
-            print('confirm $date');
-            //  String time = "${date.hour}:${date.minute} ${date.";
-
-            String time = DateFormat.Hm().format(date);
-            print(time);
-
-            _closeTimeController.text = time.toLowerCase();
-            if (_closeTimeController.text != "") {
-              List<String> time = _closeTimeController.text.split(':');
-              entity.endTimeHour = int.parse(time[0]);
-
-              entity.endTimeMinute = int.parse(time[1]);
-            }
-          }, currentTime: DateTime.now());
-        },
-        decoration: InputDecoration(
-            labelText: "Closing time",
-            hintText: "hh:mm 24 hour time format",
-            enabledBorder: UnderlineInputBorder(
-                borderSide: BorderSide(color: Colors.grey)),
-            focusedBorder: UnderlineInputBorder(
-                borderSide: BorderSide(color: Colors.orange))),
-        validator: validateTime,
-        onChanged: (String value) {
-          //TODO: test the values
-          if (value != "") {
-            List<String> time = value.split(':');
-            entity.endTimeHour = int.parse(time[0]);
-
-            entity.endTimeMinute = int.parse(time[1]);
-          }
+          entity.description = value;
         },
         onSaved: (String value) {
-          //TODO: test the values
-        },
-      );
-      final breakSartTimeField = TextFormField(
-        obscureText: false,
-        maxLines: 1,
-        readOnly: true,
-        minLines: 1,
-        style: textInputTextStyle,
-        onTap: () {
-          DatePicker.showTimePicker(context,
-              showTitleActions: true,
-              showSecondsColumn: false, onChanged: (date) {
-            print('change $date in time zone ' +
-                date.timeZoneOffset.inHours.toString());
-          }, onConfirm: (date) {
-            print('confirm $date');
-            //  String time = "${date.hour}:${date.minute} ${date.";
-
-            String time = DateFormat.Hm().format(date);
-            print(time);
-
-            _breakStartController.text = time.toLowerCase();
-            if (_breakStartController.text != "") {
-              List<String> time = _breakStartController.text.split(':');
-              entity.breakStartHour = int.parse(time[0]);
-
-              entity.breakStartMinute = int.parse(time[1]);
-            }
-          }, currentTime: DateTime.now());
-        },
-        controller: _breakStartController,
-        keyboardType: TextInputType.text,
-        decoration: InputDecoration(
-            labelText: "Break starts at",
-            hintText: "hh:mm 24 hour time format",
-            enabledBorder: UnderlineInputBorder(
-                borderSide: BorderSide(color: Colors.grey)),
-            focusedBorder: UnderlineInputBorder(
-                borderSide: BorderSide(color: Colors.orange))),
-        validator: (value) {
-          if (!validateField)
-            return validateTime(value);
-          else
-            return null;
-        },
-        onChanged: (value) {
-          if (value != "") {
-            List<String> time = value.split(':');
-            entity.breakStartHour = int.parse(time[0]);
-            entity.breakStartMinute = int.parse(time[1]);
-          }
-        },
-        onSaved: (String value) {},
-      );
-      final breakEndTimeField = TextFormField(
-        enabled: true,
-        obscureText: false,
-        readOnly: true,
-        maxLines: 1,
-        minLines: 1,
-        controller: _breakEndController,
-        style: textInputTextStyle,
-        onTap: () {
-          DatePicker.showTimePicker(context,
-              showTitleActions: true,
-              showSecondsColumn: false, onChanged: (date) {
-            print('change $date in time zone ' +
-                date.timeZoneOffset.inHours.toString());
-          }, onConfirm: (date) {
-            print('confirm $date');
-            //  String time = "${date.hour}:${date.minute} ${date.";
-
-            String time = DateFormat.Hm().format(date);
-            print(time);
-
-            _breakEndController.text = time.toLowerCase();
-            if (_breakEndController.text != "") {
-              List<String> time = _breakEndController.text.split(':');
-              entity.breakEndHour = int.parse(time[0]);
-              entity.breakEndMinute = int.parse(time[1]);
-            }
-          }, currentTime: DateTime.now());
-        },
-        decoration: InputDecoration(
-            labelText: "Break ends at",
-            hintText: "hh:mm 24 hour time format",
-            enabledBorder: UnderlineInputBorder(
-                borderSide: BorderSide(color: Colors.grey)),
-            focusedBorder: UnderlineInputBorder(
-                borderSide: BorderSide(color: Colors.orange))),
-        validator: (value) {
-          if (!validateField)
-            return validateTime(value);
-          else
-            return null;
-        },
-        onChanged: (value) {
-          if (value != "") {
-            List<String> time = value.split(':');
-            entity.breakEndHour = int.parse(time[0]);
-            entity.breakEndMinute = int.parse(time[1]);
-          }
-        },
-        onSaved: (String value) {},
-      );
-
-      final daysClosedField = Padding(
-        padding: EdgeInsets.only(top: 12, bottom: 8),
-        child: Row(
-          children: <Widget>[
-            Text(
-              'Closed on ',
-              style: TextStyle(
-                color: Colors.grey[600],
-                // fontWeight: FontWeight.w800,
-                fontFamily: 'Monsterrat',
-                letterSpacing: 0.5,
-                fontSize: 15.0,
-                //height: 2,
-              ),
-              textAlign: TextAlign.left,
-            ),
-            new WeekDaySelectorFormField(
-              displayDays: [
-                days.monday,
-                days.tuesday,
-                days.wednesday,
-                days.thursday,
-                days.friday,
-                days.saturday,
-                days.sunday
-              ],
-              initialValue: _daysOff,
-              borderRadius: 20,
-              elevation: 10,
-              textStyle: buttonXSmlTextStyle,
-              fillColor: Colors.blueGrey[400],
-              selectedFillColor: highlightColor,
-              boxConstraints: BoxConstraints(
-                  minHeight: 25, minWidth: 25, maxHeight: 28, maxWidth: 28),
-              borderSide: BorderSide(color: Colors.white, width: 0),
-              language: lang.en,
-              onChange: (days) {
-                print("Selected Days: " + days.toString());
-                _closedOnDays.clear();
-                days.forEach((element) {
-                  var day = element.toString().substring(5);
-                  _closedOnDays.add(day);
-                });
-                entity.closedOn = _closedOnDays;
-                print(_closedOnDays.length);
-                print(_closedOnDays.toString());
-              },
-            ),
-          ],
-        ),
-      );
-      final slotDuration = TextFormField(
-        obscureText: false,
-        maxLines: 1,
-        minLines: 1,
-        style: textInputTextStyle,
-        keyboardType: TextInputType.number,
-        controller: _slotDurationController,
-        decoration: InputDecoration(
-          labelText: 'Duration of time slot (in minutes)',
-          enabledBorder:
-              UnderlineInputBorder(borderSide: BorderSide(color: Colors.grey)),
-          focusedBorder: UnderlineInputBorder(
-              borderSide: BorderSide(color: Colors.orange)),
-        ),
-        validator: validateText,
-        onChanged: (value) {
-          if (value != "") entity.slotDuration = int.parse(value);
-          print("slot duration saved");
-        },
-        onSaved: (String value) {
-          if (value != "") entity.slotDuration = int.parse(value);
-          print("slot duration saved");
-        },
-      );
-      final advBookingInDays = TextFormField(
-        obscureText: false,
-        maxLines: 1,
-        minLines: 1,
-        style: textInputTextStyle,
-        keyboardType: TextInputType.number,
-        controller: _advBookingInDaysController,
-        decoration: InputDecoration(
-          labelText: 'Advance Booking Allowed(in days)',
-          enabledBorder:
-              UnderlineInputBorder(borderSide: BorderSide(color: Colors.grey)),
-          focusedBorder: UnderlineInputBorder(
-              borderSide: BorderSide(color: Colors.orange)),
-        ),
-        validator: validateText,
-        onChanged: (value) {
-          if (value != "") entity.advanceDays = int.parse(value);
-          print("Advance Booking Allowed saved");
-        },
-        onSaved: (String value) {
-          if (value != "") entity.advanceDays = int.parse(value);
-          print("Advance Booking Allowed saved");
-        },
-      );
-      final maxpeopleInASlot = TextFormField(
-        obscureText: false,
-        maxLines: 1,
-        minLines: 1,
-        style: textInputTextStyle,
-        keyboardType: TextInputType.number,
-        controller: _maxPeopleController,
-        decoration: InputDecoration(
-          labelText: 'Max. people allowed in a given time slot',
-          enabledBorder:
-              UnderlineInputBorder(borderSide: BorderSide(color: Colors.grey)),
-          focusedBorder: UnderlineInputBorder(
-              borderSide: BorderSide(color: Colors.orange)),
-        ),
-        validator: validateText,
-        onChanged: (value) {
-          if (value != "") entity.maxAllowed = int.parse(value);
-          print("saved max people");
-        },
-        onSaved: (String value) {
-          if (value != "") entity.maxAllowed = int.parse(value);
-          print("saved max people");
+          entity.description = value;
         },
       );
 
@@ -1248,10 +1167,10 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
         key: whatsappPhoneKey,
         style: textInputTextStyle,
         keyboardType: TextInputType.phone,
-        controller: _whatsappPhoneController,
+        controller: _primaryPhoneController,
         decoration: InputDecoration(
           prefixText: '+91',
-          labelText: 'WhatsApp Number (optional)',
+          labelText: 'Primary Contact Number',
           enabledBorder:
               UnderlineInputBorder(borderSide: BorderSide(color: Colors.grey)),
           focusedBorder: UnderlineInputBorder(
@@ -1279,10 +1198,10 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
         key: contactPhoneKey,
         style: textInputTextStyle,
         keyboardType: TextInputType.phone,
-        controller: _contactPhoneController,
+        controller: _alternatePhoneController,
         decoration: InputDecoration(
           prefixText: '+91',
-          labelText: 'Contact Number  (optional)',
+          labelText: 'Alternate Contact Number',
           enabledBorder:
               UnderlineInputBorder(borderSide: BorderSide(color: Colors.grey)),
           focusedBorder: UnderlineInputBorder(
@@ -1298,155 +1217,12 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
         },
       );
 
-      final paytmPhone = TextFormField(
-        obscureText: false,
-        maxLines: 1,
-        minLines: 1,
-        key: paytmPhoneKey,
-        style: textInputTextStyle,
-        keyboardType: TextInputType.phone,
-        controller: _paytmPhoneController,
-        decoration: InputDecoration(
-          prefixText: '+91',
-          labelText: 'PayTm Number (optional)',
-          enabledBorder:
-              UnderlineInputBorder(borderSide: BorderSide(color: Colors.grey)),
-          focusedBorder: UnderlineInputBorder(
-              borderSide: BorderSide(color: Colors.orange)),
-        ),
-        validator: Utils.validateMobileField,
-        onChanged: (value) {
-          //_autoValidateWhatsapp = true;
-          paytmPhoneKey.currentState.validate();
-          if (value != "") entity.paytm = _phCountryCode + (value);
-        },
-        onSaved: (String value) {
-          if (value != "") entity.paytm = _phCountryCode + (value);
-        },
-      );
-
-      final gPayPhone = TextFormField(
-        obscureText: false,
-        maxLines: 1,
-        minLines: 1,
-        key: gpayPhoneKey,
-        style: textInputTextStyle,
-        keyboardType: TextInputType.phone,
-        controller: _gpayPhoneController,
-        decoration: InputDecoration(
-          prefixText: '+91',
-          labelText: 'GPay Number',
-          enabledBorder:
-              UnderlineInputBorder(borderSide: BorderSide(color: Colors.grey)),
-          focusedBorder: UnderlineInputBorder(
-              borderSide: BorderSide(color: Colors.orange)),
-        ),
-        validator: Utils.validateMobileField,
-        onChanged: (value) {
-          //_autoValidateWhatsapp = true;
-          whatsappPhoneKey.currentState.validate();
-          if (value != "") entity.gpay = _phCountryCode + (value);
-          print("GPay Number");
-        },
-        onSaved: (String value) {
-          if (value != "") entity.gpay = _phCountryCode + (value);
-          print("GPay Number");
-        },
-      );
-
-      checkOfferDetailsFilled() {
-        if (insertOffer.message != null && insertOffer.message.isNotEmpty ||
-            insertOffer.coupon != null && insertOffer.coupon.isNotEmpty ||
-            insertOffer.startDateTime != null ||
-            insertOffer.endDateTime != null) {
-          entity.offer = insertOffer;
-        } else
-          entity.offer = null;
-      }
-
-      clearOfferDetail() {
-        insertOffer = new Offer();
-        entity.offer = null;
-        offerFieldStatus = false;
-        _offerCouponController.text = "";
-        _offerMessageController.text = "";
-        _startDateController.text = "";
-        _endDateController.text = "";
-      }
-
-      final messageField = TextFormField(
-        obscureText: false,
-        //minLines: 1,
-        style: textInputTextStyle,
-        controller: _offerMessageController,
-        decoration: CommonStyle.textFieldStyle(
-          labelTextStr: "Offer Message",
-        ),
-        validator: (value) {
-          if (offerFieldStatus) {
-            if (value == null || value == "") {
-              return 'Field is empty';
-            } else
-              return null;
-          } else
-            return null;
-        },
-        keyboardType: TextInputType.multiline,
-        maxLength: null,
-        maxLines: 1,
-        onChanged: (String value) {
-          insertOffer.message = value;
-          offerFieldStatus = true;
-          checkOfferDetailsFilled();
-        },
-        onSaved: (String value) {
-          insertOffer.message = value;
-          offerFieldStatus = true;
-          checkOfferDetailsFilled();
-        },
-      );
-
-      final couponField = TextFormField(
-        obscureText: false,
-        //minLines: 1,
-        style: textInputTextStyle,
-        controller: _offerCouponController,
-        decoration: CommonStyle.textFieldStyle(labelTextStr: "Coupon"),
-        validator: (value) {
-          if (offerFieldStatus) {
-            if (value == null || value == "") {
-              return 'Field is empty';
-            } else
-              return null;
-          } else
-            return null;
-        },
-        keyboardType: TextInputType.multiline,
-        maxLength: null,
-        maxLines: 1,
-        onChanged: (String value) {
-          insertOffer.coupon = value;
-          offerFieldStatus = true;
-          checkOfferDetailsFilled();
-        },
-        onSaved: (String value) {
-          insertOffer.coupon = value;
-          offerFieldStatus = true;
-          checkOfferDetailsFilled();
-        },
-      );
-
-      Future<Null> startPickDate(BuildContext context) async {
+      Future<Null> pickDate(BuildContext context) async {
         DateTime date = await showDatePicker(
           context: context,
-          firstDate: DateTime.now(),
-          lastDate: DateTime(DateTime.now().year + 2, DateTime.now().month,
-              DateTime.now().day),
-          initialDate: insertOffer.startDateTime != null
-              ? insertOffer.startDateTime.isBefore(DateTime.now())
-                  ? DateTime.now()
-                  : insertOffer.startDateTime
-              : DateTime.now(),
+          firstDate: DateTime.now().subtract(Duration(days: 365 * 100)),
+          lastDate: DateTime.now(),
+          initialDate: DateTime.now(),
           builder: (BuildContext context, Widget child) {
             return Theme(
               data: ThemeData.dark().copyWith(
@@ -1468,124 +1244,33 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
                 " / " +
                 date.year.toString();
             _startDateController.text = dateString;
-            checkOfferDetailsFilled();
+            // checkOfferDetailsFilled();
             offerFieldStatus = true;
           });
         }
       }
 
-      Future<Null> endPickDate(BuildContext context) async {
-        DateTime date = await showDatePicker(
-          context: context,
-          firstDate: insertOffer.startDateTime != null
-              ? insertOffer.startDateTime.isBefore(DateTime.now())
-                  ? DateTime.now()
-                  : insertOffer.startDateTime
-              : DateTime.now(),
-          lastDate: DateTime(DateTime.now().year + 2, DateTime.now().month,
-              DateTime.now().day),
-          initialDate: insertOffer.endDateTime != null
-              ? insertOffer.endDateTime.isBefore(DateTime.now()) &&
-                      insertOffer.startDateTime.isBefore(DateTime.now())
-                  ? DateTime.now()
-                  : insertOffer.endDateTime.isAfter(insertOffer.startDateTime)
-                      ? insertOffer.endDateTime
-                      : insertOffer.startDateTime
-              : insertOffer.startDateTime != null
-                  ? insertOffer.startDateTime
-                  : DateTime.now(),
-          builder: (BuildContext context, Widget child) {
-            return Theme(
-              data: ThemeData.dark().copyWith(
-                colorScheme: ColorScheme.light(
-                  primary: Colors.cyan,
-                ),
-                dialogBackgroundColor: Colors.white,
-              ),
-              child: child,
-            );
-          },
-        );
-        if (date != null) {
-          setState(() {
-            insertOffer.endDateTime = date;
-            dateString = date.day.toString() +
-                " / " +
-                date.month.toString() +
-                " / " +
-                date.year.toString();
-            _endDateController.text = dateString;
-            checkOfferDetailsFilled();
-            offerFieldStatus = true;
-          });
-        }
-      }
-
-      final startDateField = TextFormField(
+      final dobField = TextFormField(
         obscureText: false,
         //minLines: 1,
+        readOnly: true,
         style: textInputTextStyle,
         controller: _startDateController,
         decoration: CommonStyle.textFieldStyle(
-            labelTextStr: "Start Date", hintTextStr: ""),
-        validator: (value) {
-          if (offerFieldStatus) {
-            if (value != null && value != "") {
-              if (insertOffer.endDateTime == null)
-                return "End Date field is empty";
-              else
-                return null;
-            } else
-              return "Field is Empty";
-          } else
-            return null;
-        },
+            labelTextStr: "Select Date of Birth", hintTextStr: ""),
+        validator: validateMandatoryFields,
         onTap: () {
           setState(() {
-            startPickDate(context);
+            pickDate(context);
           });
         },
         maxLength: null,
         maxLines: 1,
         onChanged: (String value) {
-          checkOfferDetailsFilled();
+          //  checkOfferDetailsFilled();
         },
         onSaved: (String value) {
-          checkOfferDetailsFilled();
-        },
-      );
-
-      final endDateField = TextFormField(
-        obscureText: false,
-        //minLines: 1,
-        style: textInputTextStyle,
-        controller: _endDateController,
-        decoration: CommonStyle.textFieldStyle(
-            labelTextStr: "End Date", hintTextStr: ""),
-        validator: (value) {
-          if (offerFieldStatus) {
-            if (value != null && value != "") {
-              if (insertOffer.startDateTime == null)
-                return "Start Date Field is empty";
-              else
-                return null;
-            } else
-              return "Field is Empty";
-          } else
-            return null;
-        },
-        onTap: () {
-          setState(() {
-            endPickDate(context);
-          });
-        },
-        maxLength: null,
-        maxLines: 1,
-        onChanged: (String value) {
-          checkOfferDetailsFilled();
-        },
-        onSaved: (String value) {
-          checkOfferDetailsFilled();
+          // checkOfferDetailsFilled();
         },
       );
 
@@ -1601,9 +1286,7 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
             controller: _latController,
             decoration: CommonStyle.textFieldStyle(
                 labelTextStr: "Latitude", hintTextStr: ""),
-            validator: (value) {
-              return validateText(value);
-            },
+            validator: validateMandatoryFields,
             onChanged: (String value) {},
             onSaved: (String value) {},
           ));
@@ -1788,179 +1471,16 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
           print("saved address");
         },
       );
-      TextEditingController _txtController = new TextEditingController();
-      bool _delEnabled = false;
       Flushbar flush;
       bool _wasButtonClicked;
-      void _addNewAdminRow() {
-        bool insert = true;
-        String newAdminPh = '+91' + _adminItemController.text;
-
-        setState(() {
-          if (adminsList.length != 0) {
-            for (int i = 0; i < adminsList.length; i++) {
-              if (adminsList[i] == (newAdminPh)) {
-                insert = false;
-                Utils.showMyFlushbar(
-                    context,
-                    Icons.info_outline,
-                    Duration(
-                      seconds: 5,
-                    ),
-                    "Error",
-                    "Phone number already exists !!");
-                break;
-              }
-              print("in for loop $insert");
-              print(adminsList[i] == newAdminPh);
-              print(newAdminPh);
-              print(adminsList[i]);
-            }
-          }
-
-          if (insert) adminsList.insert(0, newAdminPh);
-          print("after foreach");
-
-          //TODO: Smita - Update GS
-        });
-      }
-
-      void _removeServiceRow(String currItem) {
-        removeAdmin(entity.entityId, currItem).then((delStatus) {
-          if (delStatus)
-            setState(() {
-              adminsList.remove(currItem);
-            });
-          else
-            Utils.showMyFlushbar(
-                context,
-                Icons.info_outline,
-                Duration(
-                  seconds: 5,
-                ),
-                'Oops!! There is some trouble deleting that admin.',
-                'Please check and try again..');
-        });
-      }
-
-      Widget _buildServiceItem(String newAdminRowItem) {
-        TextEditingController itemNameController = new TextEditingController();
-        itemNameController.text = newAdminRowItem;
-        return Card(
-          semanticContainer: true,
-          elevation: 15,
-          margin: EdgeInsets.fromLTRB(4, 2, 4, 4),
-          child: Container(
-            height: 25,
-            //padding: EdgeInsets.fromLTRB(4, 8, 4, 14),
-            margin: EdgeInsets.fromLTRB(4, 8, 4, 6),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: <Widget>[
-                Container(
-                    height: 25,
-                    width: MediaQuery.of(context).size.width * .5,
-                    child: TextFormField(
-                      // key: newAdminRowItemKey,
-                      //  autovalidate: _autoValidate,
-                      enabled: false,
-                      cursorColor: highlightColor,
-                      keyboardType: TextInputType.phone,
-                      inputFormatters: [
-                        LengthLimitingTextInputFormatter(18),
-                      ],
-                      style: TextStyle(fontSize: 14, color: primaryDarkColor),
-                      controller: itemNameController,
-                      decoration: InputDecoration(
-                        //contentPadding: EdgeInsets.all(12),
-                        // labelText: newItem.itemName,
-
-                        hintText: 'Admin\'s phone number',
-                        hintStyle: TextStyle(fontSize: 12, color: Colors.grey),
-                        enabledBorder: InputBorder.none,
-                        focusedBorder: InputBorder.none,
-                      ),
-                      // validator: Utils.validateMobileField,
-                      onChanged: (value) {
-                        //newAdminRowItemKey.currentState.validate();
-                        newAdminRowItem = value;
-                      },
-                    )
-
-                    // Text(
-                    //   newItem.itemName,ggg
-
-                    // ),
-                    ),
-                horizontalSpacer,
-                Container(
-                  height: 25,
-                  margin: EdgeInsets.fromLTRB(0, 0, 0, 0),
-                  padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
-                  width: MediaQuery.of(context).size.width * .1,
-                  child: IconButton(
-                    alignment: Alignment.topCenter,
-                    padding: EdgeInsets.all(0),
-                    icon: Icon(Icons.delete,
-                        color: Colors.blueGrey[300], size: 20),
-                    onPressed: () {
-                      _removeServiceRow(newAdminRowItem);
-                      _adminItemController.text = "";
-                    },
-                  ),
-                ),
-              ],
-            ),
-          ),
-        );
-      }
 
       saveRoute() {
-        print("saving ");
-
-        // String addressStr1;
-        // addressStr1 =
-        //     (_localityController.text != null) ? _localityController.text : "";
-        // String addressStr2 =
-        //     (_cityController.text != null) ? _cityController.text : "";
-        // String addressStr3 =
-        //     _stateController.text != null ? _stateController.text : "";
-        // String addressStr4 =
-        //     _countryController.text != null ? _countryController.text : "";
-
-        String validationPh1;
-        String validationPh2;
-        bool isContactValid = true;
-        bool timeFieldsValid = true;
-        String errTimeFields;
-        String errContactPhone;
-
         if (isActive)
           validateField = true;
         else
           validateField = false;
 
-        for (int i = 0; i < contactList.length; i++) {
-          validationPh1 = (contactList[i].ph != null)
-              ? Utils.validateMobileField(contactList[i].ph.substring(3))
-              : null;
-          validationPh2 = (contactList[i].altPhone != null)
-              ? Utils.validateMobileField(contactList[i].altPhone.substring(3))
-              : null;
-
-          if (validationPh2 != null || validationPh1 != null) {
-            isContactValid = false;
-            errContactPhone =
-                "The Contact information for managers is not valid.";
-            break;
-          }
-        }
-        errTimeFields = validateTimeFields();
-        timeFieldsValid = (errTimeFields == null) ? true : false;
-        if (_entityDetailsFormKey.currentState.validate() &&
-            isContactValid &&
-            timeFieldsValid) {
+        if (_tokenBookingDetailsFormKey.currentState.validate()) {
           Utils.showMyFlushbar(
               context,
               Icons.info_outline,
@@ -1972,45 +1492,17 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
               Colors.white,
               true);
 
-          _entityDetailsFormKey.currentState.save();
+          _tokenBookingDetailsFormKey.currentState.save();
           upsertEntity(entity, _regNumController.text).then((value) {
             if (value) {
-              // Assign admins to newly upserted entity
-              assignAdminsFromList(entity.entityId, adminsList).then((value) {
-                if (!value) {
-                  Utils.showMyFlushbar(
-                      context,
-                      Icons.error,
-                      Duration(
-                        seconds: 4,
-                      ),
-                      "Admin details could not be saved!! ",
-                      "Please verify the details and try again.",
-                      Colors.red);
-                } else {
-                  //Update gs
-                  _gState.updateMetaEntity(entity.getMetaEntity());
-
-                  Utils.showMyFlushbar(
-                      context,
-                      Icons.check,
-                      Duration(
-                        seconds: 5,
-                      ),
-                      "Place details saved!",
-                      'Be found by the customers, by marking it "ACTIVE".');
-                }
-              });
-            } else {
               Utils.showMyFlushbar(
                   context,
-                  Icons.error,
+                  Icons.check,
                   Duration(
                     seconds: 5,
                   ),
-                  entityUpsertErrStr,
-                  entityUpsertErrSubStr,
-                  Colors.red);
+                  "Request submitted successfully!",
+                  'We will contact you as soon as slot opens up. Stay Safe.');
             }
           });
         } else {
@@ -2018,22 +1510,17 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
               context,
               Icons.error,
               Duration(
-                seconds: 10,
+                seconds: 5,
               ),
-              ((errContactPhone == null) ? "" : (errContactPhone + "\n")) +
-                  ((errTimeFields == null) ? "" : (errTimeFields + "\n")) +
-                  missingInfoStr,
-              missingInfoSubStr,
+              entityUpsertErrStr,
+              entityUpsertErrSubStr,
               Colors.red);
-          setState(() {
-            _autoValidate = true;
-          });
         }
       }
 
       backRoute() {
         Navigator.of(context)
-            .push(PageAnimation.createRoute(ManageEntityListPage()));
+            .push(PageAnimation.createRoute(SearchEntityPage()));
       }
 
       processSaveWithTimer() async {
@@ -2045,90 +1532,6 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
         var duration = new Duration(seconds: 1);
         return new Timer(duration, backRoute);
       }
-
-      // Future<void> showLocationAccessDialog() async {
-      //   bool returnVal = await showDialog(
-      //       barrierDismissible: false,
-      //       context: context,
-      //       builder: (_) => AlertDialog(
-      //             titlePadding: EdgeInsets.fromLTRB(5, 10, 0, 0),
-      //             contentPadding: EdgeInsets.all(0),
-      //             actionsPadding: EdgeInsets.all(0),
-      //             //buttonPadding: EdgeInsets.all(0),
-      //             title: Column(
-      //               crossAxisAlignment: CrossAxisAlignment.start,
-      //               children: <Widget>[
-      //                 Text(
-      //                   locationPermissionMsg,
-      //                   style: TextStyle(
-      //                     fontSize: 15,
-      //                     color: Colors.blueGrey[600],
-      //                   ),
-      //                 ),
-      //                 verticalSpacer,
-
-      //                 // myDivider,
-      //               ],
-      //             ),
-      //             content: Divider(
-      //               color: Colors.blueGrey[400],
-      //               height: 1,
-      //               //indent: 40,
-      //               //endIndent: 30,
-      //             ),
-
-      //             //content: Text('This is my content'),
-      //             actions: <Widget>[
-      //               SizedBox(
-      //                 height: 24,
-      //                 child: RaisedButton(
-      //                   elevation: 5,
-      //                   autofocus: true,
-      //                   focusColor: highlightColor,
-      //                   splashColor: highlightColor,
-      //                   color: Colors.white,
-      //                   textColor: Colors.orange,
-      //                   shape: RoundedRectangleBorder(
-      //                       side: BorderSide(color: Colors.orange)),
-      //                   child: Text('No'),
-      //                   onPressed: () {
-      //                     Utils.showMyFlushbar(
-      //                         context,
-      //                         Icons.info,
-      //                         Duration(seconds: 3),
-      //                         locationAccessDeniedStr,
-      //                         locationAccessDeniedSubStr);
-      //                     Navigator.of(_).pop(false);
-      //                   },
-      //                 ),
-      //               ),
-      //               SizedBox(
-      //                 height: 24,
-      //                 child: RaisedButton(
-      //                   elevation: 10,
-      //                   color: btnColor,
-      //                   splashColor: highlightColor.withOpacity(.8),
-      //                   textColor: Colors.white,
-      //                   shape: RoundedRectangleBorder(
-      //                     side: BorderSide(color: Colors.orange),
-      //                   ),
-      //                   child: Text('Yes'),
-      //                   onPressed: () {
-      //                     Navigator.of(_).pop(true);
-      //                   },
-      //                 ),
-      //               ),
-      //             ],
-      //           ));
-
-      //   if (returnVal) {
-      //     print("in true, opening app settings");
-      //     Utils.openAppSettings();
-      //   } else {
-      //     print("nothing to do, user denied location access");
-      //     print(returnVal);
-      //   }
-      // }
 
       void useCurrLocation() {
         Position pos;
@@ -2239,56 +1642,12 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
 
       validateAllFields() {
         bool retVal;
-        if (_entityDetailsFormKey.currentState.validate())
+        if (_tokenBookingDetailsFormKey.currentState.validate())
           retVal = true;
         else
           retVal = false;
         return retVal;
       }
-
-      String _msg;
-
-      final adminInputField = new TextFormField(
-        key: adminPhoneKey,
-        autofocus: true,
-        inputFormatters: [
-          LengthLimitingTextInputFormatter(18),
-        ],
-        keyboardType: TextInputType.phone,
-
-        controller: _adminItemController,
-        cursorColor: highlightColor,
-        //cursorWidth: 1,
-        style: textInputTextStyle,
-        decoration: new InputDecoration(
-            contentPadding: EdgeInsets.fromLTRB(5, 7, 5, 7),
-            isDense: true,
-            prefixStyle: textInputTextStyle,
-            // hintStyle: hintTextStyle,
-            prefixText: '+91',
-            suffixIconConstraints: BoxConstraints(
-              maxWidth: 22,
-              maxHeight: 22,
-            ),
-            // contentPadding: EdgeInsets.all(0),
-            focusedBorder: InputBorder.none,
-            enabledBorder: InputBorder.none,
-            hintText: "Enter Admin's Contact number & press (+) (optional)",
-            hintStyle:
-                new TextStyle(fontSize: 12, color: Colors.blueGrey[500])),
-        validator: Utils.validateMobileField,
-        onChanged: (value) {
-          adminPhoneKey.currentState.validate();
-
-          setState(() {
-            _item = '+91' + value;
-            // _errMsg = "";
-          });
-        },
-        onSaved: (newValue) {
-          _item = '+91' + newValue;
-        },
-      );
 
       return MaterialApp(
         debugShowCheckedModeBanner: false,
@@ -2405,7 +1764,7 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
                 top: true,
                 bottom: true,
                 child: new Form(
-                  key: _entityDetailsFormKey,
+                  key: _tokenBookingDetailsFormKey,
                   autovalidate: _autoValidate,
                   child: new ListView(
                     padding: const EdgeInsets.all(5.0),
@@ -2900,15 +2259,7 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
                                     children: <Widget>[
                                       nameField,
                                       descField,
-                                      regNumField,
-                                      opensTimeField,
-                                      closeTimeField,
-                                      breakSartTimeField,
-                                      breakEndTimeField,
-                                      daysClosedField,
-                                      slotDuration,
-                                      advBookingInDays,
-                                      maxpeopleInASlot,
+                                      dobField,
                                       whatsappPhone,
                                       callingPhone,
                                     ],
@@ -2929,12 +2280,10 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
                             shape: BoxShape.rectangle,
                             borderRadius:
                                 BorderRadius.all(Radius.circular(5.0))),
-                        //padding: EdgeInsets.all(5.0),
                         child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            Column(
-                              children: <Widget>[
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: <Widget>[
+                              Column(children: <Widget>[
                                 Container(
                                   //padding: EdgeInsets.only(left: 5),
                                   decoration: darkContainer,
@@ -2949,7 +2298,7 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
                                       title: Row(
                                         children: <Widget>[
                                           Text(
-                                            "Payment Details",
+                                            "ID Proof Details",
                                             style: TextStyle(
                                                 color: Colors.white,
                                                 fontSize: 15),
@@ -2970,7 +2319,7 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
                                           child: Row(
                                             children: <Widget>[
                                               Expanded(
-                                                child: Text(paymentInfoStr,
+                                                child: Text(basicInfoStr,
                                                     style: buttonXSmlTextStyle),
                                               ),
                                             ],
@@ -2980,20 +2329,49 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
                                     ),
                                   ),
                                 ),
-                              ],
-                            ),
-                            Container(
-                              padding: EdgeInsets.only(left: 5.0, right: 5),
-                              child: Column(
-                                children: <Widget>[
-                                  gPayPhone,
-                                  paytmPhone,
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
+                                Container(
+                                  padding: EdgeInsets.only(left: 5.0, right: 5),
+                                  child: Column(children: <Widget>[
+                                    idTypeField,
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        (_downloadUrl == null)
+                                            ? Container(
+                                                child:
+                                                    Text("No Image Selected"))
+                                            : Container(
+                                                width: MediaQuery.of(context)
+                                                        .size
+                                                        .width *
+                                                    .2,
+                                                child: Stack(
+                                                  alignment:
+                                                      AlignmentDirectional
+                                                          .topEnd,
+                                                  children: [
+                                                    Image.network(_downloadUrl),
+                                                    Icon(Icons.cancel)
+                                                  ],
+                                                ),
+                                              ),
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.end,
+                                          children: [
+                                            selectFileBtn,
+                                            clickPicForUploadBtn
+                                          ],
+                                        ),
+                                      ],
+                                    ),
+                                  ]),
+                                ),
+                              ]),
+                            ]),
                       ),
+
                       SizedBox(
                         height: 7,
                       ),
@@ -3023,34 +2401,12 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
                                       title: Row(
                                         children: <Widget>[
                                           Text(
-                                            "Offer Details",
+                                            "Medical History",
                                             style: TextStyle(
                                                 color: Colors.white,
                                                 fontSize: 15),
                                           ),
-                                          SizedBox(
-                                              width: MediaQuery.of(context)
-                                                      .size
-                                                      .width *
-                                                  0.5),
-                                          InkWell(
-                                            child: Text(
-                                              "Clear",
-                                              style:
-                                                  offerClearTextStyleWithUnderLine,
-                                            ),
-                                            onTap: () {
-                                              setState(() {
-                                                clearOfferDetail();
-                                              });
-                                            },
-                                          ),
-                                          // RaisedButton.icon(
-                                          //   onPressed: clearOfferDetail,
-                                          //   icon: Icon(Icons.clear_sharp,
-                                          //       size: 15.0),
-                                          //   label: Text("Clear"),
-                                          // )
+                                          SizedBox(width: 5),
                                         ],
                                       ),
                                       backgroundColor: Colors.blueGrey[500],
@@ -3066,7 +2422,7 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
                                           child: Row(
                                             children: <Widget>[
                                               Expanded(
-                                                child: Text(offerInfoStr,
+                                                child: Text(basicInfoStr,
                                                     style: buttonXSmlTextStyle),
                                               ),
                                             ],
@@ -3080,14 +2436,21 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
                                   padding: EdgeInsets.only(left: 5.0, right: 5),
                                   child: Column(
                                     children: <Widget>[
-                                      messageField,
-                                      couponField,
-                                      Row(
-                                        children: <Widget>[
-                                          Expanded(child: startDateField),
-                                          Expanded(child: endDateField),
-                                        ],
-                                      ),
+                                      // nameField,
+
+                                      medicalConditionsField,
+                                      medicalConditionsDescField,
+                                      // opensTimeField,
+                                      // closeTimeField,
+                                      // breakSartTimeField,
+                                      // breakEndTimeField,
+                                      // daysClosedField,
+                                      //  slotDuration,
+                                      // advBookingInDays,
+                                      // maxpeopleInASlot,
+                                      // startDateField,
+                                      // whatsappPhone,
+                                      // callingPhone,
                                     ],
                                   ),
                                 ),
@@ -3099,6 +2462,183 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
                       SizedBox(
                         height: 7,
                       ),
+                      // Container(
+                      //   decoration: BoxDecoration(
+                      //       border: Border.all(color: containerColor),
+                      //       color: Colors.grey[50],
+                      //       shape: BoxShape.rectangle,
+                      //       borderRadius:
+                      //           BorderRadius.all(Radius.circular(5.0))),
+                      //   //padding: EdgeInsets.all(5.0),
+                      //   child: Column(
+                      //     crossAxisAlignment: CrossAxisAlignment.start,
+                      //     children: <Widget>[
+                      //       Column(
+                      //         children: <Widget>[
+                      //           Container(
+                      //             //padding: EdgeInsets.only(left: 5),
+                      //             decoration: darkContainer,
+                      //             child: Theme(
+                      //               data: ThemeData(
+                      //                 unselectedWidgetColor: Colors.white,
+                      //                 accentColor: Colors.grey[50],
+                      //               ),
+                      //               child: CustomExpansionTile(
+                      //                 //key: PageStorageKey(this.widget.headerTitle),
+                      //                 initiallyExpanded: false,
+                      //                 title: Row(
+                      //                   children: <Widget>[
+                      //                     Text(
+                      //                       "Payment Details",
+                      //                       style: TextStyle(
+                      //                           color: Colors.white,
+                      //                           fontSize: 15),
+                      //                     ),
+                      //                     SizedBox(width: 5),
+                      //                   ],
+                      //                 ),
+                      //                 backgroundColor: Colors.blueGrey[500],
+
+                      //                 children: <Widget>[
+                      //                   new Container(
+                      //                     width: MediaQuery.of(context)
+                      //                             .size
+                      //                             .width *
+                      //                         .94,
+                      //                     decoration: darkContainer,
+                      //                     padding: EdgeInsets.all(2.0),
+                      //                     child: Row(
+                      //                       children: <Widget>[
+                      //                         Expanded(
+                      //                           child: Text(paymentInfoStr,
+                      //                               style: buttonXSmlTextStyle),
+                      //                         ),
+                      //                       ],
+                      //                     ),
+                      //                   ),
+                      //                 ],
+                      //               ),
+                      //             ),
+                      //           ),
+                      //         ],
+                      //       ),
+                      //       Container(
+                      //         padding: EdgeInsets.only(left: 5.0, right: 5),
+                      //         child: Column(
+                      //           children: <Widget>[
+                      //             gPayPhone,
+                      //             paytmPhone,
+                      //           ],
+                      //         ),
+                      //       ),
+                      //     ],
+                      //   ),
+                      // ),
+                      // SizedBox(
+                      //   height: 7,
+                      // ),
+                      // Container(
+                      //   decoration: BoxDecoration(
+                      //       border: Border.all(color: containerColor),
+                      //       color: Colors.grey[50],
+                      //       shape: BoxShape.rectangle,
+                      //       borderRadius:
+                      //           BorderRadius.all(Radius.circular(5.0))),
+                      //   child: Column(
+                      //     crossAxisAlignment: CrossAxisAlignment.start,
+                      //     children: <Widget>[
+                      //       Column(
+                      //         children: <Widget>[
+                      //           Container(
+                      //             //padding: EdgeInsets.only(left: 5),
+                      //             decoration: darkContainer,
+                      //             child: Theme(
+                      //               data: ThemeData(
+                      //                 unselectedWidgetColor: Colors.white,
+                      //                 accentColor: Colors.grey[50],
+                      //               ),
+                      //               child: CustomExpansionTile(
+                      //                 //key: PageStorageKey(this.widget.headerTitle),
+                      //                 initiallyExpanded: false,
+                      //                 title: Row(
+                      //                   children: <Widget>[
+                      //                     Text(
+                      //                       "Offer Details",
+                      //                       style: TextStyle(
+                      //                           color: Colors.white,
+                      //                           fontSize: 15),
+                      //                     ),
+                      //                     SizedBox(
+                      //                         width: MediaQuery.of(context)
+                      //                                 .size
+                      //                                 .width *
+                      //                             0.5),
+                      //                     InkWell(
+                      //                       child: Text(
+                      //                         "Clear",
+                      //                         style:
+                      //                             offerClearTextStyleWithUnderLine,
+                      //                       ),
+                      //                       onTap: () {
+                      //                         setState(() {
+                      //                           clearOfferDetail();
+                      //                         });
+                      //                       },
+                      //                     ),
+                      //                     // RaisedButton.icon(
+                      //                     //   onPressed: clearOfferDetail,
+                      //                     //   icon: Icon(Icons.clear_sharp,
+                      //                     //       size: 15.0),
+                      //                     //   label: Text("Clear"),
+                      //                     // )
+                      //                   ],
+                      //                 ),
+                      //                 backgroundColor: Colors.blueGrey[500],
+
+                      //                 children: <Widget>[
+                      //                   new Container(
+                      //                     width: MediaQuery.of(context)
+                      //                             .size
+                      //                             .width *
+                      //                         .94,
+                      //                     decoration: darkContainer,
+                      //                     padding: EdgeInsets.all(2.0),
+                      //                     child: Row(
+                      //                       children: <Widget>[
+                      //                         Expanded(
+                      //                           child: Text(offerInfoStr,
+                      //                               style: buttonXSmlTextStyle),
+                      //                         ),
+                      //                       ],
+                      //                     ),
+                      //                   ),
+                      //                 ],
+                      //               ),
+                      //             ),
+                      //           ),
+                      //           Container(
+                      //             padding: EdgeInsets.only(left: 5.0, right: 5),
+                      //             child: Column(
+                      //               children: <Widget>[
+                      //                 messageField,
+                      //                 couponField,
+                      //                 Row(
+                      //                   children: <Widget>[
+                      //                     Expanded(child: startDateField),
+                      //                     Expanded(child: endDateField),
+                      //                   ],
+                      //                 ),
+                      //               ],
+                      //             ),
+                      //           ),
+                      //         ],
+                      //       ),
+                      //     ],
+                      //   ),
+                      // ),
+                      // SizedBox(
+                      //   height: 7,
+                      // ),
                       Container(
                         decoration: BoxDecoration(
                             border: Border.all(color: containerColor),
@@ -3304,298 +2844,312 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
                       SizedBox(
                         height: 7,
                       ),
-                      //THIS CONTAINER
                       Container(
+                        padding: EdgeInsets.only(left: 5.0, right: 5),
                         decoration: BoxDecoration(
                             border: Border.all(color: containerColor),
                             color: Colors.grey[50],
                             shape: BoxShape.rectangle,
                             borderRadius:
                                 BorderRadius.all(Radius.circular(5.0))),
-                        // padding: EdgeInsets.all(5.0),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            Column(
-                              children: <Widget>[
-                                Container(
-                                  //padding: EdgeInsets.only(left: 5),
-                                  decoration: darkContainer,
-                                  child: Theme(
-                                    data: ThemeData(
-                                      unselectedWidgetColor: Colors.white,
-                                      accentColor: Colors.grey[50],
-                                    ),
-                                    child: CustomExpansionTile(
-                                      //key: PageStorageKey(this.widget.headerTitle),
-                                      initiallyExpanded: false,
-                                      title: Row(
-                                        children: <Widget>[
-                                          Text(
-                                            "Assign an Admin",
-                                            style: TextStyle(
-                                                color: Colors.white,
-                                                fontSize: 15),
-                                          ),
-                                          SizedBox(width: 5),
-                                        ],
-                                      ),
-                                      // trailing: IconButton(
-                                      //   icon: Icon(Icons.add_circle,
-                                      //       color: highlightColor, size: 40),
-                                      //   onPressed: () {
-                                      //     addNewAdminRow();
-                                      //   },
-                                      // ),
-                                      backgroundColor: Colors.blueGrey[500],
-                                      children: <Widget>[
-                                        new Container(
-                                          width: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
-                                              .94,
-                                          decoration: darkContainer,
-                                          padding: EdgeInsets.all(2.0),
-                                          child: Row(
-                                            children: <Widget>[
-                                              Expanded(
-                                                child: Text(adminInfoStr,
-                                                    style: buttonXSmlTextStyle),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                                //Add Admins list
-                                Column(
-                                  children: <Widget>[
-                                    Container(
-                                      margin: EdgeInsets.all(4),
-                                      padding: EdgeInsets.fromLTRB(0, 0, 4, 0),
-                                      height:
-                                          MediaQuery.of(context).size.width *
-                                              .13,
-                                      decoration: BoxDecoration(
-                                          border:
-                                              Border.all(color: borderColor),
-                                          color: Colors.white,
-                                          shape: BoxShape.rectangle,
-                                          borderRadius: BorderRadius.all(
-                                              Radius.circular(5.0))),
-                                      child: Row(
-                                        // mainAxisAlignment: MainAxisAlignment.end,
-                                        children: <Widget>[
-                                          Expanded(
-                                            child: adminInputField,
-                                          ),
-                                          Container(
-                                            padding:
-                                                EdgeInsets.fromLTRB(0, 0, 0, 0),
-                                            width: MediaQuery.of(context)
-                                                    .size
-                                                    .width *
-                                                .1,
-                                            height: MediaQuery.of(context)
-                                                    .size
-                                                    .width *
-                                                .1,
-                                            child: IconButton(
-                                                padding: EdgeInsets.all(0),
-                                                icon: Icon(Icons.person_add,
-                                                    color: highlightColor,
-                                                    size: 38),
-                                                onPressed: () {
-                                                  if (_adminItemController
-                                                              .text ==
-                                                          null ||
-                                                      _adminItemController
-                                                          .text.isEmpty) {
-                                                    Utils.showMyFlushbar(
-                                                        context,
-                                                        Icons.info_outline,
-                                                        Duration(
-                                                          seconds: 4,
-                                                        ),
-                                                        "Something Missing ..",
-                                                        "Please enter Phone number !!");
-                                                  } else {
-                                                    bool result = adminPhoneKey
-                                                        .currentState
-                                                        .validate();
-                                                    if (result) {
-                                                      _addNewAdminRow();
-                                                      _adminItemController
-                                                          .text = "";
-                                                    } else {
-                                                      Utils.showMyFlushbar(
-                                                          context,
-                                                          Icons.info_outline,
-                                                          Duration(
-                                                            seconds: 5,
-                                                          ),
-                                                          "Oops!! Seems like the phone number is not valid",
-                                                          "Please check and try again !!");
-                                                    }
-                                                  }
-                                                }),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                    ListView.builder(
-                                      shrinkWrap: true,
-                                      //scrollDirection: Axis.vertical,
-                                      itemBuilder:
-                                          (BuildContext context, int index) {
-                                        return new Column(
-                                            children: adminsList
-                                                .map(_buildServiceItem)
-                                                .toList());
-                                      },
-                                      itemCount: 1,
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
+                        //padding: EdgeInsets.all(5.0),
+                        child: descField,
                       ),
-
                       SizedBox(
                         height: 7,
                       ),
                       //THIS CONTAINER
-                      Container(
-                        decoration: BoxDecoration(
-                            border: Border.all(color: containerColor),
-                            color: Colors.white,
-                            shape: BoxShape.rectangle,
-                            borderRadius:
-                                BorderRadius.all(Radius.circular(5.0))),
-                        // padding: EdgeInsets.all(5.0),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            Column(
-                              children: <Widget>[
-                                Container(
-                                  //padding: EdgeInsets.only(left: 5),
-                                  decoration: darkContainer,
-                                  child: Theme(
-                                    data: ThemeData(
-                                      unselectedWidgetColor: Colors.white,
-                                      accentColor: Colors.grey[50],
-                                    ),
-                                    child: CustomExpansionTile(
-                                      //key: PageStorageKey(this.widget.headerTitle),
-                                      initiallyExpanded: false,
-                                      title: Row(
-                                        children: <Widget>[
-                                          Text(
-                                            "Add a Manager",
-                                            style: TextStyle(
-                                                color: Colors.white,
-                                                fontSize: 15),
-                                          ),
-                                          SizedBox(width: 5),
-                                        ],
-                                      ),
-                                      backgroundColor: Colors.blueGrey[500],
+                      // Container(
+                      //   decoration: BoxDecoration(
+                      //       border: Border.all(color: containerColor),
+                      //       color: Colors.grey[50],
+                      //       shape: BoxShape.rectangle,
+                      //       borderRadius:
+                      //           BorderRadius.all(Radius.circular(5.0))),
+                      //   // padding: EdgeInsets.all(5.0),
+                      //   child: Column(
+                      //     crossAxisAlignment: CrossAxisAlignment.start,
+                      //     children: <Widget>[
+                      //       Column(
+                      //         children: <Widget>[
+                      //           Container(
+                      //             //padding: EdgeInsets.only(left: 5),
+                      //             decoration: darkContainer,
+                      //             child: Theme(
+                      //               data: ThemeData(
+                      //                 unselectedWidgetColor: Colors.white,
+                      //                 accentColor: Colors.grey[50],
+                      //               ),
+                      //               child: CustomExpansionTile(
+                      //                 //key: PageStorageKey(this.widget.headerTitle),
+                      //                 initiallyExpanded: false,
+                      //                 title: Row(
+                      //                   children: <Widget>[
+                      //                     Text(
+                      //                       "Assign an Admin",
+                      //                       style: TextStyle(
+                      //                           color: Colors.white,
+                      //                           fontSize: 15),
+                      //                     ),
+                      //                     SizedBox(width: 5),
+                      //                   ],
+                      //                 ),
+                      //                 // trailing: IconButton(
+                      //                 //   icon: Icon(Icons.add_circle,
+                      //                 //       color: highlightColor, size: 40),
+                      //                 //   onPressed: () {
+                      //                 //     addNewAdminRow();
+                      //                 //   },
+                      //                 // ),
+                      //                 backgroundColor: Colors.blueGrey[500],
+                      //                 children: <Widget>[
+                      //                   new Container(
+                      //                     width: MediaQuery.of(context)
+                      //                             .size
+                      //                             .width *
+                      //                         .94,
+                      //                     decoration: darkContainer,
+                      //                     padding: EdgeInsets.all(2.0),
+                      //                     child: Row(
+                      //                       children: <Widget>[
+                      //                         Expanded(
+                      //                           child: Text(adminInfoStr,
+                      //                               style: buttonXSmlTextStyle),
+                      //                         ),
+                      //                       ],
+                      //                     ),
+                      //                   ),
+                      //                 ],
+                      //               ),
+                      //             ),
+                      //           ),
+                      //           //Add Admins list
+                      //           Column(
+                      //             children: <Widget>[
+                      //               Container(
+                      //                 margin: EdgeInsets.all(4),
+                      //                 padding: EdgeInsets.fromLTRB(0, 0, 4, 0),
+                      //                 height:
+                      //                     MediaQuery.of(context).size.width *
+                      //                         .13,
+                      //                 decoration: BoxDecoration(
+                      //                     border:
+                      //                         Border.all(color: borderColor),
+                      //                     color: Colors.white,
+                      //                     shape: BoxShape.rectangle,
+                      //                     borderRadius: BorderRadius.all(
+                      //                         Radius.circular(5.0))),
+                      //                 child: Row(
+                      //                   // mainAxisAlignment: MainAxisAlignment.end,
+                      //                   children: <Widget>[
+                      //                     Expanded(
+                      //                       child: adminInputField,
+                      //                     ),
+                      //                     Container(
+                      //                       padding:
+                      //                           EdgeInsets.fromLTRB(0, 0, 0, 0),
+                      //                       width: MediaQuery.of(context)
+                      //                               .size
+                      //                               .width *
+                      //                           .1,
+                      //                       height: MediaQuery.of(context)
+                      //                               .size
+                      //                               .width *
+                      //                           .1,
+                      //                       child: IconButton(
+                      //                           padding: EdgeInsets.all(0),
+                      //                           icon: Icon(Icons.person_add,
+                      //                               color: highlightColor,
+                      //                               size: 38),
+                      //                           onPressed: () {
+                      //                             if (_adminItemController
+                      //                                         .text ==
+                      //                                     null ||
+                      //                                 _adminItemController
+                      //                                     .text.isEmpty) {
+                      //                               Utils.showMyFlushbar(
+                      //                                   context,
+                      //                                   Icons.info_outline,
+                      //                                   Duration(
+                      //                                     seconds: 4,
+                      //                                   ),
+                      //                                   "Something Missing ..",
+                      //                                   "Please enter Phone number !!");
+                      //                             } else {
+                      //                               bool result = adminPhoneKey
+                      //                                   .currentState
+                      //                                   .validate();
+                      //                               if (result) {
+                      //                                 _addNewAdminRow();
+                      //                                 _adminItemController
+                      //                                     .text = "";
+                      //                               } else {
+                      //                                 Utils.showMyFlushbar(
+                      //                                     context,
+                      //                                     Icons.info_outline,
+                      //                                     Duration(
+                      //                                       seconds: 5,
+                      //                                     ),
+                      //                                     "Oops!! Seems like the phone number is not valid",
+                      //                                     "Please check and try again !!");
+                      //                               }
+                      //                             }
+                      //                           }),
+                      //                     ),
+                      //                   ],
+                      //                 ),
+                      //               ),
+                      //               ListView.builder(
+                      //                 shrinkWrap: true,
+                      //                 //scrollDirection: Axis.vertical,
+                      //                 itemBuilder:
+                      //                     (BuildContext context, int index) {
+                      //                   return new Column(
+                      //                       children: adminsList
+                      //                           .map(_buildServiceItem)
+                      //                           .toList());
+                      //                 },
+                      //                 itemCount: 1,
+                      //               ),
+                      //             ],
+                      //           ),
+                      //         ],
+                      //       ),
+                      //     ],
+                      //   ),
+                      // ),
 
-                                      children: <Widget>[
-                                        new Container(
-                                          width: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
-                                              .94,
-                                          decoration: darkContainer,
-                                          padding: EdgeInsets.all(2.0),
-                                          child: Row(
-                                            children: <Widget>[
-                                              Expanded(
-                                                child: Text(contactInfoStr,
-                                                    style: buttonXSmlTextStyle),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                                Container(
-                                  color: Colors.grey[100],
-                                  padding:
-                                      const EdgeInsets.fromLTRB(8.0, 0, 8, 0),
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.end,
-                                    children: <Widget>[
-                                      // Expanded(
-                                      //   child: roleType,
-                                      // ),
-                                      Container(
-                                        child: IconButton(
-                                          icon: Icon(Icons.person_add,
-                                              color: highlightColor, size: 40),
-                                          onPressed: () {
-                                            _addNewContactRow();
-                                          },
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                (_msg != null)
-                                    ? Text(
-                                        _msg,
-                                        style: errorTextStyle,
-                                      )
-                                    : Container(),
-                                if (!Utils.isNullOrEmpty(contactList))
-                                  Column(children: contactRowWidgets),
-                                // Expanded(
-                                //   child: ListView.builder(
-                                //       itemCount: contactList.length,
-                                //       itemBuilder:
-                                //           (BuildContext context, int index) {
-                                //         return Column(
-                                //             children: contactList
-                                //                 .map(buildContactItem)
-                                //                 .toList());
-                                //       }),
-                                // ),
-                                // Column(
-                                //   children: <Widget>[
-                                //     new Expanded(
-                                //       child: ListView.builder(
-                                //         //  controller: _childScrollController,
-                                //         reverse: true,
-                                //         shrinkWrap: true,
-                                //         // itemExtent: itemSize,
-                                //         //scrollDirection: Axis.vertical,
-                                //         itemBuilder:
-                                //             (BuildContext context, int index) {
-                                //           return ContactRow(
-                                //             contact: contactList[index],
-                                //             entity: entity,
-                                //             list: contactList,
-                                //           );
-                                //         },
-                                //         itemCount: contactList.length,
-                                //       ),
-                                //     ),
-                                //   ],
-                                // ),
-                                //
-                              ],
-                            ),
-                          ],
-                        ),
-                      ),
+                      // SizedBox(
+                      //   height: 7,
+                      // ),
+                      // //THIS CONTAINER
+                      // Container(
+                      //   decoration: BoxDecoration(
+                      //       border: Border.all(color: containerColor),
+                      //       color: Colors.white,
+                      //       shape: BoxShape.rectangle,
+                      //       borderRadius:
+                      //           BorderRadius.all(Radius.circular(5.0))),
+                      //   // padding: EdgeInsets.all(5.0),
+                      //   child: Column(
+                      //     crossAxisAlignment: CrossAxisAlignment.start,
+                      //     children: <Widget>[
+                      //       Column(
+                      //         children: <Widget>[
+                      //           Container(
+                      //             //padding: EdgeInsets.only(left: 5),
+                      //             decoration: darkContainer,
+                      //             child: Theme(
+                      //               data: ThemeData(
+                      //                 unselectedWidgetColor: Colors.white,
+                      //                 accentColor: Colors.grey[50],
+                      //               ),
+                      //               child: CustomExpansionTile(
+                      //                 //key: PageStorageKey(this.widget.headerTitle),
+                      //                 initiallyExpanded: false,
+                      //                 title: Row(
+                      //                   children: <Widget>[
+                      //                     Text(
+                      //                       "Add a Manager",
+                      //                       style: TextStyle(
+                      //                           color: Colors.white,
+                      //                           fontSize: 15),
+                      //                     ),
+                      //                     SizedBox(width: 5),
+                      //                   ],
+                      //                 ),
+                      //                 backgroundColor: Colors.blueGrey[500],
+
+                      //                 children: <Widget>[
+                      //                   new Container(
+                      //                     width: MediaQuery.of(context)
+                      //                             .size
+                      //                             .width *
+                      //                         .94,
+                      //                     decoration: darkContainer,
+                      //                     padding: EdgeInsets.all(2.0),
+                      //                     child: Row(
+                      //                       children: <Widget>[
+                      //                         Expanded(
+                      //                           child: Text(contactInfoStr,
+                      //                               style: buttonXSmlTextStyle),
+                      //                         ),
+                      //                       ],
+                      //                     ),
+                      //                   ),
+                      //                 ],
+                      //               ),
+                      //             ),
+                      //           ),
+                      //           Container(
+                      //             color: Colors.grey[100],
+                      //             padding:
+                      //                 const EdgeInsets.fromLTRB(8.0, 0, 8, 0),
+                      //             child: Row(
+                      //               mainAxisAlignment: MainAxisAlignment.end,
+                      //               children: <Widget>[
+                      //                 // Expanded(
+                      //                 //   child: roleType,
+                      //                 // ),
+                      //                 Container(
+                      //                   child: IconButton(
+                      //                     icon: Icon(Icons.person_add,
+                      //                         color: highlightColor, size: 40),
+                      //                     onPressed: () {
+                      //                       _addNewContactRow();
+                      //                     },
+                      //                   ),
+                      //                 ),
+                      //               ],
+                      //             ),
+                      //           ),
+                      //           (_msg != null)
+                      //               ? Text(
+                      //                   _msg,
+                      //                   style: errorTextStyle,
+                      //                 )
+                      //               : Container(),
+                      //           if (!Utils.isNullOrEmpty(contactList))
+                      //             Column(children: contactRowWidgets),
+                      //           // Expanded(
+                      //           //   child: ListView.builder(
+                      //           //       itemCount: contactList.length,
+                      //           //       itemBuilder:
+                      //           //           (BuildContext context, int index) {
+                      //           //         return Column(
+                      //           //             children: contactList
+                      //           //                 .map(buildContactItem)
+                      //           //                 .toList());
+                      //           //       }),
+                      //           // ),
+                      //           // Column(
+                      //           //   children: <Widget>[
+                      //           //     new Expanded(
+                      //           //       child: ListView.builder(
+                      //           //         //  controller: _childScrollController,
+                      //           //         reverse: true,
+                      //           //         shrinkWrap: true,
+                      //           //         // itemExtent: itemSize,
+                      //           //         //scrollDirection: Axis.vertical,
+                      //           //         itemBuilder:
+                      //           //             (BuildContext context, int index) {
+                      //           //           return ContactRow(
+                      //           //             contact: contactList[index],
+                      //           //             entity: entity,
+                      //           //             list: contactList,
+                      //           //           );
+                      //           //         },
+                      //           //         itemCount: contactList.length,
+                      //           //       ),
+                      //           //     ),
+                      //           //   ],
+                      //           // ),
+                      //           //
+                      //         ],
+                      //       ),
+                      //     ],
+                      //   ),
+                      // ),
                       Builder(
                         builder: (context) => RaisedButton(
                             color: btnColor,
@@ -3605,7 +3159,7 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
                               child: Column(
                                 children: <Widget>[
                                   Text(
-                                    'Save',
+                                    'Save Details & Request Token',
                                     style: buttonMedTextStyle,
                                   ),
                                   // Text(
@@ -3620,156 +3174,6 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
                               processSaveWithTimer();
                             }),
                       ),
-                      Builder(
-                          builder: (context) => RaisedButton(
-                              color: Colors.blueGrey[400],
-                              splashColor: highlightColor,
-                              child: Container(
-                                //width: MediaQuery.of(context).size.width * .35,
-                                child: Column(
-                                  children: <Widget>[
-                                    Text(
-                                      'Delete',
-                                      style: buttonMedTextStyle,
-                                    ),
-                                    Text(
-                                      'Delete this entity and all its amenities/services',
-                                      style: buttonXSmlTextStyle,
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              onPressed: () {
-                                String _errorMessage;
-                                showDialog(
-                                    context: context,
-                                    barrierDismissible: true,
-                                    builder: (BuildContext context) {
-                                      return StatefulBuilder(
-                                          builder: (context, setState) {
-                                        return new AlertDialog(
-                                          backgroundColor: Colors.grey[200],
-                                          // titleTextStyle: inputTextStyle,
-                                          elevation: 10.0,
-                                          content: Column(
-                                            mainAxisSize: MainAxisSize.min,
-                                            children: <Widget>[
-                                              RichText(
-                                                text: TextSpan(
-                                                    style: lightSubTextStyle,
-                                                    children: <TextSpan>[
-                                                      TextSpan(text: "Enter "),
-                                                      TextSpan(
-                                                          text: "DELETE ",
-                                                          style:
-                                                              errorTextStyle),
-                                                      TextSpan(
-                                                          text:
-                                                              "to permanently delete this entity and all its services. Once deleted you cannot restore them. "),
-                                                    ]),
-                                              ),
-                                              new Row(
-                                                children: <Widget>[
-                                                  new Expanded(
-                                                    child: new TextField(
-                                                      style: inputTextStyle,
-                                                      textCapitalization:
-                                                          TextCapitalization
-                                                              .characters,
-                                                      controller:
-                                                          _txtController,
-                                                      decoration:
-                                                          InputDecoration(
-                                                        hintText: 'eg. delete',
-                                                        enabledBorder:
-                                                            UnderlineInputBorder(
-                                                                borderSide: BorderSide(
-                                                                    color: Colors
-                                                                        .grey)),
-                                                        focusedBorder:
-                                                            UnderlineInputBorder(
-                                                                borderSide: BorderSide(
-                                                                    color: Colors
-                                                                        .orange)),
-                                                      ),
-                                                      onEditingComplete: () {
-                                                        print(_txtController
-                                                            .text);
-                                                      },
-                                                      onChanged: (value) {
-                                                        if (value
-                                                                .toUpperCase() ==
-                                                            "DELETE"
-                                                                .toUpperCase())
-                                                          setState(() {
-                                                            _delEnabled = true;
-                                                            _errorMessage =
-                                                                null;
-                                                          });
-                                                        else
-                                                          setState(() {
-                                                            _errorMessage =
-                                                                "You have to enter DELETE to proceed.";
-                                                          });
-                                                      },
-                                                      autofocus: false,
-                                                    ),
-                                                  )
-                                                ],
-                                              ),
-                                              (_errorMessage != null
-                                                  ? Text(
-                                                      _errorMessage,
-                                                      style: errorTextStyle,
-                                                    )
-                                                  : Container()),
-                                            ],
-                                          ),
-
-                                          contentPadding: EdgeInsets.all(10),
-                                          actions: <Widget>[
-                                            RaisedButton(
-                                              color: (_delEnabled)
-                                                  ? btnColor
-                                                  : Colors.blueGrey[200],
-                                              elevation: (_delEnabled) ? 20 : 0,
-                                              onPressed: () {
-                                                if (_delEnabled) {
-                                                  deleteEntity(entity.entityId)
-                                                      .whenComplete(() {
-                                                    _gState.removeEntity(
-                                                        entity.entityId);
-                                                    Navigator.pop(context);
-                                                    Navigator.of(context).push(
-                                                        PageAnimation.createRoute(
-                                                            ManageEntityListPage()));
-                                                  });
-                                                } else {
-                                                  setState(() {
-                                                    _errorMessage =
-                                                        "You have to enter DELETE to proceed.";
-                                                  });
-                                                }
-                                              },
-                                              splashColor: (_delEnabled)
-                                                  ? highlightColor
-                                                  : Colors.blueGrey[200],
-                                              child: Container(
-                                                width: MediaQuery.of(context)
-                                                        .size
-                                                        .width *
-                                                    .3,
-                                                alignment: Alignment.center,
-                                                child: Text("Delete",
-                                                    style: TextStyle(
-                                                        color: Colors.white)),
-                                              ),
-                                            ),
-                                          ],
-                                        );
-                                      });
-                                    });
-                              })),
                     ],
                   ),
                 ),
@@ -3825,4 +3229,12 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
         ),
       );
   }
+}
+
+class Item {
+  String text;
+  bool isSelected;
+  String lastSelected;
+
+  Item(this.text, this.isSelected);
 }

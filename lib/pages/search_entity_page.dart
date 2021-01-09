@@ -9,10 +9,12 @@ import 'package:noq/db/db_model/entity.dart';
 import 'package:noq/db/db_model/meta_entity.dart';
 import 'package:noq/db/db_model/user_token.dart';
 import 'package:noq/db/db_service/entity_service.dart';
+import 'package:noq/enum/entity_type.dart';
 import 'package:noq/events/event_bus.dart';
 import 'package:noq/events/events.dart';
 import 'package:noq/global_state.dart';
 import 'package:noq/pages/contact_us.dart';
+import 'package:noq/pages/covid_token_booking_form.dart';
 import 'package:noq/pages/search_child_entity_page.dart';
 import 'package:noq/pages/show_booking_form.dart';
 import 'package:noq/pages/show_slots_page.dart';
@@ -48,7 +50,7 @@ class _SearchEntityPageState extends State<SearchEntityPage>
   final dtFormat = new DateFormat('dd');
   List<Entity> _stores = new List<Entity>();
   List<Entity> _pastSearches = new List<Entity>();
-  String _entityType;
+  EntityType _entityType;
   String _searchInAll = 'Search in All';
   bool searchBoxClicked = false;
   bool fetchFromServer = false;
@@ -86,9 +88,9 @@ class _SearchEntityPageState extends State<SearchEntityPage>
   Animation<Offset> offset;
   double fontSize;
   bool isLoading = false;
-  Widget _buildCategoryItem(BuildContext context, int index) {
-    String name = searchTypes[index];
-    Widget image = Utils.getEntityTypeImage(name, 30);
+  Widget _buildCategoryItem(BuildContext context, EntityType type) {
+    String name = Utils.getEntityTypeDisplayName(type);
+    Widget image = Utils.getEntityTypeImage(type, 30);
 
     return GestureDetector(
         onTap: () {
@@ -186,7 +188,7 @@ class _SearchEntityPageState extends State<SearchEntityPage>
       if (event == null) {
         return;
       }
-      String categoryType = event.eventData;
+      EntityType categoryType = event.eventData;
       setState(() {
         _entityType = categoryType;
         _isSearching = "searching";
@@ -703,27 +705,26 @@ class _SearchEntityPageState extends State<SearchEntityPage>
             text: TextSpan(
                 style: TextStyle(color: Colors.blueGrey, fontSize: 12),
                 children: <TextSpan>[
-                  Utils.isNotNullOrEmpty(_entityType) ||
-                          Utils.isNotNullOrEmpty(_searchText)
+                  _entityType != null || Utils.isNotNullOrEmpty(_searchText)
                       ? TextSpan(text: searchResultText1)
                       : TextSpan(text: ""),
-                  Utils.isNotNullOrEmpty(_entityType)
+                  _entityType != null
                       ? TextSpan(
                           text: searchResultText2,
                         )
                       : TextSpan(text: ""),
-                  Utils.isNotNullOrEmpty(_entityType)
+                  _entityType != null
                       ? TextSpan(
-                          text: _entityType,
+                          text: Utils.getEntityTypeDisplayName(_entityType),
                           style: TextStyle(color: highlightColor, fontSize: 12))
                       : TextSpan(text: ""),
-                  Utils.isNotNullOrEmpty(_entityType)
+                  _entityType != null
                       ? TextSpan(
                           text: searchResultText3,
                         )
                       : TextSpan(text: ""),
                   Utils.isNotNullOrEmpty(_searchText)
-                      ? (Utils.isNotNullOrEmpty(_entityType))
+                      ? (_entityType != null)
                           ? TextSpan(text: SYMBOL_AND + searchResultText4)
                           : TextSpan(
                               text: searchResultText4,
@@ -752,12 +753,10 @@ class _SearchEntityPageState extends State<SearchEntityPage>
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
-                  (Utils.isNotNullOrEmpty(_searchText) ||
-                          Utils.isNotNullOrEmpty(_entityType))
+                  (Utils.isNotNullOrEmpty(_searchText) || _entityType != null)
                       ? searchResultText
                       : Container(),
-                  (Utils.isNotNullOrEmpty(_searchText) ||
-                          Utils.isNotNullOrEmpty(_entityType))
+                  (Utils.isNotNullOrEmpty(_searchText) || _entityType != null)
                       ? Container(
                           //  alignment: Alignment.topCenter,
                           width: MediaQuery.of(context).size.width * .09,
@@ -1024,7 +1023,7 @@ class _SearchEntityPageState extends State<SearchEntityPage>
                                 padding: EdgeInsets.all(0),
                                 scrollDirection: Axis.vertical,
                                 shrinkWrap: true,
-                                itemCount: searchTypes.length,
+                                itemCount: EntityType.values.length,
                                 gridDelegate:
                                     SliverGridDelegateWithFixedCrossAxisCount(
                                         crossAxisCount: 4,
@@ -1040,8 +1039,8 @@ class _SearchEntityPageState extends State<SearchEntityPage>
                                       // decoration:
                                       //     BoxDecoration(border: Border.all(color: Colors.black, width: 0.5)),
                                       child: Center(
-                                        child:
-                                            _buildCategoryItem(context, index),
+                                        child: _buildCategoryItem(
+                                            context, EntityType.values[index]),
                                       ),
                                     ),
                                   );
@@ -1092,16 +1091,6 @@ class _SearchEntityPageState extends State<SearchEntityPage>
     }
   }
 
-  Widget entityImageIcon(String type) {
-    // String imgName;
-    Widget imgWidget;
-    //  imgName = Utils.getEntityTypeImage(type);
-
-    imgWidget = Utils.getEntityTypeImage(type, 30);
-
-    return imgWidget;
-  }
-
   Widget _buildItem(Entity str) {
     _prepareDateList();
 
@@ -1122,7 +1111,7 @@ class _SearchEntityPageState extends State<SearchEntityPage>
                   alignment: Alignment.center,
                   height: MediaQuery.of(context).size.width * .09,
                   width: MediaQuery.of(context).size.width * .09,
-                  child: entityImageIcon(str.type)),
+                  child: Utils.getEntityTypeImage(str.type, 30)),
               Container(
                 width: MediaQuery.of(context).size.width * .8,
                 padding: EdgeInsets.all(2),
@@ -1618,11 +1607,13 @@ class _SearchEntityPageState extends State<SearchEntityPage>
     );
   }
 
-  void showSlots(Entity store, DateTime dateTime) {
+  void showSlots(Entity entity, DateTime dateTime) {
     //_prefs = await SharedPreferences.getInstance();
 
     Navigator.push(
-        context, MaterialPageRoute(builder: (context) => ShowBookingForm()));
+        context,
+        MaterialPageRoute(
+            builder: (context) => CovidTokenBookingFormPage(entity: entity)));
 
     // print('After showDialog:');
     // Navigator.push(
@@ -1797,7 +1788,7 @@ class _SearchEntityPageState extends State<SearchEntityPage>
     //lon = 77.641603;
 
     //TODO: comment - only for testing
-    String entityTypeForSearch;
+    EntityType entityTypeForSearch;
     entityTypeForSearch = (_entityType == _searchInAll) ? null : _entityType;
 
     List<Entity> searchEntityList = await _state.getEntityService().search(
@@ -1830,8 +1821,7 @@ class _SearchEntityPageState extends State<SearchEntityPage>
       }
       //Case 2 - Zero matching search results.
       if (value.length == 0) {
-        if (Utils.isNotNullOrEmpty(_entityType) ||
-            Utils.isNotNullOrEmpty(_searchText)) {
+        if (_entityType != null || Utils.isNotNullOrEmpty(_searchText)) {
           setState(() {
             messageTitle = "NotFound";
 

@@ -1,3 +1,4 @@
+import 'package:enum_to_string/enum_to_string.dart';
 import 'package:noq/db/db_model/address.dart';
 import 'package:noq/db/db_model/employee.dart';
 import 'package:noq/db/db_model/booking_form.dart';
@@ -5,6 +6,7 @@ import 'package:noq/db/db_model/meta_entity.dart';
 import 'package:noq/db/db_model/meta_user.dart';
 import 'package:noq/db/db_model/my_geo_fire_point.dart';
 import 'package:noq/db/db_model/offer.dart';
+import 'package:noq/enum/entity_type.dart';
 import 'package:noq/utils.dart';
 
 class Entity {
@@ -69,7 +71,7 @@ class Entity {
   int endTimeHour;
   int endTimeMinute;
   String parentId;
-  String type;
+  EntityType type;
   bool isBookable;
   bool isActive;
   MyGeoFirePoint coordinates;
@@ -110,7 +112,7 @@ class Entity {
         'endTimeHour': endTimeHour,
         'endTimeMinute': endTimeMinute,
         'parentId': parentId,
-        'type': type,
+        'type': EnumToString.convertToString(type),
         'isBookable': isBookable,
         'isActive': isActive,
         'coordinates': coordinates != null ? coordinates.toJson() : null,
@@ -181,7 +183,7 @@ class Entity {
         endTimeHour: json['endTimeHour'],
         endTimeMinute: json['endTimeMinute'],
         parentId: json['parentId'],
-        type: json['type'],
+        type: EnumToString.fromString(EntityType.values, json['type']),
         isBookable: json['isBookable'],
         isActive: json['isActive'],
         coordinates: MyGeoFirePoint.fromJson(json['coordinates']),

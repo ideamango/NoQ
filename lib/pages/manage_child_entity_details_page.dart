@@ -1833,7 +1833,7 @@ class _ManageChildEntityDetailsPageState
       return new Timer(duration, saveRoute);
     }
 
-    String title = serviceEntity.type;
+    String title = Utils.getEntityTypeDisplayName(serviceEntity.type);
 
     String _msg;
     Flushbar flush;

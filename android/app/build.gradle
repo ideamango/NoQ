@@ -63,20 +63,35 @@ flutter {
 
 dependencies {
     
-    implementation platform('com.google.firebase:firebase-bom:25.5.0')
+  //  implementation platform('com.google.firebase:firebase-bom:26.2.0')
 
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
-    testImplementation 'junit:junit:4.12'
-    androidTestImplementation 'androidx.test:runner:1.1.1'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.1'  
+
+    //testImplementation 'junit:junit:4.12'
+
+    // androidTestImplementation 'androidx.test:runner:1.1.1'
+    // androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.1'
+
      // Add the Firebase SDK for Google Analytics
-    implementation 'com.google.android.gms:play-services-base'
+    // implementation 'com.google.firebase:firebase-inappmessaging'
+    // implementation 'com.google.firebase:firebase-inappmessaging-display'
+    // implementation 'com.google.firebase:firebase-config'
+    // implementation 'com.google.firebase:firebase-abt'
+    // implementation 'com.google.android.gms:play-services-base'
+    
     implementation "com.google.firebase:firebase-core"
-    implementation "com.google.firebase:firebase-messaging"
+    implementation 'com.google.firebase:firebase-firestore:22.0.1'
+    //implementation "com.google.firebase:firebase-messaging"
 
     implementation 'com.google.firebase:firebase-auth'
     implementation 'com.google.firebase:firebase-dynamic-links'
   
-    implementation 'com.google.firebase:firebase-crashlytics'
-    implementation 'com.google.firebase:firebase-analytics'
+    // implementation 'com.google.firebase:firebase-crashlytics'
+    implementation 'com.google.firebase:firebase-analytics'     
 }
+
+// configurations {
+//         implementation.exclude module:'proto-google-common-protos'
+//         implementation.exclude module:'protolite-well-known-types'
+//         implementation.exclude module:'protobuf-lite'
+// }
