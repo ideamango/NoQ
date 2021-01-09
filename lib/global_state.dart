@@ -2,6 +2,8 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 import 'package:noq/db/db_model/configurations.dart';
@@ -36,6 +38,8 @@ class GlobalState {
   List<Entity> lastSearchResults;
   Map<String, Entity> _entities;
   FirebaseApp _secondaryFirebaseApp;
+
+  FirebaseStorage firebaseStorage;
 
   //true is entity is saved on server and false if it is a new entity
   Map<String, bool> _entityState;
@@ -141,6 +145,11 @@ class GlobalState {
 
     if (_gs._secondaryFirebaseApp == null) {
       _gs._secondaryFirebaseApp = Firebase.app('SecondaryFirebaseApp');
+    }
+
+    if (_gs.firebaseStorage == null) {
+      _gs.firebaseStorage =
+          FirebaseStorage.instanceFor(app: _gs._secondaryFirebaseApp);
     }
 
     return _gs._secondaryFirebaseApp;

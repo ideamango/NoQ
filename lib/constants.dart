@@ -62,7 +62,7 @@ String pressUseCurrentLocation =
 String shouldSetLocation =
     "You should set Location for your Place, else Users can't find it!";
 String whyLocationIsRequired =
-    'This will be help users/customer find your Place.';
+    'This will help users/customer to find your Place.';
 
 String userCurrentLoc = 'Use Current Location';
 String userAccountHeadingTxt = "You have logged in with ";

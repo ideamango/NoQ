@@ -1,4 +1,4 @@
-import 'package:barcode_scan/barcode_scan.dart';
+//import 'package:barcode_scan/barcode_scan.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -46,7 +46,7 @@ class _UserAccountPageState extends State<UserAccountPage> {
   bool isUpcomingSet = false;
   bool isPastSet = false;
 //Qr code scan result
-  ScanResult scanResult;
+  //ScanResult scanResult;
   GlobalState _state;
   String _dynamicLink;
   String appID = "";
@@ -94,28 +94,28 @@ class _UserAccountPageState extends State<UserAccountPage> {
   }
 
   Future scan() async {
-    try {
-      var result = await BarcodeScanner.scan();
+    // try {
+    //   var result = await BarcodeScanner.scan();
 
-      setState(() => scanResult = result);
-    } on PlatformException catch (e) {
-      var result = ScanResult(
-        type: ResultType.Error,
-        format: BarcodeFormat.unknown,
-      );
+    //   setState(() => scanResult = result);
+    // } on PlatformException catch (e) {
+    //   var result = ScanResult(
+    //     type: ResultType.Error,
+    //     format: BarcodeFormat.unknown,
+    //   );
 
-      if (e.code == BarcodeScanner.cameraAccessDenied) {
-        setState(() {
-          result.rawContent = 'The user did not grant the camera permission!';
-        });
-      } else {
-        result.rawContent = 'Unknown error: $e';
-      }
-      setState(() {
-        scanResult = result;
-        print(scanResult);
-      });
-    }
+    //   if (e.code == BarcodeScanner.cameraAccessDenied) {
+    //     setState(() {
+    //       result.rawContent = 'The user did not grant the camera permission!';
+    //     });
+    //   } else {
+    //     result.rawContent = 'Unknown error: $e';
+    //   }
+    //   setState(() {
+    //     scanResult = result;
+    //     print(scanResult);
+    //   });
+    // }
   }
 
   void fetchDataFromGlobalState() {

@@ -1610,10 +1610,10 @@ class _SearchEntityPageState extends State<SearchEntityPage>
   void showSlots(Entity entity, DateTime dateTime) {
     //_prefs = await SharedPreferences.getInstance();
 
-    // Navigator.push(
-    //     context,
-    //     MaterialPageRoute(
-    //         builder: (context) => CovidTokenBookingFormPage(entity: entity)));
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => CovidTokenBookingFormPage(entity: entity)));
 
     // print('After showDialog:');
     // Navigator.push(

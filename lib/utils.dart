@@ -422,7 +422,8 @@ class Utils {
 
     Position pos;
     try {
-      pos = await getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+      pos = await Geolocator.getCurrentPosition(
+          desiredAccuracy: LocationAccuracy.high);
     } catch (e) {
       print(e);
     }
