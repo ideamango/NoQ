@@ -233,3 +233,72 @@ class FormInputFieldAttachment extends Field {
     return numberField;
   }
 }
+
+class FormInputFieldDateTime extends Field {
+  DateTime responseDateTime;
+
+  FormInputFieldDateTime(
+    String label,
+    bool isMandatory,
+    String infoMessage,
+  ) {
+    this.label = label;
+    this.isMandatory = isMandatory;
+    this.infoMessage = infoMessage;
+    this.type = "DATETIME";
+  }
+
+  Map<String, dynamic> toJson() => {
+        'id': id,
+        'label': label,
+        'isMandatory': isMandatory,
+        "infoMessage": infoMessage,
+        'type': type,
+        'responseDateTime': responseDateTime.millisecondsSinceEpoch
+      };
+
+  static FormInputFieldDateTime fromJson(Map<String, dynamic> json) {
+    if (json == null) return null;
+    FormInputFieldDateTime numberField = FormInputFieldDateTime(
+        json['label'], json['isMandatory'], json['infoMessage']);
+
+    numberField.id = json['id'];
+    numberField.responseDateTime =
+        DateTime.fromMillisecondsSinceEpoch(json['responseDateTime']);
+
+    return numberField;
+  }
+}
+
+class FormInputFieldPhone extends Field {
+  String responsePhone;
+  String
+      countryCode; //e.g. +91, this is to be set while creating the field in the booking form
+
+  FormInputFieldPhone(String label, bool isMandatory, String infoMessage) {
+    this.label = label;
+    this.isMandatory = isMandatory;
+    this.infoMessage = infoMessage;
+    this.type = "DATETIME";
+  }
+
+  Map<String, dynamic> toJson() => {
+        'id': id,
+        'label': label,
+        'isMandatory': isMandatory,
+        "infoMessage": infoMessage,
+        'type': type,
+        'responsePhone': responsePhone
+      };
+
+  static FormInputFieldPhone fromJson(Map<String, dynamic> json) {
+    if (json == null) return null;
+    FormInputFieldPhone numberField = FormInputFieldPhone(
+        json['label'], json['isMandatory'], json['infoMessage']);
+
+    numberField.id = json['id'];
+    numberField.responsePhone = json['responsePhone'];
+
+    return numberField;
+  }
+}
