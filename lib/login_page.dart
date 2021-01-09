@@ -1,4 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -304,6 +305,20 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   void submitForm() {
+    // FirebaseApp secondaryApp = Firebase.app('SecondaryFirebaseApp');
+
+    // FirebaseAuth auth = FirebaseAuth.instanceFor(app: secondaryApp);
+
+    // auth.verifyPhoneNumber(
+    //   phoneNumber: '+918787878787',
+    //   codeSent: (String verificationId, int resendToken) {
+    //     print(">>>>>>>DONE");
+    //   },
+    //   verificationCompleted: (PhoneAuthCredential credential) {},
+    //   verificationFailed: (FirebaseAuthException e) {},
+    //   codeAutoRetrievalTimeout: (String verificationId) {},
+    // );
+
     if (_loginPageFormKey.currentState.validate()) {
       _errorMsg = null;
       _loginPageFormKey.currentState.save();

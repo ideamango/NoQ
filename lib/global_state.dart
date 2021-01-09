@@ -58,6 +58,20 @@ class GlobalState {
     String storageBucket;
     String dbUrl;
 
+    await Firebase.initializeApp(
+        name: 'SecondaryFirebaseApp',
+        options: const FirebaseOptions(
+          appId: '1:166667469482:ios:bcaebbe8fae4c8c2e9c6d3',
+          apiKey: 'AIzaSyCPpwlp3gnK1uGSFS55vtj_ln89Nk4f6jg',
+          messagingSenderId: '166667469482',
+          projectId: 'awesomenoq',
+          iosBundleId: 'net.lesss',
+          androidClientId:
+              '166667469482-fjai5a1piepdp0tlr05hqrhl7clrq727.apps.googleusercontent.com',
+          iosClientId:
+              '166667469482-fjai5a1piepdp0tlr05hqrhl7clrq727.apps.googleusercontent.com',
+        ));
+
     for (FirebaseApp app in Firebase.apps) {
       if (app.name == "SecondaryFirebaseApp") {
         _gs._secondaryFirebaseApp = app;

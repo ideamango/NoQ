@@ -9,7 +9,7 @@ import Firebase
     _ application: UIApplication,
     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
   ) -> Bool {
-    FirebaseApp.configure()
+     FirebaseApp.configure()
 
     // FirebaseApp.app()?.delete({ (success) in
 
@@ -19,8 +19,8 @@ import Firebase
     // guard let fileopts = FirebaseOptions(contentsOfFile: filePath!)
     //   else { assert(false, "Couldn't load config file") }
     // FirebaseApp.configure(name: "SecondaryFirebaseApp", options: fileopts)
-    // // [END default_configure_file   
-  
+    // // [END default_configure_file
+
 
     // guard let defapp = FirebaseApp.app(name: "SecondaryFirebaseApp")
     //   else { assert(false, "Could not retrieve default app") }
@@ -62,12 +62,15 @@ import Firebase
     return false
   } 
 
-  // override func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable : Any], fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
-  //   let firebaseAuth = Auth.auth()
-  //   if (firebaseAuth.canHandleNotification(userInfo)){
-  //       print(userInfo)
-  //       return
-  //   }
-  // }
+  override func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable : Any], fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
+    let firebaseApp = FirebaseApp.app(name: "SecondaryFirebaseApp");
+    
+    // let firebaseAuth = Auth.auth(app: FirebaseApp.app(name: "SecondaryFirebaseApp"));
+
+    // if (firebaseAuth.canHandleNotification(userInfo)){
+    //     print(">>>>>>>userInfo", userInfo);
+    //     return;
+    // }
+  }
 
 }
