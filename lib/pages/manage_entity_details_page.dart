@@ -160,7 +160,7 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
   bool isActive = false;
   bool isBookable = false;
   Position pos;
-  GlobalState _gState;
+  GlobalState _gs;
   String _phCountryCode;
   bool setActive = false;
   //final Geolocator geolocator = Geolocator()..forceAndroidLocationManager;
@@ -604,8 +604,8 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
   ///
 
   Future<void> getGlobalState() async {
-    _gState = await GlobalState.getGlobalState();
-    _phCountryCode = _gState.getConfigurations().phCountryCode;
+    _gs = await GlobalState.getGlobalState();
+    _phCountryCode = _gs.getConfigurations().phCountryCode;
   }
 
   initializeEntity() async {
@@ -714,7 +714,7 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
         });
       }
 
-      AppUser currUser = _gState.getCurrentUser();
+      AppUser currUser = _gs.getCurrentUser();
       Map<String, String> adminMap = Map<String, String>();
       EntityPrivate entityPrivateList;
       entityPrivateList = await fetchAdmins(entity.entityId);
@@ -1989,7 +1989,7 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
                       Colors.red);
                 } else {
                   //Update gs
-                  _gState.updateMetaEntity(entity.getMetaEntity());
+                  _gs.updateMetaEntity(entity.getMetaEntity());
 
                   Utils.showMyFlushbar(
                       context,
@@ -3737,7 +3737,7 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
                                                 if (_delEnabled) {
                                                   deleteEntity(entity.entityId)
                                                       .whenComplete(() {
-                                                    _gState.removeEntity(
+                                                    _gs.removeEntity(
                                                         entity.entityId);
                                                     Navigator.pop(context);
                                                     Navigator.of(context).push(

@@ -168,7 +168,7 @@ class _ManageChildEntityDetailsPageState
   bool isAnythingChanged = false;
   Position pos;
   bool _initCompleted = false;
-  GlobalState _gState;
+  GlobalState _gs;
   String _phCountryCode;
 
   final itemSize = 80.0;
@@ -230,8 +230,8 @@ class _ManageChildEntityDetailsPageState
   }
 
   Future<void> getGlobalState() async {
-    _gState = await GlobalState.getGlobalState();
-    _phCountryCode = _gState.getConfigurations().phCountryCode;
+    _gs = await GlobalState.getGlobalState();
+    _phCountryCode = _gs.getConfigurations().phCountryCode;
   }
 
   initializeEntity() async {
@@ -385,7 +385,7 @@ class _ManageChildEntityDetailsPageState
         });
       }
 
-      AppUser currUser = _gState.getCurrentUser();
+      AppUser currUser = _gs.getCurrentUser();
       Map<String, String> adminMap = Map<String, String>();
       EntityPrivate entityPrivateList;
       entityPrivateList = await fetchAdmins(serviceEntity.entityId);
@@ -723,9 +723,7 @@ class _ManageChildEntityDetailsPageState
       print("Saved formmmmmmm");
       serviceEntity.regNum = _regNumController.text;
 
-      _gState
-          .putEntity(serviceEntity, true, serviceEntity.parentId)
-          .then((value) {
+      _gs.putEntity(serviceEntity, true, serviceEntity.parentId).then((value) {
         if (value) {
           Navigator.of(context).push(PageAnimation.createRoute(
               ManageChildEntityListPage(entity: this.serviceEntity)));
@@ -1769,7 +1767,7 @@ class _ManageChildEntityDetailsPageState
 
         _serviceDetailsFormKey.currentState.save();
         serviceEntity.regNum = _regNumController.text;
-        _gState
+        _gs
             .putEntity(serviceEntity, true, serviceEntity.parentId)
             .then((value) {
           if (value) {
@@ -1787,7 +1785,7 @@ class _ManageChildEntityDetailsPageState
                     "Please verify the details and try again.",
                     Colors.red);
               } else {
-                _gState.updateMetaEntity(serviceEntity.getMetaEntity());
+                _gs.updateMetaEntity(serviceEntity.getMetaEntity());
                 Utils.showMyFlushbar(
                     context,
                     Icons.check,
@@ -1841,7 +1839,7 @@ class _ManageChildEntityDetailsPageState
     backRoute() {
       //Navigator.of(context).pop();
       Entity parentEn;
-      _gState.getEntity(serviceEntity.parentId).then((value) {
+      _gs.getEntity(serviceEntity.parentId).then((value) {
         parentEn = value.item1;
         if (parentEn != null)
           Navigator.push(
@@ -3521,14 +3519,14 @@ class _ManageChildEntityDetailsPageState
                                                 deleteEntity(
                                                         serviceEntity.entityId)
                                                     .whenComplete(() {
-                                                  _gState
+                                                  _gs
                                                       .getEntity(parentEntityId)
                                                       .then((value) => {
                                                             parentEntity =
                                                                 value.item1
                                                           })
                                                       .whenComplete(() {
-                                                    _gState.removeEntity(
+                                                    _gs.removeEntity(
                                                         serviceEntity.entityId);
                                                     Navigator.pop(context);
                                                     Navigator.push(

@@ -59,8 +59,8 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
   bool _showProgressInd = false;
 
   String title = "Book Slot";
-  GlobalState _state;
-  bool _gStateInitFinished = false;
+  GlobalState _gs;
+  bool _gsInitFinished = false;
   MetaEntity metaEn;
   MetaEntity entity;
   Entity parentEntity;
@@ -113,8 +113,8 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
   }
 
   Future<void> getGlobalState() async {
-    _state = await GlobalState.getGlobalState();
-    _gStateInitFinished = true;
+    _gs = await GlobalState.getGlobalState();
+    _gsInitFinished = true;
   }
 
   Widget _noSlotsPage(String msg) {
@@ -124,7 +124,7 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
       home: WillPopScope(
         child: Scaffold(
           drawer: CustomDrawer(
-            phone: _state.getCurrentUser().ph,
+            phone: _gs.getCurrentUser().ph,
           ),
           appBar: CustomAppBar(
             titleTxt: title,
@@ -147,7 +147,7 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
   }
 
   Future<Entity> getEntityDetails(String id) async {
-    var tup = await _state.getEntity(id);
+    var tup = await _gs.getEntity(id);
     if (tup != null) {
       return tup.item1;
     }
@@ -200,7 +200,7 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
           home: WillPopScope(
             child: Scaffold(
               drawer: CustomDrawer(
-                phone: _state.getCurrentUser().ph,
+                phone: _gs.getCurrentUser().ph,
               ),
               appBar: CustomAppBarWithBackButton(
                   titleTxt: _storeName, backRoute: backRoute),
@@ -493,10 +493,10 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
   }
 
   bool isBooked(DateTime dateTime, String entityId) {
-    for (int i = 0; i < _state.bookings.length; i++) {
-      if (_state.bookings[i].entityId == entityId &&
-          _state.bookings[i].dateTime == dateTime) {
-        if (_state.bookings[i].number != -1) return true;
+    for (int i = 0; i < _gs.bookings.length; i++) {
+      if (_gs.bookings[i].entityId == entityId &&
+          _gs.bookings[i].dateTime == dateTime) {
+        if (_gs.bookings[i].number != -1) return true;
       }
     }
     return false;
@@ -593,7 +593,7 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
   }
 
   void bookSlot() {
-    _state.initializeNotification();
+    _gs.initializeNotification();
 
     Utils.showMyFlushbar(
         context,

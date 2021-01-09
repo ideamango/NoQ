@@ -9,6 +9,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:noq/constants.dart';
 import 'package:noq/db/db_model/address.dart';
+import 'package:noq/db/db_model/booking_application.dart';
 import 'package:noq/db/db_model/booking_form.dart';
 import 'package:noq/db/db_model/employee.dart';
 import 'package:noq/db/db_model/entity.dart';
@@ -18,6 +19,7 @@ import 'package:noq/db/db_model/my_geo_fire_point.dart';
 import 'package:noq/db/db_model/app_user.dart';
 import 'package:noq/db/db_service/user_service.dart';
 import 'package:noq/db/db_model/offer.dart';
+import 'package:noq/enum/application_status.dart';
 import 'package:noq/enum/entity_type.dart';
 import 'package:noq/events/event_bus.dart';
 import 'package:noq/events/events.dart';
@@ -70,7 +72,6 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage> {
   bool _bookExpandClick = false;
   // Color _color = Colors.green;
   BorderRadiusGeometry _borderRadius = BorderRadius.circular(5);
-  bool _autoValidateWhatsapp = false;
 
   final String title = "Managers Form";
 
@@ -85,21 +86,14 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage> {
   TextEditingController _nameController = TextEditingController();
   TextEditingController _descController = TextEditingController();
   TextEditingController _regNumController = TextEditingController();
-  TextEditingController _closeTimeController = TextEditingController();
-  TextEditingController _openTimeController = TextEditingController();
-  TextEditingController _breakStartController = TextEditingController();
-  TextEditingController _breakEndController = TextEditingController();
 
-  TextEditingController _maxPeopleController = TextEditingController();
   TextEditingController _primaryPhoneController = TextEditingController();
   TextEditingController _alternatePhoneController = TextEditingController();
 
   TextEditingController _gpayPhoneController = TextEditingController();
   TextEditingController _paytmPhoneController = TextEditingController();
 
-  TextEditingController _offerMessageController = TextEditingController();
-  TextEditingController _offerCouponController = TextEditingController();
-  TextEditingController _startDateController = TextEditingController();
+  TextEditingController _dateOfBirthController = TextEditingController();
   TextEditingController _endDateController = TextEditingController();
 
   TextEditingController _slotDurationController = TextEditingController();
@@ -127,14 +121,8 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage> {
 
   Employee cp1 = new Employee();
   Address adrs = new Address();
-  MetaEntity _metaEntity;
-  Entity entity;
 
-  List<Employee> contactList = new List<Employee>();
-  List<String> adminsList = new List<String>();
-  List<Widget> contactRowWidgets = new List<Widget>();
-  List<Widget> contactRowWidgetsNew = new List<Widget>();
-  List<Widget> adminRowWidgets = new List<Widget>();
+  Entity entity;
 
   ScrollController _scrollController;
   final itemSize = 80.0;
@@ -161,7 +149,7 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage> {
   bool isActive = false;
   bool isBookable = false;
   Position pos;
-  GlobalState _gState;
+  GlobalState _gs;
   String _phCountryCode;
   bool setActive = false;
   //final Geolocator geolocator = Geolocator()..forceAndroidLocationManager;
@@ -169,21 +157,10 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage> {
   ///from contact page
   bool _isValid = false;
   Employee contact;
-  TextEditingController _ctNameController = TextEditingController();
-  TextEditingController _ctEmpIdController = TextEditingController();
-  TextEditingController _ctPhn1controller = TextEditingController();
-  TextEditingController _ctPhn2controller = TextEditingController();
-  TextEditingController _ctAvlFromTimeController = TextEditingController();
-  TextEditingController _ctAvlTillTimeController = TextEditingController();
 
   final GlobalKey<FormFieldState> phn1Key = new GlobalKey<FormFieldState>();
   final GlobalKey<FormFieldState> phn2Key = new GlobalKey<FormFieldState>();
 
-  List<String> _ctDaysOff;
-
-  List<days> _ctClosedOnDays;
-  Entity _entity;
-  List<Employee> _list;
   Eventify.Listener removeManagerListener;
   List<String> idProofTypesStrList = List<String>();
   List<Item> idProofTypes = List<Item>();
@@ -193,6 +170,8 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage> {
   File _image; // Used only if you need a single picture
   String _downloadUrl;
   BookingForm bookingForm;
+  List<Field> fields;
+  BookingApplication bookingApplication;
   FormInputFieldText nameInput;
 
   ///end of fields from contact page
@@ -201,8 +180,20 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage> {
   void initState() {
     _scrollController = ScrollController();
     super.initState();
+    entity = this.widget.entity;
 
-    initBookingForm();
+    getGlobalState().whenComplete(() {
+      initializeEntity().whenComplete(() {
+        initBookingForm();
+        setState(() {
+          _initCompleted = true;
+        });
+      });
+    });
+  }
+
+  initBookingForm() {
+    fields = List<Field>();
     idProofTypesStrList.add('Passport');
     idProofTypesStrList.add('Driving License');
     idProofTypesStrList.add('Aadhar');
@@ -230,53 +221,71 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage> {
     medConditionsStrList.forEach((element) {
       medConditions.add(Item(element, false));
     });
-
-    entity = this.widget.entity;
-    getGlobalState().whenComplete(() {
-      initializeEntity().whenComplete(() {
-        setState(() {
-          _initCompleted = true;
-        });
-      });
-    });
-
-    removeManagerListener = EventBus.registerEvent(
-        MANAGER_REMOVED_EVENT, null, this.refreshOnManagerRemove);
-  }
-
-  initBookingForm() {
-    List<Field> fields = List<Field>();
-
-    nameInput = FormInputFieldText(
-        "Name", true, "Please enter your name as per Government ID proof", 50);
-
+    nameInput = FormInputFieldText("Name of Person", true,
+        "Please enter your name as per Government ID proof", 50);
     fields.add(nameInput);
-
-    FormInputFieldNumber ageInput =
-        FormInputFieldNumber("Age", true, "Please enter your age", 0, 120);
-
-    fields.add(ageInput);
-
+    // FormInputFieldDate dobInput = FormInputFieldDate(
+    //   "Select Date of Birth",
+    //   true,
+    //   "Please select your Date of Birth",
+    // );
+    // fields.add(dobInput);
+    FormInputFieldText primaryPhone = FormInputFieldText(
+        "Primary Contact Number", true, "Primary Contact Number", 10);
+    fields.add(primaryPhone);
+    FormInputFieldText alternatePhone = FormInputFieldText(
+        "Primary Contact Number", false, "Primary Contact Number", 10);
+    fields.add(alternatePhone);
+    FormInputFieldOptions idProofTypeInput = FormInputFieldOptions(
+        "Id Proof Type",
+        true,
+        "Please select a Government Id proof",
+        idProofTypesStrList,
+        false);
+    fields.add(idProofTypeInput);
+    FormInputFieldText idProofUrlInput = FormInputFieldText(
+        "Id Proof File Url", true, "Please upload Government Id proof", 200);
+    fields.add(idProofUrlInput);
     FormInputFieldOptions healthDetailsInput = FormInputFieldOptions(
         "Medical Conditions",
         true,
         "Please select all known medical conditions you have",
-        [
-          'Chronic kidney disease',
-          'Chronic lung disease',
-          'Diabetes',
-          'Heart Conditions',
-          'Other Cardiovascular and Cerebrovascular Diseases',
-          "Hemoglobin disorders",
-          "HIV or weakened Immune System",
-          "Liver disease",
-          "Neurologic conditions such as dementia",
-          "Overweight and Severe Obesity",
-          "Pregnancy"
-        ],
+        medConditionsStrList,
         true);
-
     fields.add(healthDetailsInput);
+    FormInputFieldText healthDetailsDesc = FormInputFieldText(
+        "Decription of medical conditions (optional)",
+        true,
+        "Decription of medical conditions (optional)",
+        200);
+    fields.add(healthDetailsDesc);
+    FormInputFieldText latInput = FormInputFieldText(
+        "Current Location Latitude", false, "Current Location Latitude", 20);
+    fields.add(latInput);
+    FormInputFieldText lonInput = FormInputFieldText(
+        "Current Location Longitude", false, "Current Location Longitude", 20);
+    fields.add(lonInput);
+    FormInputFieldText addressInput = FormInputFieldText(
+        "Apartment/ House No./ Lane", false, "Apartment/ House No./ Lane", 60);
+    fields.add(addressInput);
+    FormInputFieldText addresslandmark =
+        FormInputFieldText("Landmark", false, "Landmark", 40);
+    fields.add(addresslandmark);
+    FormInputFieldText addressLocality =
+        FormInputFieldText("Locality", false, "Locality", 40);
+    fields.add(addressLocality);
+    FormInputFieldText addressCity =
+        FormInputFieldText("City", false, "City", 30);
+    fields.add(addressCity);
+    FormInputFieldText addressState =
+        FormInputFieldText("State", false, "State", 30);
+    fields.add(addressState);
+    FormInputFieldText addressCountry =
+        FormInputFieldText("Country", false, "Country", 30);
+    fields.add(addressCountry);
+    FormInputFieldText notesInput =
+        FormInputFieldText("Notes (optional)", false, "Notes (optional)", 100);
+    fields.add(notesInput);
 
     bookingForm = new BookingForm(
         formName: "Covid-19 Vacination Applicant Details",
@@ -285,13 +294,24 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage> {
         footerMsg: "",
         formFields: fields,
         autoApproved: true);
+
+    bookingApplication = new BookingApplication();
+    bookingApplication.entityId = entity.entityId;
+    bookingApplication.userId = _gs.getCurrentUser().id;
+    bookingApplication.status = ApplicationStatus.NEW;
+    bookingApplication.responseForm = bookingForm;
   }
 
   @override
   void dispose() {
     super.dispose();
-    print("dispose called for child entity");
-    EventBus.unregisterEvent(removeManagerListener);
+    _nameController.dispose();
+    _descController.dispose();
+    _primaryPhoneController.dispose();
+    _alternatePhoneController.dispose();
+    _dateOfBirthController.dispose();
+    _primaryPhoneController.dispose();
+    _primaryPhoneController.dispose();
   }
 
   String validateMandatoryFields(String value) {
@@ -301,6 +321,13 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage> {
     } else
       retVal = null;
     return retVal;
+  }
+
+  bool validateIdProof() {
+    if (_downloadUrl == null)
+      return false;
+    else
+      return true;
   }
 
   Future getImage(bool gallery) async {
@@ -337,7 +364,7 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage> {
   }
 
   Future<String> uploadFile(File image) async {
-    Reference ref = _gState.firebaseStorage.ref().child('idProofs/');
+    Reference ref = _gs.firebaseStorage.ref().child('idProofs/');
 
     await ref.putFile(_image);
 
@@ -345,532 +372,13 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage> {
 
     return await ref.getDownloadURL();
   }
-  // variable to hold image to be displayed
-
-//method to load image and update `uploadedImage`
-
-  void refreshOnManagerRemove(event, args) {
-    setState(() {
-      //  contactRowWidgets.removeWhere((element) => element)
-      print("Inside remove Manage");
-      contactRowWidgets.clear();
-      contactRowWidgets.add(showCircularProgress());
-    });
-    //refreshContacts();
-    processRefreshContactsWithTimer();
-    print("printing event.eventData");
-    print("In parent page" + event.eventData);
-    print(event.eventData);
-  }
-
-  processRefreshContactsWithTimer() async {
-    var duration = new Duration(seconds: 1);
-    return new Timer(duration, refreshContacts);
-  }
-
-  refreshContacts() {
-    List<Widget> newList = new List<Widget>();
-    for (int i = 0; i < contactList.length; i++) {
-      newList.add(new ContactRow(
-        contact: contactList[i],
-        entity: entity,
-        list: contactList,
-      ));
-    }
-    setState(() {
-      contactRowWidgets.clear();
-      contactRowWidgets.addAll(newList);
-    });
-    entity.managers = contactList;
-  }
-
-  ///from contact page
-  void initializeContactDetails() {
-    if (contact != null) {
-      _ctNameController.text = contact.name;
-      _ctEmpIdController.text = contact.employeeId;
-      _ctPhn1controller.text =
-          contact.ph != null ? contact.ph.substring(3) : "";
-      _ctPhn2controller.text =
-          contact.altPhone != null ? contact.altPhone.substring(3) : "";
-      if (contact.shiftStartHour != null && contact.shiftStartMinute != null)
-        _ctAvlFromTimeController.text =
-            Utils.formatTime(contact.shiftStartHour.toString()) +
-                ':' +
-                Utils.formatTime(contact.shiftStartMinute.toString());
-      if (contact.shiftEndHour != null && contact.shiftEndMinute != null)
-        _ctAvlTillTimeController.text =
-            Utils.formatTime(contact.shiftEndHour.toString()) +
-                ':' +
-                Utils.formatTime(contact.shiftEndMinute.toString());
-      _ctDaysOff = (contact.daysOff) ?? new List<String>();
-    }
-    if (_daysOff.length == 0) {
-      _ctDaysOff.add('days.sunday');
-    }
-    _ctClosedOnDays = List<days>();
-    _ctClosedOnDays = Utils.convertStringsToDays(_ctDaysOff);
-
-    contact.isManager = true;
-  }
-
-  Widget buildContactItem(Employee contact) {
-    final ctNameField = TextFormField(
-      obscureText: false,
-      maxLines: 1,
-      minLines: 1,
-      style: textInputTextStyle,
-      keyboardType: TextInputType.text,
-      controller: _ctNameController,
-      decoration:
-          CommonStyle.textFieldStyle(labelTextStr: "Name", hintTextStr: ""),
-      validator: validateText,
-      onChanged: (String value) {
-        contact.name = value;
-      },
-      onSaved: (String value) {
-        contact.name = value;
-      },
-    );
-    final ctEmpIdField = TextFormField(
-      obscureText: false,
-      maxLines: 1,
-      minLines: 1,
-      style: textInputTextStyle,
-      keyboardType: TextInputType.text,
-      controller: _ctEmpIdController,
-      decoration: CommonStyle.textFieldStyle(
-          labelTextStr: "Employee Id", hintTextStr: ""),
-      validator: validateText,
-      onChanged: (String value) {
-        contact.employeeId = value;
-      },
-      onSaved: (String value) {
-        contact.employeeId = value;
-      },
-    );
-    final ctPhn1Field = TextFormField(
-      obscureText: false,
-      key: phn1Key,
-      maxLines: 1,
-      minLines: 1,
-      style: textInputTextStyle,
-      keyboardType: TextInputType.phone,
-      controller: _ctPhn1controller,
-      decoration: CommonStyle.textFieldStyle(
-          prefixText: '+91', labelTextStr: "Primary Phone", hintTextStr: ""),
-      validator: Utils.validateMobileField,
-      onChanged: (String value) {
-        phn1Key.currentState.validate();
-        contact.ph = "+91" + value;
-      },
-      onSaved: (value) {
-        contact.ph = "+91" + value;
-      },
-    );
-    final ctPhn2Field = TextFormField(
-      obscureText: false,
-      key: phn2Key,
-      maxLines: 1,
-      minLines: 1,
-      style: textInputTextStyle,
-      keyboardType: TextInputType.phone,
-      controller: _ctPhn2controller,
-      decoration: CommonStyle.textFieldStyle(
-          prefixText: '+91', labelTextStr: "Alternate Phone", hintTextStr: ""),
-      validator: Utils.validateMobileField,
-      onChanged: (String value) {
-        phn2Key.currentState.validate();
-        contact.altPhone = "+91" + value;
-      },
-      onSaved: (value) {
-        contact.altPhone = "+91" + value;
-      },
-    );
-    final ctAvlFromTimeField = TextFormField(
-      obscureText: false,
-      maxLines: 1,
-      readOnly: true,
-      minLines: 1,
-      style: textInputTextStyle,
-      controller: _ctAvlFromTimeController,
-      keyboardType: TextInputType.text,
-      onTap: () {
-        DatePicker.showTimePicker(context,
-            showTitleActions: true,
-            showSecondsColumn: false, onChanged: (date) {
-          print('change $date in time zone ' +
-              date.timeZoneOffset.inHours.toString());
-        }, onConfirm: (date) {
-          print('confirm $date');
-          //  String time = "${date.hour}:${date.minute} ${date.";
-
-          String time = DateFormat.Hm().format(date);
-          print(time);
-
-          _ctAvlFromTimeController.text = time.toLowerCase();
-          if (_ctAvlFromTimeController.text != "") {
-            List<String> time = _ctAvlFromTimeController.text.split(':');
-            contact.shiftStartHour = int.parse(time[0]);
-            contact.shiftStartMinute = int.parse(time[1]);
-          }
-        }, currentTime: DateTime.now());
-      },
-      decoration: InputDecoration(
-          // suffixIcon: IconButton(
-          //   icon: Icon(Icons.schedule),
-          //   onPressed: () {
-          //     DatePicker.showTime12hPicker(context, showTitleActions: true,
-          //         onChanged: (date) {
-          //       print('change $date in time zone ' +
-          //           date.timeZoneOffset.inHours.toString());
-          //     }, onConfirm: (date) {
-          //       print('confirm $date');
-          //       //  String time = "${date.hour}:${date.minute} ${date.";
-
-          //       String time = DateFormat.jm().format(date);
-          //       print(time);
-
-          //       _openTimeController.text = time.toLowerCase();
-          //     }, currentTime: DateTime.now());
-          //   },
-          // ),
-          labelText: "Available from",
-          hintText: "hh:mm 24 hour time format",
-          enabledBorder:
-              UnderlineInputBorder(borderSide: BorderSide(color: Colors.grey)),
-          focusedBorder: UnderlineInputBorder(
-              borderSide: BorderSide(color: Colors.orange))),
-      validator: validateTime,
-      onChanged: (String value) {
-        //TODO: test the values
-        List<String> time = value.split(':');
-        contact.shiftStartHour = int.parse(time[0]);
-        contact.shiftStartMinute = int.parse(time[1]);
-      },
-      onSaved: (String value) {
-        //TODO: test the values
-        List<String> time = value.split(':');
-        contact.shiftStartHour = int.parse(time[0]);
-        contact.shiftStartMinute = int.parse(time[1]);
-      },
-    );
-    final ctAvlTillTimeField = TextFormField(
-      enabled: true,
-      obscureText: false,
-      readOnly: true,
-      maxLines: 1,
-      minLines: 1,
-      controller: _ctAvlTillTimeController,
-      style: textInputTextStyle,
-      onTap: () {
-        DatePicker.showTimePicker(context,
-            showTitleActions: true,
-            showSecondsColumn: false, onChanged: (date) {
-          print('change $date in time zone ' +
-              date.timeZoneOffset.inHours.toString());
-        }, onConfirm: (date) {
-          print('confirm $date');
-          //  String time = "${date.hour}:${date.minute} ${date.";
-
-          String time = DateFormat.Hm().format(date);
-          print(time);
-
-          _ctAvlTillTimeController.text = time.toLowerCase();
-          if (_ctAvlTillTimeController.text != "") {
-            List<String> time = _ctAvlTillTimeController.text.split(':');
-            contact.shiftEndHour = int.parse(time[0]);
-            contact.shiftEndMinute = int.parse(time[1]);
-          }
-        }, currentTime: DateTime.now());
-      },
-      decoration: InputDecoration(
-          labelText: "Available till",
-          hintText: "hr:mm 24 hour time format",
-          enabledBorder:
-              UnderlineInputBorder(borderSide: BorderSide(color: Colors.grey)),
-          focusedBorder: UnderlineInputBorder(
-              borderSide: BorderSide(color: Colors.orange))),
-      validator: validateTime,
-      onChanged: (String value) {
-        //TODO: test the values
-        List<String> time = value.split(':');
-        contact.shiftEndHour = int.parse(time[0]);
-        contact.shiftEndMinute = int.parse(time[1]);
-      },
-      onSaved: (String value) {},
-    );
-    final ctDaysOffField = Padding(
-      padding: EdgeInsets.only(top: 12, bottom: 8),
-      child: Row(
-        children: <Widget>[
-          Text(
-            'Days off ',
-            style: TextStyle(
-              color: Colors.grey[600],
-              // fontWeight: FontWeight.w800,
-              fontFamily: 'Monsterrat',
-              letterSpacing: 0.5,
-              fontSize: 15.0,
-              //height: 2,
-            ),
-            textAlign: TextAlign.left,
-          ),
-          SizedBox(width: 5),
-          new WeekDaySelectorFormField(
-            displayDays: [
-              days.monday,
-              days.tuesday,
-              days.wednesday,
-              days.thursday,
-              days.friday,
-              days.saturday,
-              days.sunday
-            ],
-            initialValue: _ctClosedOnDays,
-            borderRadius: 20,
-            elevation: 10,
-            textStyle: buttonXSmlTextStyle,
-            fillColor: Colors.blueGrey[400],
-            selectedFillColor: highlightColor,
-            boxConstraints: BoxConstraints(
-                minHeight: 25, minWidth: 25, maxHeight: 28, maxWidth: 28),
-            borderSide: BorderSide(color: Colors.white, width: 0),
-            language: lang.en,
-            onChange: (days) {
-              print("Days off: " + days.toString());
-              _ctDaysOff.clear();
-              days.forEach((element) {
-                var day = element.toString().substring(5);
-                _ctDaysOff.add(day);
-              });
-              contact.daysOff = _ctDaysOff;
-              print(_ctDaysOff.length);
-              print(_ctDaysOff.toString());
-            },
-          ),
-        ],
-      ),
-    );
-
-    return Card(
-      child: Theme(
-        data: ThemeData(
-          unselectedWidgetColor: Colors.black,
-          accentColor: highlightColor,
-        ),
-        child: ExpansionTile(
-          //key: PageStorageKey(this.widget.headerTitle),
-          initiallyExpanded: false,
-          title: Text(
-            (contact.name != null && contact.name != "")
-                ? contact.name
-                : "Manager",
-            style: TextStyle(color: Colors.blueGrey[700], fontSize: 17),
-          ),
-
-          backgroundColor: Colors.white,
-          leading: IconButton(
-              icon: Icon(Icons.person, color: Colors.blueGrey[300], size: 20),
-              onPressed: () {
-                // contact.isManager = false;
-              }),
-          children: <Widget>[
-            Container(
-              color: Colors.cyan[50],
-              padding: EdgeInsets.only(left: 2.0, right: 2),
-              // decoration: BoxDecoration(
-              //     // border: Border.all(color: containerColor),
-              //     color: Colors.white,
-              //     shape: BoxShape.rectangle,
-              //     borderRadius: BorderRadius.all(Radius.circular(5.0))),
-              // padding: EdgeInsets.all(5.0),
-
-              child: new Form(
-                //  autovalidate: _autoValidate,
-                child: ListTile(
-                  title: Column(
-                    children: <Widget>[
-                      ctNameField,
-                      ctEmpIdField,
-                      ctPhn1Field,
-                      ctPhn2Field,
-                      ctDaysOffField,
-                      Divider(
-                        thickness: .7,
-                        color: Colors.grey[600],
-                      ),
-                      ctAvlFromTimeField,
-                      ctAvlTillTimeField,
-                      RaisedButton(
-                          color: btnColor,
-                          child: Text(
-                            "Remove",
-                            style: buttonMedTextStyle,
-                          ),
-                          onPressed: () {
-                            String removeThisId;
-                            for (int i = 0; i < _entity.managers.length; i++) {
-                              if (_entity.managers[i].id == contact.id) {
-                                removeThisId = contact.id;
-                                print(_entity.managers[i].id);
-                                break;
-                              }
-                            }
-                            if (removeThisId != null) {
-                              setState(() {
-                                contact = null;
-                                _entity.managers.removeWhere(
-                                    (element) => element.id == removeThisId);
-                                _list.removeWhere(
-                                    (element) => element.id == removeThisId);
-                              });
-                            }
-                          })
-                    ],
-                  ),
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  ///end from contact page
-  ///
 
   Future<void> getGlobalState() async {
-    _gState = await GlobalState.getGlobalState();
-    _phCountryCode = _gState.getConfigurations().phCountryCode;
+    _gs = await GlobalState.getGlobalState();
+    _phCountryCode = _gs.getConfigurations().phCountryCode;
   }
 
-  initializeEntity() async {
-    if (entity != null) {
-      isPublic = (entity.isPublic) ?? false;
-      isBookable = (entity.isBookable) ?? false;
-      isActive = (entity.isActive) ?? false;
-
-      if (entity.offer != null) {
-        insertOffer = entity.offer;
-        _offerMessageController.text =
-            entity.offer.message != null ? entity.offer.message.toString() : "";
-        _offerCouponController.text =
-            entity.offer.coupon != null ? entity.offer.coupon.toString() : "";
-
-        _startDateController.text = entity.offer.startDateTime != null
-            ? entity.offer.startDateTime.day.toString() +
-                " / " +
-                entity.offer.startDateTime.month.toString() +
-                " / " +
-                entity.offer.startDateTime.year.toString()
-            : "";
-        _endDateController.text = entity.offer.endDateTime != null
-            ? entity.offer.endDateTime.day.toString() +
-                " / " +
-                entity.offer.endDateTime.month.toString() +
-                " / " +
-                entity.offer.endDateTime.year.toString()
-            : "";
-      }
-
-      if (isActive) {
-        validateField = true;
-        _autoValidate = true;
-      }
-      _nameController.text = entity.name;
-      _descController.text = (entity.description);
-
-      if (entity.startTimeHour != null && entity.startTimeMinute != null)
-        _openTimeController.text =
-            Utils.formatTime(entity.startTimeHour.toString()) +
-                ':' +
-                Utils.formatTime(entity.startTimeMinute.toString());
-      if (entity.endTimeHour != null && entity.endTimeMinute != null)
-        _closeTimeController.text =
-            Utils.formatTime(entity.endTimeHour.toString()) +
-                ':' +
-                Utils.formatTime(entity.endTimeMinute.toString());
-      if (entity.breakStartHour != null && entity.breakStartMinute != null)
-        _breakStartController.text =
-            Utils.formatTime(entity.breakStartHour.toString()) +
-                ':' +
-                Utils.formatTime(entity.breakStartMinute.toString());
-      if (entity.breakEndHour != null && entity.breakEndMinute != null)
-        _breakEndController.text =
-            Utils.formatTime(entity.breakEndHour.toString()) +
-                ':' +
-                Utils.formatTime(entity.breakEndMinute.toString());
-
-      if (entity.closedOn != null) {
-        if (entity.closedOn.length != 0)
-          _daysOff = Utils.convertStringsToDays(entity.closedOn);
-      }
-      if (_daysOff.length == 0) {
-        _closedOnDays.add('days.sunday');
-        _daysOff = Utils.convertStringsToDays(_closedOnDays);
-      }
-      _slotDurationController.text =
-          entity.slotDuration != null ? entity.slotDuration.toString() : "";
-      _advBookingInDaysController.text =
-          entity.advanceDays != null ? entity.advanceDays.toString() : "";
-      if (entity.maxAllowed != null)
-        _maxPeopleController.text =
-            (entity.maxAllowed != null) ? entity.maxAllowed.toString() : "";
-      _primaryPhoneController.text = entity.whatsapp != null
-          ? entity.whatsapp.toString().substring(3)
-          : "";
-      _alternatePhoneController.text =
-          entity.phone != null ? entity.phone.toString().substring(3) : "";
-      _gpayPhoneController.text =
-          entity.gpay != null ? entity.gpay.toString().substring(3) : "";
-      _paytmPhoneController.text =
-          entity.paytm != null ? entity.paytm.toString().substring(3) : "";
-
-      if (entity.coordinates != null) {
-        _latController.text = entity.coordinates.geopoint.latitude.toString();
-        _lonController.text = entity.coordinates.geopoint.longitude.toString();
-      }
-
-      //address
-      if (entity.address != null) {
-        _adrs1Controller.text = entity.address.address;
-        _localityController.text = entity.address.locality;
-        _landController.text = entity.address.landmark;
-        _cityController.text = entity.address.city;
-        _stateController.text = entity.address.state;
-        _countryController.text = entity.address.country;
-        _pinController.text = entity.address.zipcode;
-      }
-      //contact person
-      if (!(Utils.isNullOrEmpty(entity.managers))) {
-        contactList = entity.managers;
-        contactList.forEach((element) {
-          contactRowWidgets.add(new ContactRow(
-              contact: element, entity: entity, list: contactList));
-        });
-      }
-
-      AppUser currUser = _gState.getCurrentUser();
-      Map<String, String> adminMap = Map<String, String>();
-      EntityPrivate entityPrivateList;
-      entityPrivateList = await fetchAdmins(entity.entityId);
-      if (entityPrivateList != null) {
-        adminMap = entityPrivateList.roles;
-        if (adminMap != null)
-          adminMap.forEach((k, v) {
-            if (currUser.ph != k) adminsList.add(k);
-          });
-        _regNumController.text = entityPrivateList.registrationNumber;
-      }
-    }
-
-    entity.address = (entity.address) ?? new Address();
-    contactList = contactList ?? new List<Employee>();
-
-    //  _ctNameController.text = entity.contactPersons[0].perName;
-  }
+  initializeEntity() async {}
 
   String validateText(String value) {
     if (validateField) {
@@ -931,62 +439,28 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage> {
     }
   }
 
-  void _addNewContactRow() {
-    Employee contact = new Employee();
-    var uuid = new Uuid();
-    contact.id = uuid.v1();
-    contactList.add(contact);
-
-    List<Widget> newList = new List<Widget>();
-    for (int i = 0; i < contactList.length; i++) {
-      newList.add(new ContactRow(
-        contact: contactList[i],
-        entity: entity,
-        list: contactList,
-      ));
-    }
-    setState(() {
-      contactRowWidgets.clear();
-      contactRowWidgets.addAll(newList);
-      entity.managers = contactList;
-      // _contactCount = _contactCount + 1;
-    });
-  }
-
-  void addNewAdminRow() {
-    setState(() {
-      adminsList.add("Admin");
-    });
-  }
-
-  void saveNewAdminRow(String newAdmPh) {
-    setState(() {
-      adminsList.forEach((element) {
-        if (element.compareTo(newAdmPh) != 0) adminsList.add(newAdmPh);
-      });
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     if (_initCompleted) {
       //Basic details field
       final nameField = TextFormField(
         obscureText: false,
+        //TODO: Add maxlength = 50
         maxLines: 1,
         minLines: 1,
         style: textInputTextStyle,
         controller: _nameController,
         keyboardType: TextInputType.text,
         decoration: CommonStyle.textFieldStyle(
-            labelTextStr: "Name of Person", hintTextStr: ""),
-        validator: validateText,
+            labelTextStr: "Name of Person",
+            hintTextStr: "Please enter your name as per Government ID proof"),
+        validator: validateMandatoryFields,
         onChanged: (String value) {
           //SAVEDATA
           //  entity.name = value;
         },
         onSaved: (String value) {
-          // nameInput.response = value;
+          nameInput.response = value;
         },
       );
 
@@ -997,12 +471,13 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage> {
         controller: _descController,
         decoration: CommonStyle.textFieldStyle(
             labelTextStr: "Notes (optional)", hintTextStr: ""),
-        validator: (value) {
-          if (!validateField)
-            return validateText(value);
-          else
-            return null;
-        },
+        //No validation required, nonmandatory field
+        // validator: (value) {
+        //   if (!validateField)
+        //     return validateText(value);
+        //   else
+        //     return null;
+        // },
         keyboardType: TextInputType.multiline,
         maxLength: null,
         maxLines: 3,
@@ -1160,6 +635,62 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage> {
         },
       );
 
+      Future<Null> pickDate(BuildContext context) async {
+        DateTime date = await showDatePicker(
+          context: context,
+          firstDate: DateTime.now().subtract(Duration(days: 365 * 100)),
+          lastDate: DateTime.now(),
+          initialDate: DateTime.now(),
+          builder: (BuildContext context, Widget child) {
+            return Theme(
+              data: ThemeData.dark().copyWith(
+                colorScheme: ColorScheme.light(
+                  primary: Colors.cyan,
+                ),
+                dialogBackgroundColor: Colors.white,
+              ),
+              child: child,
+            );
+          },
+        );
+        if (date != null) {
+          setState(() {
+            insertOffer.startDateTime = date;
+            dateString = date.day.toString() +
+                " / " +
+                date.month.toString() +
+                " / " +
+                date.year.toString();
+            _dateOfBirthController.text = dateString;
+            // checkOfferDetailsFilled();
+            offerFieldStatus = true;
+          });
+        }
+      }
+
+      final dobField = TextFormField(
+        obscureText: false,
+        //minLines: 1,
+        readOnly: true,
+        style: textInputTextStyle,
+        controller: _dateOfBirthController,
+        decoration: CommonStyle.textFieldStyle(
+            labelTextStr: "Select Date of Birth", hintTextStr: ""),
+        validator: validateMandatoryFields,
+        onTap: () {
+          setState(() {
+            pickDate(context);
+          });
+        },
+        maxLength: null,
+        maxLines: 1,
+        onChanged: (String value) {
+          //  checkOfferDetailsFilled();
+        },
+        onSaved: (String value) {
+          // checkOfferDetailsFilled();
+        },
+      );
       final whatsappPhone = TextFormField(
         obscureText: false,
         maxLines: 1,
@@ -1214,63 +745,6 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage> {
         },
         onSaved: (String value) {
           if (value != "") entity.phone = _phCountryCode + (value);
-        },
-      );
-
-      Future<Null> pickDate(BuildContext context) async {
-        DateTime date = await showDatePicker(
-          context: context,
-          firstDate: DateTime.now().subtract(Duration(days: 365 * 100)),
-          lastDate: DateTime.now(),
-          initialDate: DateTime.now(),
-          builder: (BuildContext context, Widget child) {
-            return Theme(
-              data: ThemeData.dark().copyWith(
-                colorScheme: ColorScheme.light(
-                  primary: Colors.cyan,
-                ),
-                dialogBackgroundColor: Colors.white,
-              ),
-              child: child,
-            );
-          },
-        );
-        if (date != null) {
-          setState(() {
-            insertOffer.startDateTime = date;
-            dateString = date.day.toString() +
-                " / " +
-                date.month.toString() +
-                " / " +
-                date.year.toString();
-            _startDateController.text = dateString;
-            // checkOfferDetailsFilled();
-            offerFieldStatus = true;
-          });
-        }
-      }
-
-      final dobField = TextFormField(
-        obscureText: false,
-        //minLines: 1,
-        readOnly: true,
-        style: textInputTextStyle,
-        controller: _startDateController,
-        decoration: CommonStyle.textFieldStyle(
-            labelTextStr: "Select Date of Birth", hintTextStr: ""),
-        validator: validateMandatoryFields,
-        onTap: () {
-          setState(() {
-            pickDate(context);
-          });
-        },
-        maxLength: null,
-        maxLines: 1,
-        onChanged: (String value) {
-          //  checkOfferDetailsFilled();
-        },
-        onSaved: (String value) {
-          // checkOfferDetailsFilled();
         },
       );
 
@@ -1480,7 +954,8 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage> {
         else
           validateField = false;
 
-        if (_tokenBookingDetailsFormKey.currentState.validate()) {
+        if (_tokenBookingDetailsFormKey.currentState.validate() &&
+            validateIdProof()) {
           Utils.showMyFlushbar(
               context,
               Icons.info_outline,
@@ -1493,6 +968,11 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage> {
               true);
 
           _tokenBookingDetailsFormKey.currentState.save();
+          //TODO:Server call to save data
+          _gs
+              .getTokenApplicationService()
+              .submitApplication(bookingApplication);
+
           upsertEntity(entity, _regNumController.text).then((value) {
             if (value) {
               Utils.showMyFlushbar(
@@ -2258,7 +1738,7 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage> {
                                   child: Column(
                                     children: <Widget>[
                                       nameField,
-                                      descField,
+                                      //   descField,
                                       dobField,
                                       whatsappPhone,
                                       callingPhone,
