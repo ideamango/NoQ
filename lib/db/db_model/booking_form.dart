@@ -9,6 +9,10 @@ class BookingForm {
   List<Field> formFields;
   bool autoApproved = true;
 
+  //This is not supposed to be created by Entity Manager or Admin, right not will be done via backend on Request.
+  //This implies that this BookingForm is global form not specific to any Entity
+  bool isSystemTemplate = false;
+
   BookingForm(
       {@required this.formName,
       @required this.headerMsg,
@@ -21,7 +25,8 @@ class BookingForm {
         'headerMsg': headerMsg,
         'footerMsg': footerMsg,
         'formFieldList': formFieldsToJson(formFields),
-        'autoApproved': autoApproved
+        'autoApproved': autoApproved,
+        'isSystemTemplate': isSystemTemplate
       };
 
   List<dynamic> formFieldsToJson(List<Field> fields) {
@@ -35,12 +40,16 @@ class BookingForm {
 
   static BookingForm fromJson(Map<String, dynamic> json) {
     if (json == null) return null;
-    return new BookingForm(
+    BookingForm bf = BookingForm(
         formName: json['formName'],
         headerMsg: json['headerMsg'],
         footerMsg: json['footerMsg'],
         formFields: convertToOptionValuesFromJson(json['formFieldList']),
         autoApproved: json['autoApproved']);
+
+    bf.isSystemTemplate = json['isSystemTemplate'];
+
+    return bf;
   }
 
   static List<Field> convertToOptionValuesFromJson(List<dynamic> fieldsJson) {
