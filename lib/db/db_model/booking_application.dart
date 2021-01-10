@@ -4,14 +4,14 @@ import 'package:noq/enum/application_status.dart';
 import 'package:uuid/uuid.dart';
 
 class BookingApplication {
-  BookingApplication(
-      {this.tokenId, this.entityId, this.userId, this.responseForm});
+  BookingApplication({this.entityId, this.responseForm});
 
   //SlotId is entityID#20~06~01#9~30
   String id = Uuid().v1();
   String bookingFormId;
-  String
-      tokenId; //when the Application status is Approved, then the token is assigned
+
+  //when the Application status is Approved, then the token is assigned
+  String tokenId;
   String entityId;
   String userId;
   ApplicationStatus status;
@@ -43,6 +43,8 @@ class BookingApplication {
   String notesOnCancellation;
 
   BookingForm responseForm;
+
+  DateTime preferredSlotTiming;
 
   Map<String, dynamic> toJson() => {
         'id': id,
@@ -84,18 +86,21 @@ class BookingApplication {
             ? timeOfCancellation.millisecondsSinceEpoch
             : null,
         'notesOnCancellation': notesOnCancellation,
+        'preferredSlotTiming': (preferredSlotTiming != null)
+            ? preferredSlotTiming.millisecondsSinceEpoch
+            : null
       };
 
   static BookingApplication fromJson(Map<String, dynamic> json) {
     if (json == null) return null;
 
     BookingForm bf = BookingForm.fromJson(json['responseForm']);
-    BookingApplication ba = BookingApplication(
-        tokenId: json['tokenId'],
-        entityId: json['entityId'],
-        userId: json['userId'],
-        responseForm: bf);
+    BookingApplication ba =
+        BookingApplication(entityId: json['entityId'], responseForm: bf);
     ba.bookingFormId = bf.id;
+
+    ba.tokenId = json['tokenId'];
+    ba.userId = json['userId'];
 
     ba.status =
         EnumToString.fromString(ApplicationStatus.values, json['status']);
@@ -141,6 +146,10 @@ class BookingApplication {
         : null;
 
     ba.notesOnCancellation = json['notesOnCancellation'];
+
+    ba.preferredSlotTiming = (json['preferredSlotTiming'] != null)
+        ? new DateTime.fromMillisecondsSinceEpoch(json['preferredSlotTiming'])
+        : null;
 
     return ba;
   }
