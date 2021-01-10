@@ -133,6 +133,15 @@ String missingInfoSubStr =
 String entityUpsertErrStr = "Coold not Save the details!!";
 String entityUpsertErrSubStr = "Check your internet connection and try again.";
 
+//* Start * Validation error msgs for Token Booking form
+String uploadValidIdProofMsg = "Please upload valid ID proof.";
+String idProofTypeMissingMsg = "Please select Type of ID proof.";
+String nameMissingMsg = "Please provide name as per govt. ID proof.";
+String dobMissingMsg = "Please provide Date of Birth";
+String currLocMissingMsg = "Please select Current Location";
+
+//* End * Validation error msgs for Token Booking form
+
 String missingInfoForShareStr =
     "Important details are missing in entity, Please fill those first.";
 String missingInfoForShareSubStr = "Save Entity and then Share!!";

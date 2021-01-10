@@ -1,45 +1,31 @@
 import 'dart:async';
 import 'dart:io';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:intl/intl.dart';
 import 'package:noq/constants.dart';
 import 'package:noq/db/db_model/address.dart';
 import 'package:noq/db/db_model/booking_application.dart';
 import 'package:noq/db/db_model/booking_form.dart';
 import 'package:noq/db/db_model/employee.dart';
 import 'package:noq/db/db_model/entity.dart';
-import 'package:noq/db/db_model/entity_private.dart';
-import 'package:noq/db/db_model/meta_entity.dart';
 import 'package:noq/db/db_model/my_geo_fire_point.dart';
-import 'package:noq/db/db_model/app_user.dart';
-import 'package:noq/db/db_service/user_service.dart';
 import 'package:noq/db/db_model/offer.dart';
 import 'package:noq/enum/application_status.dart';
-import 'package:noq/enum/entity_type.dart';
-import 'package:noq/events/event_bus.dart';
-import 'package:noq/events/events.dart';
 import 'package:noq/global_state.dart';
-import 'package:noq/pages/contact_item.dart';
-import 'package:noq/pages/manage_entity_list_page.dart';
 import 'package:noq/pages/search_entity_page.dart';
-import 'package:noq/repository/StoreRepository.dart';
 import 'package:noq/services/circular_progress.dart';
 import 'package:noq/style.dart';
 import 'package:noq/utils.dart';
-import 'package:noq/widget/bottom_nav_bar.dart';
 import 'package:noq/widget/custom_expansion_tile.dart';
 import 'package:noq/widget/page_animation.dart';
 import 'package:noq/widget/weekday_selector.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:flushbar/flushbar.dart';
 import 'package:noq/widget/widgets.dart';
-import 'package:uuid/uuid.dart';
 import 'package:eventify/eventify.dart' as Eventify;
 
 class CovidTokenBookingFormPage extends StatefulWidget {
@@ -50,7 +36,8 @@ class CovidTokenBookingFormPage extends StatefulWidget {
       _CovidTokenBookingFormPageState();
 }
 
-class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage> {
+class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage>
+    with SingleTickerProviderStateMixin {
   bool _autoValidate = false;
   final GlobalKey<FormState> _tokenBookingDetailsFormKey =
       new GlobalKey<FormState>();
@@ -93,7 +80,7 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage> {
   TextEditingController _gpayPhoneController = TextEditingController();
   TextEditingController _paytmPhoneController = TextEditingController();
 
-  TextEditingController _dateOfBirthController = TextEditingController();
+  TextEditingController _dobController = TextEditingController();
   TextEditingController _endDateController = TextEditingController();
 
   TextEditingController _slotDurationController = TextEditingController();
@@ -158,10 +145,6 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage> {
   bool _isValid = false;
   Employee contact;
 
-  final GlobalKey<FormFieldState> phn1Key = new GlobalKey<FormFieldState>();
-  final GlobalKey<FormFieldState> phn2Key = new GlobalKey<FormFieldState>();
-
-  Eventify.Listener removeManagerListener;
   List<String> idProofTypesStrList = List<String>();
   List<Item> idProofTypes = List<Item>();
   List<String> medConditionsStrList = List<String>();
@@ -173,21 +156,37 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage> {
   List<Field> fields;
   BookingApplication bookingApplication;
   FormInputFieldText nameInput;
+  FormInputFieldDateTime dobInput;
+  FormInputFieldText primaryPhone;
+  FormInputFieldText alternatePhone;
+  FormInputFieldOptions idProofTypeInput;
+  String _idProofType;
+  FormInputFieldText idProofUrlInput;
+  FormInputFieldOptions healthDetailsInput;
+  FormInputFieldText healthDetailsDesc;
+  FormInputFieldText latInput;
+  FormInputFieldText lonInput;
+  FormInputFieldText addressInput;
+  FormInputFieldText addresslandmark;
+  FormInputFieldText addressLocality;
+  FormInputFieldText addressCity;
+  FormInputFieldText addressState;
+  FormInputFieldText addressCountry;
+  FormInputFieldText notesInput;
+  FormInputFieldText addressPin;
+  String validationErrMsg = "";
 
   ///end of fields from contact page
 
   @override
   void initState() {
-    _scrollController = ScrollController();
     super.initState();
     entity = this.widget.entity;
 
     getGlobalState().whenComplete(() {
-      initializeEntity().whenComplete(() {
-        initBookingForm();
-        setState(() {
-          _initCompleted = true;
-        });
+      initBookingForm();
+      setState(() {
+        _initCompleted = true;
       });
     });
   }
@@ -224,66 +223,61 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage> {
     nameInput = FormInputFieldText("Name of Person", true,
         "Please enter your name as per Government ID proof", 50);
     fields.add(nameInput);
-    // FormInputFieldDate dobInput = FormInputFieldDate(
-    //   "Select Date of Birth",
-    //   true,
-    //   "Please select your Date of Birth",
-    // );
-    // fields.add(dobInput);
-    FormInputFieldText primaryPhone = FormInputFieldText(
+    dobInput = FormInputFieldDateTime(
+      "Select Date of Birth",
+      true,
+      "Please select your Date of Birth",
+    );
+
+    fields.add(dobInput);
+    primaryPhone = FormInputFieldText(
         "Primary Contact Number", true, "Primary Contact Number", 10);
     fields.add(primaryPhone);
-    FormInputFieldText alternatePhone = FormInputFieldText(
+    alternatePhone = FormInputFieldText(
         "Primary Contact Number", false, "Primary Contact Number", 10);
     fields.add(alternatePhone);
-    FormInputFieldOptions idProofTypeInput = FormInputFieldOptions(
-        "Id Proof Type",
-        true,
-        "Please select a Government Id proof",
-        idProofTypesStrList,
-        false);
+    idProofTypeInput = FormInputFieldOptions("Id Proof Type", true,
+        "Please select a Government Id proof", idProofTypesStrList, false);
+    idProofTypeInput.responseValues = new List<String>();
     fields.add(idProofTypeInput);
-    FormInputFieldText idProofUrlInput = FormInputFieldText(
+    idProofUrlInput = FormInputFieldText(
         "Id Proof File Url", true, "Please upload Government Id proof", 200);
     fields.add(idProofUrlInput);
-    FormInputFieldOptions healthDetailsInput = FormInputFieldOptions(
+    healthDetailsInput = FormInputFieldOptions(
         "Medical Conditions",
         true,
         "Please select all known medical conditions you have",
         medConditionsStrList,
         true);
     fields.add(healthDetailsInput);
-    FormInputFieldText healthDetailsDesc = FormInputFieldText(
+    healthDetailsDesc = FormInputFieldText(
         "Decription of medical conditions (optional)",
         true,
         "Decription of medical conditions (optional)",
         200);
     fields.add(healthDetailsDesc);
-    FormInputFieldText latInput = FormInputFieldText(
+    latInput = FormInputFieldText(
         "Current Location Latitude", false, "Current Location Latitude", 20);
     fields.add(latInput);
-    FormInputFieldText lonInput = FormInputFieldText(
+    lonInput = FormInputFieldText(
         "Current Location Longitude", false, "Current Location Longitude", 20);
     fields.add(lonInput);
-    FormInputFieldText addressInput = FormInputFieldText(
+    addressInput = FormInputFieldText(
         "Apartment/ House No./ Lane", false, "Apartment/ House No./ Lane", 60);
     fields.add(addressInput);
-    FormInputFieldText addresslandmark =
-        FormInputFieldText("Landmark", false, "Landmark", 40);
+    addresslandmark = FormInputFieldText("Landmark", false, "Landmark", 40);
     fields.add(addresslandmark);
-    FormInputFieldText addressLocality =
-        FormInputFieldText("Locality", false, "Locality", 40);
+    addressLocality = FormInputFieldText("Locality", false, "Locality", 40);
     fields.add(addressLocality);
-    FormInputFieldText addressCity =
-        FormInputFieldText("City", false, "City", 30);
+    addressCity = FormInputFieldText("City", false, "City", 30);
     fields.add(addressCity);
-    FormInputFieldText addressState =
-        FormInputFieldText("State", false, "State", 30);
+    addressState = FormInputFieldText("State", false, "State", 30);
     fields.add(addressState);
-    FormInputFieldText addressCountry =
-        FormInputFieldText("Country", false, "Country", 30);
+    addressCountry = FormInputFieldText("Country", false, "Country", 30);
     fields.add(addressCountry);
-    FormInputFieldText notesInput =
+    addressPin = FormInputFieldText("Pin Code", false, "Pin Code", 30);
+    fields.add(addressPin);
+    notesInput =
         FormInputFieldText("Notes (optional)", false, "Notes (optional)", 100);
     fields.add(notesInput);
 
@@ -309,22 +303,20 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage> {
     _descController.dispose();
     _primaryPhoneController.dispose();
     _alternatePhoneController.dispose();
-    _dateOfBirthController.dispose();
-    _primaryPhoneController.dispose();
-    _primaryPhoneController.dispose();
-  }
-
-  String validateMandatoryFields(String value) {
-    String retVal;
-    if (value == null || value == "") {
-      retVal = 'Field is empty';
-    } else
-      retVal = null;
-    return retVal;
+    _dobController.dispose();
   }
 
   bool validateIdProof() {
-    if (_downloadUrl == null)
+    if (!Utils.isNotNullOrEmpty(_nameController.text))
+      validationErrMsg = nameMissingMsg;
+    if (!Utils.isNotNullOrEmpty(_dobController.text))
+      validationErrMsg = validationErrMsg + '\n' + dobMissingMsg;
+    if (!Utils.isNotNullOrEmpty(_idProofType))
+      validationErrMsg = validationErrMsg + '\n' + idProofTypeMissingMsg;
+    if (!Utils.isNotNullOrEmpty(_downloadUrl))
+      validationErrMsg = validationErrMsg + '\n' + uploadValidIdProofMsg;
+
+    if (Utils.isNotNullOrEmpty(validationErrMsg))
       return false;
     else
       return true;
@@ -378,8 +370,6 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage> {
     _phCountryCode = _gs.getConfigurations().phCountryCode;
   }
 
-  initializeEntity() async {}
-
   String validateText(String value) {
     if (validateField) {
       if (value == null || value == "") {
@@ -388,28 +378,6 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage> {
         return null;
     } else
       return null;
-  }
-
-  String validateTime(String value) {
-    if (validateField) {
-      if (value == null || value == "") {
-        return 'Field is empty';
-      } else
-        return null;
-    } else
-      return null;
-  }
-
-  String validateTimeFields() {
-    if ((entity.breakEndHour != null && entity.breakStartHour == null) ||
-        (entity.breakEndHour == null && entity.breakStartHour != null)) {
-      return "Both Break Start and Break End time should be specified.";
-    }
-    if ((entity.startTimeHour != null && entity.endTimeHour == null) ||
-        (entity.startTimeHour == null && entity.endTimeHour != null)) {
-      return "Both Day Start and Day End time should be specified.";
-    }
-    return null;
   }
 
   _getAddressFromLatLng(Position position) async {
@@ -422,20 +390,40 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage> {
   }
 
   void clearLocation() {
-//If entity is Public or entity is active, latitude, longitude must be given.
-    if (entity.isActive) {
-      Utils.showMyFlushbar(
-          context,
-          Icons.info_outline,
-          Duration(
-            seconds: 6,
+    _latController.text = "";
+    _lonController.text = "";
+  }
+
+  Future<Null> pickDate(BuildContext context) async {
+    DateTime date = await showDatePicker(
+      context: context,
+      firstDate: DateTime.now().subtract(Duration(days: 365 * 100)),
+      lastDate: DateTime.now(),
+      initialDate: DateTime.now(),
+      builder: (BuildContext context, Widget child) {
+        return Theme(
+          data: ThemeData.dark().copyWith(
+            colorScheme: ColorScheme.light(
+              primary: Colors.cyan,
+            ),
+            dialogBackgroundColor: Colors.white,
           ),
-          "CURRENT LOCATION is must if entity is ACTIVE.",
-          "If you really want to clear location, deselect ACTIVE on top of the page.");
-    } else {
-      _latController.text = "";
-      _lonController.text = "";
-      entity.coordinates = null;
+          child: child,
+        );
+      },
+    );
+    if (date != null) {
+      setState(() {
+        insertOffer.startDateTime = date;
+        dateString = date.day.toString() +
+            " / " +
+            date.month.toString() +
+            " / " +
+            date.year.toString();
+        _dobController.text = dateString;
+        // checkOfferDetailsFilled();
+        offerFieldStatus = true;
+      });
     }
   }
 
@@ -448,19 +436,43 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage> {
         //TODO: Add maxlength = 50
         maxLines: 1,
         minLines: 1,
+        autovalidateMode: AutovalidateMode.always,
         style: textInputTextStyle,
         controller: _nameController,
         keyboardType: TextInputType.text,
         decoration: CommonStyle.textFieldStyle(
             labelTextStr: "Name of Person",
             hintTextStr: "Please enter your name as per Government ID proof"),
-        validator: validateMandatoryFields,
-        onChanged: (String value) {
-          //SAVEDATA
-          //  entity.name = value;
-        },
+        validator: validateText,
         onSaved: (String value) {
           nameInput.response = value;
+        },
+      );
+
+      final dobField = TextFormField(
+        obscureText: false,
+        //minLines: 1,
+        readOnly: true,
+        autovalidateMode: AutovalidateMode.always,
+        style: textInputTextStyle,
+        controller: _dobController,
+        decoration: CommonStyle.textFieldStyle(
+            labelTextStr: "Select Date of Birth", hintTextStr: ""),
+        validator: validateText,
+        onTap: () {
+          setState(() {
+            pickDate(context);
+          });
+        },
+        maxLength: null,
+        maxLines: 1,
+
+        onChanged: (String value) {
+          //  checkOfferDetailsFilled();
+        },
+        onSaved: (String value) {
+          dobInput.responseDateTime = DateTime.parse(value);
+          // checkOfferDetailsFilled();
         },
       );
 
@@ -471,33 +483,17 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage> {
         controller: _descController,
         decoration: CommonStyle.textFieldStyle(
             labelTextStr: "Notes (optional)", hintTextStr: ""),
-        //No validation required, nonmandatory field
-        // validator: (value) {
-        //   if (!validateField)
-        //     return validateText(value);
-        //   else
-        //     return null;
-        // },
         keyboardType: TextInputType.multiline,
         maxLength: null,
         maxLines: 3,
-        onChanged: (String value) {
-          entity.description = value;
-        },
         onSaved: (String value) {
-          entity.description = value;
+          notesInput.response = value;
         },
       );
       final idTypeField = Column(
         children: [
           Row(
             children: [
-              // Container(
-              //     width: MediaQuery.of(context).size.width * .2,
-              //     child: Text(
-              //       "Type of ID Proof",
-              //       style: textInputTextStyle,
-              //     )),
               Expanded(
                 child: Wrap(
                   children: idProofTypes
@@ -508,7 +504,8 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage> {
                             idProofTypes.forEach((element) {
                               element.isSelected = false;
                             });
-
+                            _idProofType = item.text;
+                            idProofTypeInput.responseValues.add(item.text);
                             setState(() {
                               item.isSelected = newSelectionValue;
                             });
@@ -547,7 +544,6 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage> {
           onPressed: () {
             getImage(false);
           });
-
       final clickPicForUploadBtn = IconButton(
           padding: EdgeInsets.zero,
           icon: Icon(
@@ -557,8 +553,6 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage> {
           onPressed: () {
             getImage(true);
           });
-      //  fillColor: Theme.of(context).accentColor,
-
       final medicalConditionsField = Column(
         children: [
           Row(
@@ -618,12 +612,13 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage> {
         decoration: CommonStyle.textFieldStyle(
             labelTextStr: "Description of above condition (optional)",
             hintTextStr: ""),
-        validator: (value) {
-          if (!validateField)
-            return validateText(value);
-          else
-            return null;
-        },
+        // validator: (String value) {
+        //   if (!Utils.isNotNullOrEmpty(value)) {
+        //     validationErrMsg = validationErrMsg + nameMissingMsg;
+        //     return validationErrMsg;
+        //   } else
+        //     return null;
+        // },
         keyboardType: TextInputType.multiline,
         maxLength: null,
         maxLines: 3,
@@ -634,68 +629,10 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage> {
           entity.description = value;
         },
       );
-
-      Future<Null> pickDate(BuildContext context) async {
-        DateTime date = await showDatePicker(
-          context: context,
-          firstDate: DateTime.now().subtract(Duration(days: 365 * 100)),
-          lastDate: DateTime.now(),
-          initialDate: DateTime.now(),
-          builder: (BuildContext context, Widget child) {
-            return Theme(
-              data: ThemeData.dark().copyWith(
-                colorScheme: ColorScheme.light(
-                  primary: Colors.cyan,
-                ),
-                dialogBackgroundColor: Colors.white,
-              ),
-              child: child,
-            );
-          },
-        );
-        if (date != null) {
-          setState(() {
-            insertOffer.startDateTime = date;
-            dateString = date.day.toString() +
-                " / " +
-                date.month.toString() +
-                " / " +
-                date.year.toString();
-            _dateOfBirthController.text = dateString;
-            // checkOfferDetailsFilled();
-            offerFieldStatus = true;
-          });
-        }
-      }
-
-      final dobField = TextFormField(
-        obscureText: false,
-        //minLines: 1,
-        readOnly: true,
-        style: textInputTextStyle,
-        controller: _dateOfBirthController,
-        decoration: CommonStyle.textFieldStyle(
-            labelTextStr: "Select Date of Birth", hintTextStr: ""),
-        validator: validateMandatoryFields,
-        onTap: () {
-          setState(() {
-            pickDate(context);
-          });
-        },
-        maxLength: null,
-        maxLines: 1,
-        onChanged: (String value) {
-          //  checkOfferDetailsFilled();
-        },
-        onSaved: (String value) {
-          // checkOfferDetailsFilled();
-        },
-      );
-      final whatsappPhone = TextFormField(
+      final primaryPhoneField = TextFormField(
         obscureText: false,
         maxLines: 1,
         minLines: 1,
-        key: whatsappPhoneKey,
         style: textInputTextStyle,
         keyboardType: TextInputType.phone,
         controller: _primaryPhoneController,
@@ -708,25 +645,25 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage> {
               borderSide: BorderSide(color: Colors.orange)),
         ),
         validator: (value) {
-          if (!validateField)
-            return Utils.validateMobileField(value);
-          else
+          if (validateField) {
+            if (validateText(value) == null) {
+              return Utils.validateMobileField(value);
+            } else
+              return null;
+          } else
             return null;
         },
         onChanged: (value) {
-          //_autoValidateWhatsapp = true;
-          whatsappPhoneKey.currentState.validate();
-          if (value != "") entity.whatsapp = _phCountryCode + (value);
+          if (value != "") primaryPhone.response = _phCountryCode + (value);
         },
         onSaved: (String value) {
-          if (value != "") entity.whatsapp = _phCountryCode + (value);
+          if (value != "") primaryPhone.response = _phCountryCode + (value);
         },
       );
-      final callingPhone = TextFormField(
+      final alternatePhoneField = TextFormField(
         obscureText: false,
         maxLines: 1,
         minLines: 1,
-        key: contactPhoneKey,
         style: textInputTextStyle,
         keyboardType: TextInputType.phone,
         controller: _alternatePhoneController,
@@ -741,10 +678,10 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage> {
         validator: Utils.validateMobileField,
         onChanged: (value) {
           contactPhoneKey.currentState.validate();
-          if (value != "") entity.phone = _phCountryCode + (value);
+          if (value != "") alternatePhone.response = _phCountryCode + (value);
         },
         onSaved: (String value) {
-          if (value != "") entity.phone = _phCountryCode + (value);
+          if (value != "") alternatePhone.response = _phCountryCode + (value);
         },
       );
 
@@ -760,9 +697,19 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage> {
             controller: _latController,
             decoration: CommonStyle.textFieldStyle(
                 labelTextStr: "Latitude", hintTextStr: ""),
-            validator: validateMandatoryFields,
-            onChanged: (String value) {},
-            onSaved: (String value) {},
+            validator: (String value) {
+              if (!Utils.isNotNullOrEmpty(value)) {
+                validationErrMsg = validationErrMsg + currLocMissingMsg;
+                return validationErrMsg;
+              } else
+                return null;
+            },
+            onChanged: (String value) {
+              latInput.response = value;
+            },
+            onSaved: (String value) {
+              latInput.response = value;
+            },
           ));
 
       final lonField = Container(
@@ -780,8 +727,12 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage> {
             validator: (value) {
               return validateText(value);
             },
-            onChanged: (String value) {},
-            onSaved: (String value) {},
+            onChanged: (String value) {
+              lonInput.response = value;
+            },
+            onSaved: (String value) {
+              lonInput.response = value;
+            },
           ));
       final clearBtn = Container(
           width: MediaQuery.of(context).size.width * .3,
@@ -807,13 +758,13 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage> {
         controller: _adrs1Controller,
         decoration: CommonStyle.textFieldStyle(
             labelTextStr: "Apartment/ House No./ Lane", hintTextStr: ""),
-        validator: validateText,
+        // validator: validateText,
         onChanged: (String value) {
-          entity.address.address = value;
+          addressInput.response = value;
           print("changed address");
         },
         onSaved: (String value) {
-          entity.address.address = value;
+          addressInput.response = value;
           print("saved address");
         },
       );
@@ -831,13 +782,13 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage> {
           focusedBorder: UnderlineInputBorder(
               borderSide: BorderSide(color: Colors.orange)),
         ),
-        validator: validateText,
+        //validator: validateText,
         onChanged: (String value) {
-          entity.address.landmark = value;
+          addresslandmark.response = value;
           print("changed landmark");
         },
         onSaved: (String value) {
-          entity.address.landmark = value;
+          addresslandmark.response = value;
           print("saved landmark");
         },
       );
@@ -855,9 +806,9 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage> {
           focusedBorder: UnderlineInputBorder(
               borderSide: BorderSide(color: Colors.orange)),
         ),
-        validator: validateText,
+        // validator: validateText,
         onSaved: (String value) {
-          entity.address.locality = value;
+          addressLocality.response = value;
           print("saved address");
         },
       );
@@ -875,9 +826,9 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage> {
           focusedBorder: UnderlineInputBorder(
               borderSide: BorderSide(color: Colors.orange)),
         ),
-        validator: validateText,
+        // validator: validateText,
         onSaved: (String value) {
-          entity.address.city = value;
+          addressCity.response = value;
           print("saved address");
         },
       );
@@ -895,9 +846,9 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage> {
           focusedBorder: UnderlineInputBorder(
               borderSide: BorderSide(color: Colors.orange)),
         ),
-        validator: validateText,
+        // validator: validateText,
         onSaved: (String value) {
-          entity.address.state = value;
+          addressState.response = value;
           print("saved address");
         },
       );
@@ -915,9 +866,9 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage> {
           focusedBorder: UnderlineInputBorder(
               borderSide: BorderSide(color: Colors.orange)),
         ),
-        validator: validateText,
+        //validator: validateText,
         onSaved: (String value) {
-          entity.address.country = value;
+          addressCountry.response = value;
           print("saved address");
         },
       );
@@ -935,13 +886,10 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage> {
           focusedBorder: UnderlineInputBorder(
               borderSide: BorderSide(color: Colors.orange)),
         ),
-        validator: validateText,
-        onChanged: (String value) {
-          entity.address.zipcode = value;
-          print("saved address");
-        },
+        // validator: validateText,
+
         onSaved: (String value) {
-          entity.address.zipcode = value;
+          addressPin.response = value;
           print("saved address");
         },
       );
@@ -949,18 +897,18 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage> {
       bool _wasButtonClicked;
 
       saveRoute() {
-        if (isActive)
+        setState(() {
           validateField = true;
-        else
-          validateField = false;
+        });
 
-        if (_tokenBookingDetailsFormKey.currentState.validate() &&
-            validateIdProof()) {
+        validationErrMsg = "";
+
+        if (validateIdProof()) {
           Utils.showMyFlushbar(
               context,
               Icons.info_outline,
               Duration(
-                seconds: 3,
+                seconds: 4,
               ),
               "Saving details!! ",
               "This would take just a moment.",
@@ -971,9 +919,8 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage> {
           //TODO:Server call to save data
           _gs
               .getTokenApplicationService()
-              .submitApplication(bookingApplication);
-
-          upsertEntity(entity, _regNumController.text).then((value) {
+              .submitApplication(bookingApplication)
+              .then((value) {
             if (value) {
               Utils.showMyFlushbar(
                   context,
@@ -986,14 +933,15 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage> {
             }
           });
         } else {
+          print(validationErrMsg);
           Utils.showMyFlushbar(
               context,
               Icons.error,
               Duration(
-                seconds: 5,
+                seconds: 10,
               ),
-              entityUpsertErrStr,
-              entityUpsertErrSubStr,
+              validationErrMsg,
+              "Please fill all mandatory fields and save again.",
               Colors.red);
         }
       }
@@ -1023,111 +971,93 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage> {
         });
       }
 
-      Future<void> showConfirmationDialog() async {
-        bool returnVal = await showDialog(
-            barrierDismissible: false,
-            context: context,
-            builder: (_) => AlertDialog(
-                  titlePadding: EdgeInsets.fromLTRB(5, 10, 0, 0),
-                  contentPadding: EdgeInsets.all(0),
-                  actionsPadding: EdgeInsets.all(0),
-                  //buttonPadding: EdgeInsets.all(0),
-                  title: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Text(
-                        bookable,
-                        style: TextStyle(
-                          fontSize: 15,
-                          color: Colors.blueGrey[600],
-                        ),
-                      ),
-                      verticalSpacer,
-                      Text(
-                        'Are you sure you make the Place "Bookable"?',
-                        style: TextStyle(
-                          fontSize: 15,
-                          color: Colors.blueGrey[600],
-                        ),
-                      ),
-                      verticalSpacer,
-                      // myDivider,
-                    ],
-                  ),
-                  content: Divider(
-                    color: Colors.blueGrey[400],
-                    height: 1,
-                    //indent: 40,
-                    //endIndent: 30,
-                  ),
+      // Future<void> showConfirmationDialog() async {
+      //   bool returnVal = await showDialog(
+      //       barrierDismissible: false,
+      //       context: context,
+      //       builder: (_) => AlertDialog(
+      //             titlePadding: EdgeInsets.fromLTRB(5, 10, 0, 0),
+      //             contentPadding: EdgeInsets.all(0),
+      //             actionsPadding: EdgeInsets.all(0),
+      //             //buttonPadding: EdgeInsets.all(0),
+      //             title: Column(
+      //               crossAxisAlignment: CrossAxisAlignment.start,
+      //               children: <Widget>[
+      //                 Text(
+      //                   bookable,
+      //                   style: TextStyle(
+      //                     fontSize: 15,
+      //                     color: Colors.blueGrey[600],
+      //                   ),
+      //                 ),
+      //                 verticalSpacer,
+      //                 Text(
+      //                   'Are you sure you make the Place "Bookable"?',
+      //                   style: TextStyle(
+      //                     fontSize: 15,
+      //                     color: Colors.blueGrey[600],
+      //                   ),
+      //                 ),
+      //                 verticalSpacer,
+      //                 // myDivider,
+      //               ],
+      //             ),
+      //             content: Divider(
+      //               color: Colors.blueGrey[400],
+      //               height: 1,
+      //               //indent: 40,
+      //               //endIndent: 30,
+      //             ),
 
-                  //content: Text('This is my content'),
-                  actions: <Widget>[
-                    SizedBox(
-                      height: 24,
-                      child: RaisedButton(
-                        elevation: 0,
-                        color: Colors.transparent,
-                        splashColor: highlightColor.withOpacity(.8),
-                        textColor: Colors.orange,
-                        shape: RoundedRectangleBorder(
-                            side: BorderSide(color: Colors.orange)),
-                        child: Text('Yes'),
-                        onPressed: () {
-                          Navigator.of(_).pop(true);
-                        },
-                      ),
-                    ),
-                    SizedBox(
-                      height: 24,
-                      child: RaisedButton(
-                        elevation: 20,
-                        autofocus: true,
-                        focusColor: highlightColor,
-                        splashColor: highlightColor,
-                        color: Colors.white,
-                        textColor: Colors.orange,
-                        shape: RoundedRectangleBorder(
-                            side: BorderSide(color: Colors.orange)),
-                        child: Text('No'),
-                        onPressed: () {
-                          Navigator.of(_).pop(false);
-                        },
-                      ),
-                    ),
-                  ],
-                ));
+      //             //content: Text('This is my content'),
+      //             actions: <Widget>[
+      //               SizedBox(
+      //                 height: 24,
+      //                 child: RaisedButton(
+      //                   elevation: 0,
+      //                   color: Colors.transparent,
+      //                   splashColor: highlightColor.withOpacity(.8),
+      //                   textColor: Colors.orange,
+      //                   shape: RoundedRectangleBorder(
+      //                       side: BorderSide(color: Colors.orange)),
+      //                   child: Text('Yes'),
+      //                   onPressed: () {
+      //                     Navigator.of(_).pop(true);
+      //                   },
+      //                 ),
+      //               ),
+      //               SizedBox(
+      //                 height: 24,
+      //                 child: RaisedButton(
+      //                   elevation: 20,
+      //                   autofocus: true,
+      //                   focusColor: highlightColor,
+      //                   splashColor: highlightColor,
+      //                   color: Colors.white,
+      //                   textColor: Colors.orange,
+      //                   shape: RoundedRectangleBorder(
+      //                       side: BorderSide(color: Colors.orange)),
+      //                   child: Text('No'),
+      //                   onPressed: () {
+      //                     Navigator.of(_).pop(false);
+      //                   },
+      //                 ),
+      //               ),
+      //             ],
+      //           ));
 
-        if (returnVal) {
-          setState(() {
-            isBookable = true;
-          });
-          entity.isBookable = true;
-        } else {
-          setState(() {
-            isBookable = false;
-          });
-          entity.isBookable = false;
-        }
-      }
-
-      validateLatLon() {
-        bool retVal;
-        if (_latController.text == null || _latController.text == "")
-          retVal = false;
-        else
-          retVal = true;
-        return retVal;
-      }
-
-      validateAllFields() {
-        bool retVal;
-        if (_tokenBookingDetailsFormKey.currentState.validate())
-          retVal = true;
-        else
-          retVal = false;
-        return retVal;
-      }
+      //   if (returnVal) {
+      //     setState(() {
+      //       isBookable = true;
+      //     });
+      //     entity.isBookable = true;
+      //   } else {
+      //     setState(() {
+      //       isBookable = false;
+      //     });
+      //     entity.isBookable = false;
+      //   }
+      // }
 
       return MaterialApp(
         debugShowCheckedModeBanner: false,
@@ -1249,432 +1179,432 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage> {
                   child: new ListView(
                     padding: const EdgeInsets.all(5.0),
                     children: <Widget>[
-                      Container(
-                        width: MediaQuery.of(context).size.width * .9,
-                        margin: EdgeInsets.all(0),
-                        padding: EdgeInsets.all(0),
-                        // padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
-                        decoration: BoxDecoration(
-                            border: Border.all(color: containerColor),
-                            color: Colors.grey[50],
-                            shape: BoxShape.rectangle,
-                            borderRadius:
-                                BorderRadius.all(Radius.circular(5.0))),
-                        child: Column(
-                          mainAxisSize: MainAxisSize.max,
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: <Widget>[
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              mainAxisSize: MainAxisSize.max,
-                              children: <Widget>[
-                                Container(
-                                  width:
-                                      MediaQuery.of(context).size.width * .15,
-                                  child: FlatButton(
-                                      visualDensity: VisualDensity.compact,
-                                      padding: EdgeInsets.all(0),
-                                      child: Row(
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: <Widget>[
-                                          Text('Public',
-                                              style: TextStyle(fontSize: 12)),
-                                          SizedBox(
-                                            width: MediaQuery.of(context)
-                                                    .size
-                                                    .width *
-                                                .05,
-                                            height: MediaQuery.of(context)
-                                                    .size
-                                                    .height *
-                                                .02,
-                                            child: Icon(
-                                              Icons.info,
-                                              color: Colors.blueGrey[600],
-                                              size: 14,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                      onPressed: () {
-                                        if (!_isExpanded) {
-                                          setState(() {
-                                            _publicExpandClick = true;
-                                            _isExpanded = true;
-                                            _margin =
-                                                EdgeInsets.fromLTRB(0, 0, 0, 8);
-                                            _width = MediaQuery.of(context)
-                                                    .size
-                                                    .width *
-                                                .9;
-                                            _text = RichText(
-                                                text: TextSpan(
-                                                    style: subHeadingTextStyle,
-                                                    children: <TextSpan>[
-                                                  TextSpan(
-                                                      text: publicInfo,
-                                                      style:
-                                                          buttonXSmlTextStyle)
-                                                ]));
+                      // Container(
+                      //   width: MediaQuery.of(context).size.width * .9,
+                      //   margin: EdgeInsets.all(0),
+                      //   padding: EdgeInsets.all(0),
+                      //   // padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
+                      //   decoration: BoxDecoration(
+                      //       border: Border.all(color: containerColor),
+                      //       color: Colors.grey[50],
+                      //       shape: BoxShape.rectangle,
+                      //       borderRadius:
+                      //           BorderRadius.all(Radius.circular(5.0))),
+                      //   child: Column(
+                      //     mainAxisSize: MainAxisSize.max,
+                      //     mainAxisAlignment: MainAxisAlignment.center,
+                      //     children: <Widget>[
+                      //       Row(
+                      //         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      //         mainAxisSize: MainAxisSize.max,
+                      //         children: <Widget>[
+                      //           Container(
+                      //             width:
+                      //                 MediaQuery.of(context).size.width * .15,
+                      //             child: FlatButton(
+                      //                 visualDensity: VisualDensity.compact,
+                      //                 padding: EdgeInsets.all(0),
+                      //                 child: Row(
+                      //                   mainAxisSize: MainAxisSize.min,
+                      //                   children: <Widget>[
+                      //                     Text('Public',
+                      //                         style: TextStyle(fontSize: 12)),
+                      //                     SizedBox(
+                      //                       width: MediaQuery.of(context)
+                      //                               .size
+                      //                               .width *
+                      //                           .05,
+                      //                       height: MediaQuery.of(context)
+                      //                               .size
+                      //                               .height *
+                      //                           .02,
+                      //                       child: Icon(
+                      //                         Icons.info,
+                      //                         color: Colors.blueGrey[600],
+                      //                         size: 14,
+                      //                       ),
+                      //                     ),
+                      //                   ],
+                      //                 ),
+                      //                 onPressed: () {
+                      //                   if (!_isExpanded) {
+                      //                     setState(() {
+                      //                       _publicExpandClick = true;
+                      //                       _isExpanded = true;
+                      //                       _margin =
+                      //                           EdgeInsets.fromLTRB(0, 0, 0, 8);
+                      //                       _width = MediaQuery.of(context)
+                      //                               .size
+                      //                               .width *
+                      //                           .9;
+                      //                       _text = RichText(
+                      //                           text: TextSpan(
+                      //                               style: subHeadingTextStyle,
+                      //                               children: <TextSpan>[
+                      //                             TextSpan(
+                      //                                 text: publicInfo,
+                      //                                 style:
+                      //                                     buttonXSmlTextStyle)
+                      //                           ]));
 
-                                            _height = 60;
-                                          });
-                                        } else {
-                                          //if bookable info is being shown
-                                          if (_publicExpandClick) {
-                                            setState(() {
-                                              _width = 0;
-                                              _height = 0;
-                                              _isExpanded = false;
-                                              _publicExpandClick = false;
-                                            });
-                                          } else {
-                                            setState(() {
-                                              _publicExpandClick = true;
-                                              _activeExpandClick = false;
-                                              _bookExpandClick = false;
-                                              _isExpanded = true;
-                                              _margin = EdgeInsets.fromLTRB(
-                                                  0, 0, 0, 8);
-                                              _width = MediaQuery.of(context)
-                                                      .size
-                                                      .width *
-                                                  .9;
-                                              _text = RichText(
-                                                  text: TextSpan(
-                                                      style:
-                                                          subHeadingTextStyle,
-                                                      children: <TextSpan>[
-                                                    TextSpan(
-                                                        text: publicInfo,
-                                                        style:
-                                                            buttonXSmlTextStyle)
-                                                  ]));
+                      //                       _height = 60;
+                      //                     });
+                      //                   } else {
+                      //                     //if bookable info is being shown
+                      //                     if (_publicExpandClick) {
+                      //                       setState(() {
+                      //                         _width = 0;
+                      //                         _height = 0;
+                      //                         _isExpanded = false;
+                      //                         _publicExpandClick = false;
+                      //                       });
+                      //                     } else {
+                      //                       setState(() {
+                      //                         _publicExpandClick = true;
+                      //                         _activeExpandClick = false;
+                      //                         _bookExpandClick = false;
+                      //                         _isExpanded = true;
+                      //                         _margin = EdgeInsets.fromLTRB(
+                      //                             0, 0, 0, 8);
+                      //                         _width = MediaQuery.of(context)
+                      //                                 .size
+                      //                                 .width *
+                      //                             .9;
+                      //                         _text = RichText(
+                      //                             text: TextSpan(
+                      //                                 style:
+                      //                                     subHeadingTextStyle,
+                      //                                 children: <TextSpan>[
+                      //                               TextSpan(
+                      //                                   text: publicInfo,
+                      //                                   style:
+                      //                                       buttonXSmlTextStyle)
+                      //                             ]));
 
-                                              _height = 60;
-                                            });
-                                          }
-                                        }
-                                      }),
-                                ),
-                                SizedBox(
-                                  height:
-                                      MediaQuery.of(context).size.height * .08,
-                                  width:
-                                      MediaQuery.of(context).size.width * .14,
-                                  child: Transform.scale(
-                                    scale: 0.6,
-                                    alignment: Alignment.centerLeft,
-                                    child: Switch(
-                                      materialTapTargetSize:
-                                          MaterialTapTargetSize.shrinkWrap,
-                                      value: isPublic,
-                                      onChanged: (value) {
-                                        setState(() {
-                                          isPublic = value;
-                                          entity.isPublic = value;
-                                          print(isPublic);
-                                          //}
-                                        });
-                                      },
-                                      // activeTrackColor: Colors.green,
-                                      activeColor: highlightColor,
-                                      inactiveThumbColor: Colors.grey[300],
-                                    ),
-                                  ),
-                                ),
-                                Container(
-                                  width: MediaQuery.of(context).size.width * .2,
-                                  child: FlatButton(
-                                      visualDensity: VisualDensity.compact,
-                                      padding: EdgeInsets.all(0),
-                                      child: Row(
-                                          mainAxisSize: MainAxisSize.min,
-                                          children: <Widget>[
-                                            Text('Bookable',
-                                                style: TextStyle(fontSize: 12)),
-                                            SizedBox(
-                                              width: MediaQuery.of(context)
-                                                      .size
-                                                      .width *
-                                                  .05,
-                                              height: MediaQuery.of(context)
-                                                      .size
-                                                      .height *
-                                                  .02,
-                                              child: Icon(Icons.info,
-                                                  color: Colors.blueGrey[600],
-                                                  size: 14),
-                                            ),
-                                          ]),
-                                      onPressed: () {
-                                        if (!_isExpanded) {
-                                          setState(() {
-                                            _bookExpandClick = true;
-                                            _isExpanded = true;
-                                            _margin =
-                                                EdgeInsets.fromLTRB(0, 0, 0, 8);
-                                            _width = MediaQuery.of(context)
-                                                    .size
-                                                    .width *
-                                                .9;
-                                            _text = RichText(
-                                                text: TextSpan(
-                                                    style: subHeadingTextStyle,
-                                                    children: <TextSpan>[
-                                                  TextSpan(
-                                                      text: bookableInfo,
-                                                      style:
-                                                          buttonXSmlTextStyle)
-                                                ]));
-                                            _height = 60;
-                                          });
-                                        } else {
-                                          //if bookable info is being shown
-                                          if (_bookExpandClick) {
-                                            setState(() {
-                                              _width = 0;
-                                              _height = 0;
-                                              _isExpanded = false;
-                                              _bookExpandClick = false;
-                                            });
-                                          } else {
-                                            setState(() {
-                                              _publicExpandClick = false;
-                                              _activeExpandClick = false;
-                                              _bookExpandClick = true;
-                                              _isExpanded = true;
-                                              _margin = EdgeInsets.fromLTRB(
-                                                  0, 0, 0, 8);
-                                              _width = MediaQuery.of(context)
-                                                      .size
-                                                      .width *
-                                                  .9;
-                                              _text = RichText(
-                                                  text: TextSpan(
-                                                      style:
-                                                          subHeadingTextStyle,
-                                                      children: <TextSpan>[
-                                                    TextSpan(
-                                                        text: bookableInfo,
-                                                        style:
-                                                            buttonXSmlTextStyle)
-                                                  ]));
+                      //                         _height = 60;
+                      //                       });
+                      //                     }
+                      //                   }
+                      //                 }),
+                      //           ),
+                      //           SizedBox(
+                      //             height:
+                      //                 MediaQuery.of(context).size.height * .08,
+                      //             width:
+                      //                 MediaQuery.of(context).size.width * .14,
+                      //             child: Transform.scale(
+                      //               scale: 0.6,
+                      //               alignment: Alignment.centerLeft,
+                      //               child: Switch(
+                      //                 materialTapTargetSize:
+                      //                     MaterialTapTargetSize.shrinkWrap,
+                      //                 value: isPublic,
+                      //                 onChanged: (value) {
+                      //                   setState(() {
+                      //                     isPublic = value;
+                      //                     entity.isPublic = value;
+                      //                     print(isPublic);
+                      //                     //}
+                      //                   });
+                      //                 },
+                      //                 // activeTrackColor: Colors.green,
+                      //                 activeColor: highlightColor,
+                      //                 inactiveThumbColor: Colors.grey[300],
+                      //               ),
+                      //             ),
+                      //           ),
+                      //           Container(
+                      //             width: MediaQuery.of(context).size.width * .2,
+                      //             child: FlatButton(
+                      //                 visualDensity: VisualDensity.compact,
+                      //                 padding: EdgeInsets.all(0),
+                      //                 child: Row(
+                      //                     mainAxisSize: MainAxisSize.min,
+                      //                     children: <Widget>[
+                      //                       Text('Bookable',
+                      //                           style: TextStyle(fontSize: 12)),
+                      //                       SizedBox(
+                      //                         width: MediaQuery.of(context)
+                      //                                 .size
+                      //                                 .width *
+                      //                             .05,
+                      //                         height: MediaQuery.of(context)
+                      //                                 .size
+                      //                                 .height *
+                      //                             .02,
+                      //                         child: Icon(Icons.info,
+                      //                             color: Colors.blueGrey[600],
+                      //                             size: 14),
+                      //                       ),
+                      //                     ]),
+                      //                 onPressed: () {
+                      //                   if (!_isExpanded) {
+                      //                     setState(() {
+                      //                       _bookExpandClick = true;
+                      //                       _isExpanded = true;
+                      //                       _margin =
+                      //                           EdgeInsets.fromLTRB(0, 0, 0, 8);
+                      //                       _width = MediaQuery.of(context)
+                      //                               .size
+                      //                               .width *
+                      //                           .9;
+                      //                       _text = RichText(
+                      //                           text: TextSpan(
+                      //                               style: subHeadingTextStyle,
+                      //                               children: <TextSpan>[
+                      //                             TextSpan(
+                      //                                 text: bookableInfo,
+                      //                                 style:
+                      //                                     buttonXSmlTextStyle)
+                      //                           ]));
+                      //                       _height = 60;
+                      //                     });
+                      //                   } else {
+                      //                     //if bookable info is being shown
+                      //                     if (_bookExpandClick) {
+                      //                       setState(() {
+                      //                         _width = 0;
+                      //                         _height = 0;
+                      //                         _isExpanded = false;
+                      //                         _bookExpandClick = false;
+                      //                       });
+                      //                     } else {
+                      //                       setState(() {
+                      //                         _publicExpandClick = false;
+                      //                         _activeExpandClick = false;
+                      //                         _bookExpandClick = true;
+                      //                         _isExpanded = true;
+                      //                         _margin = EdgeInsets.fromLTRB(
+                      //                             0, 0, 0, 8);
+                      //                         _width = MediaQuery.of(context)
+                      //                                 .size
+                      //                                 .width *
+                      //                             .9;
+                      //                         _text = RichText(
+                      //                             text: TextSpan(
+                      //                                 style:
+                      //                                     subHeadingTextStyle,
+                      //                                 children: <TextSpan>[
+                      //                               TextSpan(
+                      //                                   text: bookableInfo,
+                      //                                   style:
+                      //                                       buttonXSmlTextStyle)
+                      //                             ]));
 
-                                              _height = 60;
-                                            });
-                                          }
-                                        }
-                                      }),
-                                ),
-                                SizedBox(
-                                  height:
-                                      MediaQuery.of(context).size.height * .08,
-                                  width:
-                                      MediaQuery.of(context).size.width * .14,
-                                  child: Transform.scale(
-                                    scale: 0.6,
-                                    alignment: Alignment.centerLeft,
-                                    child: Switch(
-                                      materialTapTargetSize:
-                                          MaterialTapTargetSize.shrinkWrap,
-                                      value: isBookable,
-                                      onChanged: (value) {
-                                        setState(() {
-                                          isBookable = value;
-                                          entity.isBookable = value;
+                      //                         _height = 60;
+                      //                       });
+                      //                     }
+                      //                   }
+                      //                 }),
+                      //           ),
+                      //           SizedBox(
+                      //             height:
+                      //                 MediaQuery.of(context).size.height * .08,
+                      //             width:
+                      //                 MediaQuery.of(context).size.width * .14,
+                      //             child: Transform.scale(
+                      //               scale: 0.6,
+                      //               alignment: Alignment.centerLeft,
+                      //               child: Switch(
+                      //                 materialTapTargetSize:
+                      //                     MaterialTapTargetSize.shrinkWrap,
+                      //                 value: isBookable,
+                      //                 onChanged: (value) {
+                      //                   setState(() {
+                      //                     isBookable = value;
+                      //                     entity.isBookable = value;
 
-                                          if (value) {
-                                            showConfirmationDialog();
-                                            //TODO: SMita - show msg with info, yes/no
-                                          }
-                                          print(isBookable);
-                                        });
-                                      },
-                                      // activeTrackColor: Colors.green,
-                                      activeColor: highlightColor,
-                                      inactiveThumbColor: Colors.grey[300],
-                                    ),
-                                  ),
-                                ),
-                                Container(
-                                  width:
-                                      MediaQuery.of(context).size.width * .15,
-                                  child: FlatButton(
-                                    visualDensity: VisualDensity.compact,
-                                    padding: EdgeInsets.all(0),
-                                    child: Row(
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: <Widget>[
-                                          Text('Active',
-                                              style: TextStyle(fontSize: 12)),
-                                          SizedBox(
-                                            width: MediaQuery.of(context)
-                                                    .size
-                                                    .width *
-                                                .05,
-                                            height: MediaQuery.of(context)
-                                                    .size
-                                                    .height *
-                                                .02,
-                                            child: Icon(Icons.info,
-                                                color: Colors.blueGrey[600],
-                                                size: 15),
-                                          ),
-                                        ]),
-                                    onPressed: () {
-                                      if (!_isExpanded) {
-                                        setState(() {
-                                          _activeExpandClick = true;
-                                          _isExpanded = true;
-                                          _margin =
-                                              EdgeInsets.fromLTRB(0, 0, 0, 8);
-                                          _width = MediaQuery.of(context)
-                                                  .size
-                                                  .width *
-                                              .9;
-                                          _text = RichText(
-                                              text: TextSpan(
-                                                  style: subHeadingTextStyle,
-                                                  children: <TextSpan>[
-                                                TextSpan(
-                                                    text: activeDef,
-                                                    style: buttonXSmlTextStyle)
-                                              ]));
+                      //                     if (value) {
+                      //                       showConfirmationDialog();
+                      //                       //TODO: SMita - show msg with info, yes/no
+                      //                     }
+                      //                     print(isBookable);
+                      //                   });
+                      //                 },
+                      //                 // activeTrackColor: Colors.green,
+                      //                 activeColor: highlightColor,
+                      //                 inactiveThumbColor: Colors.grey[300],
+                      //               ),
+                      //             ),
+                      //           ),
+                      //           Container(
+                      //             width:
+                      //                 MediaQuery.of(context).size.width * .15,
+                      //             child: FlatButton(
+                      //               visualDensity: VisualDensity.compact,
+                      //               padding: EdgeInsets.all(0),
+                      //               child: Row(
+                      //                   mainAxisSize: MainAxisSize.min,
+                      //                   children: <Widget>[
+                      //                     Text('Active',
+                      //                         style: TextStyle(fontSize: 12)),
+                      //                     SizedBox(
+                      //                       width: MediaQuery.of(context)
+                      //                               .size
+                      //                               .width *
+                      //                           .05,
+                      //                       height: MediaQuery.of(context)
+                      //                               .size
+                      //                               .height *
+                      //                           .02,
+                      //                       child: Icon(Icons.info,
+                      //                           color: Colors.blueGrey[600],
+                      //                           size: 15),
+                      //                     ),
+                      //                   ]),
+                      //               onPressed: () {
+                      //                 if (!_isExpanded) {
+                      //                   setState(() {
+                      //                     _activeExpandClick = true;
+                      //                     _isExpanded = true;
+                      //                     _margin =
+                      //                         EdgeInsets.fromLTRB(0, 0, 0, 8);
+                      //                     _width = MediaQuery.of(context)
+                      //                             .size
+                      //                             .width *
+                      //                         .9;
+                      //                     _text = RichText(
+                      //                         text: TextSpan(
+                      //                             style: subHeadingTextStyle,
+                      //                             children: <TextSpan>[
+                      //                           TextSpan(
+                      //                               text: activeDef,
+                      //                               style: buttonXSmlTextStyle)
+                      //                         ]));
 
-                                          _height = 60;
-                                        });
-                                      } else {
-                                        //if bookable info is being shown
-                                        if (_activeExpandClick) {
-                                          setState(() {
-                                            _width = 0;
-                                            _height = 0;
-                                            _isExpanded = false;
-                                            _activeExpandClick = false;
-                                          });
-                                        } else {
-                                          setState(() {
-                                            _publicExpandClick = false;
-                                            _activeExpandClick = true;
-                                            _bookExpandClick = false;
-                                            _isExpanded = true;
-                                            _margin =
-                                                EdgeInsets.fromLTRB(0, 0, 0, 8);
-                                            _width = MediaQuery.of(context)
-                                                    .size
-                                                    .width *
-                                                .9;
-                                            _text = RichText(
-                                                text: TextSpan(
-                                                    style: subHeadingTextStyle,
-                                                    children: <TextSpan>[
-                                                  TextSpan(
-                                                      text: activeDef,
-                                                      style:
-                                                          buttonXSmlTextStyle)
-                                                ]));
+                      //                     _height = 60;
+                      //                   });
+                      //                 } else {
+                      //                   //if bookable info is being shown
+                      //                   if (_activeExpandClick) {
+                      //                     setState(() {
+                      //                       _width = 0;
+                      //                       _height = 0;
+                      //                       _isExpanded = false;
+                      //                       _activeExpandClick = false;
+                      //                     });
+                      //                   } else {
+                      //                     setState(() {
+                      //                       _publicExpandClick = false;
+                      //                       _activeExpandClick = true;
+                      //                       _bookExpandClick = false;
+                      //                       _isExpanded = true;
+                      //                       _margin =
+                      //                           EdgeInsets.fromLTRB(0, 0, 0, 8);
+                      //                       _width = MediaQuery.of(context)
+                      //                               .size
+                      //                               .width *
+                      //                           .9;
+                      //                       _text = RichText(
+                      //                           text: TextSpan(
+                      //                               style: subHeadingTextStyle,
+                      //                               children: <TextSpan>[
+                      //                             TextSpan(
+                      //                                 text: activeDef,
+                      //                                 style:
+                      //                                     buttonXSmlTextStyle)
+                      //                           ]));
 
-                                            _height = 60;
-                                          });
-                                        }
-                                      }
-                                    },
-                                  ),
-                                ),
-                                SizedBox(
-                                  height:
-                                      MediaQuery.of(context).size.height * .08,
-                                  width:
-                                      MediaQuery.of(context).size.width * .14,
-                                  child: Transform.scale(
-                                    scale: 0.6,
-                                    alignment: Alignment.centerLeft,
-                                    child: Switch(
-                                      materialTapTargetSize:
-                                          MaterialTapTargetSize.shrinkWrap,
-                                      value: isActive,
-                                      onChanged: (value) {
-                                        setState(() {
-                                          if (value) {
-                                            validateField = true;
-                                            _autoValidate = true;
-                                            bool retVal = false;
-                                            bool locValid = false;
-                                            if (validateAllFields())
-                                              retVal = true;
-                                            if (validateLatLon())
-                                              locValid = true;
+                      //                       _height = 60;
+                      //                     });
+                      //                   }
+                      //                 }
+                      //               },
+                      //             ),
+                      //           ),
+                      //           SizedBox(
+                      //             height:
+                      //                 MediaQuery.of(context).size.height * .08,
+                      //             width:
+                      //                 MediaQuery.of(context).size.width * .14,
+                      //             child: Transform.scale(
+                      //               scale: 0.6,
+                      //               alignment: Alignment.centerLeft,
+                      //               child: Switch(
+                      //                 materialTapTargetSize:
+                      //                     MaterialTapTargetSize.shrinkWrap,
+                      //                 value: isActive,
+                      //                 onChanged: (value) {
+                      //                   setState(() {
+                      //                     if (value) {
+                      //                       validateField = true;
+                      //                       _autoValidate = true;
+                      //                       bool retVal = false;
+                      //                       bool locValid = false;
+                      //                       if (validateAllFields())
+                      //                         retVal = true;
+                      //                       if (validateLatLon())
+                      //                         locValid = true;
 
-                                            if (!locValid || !retVal) {
-                                              if (!locValid) {
-                                                Utils.showMyFlushbar(
-                                                    context,
-                                                    Icons.info_outline,
-                                                    Duration(
-                                                      seconds: 6,
-                                                    ),
-                                                    shouldSetLocation,
-                                                    pressUseCurrentLocation);
-                                              } else if (!retVal) {
-                                                //Show flushbar with info that fields has invalid data
-                                                Utils.showMyFlushbar(
-                                                    context,
-                                                    Icons.info_outline,
-                                                    Duration(
-                                                      seconds: 6,
-                                                    ),
-                                                    "Missing Information!!",
-                                                    'Making a place "ACTIVE" requires all mandatory information to be filled in. Please provide the details and Save.');
-                                              }
-                                            } else {
-                                              validateField = false;
-                                              isActive = value;
-                                              entity.isActive = value;
-                                              print(isActive);
-                                            }
-                                          } else {
-                                            isActive = value;
-                                            validateField = false;
-                                            _autoValidate = false;
-                                            entity.isActive = value;
-                                            print(isActive);
-                                          }
-                                        });
-                                      },
-                                      // activeTrackColor: Colors.green,
-                                      activeColor: highlightColor,
-                                      inactiveThumbColor: Colors.grey[300],
-                                    ),
-                                  ),
-                                )
-                              ],
-                            ),
-                            AnimatedContainer(
-                              padding: EdgeInsets.all(2),
-                              margin: _margin,
-                              // Use the properties stored in the State class.
-                              width: _width,
-                              height: _height,
-                              alignment: Alignment.center,
-                              decoration: BoxDecoration(
-                                color: Colors.blueGrey[500],
-                                border: Border.all(color: primaryAccentColor),
-                                borderRadius: _borderRadius,
-                              ),
-                              // Define how long the animation should take.
-                              duration: Duration(seconds: 1),
-                              // Provide an optional curve to make the animation feel smoother.
-                              curve: Curves.easeInOutCirc,
-                              child: Center(child: _text),
-                            ),
-                          ],
-                        ),
-                      ),
+                      //                       if (!locValid || !retVal) {
+                      //                         if (!locValid) {
+                      //                           Utils.showMyFlushbar(
+                      //                               context,
+                      //                               Icons.info_outline,
+                      //                               Duration(
+                      //                                 seconds: 6,
+                      //                               ),
+                      //                               shouldSetLocation,
+                      //                               pressUseCurrentLocation);
+                      //                         } else if (!retVal) {
+                      //                           //Show flushbar with info that fields has invalid data
+                      //                           Utils.showMyFlushbar(
+                      //                               context,
+                      //                               Icons.info_outline,
+                      //                               Duration(
+                      //                                 seconds: 6,
+                      //                               ),
+                      //                               "Missing Information!!",
+                      //                               'Making a place "ACTIVE" requires all mandatory information to be filled in. Please provide the details and Save.');
+                      //                         }
+                      //                       } else {
+                      //                         validateField = false;
+                      //                         isActive = value;
+                      //                         entity.isActive = value;
+                      //                         print(isActive);
+                      //                       }
+                      //                     } else {
+                      //                       isActive = value;
+                      //                       validateField = false;
+                      //                       _autoValidate = false;
+                      //                       entity.isActive = value;
+                      //                       print(isActive);
+                      //                     }
+                      //                   });
+                      //                 },
+                      //                 // activeTrackColor: Colors.green,
+                      //                 activeColor: highlightColor,
+                      //                 inactiveThumbColor: Colors.grey[300],
+                      //               ),
+                      //             ),
+                      //           )
+                      //         ],
+                      //       ),
+                      //       AnimatedContainer(
+                      //         padding: EdgeInsets.all(2),
+                      //         margin: _margin,
+                      //         // Use the properties stored in the State class.
+                      //         width: _width,
+                      //         height: _height,
+                      //         alignment: Alignment.center,
+                      //         decoration: BoxDecoration(
+                      //           color: Colors.blueGrey[500],
+                      //           border: Border.all(color: primaryAccentColor),
+                      //           borderRadius: _borderRadius,
+                      //         ),
+                      //         // Define how long the animation should take.
+                      //         duration: Duration(seconds: 1),
+                      //         // Provide an optional curve to make the animation feel smoother.
+                      //         curve: Curves.easeInOutCirc,
+                      //         child: Center(child: _text),
+                      //       ),
+                      //     ],
+                      //   ),
+                      // ),
 
-                      SizedBox(
-                        height: 7,
-                      ),
+                      // SizedBox(
+                      //   height: 7,
+                      // ),
 
                       Container(
                         decoration: BoxDecoration(
@@ -1740,8 +1670,8 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage> {
                                       nameField,
                                       //   descField,
                                       dobField,
-                                      whatsappPhone,
-                                      callingPhone,
+                                      primaryPhoneField,
+                                      alternatePhoneField,
                                     ],
                                   ),
                                 ),
@@ -1819,8 +1749,13 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage> {
                                       children: [
                                         (_downloadUrl == null)
                                             ? Container(
-                                                child:
-                                                    Text("No Image Selected"))
+                                                child: Text(
+                                                "No Image Selected",
+                                                style: TextStyle(
+                                                    color: (validateField)
+                                                        ? Colors.red
+                                                        : Colors.black),
+                                              ))
                                             : Container(
                                                 width: MediaQuery.of(context)
                                                         .size
@@ -1832,7 +1767,14 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage> {
                                                           .topEnd,
                                                   children: [
                                                     Image.network(_downloadUrl),
-                                                    Icon(Icons.cancel)
+                                                    IconButton(
+                                                      icon: Icon(Icons.cancel),
+                                                      onPressed: () {
+                                                        setState(() {
+                                                          _downloadUrl = null;
+                                                        });
+                                                      },
+                                                    )
                                                   ],
                                                 ),
                                               ),
