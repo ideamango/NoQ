@@ -42,7 +42,24 @@ class ApplicationService {
     return null;
   }
 
+  //to be done by the Applicant
   Future<bool> submitApplication(BookingApplication ba) async {
     return false;
+  }
+
+  //to be done by the Applicant
+  Future<bool> withDrawApplication(String applicationId) async {
+    return false;
+  }
+
+  //to be done by Manager of the Entity who has restricted rights
+  Future<bool> updateApplicationStatus(
+      String applicationId, ApplicationStatus status, String note) async {
+    return false;
+  }
+
+  Future<BookingApplicationsOverview> getBookingApplicationOverview(
+      String bookingFormId, String entityId) async {
+    return null;
   }
 }

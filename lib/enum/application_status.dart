@@ -1,1 +1,9 @@
-enum ApplicationStatus { REJECTED, APPROVED, NEW, ONHOLD }
+enum ApplicationStatus {
+  NEW,
+  INREVIEW,
+  REJECTED,
+  APPROVED,
+  ONHOLD,
+  COMPLETED,
+  CANCELLED
+}
