@@ -26,11 +26,18 @@ import 'package:noq/widget/weekday_selector.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flushbar/flushbar.dart';
 import 'package:noq/widget/widgets.dart';
-import 'package:eventify/eventify.dart' as Eventify;
+import 'package:path/path.dart' as path;
 
 class CovidTokenBookingFormPage extends StatefulWidget {
-  final Entity entity;
-  CovidTokenBookingFormPage({Key key, @required this.entity}) : super(key: key);
+  final String entityId;
+  final String bookingFormId;
+  final DateTime preferredSlotTime;
+  CovidTokenBookingFormPage(
+      {Key key,
+      @required this.entityId,
+      @required this.bookingFormId,
+      @required this.preferredSlotTime})
+      : super(key: key);
   @override
   _CovidTokenBookingFormPageState createState() =>
       _CovidTokenBookingFormPageState();
@@ -71,7 +78,7 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage>
 //Basic Details
   bool validateField = false;
   TextEditingController _nameController = TextEditingController();
-  TextEditingController _descController = TextEditingController();
+  TextEditingController _medDescController = TextEditingController();
   TextEditingController _regNumController = TextEditingController();
 
   TextEditingController _primaryPhoneController = TextEditingController();
@@ -109,7 +116,7 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage>
   Employee cp1 = new Employee();
   Address adrs = new Address();
 
-  Entity entity;
+  String entityId;
 
   ScrollController _scrollController;
   final itemSize = 80.0;
@@ -150,8 +157,8 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage>
   List<String> medConditionsStrList = List<String>();
   List<Item> medConditions = List<Item>();
   List<File> _images = [];
-  File _image; // Used only if you need a single picture
-  String _downloadUrl;
+  //File _image; // Used only if you need a single picture
+  // String _downloadUrl;
   BookingForm bookingForm;
   List<Field> fields;
   BookingApplication bookingApplication;
@@ -161,7 +168,7 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage>
   FormInputFieldText alternatePhone;
   FormInputFieldOptions idProofTypeInput;
   String _idProofType;
-  FormInputFieldText idProofUrlInput;
+  FormInputFieldAttachment idProofUrlInput;
   FormInputFieldOptions healthDetailsInput;
   FormInputFieldText healthDetailsDesc;
   FormInputFieldText latInput;
@@ -175,13 +182,16 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage>
   FormInputFieldText notesInput;
   FormInputFieldText addressPin;
   String validationErrMsg = "";
+  String submissionDoneMsg =
+      "Thanks for Submitting application. We will contact you soon";
+  int idProofCounter = 0;
 
   ///end of fields from contact page
 
   @override
   void initState() {
     super.initState();
-    entity = this.widget.entity;
+    entityId = this.widget.entityId;
 
     getGlobalState().whenComplete(() {
       initBookingForm();
@@ -240,8 +250,9 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage>
         "Please select a Government Id proof", idProofTypesStrList, false);
     idProofTypeInput.responseValues = new List<String>();
     fields.add(idProofTypeInput);
-    idProofUrlInput = FormInputFieldText(
-        "Id Proof File Url", true, "Please upload Government Id proof", 200);
+    idProofUrlInput = FormInputFieldAttachment(
+        "Id Proof File Url", true, "Please upload Government Id proof");
+    idProofUrlInput.responseFilePaths = List<String>();
     fields.add(idProofUrlInput);
     healthDetailsInput = FormInputFieldOptions(
         "Medical Conditions",
@@ -284,13 +295,18 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage>
     bookingForm = new BookingForm(
         formName: "Covid-19 Vacination Applicant Details",
         headerMsg:
-            "You request will be approved based on the information provided by you.",
-        footerMsg: "",
+            "Your request will be approved based on the information provided by you.",
+        footerMsg:
+            "Please carry same ID proof (uploaded here) to the Vaccination center for verification purpose.",
         formFields: fields,
-        autoApproved: true);
+        autoApproved: false);
 
     bookingApplication = new BookingApplication();
-    bookingApplication.entityId = entity.entityId;
+    //slot
+    bookingApplication.preferredSlotTiming = widget.preferredSlotTime;
+    //bookingFormId
+    bookingApplication.bookingFormId = widget.bookingFormId;
+    bookingApplication.entityId = entityId;
     bookingApplication.userId = _gs.getCurrentUser().id;
     bookingApplication.status = ApplicationStatus.NEW;
     bookingApplication.responseForm = bookingForm;
@@ -300,7 +316,7 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage>
   void dispose() {
     super.dispose();
     _nameController.dispose();
-    _descController.dispose();
+    _medDescController.dispose();
     _primaryPhoneController.dispose();
     _alternatePhoneController.dispose();
     _dobController.dispose();
@@ -313,7 +329,7 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage>
       validationErrMsg = validationErrMsg + '\n' + dobMissingMsg;
     if (!Utils.isNotNullOrEmpty(_idProofType))
       validationErrMsg = validationErrMsg + '\n' + idProofTypeMissingMsg;
-    if (!Utils.isNotNullOrEmpty(_downloadUrl))
+    if (Utils.isNullOrEmpty(idProofUrlInput.responseFilePaths))
       validationErrMsg = validationErrMsg + '\n' + uploadValidIdProofMsg;
 
     if (Utils.isNotNullOrEmpty(validationErrMsg))
@@ -322,32 +338,50 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage>
       return true;
   }
 
-  Future getImage(bool gallery) async {
+  Future getImageForIdProof(bool gallery) async {
     ImagePicker picker = ImagePicker();
     PickedFile pickedFile;
     // Let user select photo from gallery
     if (gallery) {
       pickedFile = await picker.getImage(
-        source: ImageSource.gallery,
-      );
+          source: ImageSource.gallery,
+          maxHeight: 600,
+          maxWidth: 600,
+          imageQuality: 50);
     }
     // Otherwise open camera to get new photo
     else {
       pickedFile = await picker.getImage(
-        source: ImageSource.camera,
-      );
+          source: ImageSource.camera,
+          maxHeight: 600,
+          maxWidth: 600,
+          imageQuality: 50);
     }
+    String fileName =
+        '${bookingApplication.id}#${_gs.getCurrentUser().id}#${idProofUrlInput.id}#${idProofCounter + 1}';
 
     setState(() {
       if (pickedFile != null) {
-        //_images.add(File(pickedFile.path));
-        _image = File(pickedFile.path);
-        uploadFile(_image).then((value) {
-          print(value);
-          setState(() {
-            _downloadUrl = value;
-          });
+        File newImageFile = File(pickedFile.path);
+
+        //Change File name
+        print('Original path: ${newImageFile.path}');
+        String dir = path.dirname(newImageFile.path);
+        String newPath = path.join(dir, '$fileName');
+        print('NewPath: $newPath');
+        newImageFile.renameSync(newPath);
+        print('NEW PATH in _images ${newImageFile.path}');
+        _images.add(newImageFile);
+
+        idProofCounter++;
+        // _image = File(pickedFile.path);
+        //  uploadFile(newImageFile).then((value) {
+        // print(value)
+        print('NEW PATH in responsePaths $newPath');
+        setState(() {
+          idProofUrlInput.responseFilePaths.add(newPath);
         });
+        // });
         print("before i think");
       } else {
         print('No image selected.');
@@ -355,15 +389,32 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage>
     });
   }
 
-  Future<String> uploadFile(File image) async {
-    Reference ref = _gs.firebaseStorage.ref().child('idProofs/');
+  // Future<String> uploadFilesToServer(File image) async {
+  //   //Iterate on fields collection
 
-    await ref.putFile(_image);
+  //   String newFileNamePath;
 
-    print('File Uploaded');
+  //   // for()
+  //   // {}
 
-    return await ref.getDownloadURL();
-  }
+  //   Reference ref = _gs.firebaseStorage.ref().child('$newFileNamePath');
+
+  //   await ref.putFile(image);
+
+  //   print('File Uploaded');
+
+  //   return await ref.getDownloadURL();
+  // }
+
+  // Future<bool> removeFile(String imageUrl) async {
+  //   Reference ref = _gs.firebaseStorage.refFromURL(imageUrl);
+  //   print(imageUrl);
+  //   await ref.delete();
+
+  //   print('File Deleted');
+
+  //   return true;
+  // }
 
   Future<void> getGlobalState() async {
     _gs = await GlobalState.getGlobalState();
@@ -382,8 +433,8 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage>
 
   _getAddressFromLatLng(Position position) async {
     setState(() {
-      entity.coordinates =
-          new MyGeoFirePoint(position.latitude, position.longitude);
+      // entity.coordinates =
+      //     new MyGeoFirePoint(position.latitude, position.longitude);
       _latController.text = position.latitude.toString();
       _lonController.text = position.longitude.toString();
     });
@@ -425,6 +476,41 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage>
         offerFieldStatus = true;
       });
     }
+  }
+
+  Widget showImageList(String imageUrl) {
+    return Stack(
+      alignment: AlignmentDirectional.topEnd,
+      children: [
+        Image.network(imageUrl),
+        IconButton(
+          alignment: Alignment.topRight,
+          padding: EdgeInsets.zero,
+          icon: Icon(
+            Icons.cancel_outlined,
+            size: 20,
+            color: Colors.red[700],
+          ),
+          onPressed: () {
+            setState(() {
+              Utils.showConfirmationDialog(
+                      context, "Are you sure you want to delete this image?")
+                  .then((value) {
+                if (value) {
+                  print('REMOVE path in responsePaths $imageUrl');
+                  setState(() {
+                    idProofUrlInput.responseFilePaths
+                        .removeWhere((element) => element == imageUrl);
+                  });
+                }
+              });
+
+              //Update field path values and remove this file url.
+            });
+          },
+        )
+      ],
+    );
   }
 
   @override
@@ -480,7 +566,7 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage>
         obscureText: false,
         //minLines: 1,
         style: textInputTextStyle,
-        controller: _descController,
+        //controller: _descController,
         decoration: CommonStyle.textFieldStyle(
             labelTextStr: "Notes (optional)", hintTextStr: ""),
         keyboardType: TextInputType.multiline,
@@ -542,7 +628,7 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage>
             color: primaryDarkColor,
           ),
           onPressed: () {
-            getImage(false);
+            getImageForIdProof(false);
           });
       final clickPicForUploadBtn = IconButton(
           padding: EdgeInsets.zero,
@@ -551,7 +637,7 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage>
             color: primaryDarkColor,
           ),
           onPressed: () {
-            getImage(true);
+            getImageForIdProof(true);
           });
       final medicalConditionsField = Column(
         children: [
@@ -608,7 +694,7 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage>
         obscureText: false,
         //minLines: 1,
         style: textInputTextStyle,
-        controller: _descController,
+        controller: _medDescController,
         decoration: CommonStyle.textFieldStyle(
             labelTextStr: "Description of above condition (optional)",
             hintTextStr: ""),
@@ -623,10 +709,10 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage>
         maxLength: null,
         maxLines: 3,
         onChanged: (String value) {
-          entity.description = value;
+          healthDetailsDesc.response = value;
         },
         onSaved: (String value) {
-          entity.description = value;
+          healthDetailsDesc.response = value;
         },
       );
       final primaryPhoneField = TextFormField(
@@ -675,9 +761,16 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage>
           focusedBorder: UnderlineInputBorder(
               borderSide: BorderSide(color: Colors.orange)),
         ),
-        validator: Utils.validateMobileField,
+        validator: (value) {
+          if (validateField) {
+            if (validateText(value) == null) {
+              return Utils.validateMobileField(value);
+            } else
+              return null;
+          } else
+            return null;
+        },
         onChanged: (value) {
-          contactPhoneKey.currentState.validate();
           if (value != "") alternatePhone.response = _phCountryCode + (value);
         },
         onSaved: (String value) {
@@ -916,12 +1009,17 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage>
               true);
 
           _tokenBookingDetailsFormKey.currentState.save();
+
+          // bookingApplication.preferredSlotTiming =
           //TODO:Server call to save data
           _gs
               .getTokenApplicationService()
-              .submitApplication(bookingApplication)
+              .submitApplication(bookingApplication, entityId)
               .then((value) {
             if (value) {
+              //Upload attached files to server.
+              //TODO: uploadFilesToServer();
+
               Utils.showMyFlushbar(
                   context,
                   Icons.check,
@@ -1166,8 +1264,8 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage>
                   print("flush already running");
                 },
               ),
-              title: Text(Utils.getEntityTypeDisplayName(entity.type),
-                  style: whiteBoldTextStyle1),
+              title: Text("Booking Request Form",
+                  style: TextStyle(color: Colors.white, fontSize: 16)),
             ),
             body: Center(
               child: new SafeArea(
@@ -1747,7 +1845,8 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage>
                                       mainAxisAlignment:
                                           MainAxisAlignment.spaceBetween,
                                       children: [
-                                        (_downloadUrl == null)
+                                        (Utils.isNullOrEmpty(idProofUrlInput
+                                                .responseFilePaths))
                                             ? Container(
                                                 child: Text(
                                                 "No Image Selected",
@@ -1760,22 +1859,32 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage>
                                                 width: MediaQuery.of(context)
                                                         .size
                                                         .width *
-                                                    .2,
-                                                child: Stack(
-                                                  alignment:
-                                                      AlignmentDirectional
-                                                          .topEnd,
-                                                  children: [
-                                                    Image.network(_downloadUrl),
-                                                    IconButton(
-                                                      icon: Icon(Icons.cancel),
-                                                      onPressed: () {
-                                                        setState(() {
-                                                          _downloadUrl = null;
-                                                        });
-                                                      },
-                                                    )
-                                                  ],
+                                                    .6,
+                                                child: ListView.builder(
+                                                  padding: EdgeInsets.all(
+                                                      MediaQuery.of(context)
+                                                              .size
+                                                              .width *
+                                                          .03),
+                                                  //  controller: _childScrollController,
+                                                  scrollDirection:
+                                                      Axis.vertical,
+
+                                                  shrinkWrap: true,
+                                                  //   itemExtent: itemSize,
+                                                  //scrollDirection: Axis.vertical,
+                                                  itemBuilder:
+                                                      (BuildContext context,
+                                                          int index) {
+                                                    return Container(
+                                                      child: showImageList(
+                                                          idProofUrlInput
+                                                                  .responseFilePaths[
+                                                              index]),
+                                                    );
+                                                  },
+                                                  itemCount: idProofUrlInput
+                                                      .responseFilePaths.length,
                                                 ),
                                               ),
                                         Row(
@@ -2280,6 +2389,29 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage>
                       SizedBox(
                         height: 7,
                       ),
+                      Container(
+                        padding: EdgeInsets.only(left: 5.0, right: 5),
+                        decoration: BoxDecoration(
+                            border: Border.all(color: containerColor),
+                            color: Colors.grey[50],
+                            shape: BoxShape.rectangle,
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(5.0))),
+                        //padding: EdgeInsets.all(5.0),
+                        child: Text(
+                          bookingForm.footerMsg,
+                          style: TextStyle(
+                              color: Colors.orangeAccent.shade400,
+                              //fontWeight: FontWeight.w600,
+                              fontFamily: 'Montserrat',
+
+                              // decoration: TextDecoration.underline,
+                              fontSize: 16.0),
+                        ),
+                      ),
+                      SizedBox(
+                        height: 7,
+                      ),
                       //THIS CONTAINER
                       // Container(
                       //   decoration: BoxDecoration(
@@ -2630,8 +2762,8 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage>
                   Navigator.of(context).pop();
                 },
               ),
-              title: Text(Utils.getEntityTypeDisplayName(entity.type),
-                  style: whiteBoldTextStyle1),
+              title: Text("Booking Request Form",
+                  style: TextStyle(color: Colors.white, fontSize: 16)),
             ),
 
             body: Center(

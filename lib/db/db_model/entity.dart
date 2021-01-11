@@ -281,7 +281,8 @@ class Entity {
           hasChildren: (childEntities != null && childEntities.length > 0)
               ? true
               : false,
-          isBookable: isBookable);
+          isBookable: isBookable,
+          bookingFormId: bookingFormId);
     } else {
       _meta.name = name;
       _meta.type = type;
@@ -315,6 +316,7 @@ class Entity {
       _meta.hasChildren =
           (childEntities != null && childEntities.length > 0) ? true : false;
       _meta.isBookable = isBookable;
+      _meta.bookingFormId = bookingFormId;
     }
     return _meta;
   }

@@ -8,6 +8,7 @@ import 'package:noq/db/db_service/entity_service.dart';
 import 'package:noq/db/db_service/slot_full_exception.dart';
 import 'package:noq/db/db_service/token_already_exists_exception.dart';
 import 'package:noq/global_state.dart';
+import 'package:noq/pages/covid_token_booking_form.dart';
 import 'package:noq/pages/search_child_entity_page.dart';
 import 'package:noq/pages/search_entity_page.dart';
 import 'package:noq/pages/favs_list_page.dart';
@@ -559,22 +560,35 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
                 ),
           onPressed: () {
             if (!isDisabled(sl.dateTime)) {
-              if (isBooked(sl.dateTime, entity.entityId)) {
-                Utils.showMyFlushbar(
+//Check if booking form is required then take request else show form.
+              if (Utils.isNotNullOrEmpty(entity.bookingFormId)) {
+                //Show Booking request form
+                Navigator.push(
                     context,
-                    Icons.info_outline,
-                    Duration(seconds: 6),
-                    alreadyHaveBooking,
-                    wantToBookAnotherSlot);
-                return null;
+                    MaterialPageRoute(
+                        builder: (context) => CovidTokenBookingFormPage(
+                              entityId: entity.entityId,
+                              bookingFormId: entity.bookingFormId,
+                              preferredSlotTime: sl.dateTime,
+                            )));
+              } else {
+                if (isBooked(sl.dateTime, entity.entityId)) {
+                  Utils.showMyFlushbar(
+                      context,
+                      Icons.info_outline,
+                      Duration(seconds: 6),
+                      alreadyHaveBooking,
+                      wantToBookAnotherSlot);
+                  return null;
+                }
+                if (sl.isFull == false) {
+                  setState(() {
+                    //unselect previously selected slot
+                    selectedSlot = sl;
+                  });
+                } else
+                  return null;
               }
-              if (sl.isFull == false) {
-                setState(() {
-                  //unselect previously selected slot
-                  selectedSlot = sl;
-                });
-              } else
-                return null;
             } else
               return null;
           },

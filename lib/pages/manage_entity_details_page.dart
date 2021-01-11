@@ -1973,6 +1973,7 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
               true);
 
           _entityDetailsFormKey.currentState.save();
+          entity.bookingFormId = COVID_BOOKING_FORM_ID;
           upsertEntity(entity, _regNumController.text).then((value) {
             if (value) {
               // Assign admins to newly upserted entity

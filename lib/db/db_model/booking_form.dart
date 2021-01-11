@@ -209,7 +209,8 @@ class FormInputFieldOptions extends Field {
 }
 
 class FormInputFieldAttachment extends Field {
-  String responseFilePath;
+  List<String> responseFilePaths;
+  int maxAttachments = 2;
 
   FormInputFieldAttachment(
     String label,
@@ -228,18 +229,30 @@ class FormInputFieldAttachment extends Field {
         'isMandatory': isMandatory,
         "infoMessage": infoMessage,
         'type': type,
-        'responseFilePath': responseFilePath
+        'responseFilePaths': responseFilePaths,
+        'maxAttachments': maxAttachments
       };
+  static List<String> convertToPathValuesFromJson(List<dynamic> valuesJson) {
+    List<String> values = new List<String>();
+    if (valuesJson == null) return values;
+
+    for (String value in valuesJson) {
+      values.add(value);
+    }
+    return values;
+  }
 
   static FormInputFieldAttachment fromJson(Map<String, dynamic> json) {
     if (json == null) return null;
-    FormInputFieldAttachment numberField = FormInputFieldAttachment(
+    FormInputFieldAttachment attachmentField = FormInputFieldAttachment(
         json['label'], json['isMandatory'], json['infoMessage']);
 
-    numberField.id = json['id'];
-    numberField.responseFilePath = json['responseFilePath'];
+    attachmentField.id = json['id'];
+    attachmentField.responseFilePaths =
+        convertToPathValuesFromJson(json['responseFilePaths']);
+    attachmentField.maxAttachments = json['maxAttachments'];
 
-    return numberField;
+    return attachmentField;
   }
 }
 

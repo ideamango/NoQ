@@ -28,19 +28,10 @@ class ManageBookings extends StatefulWidget {
 }
 
 class _ManageBookingsState extends State<ManageBookings> {
-  TextEditingController _mailController = new TextEditingController();
-  TextEditingController _nameController = new TextEditingController();
-  TextEditingController _phController = new TextEditingController();
   final GlobalKey<FormFieldState> phnKey = new GlobalKey<FormFieldState>();
-  TextEditingController _msgController = new TextEditingController();
-  String _reasonType;
+
   List<String> attachments = [];
-  String _mailBody;
-  String _altPh;
-  String _mailFirstline;
-  String _mailSecLine;
-  bool _validate = false;
-  String _errMsg;
+
   bool initCompleted = false;
   GlobalState _state;
   DateTime currentDate = DateTime.now();
@@ -82,7 +73,7 @@ class _ManageBookingsState extends State<ManageBookings> {
       for (int i = 0; i <= slotList.length - 1; i++) {
         List<UserToken> tokensForThisSlot =
             await getTokenService().getAllTokensForSlot(slotList[i].slotId);
-        if (Utils.isNullOrEmpty(tokensForThisSlot))
+        if (!Utils.isNullOrEmpty(tokensForThisSlot))
           _tokensMap[slotList[i].slotId] = tokensForThisSlot;
       }
     }).catchError((onError) {
@@ -301,7 +292,7 @@ class _ManageBookingsState extends State<ManageBookings> {
   Widget getUpcomingBookings() {
     print(_state.getConfigurations().bookingDataFromDays);
     DateTime selectedDate;
-   
+
     return Container(child: Text('Date time slots and Up bookings'));
   }
 

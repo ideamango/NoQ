@@ -12,7 +12,7 @@ import 'package:noq/db/db_model/meta_entity.dart';
 import 'package:noq/db/db_model/app_user.dart';
 import 'package:noq/db/db_model/slot.dart';
 import 'package:noq/db/db_model/user_token.dart';
-import 'package:noq/db/db_service/application_service.dart';
+import 'package:noq/db/db_service/booking_application_service.dart';
 
 import 'package:noq/db/db_service/configurations_service.dart';
 import 'package:noq/db/db_service/entity_service.dart';
@@ -47,7 +47,7 @@ class GlobalState {
   EntityService _entityService;
   UserService _userService;
   TokenService _tokenService;
-  ApplicationService _applicationService;
+  BookingApplicationService _applicationService;
   AuthService _authService;
   static Future<Null> isWorking;
   Location _locData;
@@ -211,7 +211,7 @@ class GlobalState {
 
     if (_gs._applicationService == null) {
       _gs._applicationService =
-          new ApplicationService(_gs._secondaryFirebaseApp);
+          new BookingApplicationService(_gs._secondaryFirebaseApp);
     }
 
     if (_gs._conf == null) {
@@ -264,7 +264,7 @@ class GlobalState {
     return _gs._entityService;
   }
 
-  ApplicationService getTokenApplicationService() {
+  BookingApplicationService getTokenApplicationService() {
     return _gs._applicationService;
   }
 

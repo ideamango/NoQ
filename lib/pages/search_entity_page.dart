@@ -1613,17 +1613,11 @@ class _SearchEntityPageState extends State<SearchEntityPage>
     Navigator.push(
         context,
         MaterialPageRoute(
-            builder: (context) => CovidTokenBookingFormPage(entity: entity)));
-
-    // print('After showDialog:');
-    // Navigator.push(
-    //     context,
-    //     MaterialPageRoute(
-    //         builder: (context) => ShowSlotsPage(
-    //               entity: store.getMetaEntity(),
-    //               dateTime: dateTime,
-    //               forPage: 'MainSearch',
-    //             )));
+            builder: (context) => ShowSlotsPage(
+                  entity: entity.getMetaEntity(),
+                  dateTime: dateTime,
+                  forPage: 'MainSearch',
+                )));
 
     print('After showDialog:');
     // });

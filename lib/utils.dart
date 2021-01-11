@@ -736,4 +736,78 @@ class Utils {
               ],
             ));
   }
+
+  static Future<bool> showConfirmationDialog(
+      BuildContext context, String msg) async {
+    bool returnVal = await showDialog(
+        barrierDismissible: false,
+        context: context,
+        builder: (_) => AlertDialog(
+              titlePadding: EdgeInsets.fromLTRB(10, 15, 10, 10),
+              contentPadding: EdgeInsets.all(0),
+              actionsPadding: EdgeInsets.all(5),
+              //buttonPadding: EdgeInsets.all(0),
+              title: Container(
+                width: MediaQuery.of(context).size.width,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Text(
+                      msg,
+                      style: TextStyle(
+                        fontSize: 15,
+                        color: Colors.blueGrey[600],
+                      ),
+                    ),
+                    verticalSpacer,
+                    // myDivider,
+                  ],
+                ),
+              ),
+              content: Container(
+                width: MediaQuery.of(context).size.width,
+                child: Divider(
+                  color: Colors.blueGrey[400],
+                  height: 1,
+                  //indent: 40,
+                  //endIndent: 30,
+                ),
+              ),
+
+              actions: <Widget>[
+                SizedBox(
+                  height: 24,
+                  child: FlatButton(
+                    color: Colors.transparent,
+                    splashColor: highlightColor.withOpacity(.8),
+                    textColor: Colors.orange,
+                    shape: RoundedRectangleBorder(
+                        side: BorderSide(color: Colors.orange)),
+                    child: Text('Yes'),
+                    onPressed: () {
+                      Navigator.of(_).pop(true);
+                    },
+                  ),
+                ),
+                SizedBox(
+                  height: 24,
+                  child: FlatButton(
+                    // elevation: 20,
+                    autofocus: true,
+                    focusColor: highlightColor,
+                    splashColor: highlightColor,
+                    color: Colors.white,
+                    textColor: Colors.orange,
+                    shape: RoundedRectangleBorder(
+                        side: BorderSide(color: Colors.orange)),
+                    child: Text('No'),
+                    onPressed: () {
+                      Navigator.of(_).pop(false);
+                    },
+                  ),
+                ),
+              ],
+            ));
+    return returnVal;
+  }
 }

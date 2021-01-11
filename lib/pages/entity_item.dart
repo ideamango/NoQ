@@ -6,6 +6,7 @@ import 'package:noq/db/db_service/entity_service.dart';
 import 'package:noq/pages/business_info_page.dart';
 import 'package:noq/pages/manage_child_entity_details_page.dart';
 import 'package:noq/pages/manage_entity_details_page.dart';
+import 'package:noq/pages/overview_page.dart';
 import 'package:noq/services/circular_progress.dart';
 import 'package:noq/services/qr_code_generate.dart';
 import 'package:noq/style.dart';
@@ -320,11 +321,16 @@ class EntityRowState extends State<EntityRow> {
                         style: TextStyle(color: primaryDarkColor, fontSize: 13),
                       ),
                       onPressed: () {
-                        print("To manage bookings page");
+                        print("Over To overview page");
+
                         Navigator.of(context)
-                            .push(PageAnimation.createRoute(ManageBookings(
-                          metaEntity: _metaEntity,
+                            .push(PageAnimation.createRoute(OverviewPage(
+                          entityId: _metaEntity.entityId,
                         )));
+                        // Navigator.of(context)
+                        //     .push(PageAnimation.createRoute(ManageBookings(
+                        //   metaEntity: _metaEntity,
+                        // )));
                       },
                     ),
                   ),

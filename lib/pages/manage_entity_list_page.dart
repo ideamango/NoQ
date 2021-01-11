@@ -262,7 +262,7 @@ class _ManageEntityListPageState extends State<ManageEntityListPage> {
                           controller: _scrollController,
                           reverse: true,
                           shrinkWrap: true,
-                          itemExtent: itemSize,
+                          //itemExtent: itemSize,
                           itemBuilder: (BuildContext context, int index) {
                             itemSize = MediaQuery.of(context).size.height * .21;
                             return Container(
