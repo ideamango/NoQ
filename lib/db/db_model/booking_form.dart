@@ -160,16 +160,16 @@ class FormInputFieldNumber extends Field {
 }
 
 class FormInputFieldOptions extends Field {
-  List<String> values;
+  List<String> options;
   bool isMultiSelect;
   List<String> responseValues;
 
   FormInputFieldOptions(String label, bool isMandatory, String infoMessage,
-      List<String> values, bool isMultiSelect) {
+      List<String> options, bool isMultiSelect) {
     this.label = label;
     this.isMandatory = isMandatory;
     this.infoMessage = infoMessage;
-    this.values = values;
+    this.options = options;
     this.isMultiSelect = isMultiSelect;
     this.type = "OPTIONS";
   }
@@ -179,7 +179,7 @@ class FormInputFieldOptions extends Field {
         'label': label,
         'isMandatory': isMandatory,
         "infoMessage": infoMessage,
-        'values': values,
+        'options': options,
         'isMultiSelect': isMultiSelect,
         'type': type
       };
@@ -190,7 +190,7 @@ class FormInputFieldOptions extends Field {
         json['label'],
         json['isMandatory'],
         json['infoMessage'],
-        convertToOptionValuesFromJson(json['values']),
+        convertToOptionValuesFromJson(json['options']),
         json['isMultiSelect']);
 
     optionsField.id = json['id'];
@@ -322,5 +322,64 @@ class FormInputFieldPhone extends Field {
     numberField.responsePhone = json['responsePhone'];
 
     return numberField;
+  }
+}
+
+class FormInputFieldOptionsWithAttachments extends Field {
+  List<String> options;
+  bool isMultiSelect;
+  List<String> responseValues;
+
+  List<String> responseFilePaths;
+  int maxAttachments = 2;
+
+  FormInputFieldOptionsWithAttachments(String label, bool isMandatory,
+      String infoMessage, List<String> options, bool isMultiSelect) {
+    this.label = label;
+    this.isMandatory = isMandatory;
+    this.infoMessage = infoMessage;
+    this.options = options;
+    this.isMultiSelect = isMultiSelect;
+    this.type = "OPTIONS_ATTACHMENTS";
+  }
+
+  Map<String, dynamic> toJson() => {
+        'id': id,
+        'label': label,
+        'isMandatory': isMandatory,
+        "infoMessage": infoMessage,
+        'options': options,
+        'isMultiSelect': isMultiSelect,
+        'type': type,
+        'responseFilePaths': responseFilePaths,
+        'maxAttachments': maxAttachments
+      };
+
+  static FormInputFieldOptionsWithAttachments fromJson(
+      Map<String, dynamic> json) {
+    if (json == null) return null;
+    FormInputFieldOptionsWithAttachments optionsFieldWithAttachments =
+        FormInputFieldOptionsWithAttachments(
+            json['label'],
+            json['isMandatory'],
+            json['infoMessage'],
+            convertToValuesFromJson(json['options']),
+            json['isMultiSelect']);
+
+    optionsFieldWithAttachments.id = json['id'];
+    optionsFieldWithAttachments.responseFilePaths =
+        convertToValuesFromJson(json['responseFilePaths']);
+    optionsFieldWithAttachments.maxAttachments = json['maxAttachments'];
+    return optionsFieldWithAttachments;
+  }
+
+  static List<String> convertToValuesFromJson(List<dynamic> valuesJson) {
+    List<String> values = new List<String>();
+    if (valuesJson == null) return values;
+
+    for (String value in valuesJson) {
+      values.add(value);
+    }
+    return values;
   }
 }
