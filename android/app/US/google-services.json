@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "964237045237",
+    "project_id": "lesssusdefault",
+    "storage_bucket": "lesssusdefault.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:964237045237:android:dac9374ed36f850a5784bc",
+        "android_client_info": {
+          "package_name": "net.lesss"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "964237045237-qd7h74h6u5814tll15j2693d0c2geie9.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "net.lesss",
+            "certificate_hash": "873c1be027566f20bf722110a2ce49c884065dd3"
+          }
+        },
+        {
+          "client_id": "964237045237-ck64vap2lkcbc9p24p6botnfdiedt9va.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCZlz1Cdyi2wjOvhuIFJmWTnc4m8eUuW34"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "964237045237-ck64vap2lkcbc9p24p6botnfdiedt9va.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "964237045237-mtcled3g06soi7np0i7a1vbk2elt8ldi.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "net.lesss",
+                "app_store_id": "1545296767"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
