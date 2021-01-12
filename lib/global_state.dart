@@ -57,6 +57,9 @@ class GlobalState {
   GlobalState._();
 
   Future<FirebaseApp> initSecondaryFirebaseApp() async {
+    //comment following line to continue to work with secondary Firebase
+    _gs._secondaryFirebaseApp = Firebase.apps[0];
+
     String appId;
     String apiKey;
     String messagingSenderId;
@@ -167,10 +170,11 @@ class GlobalState {
 
   static Future<GlobalState> getGlobalState() async {
     //automatically detect country
-    Location loc = await LocationUtil.getLocation();
-    loc.countryCode = "Test";
+    //Location loc = await LocationUtil.getLocation();
+    //loc.countryCode = "Test";
+    //return await GlobalState.getGlobalStateForCountry(loc);
 
-    return await GlobalState.getGlobalStateForCountry(loc);
+    return await GlobalState.getGlobalStateForCountry(null);
   }
 
   static Future<GlobalState> getGlobalStateForCountry(Location location) async {
@@ -189,9 +193,9 @@ class GlobalState {
 
     _gs._locData = location;
 
-    // if (_gs._secondaryFirebaseApp == null) {
-    //   await _gs.initSecondaryFirebaseApp();
-    // }
+    if (_gs._secondaryFirebaseApp == null) {
+      await _gs.initSecondaryFirebaseApp();
+    }
 
     if (_gs._authService == null) {
       _gs._authService = new AuthService(_gs._secondaryFirebaseApp);

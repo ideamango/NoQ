@@ -1,45 +1,38 @@
 {
   "project_info": {
-    "project_number": "964237045237",
-    "project_id": "lesssusdefault",
-    "storage_bucket": "lesssusdefault.appspot.com"
+    "project_number": "643643889883",
+    "firebase_url": "https://sukoon-india.firebaseio.com",
+    "project_id": "sukoon-india",
+    "storage_bucket": "sukoon-india.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:964237045237:android:dac9374ed36f850a5784bc",
+        "mobilesdk_app_id": "1:643643889883:android:2c47f2ee29f66b35c594fe",
         "android_client_info": {
           "package_name": "net.lesss"
         }
       },
       "oauth_client": [
         {
-          "client_id": "964237045237-qd7h74h6u5814tll15j2693d0c2geie9.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "net.lesss",
-            "certificate_hash": "873c1be027566f20bf722110a2ce49c884065dd3"
-          }
-        },
-        {
-          "client_id": "964237045237-ck64vap2lkcbc9p24p6botnfdiedt9va.apps.googleusercontent.com",
+          "client_id": "643643889883-cti235v5rurjhovagf5876bfoeu5mr5i.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyCZlz1Cdyi2wjOvhuIFJmWTnc4m8eUuW34"
+          "current_key": "AIzaSyDYo0KL7mzN9-0ghFsO4ydCLQYFXoWvujg"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "964237045237-ck64vap2lkcbc9p24p6botnfdiedt9va.apps.googleusercontent.com",
+              "client_id": "643643889883-cti235v5rurjhovagf5876bfoeu5mr5i.apps.googleusercontent.com",
               "client_type": 3
             },
             {
-              "client_id": "964237045237-mtcled3g06soi7np0i7a1vbk2elt8ldi.apps.googleusercontent.com",
+              "client_id": "643643889883-dffliinmljkuoh98r25fqt5c2up4rq9r.apps.googleusercontent.com",
               "client_type": 2,
               "ios_info": {
                 "bundle_id": "net.lesss",
