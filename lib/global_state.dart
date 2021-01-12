@@ -65,85 +65,85 @@ class GlobalState {
     String storageBucket;
     String dbUrl;
 
-    for (FirebaseApp app in Firebase.apps) {
-      if (app.name == "SecondaryFirebaseApp") {
-        _gs._secondaryFirebaseApp = app;
-        return app;
-      }
-    }
+    // for (FirebaseApp app in Firebase.apps) {
+    //   if (app.name == "SecondaryFirebaseApp") {
+    //     _gs._secondaryFirebaseApp = app;
+    //     return app;
+    //   }
+    // }
 
-    if (_locData.countryCode == "Test") {
-      appId = Platform.isAndroid
-          ? "1:166667469482:android:f488ccf8299e9542e9c6d3"
-          : "1:166667469482:ios:bcaebbe8fae4c8c2e9c6d3";
+    // if (_locData.countryCode == "Test") {
+    //   appId = Platform.isAndroid
+    //       ? "1:166667469482:android:f488ccf8299e9542e9c6d3"
+    //       : "1:166667469482:ios:bcaebbe8fae4c8c2e9c6d3";
 
-      apiKey = "AIzaSyBvRdM2jfG54VzciJ3sfef4xq_TalMmOAM";
-      messagingSenderId = "166667469482";
-      projectId = "awesomenoq";
-      clientId =
-          "166667469482-fjai5a1piepdp0tlr05hqrhl7clrq727.apps.googleusercontent.com";
-      storageBucket = 'awesomenoq.appspot.com';
-      dbUrl = 'https: //awesomenoq.firebaseio.com';
-      await Firebase.initializeApp(
-          name: 'SecondaryFirebaseApp',
-          options: FirebaseOptions(
-              appId: appId,
-              apiKey: apiKey,
-              bundleID: 'net.lesss',
-              gcmSenderID: messagingSenderId,
-              googleAppID: appId,
-              iosBundleId: "net.lesss",
-              iosClientId: clientId,
-              messagingSenderId: messagingSenderId,
-              projectId: projectId,
-              storageBucket: storageBucket,
-              databaseURL: dbUrl));
-    } else if (_locData.isEU) {
-      //firebase project with location as EU, not handled yet
+    //   apiKey = "AIzaSyBvRdM2jfG54VzciJ3sfef4xq_TalMmOAM";
+    //   messagingSenderId = "166667469482";
+    //   projectId = "awesomenoq";
+    //   clientId =
+    //       "166667469482-fjai5a1piepdp0tlr05hqrhl7clrq727.apps.googleusercontent.com";
+    //   storageBucket = 'awesomenoq.appspot.com';
+    //   dbUrl = 'https: //awesomenoq.firebaseio.com';
+    //   await Firebase.initializeApp(
+    //       name: 'SecondaryFirebaseApp',
+    //       options: FirebaseOptions(
+    //           appId: appId,
+    //           apiKey: apiKey,
+    //           bundleID: 'net.lesss',
+    //           gcmSenderID: messagingSenderId,
+    //           googleAppID: appId,
+    //           iosBundleId: "net.lesss",
+    //           iosClientId: clientId,
+    //           messagingSenderId: messagingSenderId,
+    //           projectId: projectId,
+    //           storageBucket: storageBucket,
+    //           databaseURL: dbUrl));
+    // } else if (_locData.isEU) {
+    //   //firebase project with location as EU, not handled yet
 
-    } else if (_locData.countryCode == "IN") {
-      appId = Platform.isAndroid
-          ? "1:643643889883:android:2c47f2ee29f66b35c594fe"
-          : "1:643643889883:ios:1e17e4f8114d5fd0c594fe";
+    // } else if (_locData.countryCode == "IN") {
+    //   appId = Platform.isAndroid
+    //       ? "1:643643889883:android:2c47f2ee29f66b35c594fe"
+    //       : "1:643643889883:ios:1e17e4f8114d5fd0c594fe";
 
-      apiKey = "AIzaSyDYo0KL7mzN9-0ghFsO4ydCLQYFXoWvujg";
-      messagingSenderId = "643643889883";
-      projectId = "sukoon-india";
+    //   apiKey = "AIzaSyDYo0KL7mzN9-0ghFsO4ydCLQYFXoWvujg";
+    //   messagingSenderId = "643643889883";
+    //   projectId = "sukoon-india";
 
-      await Firebase.initializeApp(
-          name: 'SecondaryFirebaseApp',
-          options: FirebaseOptions(
-              appId: appId,
-              apiKey: apiKey,
-              messagingSenderId: messagingSenderId,
-              projectId: projectId,
-              iosBundleId: "net.lesss",
-              trackingId: "",
-              iosClientId:
-                  "643643889883-dffliinmljkuoh98r25fqt5c2up4rq9r.apps.googleusercontent.com",
-              storageBucket: "gs://sukoon-india.appspot.com",
-              databaseURL: "https://sukoon-india.firebaseio.com"));
-    } else if (_locData.countryCode == "US") {
-      // appId = Platform.isAndroid
-      //     ? "1:964237045237:android:dac9374ed36f850a5784bc"
-      //     : "1:964237045237:ios:458f3c6fc630f29c5784bc";
+    //   await Firebase.initializeApp(
+    //       name: 'SecondaryFirebaseApp',
+    //       options: FirebaseOptions(
+    //           appId: appId,
+    //           apiKey: apiKey,
+    //           messagingSenderId: messagingSenderId,
+    //           projectId: projectId,
+    //           iosBundleId: "net.lesss",
+    //           trackingId: "",
+    //           iosClientId:
+    //               "643643889883-dffliinmljkuoh98r25fqt5c2up4rq9r.apps.googleusercontent.com",
+    //           storageBucket: "gs://sukoon-india.appspot.com",
+    //           databaseURL: "https://sukoon-india.firebaseio.com"));
+    // } else if (_locData.countryCode == "US") {
+    //   // appId = Platform.isAndroid
+    //   //     ? "1:964237045237:android:dac9374ed36f850a5784bc"
+    //   //     : "1:964237045237:ios:458f3c6fc630f29c5784bc";
 
-      // apiKey = "AIzaSyCZlz1Cdyi2wjOvhuIFJmWTnc4m8eUuW34";
-      // messagingSenderId = "964237045237";
-      // projectId = "lesssusdefault";
+    //   // apiKey = "AIzaSyCZlz1Cdyi2wjOvhuIFJmWTnc4m8eUuW34";
+    //   // messagingSenderId = "964237045237";
+    //   // projectId = "lesssusdefault";
 
-      // await Firebase.initializeApp(
-      //     name: 'SecondaryFirebaseApp',
-      //     options: FirebaseOptions(
-      //         appId: appId,
-      //         apiKey: apiKey,
-      //         messagingSenderId: messagingSenderId,
-      //         projectId: projectId));
-      _gs._secondaryFirebaseApp = Firebase.apps[0];
-    } else {
-      //for all countries store in Default-US
-      _gs._secondaryFirebaseApp = Firebase.apps[0];
-    }
+    //   // await Firebase.initializeApp(
+    //   //     name: 'SecondaryFirebaseApp',
+    //   //     options: FirebaseOptions(
+    //   //         appId: appId,
+    //   //         apiKey: apiKey,
+    //   //         messagingSenderId: messagingSenderId,
+    //   //         projectId: projectId));
+    //   _gs._secondaryFirebaseApp = Firebase.apps[0];
+    // } else {
+    //   //for all countries store in Default-US
+    //   _gs._secondaryFirebaseApp = Firebase.apps[0];
+    // }
 
     if (_gs._secondaryFirebaseApp == null) {
       _gs._secondaryFirebaseApp = Firebase.app('SecondaryFirebaseApp');
@@ -189,9 +189,9 @@ class GlobalState {
 
     _gs._locData = location;
 
-    if (_gs._secondaryFirebaseApp == null) {
-      await _gs.initSecondaryFirebaseApp();
-    }
+    // if (_gs._secondaryFirebaseApp == null) {
+    //   await _gs.initSecondaryFirebaseApp();
+    // }
 
     if (_gs._authService == null) {
       _gs._authService = new AuthService(_gs._secondaryFirebaseApp);

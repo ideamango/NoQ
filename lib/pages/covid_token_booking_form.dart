@@ -26,7 +26,7 @@ import 'package:noq/widget/weekday_selector.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flushbar/flushbar.dart';
 import 'package:noq/widget/widgets.dart';
-import 'package:path/path.dart' as path;
+import 'package:path/path.dart';
 
 class CovidTokenBookingFormPage extends StatefulWidget {
   final String entityId;
@@ -166,9 +166,8 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage>
   FormInputFieldDateTime dobInput;
   FormInputFieldText primaryPhone;
   FormInputFieldText alternatePhone;
-  FormInputFieldOptions idProofTypeInput;
   String _idProofType;
-  FormInputFieldAttachment idProofUrlInput;
+  FormInputFieldOptionsWithAttachments idProofField;
   FormInputFieldOptions healthDetailsInput;
   FormInputFieldText healthDetailsDesc;
   FormInputFieldText latInput;
@@ -246,14 +245,13 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage>
     alternatePhone = FormInputFieldText(
         "Primary Contact Number", false, "Primary Contact Number", 10);
     fields.add(alternatePhone);
-    idProofTypeInput = FormInputFieldOptions("Id Proof Type", true,
-        "Please select a Government Id proof", idProofTypesStrList, false);
-    idProofTypeInput.responseValues = new List<String>();
-    fields.add(idProofTypeInput);
-    idProofUrlInput = FormInputFieldAttachment(
-        "Id Proof File Url", true, "Please upload Government Id proof");
-    idProofUrlInput.responseFilePaths = List<String>();
-    fields.add(idProofUrlInput);
+
+    idProofField = FormInputFieldOptionsWithAttachments("Id Proof File Url",
+        true, "Please upload Government Id proof", idProofTypesStrList, false);
+    idProofField.responseFilePaths = List<String>();
+    idProofField.responseValues = new List<String>();
+    fields.add(idProofField);
+
     healthDetailsInput = FormInputFieldOptions(
         "Medical Conditions",
         true,
@@ -329,7 +327,7 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage>
       validationErrMsg = validationErrMsg + '\n' + dobMissingMsg;
     if (!Utils.isNotNullOrEmpty(_idProofType))
       validationErrMsg = validationErrMsg + '\n' + idProofTypeMissingMsg;
-    if (Utils.isNullOrEmpty(idProofUrlInput.responseFilePaths))
+    if (Utils.isNullOrEmpty(idProofField.responseFilePaths))
       validationErrMsg = validationErrMsg + '\n' + uploadValidIdProofMsg;
 
     if (Utils.isNotNullOrEmpty(validationErrMsg))
@@ -357,30 +355,28 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage>
           maxWidth: 600,
           imageQuality: 50);
     }
-    String fileName =
-        '${bookingApplication.id}#${_gs.getCurrentUser().id}#${idProofUrlInput.id}#${idProofCounter + 1}';
 
     setState(() {
       if (pickedFile != null) {
         File newImageFile = File(pickedFile.path);
 
         //Change File name
-        print('Original path: ${newImageFile.path}');
-        String dir = path.dirname(newImageFile.path);
-        String newPath = path.join(dir, '$fileName');
-        print('NewPath: $newPath');
-        newImageFile.renameSync(newPath);
-        print('NEW PATH in _images ${newImageFile.path}');
+        // print('Original path: ${newImageFile.path}');
+        // String dir = path.dirname(newImageFile.path);
+        // String newPath = path.join(dir, '$fileName');
+        // print('NewPath: $newPath');
+        // newImageFile.renameSync(newPath);
+        // print('NEW PATH in _images ${newImageFile.path}');
         _images.add(newImageFile);
 
         idProofCounter++;
         // _image = File(pickedFile.path);
         //  uploadFile(newImageFile).then((value) {
         // print(value)
-        print('NEW PATH in responsePaths $newPath');
-        setState(() {
-          idProofUrlInput.responseFilePaths.add(newPath);
-        });
+        // print('NEW PATH in responsePaths $newPath');
+
+        idProofField.responseFilePaths.add(newImageFile.path);
+
         // });
         print("before i think");
       } else {
@@ -389,22 +385,16 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage>
     });
   }
 
-  // Future<String> uploadFilesToServer(File image) async {
-  //   //Iterate on fields collection
+  Future<String> uploadFilesToServer(
+      String localPath, String targetFileName) async {
+    File localImage = File(localPath);
 
-  //   String newFileNamePath;
+    Reference ref = _gs.firebaseStorage.ref().child('$targetFileName');
 
-  //   // for()
-  //   // {}
+    await ref.putFile(localImage);
 
-  //   Reference ref = _gs.firebaseStorage.ref().child('$newFileNamePath');
-
-  //   await ref.putFile(image);
-
-  //   print('File Uploaded');
-
-  //   return await ref.getDownloadURL();
-  // }
+    return await ref.getDownloadURL();
+  }
 
   // Future<bool> removeFile(String imageUrl) async {
   //   Reference ref = _gs.firebaseStorage.refFromURL(imageUrl);
@@ -478,7 +468,7 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage>
     }
   }
 
-  Widget showImageList(String imageUrl) {
+  Widget showImageList(BuildContext context, String imageUrl) {
     return Stack(
       alignment: AlignmentDirectional.topEnd,
       children: [
@@ -499,7 +489,7 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage>
                 if (value) {
                   print('REMOVE path in responsePaths $imageUrl');
                   setState(() {
-                    idProofUrlInput.responseFilePaths
+                    idProofField.responseFilePaths
                         .removeWhere((element) => element == imageUrl);
                   });
                 }
@@ -591,7 +581,7 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage>
                               element.isSelected = false;
                             });
                             _idProofType = item.text;
-                            idProofTypeInput.responseValues.add(item.text);
+                            idProofField.responseValues.add(item.text);
                             setState(() {
                               item.isSelected = newSelectionValue;
                             });
@@ -989,7 +979,7 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage>
       Flushbar flush;
       bool _wasButtonClicked;
 
-      saveRoute() {
+      saveRoute() async {
         setState(() {
           validateField = true;
         });
@@ -1011,15 +1001,25 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage>
           _tokenBookingDetailsFormKey.currentState.save();
 
           // bookingApplication.preferredSlotTiming =
-          //TODO:Server call to save data
+          //TODO:Save Files and then submit application with the updated file path
+          List<String> targetPaths = List<String>();
+          for (String path in idProofField.responseFilePaths) {
+            String fileName = basename(path);
+
+            String targetFileName =
+                '${bookingApplication.id}#${idProofField.id}#${_gs.getCurrentUser().id}#$fileName';
+
+            String targetPath = await uploadFilesToServer(path, targetFileName);
+            targetPaths.add(targetPath);
+          }
+
+          idProofField.responseFilePaths = targetPaths;
+
           _gs
               .getTokenApplicationService()
               .submitApplication(bookingApplication, entityId)
               .then((value) {
             if (value) {
-              //Upload attached files to server.
-              //TODO: uploadFilesToServer();
-
               Utils.showMyFlushbar(
                   context,
                   Icons.check,
@@ -1027,7 +1027,7 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage>
                     seconds: 5,
                   ),
                   "Request submitted successfully!",
-                  'We will contact you as soon as slot opens up. Stay Safe.');
+                  'We will contact you as soon as slot opens up. Stay Safe!');
             }
           });
         } else {
@@ -1845,8 +1845,8 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage>
                                       mainAxisAlignment:
                                           MainAxisAlignment.spaceBetween,
                                       children: [
-                                        (Utils.isNullOrEmpty(idProofUrlInput
-                                                .responseFilePaths))
+                                        (Utils.isNullOrEmpty(
+                                                idProofField.responseFilePaths))
                                             ? Container(
                                                 child: Text(
                                                 "No Image Selected",
@@ -1878,12 +1878,13 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage>
                                                           int index) {
                                                     return Container(
                                                       child: showImageList(
-                                                          idProofUrlInput
+                                                          context,
+                                                          idProofField
                                                                   .responseFilePaths[
                                                               index]),
                                                     );
                                                   },
-                                                  itemCount: idProofUrlInput
+                                                  itemCount: idProofField
                                                       .responseFilePaths.length,
                                                 ),
                                               ),
