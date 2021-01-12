@@ -78,7 +78,7 @@ class _HelpPageState extends State<HelpPage> {
                                         children: <TextSpan>[
                                       TextSpan(
                                           text:
-                                              'Below you will find all the help to use SUKOON like a pro. Still if you didn\'t find the answer you are looking for, feel free to drop a message to us at '),
+                                              'Below you will find all the help to use LESSS like a pro. Still if you didn\'t find the answer you are looking for, feel free to drop a message to us at '),
                                       TextSpan(
                                         text: 'care@sukoon.mobi',
                                         style: TextStyle(color: Colors.blue),

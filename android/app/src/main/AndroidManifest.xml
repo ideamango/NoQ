@@ -25,8 +25,8 @@
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
-                <data android:host="sukoontest2.page.link" android:scheme="https" />
-                <data android:host="sukoontest2.page.link" android:scheme="http" />
+                <data android:host="in.lesss.net" android:scheme="https" />
+                <data android:host="in.lesss.net" android:scheme="http" />
             </intent-filter>
         </activity>
         <receiver android:name="com.dexterous.flutterlocalnotifications.ScheduledNotificationBootReceiver">

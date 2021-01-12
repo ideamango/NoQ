@@ -54,7 +54,7 @@ class _AboutUsPageState extends State<AboutUsPage> {
                     //key: PageStorageKey(this.widget.headerTitle),
                     initiallyExpanded: true,
                     title: Text(
-                      "Story of Sukoon",
+                      "Story of Lesss",
                       style:
                           TextStyle(color: Colors.blueGrey[700], fontSize: 17),
                     ),

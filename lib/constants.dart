@@ -33,7 +33,7 @@ const PLACE_TYPE_OTHERS = "Others";
 
 const SELECT_TYPE_OF_PLACE = "Search by Type of Place";
 
-String appName = 'Sukoon';
+String appName = 'Lesss';
 var loginSubTxt = "Peace of Mind";
 var loginMainTxt = "";
 String dateDisplayFormat = 'EEE, MMM d';
@@ -42,17 +42,17 @@ String homeScreenMsgTxt =
 String whatsappContactUsMsg = "Hey!!";
 String bookNowMsg = "Book now to save time later!";
 
-String whatsappMessageToPlaceOwner = "Hey there! My Sukoon Token number is ";
+String whatsappMessageToPlaceOwner = "Hey there! My Lesss Token number is ";
 String whatsappMessage =
-    "Hey!! Are you worried about safety in the crowded place or long waiting in queues? \nNo worries, book your peace of mind with Sukoon mobile app. \nBook your slot when it's Less crowded and Stay Safe!!";
+    "Hey!! Are you worried about safety in the crowded place or long waiting in queues? \nNo worries, book your peace of mind with Lesss mobile app. \nBook your slot when it's Less crowded and Stay Safe!!";
 
 String qrCodeShareHeading = "You Safety and Convenience is our top priority!";
 
 String qrCodeShareMessage =
-    "For your next visit, book an appointment when the crowd is less.\n\nScan the QR to Download the Sukoon app and start booking your peace of mind!";
+    "For your next visit, book an appointment when the crowd is less.\n\nScan the QR to Download the Lesss app and start booking your peace of mind!";
 
 String locationPermissionMsg =
-    'To find nearby places we need access to your current location. Open Settings and give permission to "Sukoon" to access your location.';
+    'To find nearby places we need access to your current location. Open Settings and give permission to "Lesss" to access your location.';
 String locationAccessDeniedStr =
     "Sorry, couldn't access your current location!!";
 String locationAccessDeniedSubStr =
@@ -113,8 +113,8 @@ String drawerHeaderTxt33 = 'hours !!  ';
 String drawerHeaderTxt41 = 'Save ';
 String drawerHeaderTxt42 = 'time !!';
 String bundleId = 'net.lesss';
-String appStoreId = '962194608';
-String shareURLPrefix = 'https://sukoontest2.page.link';
+String appStoreId = '1545296767';
+String shareURLPrefix = 'https://in.lesss.net';
 String publicInfo =
     "Public: If this is off - it means your service/facility is restricted to only either your employees or residents. Example: Office or Apartment.";
 String activeDef =
@@ -159,10 +159,10 @@ String contactInfoStr =
 String ratingMsg = "We really appreciate your time to provide the review.";
 
 String correctQRCode =
-    "It's not a valid Sukoon QR code. Report this issue to the Place Owner.";
+    "It's not a valid Lesss QR code. Report this issue to the Place Owner.";
 String invalidQRCode =
     "Invalid QR code, sorry we can't add this place to your favourites.";
-String cameraAccess = "Sukoon needs access to the Camera.";
+String cameraAccess = "Lesss needs access to the Camera.";
 String openCameraAccessSetting = "Open Settings to provide the Camera access.";
 String locationNotFound = "Oops.. No location found for this place!";
 String entityAlreadyInFav =
@@ -229,31 +229,31 @@ String tryAgainToBook = "Please try again or choose a different time or date.";
 String appShareHeading =
     "Are you worried about your Safety while stepping out or fed up with waiting in long queues?";
 String appShareMessage =
-    "Fix your appointment well in advance and visit places when the crowd is less.\n\nDownload the Sukoon app today and save lives!";
+    "Fix your appointment well in advance and visit places when the crowd is less.\n\nDownload the Lesss app today and save lives!";
 
 String appShareWithOwnerHeading =
     "Protect your Customers to Protect your Business!\nProvide Safety and Convenience to regain the confidence of your customers.";
 
 String appShareWithOwnerMessage =
-    "Register your Business or Place with Sukoon app at absolutely no cost and grow your business.";
+    "Register your Business or Place with Lesss app at absolutely no cost and grow your business.";
 
 //append place name in the last
 String entityShareByUserHeading =
     "Don't compromise with your safety while stepping out. \n\nFix your appointment, when the crowd is less for your next visit to ";
 
 String entityShareByUserMessage =
-    "Download the Sukoon app and start booking your peace of mind!";
+    "Download the Lesss app and start booking your peace of mind!";
 
 String entityShareByOwnerMailSubject =
-    " is inviting you to use Sukoon app to Book your peace of mind!";
+    " is inviting you to use Lesss app to Book your peace of mind!";
 //append place name in start of string
 String entityShareByOwnerHeading =
     "You Safety and Convenience is our top priority!";
 
 String entityShareMessage =
-    "Fix your appointment well in advance & Visit us when the crowd is less.\n\nDownload the Sukoon app and start booking your peace of mind!";
+    "Fix your appointment well in advance & Visit us when the crowd is less.\n\nDownload the Lesss app and start booking your peace of mind!";
 
-String faqHead1 = "How Sukoon helps bring Sukoon to your life?";
+String faqHead1 = "How Lesss helps bring Lesss to your life?";
 String faqHead1Sub1 = "Lets look at the problems first..";
 String faqHead1Sub2 = "How this app helps me?";
 String faqHead2 = "Registration";
@@ -281,7 +281,7 @@ TO CHANGE:- lack of change due to prolonged containment and restricted activitie
 
 This is where we realized that life has to continue, we should do whatever it takes to restore the normalcy but with few extra precautionary measures should be in place to avoid the spread of infection.   
 
-The reason was big enough to motivate us to build the Sukoon App which is available on both Android and iPhone platforms. We believe that technology can help society to maintain social distancing and can still allow us to lead close to a normal life.  
+The reason was big enough to motivate us to build the Lesss App which is available on both Android and iPhone platforms. We believe that technology can help society to maintain social distancing and can still allow us to lead close to a normal life.  
 
 Note: This App is not for any commercial gain, it shall remain free as long as we can support it. We are working on a donation-based model to pay for the operational cost, through which we can continue to help our society and make it a better place for everyone.  
 
@@ -289,7 +289,7 @@ I am a Technologist turned Entrepreneur, who likes to solve problems in the real
 
 Would love to hear back from you for any feedback/suggestion or even for a simple cheer which will help me know that I am moving in the right direction. ''';
 
-String agreement = '''Welcome to Sukoon mobile application.
+String agreement = '''Welcome to Lesss mobile application.
 
 Please carefully read the Terms of Use of the Application (here) and Privacy Policy (here)
 
