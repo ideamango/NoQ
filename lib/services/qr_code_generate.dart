@@ -97,7 +97,7 @@ class GenerateScreenState extends State<GenerateScreen> {
   Future<void> _loadImage() async {
     try {
       //Dynamic Link Text
-      //'LESSS ~ Book your peace of mind!!'
+      //'LESSs ~ Book your peace of mind!!'
       String msgTitle = qrCodeShareHeading + " - " + widget.entityName;
       String msgBody = qrCodeShareMessage;
 
