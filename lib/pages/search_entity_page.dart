@@ -98,7 +98,7 @@ class _SearchEntityPageState extends State<SearchEntityPage>
           bottomSheetController.close();
           bottomSheetController = null;
           //   Navigator.of(context).pop();
-          EventBus.fireEvent(SEARCH_CATEGORY_SELECTED, null, categoryType);
+          EventBus.fireEvent(SEARCH_CATEGORY_SELECTED, null, type);
         },
         child: Column(
           children: <Widget>[

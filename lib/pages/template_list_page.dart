@@ -6,14 +6,14 @@ import 'package:noq/userHomePage.dart';
 import 'package:noq/utils.dart';
 import 'package:noq/widget/appbar.dart';
 
-class ShowApplicationDetails extends StatefulWidget {
+class ShowListPage extends StatefulWidget {
   final String entityId;
-  ShowApplicationDetails({Key key, @required this.entityId}) : super(key: key);
+  ShowListPage({Key key, @required this.entityId}) : super(key: key);
   @override
-  _ShowApplicationDetailsState createState() => _ShowApplicationDetailsState();
+  _ShowListPageState createState() => _ShowListPageState();
 }
 
-class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
+class _ShowListPageState extends State<ShowListPage> {
   bool initCompleted = false;
   GlobalState _gs;
   List<String> list;
