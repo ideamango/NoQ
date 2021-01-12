@@ -148,7 +148,7 @@ class _LoginPageState extends State<LoginPage> {
                         fit: BoxFit.contain,
                       ),
                       // child: Text(
-                      //   "Sukoon",
+                      //   "LESSs",
                       //   style: TextStyle(
                       //       fontFamily: "AnandaNamaste",
                       //       fontSize: 90,
@@ -216,7 +216,7 @@ class _LoginPageState extends State<LoginPage> {
                       alignment: Alignment.center,
                       width: MediaQuery.of(context).size.width * .8,
                       child: Text(
-                        "To know more how Sukoon help Save Lives",
+                        "To know more how LESSs help Save Lives",
                         style: TextStyle(
                           color: Colors.white,
                         ),
