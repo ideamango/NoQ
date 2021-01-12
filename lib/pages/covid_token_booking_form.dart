@@ -468,7 +468,7 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage>
     }
   }
 
-  Widget showImageList(String imageUrl) {
+  Widget showImageList(BuildContext context, String imageUrl) {
     return Stack(
       alignment: AlignmentDirectional.topEnd,
       children: [
@@ -1878,6 +1878,7 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage>
                                                           int index) {
                                                     return Container(
                                                       child: showImageList(
+                                                          context,
                                                           idProofField
                                                                   .responseFilePaths[
                                                               index]),
