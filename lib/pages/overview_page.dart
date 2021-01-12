@@ -67,27 +67,46 @@ class _OverviewPageState extends State<OverviewPage> {
               padding: EdgeInsets.all(10),
               child: Column(children: <Widget>[
                 Card(
-                  color: Colors.greenAccent,
+                  color: Colors.blue[300],
                   child: Container(
-                      width: MediaQuery.of(context).size.width * .9,
-                      padding: EdgeInsets.all(10),
-                      margin: EdgeInsets.all(15),
-                      child: Column(
+                      width: MediaQuery.of(context).size.width * .8,
+                      child: Stack(
+                        alignment: Alignment.topRight,
                         children: [
-                          // Text(
-                          //   '30',
-                          //   style: TextStyle(
-                          //     fontSize: 30,
-                          //     fontFamily: 'Roboto',
-                          //   ),
-                          // ),
-                          Text(
-                            'Some message can be given here',
-                            style: TextStyle(
-                              fontSize: 15,
-                              fontFamily: 'RalewayRegular',
+                          Container(
+                            width: MediaQuery.of(context).size.width * .8,
+                            padding: EdgeInsets.all(10),
+                            child: Column(
+                              children: [
+                                AutoSizeText(
+                                  '500',
+                                  maxLines: 1,
+                                  minFontSize: 12,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 30,
+                                    fontFamily: 'Roboto',
+                                  ),
+                                ),
+                                AutoSizeText(
+                                  'Total New Requests Received',
+                                  maxLines: 1,
+                                  minFontSize: 12,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: TextStyle(
+                                    fontSize: 15,
+                                    fontFamily: 'RalewayRegular',
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
+                          Icon(
+                            Icons.new_releases_rounded,
+                            color: Colors.yellowAccent,
+                            size: 25,
+                          )
                         ],
                       )),
                 ),
@@ -247,7 +266,7 @@ class _OverviewPageState extends State<OverviewPage> {
                     ),
                     Card(
                       elevation: 20,
-                      color: Colors.lightGreen,
+                      color: Colors.greenAccent,
                       child: Container(
                           width: MediaQuery.of(context).size.width * .25,
                           height: MediaQuery.of(context).size.width * .25,
@@ -439,29 +458,35 @@ class _OverviewPageState extends State<OverviewPage> {
                 verticalSpacer,
                 Card(
                   elevation: 20,
-                  color: Colors.blueGrey,
+                  color: Colors.green,
                   child: Container(
-                      width: MediaQuery.of(context).size.width * .7,
+                      width: MediaQuery.of(context).size.width * .8,
                       child: Stack(
                         alignment: Alignment.topRight,
                         children: [
                           Container(
-                            width: MediaQuery.of(context).size.width * .7,
+                            width: MediaQuery.of(context).size.width * .8,
                             padding: EdgeInsets.all(10),
                             child: Column(
                               children: [
                                 new AnimatedCount(
                                   count: _completedCount,
                                   duration: Duration(seconds: 2),
+                                  textStyle: TextStyle(
+                                    color: Colors.yellowAccent,
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 30,
+                                    fontFamily: 'Roboto',
+                                  ),
                                 ),
                                 AutoSizeText(
-                                  'Completed ',
+                                  'Total Completed ',
                                   maxLines: 1,
                                   minFontSize: 12,
                                   overflow: TextOverflow.ellipsis,
                                   style: TextStyle(
-                                    color: primaryAccentColor,
-                                    fontSize: 15,
+                                    color: Colors.yellowAccent,
+                                    fontSize: 17,
                                     fontFamily: 'RalewayRegular',
                                   ),
                                 ),

@@ -4,11 +4,13 @@ import 'package:noq/style.dart';
 
 class AnimatedCount extends ImplicitlyAnimatedWidget {
   final int count;
+  final TextStyle textStyle;
 
   AnimatedCount(
       {Key key,
       @required this.count,
       @required Duration duration,
+      @required this.textStyle,
       Curve curve = Curves.linear})
       : super(duration: duration, curve: curve, key: key);
 
@@ -27,12 +29,7 @@ class _AnimatedCountState extends AnimatedWidgetBaseState<AnimatedCount> {
       maxLines: 1,
       minFontSize: 12,
       overflow: TextOverflow.ellipsis,
-      style: TextStyle(
-        color: primaryAccentColor,
-        fontWeight: FontWeight.w600,
-        fontSize: 30,
-        fontFamily: 'Roboto',
-      ),
+      style: widget.textStyle,
     );
   }
 
