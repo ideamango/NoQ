@@ -11,19 +11,18 @@ import 'package:noq/userHomePage.dart';
 import 'package:noq/utils.dart';
 import 'package:noq/widget/appbar.dart';
 
-class ShowApplicationDetails extends StatefulWidget {
+class ApplicationsList extends StatefulWidget {
   final String entityId;
-  ShowApplicationDetails({Key key, @required this.entityId}) : super(key: key);
+  ApplicationsList({Key key, @required this.entityId}) : super(key: key);
   @override
-  _ShowApplicationDetailsState createState() => _ShowApplicationDetailsState();
+  _ApplicationsListState createState() => _ApplicationsListState();
 }
 
-class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
+class _ApplicationsListState extends State<ApplicationsList> {
   bool initCompleted = false;
   GlobalState _gs;
   List<BookingApplication> list;
   TextEditingController notesController = new TextEditingController();
-  TextEditingController nameController = new TextEditingController();
 
   @override
   void initState() {
@@ -38,7 +37,6 @@ class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
         initCompleted = true;
     });
     notesController.text = "XWLJRVER";
-    nameController.text = "SMITA";
   }
 
   Future<void> getGlobalState() async {
@@ -209,7 +207,7 @@ class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
     // bookingApplication.bookingFormId = widget.bookingFormId;
     bookingApplication.entityId = "SELENium Id";
     bookingApplication.userId = _gs.getCurrentUser().id;
-    bookingApplication.status = ApplicationStatus.NEW;
+    bookingApplication.status = ApplicationStatus.INREVIEW;
     bookingApplication.responseForm = bookingForm;
   }
 
@@ -254,23 +252,7 @@ class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
           case "TEXT":
             {
               FormInputFieldText newfield = field;
-              fieldWidget = TextField(
-                controller: nameController,
-                readOnly: true,
-                decoration: InputDecoration(
-                  labelText: 'Remarks',
-                  enabledBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.grey)),
-                  focusedBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.orange)),
-                  // errorText:
-                  //     _validate ? 'Please enter your message' : null,
-                ),
-                keyboardType: TextInputType.multiline,
-                maxLength: null,
-                maxLines: 2,
-              );
-              nameController.text = newfield.response.toString();
+              fieldWidget = Text(newfield.response);
             }
             break;
           case "NUMBER":
@@ -347,36 +329,87 @@ class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
   }
 
   Widget _buildItem(BookingApplication ba) {
-    return Card(
-      margin: EdgeInsets.fromLTRB(8, 12, 8, 0),
-      elevation: 10,
-      child: Container(
-        padding: EdgeInsets.all(10),
-        margin: EdgeInsets.all(8),
-        width: MediaQuery.of(context).size.width * .9,
-        height: MediaQuery.of(context).size.height * .82,
-        child: Column(
-          children: <Widget>[
-            Text(ba.status.toString()),
-            Expanded(
-              child: ListView.builder(
-                padding:
-                    EdgeInsets.all(MediaQuery.of(context).size.width * .026),
-                shrinkWrap: true,
-                //scrollDirection: Axis.vertical,
-                itemBuilder: (BuildContext context, int index) {
-                  return Container(
-                    padding: EdgeInsets.all(5),
-                    //  height: MediaQuery.of(context).size.height * .3,
-                    child: buildChildItem(
-                        bookingApplication.responseForm.formFields[index]),
-                  );
-                },
-                itemCount: bookingApplication.responseForm.formFields.length,
-              ),
-            )
-          ],
-        ),
+    return Container(
+      padding: EdgeInsets.all(10),
+      margin: EdgeInsets.all(8),
+      width: MediaQuery.of(context).size.width * .9,
+      height: MediaQuery.of(context).size.height * .82,
+      child: Column(
+        children: <Widget>[
+          Expanded(
+            child: ListView.builder(
+              padding: EdgeInsets.all(MediaQuery.of(context).size.width * .026),
+              shrinkWrap: true,
+              //scrollDirection: Axis.vertical,
+              itemBuilder: (BuildContext context, int index) {
+                return Container(
+                  padding: EdgeInsets.all(5),
+                  //  height: MediaQuery.of(context).size.height * .3,
+                  child: Card(
+                    child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          // Container(
+                          //   height: 40,
+                          //   margin: EdgeInsets.fromLTRB(0, 0, 0, 0),
+                          //   width: MediaQuery.of(context).size.width * .06,
+                          //   child: Checkbox(
+                          //     value: false,
+                          //     onChanged: (value) {
+                          //       setState(() {
+                          //         value = !value;
+                          //       });
+                          //     },
+                          //     activeColor: primaryIcon,
+                          //     checkColor: primaryAccentColor,
+                          //   ),
+                          // ),
+                          Text(
+                            'SMita',
+                            style: linkTextStyle,
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              IconButton(
+                                  color: Colors.purple[200],
+                                  onPressed: () {
+                                    bookingApplication.notesOnAcceptance =
+                                        notesController.text;
+                                    bookingApplication.status =
+                                        ApplicationStatus.APPROVED;
+                                  },
+                                  icon: Icon(Icons.check_circle)),
+                              IconButton(
+                                color: Colors.greenAccent,
+                                onPressed: () {
+                                  bookingApplication.notesOnPuttingOnHold =
+                                      notesController.text;
+                                  bookingApplication.status =
+                                      ApplicationStatus.ONHOLD;
+                                },
+                                icon: Icon(Icons.pan_tool),
+                              ),
+                              IconButton(
+                                color: Colors.orange,
+                                onPressed: () {
+                                  bookingApplication.notesOnRejection =
+                                      notesController.text;
+                                  bookingApplication.status =
+                                      ApplicationStatus.REJECTED;
+                                },
+                                icon: Icon(Icons.cancel),
+                              ),
+                            ],
+                          )
+                        ]),
+                  ),
+                );
+              },
+              itemCount: 1,
+            ),
+          )
+        ],
       ),
     );
   }
@@ -398,7 +431,7 @@ class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
               backRoute: OverviewPage(
                 entityId: widget.entityId,
               ),
-              titleTxt: "Approved Requests",
+              titleTxt: "Applications In-Process",
             ),
             body: Center(
               child: Column(
@@ -421,6 +454,7 @@ class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
                   Container(
                       margin: EdgeInsets.fromLTRB(10, 10, 10, 10),
                       child: TextField(
+                        readOnly: true,
                         controller: notesController,
                         decoration: InputDecoration(
                           labelText: 'Remarks',
@@ -435,49 +469,6 @@ class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
                         maxLength: null,
                         maxLines: 2,
                       )),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      RaisedButton(
-                        color: Colors.purple[200],
-                        onPressed: () {
-                          bookingApplication.notesOnAcceptance =
-                              notesController.text;
-                          bookingApplication.status =
-                              ApplicationStatus.APPROVED;
-                        },
-                        child: Text(
-                          "Approve",
-                          style: buttonTextStyle,
-                        ),
-                      ),
-                      RaisedButton(
-                        color: Colors.greenAccent,
-                        onPressed: () {
-                          bookingApplication.notesOnPuttingOnHold =
-                              notesController.text;
-                          bookingApplication.status = ApplicationStatus.ONHOLD;
-                        },
-                        child: Text(
-                          "On-Hold",
-                          style: buttonTextStyle,
-                        ),
-                      ),
-                      RaisedButton(
-                        color: Colors.orangeAccent,
-                        onPressed: () {
-                          bookingApplication.notesOnRejection =
-                              notesController.text;
-                          bookingApplication.status =
-                              ApplicationStatus.REJECTED;
-                        },
-                        child: Text(
-                          "Reject",
-                          style: buttonTextStyle,
-                        ),
-                      ),
-                    ],
-                  )
                 ],
               ),
             ),

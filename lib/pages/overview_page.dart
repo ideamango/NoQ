@@ -1,7 +1,9 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
+import 'package:noq/db/db_model/booking_application.dart';
 import 'package:noq/global_state.dart';
 import 'package:noq/pages/show_application_details.dart';
+import 'package:noq/pages/applications_list.dart';
 import 'package:noq/services/circular_progress.dart';
 import 'package:noq/style.dart';
 import 'package:noq/userHomePage.dart';
@@ -12,7 +14,9 @@ import 'package:noq/widget/widgets.dart';
 
 class OverviewPage extends StatefulWidget {
   final String entityId;
-  OverviewPage({Key key, @required this.entityId}) : super(key: key);
+  final String bookingFormId;
+  OverviewPage({Key key, @required this.entityId, @required this.bookingFormId})
+      : super(key: key);
   @override
   _OverviewPageState createState() => _OverviewPageState();
 }
@@ -21,21 +25,42 @@ class _OverviewPageState extends State<OverviewPage> {
   bool initCompleted = false;
   GlobalState _gs;
   int _completedCount = 0;
+  int _totalReceivedCount = 0;
+  BookingApplicationsOverview _bookingApplicationsOverview;
 
   @override
   void initState() {
     super.initState();
     getGlobalState().whenComplete(() {
-      if (this.mounted) {
-        setState(() {
+      _gs
+          .getTokenApplicationService()
+          .getBookingApplicationOverview(widget.bookingFormId, widget.entityId)
+          .then((value) {
+        _bookingApplicationsOverview = value;
+//TODO : Start - Dummy Data remove later
+        _bookingApplicationsOverview.totalApplications = 3534565;
+        _bookingApplicationsOverview.numberOfNew = 5500;
+        _bookingApplicationsOverview.numberOfInReview = 5500;
+        _bookingApplicationsOverview.numberOfRejected = 330;
+        _bookingApplicationsOverview.numberOfCancelled = 5900;
+        _bookingApplicationsOverview.numberOfPutOnHold = 66560;
+        _bookingApplicationsOverview.numberOfApproved = 500201;
+        _bookingApplicationsOverview.numberOfCompleted = 1830500;
+
+//TODO : End - Dummy Data remove later
+
+        if (this.mounted) {
+          setState(() {
+            initCompleted = true;
+          });
+        } else
           initCompleted = true;
-        });
-      } else
-        initCompleted = true;
+      });
     });
     Future.delayed(Duration(seconds: 1)).then((value) {
       setState(() {
-        _completedCount = 2000;
+        _completedCount = _bookingApplicationsOverview.numberOfCompleted;
+        _totalReceivedCount = _bookingApplicationsOverview.totalApplications;
       });
     });
   }
@@ -65,443 +90,457 @@ class _OverviewPageState extends State<OverviewPage> {
             child: Container(
               //color: Colors.blueGrey[800],
               padding: EdgeInsets.all(10),
-              child: Column(children: <Widget>[
-                Card(
-                  color: Colors.blue[300],
-                  child: Container(
-                      width: MediaQuery.of(context).size.width * .8,
-                      child: Stack(
-                        alignment: Alignment.topRight,
-                        children: [
-                          Container(
-                            width: MediaQuery.of(context).size.width * .8,
-                            padding: EdgeInsets.all(10),
-                            child: Column(
-                              children: [
-                                AutoSizeText(
-                                  '500',
-                                  maxLines: 1,
-                                  minFontSize: 12,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.w600,
-                                    fontSize: 30,
-                                    fontFamily: 'Roboto',
-                                  ),
+              child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    verticalSpacer,
+                    Card(
+                      elevation: 20,
+                      color: Colors.blueGrey[500],
+                      child: Container(
+                          width: MediaQuery.of(context).size.width * .9,
+                          child: Stack(
+                            alignment: Alignment.topRight,
+                            children: [
+                              Container(
+                                width: MediaQuery.of(context).size.width * .9,
+                                padding: EdgeInsets.all(10),
+                                child: Column(
+                                  children: [
+                                    new AnimatedCount(
+                                      count: _totalReceivedCount,
+                                      duration: Duration(seconds: 2),
+                                      textStyle: TextStyle(
+                                        color: primaryAccentColor,
+                                        fontWeight: FontWeight.w600,
+                                        fontSize: 30,
+                                        fontFamily: 'Roboto',
+                                      ),
+                                    ),
+                                    AutoSizeText(
+                                      'Total Requests Received',
+                                      maxLines: 1,
+                                      minFontSize: 12,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: TextStyle(
+                                        color: primaryAccentColor,
+                                        fontSize: 17,
+                                        fontFamily: 'RalewayRegular',
+                                      ),
+                                    ),
+                                  ],
                                 ),
-                                AutoSizeText(
-                                  'Total New Requests Received',
-                                  maxLines: 1,
-                                  minFontSize: 12,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: TextStyle(
-                                    fontSize: 15,
-                                    fontFamily: 'RalewayRegular',
+                              ),
+                              Icon(
+                                Icons.new_releases,
+                                color: primaryAccentColor,
+                                size: 25,
+                              )
+                            ],
+                          )),
+                    ),
+                    SizedBox(height: 12),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        Card(
+                          elevation: 20,
+                          color: Colors.blue[300],
+                          child: Container(
+                              width: MediaQuery.of(context).size.width * .34,
+                              child: Stack(
+                                alignment: Alignment.topRight,
+                                children: [
+                                  Container(
+                                    width:
+                                        MediaQuery.of(context).size.width * .34,
+                                    padding: EdgeInsets.all(10),
+                                    child: Column(
+                                      children: [
+                                        AutoSizeText(
+                                          '300',
+                                          maxLines: 1,
+                                          minFontSize: 8,
+                                          overflow: TextOverflow.ellipsis,
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.w600,
+                                            color: Colors.white,
+                                            fontSize: 30,
+                                            fontFamily: 'Roboto',
+                                          ),
+                                        ),
+                                        AutoSizeText(
+                                          'New Requests',
+                                          maxLines: 1,
+                                          minFontSize: 12,
+                                          overflow: TextOverflow.ellipsis,
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.w600,
+                                            fontSize: 15,
+                                            color: Colors.white,
+                                            fontFamily: 'RalewayRegular',
+                                          ),
+                                        ),
+                                      ],
+                                    ),
                                   ),
-                                ),
-                              ],
-                            ),
+                                  Container(
+                                    padding: EdgeInsets.all(2),
+                                    child: Icon(
+                                      Icons.new_releases_rounded,
+                                      color: Colors.yellowAccent,
+                                      size: 25,
+                                    ),
+                                  )
+                                ],
+                              )),
+                        ),
+                        Card(
+                          elevation: 20,
+                          color: Colors.amberAccent.withOpacity(0.7),
+                          child: GestureDetector(
+                            onTap: () {
+                              //User clicked on show how, lets show them.
+                              print("Showing how to book time-slot");
+                              Navigator.of(context).push(
+                                  PageAnimation.createRoute(ApplicationsList(
+                                entityId: widget.entityId,
+                              )));
+                            },
+                            child: Container(
+                                width: MediaQuery.of(context).size.width * .42,
+                                height: MediaQuery.of(context).size.width * .2,
+                                child: Stack(
+                                  alignment: Alignment.topRight,
+                                  children: [
+                                    Container(
+                                      width: MediaQuery.of(context).size.width *
+                                          .42,
+                                      padding: EdgeInsets.all(10),
+                                      child: Column(
+                                        children: [
+                                          AutoSizeText(
+                                            '1000',
+                                            maxLines: 1,
+                                            minFontSize: 8,
+                                            overflow: TextOverflow.ellipsis,
+                                            style: TextStyle(
+                                              fontWeight: FontWeight.w600,
+                                              fontSize: 30,
+                                              color: Colors.blueGrey[800],
+                                              fontFamily: 'Roboto',
+                                            ),
+                                          ),
+                                          AutoSizeText(
+                                            'In-Process',
+                                            maxLines: 1,
+                                            minFontSize: 12,
+                                            overflow: TextOverflow.ellipsis,
+                                            style: TextStyle(
+                                              fontSize: 15,
+                                              fontWeight: FontWeight.w600,
+                                              color: Colors.blueGrey[800],
+                                              fontFamily: 'RalewayRegular',
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    Container(
+                                        padding: EdgeInsets.all(2),
+                                        child: Icon(
+                                          Icons.hourglass_bottom,
+                                          color: Colors.green,
+                                          size: 25,
+                                        )),
+                                  ],
+                                )),
                           ),
-                          Icon(
-                            Icons.new_releases_rounded,
-                            color: Colors.yellowAccent,
-                            size: 25,
-                          )
-                        ],
-                      )),
-                ),
-                verticalSpacer,
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    Card(
-                      elevation: 20,
-                      color: Colors.blue[300],
-                      child: Container(
-                          width: MediaQuery.of(context).size.width * .3,
-                          child: Stack(
-                            alignment: Alignment.topRight,
-                            children: [
-                              Container(
-                                padding: EdgeInsets.all(10),
-                                child: Column(
-                                  children: [
-                                    AutoSizeText(
-                                      '300',
-                                      maxLines: 1,
-                                      minFontSize: 12,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.w600,
-                                        fontSize: 30,
-                                        fontFamily: 'Roboto',
-                                      ),
-                                    ),
-                                    AutoSizeText(
-                                      'New Requests',
-                                      maxLines: 1,
-                                      minFontSize: 12,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: TextStyle(
-                                        fontSize: 15,
-                                        fontFamily: 'RalewayRegular',
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              Icon(
-                                Icons.new_releases_rounded,
-                                color: Colors.yellowAccent,
-                                size: 25,
-                              )
-                            ],
-                          )),
+                        ),
+                      ],
                     ),
-                    Card(
-                      elevation: 20,
-                      color: Colors.amberAccent,
-                      child: GestureDetector(
-                        onTap: () {
-                          //User clicked on show how, lets show them.
-                          print("Showing how to book time-slot");
-                          Navigator.of(context).push(
-                              PageAnimation.createRoute(ShowApplicationDetails(
-                            entityId: widget.entityId,
-                          )));
-                        },
-                        child: Container(
-                            width: MediaQuery.of(context).size.width * .4,
-                            child: Stack(
-                              alignment: Alignment.topRight,
-                              children: [
-                                Container(
-                                  width: MediaQuery.of(context).size.width * .4,
-                                  padding: EdgeInsets.all(10),
-                                  child: Column(
-                                    children: [
-                                      AutoSizeText(
-                                        '1000',
-                                        maxLines: 1,
-                                        minFontSize: 12,
-                                        overflow: TextOverflow.ellipsis,
-                                        style: TextStyle(
-                                          fontWeight: FontWeight.w600,
-                                          fontSize: 30,
-                                          fontFamily: 'Roboto',
+                    SizedBox(height: 12),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        Card(
+                          elevation: 20,
+                          color: Colors.orangeAccent.withOpacity(0.7),
+                          child: Container(
+                              width: MediaQuery.of(context).size.width * .45,
+                              height: MediaQuery.of(context).size.height * .15,
+                              child: Stack(
+                                alignment: Alignment.topRight,
+                                children: [
+                                  Container(
+                                    width:
+                                        MediaQuery.of(context).size.width * .45,
+                                    height: MediaQuery.of(context).size.height *
+                                        .15,
+                                    padding: EdgeInsets.all(10),
+                                    child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        AutoSizeText(
+                                          '2000',
+                                          maxLines: 1,
+                                          minFontSize: 8,
+                                          overflow: TextOverflow.ellipsis,
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.w600,
+                                            color: Colors.blueGrey[800],
+                                            fontSize: 30,
+                                            fontFamily: 'Roboto',
+                                          ),
                                         ),
-                                      ),
-                                      AutoSizeText(
-                                        'In-Process',
-                                        maxLines: 1,
-                                        minFontSize: 12,
-                                        overflow: TextOverflow.ellipsis,
-                                        style: TextStyle(
-                                          fontSize: 15,
-                                          fontFamily: 'RalewayRegular',
+                                        AutoSizeText(
+                                          'Rejected',
+                                          maxLines: 1,
+                                          minFontSize: 12,
+                                          overflow: TextOverflow.ellipsis,
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.w600,
+                                            color: Colors.blueGrey[800],
+                                            fontSize: 15,
+                                            fontFamily: 'RalewayRegular',
+                                          ),
                                         ),
-                                      ),
-                                    ],
+                                      ],
+                                    ),
                                   ),
-                                ),
-                                Icon(
-                                  Icons.hourglass_bottom,
-                                  color: Colors.green,
-                                  size: 25,
-                                )
-                              ],
-                            )),
-                      ),
+                                  Container(
+                                      padding: EdgeInsets.all(2),
+                                      child: Icon(
+                                        Icons.cancel,
+                                        color: Colors.red,
+                                        size: 25,
+                                      )),
+                                ],
+                              )),
+                        ),
+                        Card(
+                          elevation: 20,
+                          color: Colors.pink[200],
+                          child: Container(
+                              width: MediaQuery.of(context).size.width * .3,
+                              child: Stack(
+                                alignment: Alignment.topRight,
+                                children: [
+                                  Container(
+                                    width:
+                                        MediaQuery.of(context).size.width * .3,
+                                    padding: EdgeInsets.all(10),
+                                    child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        AutoSizeText(
+                                          '200',
+                                          maxLines: 1,
+                                          minFontSize: 8,
+                                          overflow: TextOverflow.ellipsis,
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.w600,
+                                            color: Colors.white,
+                                            fontSize: 30,
+                                            fontFamily: 'Roboto',
+                                          ),
+                                        ),
+                                        AutoSizeText(
+                                          'Cancelled',
+                                          maxLines: 1,
+                                          minFontSize: 12,
+                                          overflow: TextOverflow.ellipsis,
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.w600,
+                                            color: Colors.white,
+                                            fontSize: 15,
+                                            fontFamily: 'RalewayRegular',
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  Container(
+                                      padding: EdgeInsets.all(2),
+                                      child: Icon(
+                                        Icons.block_rounded,
+                                        color: Colors.purple,
+                                        size: 25,
+                                      )),
+                                ],
+                              )),
+                        ),
+                      ],
                     ),
-                  ],
-                ),
-                verticalSpacer,
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
+                    SizedBox(height: 12),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        Card(
+                          elevation: 20,
+                          color: Colors.greenAccent,
+                          child: Container(
+                              width: MediaQuery.of(context).size.width * .35,
+                              height: MediaQuery.of(context).size.width * .25,
+                              child: Stack(
+                                alignment: Alignment.topRight,
+                                children: [
+                                  Container(
+                                    width:
+                                        MediaQuery.of(context).size.width * .35,
+                                    padding: EdgeInsets.all(10),
+                                    child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        AutoSizeText(
+                                          '1000000',
+                                          maxLines: 1,
+                                          minFontSize: 8,
+                                          overflow: TextOverflow.ellipsis,
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.w600,
+                                            color: Colors.blueGrey[800],
+                                            fontSize: 30,
+                                            fontFamily: 'Roboto',
+                                          ),
+                                        ),
+                                        AutoSizeText(
+                                          'On-Hold',
+                                          maxLines: 1,
+                                          minFontSize: 12,
+                                          overflow: TextOverflow.ellipsis,
+                                          style: TextStyle(
+                                            fontSize: 15,
+                                            fontWeight: FontWeight.w600,
+                                            color: Colors.blueGrey[800],
+                                            fontFamily: 'RalewayRegular',
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  Container(
+                                      padding: EdgeInsets.all(2),
+                                      child: Icon(
+                                        Icons.pan_tool_rounded,
+                                        color: Colors.indigo[900],
+                                        size: 20,
+                                      )),
+                                ],
+                              )),
+                        ),
+                        Card(
+                          elevation: 20,
+                          color: Colors.blueAccent,
+                          child: Container(
+                              width: MediaQuery.of(context).size.width * .45,
+                              height: MediaQuery.of(context).size.width * .25,
+                              child: Stack(
+                                alignment: Alignment.topRight,
+                                children: [
+                                  Container(
+                                    width:
+                                        MediaQuery.of(context).size.width * .4,
+                                    padding: EdgeInsets.all(10),
+                                    child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        AutoSizeText(
+                                          '400',
+                                          maxLines: 1,
+                                          minFontSize: 8,
+                                          overflow: TextOverflow.ellipsis,
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.w600,
+                                            color: Colors.white,
+                                            fontSize: 30,
+                                            fontFamily: 'Roboto',
+                                          ),
+                                        ),
+                                        AutoSizeText(
+                                          'Approved',
+                                          maxLines: 1,
+                                          minFontSize: 12,
+                                          overflow: TextOverflow.ellipsis,
+                                          style: TextStyle(
+                                            fontSize: 15,
+                                            fontWeight: FontWeight.w600,
+                                            color: Colors.white,
+                                            fontFamily: 'RalewayRegular',
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  Container(
+                                      padding: EdgeInsets.all(2),
+                                      child: Icon(
+                                        Icons.check_circle,
+                                        color: Colors.yellow[600],
+                                        size: 30,
+                                      )),
+                                ],
+                              )),
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 12),
                     Card(
                       elevation: 20,
-                      color: Colors.pink[200],
+                      color: Colors.greenAccent[700],
                       child: Container(
-                          width: MediaQuery.of(context).size.width * .25,
-                          child: Stack(
-                            alignment: Alignment.topRight,
+                          width: MediaQuery.of(context).size.width * .9,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Container(
-                                width: MediaQuery.of(context).size.width * .25,
+                                  // width: MediaQuery.of(context).size.width * .2,
+                                  padding: EdgeInsets.all(2),
+                                  child: Icon(
+                                    Icons.thumb_up,
+                                    color: Colors.yellowAccent,
+                                    size: 50,
+                                  )),
+                              Container(
+                                //  width: MediaQuery.of(context).size.width * .,
                                 padding: EdgeInsets.all(10),
-                                child: Column(
-                                  children: [
-                                    AutoSizeText(
-                                      '200',
-                                      maxLines: 1,
-                                      minFontSize: 12,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.w600,
-                                        fontSize: 30,
-                                        fontFamily: 'Roboto',
-                                      ),
-                                    ),
-                                    AutoSizeText(
-                                      'Cancelled',
-                                      maxLines: 1,
-                                      minFontSize: 12,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: TextStyle(
-                                        fontSize: 15,
-                                        fontFamily: 'RalewayRegular',
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              Icon(
-                                Icons.cancel,
-                                color: Colors.purple,
-                                size: 25,
-                              )
-                            ],
-                          )),
-                    ),
-                    Card(
-                      elevation: 20,
-                      color: Colors.greenAccent,
-                      child: Container(
-                          width: MediaQuery.of(context).size.width * .25,
-                          height: MediaQuery.of(context).size.width * .25,
-                          child: Stack(
-                            alignment: Alignment.topRight,
-                            children: [
-                              Container(
-                                width: MediaQuery.of(context).size.width * .25,
-                                // padding: EdgeInsets.fromLTRB(10, 20, 10, 10),
                                 child: Column(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
-                                    AutoSizeText(
-                                      '200',
-                                      maxLines: 1,
-                                      minFontSize: 12,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: TextStyle(
+                                    new AnimatedCount(
+                                      count: _completedCount,
+                                      duration: Duration(seconds: 2),
+                                      textStyle: TextStyle(
+                                        color: Colors.yellowAccent[700],
                                         fontWeight: FontWeight.w600,
                                         fontSize: 30,
                                         fontFamily: 'Roboto',
                                       ),
                                     ),
                                     AutoSizeText(
-                                      'In-Queue',
-                                      maxLines: 1,
-                                      minFontSize: 12,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: TextStyle(
-                                        fontSize: 15,
-                                        fontFamily: 'RalewayRegular',
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              Icon(
-                                Icons.star_half_outlined,
-                                color: Colors.deepOrangeAccent,
-                                size: 30,
-                              )
-                            ],
-                          )),
-                    ),
-                    Card(
-                      elevation: 20,
-                      color: Colors.orangeAccent,
-                      child: Container(
-                          width: MediaQuery.of(context).size.width * .25,
-                          child: Stack(
-                            alignment: Alignment.topRight,
-                            children: [
-                              Container(
-                                width: MediaQuery.of(context).size.width * .25,
-                                padding: EdgeInsets.all(10),
-                                child: Column(
-                                  children: [
-                                    AutoSizeText(
-                                      '200',
+                                      'Total Completed ',
                                       maxLines: 1,
                                       minFontSize: 12,
                                       overflow: TextOverflow.ellipsis,
                                       style: TextStyle(
                                         fontWeight: FontWeight.w600,
-                                        fontSize: 30,
-                                        fontFamily: 'Roboto',
-                                      ),
-                                    ),
-                                    AutoSizeText(
-                                      'Rejected',
-                                      maxLines: 1,
-                                      minFontSize: 12,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: TextStyle(
-                                        fontSize: 15,
+                                        color: Colors.yellowAccent,
+                                        fontSize: 17,
                                         fontFamily: 'RalewayRegular',
                                       ),
                                     ),
                                   ],
                                 ),
                               ),
-                              Icon(
-                                Icons.do_disturb_on_rounded,
-                                color: Colors.red,
-                                size: 25,
-                              )
                             ],
                           )),
                     ),
-                  ],
-                ),
-                verticalSpacer,
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    Card(
-                      elevation: 20,
-                      color: Colors.limeAccent,
-                      child: Container(
-                          width: MediaQuery.of(context).size.width * .25,
-                          child: Stack(
-                            alignment: Alignment.topRight,
-                            children: [
-                              Container(
-                                width: MediaQuery.of(context).size.width * .25,
-                                padding: EdgeInsets.all(10),
-                                child: Column(
-                                  children: [
-                                    AutoSizeText(
-                                      '200',
-                                      maxLines: 1,
-                                      minFontSize: 12,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.w600,
-                                        fontSize: 30,
-                                        fontFamily: 'Roboto',
-                                      ),
-                                    ),
-                                    AutoSizeText(
-                                      'On-Hold',
-                                      maxLines: 1,
-                                      minFontSize: 12,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: TextStyle(
-                                        fontSize: 15,
-                                        fontFamily: 'RalewayRegular',
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              Icon(
-                                Icons.star_half_outlined,
-                                color: Colors.indigo[900],
-                                size: 25,
-                              )
-                            ],
-                          )),
-                    ),
-                    Card(
-                      elevation: 20,
-                      color: Colors.purple[200],
-                      child: Container(
-                          width: MediaQuery.of(context).size.width * .4,
-                          height: MediaQuery.of(context).size.width * .2,
-                          child: Stack(
-                            alignment: Alignment.topRight,
-                            children: [
-                              Container(
-                                width: MediaQuery.of(context).size.width * .4,
-                                padding: EdgeInsets.all(10),
-                                child: Column(
-                                  children: [
-                                    AutoSizeText(
-                                      '40',
-                                      maxLines: 1,
-                                      minFontSize: 12,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.w600,
-                                        fontSize: 30,
-                                        fontFamily: 'Roboto',
-                                      ),
-                                    ),
-                                    AutoSizeText(
-                                      'Approved',
-                                      maxLines: 1,
-                                      minFontSize: 12,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: TextStyle(
-                                        fontSize: 15,
-                                        fontFamily: 'RalewayRegular',
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              Icon(
-                                Icons.add_box,
-                                color: Colors.lightGreenAccent,
-                                size: 25,
-                              )
-                            ],
-                          )),
-                    ),
-                  ],
-                ),
-                verticalSpacer,
-                Card(
-                  elevation: 20,
-                  color: Colors.green,
-                  child: Container(
-                      width: MediaQuery.of(context).size.width * .8,
-                      child: Stack(
-                        alignment: Alignment.topRight,
-                        children: [
-                          Container(
-                            width: MediaQuery.of(context).size.width * .8,
-                            padding: EdgeInsets.all(10),
-                            child: Column(
-                              children: [
-                                new AnimatedCount(
-                                  count: _completedCount,
-                                  duration: Duration(seconds: 2),
-                                  textStyle: TextStyle(
-                                    color: Colors.yellowAccent,
-                                    fontWeight: FontWeight.w600,
-                                    fontSize: 30,
-                                    fontFamily: 'Roboto',
-                                  ),
-                                ),
-                                AutoSizeText(
-                                  'Total Completed ',
-                                  maxLines: 1,
-                                  minFontSize: 12,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: TextStyle(
-                                    color: Colors.yellowAccent,
-                                    fontSize: 17,
-                                    fontFamily: 'RalewayRegular',
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          Icon(
-                            Icons.check_circle,
-                            color: Colors.yellowAccent,
-                            size: 25,
-                          )
-                        ],
-                      )),
-                ),
-              ]),
+                    verticalSpacer,
+                  ]),
             ),
           ),
         ),
