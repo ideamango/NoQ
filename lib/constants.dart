@@ -1,4 +1,6 @@
 const COVID_BOOKING_FORM_ID = "0ba22050-5347-11eb-929a-87c3b00dc095";
+const AUTO_APPROVED = "Auto Approved";
+const SYSTEM = "SYSTEM";
 
 const ADMIN = "admin";
 const VERIFICATION_PENDING = "Verification Pending";
