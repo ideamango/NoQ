@@ -448,7 +448,7 @@ class Utils {
       androidParameters: AndroidParameters(
           packageName: bundleId,
           minimumVersion: 1,
-          fallbackUrl: Uri.parse('https://watcharoundyou.wordpress.com/')),
+          fallbackUrl: Uri.parse('https://bigpiq.com/')),
       iosParameters: IosParameters(
         bundleId: bundleId,
         minimumVersion: '1',
@@ -482,7 +482,7 @@ class Utils {
       androidParameters: AndroidParameters(
           packageName: bundleId,
           minimumVersion: 1,
-          fallbackUrl: Uri.parse('https://watcharoundyou.wordpress.com/')),
+          fallbackUrl: Uri.parse('https://bigpiq.com/')),
       iosParameters: IosParameters(
         bundleId: bundleId,
         minimumVersion: '1',
