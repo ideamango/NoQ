@@ -1,6 +1,6 @@
 enum ApplicationStatus {
   NEW,
-  INREVIEW,
+  INPROCESS,
   REJECTED,
   APPROVED,
   ONHOLD,

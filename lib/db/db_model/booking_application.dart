@@ -19,13 +19,13 @@ class BookingApplication {
   DateTime timeOfSubmission;
   String notesOnSubmission;
 
-  DateTime timeOfInReview;
-  String notesInReview;
-  String reviewedBy;
+  DateTime timeOfInProcess;
+  String notesInProcess;
+  String processedBy;
 
-  DateTime timeOfAcceptance;
-  String notesOnAcceptance;
-  String acceptedBy;
+  DateTime timeOfApproval;
+  String notesOnApproval;
+  String approvedBy;
 
   DateTime timeOfRejection;
   String notesOnRejection;
@@ -57,16 +57,16 @@ class BookingApplication {
             ? timeOfSubmission.millisecondsSinceEpoch
             : null,
         'notesOnSubmission': notesOnSubmission,
-        'timeOfInReview': (timeOfInReview != null)
-            ? timeOfInReview.millisecondsSinceEpoch
+        'timeOfInProcess': (timeOfInProcess != null)
+            ? timeOfInProcess.millisecondsSinceEpoch
             : null,
-        'notesInReview': notesInReview,
-        'reviewedBy': reviewedBy,
-        'timeOfAcceptance': (timeOfAcceptance != null)
-            ? timeOfAcceptance.millisecondsSinceEpoch
+        'notesInProcess': notesInProcess,
+        'processedBy': processedBy,
+        'timeOfAcceptance': (timeOfApproval != null)
+            ? timeOfApproval.millisecondsSinceEpoch
             : null,
-        'notesOnAcceptance': notesOnAcceptance,
-        'acceptedBy': acceptedBy,
+        'notesOnApproval': notesOnApproval,
+        'approvedBy': approvedBy,
         'timeOfRejection': (timeOfRejection != null)
             ? timeOfRejection.millisecondsSinceEpoch
             : null,
@@ -110,17 +110,17 @@ class BookingApplication {
         : null;
     ba.notesOnSubmission = json['notesOnSubmission'];
 
-    ba.timeOfInReview = (json['timeOfInReview'] != null)
-        ? new DateTime.fromMillisecondsSinceEpoch(json['timeOfInReview'])
+    ba.timeOfInProcess = (json['timeOfInProcess'] != null)
+        ? new DateTime.fromMillisecondsSinceEpoch(json['timeOfInProcess'])
         : null;
-    ba.notesInReview = json['notesInReview'];
-    ba.reviewedBy = json['reviewedBy'];
+    ba.notesInProcess = json['notesInProcess'];
+    ba.processedBy = json['processedBy'];
 
-    ba.timeOfAcceptance = (json['timeOfAcceptance'] != null)
-        ? new DateTime.fromMillisecondsSinceEpoch(json['timeOfAcceptance'])
+    ba.timeOfApproval = (json['timeOfApproval'] != null)
+        ? new DateTime.fromMillisecondsSinceEpoch(json['timeOfApproval'])
         : null;
-    ba.notesOnAcceptance = json['notesOnAcceptance'];
-    ba.acceptedBy = json['acceptedBy'];
+    ba.notesOnApproval = json['notesOnApproval'];
+    ba.approvedBy = json['approvedBy'];
 
     ba.timeOfRejection = (json['timeOfRejection'] != null)
         ? new DateTime.fromMillisecondsSinceEpoch(json['timeOfRejection'])
@@ -168,7 +168,7 @@ class BookingApplicationsOverview {
   int numberOfApproved;
   int numberOfRejected;
   int numberOfPutOnHold;
-  int numberOfInReview;
+  int numberOfInProcess;
   int numberOfCompleted;
   int numberOfCancelled;
 
@@ -178,7 +178,7 @@ class BookingApplicationsOverview {
         'entityId': entityId,
         'totalApplications': totalApplications,
         'numberOfNew': numberOfNew,
-        'numberOfInReview': numberOfInReview,
+        'numberOfInProcess': numberOfInProcess,
         'numberOfApproved': numberOfApproved,
         'numberOfRejected': numberOfRejected,
         'numberOfPutOnHold': numberOfPutOnHold,
@@ -195,7 +195,7 @@ class BookingApplicationsOverview {
     overview.id = json['id'];
     overview.totalApplications = json['totalApplications'];
     overview.numberOfNew = json['numberOfNew'];
-    overview.numberOfInReview = json['numberOfInReview'];
+    overview.numberOfInProcess = json['numberOfInProcess'];
     overview.numberOfApproved = json['numberOfApproved'];
     overview.numberOfRejected = json['numberOfRejected'];
     overview.numberOfPutOnHold = json['numberOfPutOnHold'];
