@@ -5,21 +5,25 @@ import 'package:noq/enum/application_status.dart';
 import 'package:noq/global_state.dart';
 import 'package:noq/pages/covid_token_booking_form.dart';
 import 'package:noq/pages/overview_page.dart';
+import 'package:noq/pages/show_application_details.dart';
 import 'package:noq/services/circular_progress.dart';
 import 'package:noq/style.dart';
 import 'package:noq/userHomePage.dart';
 import 'package:noq/utils.dart';
 import 'package:noq/widget/appbar.dart';
+import 'package:noq/widget/page_animation.dart';
 
 class ApplicationsList extends StatefulWidget {
   final String entityId;
   final String bookingFormId;
   final ApplicationStatus status;
+  final String titleText;
   ApplicationsList(
       {Key key,
       @required this.entityId,
       @required this.bookingFormId,
-      @required this.status})
+      @required this.status,
+      @required this.titleText})
       : super(key: key);
   @override
   _ApplicationsListState createState() => _ApplicationsListState();
@@ -28,8 +32,9 @@ class ApplicationsList extends StatefulWidget {
 class _ApplicationsListState extends State<ApplicationsList> {
   bool initCompleted = false;
   GlobalState _gs;
-  List<BookingApplication> list;
+
   TextEditingController notesController = new TextEditingController();
+  List<BookingApplication> listOfBa;
 
   @override
   void initState() {
@@ -51,44 +56,38 @@ class _ApplicationsListState extends State<ApplicationsList> {
   }
 
   getListOfData() {
-    list = new List<BookingApplication>();
     //TODO: Generate dummy data as of now, later change to actual data
 
-    initBookingForm();
-    list.add(bookingApplication);
-    return list;
+    listOfBa = initBookingFormDummy();
   }
 
-  List<String> idProofTypesStrList = List<String>();
-  List<Item> idProofTypes = List<Item>();
-  List<String> medConditionsStrList = List<String>();
-  List<Item> medConditions = List<Item>();
+  initBookingFormDummy() {
+    BookingForm bookingForm;
+    List<Field> fields;
+    BookingApplication bookingApplication;
+    List<String> idProofTypesStrList = List<String>();
+    List<Item> idProofTypes = List<Item>();
+    List<String> medConditionsStrList = List<String>();
+    List<Item> medConditions = List<Item>();
+    FormInputFieldText nameInput;
+    FormInputFieldDateTime dobInput;
+    FormInputFieldText primaryPhone;
+    FormInputFieldText alternatePhone;
+    String _idProofType;
+    FormInputFieldOptionsWithAttachments idProofField;
+    FormInputFieldOptions healthDetailsInput;
+    FormInputFieldText healthDetailsDesc;
+    FormInputFieldText latInput;
+    FormInputFieldText lonInput;
+    FormInputFieldText addressInput;
+    FormInputFieldText addresslandmark;
+    FormInputFieldText addressLocality;
+    FormInputFieldText addressCity;
+    FormInputFieldText addressState;
+    FormInputFieldText addressCountry;
+    FormInputFieldText notesInput;
+    FormInputFieldText addressPin;
 
-  //File _image; // Used only if you need a single picture
-  // String _downloadUrl;
-  BookingForm bookingForm;
-  List<Field> fields;
-  BookingApplication bookingApplication;
-  FormInputFieldText nameInput;
-  FormInputFieldDateTime dobInput;
-  FormInputFieldText primaryPhone;
-  FormInputFieldText alternatePhone;
-  String _idProofType;
-  FormInputFieldOptionsWithAttachments idProofField;
-  FormInputFieldOptions healthDetailsInput;
-  FormInputFieldText healthDetailsDesc;
-  FormInputFieldText latInput;
-  FormInputFieldText lonInput;
-  FormInputFieldText addressInput;
-  FormInputFieldText addresslandmark;
-  FormInputFieldText addressLocality;
-  FormInputFieldText addressCity;
-  FormInputFieldText addressState;
-  FormInputFieldText addressCountry;
-  FormInputFieldText notesInput;
-  FormInputFieldText addressPin;
-
-  initBookingForm() {
     fields = List<Field>();
     idProofTypesStrList.add('Passport');
     idProofTypesStrList.add('Driving License');
@@ -120,22 +119,26 @@ class _ApplicationsListState extends State<ApplicationsList> {
     nameInput = FormInputFieldText("Name of Person", true,
         "Please enter your name as per Government ID proof", 50);
     nameInput.response = "SMITA Agarwal";
+    nameInput.isMeta = true;
 
     dobInput = FormInputFieldDateTime(
       "Date of Birth",
       true,
       "Please select your Date of Birth",
     );
+    dobInput.isMeta = true;
     dobInput.responseDateTime =
         DateTime.now().subtract(Duration(days: 365 * 30));
 
     primaryPhone = FormInputFieldText(
         "Primary Contact Number", true, "Primary Contact Number", 10);
     primaryPhone.response = "9611009823";
+    primaryPhone.isMeta = true;
 
     alternatePhone = FormInputFieldText(
         "Alternate Contact Number", false, "Alternate Contact Number", 10);
     alternatePhone.response = "9611005523";
+    alternatePhone.isMeta = false;
 
     idProofField = FormInputFieldOptionsWithAttachments("Id Proof File Url",
         true, "Please upload Government Id proof", idProofTypesStrList, false);
@@ -144,6 +147,7 @@ class _ApplicationsListState extends State<ApplicationsList> {
     idProofField.responseValues.add("x.com");
     idProofField.responseValues.add("y.com");
     idProofField.options.add("DL");
+    idProofField.isMeta = true;
 
     healthDetailsInput = FormInputFieldOptions(
         "Medical Conditions",
@@ -151,6 +155,7 @@ class _ApplicationsListState extends State<ApplicationsList> {
         "Please select all known medical conditions you have",
         medConditionsStrList,
         true);
+    healthDetailsInput.isMeta = true;
 
     healthDetailsDesc = FormInputFieldText(
         "Decription of medical conditions (optional)",
@@ -216,6 +221,9 @@ class _ApplicationsListState extends State<ApplicationsList> {
     bookingApplication.userId = _gs.getCurrentUser().id;
     bookingApplication.status = ApplicationStatus.INPROCESS;
     bookingApplication.responseForm = bookingForm;
+    List<BookingApplication> list = new List<BookingApplication>();
+    list.add(bookingApplication);
+    return list;
   }
 
   Widget _emptyPage() {
@@ -243,11 +251,6 @@ class _ApplicationsListState extends State<ApplicationsList> {
         ),
       ),
     );
-  }
-
-  List<Widget> showListOfData() {
-    return list.map(_buildItem).toList();
-    // return _stores.map((contact) => new ChildItem(contact.name)).toList();
   }
 
   Widget buildChildItem(Field field) {
@@ -336,87 +339,124 @@ class _ApplicationsListState extends State<ApplicationsList> {
   }
 
   Widget _buildItem(BookingApplication ba) {
-    return Container(
-      padding: EdgeInsets.all(10),
-      margin: EdgeInsets.all(8),
-      width: MediaQuery.of(context).size.width * .9,
-      height: MediaQuery.of(context).size.height * .82,
-      child: Column(
-        children: <Widget>[
-          Expanded(
-            child: ListView.builder(
-              padding: EdgeInsets.all(MediaQuery.of(context).size.width * .026),
-              shrinkWrap: true,
-              //scrollDirection: Axis.vertical,
-              itemBuilder: (BuildContext context, int index) {
-                return Container(
-                  padding: EdgeInsets.all(5),
-                  //  height: MediaQuery.of(context).size.height * .3,
-                  child: Card(
-                    child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          // Container(
-                          //   height: 40,
-                          //   margin: EdgeInsets.fromLTRB(0, 0, 0, 0),
-                          //   width: MediaQuery.of(context).size.width * .06,
-                          //   child: Checkbox(
-                          //     value: false,
-                          //     onChanged: (value) {
-                          //       setState(() {
-                          //         value = !value;
-                          //       });
-                          //     },
-                          //     activeColor: primaryIcon,
-                          //     checkColor: primaryAccentColor,
-                          //   ),
-                          // ),
-                          Text(
-                            'SMita',
-                            style: linkTextStyle,
-                          ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            children: [
-                              IconButton(
-                                  color: Colors.purple[200],
-                                  onPressed: () {
-                                    bookingApplication.notesOnApproval =
-                                        notesController.text;
-                                    bookingApplication.status =
-                                        ApplicationStatus.APPROVED;
-                                  },
-                                  icon: Icon(Icons.check_circle)),
-                              IconButton(
-                                color: Colors.greenAccent,
-                                onPressed: () {
-                                  bookingApplication.notesOnPuttingOnHold =
-                                      notesController.text;
-                                  bookingApplication.status =
-                                      ApplicationStatus.ONHOLD;
-                                },
-                                icon: Icon(Icons.pan_tool),
-                              ),
-                              IconButton(
-                                color: Colors.orange,
-                                onPressed: () {
-                                  bookingApplication.notesOnRejection =
-                                      notesController.text;
-                                  bookingApplication.status =
-                                      ApplicationStatus.REJECTED;
-                                },
-                                icon: Icon(Icons.cancel),
-                              ),
-                            ],
-                          )
-                        ]),
+    List<Field> listOfMeta = new List<Field>();
+
+    listOfMeta.addAll(
+        ba.responseForm.formFields.where((element) => element.isMeta == true));
+
+    return GestureDetector(
+      onTap: () {
+        //User clicked on show how, lets show them.
+        print("Showing how to book time-slot");
+        Navigator.of(context)
+            .push(PageAnimation.createRoute(ShowApplicationDetails(
+          entityId: widget.entityId,
+        )));
+      },
+      child: Container(
+        color: Colors.orange,
+        width: MediaQuery.of(context).size.width * .9,
+        // height: MediaQuery.of(context).size.height * .65,
+        child: Card(
+          elevation: 20,
+          child: Column(
+            children: [
+              Text(listOfMeta[0].label),
+              Text(listOfMeta[1].label),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  IconButton(
+                      color: Colors.green[400],
+                      onPressed: () {
+                        ba.notesOnApproval = notesController.text;
+                        ba.status = ApplicationStatus.APPROVED;
+                      },
+                      icon: Icon(Icons.check_circle)),
+                  IconButton(
+                    color: Colors.yellow[700],
+                    onPressed: () {
+                      ba.notesOnPuttingOnHold = notesController.text;
+                      ba.status = ApplicationStatus.ONHOLD;
+                    },
+                    icon: Icon(Icons.pan_tool_rounded),
                   ),
-                );
-              },
-              itemCount: 1,
-            ),
-          )
-        ],
+                  IconButton(
+                    color: Colors.red,
+                    onPressed: () {
+                      ba.notesOnRejection = notesController.text;
+                      ba.status = ApplicationStatus.REJECTED;
+                    },
+                    icon: Icon(Icons.cancel),
+                  ),
+                ],
+              )
+            ],
+          ),
+        ),
+
+//       Column(
+//         children: <Widget>[
+//           Expanded(
+//             child: Container(
+//               height: 200,
+//               padding: EdgeInsets.all(5),
+//               child: Card(
+//                 child: Row(
+//                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+//                     children: [
+// //Container that holds fields from response form where isMeta is true.
+
+//                       Container(
+//                         child: ListView.builder(
+//                           itemBuilder: (BuildContext context, int index) {
+//                             return Container(
+//                               margin: EdgeInsets.fromLTRB(10, 0, 10, 50),
+//                               child: new Column(
+//                                 children: [
+//                                   Text(listOfMeta[index].label),
+//                                 ],
+//                               ),
+//                             );
+//                           },
+//                           itemCount: listOfMeta.length,
+//                         ),
+//                       ),
+
+//                       Row(
+//                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+//                         children: [
+//                           IconButton(
+//                               color: Colors.green[400],
+//                               onPressed: () {
+//                                 ba.notesOnApproval = notesController.text;
+//                                 ba.status = ApplicationStatus.APPROVED;
+//                               },
+//                               icon: Icon(Icons.check_circle)),
+//                           IconButton(
+//                             color: Colors.yellow[700],
+//                             onPressed: () {
+//                               ba.notesOnPuttingOnHold = notesController.text;
+//                               ba.status = ApplicationStatus.ONHOLD;
+//                             },
+//                             icon: Icon(Icons.pan_tool_rounded),
+//                           ),
+//                           IconButton(
+//                             color: Colors.red,
+//                             onPressed: () {
+//                               ba.notesOnRejection = notesController.text;
+//                               ba.status = ApplicationStatus.REJECTED;
+//                             },
+//                             icon: Icon(Icons.cancel),
+//                           ),
+//                         ],
+//                       )
+//                     ]),
+//               ),
+//             ),
+//           )
+//         ],
+//       ),
       ),
     );
   }
@@ -434,28 +474,44 @@ class _ApplicationsListState extends State<ApplicationsList> {
         theme: ThemeData.light().copyWith(),
         home: WillPopScope(
           child: Scaffold(
-            appBar: CustomAppBarWithBackButton(
-              backRoute: OverviewPage(
-                entityId: widget.entityId,
+            appBar: AppBar(
+              title: Text(
+                widget.titleText,
+                style: drawerdefaultTextStyle,
               ),
-              titleTxt: "Applications In-Process",
+              flexibleSpace: Container(
+                decoration: gradientBackground,
+              ),
+              leading: IconButton(
+                  padding: EdgeInsets.all(0),
+                  alignment: Alignment.center,
+                  highlightColor: Colors.orange[300],
+                  icon: Icon(Icons.arrow_back),
+                  color: Colors.white,
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  }),
             ),
             body: Center(
               child: Column(
                 children: <Widget>[
-                  (!Utils.isNullOrEmpty(list))
+                  (!Utils.isNullOrEmpty(listOfBa))
                       ? Expanded(
                           child: ListView.builder(
-                              itemCount: 1,
-                              // reverse: true,
-                              itemBuilder: (BuildContext context, int index) {
-                                return Container(
-                                  margin: EdgeInsets.fromLTRB(10, 0, 10, 50),
-                                  child: new Column(
-                                    children: showListOfData(),
-                                  ),
-                                );
-                              }),
+                            itemCount: listOfBa.length,
+                            // reverse: true,
+                            itemBuilder: (BuildContext context, int index) {
+                              return Container(
+                                margin: EdgeInsets.fromLTRB(10, 0, 10, 50),
+                                child: new Column(
+                                  children: [
+                                    //  Text('dfhgd'),
+                                    _buildItem(listOfBa[index])
+                                  ],
+                                ),
+                              );
+                            },
+                          ),
                         )
                       : _emptyPage(),
                   Container(

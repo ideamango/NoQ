@@ -3,6 +3,7 @@ import 'package:noq/db/db_model/booking_application.dart';
 import 'package:noq/db/db_model/booking_form.dart';
 import 'package:noq/enum/application_status.dart';
 import 'package:noq/global_state.dart';
+import 'package:noq/pages/applications_list.dart';
 import 'package:noq/pages/covid_token_booking_form.dart';
 import 'package:noq/pages/overview_page.dart';
 import 'package:noq/services/circular_progress.dart';
@@ -13,7 +14,14 @@ import 'package:noq/widget/appbar.dart';
 
 class ShowApplicationDetails extends StatefulWidget {
   final String entityId;
-  ShowApplicationDetails({Key key, @required this.entityId}) : super(key: key);
+  final String bookingFormId;
+  final ApplicationStatus status;
+  ShowApplicationDetails(
+      {Key key,
+      @required this.entityId,
+      @required this.bookingFormId,
+      @required this.status})
+      : super(key: key);
   @override
   _ShowApplicationDetailsState createState() => _ShowApplicationDetailsState();
 }
@@ -58,6 +66,8 @@ class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
   List<Item> idProofTypes = List<Item>();
   List<String> medConditionsStrList = List<String>();
   List<Item> medConditions = List<Item>();
+  Map<String, TextEditingController> listOfControllers =
+      new Map<String, TextEditingController>();
 
   //File _image; // Used only if you need a single picture
   // String _downloadUrl;
@@ -132,13 +142,15 @@ class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
         "Alternate Contact Number", false, "Alternate Contact Number", 10);
     alternatePhone.response = "9611005523";
 
-    idProofField = FormInputFieldOptionsWithAttachments("Id Proof File Url",
-        true, "Please upload Government Id proof", idProofTypesStrList, false);
+    idProofField = FormInputFieldOptionsWithAttachments("Id Proof", true,
+        "Please upload Government Id proof", idProofTypesStrList, false);
     idProofField.responseFilePaths = List<String>();
     idProofField.responseValues = new List<String>();
-    idProofField.responseValues.add("x.com");
-    idProofField.responseValues.add("y.com");
+    idProofField.responseValues.add("DL");
+    idProofField.responseFilePaths.add(
+        "https://firebasestorage.googleapis.com/v0/b/sukoon-india.appspot.com/o/dl_image.png?alt=media&token=d0bb835d-e569-4f38-ad6e-fa0fed822cc7");
     idProofField.options.add("DL");
+    idProofField.options.add("PAN");
 
     healthDetailsInput = FormInputFieldOptions(
         "Medical Conditions",
@@ -246,6 +258,9 @@ class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
   }
 
   Widget buildChildItem(Field field) {
+    if (!listOfControllers.containsKey(field.label)) {
+      listOfControllers[field.label] = new TextEditingController();
+    }
     Widget fieldWidget;
     Widget fieldsContainer = Container();
     if (field != null) {
@@ -255,10 +270,18 @@ class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
             {
               FormInputFieldText newfield = field;
               fieldWidget = TextField(
-                controller: nameController,
-                readOnly: true,
+                controller: listOfControllers[field.label],
+                style: TextStyle(
+                  fontSize: 18,
+                  color: Colors.blueGrey[500],
+                ),
                 decoration: InputDecoration(
-                  labelText: 'Remarks',
+                  labelText: newfield.label,
+                  labelStyle: TextStyle(
+                      fontSize: 20,
+                      color: Colors.indigo[900],
+                      fontWeight: FontWeight.bold,
+                      fontFamily: 'RalewayRegular'),
                   enabledBorder: OutlineInputBorder(
                       borderSide: BorderSide(color: Colors.grey)),
                   focusedBorder: OutlineInputBorder(
@@ -267,47 +290,194 @@ class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
                   //     _validate ? 'Please enter your message' : null,
                 ),
                 keyboardType: TextInputType.multiline,
-                maxLength: null,
-                maxLines: 2,
               );
-              nameController.text = newfield.response.toString();
+              listOfControllers[field.label].text =
+                  newfield.response.toString();
             }
             break;
           case "NUMBER":
             {
               FormInputFieldNumber newfield = field;
-              fieldWidget = Text(newfield.response.toString());
+              fieldWidget = TextField(
+                controller: listOfControllers[field.label],
+                style: TextStyle(
+                  fontSize: 18,
+                  color: Colors.blueGrey[500],
+                ),
+                decoration: InputDecoration(
+                  labelText: newfield.label,
+                  labelStyle: TextStyle(
+                      fontSize: 20,
+                      color: Colors.indigo[900],
+                      fontWeight: FontWeight.bold,
+                      fontFamily: 'RalewayRegular'),
+                  enabledBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.grey)),
+                  focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.orange)),
+                  // errorText:
+                  //     _validate ? 'Please enter your message' : null,
+                ),
+                keyboardType: TextInputType.text,
+              );
+              listOfControllers[field.label].text =
+                  (newfield.response.toString());
             }
             break;
           case "PHONE":
             {
               FormInputFieldNumber newfield = field;
-              fieldWidget = Text("+91 ${newfield.response.toString()}");
+              fieldWidget = fieldWidget = TextField(
+                controller: listOfControllers[field.label],
+                style: TextStyle(
+                  fontSize: 18,
+                  color: Colors.blueGrey[500],
+                ),
+                decoration: InputDecoration(
+                  labelText: newfield.label,
+                  labelStyle: TextStyle(
+                      fontSize: 20,
+                      color: Colors.indigo[900],
+                      fontWeight: FontWeight.bold,
+                      fontFamily: 'RalewayRegular'),
+                  enabledBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.grey)),
+                  focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.orange)),
+                  // errorText:
+                  //     _validate ? 'Please enter your message' : null,
+                ),
+                keyboardType: TextInputType.multiline,
+              );
+              listOfControllers[field.label].text =
+                  "+91 ${newfield.response.toString()}";
             }
             break;
 
           case "DATETIME":
             {
               FormInputFieldDateTime newfield = field;
-              fieldWidget = Text(newfield.responseDateTime.toString());
+              fieldWidget = fieldWidget = TextField(
+                controller: listOfControllers[field.label],
+                readOnly: true,
+                style: TextStyle(
+                  fontSize: 18,
+                  color: Colors.blueGrey[500],
+                ),
+                decoration: InputDecoration(
+                  labelText: (newfield.label == "Date of Birth")
+                      ? "Age"
+                      : newfield.label,
+                  labelStyle: TextStyle(
+                      fontSize: 20,
+                      color: Colors.indigo[900],
+                      fontWeight: FontWeight.bold,
+                      fontFamily: 'RalewayRegular'),
+                  enabledBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.grey)),
+                  focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.orange)),
+                  // errorText:
+                  //     _validate ? 'Please enter your message' : null,
+                ),
+                keyboardType: TextInputType.text,
+              );
+              listOfControllers[field.label].text =
+                  (newfield.label == "Date of Birth")
+                      ? ((DateTime.now()
+                                  .difference(newfield.responseDateTime)
+                                  .inDays) /
+                              365)
+                          .toStringAsFixed(0)
+                      : newfield.label;
             }
             break;
           case "OPTIONS":
             {
               FormInputFieldOptions newfield = field;
-              fieldWidget = Text(newfield.responseValues.toString());
+              fieldWidget = fieldWidget = TextField(
+                controller: listOfControllers[field.label],
+                readOnly: true,
+                style: TextStyle(
+                  fontSize: 18,
+                  color: Colors.blueGrey[500],
+                ),
+                decoration: InputDecoration(
+                  labelText: newfield.label,
+                  labelStyle: TextStyle(
+                      fontSize: 20,
+                      color: Colors.indigo[900],
+                      fontWeight: FontWeight.bold,
+                      fontFamily: 'RalewayRegular'),
+                  enabledBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.grey)),
+                  focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.orange)),
+                  // errorText:
+                  //     _validate ? 'Please enter your message' : null,
+                ),
+                keyboardType: TextInputType.multiline,
+              );
+              listOfControllers[field.label].text =
+                  newfield.responseValues.toString();
             }
             break;
           case "OPTIONS_ATTACHMENTS":
             {
               FormInputFieldOptionsWithAttachments newfield = field;
+              Widget attachmentList = Container(
+                  child: Column(
+                children: [
+                  ListView.builder(
+                    itemBuilder: (BuildContext context, int index) {
+                      return Container(
+                        margin: EdgeInsets.fromLTRB(10, 10, 10, 10),
+                        child: new Column(
+                          children: [
+                            Image.network(newfield.responseFilePaths[index]),
+                          ],
+                        ),
+                      );
+                    },
+                    itemCount: newfield.responseFilePaths.length,
+                  ),
+                ],
+              ));
+
               fieldWidget = Column(
                 children: [
-                  Text(newfield.responseValues.toString()),
-                  Text("Show attachments please"),
-                  //TODO : show images from response file path
+                  TextField(
+                    controller: listOfControllers[field.label],
+                    readOnly: true,
+                    style: TextStyle(
+                      fontSize: 18,
+                      color: Colors.blueGrey[500],
+                    ),
+                    decoration: InputDecoration(
+                      labelText: newfield.label,
+                      labelStyle: TextStyle(
+                          fontSize: 20,
+                          color: Colors.indigo[900],
+                          fontWeight: FontWeight.bold,
+                          fontFamily: 'RalewayRegular'),
+                      enabledBorder: OutlineInputBorder(
+                          borderSide: BorderSide(color: Colors.grey)),
+                      focusedBorder: OutlineInputBorder(
+                          borderSide: BorderSide(color: Colors.orange)),
+                      // errorText:
+                      //     _validate ? 'Please enter your message' : null,
+                    ),
+                    keyboardType: TextInputType.multiline,
+                  ),
+                  // Column(
+                  //   children: [
+                  //     attachmentList,
+                  //   ],
+                  // )
                 ],
               );
+              listOfControllers[field.label].text =
+                  newfield.responseValues.toString();
             }
             break;
           default:
@@ -317,30 +487,17 @@ class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
             break;
         }
 
-        fieldsContainer = Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Wrap(children: [
-              Container(
-                width: MediaQuery.of(context).size.width * .3,
-                child: Text(
-                  field.label,
-                ),
-              )
-            ]),
-            Wrap(children: [
-              Container(
-                  width: MediaQuery.of(context).size.width * .4,
-                  padding: EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                    border: Border.all(color: Colors.teal[200]),
-                    shape: BoxShape.rectangle,
-                    color: Colors.cyan[50],
-                  ),
-                  child: fieldWidget),
-            ]),
-          ],
-        );
+        fieldsContainer = Wrap(children: [
+          Container(
+              width: MediaQuery.of(context).size.width * .9,
+              padding: EdgeInsets.all(0),
+              // decoration: BoxDecoration(
+              //   // border: Border.all(color: Colors.teal[200]),
+              //   shape: BoxShape.rectangle,
+              //   // color: Colors.cyan[50],
+              // ),
+              child: fieldWidget),
+        ]);
       }
     }
     return fieldsContainer;
@@ -348,12 +505,12 @@ class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
 
   Widget _buildItem(BookingApplication ba) {
     return Card(
-      margin: EdgeInsets.fromLTRB(8, 12, 8, 0),
+      // margin: EdgeInsets.fromLTRB(8, 12, 8, 0),
       elevation: 10,
       child: Container(
         padding: EdgeInsets.all(10),
         margin: EdgeInsets.all(8),
-        width: MediaQuery.of(context).size.width * .9,
+        width: MediaQuery.of(context).size.width,
         height: MediaQuery.of(context).size.height * .82,
         child: Column(
           children: <Widget>[
@@ -394,11 +551,23 @@ class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
         theme: ThemeData.light().copyWith(),
         home: WillPopScope(
           child: Scaffold(
-            appBar: CustomAppBarWithBackButton(
-              backRoute: OverviewPage(
-                entityId: widget.entityId,
+            appBar: AppBar(
+              title: Text(
+                "Details",
+                style: drawerdefaultTextStyle,
               ),
-              titleTxt: "Approved Requests",
+              flexibleSpace: Container(
+                decoration: gradientBackground,
+              ),
+              leading: IconButton(
+                  padding: EdgeInsets.all(0),
+                  alignment: Alignment.center,
+                  highlightColor: Colors.orange[300],
+                  icon: Icon(Icons.arrow_back),
+                  color: Colors.white,
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  }),
             ),
             body: Center(
               child: Column(
