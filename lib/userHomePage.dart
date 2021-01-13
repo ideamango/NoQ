@@ -410,7 +410,7 @@ class _UserHomePageState extends State<UserHomePage> {
                     ),
                     backgroundColor: primaryAccentColor,
                     onPressed: () {
-                      //QrCodeScanner.scan(context);
+                      QrCodeScanner.scan(context);
                     }),
               ),
               floatingActionButtonLocation:
