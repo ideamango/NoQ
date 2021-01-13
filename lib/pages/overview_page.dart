@@ -38,9 +38,10 @@ class _OverviewPageState extends State<OverviewPage> {
           .then((value) {
         _bookingApplicationsOverview = value;
 //TODO : Start - Dummy Data remove later
+        _bookingApplicationsOverview = new BookingApplicationsOverview();
         _bookingApplicationsOverview.totalApplications = 3534565;
         _bookingApplicationsOverview.numberOfNew = 5500;
-        _bookingApplicationsOverview.numberOfInReview = 5500;
+        _bookingApplicationsOverview.numberOfInProcess = 5500;
         _bookingApplicationsOverview.numberOfRejected = 330;
         _bookingApplicationsOverview.numberOfCancelled = 5900;
         _bookingApplicationsOverview.numberOfPutOnHold = 66560;
@@ -158,7 +159,9 @@ class _OverviewPageState extends State<OverviewPage> {
                                     child: Column(
                                       children: [
                                         AutoSizeText(
-                                          '300',
+                                          _bookingApplicationsOverview
+                                              .numberOfNew
+                                              .toString(),
                                           maxLines: 1,
                                           minFontSize: 8,
                                           overflow: TextOverflow.ellipsis,
@@ -205,6 +208,7 @@ class _OverviewPageState extends State<OverviewPage> {
                               Navigator.of(context).push(
                                   PageAnimation.createRoute(ApplicationsList(
                                 entityId: widget.entityId,
+                                bookingFormId: widget.bookingFormId,
                               )));
                             },
                             child: Container(
@@ -220,7 +224,9 @@ class _OverviewPageState extends State<OverviewPage> {
                                       child: Column(
                                         children: [
                                           AutoSizeText(
-                                            '1000',
+                                            _bookingApplicationsOverview
+                                                .numberOfInProcess
+                                                .toString(),
                                             maxLines: 1,
                                             minFontSize: 8,
                                             overflow: TextOverflow.ellipsis,
@@ -283,7 +289,9 @@ class _OverviewPageState extends State<OverviewPage> {
                                           MainAxisAlignment.center,
                                       children: [
                                         AutoSizeText(
-                                          '2000',
+                                          _bookingApplicationsOverview
+                                              .numberOfRejected
+                                              .toString(),
                                           maxLines: 1,
                                           minFontSize: 8,
                                           overflow: TextOverflow.ellipsis,
@@ -336,7 +344,9 @@ class _OverviewPageState extends State<OverviewPage> {
                                           MainAxisAlignment.center,
                                       children: [
                                         AutoSizeText(
-                                          '200',
+                                          _bookingApplicationsOverview
+                                              .numberOfCancelled
+                                              .toString(),
                                           maxLines: 1,
                                           minFontSize: 8,
                                           overflow: TextOverflow.ellipsis,
@@ -396,7 +406,9 @@ class _OverviewPageState extends State<OverviewPage> {
                                           MainAxisAlignment.center,
                                       children: [
                                         AutoSizeText(
-                                          '1000000',
+                                          _bookingApplicationsOverview
+                                              .numberOfPutOnHold
+                                              .toString(),
                                           maxLines: 1,
                                           minFontSize: 8,
                                           overflow: TextOverflow.ellipsis,
@@ -450,7 +462,9 @@ class _OverviewPageState extends State<OverviewPage> {
                                           MainAxisAlignment.center,
                                       children: [
                                         AutoSizeText(
-                                          '400',
+                                          _bookingApplicationsOverview
+                                              .numberOfApproved
+                                              .toString(),
                                           maxLines: 1,
                                           minFontSize: 8,
                                           overflow: TextOverflow.ellipsis,

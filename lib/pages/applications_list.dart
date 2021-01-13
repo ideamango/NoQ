@@ -13,7 +13,14 @@ import 'package:noq/widget/appbar.dart';
 
 class ApplicationsList extends StatefulWidget {
   final String entityId;
-  ApplicationsList({Key key, @required this.entityId}) : super(key: key);
+  final String bookingFormId;
+  final ApplicationStatus status;
+  ApplicationsList(
+      {Key key,
+      @required this.entityId,
+      @required this.bookingFormId,
+      @required this.status})
+      : super(key: key);
   @override
   _ApplicationsListState createState() => _ApplicationsListState();
 }
@@ -207,7 +214,7 @@ class _ApplicationsListState extends State<ApplicationsList> {
     // bookingApplication.bookingFormId = widget.bookingFormId;
     bookingApplication.entityId = "SELENium Id";
     bookingApplication.userId = _gs.getCurrentUser().id;
-    bookingApplication.status = ApplicationStatus.INREVIEW;
+    bookingApplication.status = ApplicationStatus.INPROCESS;
     bookingApplication.responseForm = bookingForm;
   }
 
@@ -374,7 +381,7 @@ class _ApplicationsListState extends State<ApplicationsList> {
                               IconButton(
                                   color: Colors.purple[200],
                                   onPressed: () {
-                                    bookingApplication.notesOnAcceptance =
+                                    bookingApplication.notesOnApproval =
                                         notesController.text;
                                     bookingApplication.status =
                                         ApplicationStatus.APPROVED;

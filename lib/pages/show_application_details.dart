@@ -441,7 +441,7 @@ class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
                       RaisedButton(
                         color: Colors.purple[200],
                         onPressed: () {
-                          bookingApplication.notesOnAcceptance =
+                          bookingApplication.notesOnApproval =
                               notesController.text;
                           bookingApplication.status =
                               ApplicationStatus.APPROVED;
