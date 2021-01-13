@@ -457,6 +457,8 @@ class Utils {
       socialMetaTagParameters: SocialMetaTagParameters(
         title: msgTitle,
         description: entityShareMessage,
+        imageUrl: Uri.parse(
+            'https://firebasestorage.googleapis.com/v0/b/sukoon-india.appspot.com/o/ic_launcher-web.png?alt=media&token=d0bb835d-e569-4f38-ad6e-fa0fed822cc7'),
       ),
     );
     final link = await parameters.buildUrl();
@@ -489,7 +491,7 @@ class Utils {
       socialMetaTagParameters: SocialMetaTagParameters(
         title: msgTitle,
         imageUrl: Uri.parse(
-            "https://firebasestorage.googleapis.com/v0/b/awesomenoq.appspot.com/o/logo_icon.png?alt=media&token=d0bb835d-e569-4f38-ad6e-fa0fed822cc7"),
+            'https://firebasestorage.googleapis.com/v0/b/sukoon-india.appspot.com/o/ic_launcher-web.png?alt=media&token=d0bb835d-e569-4f38-ad6e-fa0fed822cc7'),
       ),
     );
     final link = await parameters.buildUrl();
