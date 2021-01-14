@@ -325,6 +325,7 @@ class EntityRowState extends State<EntityRow> {
 
                         Navigator.of(context)
                             .push(PageAnimation.createRoute(OverviewPage(
+                          bookingFormId: _metaEntity.bookingFormId,
                           entityId: _metaEntity.entityId,
                         )));
                         // Navigator.of(context)

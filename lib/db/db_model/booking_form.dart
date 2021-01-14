@@ -72,6 +72,7 @@ class BookingForm {
 class Field {
   String id = Uuid().v1();
   String label;
+  bool isMeta = false;
   bool isMandatory;
   String infoMessage;
   String type;
@@ -97,6 +98,7 @@ class FormInputFieldText extends Field {
         'id': id,
         'maxLength': maxLength,
         'label': label,
+        'isMeta': isMeta,
         'isMandatory': isMandatory,
         "infoMessage": infoMessage,
         "type": type,
@@ -110,6 +112,7 @@ class FormInputFieldText extends Field {
         json['isMandatory'], json['infoMessage'], json['maxLength']);
 
     textField.id = json["id"];
+    textField.isMeta = json["isMeta"];
     textField.response = json['response'];
 
     return textField;
@@ -135,6 +138,7 @@ class FormInputFieldNumber extends Field {
   Map<String, dynamic> toJson() => {
         'id': id,
         'label': label,
+        'isMeta': isMeta,
         'isMandatory': isMandatory,
         "infoMessage": infoMessage,
         'minValue': minValue,
@@ -151,7 +155,7 @@ class FormInputFieldNumber extends Field {
         json['infoMessage'],
         json['minValue'],
         json['maxValue']);
-
+    numberField.isMeta = json['isMeta'];
     numberField.id = json['id'];
     numberField.response = json['response'];
 
@@ -177,6 +181,7 @@ class FormInputFieldOptions extends Field {
   Map<String, dynamic> toJson() => {
         'id': id,
         'label': label,
+        'isMeta': isMeta,
         'isMandatory': isMandatory,
         "infoMessage": infoMessage,
         'options': convertValuesToJson(options),
@@ -192,7 +197,7 @@ class FormInputFieldOptions extends Field {
         json['infoMessage'],
         convertToValuesFromJson(json['options']),
         json['isMultiSelect']);
-
+    optionsField.isMeta = json['isMeta'];
     optionsField.id = json['id'];
     return optionsField;
   }
@@ -235,6 +240,7 @@ class FormInputFieldAttachment extends Field {
   Map<String, dynamic> toJson() => {
         'id': id,
         'label': label,
+        'isMeta': isMeta,
         'isMandatory': isMandatory,
         "infoMessage": infoMessage,
         'type': type,
@@ -255,7 +261,7 @@ class FormInputFieldAttachment extends Field {
     if (json == null) return null;
     FormInputFieldAttachment attachmentField = FormInputFieldAttachment(
         json['label'], json['isMandatory'], json['infoMessage']);
-
+    attachmentField.isMeta = json['isMeta'];
     attachmentField.id = json['id'];
     attachmentField.responseFilePaths =
         convertToPathValuesFromJson(json['responseFilePaths']);
@@ -282,6 +288,7 @@ class FormInputFieldDateTime extends Field {
   Map<String, dynamic> toJson() => {
         'id': id,
         'label': label,
+        'isMeta': isMeta,
         'isMandatory': isMandatory,
         "infoMessage": infoMessage,
         'type': type,
@@ -290,14 +297,14 @@ class FormInputFieldDateTime extends Field {
 
   static FormInputFieldDateTime fromJson(Map<String, dynamic> json) {
     if (json == null) return null;
-    FormInputFieldDateTime numberField = FormInputFieldDateTime(
+    FormInputFieldDateTime dateTimeField = FormInputFieldDateTime(
         json['label'], json['isMandatory'], json['infoMessage']);
-
-    numberField.id = json['id'];
-    numberField.responseDateTime =
+    dateTimeField.isMeta = json['isMeta'];
+    dateTimeField.id = json['id'];
+    dateTimeField.responseDateTime =
         DateTime.fromMillisecondsSinceEpoch(json['responseDateTime']);
 
-    return numberField;
+    return dateTimeField;
   }
 }
 
@@ -316,6 +323,7 @@ class FormInputFieldPhone extends Field {
   Map<String, dynamic> toJson() => {
         'id': id,
         'label': label,
+        'isMeta': isMeta,
         'isMandatory': isMandatory,
         "infoMessage": infoMessage,
         'type': type,
@@ -324,13 +332,13 @@ class FormInputFieldPhone extends Field {
 
   static FormInputFieldPhone fromJson(Map<String, dynamic> json) {
     if (json == null) return null;
-    FormInputFieldPhone numberField = FormInputFieldPhone(
+    FormInputFieldPhone phoneField = FormInputFieldPhone(
         json['label'], json['isMandatory'], json['infoMessage']);
+    phoneField.isMeta = json['isMeta'];
+    phoneField.id = json['id'];
+    phoneField.responsePhone = json['responsePhone'];
 
-    numberField.id = json['id'];
-    numberField.responsePhone = json['responsePhone'];
-
-    return numberField;
+    return phoneField;
   }
 }
 
@@ -355,6 +363,7 @@ class FormInputFieldOptionsWithAttachments extends Field {
   Map<String, dynamic> toJson() => {
         'id': id,
         'label': label,
+        'isMeta': isMeta,
         'isMandatory': isMandatory,
         "infoMessage": infoMessage,
         'options': convertValuesToJson(options),
@@ -374,7 +383,7 @@ class FormInputFieldOptionsWithAttachments extends Field {
             json['infoMessage'],
             convertToValuesFromJson(json['options']),
             json['isMultiSelect']);
-
+    optionsFieldWithAttachments.isMeta = json["isMeta"];
     optionsFieldWithAttachments.id = json['id'];
     optionsFieldWithAttachments.responseFilePaths =
         convertToStringsFromJson(json['responseFilePaths']);
