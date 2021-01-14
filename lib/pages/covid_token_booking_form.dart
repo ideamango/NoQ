@@ -435,7 +435,7 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage>
     _lonController.text = "";
   }
 
-  Future<Null> pickDate(BuildContext context) async {
+  Future<DateTime> pickDate(BuildContext context) async {
     DateTime date = await showDatePicker(
       context: context,
       firstDate: DateTime.now().subtract(Duration(days: 365 * 100)),
@@ -453,26 +453,14 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage>
         );
       },
     );
-    if (date != null) {
-      setState(() {
-        insertOffer.startDateTime = date;
-        dateString = date.day.toString() +
-            " / " +
-            date.month.toString() +
-            " / " +
-            date.year.toString();
-        _dobController.text = dateString;
-        // checkOfferDetailsFilled();
-        offerFieldStatus = true;
-      });
-    }
+    return date;
   }
 
-  Widget showImageList(BuildContext context, String imageUrl) {
+  Widget showImageList(BuildContext context, File imageUrl) {
     return Stack(
       alignment: AlignmentDirectional.topEnd,
       children: [
-        Image.network(imageUrl),
+        Image.file(imageUrl),
         IconButton(
           alignment: Alignment.topRight,
           padding: EdgeInsets.zero,
@@ -489,8 +477,14 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage>
                 if (value) {
                   print('REMOVE path in responsePaths $imageUrl');
                   setState(() {
+                    print(imageUrl);
+                    print(_images.length);
+                    _images.removeWhere((element) => element == imageUrl);
+                    print(_images.length);
+                    print(idProofField.responseFilePaths.length);
                     idProofField.responseFilePaths
-                        .removeWhere((element) => element == imageUrl);
+                        .removeWhere((element) => element == imageUrl.path);
+                    print(idProofField.responseFilePaths.length);
                   });
                 }
               });
@@ -537,7 +531,22 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage>
         validator: validateText,
         onTap: () {
           setState(() {
-            pickDate(context);
+            pickDate(context).then((value) {
+              if (value != null) {
+                setState(() {
+                  insertOffer.startDateTime = value;
+                  dateString = value.day.toString() +
+                      " / " +
+                      value.month.toString() +
+                      " / " +
+                      value.year.toString();
+                  _dobController.text = dateString;
+                  // checkOfferDetailsFilled();
+                  offerFieldStatus = true;
+                });
+                dobInput.responseDateTime = value;
+              }
+            });
           });
         },
         maxLength: null,
@@ -547,7 +556,7 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage>
           //  checkOfferDetailsFilled();
         },
         onSaved: (String value) {
-          dobInput.responseDateTime = DateTime.parse(value);
+          //  dobInput.responseDateTime = DateTime.parse(value);
           // checkOfferDetailsFilled();
         },
       );
@@ -1005,11 +1014,13 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage>
           List<String> targetPaths = List<String>();
           for (String path in idProofField.responseFilePaths) {
             String fileName = basename(path);
+            print(fileName);
 
             String targetFileName =
                 '${bookingApplication.id}#${idProofField.id}#${_gs.getCurrentUser().id}#$fileName';
 
             String targetPath = await uploadFilesToServer(path, targetFileName);
+            print(targetPath);
             targetPaths.add(targetPath);
           }
 
@@ -1877,11 +1888,11 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage>
                                                       (BuildContext context,
                                                           int index) {
                                                     return Container(
+                                                      padding: EdgeInsets.only(
+                                                          bottom: 5),
                                                       child: showImageList(
                                                           context,
-                                                          idProofField
-                                                                  .responseFilePaths[
-                                                              index]),
+                                                          _images[index]),
                                                     );
                                                   },
                                                   itemCount: idProofField

@@ -516,24 +516,24 @@ class _ApplicationsListState extends State<ApplicationsList> {
                           ),
                         )
                       : _emptyPage(),
-                  Container(
-                      margin: EdgeInsets.fromLTRB(10, 10, 10, 10),
-                      child: TextField(
-                        readOnly: true,
-                        controller: notesController,
-                        decoration: InputDecoration(
-                          labelText: 'Remarks',
-                          enabledBorder: OutlineInputBorder(
-                              borderSide: BorderSide(color: Colors.grey)),
-                          focusedBorder: OutlineInputBorder(
-                              borderSide: BorderSide(color: Colors.orange)),
-                          // errorText:
-                          //     _validate ? 'Please enter your message' : null,
-                        ),
-                        keyboardType: TextInputType.multiline,
-                        maxLength: null,
-                        maxLines: 2,
-                      )),
+                  // Container(
+                  //     margin: EdgeInsets.fromLTRB(10, 10, 10, 10),
+                  //     child: TextField(
+                  //       readOnly: true,
+                  //       controller: notesController,
+                  //       decoration: InputDecoration(
+                  //         labelText: 'Remarks',
+                  //         enabledBorder: OutlineInputBorder(
+                  //             borderSide: BorderSide(color: Colors.grey)),
+                  //         focusedBorder: OutlineInputBorder(
+                  //             borderSide: BorderSide(color: Colors.orange)),
+                  //         // errorText:
+                  //         //     _validate ? 'Please enter your message' : null,
+                  //       ),
+                  //       keyboardType: TextInputType.multiline,
+                  //       maxLength: null,
+                  //       maxLines: 2,
+                  //     )),
                 ],
               ),
             ),
