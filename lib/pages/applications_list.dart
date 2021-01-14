@@ -351,6 +351,8 @@ class _ApplicationsListState extends State<ApplicationsList> {
         Navigator.of(context)
             .push(PageAnimation.createRoute(ShowApplicationDetails(
           entityId: widget.entityId,
+          bookingFormId: widget.bookingFormId,
+          status: widget.status,
         )));
       },
       child: Container(

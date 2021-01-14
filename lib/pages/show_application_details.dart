@@ -11,6 +11,7 @@ import 'package:noq/style.dart';
 import 'package:noq/userHomePage.dart';
 import 'package:noq/utils.dart';
 import 'package:noq/widget/appbar.dart';
+import 'package:noq/widget/widgets.dart';
 
 class ShowApplicationDetails extends StatefulWidget {
   final String entityId;
@@ -148,7 +149,9 @@ class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
     idProofField.responseValues = new List<String>();
     idProofField.responseValues.add("DL");
     idProofField.responseFilePaths.add(
-        "https://firebasestorage.googleapis.com/v0/b/sukoon-india.appspot.com/o/dl_image.png?alt=media&token=d0bb835d-e569-4f38-ad6e-fa0fed822cc7");
+        "https://firebasestorage.googleapis.com/v0/b/sukoon-india.appspot.com/o/landscape.png?alt=media&token=b3a09803-dda9-4576-a26a-4856cada5c63");
+    idProofField.responseFilePaths.add(
+        "https://firebasestorage.googleapis.com/v0/b/sukoon-india.appspot.com/o/DL.jpg?alt=media&token=99957a19-7a65-4d80-a107-3ef19036dc34");
     idProofField.options.add("DL");
     idProofField.options.add("PAN");
 
@@ -158,10 +161,13 @@ class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
         "Please select all known medical conditions you have",
         medConditionsStrList,
         true);
+    healthDetailsInput.responseValues = new List<String>();
+    healthDetailsInput.responseValues.add("Liver Disease");
+    healthDetailsInput.responseValues.add("Heart Disease");
 
     healthDetailsDesc = FormInputFieldText(
         "Decription of medical conditions (optional)",
-        true,
+        false,
         "Decription of medical conditions (optional)",
         200);
     healthDetailsDesc.response = "Migraine";
@@ -271,6 +277,7 @@ class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
               FormInputFieldText newfield = field;
               fieldWidget = TextField(
                 controller: listOfControllers[field.label],
+                readOnly: true,
                 style: TextStyle(
                   fontSize: 18,
                   color: Colors.blueGrey[500],
@@ -289,7 +296,7 @@ class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
                   // errorText:
                   //     _validate ? 'Please enter your message' : null,
                 ),
-                keyboardType: TextInputType.multiline,
+                // keyboardType: TextInputType.multiline,
               );
               listOfControllers[field.label].text =
                   newfield.response.toString();
@@ -300,6 +307,7 @@ class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
               FormInputFieldNumber newfield = field;
               fieldWidget = TextField(
                 controller: listOfControllers[field.label],
+                readOnly: true,
                 style: TextStyle(
                   fontSize: 18,
                   color: Colors.blueGrey[500],
@@ -318,7 +326,7 @@ class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
                   // errorText:
                   //     _validate ? 'Please enter your message' : null,
                 ),
-                keyboardType: TextInputType.text,
+                // keyboardType: TextInputType.text,
               );
               listOfControllers[field.label].text =
                   (newfield.response.toString());
@@ -329,6 +337,7 @@ class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
               FormInputFieldNumber newfield = field;
               fieldWidget = fieldWidget = TextField(
                 controller: listOfControllers[field.label],
+                readOnly: true,
                 style: TextStyle(
                   fontSize: 18,
                   color: Colors.blueGrey[500],
@@ -347,7 +356,7 @@ class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
                   // errorText:
                   //     _validate ? 'Please enter your message' : null,
                 ),
-                keyboardType: TextInputType.multiline,
+                //keyboardType: TextInputType.multiline,
               );
               listOfControllers[field.label].text =
                   "+91 ${newfield.response.toString()}";
@@ -357,7 +366,7 @@ class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
           case "DATETIME":
             {
               FormInputFieldDateTime newfield = field;
-              fieldWidget = fieldWidget = TextField(
+              fieldWidget = TextField(
                 controller: listOfControllers[field.label],
                 readOnly: true,
                 style: TextStyle(
@@ -380,7 +389,7 @@ class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
                   // errorText:
                   //     _validate ? 'Please enter your message' : null,
                 ),
-                keyboardType: TextInputType.text,
+                //keyboardType: TextInputType.text,
               );
               listOfControllers[field.label].text =
                   (newfield.label == "Date of Birth")
@@ -416,59 +425,92 @@ class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
                   // errorText:
                   //     _validate ? 'Please enter your message' : null,
                 ),
-                keyboardType: TextInputType.multiline,
+                // keyboardType: TextInputType.multiline,
               );
-              listOfControllers[field.label].text =
-                  newfield.responseValues.toString();
+              String conds = "";
+
+              if (newfield.isMultiSelect) {
+                if (Utils.isNullOrEmpty(newfield.responseValues)) {
+                  conds = "None";
+                }
+                for (int i = 0; i < newfield.responseValues.length; i++) {
+                  if (conds != "")
+                    conds = conds + "  |  " + newfield.responseValues[i];
+                  else
+                    conds = conds + newfield.responseValues[i].toString();
+                }
+              }
+
+              listOfControllers[field.label].text = conds;
             }
             break;
           case "OPTIONS_ATTACHMENTS":
             {
               FormInputFieldOptionsWithAttachments newfield = field;
-              Widget attachmentList = Container(
-                  child: Column(
-                children: [
-                  ListView.builder(
-                    itemBuilder: (BuildContext context, int index) {
-                      return Container(
-                        margin: EdgeInsets.fromLTRB(10, 10, 10, 10),
-                        child: new Column(
-                          children: [
-                            Image.network(newfield.responseFilePaths[index]),
-                          ],
-                        ),
-                      );
-                    },
-                    itemCount: newfield.responseFilePaths.length,
-                  ),
-                ],
-              ));
+              // Widget attachmentList = Container(
+              //     child: ListView.builder(
+              //   itemBuilder: (BuildContext context, int index) {
+              //     return Container(
+              //       margin: EdgeInsets.fromLTRB(10, 10, 10, 10),
+              //       child: Container(
 
-              fieldWidget = Column(
+              //         child: Image.network(newfield.responseFilePaths[index])),
+              //     );
+              //   },
+              //   itemCount: newfield.responseFilePaths.length,
+              // ));
+
+              fieldWidget = Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  TextField(
-                    controller: listOfControllers[field.label],
-                    readOnly: true,
-                    style: TextStyle(
-                      fontSize: 18,
-                      color: Colors.blueGrey[500],
+                  SizedBox(
+                    width: MediaQuery.of(context).size.width * .3,
+                    child: TextField(
+                      controller: listOfControllers[field.label],
+                      readOnly: true,
+                      style: TextStyle(
+                        fontSize: 18,
+                        color: Colors.blueGrey[500],
+                      ),
+                      textAlign: TextAlign.start,
+                      decoration: InputDecoration(
+                        labelText: newfield.label,
+                        labelStyle: TextStyle(
+                            fontSize: 20,
+                            color: Colors.indigo[900],
+                            fontWeight: FontWeight.bold,
+                            fontFamily: 'RalewayRegular'),
+                        enabledBorder: OutlineInputBorder(
+                            borderSide: BorderSide(color: Colors.grey)),
+                        focusedBorder: OutlineInputBorder(
+                            borderSide: BorderSide(color: Colors.orange)),
+                        // errorText:
+                        //     _validate ? 'Please enter your message' : null,
+                      ),
+                      //  keyboardType: TextInputType.multiline,
                     ),
-                    decoration: InputDecoration(
-                      labelText: newfield.label,
-                      labelStyle: TextStyle(
-                          fontSize: 20,
-                          color: Colors.indigo[900],
-                          fontWeight: FontWeight.bold,
-                          fontFamily: 'RalewayRegular'),
-                      enabledBorder: OutlineInputBorder(
-                          borderSide: BorderSide(color: Colors.grey)),
-                      focusedBorder: OutlineInputBorder(
-                          borderSide: BorderSide(color: Colors.orange)),
-                      // errorText:
-                      //     _validate ? 'Please enter your message' : null,
-                    ),
-                    keyboardType: TextInputType.multiline,
                   ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      SizedBox(
+                          width: MediaQuery.of(context).size.width * .16,
+                          height: MediaQuery.of(context).size.width * .16,
+                          child: Image.network(
+                            newfield.responseFilePaths[0],
+                            scale: 5.0,
+                          )),
+                      horizontalSpacer,
+                      (newfield.responseFilePaths.length > 1)
+                          ? SizedBox(
+                              width: MediaQuery.of(context).size.width * .16,
+                              height: MediaQuery.of(context).size.width * .16,
+                              child:
+                                  Image.network(newfield.responseFilePaths[1]))
+                          : SizedBox(),
+                    ],
+                  ),
+
                   // Column(
                   //   children: [
                   //     attachmentList,
@@ -476,8 +518,21 @@ class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
                   // )
                 ],
               );
-              listOfControllers[field.label].text =
-                  newfield.responseValues.toString();
+              String conds = "";
+
+              if (newfield.isMultiSelect) {
+                if (Utils.isNullOrEmpty(newfield.responseValues)) {
+                  conds = "None";
+                }
+                for (int i = 0; i < newfield.responseValues.length; i++) {
+                  if (conds != "")
+                    conds = conds + "  |  " + newfield.responseValues[i];
+                  else
+                    conds = conds + newfield.responseValues[i].toString();
+                }
+              } else
+                conds = newfield.responseValues[0].toString();
+              listOfControllers[field.label].text = conds;
             }
             break;
           default:
@@ -514,7 +569,6 @@ class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
         height: MediaQuery.of(context).size.height * .82,
         child: Column(
           children: <Widget>[
-            Text(ba.status.toString()),
             Expanded(
               child: ListView.builder(
                 padding:
@@ -608,42 +662,68 @@ class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
                       RaisedButton(
-                        color: Colors.purple[200],
-                        onPressed: () {
-                          bookingApplication.notesOnApproval =
-                              notesController.text;
-                          bookingApplication.status =
-                              ApplicationStatus.APPROVED;
-                        },
-                        child: Text(
-                          "Approve",
-                          style: buttonTextStyle,
-                        ),
-                      ),
+                          color: Colors.green[400],
+                          onPressed: () {
+                            bookingApplication.notesOnApproval =
+                                notesController.text;
+                            bookingApplication.status =
+                                ApplicationStatus.APPROVED;
+                            Utils.showMyFlushbar(
+                                context,
+                                Icons.check,
+                                Duration(seconds: 4),
+                                "Application Saved!!",
+                                "");
+                            //TODO: Add server code
+                          },
+                          child: Row(children: [
+                            Text(
+                              "Approve",
+                              // style: TextStyle(),
+                            ),
+                            Icon(
+                              Icons.check_circle,
+                            )
+                          ])),
                       RaisedButton(
-                        color: Colors.greenAccent,
+                        color: Colors.yellow[700],
                         onPressed: () {
                           bookingApplication.notesOnPuttingOnHold =
                               notesController.text;
                           bookingApplication.status = ApplicationStatus.ONHOLD;
+                          Utils.showMyFlushbar(context, Icons.check,
+                              Duration(seconds: 4), "Application Saved!!", "");
                         },
-                        child: Text(
-                          "On-Hold",
-                          style: buttonTextStyle,
-                        ),
+                        child: Row(children: [
+                          Text(
+                            "On-Hold",
+                            // style: buttonTextStyle,
+                          ),
+                          Icon(
+                            Icons.pan_tool_rounded,
+                          )
+                        ]),
                       ),
                       RaisedButton(
-                        color: Colors.orangeAccent,
+                        color: Colors.red,
                         onPressed: () {
                           bookingApplication.notesOnRejection =
                               notesController.text;
                           bookingApplication.status =
                               ApplicationStatus.REJECTED;
+                          Utils.showMyFlushbar(context, Icons.check,
+                              Duration(seconds: 4), "Application Saved!!", "");
                         },
-                        child: Text(
-                          "Reject",
-                          style: buttonTextStyle,
-                        ),
+                        child: Row(children: [
+                          Text(
+                            "Reject",
+                            //  style: buttonTextStyle,
+                          ),
+                          Icon(
+                            Icons.cancel_rounded,
+                            //color: Colors.red,
+                          )
+                        ]),
                       ),
                     ],
                   )
