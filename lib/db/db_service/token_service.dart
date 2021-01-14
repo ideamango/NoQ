@@ -59,6 +59,9 @@ class TokenService {
     return es;
   }
 
+  Future<UserToken> autoGenerateToken(
+      MetaEntity metaEntity, DateTime preferredDateTime, Transaction tx) {}
+
   Future<UserToken> generateToken(
       MetaEntity metaEntity, DateTime dateTime) async {
     final User user = getFirebaseAuth().currentUser;

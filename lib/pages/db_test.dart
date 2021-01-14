@@ -1,8 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:noq/db/db_model/address.dart';
+import 'package:noq/db/db_model/booking_application.dart';
 import 'package:noq/db/db_model/booking_form.dart';
 import 'package:noq/db/db_model/configurations.dart';
 import 'package:noq/db/db_model/employee.dart';
@@ -15,10 +15,7 @@ import 'package:noq/db/db_model/offer.dart';
 import 'package:noq/db/db_model/slot.dart';
 import 'package:noq/db/db_model/app_user.dart';
 import 'package:noq/db/db_model/user_token.dart';
-import 'package:noq/db/db_service/configurations_service.dart';
-import 'package:noq/db/db_service/entity_service.dart';
-import 'package:noq/db/db_service/token_service.dart';
-import 'package:noq/db/db_service/user_service.dart';
+import 'package:noq/db/db_service/booking_application_service.dart';
 import 'package:noq/enum/entity_type.dart';
 import 'package:noq/events/event_bus.dart';
 import 'package:noq/events/events.dart';
@@ -832,6 +829,9 @@ class DBTest {
           "TokenService.getAllTokensForSlot -----------------------------------> failure");
     }
 
+    BookingForm bf = await testCovidCenterWithForm();
+    testBookingApplication(bf);
+
     print(
         "<==========================================TESTING DONE=========================================>");
 
@@ -895,8 +895,6 @@ class DBTest {
 
     await createGym();
     await createPrivateGym();
-
-    await testCovidCenterWithForm();
 
     print("Dummy place creation completed.");
   }
@@ -1302,7 +1300,7 @@ class DBTest {
     }
   }
 
-  testCovidCenterWithForm() async {
+  Future<BookingForm> testCovidCenterWithForm() async {
     Address adrs = new Address(
         city: "Hyderbad",
         state: "Telangana",
@@ -1326,17 +1324,17 @@ class DBTest {
         true,
         "Please select all known medical conditions you have",
         [
-          'Chronic kidney disease',
-          'Chronic lung disease',
-          'Diabetes',
-          'Heart Conditions',
-          'Other Cardiovascular and Cerebrovascular Diseases',
-          "Hemoglobin disorders",
-          "HIV or weakened Immune System",
-          "Liver disease",
-          "Neurologic conditions such as dementia",
-          "Overweight and Severe Obesity",
-          "Pregnancy"
+          Value('Chronic kidney disease'),
+          Value('Chronic lung disease'),
+          Value('Diabetes'),
+          Value('Heart Conditions'),
+          Value('Other Cardiovascular and Cerebrovascular Diseases'),
+          Value("Hemoglobin disorders"),
+          Value("HIV or weakened Immune System"),
+          Value("Liver disease"),
+          Value("Neurologic conditions such as dementia"),
+          Value("Overweight and Severe Obesity"),
+          Value("Pregnancy")
         ],
         true);
 
@@ -1392,6 +1390,8 @@ class DBTest {
         .getEntityService()
         .getEntity("Selenium-Covid-Vacination-Center");
 
+    return bf;
+
     // FormInputFieldOptions options =
     //     seleniumVacCenter.tokenBookingForm.formFields[2];
 
@@ -1402,5 +1402,28 @@ class DBTest {
     //   print(
     //       "Token Booking Form Fields tested -----------------------> FAILURE");
     // }
+  }
+
+  testBookingApplication(BookingForm bf) {
+    //Case 1: Application submission
+    //Case 2: Application state change by Admin
+    //Case 3: Counter increment for Global and Local both
+
+    FormInputFieldText nameInput = bf.formFields[0];
+    nameInput.response = "FN LN";
+
+    FormInputFieldNumber ageInput = bf.formFields[1];
+    ageInput.response = 25;
+
+    FormInputFieldOptions healthDetailsInput = bf.formFields[2];
+    healthDetailsInput.responseValues = new List<Value>();
+    healthDetailsInput.responseValues.add(healthDetailsInput.options[1]);
+    healthDetailsInput.responseValues.add(healthDetailsInput.options[3]);
+
+    BookingApplication ba = new BookingApplication();
+    ba.responseForm = bf;
+
+    BookingApplicationService as = _gs.getTokenApplicationService();
+    as.submitApplication(ba, "Selenium-Covid-Vacination-Center");
   }
 }

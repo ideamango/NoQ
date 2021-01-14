@@ -160,12 +160,12 @@ class FormInputFieldNumber extends Field {
 }
 
 class FormInputFieldOptions extends Field {
-  List<String> options;
+  List<Value> options;
   bool isMultiSelect;
-  List<String> responseValues;
+  List<Value> responseValues;
 
   FormInputFieldOptions(String label, bool isMandatory, String infoMessage,
-      List<String> options, bool isMultiSelect) {
+      List<Value> options, bool isMultiSelect) {
     this.label = label;
     this.isMandatory = isMandatory;
     this.infoMessage = infoMessage;
@@ -179,7 +179,7 @@ class FormInputFieldOptions extends Field {
         'label': label,
         'isMandatory': isMandatory,
         "infoMessage": infoMessage,
-        'options': options,
+        'options': convertValuesToJson(options),
         'isMultiSelect': isMultiSelect,
         'type': type
       };
@@ -190,21 +190,30 @@ class FormInputFieldOptions extends Field {
         json['label'],
         json['isMandatory'],
         json['infoMessage'],
-        convertToOptionValuesFromJson(json['options']),
+        convertToValuesFromJson(json['options']),
         json['isMultiSelect']);
 
     optionsField.id = json['id'];
     return optionsField;
   }
 
-  static List<String> convertToOptionValuesFromJson(List<dynamic> valuesJson) {
-    List<String> values = new List<String>();
+  static List<Value> convertToValuesFromJson(List<dynamic> valuesJson) {
+    List<Value> values = new List<Value>();
     if (valuesJson == null) return values;
 
-    for (String value in valuesJson) {
-      values.add(value);
+    for (Map<String, dynamic> json in valuesJson) {
+      values.add(Value.fromJson(json));
     }
     return values;
+  }
+
+  List<dynamic> convertValuesToJson(List<Value> options) {
+    List<dynamic> usersJson = new List<dynamic>();
+    if (options == null) return usersJson;
+    for (Value val in options) {
+      usersJson.add(val.toJson());
+    }
+    return usersJson;
   }
 }
 
@@ -326,15 +335,15 @@ class FormInputFieldPhone extends Field {
 }
 
 class FormInputFieldOptionsWithAttachments extends Field {
-  List<String> options;
+  List<Value> options;
   bool isMultiSelect;
-  List<String> responseValues;
+  List<Value> responseValues;
 
   List<String> responseFilePaths;
   int maxAttachments = 2;
 
   FormInputFieldOptionsWithAttachments(String label, bool isMandatory,
-      String infoMessage, List<String> options, bool isMultiSelect) {
+      String infoMessage, List<Value> options, bool isMultiSelect) {
     this.label = label;
     this.isMandatory = isMandatory;
     this.infoMessage = infoMessage;
@@ -348,7 +357,7 @@ class FormInputFieldOptionsWithAttachments extends Field {
         'label': label,
         'isMandatory': isMandatory,
         "infoMessage": infoMessage,
-        'options': options,
+        'options': convertValuesToJson(options),
         'isMultiSelect': isMultiSelect,
         'type': type,
         'responseFilePaths': responseFilePaths,
@@ -368,18 +377,59 @@ class FormInputFieldOptionsWithAttachments extends Field {
 
     optionsFieldWithAttachments.id = json['id'];
     optionsFieldWithAttachments.responseFilePaths =
-        convertToValuesFromJson(json['responseFilePaths']);
+        convertToStringsFromJson(json['responseFilePaths']);
     optionsFieldWithAttachments.maxAttachments = json['maxAttachments'];
     return optionsFieldWithAttachments;
   }
 
-  static List<String> convertToValuesFromJson(List<dynamic> valuesJson) {
-    List<String> values = new List<String>();
+  static List<Value> convertToValuesFromJson(List<dynamic> valuesJson) {
+    List<Value> values = new List<Value>();
     if (valuesJson == null) return values;
 
-    for (String value in valuesJson) {
-      values.add(value);
+    for (Map<String, dynamic> json in valuesJson) {
+      values.add(Value.fromJson(json));
     }
     return values;
+  }
+
+  static List<String> convertToStringsFromJson(List<dynamic> valuesJson) {
+    List<String> strs = new List<String>();
+    if (valuesJson == null) return strs;
+
+    for (String str in valuesJson) {
+      strs.add(str);
+    }
+    return strs;
+  }
+
+  List<dynamic> convertValuesToJson(List<Value> options) {
+    List<dynamic> usersJson = new List<dynamic>();
+    if (options == null) return usersJson;
+    for (Value val in options) {
+      usersJson.add(val.toJson());
+    }
+    return usersJson;
+  }
+}
+
+class Value {
+  dynamic value;
+  String key;
+
+  Value(dynamic label) {
+    this.key = Uuid().v1();
+    this.value = label;
+  }
+
+  Map<String, dynamic> toJson() => {'key': key, 'value': value};
+
+  static Value fromJson(Map<String, dynamic> json) {
+    if (json == null) return null;
+
+    Value textValue = Value(json['value']);
+
+    textValue.key = json['key'];
+
+    return textValue;
   }
 }
