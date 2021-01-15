@@ -14,15 +14,11 @@ import 'package:noq/widget/appbar.dart';
 import 'package:noq/widget/widgets.dart';
 
 class ShowApplicationDetails extends StatefulWidget {
-  final String entityId;
-  final String bookingFormId;
-  final ApplicationStatus status;
-  ShowApplicationDetails(
-      {Key key,
-      @required this.entityId,
-      @required this.bookingFormId,
-      @required this.status})
-      : super(key: key);
+  final BookingApplication bookingApplication;
+  ShowApplicationDetails({
+    Key key,
+    @required this.bookingApplication,
+  }) : super(key: key);
   @override
   _ShowApplicationDetailsState createState() => _ShowApplicationDetailsState();
 }
@@ -46,7 +42,7 @@ class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
       } else
         initCompleted = true;
     });
-    notesController.text = "XWLJRVER";
+
     nameController.text = "SMITA";
   }
 
@@ -498,7 +494,6 @@ class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
                           height: MediaQuery.of(context).size.width * .16,
                           child: Image.network(
                             newfield.responseFilePaths[0],
-                            scale: 5.0,
                           )),
                       horizontalSpacer,
                       (newfield.responseFilePaths.length > 1)

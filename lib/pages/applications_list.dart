@@ -1,4 +1,7 @@
+import 'package:auto_size_text/auto_size_text.dart';
+import 'package:enum_to_string/enum_to_string.dart';
 import 'package:flutter/material.dart';
+import 'package:noq/constants.dart';
 import 'package:noq/db/db_model/booking_application.dart';
 import 'package:noq/db/db_model/booking_form.dart';
 import 'package:noq/enum/application_status.dart';
@@ -12,6 +15,7 @@ import 'package:noq/userHomePage.dart';
 import 'package:noq/utils.dart';
 import 'package:noq/widget/appbar.dart';
 import 'package:noq/widget/page_animation.dart';
+import 'package:noq/widget/widgets.dart';
 
 class ApplicationsList extends StatefulWidget {
   final String entityId;
@@ -33,8 +37,9 @@ class _ApplicationsListState extends State<ApplicationsList> {
   bool initCompleted = false;
   GlobalState _gs;
 
-  TextEditingController notesController = new TextEditingController();
   List<BookingApplication> listOfBa;
+  Map<String, TextEditingController> listOfControllers =
+      new Map<String, TextEditingController>();
 
   @override
   void initState() {
@@ -48,7 +53,6 @@ class _ApplicationsListState extends State<ApplicationsList> {
       } else
         initCompleted = true;
     });
-    notesController.text = "XWLJRVER";
   }
 
   Future<void> getGlobalState() async {
@@ -64,7 +68,7 @@ class _ApplicationsListState extends State<ApplicationsList> {
   initBookingFormDummy() {
     BookingForm bookingForm;
     List<Field> fields;
-    BookingApplication bookingApplication;
+    BookingApplication bookingApplication1;
     List<String> idProofTypesStrList = List<String>();
     List<Item> idProofTypes = List<Item>();
     List<String> medConditionsStrList = List<String>();
@@ -75,7 +79,9 @@ class _ApplicationsListState extends State<ApplicationsList> {
     FormInputFieldText alternatePhone;
     String _idProofType;
     FormInputFieldOptionsWithAttachments idProofField;
-    FormInputFieldOptions healthDetailsInput;
+    FormInputFieldOptionsWithAttachments flWorkerField;
+
+    FormInputFieldOptionsWithAttachments healthDetailsInput;
     FormInputFieldText healthDetailsDesc;
     FormInputFieldText latInput;
     FormInputFieldText lonInput;
@@ -148,14 +154,38 @@ class _ApplicationsListState extends State<ApplicationsList> {
     idProofField.responseValues.add("y.com");
     idProofField.options.add("DL");
     idProofField.isMeta = true;
+//**************Frontline workers****** */
+    flWorkerField = FormInputFieldOptionsWithAttachments(
+        "Is Frontline Worker",
+        true,
+        "Please upload supporting documents",
+        ["MP", "MLA", "DOCTOR", "NURSE"],
+        false);
+    flWorkerField.responseFilePaths = List<String>();
+    flWorkerField.responseValues = new List<String>();
+    flWorkerField.responseValues.add("MP");
+    flWorkerField.responseFilePaths.add(
+        "https://firebasestorage.googleapis.com/v0/b/sukoon-india.appspot.com/o/landscape.png?alt=media&token=b3a09803-dda9-4576-a26a-4856cada5c63");
+    flWorkerField.isMeta = true;
+//**************Frontline workers****** */
 
-    healthDetailsInput = FormInputFieldOptions(
-        "Medical Conditions",
+//**************Medical Conditionss****** */
+
+    healthDetailsInput = FormInputFieldOptionsWithAttachments(
+        "Any Medical Conditions",
         true,
         "Please select all known medical conditions you have",
         medConditionsStrList,
         true);
     healthDetailsInput.isMeta = true;
+    healthDetailsInput.responseFilePaths = List<String>();
+    healthDetailsInput.responseValues = new List<String>();
+    healthDetailsInput.responseValues.add("Heart Conditions");
+    healthDetailsInput.responseValues
+        .add("Other Cardiovascular and Cerebrovascular Diseases");
+    healthDetailsInput.isMultiSelect = true;
+    healthDetailsInput.responseFilePaths.add(
+        "https://firebasestorage.googleapis.com/v0/b/sukoon-india.appspot.com/o/landscape.png?alt=media&token=b3a09803-dda9-4576-a26a-4856cada5c63");
 
     healthDetailsDesc = FormInputFieldText(
         "Decription of medical conditions (optional)",
@@ -163,6 +193,8 @@ class _ApplicationsListState extends State<ApplicationsList> {
         "Decription of medical conditions (optional)",
         200);
     healthDetailsDesc.response = "Migraine";
+
+    //**************Medical Conditionss****** */
 
     latInput = FormInputFieldText(
         "Current Location Latitude", false, "Current Location Latitude", 20);
@@ -177,6 +209,7 @@ class _ApplicationsListState extends State<ApplicationsList> {
     fields.add(primaryPhone);
     fields.add(alternatePhone);
     fields.add(idProofField);
+    fields.add(flWorkerField);
     fields.add(healthDetailsInput);
     fields.add(healthDetailsDesc);
     fields.add(latInput);
@@ -210,19 +243,58 @@ class _ApplicationsListState extends State<ApplicationsList> {
         formFields: fields,
         autoApproved: false);
 
-    bookingApplication = new BookingApplication();
+    bookingApplication1 = new BookingApplication();
     //slot
 
-    bookingApplication.preferredSlotTiming = DateTime.now();
-    bookingApplication.status = ApplicationStatus.CANCELLED;
+    bookingApplication1.preferredSlotTiming = DateTime.now();
+    bookingApplication1.status = ApplicationStatus.CANCELLED;
     //bookingFormId
     // bookingApplication.bookingFormId = widget.bookingFormId;
-    bookingApplication.entityId = "SELENium Id";
-    bookingApplication.userId = _gs.getCurrentUser().id;
-    bookingApplication.status = ApplicationStatus.INPROCESS;
-    bookingApplication.responseForm = bookingForm;
+    bookingApplication1.entityId = "SELENium Id";
+    bookingApplication1.userId = _gs.getCurrentUser().id;
+    bookingApplication1.status = ApplicationStatus.INPROCESS;
+    bookingApplication1.responseForm = bookingForm;
+
+    BookingApplication bookingApplication2 = new BookingApplication();
+    //slot
+
+    bookingApplication2.preferredSlotTiming = DateTime.now();
+    bookingApplication2.status = ApplicationStatus.CANCELLED;
+    //bookingFormId
+    // bookingApplication.bookingFormId = widget.bookingFormId;
+    bookingApplication2.entityId = "SELENium Id";
+    bookingApplication2.userId = _gs.getCurrentUser().id;
+    bookingApplication2.status = ApplicationStatus.INPROCESS;
+    bookingApplication2.responseForm = bookingForm;
+    BookingApplication bookingApplication3 = new BookingApplication();
+    //slot
+
+    bookingApplication3.preferredSlotTiming = DateTime.now();
+    bookingApplication3.status = ApplicationStatus.CANCELLED;
+    //bookingFormId
+    // bookingApplication.bookingFormId = widget.bookingFormId;
+    bookingApplication3.entityId = "SELENium Id";
+    bookingApplication3.userId = _gs.getCurrentUser().id;
+    bookingApplication3.status = ApplicationStatus.INPROCESS;
+    bookingApplication3.responseForm = bookingForm;
+    BookingApplication bookingApplication4 = new BookingApplication();
+    //slot
+
+    bookingApplication4.preferredSlotTiming = DateTime.now();
+    bookingApplication4.status = ApplicationStatus.CANCELLED;
+    //bookingFormId
+    // bookingApplication.bookingFormId = widget.bookingFormId;
+    bookingApplication4.entityId = "SELENium Id";
+    bookingApplication4.userId = _gs.getCurrentUser().id;
+    bookingApplication4.status = ApplicationStatus.INPROCESS;
+    bookingApplication4.responseForm = bookingForm;
+
     List<BookingApplication> list = new List<BookingApplication>();
-    list.add(bookingApplication);
+    list.add(bookingApplication1);
+    list.add(bookingApplication2);
+    list.add(bookingApplication3);
+    list.add(bookingApplication4);
+
     return list;
   }
 
@@ -340,59 +412,308 @@ class _ApplicationsListState extends State<ApplicationsList> {
 
   Widget _buildItem(BookingApplication ba) {
     List<Field> listOfMeta = new List<Field>();
+    if (!listOfControllers.containsKey(ba.id)) {
+      listOfControllers[ba.id] = new TextEditingController();
+    }
+
+    String name;
+    String age;
+    bool isFrontlineWorker = false;
+    String fwImg1;
+
+    bool isMedicalMorbidities = false;
+    String mbImg1;
+    String mbImg2;
+    TextEditingController notesController = new TextEditingController();
 
     listOfMeta.addAll(
         ba.responseForm.formFields.where((element) => element.isMeta == true));
 
+    for (var element in listOfMeta) {
+      switch (element.label) {
+        case "Name of Person":
+          name = (element as FormInputFieldText).response;
+          break;
+        case "Date of Birth":
+          FormInputFieldDateTime newfield = element;
+          age = ((DateTime.now().difference(newfield.responseDateTime).inDays) /
+                  365)
+              .toStringAsFixed(0);
+          break;
+        case "Is Frontline Worker":
+          FormInputFieldOptionsWithAttachments newfield = element;
+          isFrontlineWorker = !Utils.isNullOrEmpty(newfield.responseValues);
+          if (isFrontlineWorker) {
+            fwImg1 = newfield.responseValues[0];
+          }
+          break;
+        case "Any Medical Conditions":
+          FormInputFieldOptionsWithAttachments newfield = element;
+          isMedicalMorbidities = !Utils.isNullOrEmpty(newfield.responseValues);
+          if (isMedicalMorbidities) {
+            mbImg1 = newfield.responseValues[0];
+            if (newfield.responseValues.length > 1)
+              mbImg2 = newfield.responseValues[1];
+          }
+          break;
+        default:
+          break;
+      }
+    }
+
+    double cardHeight = MediaQuery.of(context).size.height * .22;
+    double cardWidth = MediaQuery.of(context).size.width * .95;
+    var medCondGroup = AutoSizeGroup();
+    var labelGroup = AutoSizeGroup();
+    Iterable<String> autoHints = [
+      "Documents Incomplete",
+      "Not priority now",
+      "No Slots available"
+    ];
+
+    String medConds =
+        mbImg1 + (Utils.isNotNullOrEmpty(mbImg2) ? " & $mbImg2" : "");
+
     return GestureDetector(
       onTap: () {
-        //User clicked on show how, lets show them.
-        print("Showing how to book time-slot");
         Navigator.of(context)
             .push(PageAnimation.createRoute(ShowApplicationDetails(
-          entityId: widget.entityId,
-          bookingFormId: widget.bookingFormId,
-          status: widget.status,
+          bookingApplication: ba,
         )));
       },
-      child: Container(
-        color: Colors.orange,
-        width: MediaQuery.of(context).size.width * .9,
-        // height: MediaQuery.of(context).size.height * .65,
-        child: Card(
-          elevation: 20,
+      child: Card(
+        elevation: 8,
+        child: Container(
+          decoration: BoxDecoration(border: Border.all(color: Colors.blueGrey)),
+          // color: Colors.orange,
+          width: cardWidth,
+          height: cardHeight,
+
           child: Column(
             children: [
-              Text(listOfMeta[0].label),
-              Text(listOfMeta[1].label),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(8, 10, 8, 4),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Row(
+                      children: [
+                        Row(
+                          children: [
+                            AutoSizeText(
+                              "Name : ",
+                              group: labelGroup,
+                              minFontSize: 10,
+                              maxFontSize: 12,
+                              maxLines: 1,
+                              overflow: TextOverflow.clip,
+                              style: TextStyle(
+                                  color: Colors.blueGrey[700],
+                                  fontFamily: 'RalewayRegular'),
+                            ),
+                            SizedBox(
+                              width: cardWidth * .3,
+                              //height: cardHeight * .1,
+                              child: AutoSizeText(
+                                name,
+                                minFontSize: 12,
+                                maxFontSize: 14,
+                                maxLines: 1,
+                                overflow: TextOverflow.clip,
+                                style: TextStyle(
+                                    fontSize: 14,
+                                    color: Colors.indigo[900],
+                                    fontWeight: FontWeight.bold,
+                                    fontFamily: 'RalewayRegular'),
+                              ),
+                            ),
+                          ],
+                        ),
+                        horizontalSpacer,
+                        Row(children: [
+                          AutoSizeText(
+                            "Age : ",
+                            group: labelGroup,
+                            minFontSize: 10,
+                            maxFontSize: 12,
+                            maxLines: 1,
+                            overflow: TextOverflow.clip,
+                            style: TextStyle(
+                                color: Colors.blueGrey[700],
+                                fontFamily: 'RalewayRegular'),
+                          ),
+                          Text(
+                            age,
+                            style: TextStyle(
+                                fontSize: 14,
+                                color: Colors.indigo[900],
+                                fontWeight: FontWeight.bold,
+                                fontFamily: 'RalewayRegular'),
+                          ),
+                        ]),
+                      ],
+                    ),
+                    Row(children: [
+                      AutoSizeText(
+                        "Status : ",
+                        group: labelGroup,
+                        minFontSize: 10,
+                        maxFontSize: 12,
+                        maxLines: 1,
+                        overflow: TextOverflow.clip,
+                        style: TextStyle(
+                            color: Colors.blueGrey[700],
+                            fontFamily: 'RalewayRegular'),
+                      ),
+                      Text(
+                        EnumToString.convertToString(ba.status),
+                        style: TextStyle(
+                            fontSize: 14,
+                            color: Colors.indigo[900],
+                            fontWeight: FontWeight.bold,
+                            fontFamily: 'RalewayRegular'),
+                      ),
+                    ]),
+                  ],
+                ),
+              ),
+              Padding(
+                padding:
+                    const EdgeInsets.symmetric(vertical: 2.0, horizontal: 8),
+                child: Row(
+                  children: [
+                    AutoSizeText(
+                      "Is a FrontLine Worker",
+                      group: labelGroup,
+                      minFontSize: 10,
+                      maxFontSize: 12,
+                      maxLines: 1,
+                      overflow: TextOverflow.clip,
+                      style: TextStyle(
+                          color: Colors.blueGrey[700],
+                          fontFamily: 'RalewayRegular'),
+                    ),
+                    horizontalSpacer,
+                    (isFrontlineWorker)
+                        ? Text(fwImg1,
+                            style: TextStyle(
+                                fontSize: 14,
+                                color: Colors.indigo[900],
+                                fontWeight: FontWeight.bold,
+                                fontFamily: 'RalewayRegular'))
+                        : Text("Not Applicable"),
+                  ],
+                ),
+              ),
+              Padding(
+                padding:
+                    const EdgeInsets.symmetric(vertical: 2.0, horizontal: 8),
+                child: Row(
+                  children: [
+                    SizedBox(
+                        width: cardWidth * .25,
+                        child: Row(
+                          // crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            AutoSizeText(
+                              "Medical Issues",
+                              group: labelGroup,
+                              minFontSize: 10,
+                              maxFontSize: 12,
+                              maxLines: 1,
+                              overflow: TextOverflow.clip,
+                              style: TextStyle(
+                                  color: Colors.blueGrey[700],
+                                  fontFamily: 'RalewayRegular'),
+                            ),
+                          ],
+                        )),
+                    Wrap(children: [
+                      SizedBox(
+                        width: cardWidth * .63,
+                        child: AutoSizeText(medConds,
+                            group: medCondGroup,
+                            minFontSize: 12,
+                            maxFontSize: 14,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                                color: Colors.indigo[900],
+                                fontWeight: FontWeight.bold,
+                                fontFamily: 'RalewayRegular')),
+                      ),
+                    ]),
+                  ],
+                ),
+              ),
+              // Divider(
+              //   indent: 5,
+              //   thickness: 1,
+              //   height: 5,
+              //   color: Colors.blueGrey[300],
+              // ),
+
               Row(
-                mainAxisAlignment: MainAxisAlignment.end,
+                //   mainAxisAlignment: MainAxisAlignment.end,
                 children: [
+                  Container(
+                      margin: EdgeInsets.zero,
+                      padding: EdgeInsets.only(left: 8, top: 0),
+                      width: cardWidth * .65,
+                      height: cardHeight * .45,
+                      child: TextFormField(
+                        controller: listOfControllers[ba.id],
+                        style: TextStyle(fontSize: 12),
+                        decoration: InputDecoration(
+                          labelText: 'Remarks',
+                          enabledBorder: UnderlineInputBorder(
+                              borderSide: BorderSide(color: Colors.grey)),
+                          focusedBorder: UnderlineInputBorder(
+                              borderSide: BorderSide(color: Colors.orange)),
+                        ),
+                        maxLines: 2,
+                        keyboardType: TextInputType.text,
+                      )),
                   IconButton(
+                      visualDensity: VisualDensity.compact,
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 2.0, horizontal: 8),
                       color: Colors.green[400],
                       onPressed: () {
                         ba.notesOnApproval = notesController.text;
+                        //  setState(() {
                         ba.status = ApplicationStatus.APPROVED;
+                        //  });
                       },
                       icon: Icon(Icons.check_circle)),
                   IconButton(
+                    visualDensity: VisualDensity.compact,
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 2.0, horizontal: 8),
                     color: Colors.yellow[700],
                     onPressed: () {
                       ba.notesOnPuttingOnHold = notesController.text;
+                      // setState(() {
                       ba.status = ApplicationStatus.ONHOLD;
+                      // });
                     },
                     icon: Icon(Icons.pan_tool_rounded),
                   ),
                   IconButton(
+                    visualDensity: VisualDensity.compact,
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 2.0, horizontal: 8),
                     color: Colors.red,
                     onPressed: () {
                       ba.notesOnRejection = notesController.text;
+                      //setState(() {
                       ba.status = ApplicationStatus.REJECTED;
+                      // });
                     },
                     icon: Icon(Icons.cancel),
                   ),
                 ],
-              )
+              ),
             ],
           ),
         ),
@@ -504,7 +825,7 @@ class _ApplicationsListState extends State<ApplicationsList> {
                             // reverse: true,
                             itemBuilder: (BuildContext context, int index) {
                               return Container(
-                                margin: EdgeInsets.fromLTRB(10, 0, 10, 50),
+                                margin: EdgeInsets.fromLTRB(10, 10, 10, 0),
                                 child: new Column(
                                   children: [
                                     //  Text('dfhgd'),
