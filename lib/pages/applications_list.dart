@@ -150,10 +150,11 @@ class _ApplicationsListState extends State<ApplicationsList> {
         true, "Please upload Government Id proof", idProofTypesStrList, false);
     idProofField.responseFilePaths = List<String>();
     idProofField.responseValues = new List<String>();
-    idProofField.responseValues.add("x.com");
-    idProofField.responseValues.add("y.com");
+    idProofField.responseValues.add("DL");
     idProofField.options.add("DL");
-    idProofField.isMeta = true;
+    idProofField.responseFilePaths.add(
+        "https://firebasestorage.googleapis.com/v0/b/sukoon-india.appspot.com/o/fe3de7b0-567e-11eb-ae5b-5772ee4a0592%23fe3c12f0-567e-11eb-a11e-7f5c09f04575%23O72Pv6XakoRlxNKYbZLruYaMlwi1%23scaled_323f121e-f284-4d7f-8d58-95c81a3d6f2d5266208110146393983.jpg?alt=media&token=3415fa17-fc43-42fe-8e97-55cffea2f368");
+    idProofField.isMeta = false;
 //**************Frontline workers****** */
     flWorkerField = FormInputFieldOptionsWithAttachments(
         "Is Frontline Worker",
@@ -165,7 +166,7 @@ class _ApplicationsListState extends State<ApplicationsList> {
     flWorkerField.responseValues = new List<String>();
     flWorkerField.responseValues.add("MP");
     flWorkerField.responseFilePaths.add(
-        "https://firebasestorage.googleapis.com/v0/b/sukoon-india.appspot.com/o/landscape.png?alt=media&token=b3a09803-dda9-4576-a26a-4856cada5c63");
+        "https://firebasestorage.googleapis.com/v0/b/sukoon-india.appspot.com/o/fe3de7b0-567e-11eb-ae5b-5772ee4a0592%23fe3c12f0-567e-11eb-a11e-7f5c09f04575%23O72Pv6XakoRlxNKYbZLruYaMlwi1%23scaled_323f121e-f284-4d7f-8d58-95c81a3d6f2d5266208110146393983.jpg?alt=media&token=3415fa17-fc43-42fe-8e97-55cffea2f368");
     flWorkerField.isMeta = true;
 //**************Frontline workers****** */
 
@@ -185,7 +186,9 @@ class _ApplicationsListState extends State<ApplicationsList> {
         .add("Other Cardiovascular and Cerebrovascular Diseases");
     healthDetailsInput.isMultiSelect = true;
     healthDetailsInput.responseFilePaths.add(
-        "https://firebasestorage.googleapis.com/v0/b/sukoon-india.appspot.com/o/landscape.png?alt=media&token=b3a09803-dda9-4576-a26a-4856cada5c63");
+        "https://firebasestorage.googleapis.com/v0/b/sukoon-india.appspot.com/o/fe3de7b0-567e-11eb-ae5b-5772ee4a0592%23fe3c12f0-567e-11eb-a11e-7f5c09f04575%23O72Pv6XakoRlxNKYbZLruYaMlwi1%23scaled_323f121e-f284-4d7f-8d58-95c81a3d6f2d5266208110146393983.jpg?alt=media&token=3415fa17-fc43-42fe-8e97-55cffea2f368");
+    healthDetailsInput.responseFilePaths.add(
+        "https://firebasestorage.googleapis.com/v0/b/sukoon-india.appspot.com/o/fe3de7b0-567e-11eb-ae5b-5772ee4a0592%23fe3c12f0-567e-11eb-a11e-7f5c09f04575%23O72Pv6XakoRlxNKYbZLruYaMlwi1%23scaled_323f121e-f284-4d7f-8d58-95c81a3d6f2d5266208110146393983.jpg?alt=media&token=3415fa17-fc43-42fe-8e97-55cffea2f368");
 
     healthDetailsDesc = FormInputFieldText(
         "Decription of medical conditions (optional)",
@@ -264,7 +267,7 @@ class _ApplicationsListState extends State<ApplicationsList> {
     // bookingApplication.bookingFormId = widget.bookingFormId;
     bookingApplication2.entityId = "SELENium Id";
     bookingApplication2.userId = _gs.getCurrentUser().id;
-    bookingApplication2.status = ApplicationStatus.INPROCESS;
+    bookingApplication2.status = ApplicationStatus.NEW;
     bookingApplication2.responseForm = bookingForm;
     BookingApplication bookingApplication3 = new BookingApplication();
     //slot
@@ -281,13 +284,16 @@ class _ApplicationsListState extends State<ApplicationsList> {
     //slot
 
     bookingApplication4.preferredSlotTiming = DateTime.now();
-    bookingApplication4.status = ApplicationStatus.CANCELLED;
+    bookingApplication4.status = ApplicationStatus.NEW;
     //bookingFormId
     // bookingApplication.bookingFormId = widget.bookingFormId;
     bookingApplication4.entityId = "SELENium Id";
     bookingApplication4.userId = _gs.getCurrentUser().id;
     bookingApplication4.status = ApplicationStatus.INPROCESS;
     bookingApplication4.responseForm = bookingForm;
+    // bookingApplication4.responseForm.formFields[0].label = "Application4";
+    // bookingApplication3.responseForm.formFields[0].label = "Application3";
+    // bookingApplication2.responseForm.formFields[0].label = "Application2";
 
     List<BookingApplication> list = new List<BookingApplication>();
     list.add(bookingApplication1);
@@ -565,13 +571,31 @@ class _ApplicationsListState extends State<ApplicationsList> {
                             color: Colors.blueGrey[700],
                             fontFamily: 'RalewayRegular'),
                       ),
-                      Text(
-                        EnumToString.convertToString(ba.status),
-                        style: TextStyle(
-                            fontSize: 14,
-                            color: Colors.indigo[900],
-                            fontWeight: FontWeight.bold,
-                            fontFamily: 'RalewayRegular'),
+                      Container(
+                        padding: EdgeInsets.all(4),
+                        decoration: BoxDecoration(
+                            color: (ba.status == ApplicationStatus.NEW)
+                                ? Colors.blue
+                                : (ba.status == ApplicationStatus.ONHOLD
+                                    ? Colors.yellow[700]
+                                    : (ba.status == ApplicationStatus.REJECTED
+                                        ? Colors.red
+                                        : (ba.status ==
+                                                ApplicationStatus.APPROVED
+                                            ? Colors.green[400]
+                                            : Colors.blueGrey))),
+                            shape: BoxShape.rectangle,
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(5.0))),
+                        child: Text(
+                          EnumToString.convertToString(ba.status),
+                          style: TextStyle(
+                              fontSize: 10,
+                              letterSpacing: 1,
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                              fontFamily: 'RalewayRegular'),
+                        ),
                       ),
                     ]),
                   ],
