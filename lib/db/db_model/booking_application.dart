@@ -50,6 +50,7 @@ class BookingApplication {
   Map<String, dynamic> toJson() {
     Map<String, dynamic> map = {
       'id': id,
+      'responseForm': responseForm.toJson(),
       'bookingFormId': bookingFormId,
       'tokenId': tokenId,
       'entityId': entityId,
@@ -119,8 +120,10 @@ class BookingApplication {
           EnumToString.convertToString(FieldType.OPTIONS_ATTACHMENTS)) {
         FormInputFieldOptionsWithAttachments t = f;
         List<String> fieldValueIds = List<String>();
-        for (Value val in t.responseValues) {
-          fieldValueIds.add(val.key);
+        if (t.responseValues != null) {
+          for (Value val in t.responseValues) {
+            fieldValueIds.add(val.key);
+          }
         }
         map[t.key] = fieldValueIds;
       } else if (f.type == EnumToString.convertToString(FieldType.BOOL)) {
@@ -139,6 +142,7 @@ class BookingApplication {
     BookingApplication ba =
         BookingApplication(entityId: json['entityId'], responseForm: bf);
     ba.bookingFormId = bf.id;
+    ba.id = json['id'];
 
     ba.tokenId = json['tokenId'];
     ba.userId = json['userId'];

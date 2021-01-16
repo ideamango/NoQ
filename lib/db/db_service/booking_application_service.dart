@@ -272,6 +272,7 @@ class BookingApplicationService {
 
     String localCounterId;
     String globalCounterId;
+    bool requestProcessed = false;
 
     final DocumentReference applicationRef =
         fStore.doc('bookingApplications/' + applicationId);
@@ -283,6 +284,7 @@ class BookingApplicationService {
         if (applicationSnapshot.exists) {
           application = BookingApplication.fromJson(applicationSnapshot.data());
           existingStatus = application.status;
+          bf = application.responseForm;
           if (application.timeOfSubmission == null ||
               application.status == ApplicationStatus.CANCELLED) {
             throw new Exception(
@@ -380,6 +382,13 @@ class BookingApplicationService {
           if (localCounter != null) {
             localCounter.numberOfApproved--;
           }
+        } else if (existingStatus == ApplicationStatus.NEW) {
+          if (globalCounter != null) {
+            globalCounter.numberOfNew--;
+          }
+          if (localCounter != null) {
+            localCounter.numberOfNew--;
+          }
         } else if (existingStatus == ApplicationStatus.COMPLETED) {
           if (globalCounter != null) {
             globalCounter.numberOfCompleted--;
@@ -417,12 +426,12 @@ class BookingApplicationService {
         if (globalCounter != null) {
           tx.set(globalCounterRef, globalCounter.toJson());
         }
-      } catch (e) {
-        exception = e;
+      } catch (ex) {
+        requestProcessed = false;
       }
     });
 
-    return false;
+    return requestProcessed;
   }
 
   Future<BookingApplicationsOverview> getBookingApplicationOverview(

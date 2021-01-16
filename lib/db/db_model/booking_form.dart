@@ -34,6 +34,7 @@ class BookingForm {
   }
 
   Map<String, dynamic> toJson() => {
+        'id': id,
         'formName': formName,
         'headerMsg': headerMsg,
         'footerMsg': footerMsg,
@@ -59,6 +60,7 @@ class BookingForm {
         footerMsg: json['footerMsg'],
         autoApproved: json['autoApproved']);
 
+    bf.id = json["id"];
     bf.isSystemTemplate = json['isSystemTemplate'];
     bf._formFields = _convertToOptionValuesFromJson(json['formFields']);
 

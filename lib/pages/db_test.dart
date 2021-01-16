@@ -1537,20 +1537,20 @@ class DBTest {
         globalOverView.numberOfNew == 10 &&
         globalOverView.numberOfCompleted == 0 &&
         globalOverView.totalApplications == 10) {
-      print("GlobalApplicationOverview stats --> SUCCESS");
+      print("GlobalApplicationOverview stats after submission --> SUCCESS");
     } else {
       print(
-          "GlobalApplicationOverview stats ------------------------------> Failure");
+          "GlobalApplicationOverview stats after submission ------------------------------> Failure");
     }
 
     if (localOverView.numberOfApproved == 0 &&
         localOverView.numberOfNew == 10 &&
         localOverView.numberOfCompleted == 0 &&
         localOverView.totalApplications == 10) {
-      print("LocalApplicationOverview stats --> SUCCESS");
+      print("LocalApplicationOverview stats after submission --> SUCCESS");
     } else {
       print(
-          "LocalApplicationOverview stats ------------------------------> Failure");
+          "LocalApplicationOverview stats after submission ------------------------------> Failure");
     }
   }
 
@@ -1580,6 +1580,7 @@ class DBTest {
     _gs.getTokenApplicationService().updateApplicationStatus(bs10.id,
         ApplicationStatus.REJECTED, "Notes on rejecting this application");
 
+    //now get the ApplicationOver object to check the count
     BookingApplicationsOverview globalOverView = await _gs
         .getTokenApplicationService()
         .getBookingApplicationOverview(TEST_COVID_BOOKING_FORM_ID, null);
@@ -1595,10 +1596,10 @@ class DBTest {
         globalOverView.totalApplications == 10 &&
         globalOverView.numberOfPutOnHold == 1 &&
         globalOverView.numberOfRejected == 1) {
-      print("GlobalApplicationOverview stats --> SUCCESS");
+      print("GlobalApplicationOverview stats after status change --> SUCCESS");
     } else {
       print(
-          "GlobalApplicationOverview stats ------------------------------> Failure");
+          "GlobalApplicationOverview stats after status change ------------------------------> Failure");
     }
 
     if (localOverView.numberOfApproved == 2 &&
@@ -1607,10 +1608,10 @@ class DBTest {
         localOverView.totalApplications == 10 &&
         localOverView.numberOfPutOnHold == 1 &&
         localOverView.numberOfRejected == 1) {
-      print("LocalApplicationOverview stats --> SUCCESS");
+      print("LocalApplicationOverview stats after status change --> SUCCESS");
     } else {
       print(
-          "LocalApplicationOverview stats ------------------------------> Failure");
+          "LocalApplicationOverview stats after status change ------------------------------> Failure");
     }
 
     List<BookingApplication> approvedApplications = await _gs
