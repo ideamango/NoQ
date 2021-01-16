@@ -812,4 +812,36 @@ class Utils {
             ));
     return returnVal;
   }
+
+  static Future<bool> showImagePopUp(BuildContext context, Image image) async {
+    bool returnVal = await showDialog(
+        barrierDismissible: false,
+        context: context,
+        builder: (_) => AlertDialog(
+              titlePadding: EdgeInsets.fromLTRB(10, 15, 10, 10),
+              contentPadding: EdgeInsets.all(0),
+              actionsPadding: EdgeInsets.all(5),
+              //buttonPadding: EdgeInsets.all(0),
+
+              content: Container(
+                padding: EdgeInsets.all(10),
+                color: Colors.white,
+                width: MediaQuery.of(context).size.width,
+                child: Stack(
+                  alignment: Alignment.topRight,
+                  children: [
+                    image,
+                    IconButton(
+                      alignment: Alignment.topRight,
+                      padding: EdgeInsets.zero,
+                      icon: Icon(Icons.cancel_outlined,
+                          color: Colors.red, size: 30),
+                      onPressed: () => Navigator.of(_).pop(true),
+                    ),
+                  ],
+                ),
+              ),
+            ));
+    return returnVal;
+  }
 }
