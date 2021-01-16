@@ -532,41 +532,81 @@ class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
                         //  keyboardType: TextInputType.multiline,
                       ),
                     ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        Container(
-                            padding: EdgeInsets.all(2),
-                            margin: EdgeInsets.all(2),
-                            // decoration: BoxDecoration(
-                            //     border:
-                            //         Border.all(color: Colors.blueGrey[800])),
-                            width: MediaQuery.of(context).size.width * .37,
-                            height: MediaQuery.of(context).size.width * .4,
-                            child: Image.network(
-                              newfield.responseFilePaths[0],
-                            )),
-                        horizontalSpacer,
-                        (newfield.responseFilePaths.length > 1)
-                            ? Container(
-                                padding: EdgeInsets.all(2),
-                                margin: EdgeInsets.all(2),
-                                // decoration: BoxDecoration(
-                                //     border: Border.all(
-                                //         color: Colors.blueGrey[800])),
-                                width: MediaQuery.of(context).size.width * .37,
-                                height: MediaQuery.of(context).size.width * .4,
-                                child: Image.network(
-                                    newfield.responseFilePaths[1]))
-                            : SizedBox(),
-                      ],
-                    ),
-
-                    // Column(
-                    //   children: [
-                    //     attachmentList,
-                    //   ],
-                    // )
+                    (newfield.responseFilePaths.length > 0)
+                        ? Wrap(
+                            children: newfield.responseFilePaths
+                                .map((item) => GestureDetector(
+                                      onTap: () {
+                                        Utils.showImagePopUp(
+                                            context,
+                                            Image.network(
+                                              item,
+                                              loadingBuilder:
+                                                  (BuildContext context,
+                                                      Widget child,
+                                                      ImageChunkEvent
+                                                          loadingProgress) {
+                                                if (loadingProgress == null)
+                                                  return child;
+                                                return Center(
+                                                  child:
+                                                      CircularProgressIndicator(
+                                                    value: loadingProgress
+                                                                .expectedTotalBytes !=
+                                                            null
+                                                        ? loadingProgress
+                                                                .cumulativeBytesLoaded /
+                                                            loadingProgress
+                                                                .expectedTotalBytes
+                                                        : null,
+                                                  ),
+                                                );
+                                              },
+                                            ));
+                                      },
+                                      child: Container(
+                                          padding: EdgeInsets.all(2),
+                                          margin: EdgeInsets.all(2),
+                                          // decoration: BoxDecoration(
+                                          //     border:
+                                          //         Border.all(color: Colors.blueGrey[800])),
+                                          width: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                              .37,
+                                          height: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                              .4,
+                                          child: Image.network(
+                                            item,
+                                            loadingBuilder:
+                                                (BuildContext context,
+                                                    Widget child,
+                                                    ImageChunkEvent
+                                                        loadingProgress) {
+                                              if (loadingProgress == null)
+                                                return child;
+                                              return Center(
+                                                child:
+                                                    CircularProgressIndicator(
+                                                  value: loadingProgress
+                                                              .expectedTotalBytes !=
+                                                          null
+                                                      ? loadingProgress
+                                                              .cumulativeBytesLoaded /
+                                                          loadingProgress
+                                                              .expectedTotalBytes
+                                                      : null,
+                                                ),
+                                              );
+                                            },
+                                          )),
+                                    ))
+                                .toList()
+                                .cast<Widget>(),
+                          )
+                        : SizedBox(),
                   ],
                 ),
               );
@@ -578,7 +618,7 @@ class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
                 }
                 for (int i = 0; i < newfield.responseValues.length; i++) {
                   if (conds != "")
-                    conds = conds + "  |  " + newfield.responseValues[i];
+                    conds = conds + "  &  " + newfield.responseValues[i];
                   else
                     conds = conds + newfield.responseValues[i].toString();
                 }
@@ -598,11 +638,6 @@ class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
           Container(
               width: MediaQuery.of(context).size.width * .9,
               padding: EdgeInsets.all(0),
-              // decoration: BoxDecoration(
-              //   // border: Border.all(color: Colors.teal[200]),
-              //   shape: BoxShape.rectangle,
-              //   // color: Colors.cyan[50],
-              // ),
               child: fieldWidget),
         ]);
       }
@@ -611,66 +646,76 @@ class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
   }
 
   Widget _buildItem(BookingApplication ba) {
-    return Card(
-      child: Container(
-        padding: EdgeInsets.all(8),
-        margin: EdgeInsets.all(8),
-        width: MediaQuery.of(context).size.width,
-        //height: MediaQuery.of(context).size.height * .82,
-        child: Column(
-          children: <Widget>[
-            Row(mainAxisAlignment: MainAxisAlignment.end, children: [
-              AutoSizeText(
-                "Status : ",
-                minFontSize: 10,
-                maxFontSize: 12,
-                maxLines: 1,
-                overflow: TextOverflow.clip,
-                style: TextStyle(
-                    color: Colors.blueGrey[700], fontFamily: 'RalewayRegular'),
-              ),
+    return Container(
+      padding: EdgeInsets.fromLTRB(8, 8, 8, 0),
+      margin: EdgeInsets.all(8),
+      child: Card(
+        elevation: 8,
+        child: Container(
+          width: MediaQuery.of(context).size.width,
+          //height: MediaQuery.of(context).size.height * .82,
+          child: Column(
+            children: <Widget>[
               Container(
-                padding: EdgeInsets.all(4),
-                decoration: BoxDecoration(
-                    color: (ba.status == ApplicationStatus.NEW)
-                        ? Colors.blue
-                        : (ba.status == ApplicationStatus.ONHOLD
-                            ? Colors.yellow[700]
-                            : (ba.status == ApplicationStatus.REJECTED
-                                ? Colors.red
-                                : (ba.status == ApplicationStatus.APPROVED
-                                    ? Colors.green[400]
-                                    : Colors.blueGrey))),
-                    shape: BoxShape.rectangle,
-                    borderRadius: BorderRadius.all(Radius.circular(5.0))),
-                child: Text(
-                  EnumToString.convertToString(ba.status),
-                  style: TextStyle(
-                      fontSize: 10,
-                      letterSpacing: 1,
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                      fontFamily: 'RalewayRegular'),
+                padding: EdgeInsets.all(8),
+                child: Row(mainAxisAlignment: MainAxisAlignment.end, children: [
+                  AutoSizeText(
+                    "Status : ",
+                    minFontSize: 10,
+                    maxFontSize: 12,
+                    maxLines: 1,
+                    overflow: TextOverflow.clip,
+                    style: TextStyle(
+                        color: Colors.blueGrey[700],
+                        fontFamily: 'RalewayRegular'),
+                  ),
+                  Container(
+                    padding: EdgeInsets.all(4),
+                    decoration: BoxDecoration(
+                        color: (ba.status == ApplicationStatus.NEW)
+                            ? Colors.blue
+                            : (ba.status == ApplicationStatus.ONHOLD
+                                ? Colors.yellow[700]
+                                : (ba.status == ApplicationStatus.REJECTED
+                                    ? Colors.red
+                                    : (ba.status == ApplicationStatus.APPROVED
+                                        ? Colors.green[400]
+                                        : Colors.blueGrey))),
+                        shape: BoxShape.rectangle,
+                        borderRadius: BorderRadius.all(Radius.circular(5.0))),
+                    child: Text(
+                      EnumToString.convertToString(ba.status),
+                      style: TextStyle(
+                          fontSize: 10,
+                          letterSpacing: 1,
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                          fontFamily: 'RalewayRegular'),
+                    ),
+                  ),
+                ]),
+              ),
+              Expanded(
+                child: ListView.builder(
+                  padding: EdgeInsets.fromLTRB(
+                      MediaQuery.of(context).size.width * .026,
+                      0,
+                      MediaQuery.of(context).size.width * .026,
+                      MediaQuery.of(context).size.width * .026),
+                  shrinkWrap: true,
+                  //scrollDirection: Axis.vertical,
+                  itemBuilder: (BuildContext context, int index) {
+                    return Container(
+                      padding: EdgeInsets.fromLTRB(5, 5, 5, 0),
+                      //  height: MediaQuery.of(context).size.height * .3,
+                      child: buildChildItem(ba.responseForm.formFields[index]),
+                    );
+                  },
+                  itemCount: ba.responseForm.formFields.length,
                 ),
-              ),
-            ]),
-            Expanded(
-              child: ListView.builder(
-                padding:
-                    EdgeInsets.all(MediaQuery.of(context).size.width * .026),
-                shrinkWrap: true,
-                //scrollDirection: Axis.vertical,
-                itemBuilder: (BuildContext context, int index) {
-                  return Container(
-                    padding: EdgeInsets.all(5),
-                    //  height: MediaQuery.of(context).size.height * .3,
-                    child: buildChildItem(ba.responseForm.formFields[index]),
-                  );
-                },
-                itemCount: ba.responseForm.formFields.length,
-              ),
-            )
-          ],
+              )
+            ],
+          ),
         ),
       ),
     );
@@ -684,6 +729,7 @@ class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
   @override
   Widget build(BuildContext context) {
     if (initCompleted) {
+      // notesController.text = widget.bookingApplication.notesOnApproval;
       return MaterialApp(
         debugShowCheckedModeBanner: false,
         theme: ThemeData.light().copyWith(),
@@ -711,45 +757,41 @@ class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
               child: Column(
                 children: <Widget>[
                   Expanded(child: _buildItem(widget.bookingApplication)),
-                  // ListView.builder(
-                  //     itemCount: 1,
-                  //     // reverse: true,
-                  //     itemBuilder: (BuildContext context, int index) {
-                  //       return Container(
-                  //         margin: EdgeInsets.fromLTRB(10, 0, 10, 50),
-                  //         child: new Column(
-                  //           children: showListOfData(),
-                  //         ),
-                  //       );
-                  //     }),
-
                   Container(
-                      margin: EdgeInsets.fromLTRB(10, 10, 10, 10),
-                      child: TextField(
-                        controller: notesController,
-                        decoration: InputDecoration(
-                          labelText: 'Remarks',
-                          enabledBorder: OutlineInputBorder(
-                              borderSide: BorderSide(color: Colors.grey)),
-                          focusedBorder: OutlineInputBorder(
-                              borderSide: BorderSide(color: Colors.orange)),
-                          // errorText:
-                          //     _validate ? 'Please enter your message' : null,
+                      padding: EdgeInsets.fromLTRB(8, 0, 8, 8),
+                      margin: EdgeInsets.all(8),
+                      child: Card(
+                        elevation: 8,
+                        child: TextField(
+                          controller: notesController,
+                          decoration: InputDecoration(
+                            labelText: 'Remarks',
+                            enabledBorder: OutlineInputBorder(
+                                borderSide: BorderSide(color: Colors.grey)),
+                            focusedBorder: OutlineInputBorder(
+                                borderSide: BorderSide(color: Colors.orange)),
+                            // errorText:
+                            //     _validate ? 'Please enter your message' : null,
+                          ),
+                          keyboardType: TextInputType.multiline,
+                          maxLength: null,
+                          maxLines: 2,
                         ),
-                        keyboardType: TextInputType.multiline,
-                        maxLength: null,
-                        maxLines: 2,
                       )),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
                       RaisedButton(
+                          elevation: 8,
                           color: Colors.green[400],
                           onPressed: () {
                             widget.bookingApplication.notesOnApproval =
                                 notesController.text;
-                            widget.bookingApplication.status =
-                                ApplicationStatus.APPROVED;
+                            setState(() {
+                              widget.bookingApplication.status =
+                                  ApplicationStatus.APPROVED;
+                            });
+
                             Utils.showMyFlushbar(
                                 context,
                                 Icons.check,
@@ -761,10 +803,13 @@ class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
                           child: Row(children: [
                             Text(
                               "Approve",
-                              // style: TextStyle(),
+                              style: TextStyle(
+                                color: Colors.white,
+                              ),
                             ),
                             Icon(
                               Icons.check_circle,
+                              color: Colors.white,
                             )
                           ])),
                       RaisedButton(
@@ -772,18 +817,25 @@ class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
                         onPressed: () {
                           widget.bookingApplication.notesOnPuttingOnHold =
                               notesController.text;
-                          widget.bookingApplication.status =
-                              ApplicationStatus.ONHOLD;
+                          setState(() {
+                            widget.bookingApplication.status =
+                                ApplicationStatus.ONHOLD;
+                          });
+
                           Utils.showMyFlushbar(context, Icons.check,
                               Duration(seconds: 4), "Application Saved!!", "");
                         },
                         child: Row(children: [
                           Text(
                             "On-Hold",
+                            style: TextStyle(
+                              color: Colors.white,
+                            ),
                             // style: buttonTextStyle,
                           ),
                           Icon(
                             Icons.pan_tool_rounded,
+                            color: Colors.white,
                           )
                         ]),
                       ),
@@ -792,19 +844,24 @@ class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
                         onPressed: () {
                           widget.bookingApplication.notesOnRejection =
                               notesController.text;
-                          widget.bookingApplication.status =
-                              ApplicationStatus.REJECTED;
+                          setState(() {
+                            widget.bookingApplication.status =
+                                ApplicationStatus.REJECTED;
+                          });
+
                           Utils.showMyFlushbar(context, Icons.check,
                               Duration(seconds: 4), "Application Saved!!", "");
                         },
                         child: Row(children: [
                           Text(
                             "Reject",
-                            //  style: buttonTextStyle,
+                            style: TextStyle(
+                              color: Colors.white,
+                            ),
                           ),
                           Icon(
                             Icons.cancel_rounded,
-                            //color: Colors.red,
+                            color: Colors.white,
                           )
                         ]),
                       ),

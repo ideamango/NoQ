@@ -154,6 +154,9 @@ class _ApplicationsListState extends State<ApplicationsList> {
     idProofField.options.add("DL");
     idProofField.responseFilePaths.add(
         "https://firebasestorage.googleapis.com/v0/b/sukoon-india.appspot.com/o/fe3de7b0-567e-11eb-ae5b-5772ee4a0592%23fe3c12f0-567e-11eb-a11e-7f5c09f04575%23O72Pv6XakoRlxNKYbZLruYaMlwi1%23scaled_323f121e-f284-4d7f-8d58-95c81a3d6f2d5266208110146393983.jpg?alt=media&token=3415fa17-fc43-42fe-8e97-55cffea2f368");
+    idProofField.responseFilePaths.add(
+        "https://firebasestorage.googleapis.com/v0/b/sukoon-india.appspot.com/o/a457b240-5682-11eb-96bc-cb6bbe64022a%23a455b670-5682-11eb-9a03-7fcd37495df5%23O72Pv6XakoRlxNKYbZLruYaMlwi1%23scaled_38c1ed3d-38bb-45c4-9d22-93c1309be86c3402775137232538653.jpg?alt=media&token=4bb71a03-87c9-4056-9309-ab52d34d73c9");
+
     idProofField.isMeta = false;
 //**************Frontline workers****** */
     flWorkerField = FormInputFieldOptionsWithAttachments(
@@ -167,6 +170,9 @@ class _ApplicationsListState extends State<ApplicationsList> {
     flWorkerField.responseValues.add("MP");
     flWorkerField.responseFilePaths.add(
         "https://firebasestorage.googleapis.com/v0/b/sukoon-india.appspot.com/o/fe3de7b0-567e-11eb-ae5b-5772ee4a0592%23fe3c12f0-567e-11eb-a11e-7f5c09f04575%23O72Pv6XakoRlxNKYbZLruYaMlwi1%23scaled_323f121e-f284-4d7f-8d58-95c81a3d6f2d5266208110146393983.jpg?alt=media&token=3415fa17-fc43-42fe-8e97-55cffea2f368");
+    flWorkerField.responseFilePaths.add(
+        "https://firebasestorage.googleapis.com/v0/b/sukoon-india.appspot.com/o/a457b240-5682-11eb-96bc-cb6bbe64022a%23a455b670-5682-11eb-9a03-7fcd37495df5%23O72Pv6XakoRlxNKYbZLruYaMlwi1%23scaled_38c1ed3d-38bb-45c4-9d22-93c1309be86c3402775137232538653.jpg?alt=media&token=4bb71a03-87c9-4056-9309-ab52d34d73c9");
+
     flWorkerField.isMeta = true;
 //**************Frontline workers****** */
 
@@ -188,8 +194,10 @@ class _ApplicationsListState extends State<ApplicationsList> {
     healthDetailsInput.responseFilePaths.add(
         "https://firebasestorage.googleapis.com/v0/b/sukoon-india.appspot.com/o/fe3de7b0-567e-11eb-ae5b-5772ee4a0592%23fe3c12f0-567e-11eb-a11e-7f5c09f04575%23O72Pv6XakoRlxNKYbZLruYaMlwi1%23scaled_323f121e-f284-4d7f-8d58-95c81a3d6f2d5266208110146393983.jpg?alt=media&token=3415fa17-fc43-42fe-8e97-55cffea2f368");
     healthDetailsInput.responseFilePaths.add(
-        "https://firebasestorage.googleapis.com/v0/b/sukoon-india.appspot.com/o/fe3de7b0-567e-11eb-ae5b-5772ee4a0592%23fe3c12f0-567e-11eb-a11e-7f5c09f04575%23O72Pv6XakoRlxNKYbZLruYaMlwi1%23scaled_323f121e-f284-4d7f-8d58-95c81a3d6f2d5266208110146393983.jpg?alt=media&token=3415fa17-fc43-42fe-8e97-55cffea2f368");
+        "https://firebasestorage.googleapis.com/v0/b/sukoon-india.appspot.com/o/appstore.png?alt=media&token=d0bb835d-e569-4f38-ad6e-fa0fed822cc7");
 
+    healthDetailsInput.responseFilePaths.add(
+        "https://firebasestorage.googleapis.com/v0/b/sukoon-india.appspot.com/o/a457b240-5682-11eb-96bc-cb6bbe64022a%23a455b670-5682-11eb-9a03-7fcd37495df5%23O72Pv6XakoRlxNKYbZLruYaMlwi1%23scaled_38c1ed3d-38bb-45c4-9d22-93c1309be86c3402775137232538653.jpg?alt=media&token=4bb71a03-87c9-4056-9309-ab52d34d73c9");
     healthDetailsDesc = FormInputFieldText(
         "Decription of medical conditions (optional)",
         true,
@@ -704,10 +712,10 @@ class _ApplicationsListState extends State<ApplicationsList> {
                           vertical: 2.0, horizontal: 8),
                       color: Colors.green[400],
                       onPressed: () {
-                        ba.notesOnApproval = notesController.text;
-                        //  setState(() {
-                        ba.status = ApplicationStatus.APPROVED;
-                        //  });
+                        ba.notesOnApproval = listOfControllers[ba.id].text;
+                        setState(() {
+                          ba.status = ApplicationStatus.APPROVED;
+                        });
                       },
                       icon: Icon(Icons.check_circle)),
                   IconButton(
@@ -716,10 +724,10 @@ class _ApplicationsListState extends State<ApplicationsList> {
                         vertical: 2.0, horizontal: 8),
                     color: Colors.yellow[700],
                     onPressed: () {
-                      ba.notesOnPuttingOnHold = notesController.text;
-                      // setState(() {
-                      ba.status = ApplicationStatus.ONHOLD;
-                      // });
+                      ba.notesOnPuttingOnHold = listOfControllers[ba.id].text;
+                      setState(() {
+                        ba.status = ApplicationStatus.ONHOLD;
+                      });
                     },
                     icon: Icon(Icons.pan_tool_rounded),
                   ),
@@ -729,10 +737,10 @@ class _ApplicationsListState extends State<ApplicationsList> {
                         vertical: 2.0, horizontal: 8),
                     color: Colors.red,
                     onPressed: () {
-                      ba.notesOnRejection = notesController.text;
-                      //setState(() {
-                      ba.status = ApplicationStatus.REJECTED;
-                      // });
+                      ba.notesOnRejection = listOfControllers[ba.id].text;
+                      setState(() {
+                        ba.status = ApplicationStatus.REJECTED;
+                      });
                     },
                     icon: Icon(Icons.cancel),
                   ),
