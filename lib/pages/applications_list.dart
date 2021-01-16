@@ -69,9 +69,9 @@ class _ApplicationsListState extends State<ApplicationsList> {
     BookingForm bookingForm;
     List<Field> fields;
     BookingApplication bookingApplication1;
-    List<String> idProofTypesStrList = List<String>();
+    List<Value> idProofTypesStrList = List<Value>();
     List<Item> idProofTypes = List<Item>();
-    List<String> medConditionsStrList = List<String>();
+    List<Value> medConditionsStrList = List<Value>();
     List<Item> medConditions = List<Item>();
     FormInputFieldText nameInput;
     FormInputFieldDateTime dobInput;
@@ -95,29 +95,29 @@ class _ApplicationsListState extends State<ApplicationsList> {
     FormInputFieldText addressPin;
 
     fields = List<Field>();
-    idProofTypesStrList.add('Passport');
-    idProofTypesStrList.add('Driving License');
-    idProofTypesStrList.add('Aadhar');
-    idProofTypesStrList.add('PAN');
+    idProofTypesStrList.add(Value('Passport'));
+    idProofTypesStrList.add(Value('Driving License'));
+    idProofTypesStrList.add(Value('Aadhar'));
+    idProofTypesStrList.add(Value('PAN'));
     idProofTypesStrList.forEach((element) {
       idProofTypes.add(Item(element, false));
     });
-    medConditionsStrList.add('Chronic Kidney Disease');
-    medConditionsStrList.add('Liver Disease');
-    medConditionsStrList.add('Overweight and Severe Obesity');
+    medConditionsStrList.add(Value('Chronic Kidney Disease'));
+    medConditionsStrList.add(Value('Liver Disease'));
+    medConditionsStrList.add(Value('Overweight and Severe Obesity'));
     medConditionsStrList
-        .add('Other Cardiovascular and Cerebrovascular Diseases');
-    medConditionsStrList.add('Haemoglobin Disorders');
-    medConditionsStrList.add('Pregnancy');
-    medConditionsStrList.add('Heart Conditions');
-    medConditionsStrList.add('Chronic Lung Disease');
-    medConditionsStrList.add('HIV or Weakened Immune System');
+        .add(Value('Other Cardiovascular and Cerebrovascular Diseases'));
+    medConditionsStrList.add(Value('Haemoglobin Disorders'));
+    medConditionsStrList.add(Value('Pregnancy'));
+    medConditionsStrList.add(Value('Heart Conditions'));
+    medConditionsStrList.add(Value('Chronic Lung Disease'));
+    medConditionsStrList.add(Value('HIV or Weakened Immune System'));
 
-    medConditionsStrList.add('Neurologic Conditions such as Dementia');
+    medConditionsStrList.add(Value('Neurologic Conditions such as Dementia'));
 
-    medConditionsStrList.add('Diabetes');
+    medConditionsStrList.add(Value('Diabetes'));
 
-    medConditionsStrList.add('Others (Specify below)');
+    medConditionsStrList.add(Value('Others (Specify below)'));
 
     medConditionsStrList.forEach((element) {
       medConditions.add(Item(element, false));
@@ -146,12 +146,12 @@ class _ApplicationsListState extends State<ApplicationsList> {
     alternatePhone.response = "9611005523";
     alternatePhone.isMeta = false;
 
-    idProofField = FormInputFieldOptionsWithAttachments("Id Proof File Url",
-        true, "Please upload Government Id proof", idProofTypesStrList, false);
+    idProofField = FormInputFieldOptionsWithAttachments("Photo ID Proof", true,
+        "Please upload Government Id proof", idProofTypesStrList, false);
     idProofField.responseFilePaths = List<String>();
-    idProofField.responseValues = new List<String>();
-    idProofField.responseValues.add("DL");
-    idProofField.options.add("DL");
+    idProofField.responseValues = new List<Value>();
+    idProofField.responseValues.add(Value("DL"));
+    idProofField.options.add(Value("DL"));
     idProofField.responseFilePaths.add(
         "https://firebasestorage.googleapis.com/v0/b/sukoon-india.appspot.com/o/fe3de7b0-567e-11eb-ae5b-5772ee4a0592%23fe3c12f0-567e-11eb-a11e-7f5c09f04575%23O72Pv6XakoRlxNKYbZLruYaMlwi1%23scaled_323f121e-f284-4d7f-8d58-95c81a3d6f2d5266208110146393983.jpg?alt=media&token=3415fa17-fc43-42fe-8e97-55cffea2f368");
     idProofField.responseFilePaths.add(
@@ -163,11 +163,11 @@ class _ApplicationsListState extends State<ApplicationsList> {
         "Is Frontline Worker",
         true,
         "Please upload supporting documents",
-        ["MP", "MLA", "DOCTOR", "NURSE"],
+        [Value("MP"), Value("MLA"), Value("DOCTOR"), Value("NURSE")],
         false);
     flWorkerField.responseFilePaths = List<String>();
-    flWorkerField.responseValues = new List<String>();
-    flWorkerField.responseValues.add("MP");
+    flWorkerField.responseValues = new List<Value>();
+    flWorkerField.responseValues.add(Value("MP"));
     flWorkerField.responseFilePaths.add(
         "https://firebasestorage.googleapis.com/v0/b/sukoon-india.appspot.com/o/fe3de7b0-567e-11eb-ae5b-5772ee4a0592%23fe3c12f0-567e-11eb-a11e-7f5c09f04575%23O72Pv6XakoRlxNKYbZLruYaMlwi1%23scaled_323f121e-f284-4d7f-8d58-95c81a3d6f2d5266208110146393983.jpg?alt=media&token=3415fa17-fc43-42fe-8e97-55cffea2f368");
     flWorkerField.responseFilePaths.add(
@@ -186,10 +186,10 @@ class _ApplicationsListState extends State<ApplicationsList> {
         true);
     healthDetailsInput.isMeta = true;
     healthDetailsInput.responseFilePaths = List<String>();
-    healthDetailsInput.responseValues = new List<String>();
-    healthDetailsInput.responseValues.add("Heart Conditions");
+    healthDetailsInput.responseValues = new List<Value>();
+    healthDetailsInput.responseValues.add(Value("Heart Conditions"));
     healthDetailsInput.responseValues
-        .add("Other Cardiovascular and Cerebrovascular Diseases");
+        .add(Value("Other Cardiovascular and Cerebrovascular Diseases"));
     healthDetailsInput.isMultiSelect = true;
     healthDetailsInput.responseFilePaths.add(
         "https://firebasestorage.googleapis.com/v0/b/sukoon-india.appspot.com/o/fe3de7b0-567e-11eb-ae5b-5772ee4a0592%23fe3c12f0-567e-11eb-a11e-7f5c09f04575%23O72Pv6XakoRlxNKYbZLruYaMlwi1%23scaled_323f121e-f284-4d7f-8d58-95c81a3d6f2d5266208110146393983.jpg?alt=media&token=3415fa17-fc43-42fe-8e97-55cffea2f368");
@@ -251,7 +251,6 @@ class _ApplicationsListState extends State<ApplicationsList> {
             "Your request will be approved based on the information provided by you.",
         footerMsg:
             "Please carry same ID proof (uploaded here) to the Vaccination center for verification purpose.",
-        formFields: fields,
         autoApproved: false);
 
     bookingApplication1 = new BookingApplication();
@@ -440,8 +439,9 @@ class _ApplicationsListState extends State<ApplicationsList> {
     String mbImg2;
     TextEditingController notesController = new TextEditingController();
 
-    listOfMeta.addAll(
-        ba.responseForm.formFields.where((element) => element.isMeta == true));
+    listOfMeta.addAll(ba.responseForm
+        .getFormFields()
+        .where((element) => element.isMeta == true));
 
     for (var element in listOfMeta) {
       switch (element.label) {
@@ -458,16 +458,16 @@ class _ApplicationsListState extends State<ApplicationsList> {
           FormInputFieldOptionsWithAttachments newfield = element;
           isFrontlineWorker = !Utils.isNullOrEmpty(newfield.responseValues);
           if (isFrontlineWorker) {
-            fwImg1 = newfield.responseValues[0];
+            fwImg1 = newfield.responseValues[0].value;
           }
           break;
         case "Any Medical Conditions":
           FormInputFieldOptionsWithAttachments newfield = element;
           isMedicalMorbidities = !Utils.isNullOrEmpty(newfield.responseValues);
           if (isMedicalMorbidities) {
-            mbImg1 = newfield.responseValues[0];
+            mbImg1 = newfield.responseValues[0].value;
             if (newfield.responseValues.length > 1)
-              mbImg2 = newfield.responseValues[1];
+              mbImg2 = newfield.responseValues[1].value;
           }
           break;
         default:

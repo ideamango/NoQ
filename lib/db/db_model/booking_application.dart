@@ -1,6 +1,7 @@
 import 'package:enum_to_string/enum_to_string.dart';
 import 'package:noq/db/db_model/booking_form.dart';
 import 'package:noq/enum/application_status.dart';
+import 'package:noq/enum/field_type.dart';
 import 'package:uuid/uuid.dart';
 
 class BookingApplication {
@@ -46,50 +47,90 @@ class BookingApplication {
 
   DateTime preferredSlotTiming;
 
-  Map<String, dynamic> toJson() => {
-        'id': id,
-        'bookingFormId': bookingFormId,
-        'tokenId': tokenId,
-        'entityId': entityId,
-        'userId': userId,
-        'status': EnumToString.convertToString(status),
-        'timeOfSubmission': (timeOfSubmission != null)
-            ? timeOfSubmission.millisecondsSinceEpoch
-            : null,
-        'notesOnSubmission': notesOnSubmission,
-        'timeOfInProcess': (timeOfInProcess != null)
-            ? timeOfInProcess.millisecondsSinceEpoch
-            : null,
-        'notesInProcess': notesInProcess,
-        'processedBy': processedBy,
-        'timeOfAcceptance': (timeOfApproval != null)
-            ? timeOfApproval.millisecondsSinceEpoch
-            : null,
-        'notesOnApproval': notesOnApproval,
-        'approvedBy': approvedBy,
-        'timeOfRejection': (timeOfRejection != null)
-            ? timeOfRejection.millisecondsSinceEpoch
-            : null,
-        'notesOnRejection': notesOnRejection,
-        'rejectedBy': rejectedBy,
-        'timeOfPuttingOnHold': (timeOfPuttingOnHold != null)
-            ? timeOfPuttingOnHold.millisecondsSinceEpoch
-            : null,
-        'notesOnPuttingOnHold': notesOnPuttingOnHold,
-        'putOnHoldBy': putOnHoldBy,
-        'timeOfCompletion': (timeOfCompletion != null)
-            ? timeOfCompletion.millisecondsSinceEpoch
-            : null,
-        'notesOnCompletion': notesOnCompletion,
-        'completedBy': completedBy,
-        'timeOfCancellation': (timeOfCancellation != null)
-            ? timeOfCancellation.millisecondsSinceEpoch
-            : null,
-        'notesOnCancellation': notesOnCancellation,
-        'preferredSlotTiming': (preferredSlotTiming != null)
-            ? preferredSlotTiming.millisecondsSinceEpoch
-            : null
-      };
+  Map<String, dynamic> toJson() {
+    Map<String, dynamic> map = {
+      'id': id,
+      'bookingFormId': bookingFormId,
+      'tokenId': tokenId,
+      'entityId': entityId,
+      'userId': userId,
+      'status': EnumToString.convertToString(status),
+      'timeOfSubmission': (timeOfSubmission != null)
+          ? timeOfSubmission.millisecondsSinceEpoch
+          : null,
+      'notesOnSubmission': notesOnSubmission,
+      'timeOfInProcess': (timeOfInProcess != null)
+          ? timeOfInProcess.millisecondsSinceEpoch
+          : null,
+      'notesInProcess': notesInProcess,
+      'processedBy': processedBy,
+      'timeOfAcceptance': (timeOfApproval != null)
+          ? timeOfApproval.millisecondsSinceEpoch
+          : null,
+      'notesOnApproval': notesOnApproval,
+      'approvedBy': approvedBy,
+      'timeOfRejection': (timeOfRejection != null)
+          ? timeOfRejection.millisecondsSinceEpoch
+          : null,
+      'notesOnRejection': notesOnRejection,
+      'rejectedBy': rejectedBy,
+      'timeOfPuttingOnHold': (timeOfPuttingOnHold != null)
+          ? timeOfPuttingOnHold.millisecondsSinceEpoch
+          : null,
+      'notesOnPuttingOnHold': notesOnPuttingOnHold,
+      'putOnHoldBy': putOnHoldBy,
+      'timeOfCompletion': (timeOfCompletion != null)
+          ? timeOfCompletion.millisecondsSinceEpoch
+          : null,
+      'notesOnCompletion': notesOnCompletion,
+      'completedBy': completedBy,
+      'timeOfCancellation': (timeOfCancellation != null)
+          ? timeOfCancellation.millisecondsSinceEpoch
+          : null,
+      'notesOnCancellation': notesOnCancellation,
+      'preferredSlotTiming': (preferredSlotTiming != null)
+          ? preferredSlotTiming.millisecondsSinceEpoch
+          : null,
+    };
+
+    for (Field f in responseForm.getFormFields()) {
+      if (f.type == EnumToString.convertToString(FieldType.TEXT)) {
+        FormInputFieldText t = f;
+        map[t.key] = t.response;
+      } else if (f.type == EnumToString.convertToString(FieldType.NUMBER)) {
+        FormInputFieldNumber t = f;
+        map[t.key] = t.response;
+      } else if (f.type == EnumToString.convertToString(FieldType.OPTIONS)) {
+        FormInputFieldOptions t = f;
+        List<String> fieldValueIds = List<String>();
+        for (Value val in t.responseValues) {
+          fieldValueIds.add(val.key);
+        }
+        map[t.key] = fieldValueIds;
+      } else if (f.type == EnumToString.convertToString(FieldType.ATTACHMENT)) {
+        FormInputFieldAttachment t = f;
+      } else if (f.type == EnumToString.convertToString(FieldType.DATETIME)) {
+        FormInputFieldDateTime t = f;
+        map[t.key] = t.responseDateTime;
+      } else if (f.type == EnumToString.convertToString(FieldType.PHONE)) {
+        FormInputFieldPhone t = f;
+        map[t.key] = t.responsePhone;
+      } else if (f.type ==
+          EnumToString.convertToString(FieldType.OPTIONS_ATTACHMENTS)) {
+        FormInputFieldOptionsWithAttachments t = f;
+        List<String> fieldValueIds = List<String>();
+        for (Value val in t.responseValues) {
+          fieldValueIds.add(val.key);
+        }
+        map[t.key] = fieldValueIds;
+      } else if (f.type == EnumToString.convertToString(FieldType.BOOL)) {
+        FormInputFieldBool t = f;
+        map[t.key] = t.response;
+      }
+    }
+
+    return map;
+  }
 
   static BookingApplication fromJson(Map<String, dynamic> json) {
     if (json == null) return null;

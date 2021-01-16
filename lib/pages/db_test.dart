@@ -1,8 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:noq/db/db_model/address.dart';
+import 'package:noq/db/db_model/booking_application.dart';
 import 'package:noq/db/db_model/booking_form.dart';
 import 'package:noq/db/db_model/configurations.dart';
 import 'package:noq/db/db_model/employee.dart';
@@ -15,10 +15,8 @@ import 'package:noq/db/db_model/offer.dart';
 import 'package:noq/db/db_model/slot.dart';
 import 'package:noq/db/db_model/app_user.dart';
 import 'package:noq/db/db_model/user_token.dart';
-import 'package:noq/db/db_service/configurations_service.dart';
-import 'package:noq/db/db_service/entity_service.dart';
-import 'package:noq/db/db_service/token_service.dart';
-import 'package:noq/db/db_service/user_service.dart';
+import 'package:noq/db/db_service/booking_application_service.dart';
+import 'package:noq/enum/application_status.dart';
 import 'package:noq/enum/entity_type.dart';
 import 'package:noq/events/event_bus.dart';
 import 'package:noq/events/events.dart';
@@ -27,6 +25,7 @@ import 'package:noq/constants.dart';
 import 'package:noq/global_state.dart';
 
 class DBTest {
+  String TEST_COVID_BOOKING_FORM_ID = COVID_BOOKING_FORM_ID + "TEST";
   GlobalState _gs;
   DBTest() {
     GlobalState.clearGlobalState();
@@ -282,9 +281,6 @@ class DBTest {
       await _gs.getEntityService().deleteEntity('SalonEntity108');
       await _gs.getEntityService().deleteEntity('GymEntity109');
       await _gs.getEntityService().deleteEntity('GymEntity110');
-      await _gs
-          .getEntityService()
-          .deleteEntity("Selenium-Covid-Vacination-Center");
 
       await _gs.getTokenService().deleteSlot("Child101-1#2020~7~6");
       await _gs.getTokenService().deleteSlot("Child101-1#2020~7~7");
@@ -307,6 +303,33 @@ class DBTest {
       await _gs.getEntityService().deleteEntity('Entity102');
       //delete user
       await _gs.getUserService().deleteCurrentUser();
+
+      await _gs
+          .getEntityService()
+          .deleteEntity("Selenium-Covid-Vacination-Center");
+
+      //delete booking form, NOTE: should not be done for the TEST_COVID_BOOKING_FORM_ID else Ids of the field are going to change and queries would fail
+      await _gs
+          .getTokenApplicationService()
+          .deleteBookingForm(TEST_COVID_BOOKING_FORM_ID);
+
+      //delete globalCounter
+      String globalCounterId = TEST_COVID_BOOKING_FORM_ID;
+      await _gs.getTokenApplicationService().deleteCounter(globalCounterId);
+
+      //delete local counter
+      String localCounterId =
+          TEST_COVID_BOOKING_FORM_ID + "#" + "Selenium-Covid-Vacination-Center";
+      await _gs.getTokenApplicationService().deleteCounter(localCounterId);
+
+      //delete application
+      for (int i = 0; i < 10; i++) {
+        String applicationId = TEST_COVID_BOOKING_FORM_ID +
+            "#" +
+            "TestApplicationID" +
+            i.toString();
+        await _gs.getTokenApplicationService().deleteBookingForm(applicationId);
+      }
     } catch (e) {
       print("Error occurred in cleaning.. may be DB is already cleaned.");
     }
@@ -832,6 +855,10 @@ class DBTest {
           "TokenService.getAllTokensForSlot -----------------------------------> failure");
     }
 
+    BookingForm bf = await testCovidCenterBookingForm();
+    await testBookingApplicationSubmission(bf);
+    await testBookingApplicationStatusChange();
+
     print(
         "<==========================================TESTING DONE=========================================>");
 
@@ -895,8 +922,6 @@ class DBTest {
 
     await createGym();
     await createPrivateGym();
-
-    await testCovidCenterWithForm();
 
     print("Dummy place creation completed.");
   }
@@ -1302,53 +1327,97 @@ class DBTest {
     }
   }
 
-  testCovidCenterWithForm() async {
+  Future<BookingForm> testCovidCenterBookingForm() async {
     Address adrs = new Address(
         city: "Hyderbad",
         state: "Telangana",
         country: "India",
         address: "Shop 61, Towli Chowk Bazar, Gachibowli");
 
-    List<Field> fields = List<Field>();
+    BookingForm bf = await _gs
+        .getTokenApplicationService()
+        .getBookingForm(TEST_COVID_BOOKING_FORM_ID);
 
-    FormInputFieldText nameInput = FormInputFieldText(
-        "Name", true, "Please enter your name as per Government ID proof", 50);
+    if (bf == null) {
+      bf = new BookingForm(
+          formName: "Covid-19 Vacination Applicant Details",
+          headerMsg:
+              "You request will be approved based on the information provided by you, please enter the correct information.",
+          footerMsg: "",
+          autoApproved: true);
 
-    fields.add(nameInput);
+      bf.isSystemTemplate = true;
+      bf.id = TEST_COVID_BOOKING_FORM_ID;
 
-    FormInputFieldNumber ageInput =
-        FormInputFieldNumber("Age", true, "Please enter your age", 0, 120);
+      FormInputFieldText nameInput = FormInputFieldText("Name of the Applicant",
+          true, "Please enter your name as per Government ID proof", 50);
 
-    fields.add(ageInput);
+      bf.addField(nameInput);
 
-    FormInputFieldOptions healthDetailsInput = FormInputFieldOptions(
-        "Medical Conditions",
-        true,
-        "Please select all known medical conditions you have",
-        [
-          'Chronic kidney disease',
-          'Chronic lung disease',
-          'Diabetes',
-          'Heart Conditions',
-          'Other Cardiovascular and Cerebrovascular Diseases',
-          "Hemoglobin disorders",
-          "HIV or weakened Immune System",
-          "Liver disease",
-          "Neurologic conditions such as dementia",
-          "Overweight and Severe Obesity",
-          "Pregnancy"
-        ],
-        true);
+      FormInputFieldDateTime dob = FormInputFieldDateTime(
+          "Date of birth of the Applicant",
+          true,
+          "Please select the applicant's Date of Birth");
 
-    fields.add(healthDetailsInput);
+      bf.addField(dob);
 
-    BookingForm bf = new BookingForm(
-        formName: "Covid-19 Vacination Applicant Details",
-        headerMsg:
-            "You request will be approved based on the information provided by you.",
-        footerMsg: "",
-        formFields: fields,
-        autoApproved: true);
+      FormInputFieldOptionsWithAttachments healthDetailsInput =
+          FormInputFieldOptionsWithAttachments(
+              "Pre-existing Medical Conditions",
+              true,
+              "Please select all known medical conditions the applicant have",
+              [
+                Value('Chronic kidney disease'),
+                Value('Chronic lung disease'),
+                Value('Diabetes'),
+                Value('Heart Conditions'),
+                Value('Other Cardiovascular and Cerebrovascular Diseases'),
+                Value("Hemoglobin disorders"),
+                Value("HIV or weakened Immune System"),
+                Value("Liver disease"),
+                Value("Neurologic conditions such as dementia"),
+                Value("Overweight and Severe Obesity"),
+                Value("Pregnancy")
+              ],
+              true);
+
+      bf.addField(healthDetailsInput);
+
+      FormInputFieldOptionsWithAttachments frontLineWorkerProof =
+          FormInputFieldOptionsWithAttachments(
+              "Only for Front line workers",
+              false,
+              "Please select the category by Applicant's profession and upload a corresponding ID proof",
+              [
+                Value('Medical Professional'),
+                Value('Government Official'),
+                Value('MP/MLA'),
+                Value('Others'),
+              ],
+              false);
+
+      bf.addField(frontLineWorkerProof);
+
+      FormInputFieldOptionsWithAttachments idProof =
+          FormInputFieldOptionsWithAttachments(
+              "Pre-existing Medical Conditions",
+              true,
+              "Please select all known medical conditions the applicant have",
+              [
+                Value('PAN'),
+                Value('Passport'),
+                Value('Driving License'),
+                Value('Aadhaar Card'),
+                Value('Bank Passbook'),
+                Value('Any other government issued photo ID'),
+              ],
+              true);
+
+      bf.addField(idProof);
+    }
+
+    //NOTE: If this is executed, every time the ID of the field is going to change
+    await _gs.getTokenApplicationService().saveBookingForm(bf);
 
     MyGeoFirePoint geoPoint = new MyGeoFirePoint(17.444317, 78.355321);
     Entity entity = new Entity(
@@ -1392,6 +1461,8 @@ class DBTest {
         .getEntityService()
         .getEntity("Selenium-Covid-Vacination-Center");
 
+    return bf;
+
     // FormInputFieldOptions options =
     //     seleniumVacCenter.tokenBookingForm.formFields[2];
 
@@ -1402,5 +1473,171 @@ class DBTest {
     //   print(
     //       "Token Booking Form Fields tested -----------------------> FAILURE");
     // }
+  }
+
+  Future<void> testBookingApplicationSubmission(BookingForm bf) async {
+    //Case 1: Application submission
+    //Case 2: Application state change by Admin
+    //Case 3: Counter increment for Global and Local both
+    for (int i = 0; i < 10; i++) {
+      FormInputFieldText nameInput = bf.getFormFields()[0];
+      nameInput.response = "FN LN " + i.toString();
+
+      FormInputFieldDateTime ageInput = bf.getFormFields()[1];
+      ageInput.responseDateTime = DateTime(2001, 8, 6);
+
+      FormInputFieldOptions healthDetailsInput = bf.getFormFields()[2];
+      healthDetailsInput.responseValues = new List<Value>();
+      healthDetailsInput.responseValues.add(healthDetailsInput.options[1]);
+      healthDetailsInput.responseValues.add(healthDetailsInput.options[3]);
+
+      FormInputFieldOptionsWithAttachments idProof = bf.getFormFields()[3];
+      idProof.responseValues = new List<Value>();
+      idProof.responseValues.add(idProof.options[1]);
+      idProof.responseValues.add(idProof.options[3]);
+      idProof.responseFilePaths.add(
+          "https://firebasestorage.googleapis.com/v0/b/sukoon-india.appspot.com/o/8d33fca0-567c-11eb-ab9e-3186f616ddb9%238d3200d0-567c-11eb-8f72-39e1ef14fb06%23O72Pv6XakoRlxNKYbZLruYaMlwi1%23scaled_f511c73a-5c2b-43b6-91b7-fe1698dffb671714737705318816047.jpg?alt=media&token=d4b890c9-ff3c-4529-a65f-493e29763b61");
+      idProof.responseFilePaths.add(
+          "https://firebasestorage.googleapis.com/v0/b/sukoon-india.appspot.com/o/fe3de7b0-567e-11eb-ae5b-5772ee4a0592%23fe3c12f0-567e-11eb-a11e-7f5c09f04575%23O72Pv6XakoRlxNKYbZLruYaMlwi1%23scaled_323f121e-f284-4d7f-8d58-95c81a3d6f2d5266208110146393983.jpg?alt=media&token=3415fa17-fc43-42fe-8e97-55cffea2f368");
+
+      FormInputFieldOptionsWithAttachments frontLineWorker =
+          bf.getFormFields()[4];
+      frontLineWorker.responseValues = new List<Value>();
+      frontLineWorker.responseValues.add(frontLineWorker.options[0]);
+      frontLineWorker.responseValues.add(frontLineWorker.options[2]);
+      frontLineWorker.responseFilePaths.add(
+          "https://firebasestorage.googleapis.com/v0/b/sukoon-india.appspot.com/o/8d33fca0-567c-11eb-ab9e-3186f616ddb9%238d3200d0-567c-11eb-8f72-39e1ef14fb06%23O72Pv6XakoRlxNKYbZLruYaMlwi1%23scaled_f511c73a-5c2b-43b6-91b7-fe1698dffb671714737705318816047.jpg?alt=media&token=d4b890c9-ff3c-4529-a65f-493e29763b61");
+      frontLineWorker.responseFilePaths.add(
+          "https://firebasestorage.googleapis.com/v0/b/sukoon-india.appspot.com/o/fe3de7b0-567e-11eb-ae5b-5772ee4a0592%23fe3c12f0-567e-11eb-a11e-7f5c09f04575%23O72Pv6XakoRlxNKYbZLruYaMlwi1%23scaled_323f121e-f284-4d7f-8d58-95c81a3d6f2d5266208110146393983.jpg?alt=media&token=3415fa17-fc43-42fe-8e97-55cffea2f368");
+
+      BookingApplication ba = new BookingApplication();
+      ba.responseForm = bf;
+      ba.id =
+          TEST_COVID_BOOKING_FORM_ID + "#" + "TestApplicationID" + i.toString();
+
+      BookingApplicationService tas = _gs.getTokenApplicationService();
+      await tas.submitApplication(ba, "Selenium-Covid-Vacination-Center");
+    }
+
+    BookingApplicationsOverview globalOverView = await _gs
+        .getTokenApplicationService()
+        .getBookingApplicationOverview(TEST_COVID_BOOKING_FORM_ID, null);
+
+    BookingApplicationsOverview localOverView = await _gs
+        .getTokenApplicationService()
+        .getBookingApplicationOverview(
+            TEST_COVID_BOOKING_FORM_ID, "Selenium-Covid-Vacination-Center");
+
+    if (globalOverView.numberOfApproved == 0 &&
+        globalOverView.numberOfNew == 10 &&
+        globalOverView.numberOfCompleted == 0 &&
+        globalOverView.totalApplications == 10) {
+      print("GlobalApplicationOverview stats --> SUCCESS");
+    } else {
+      print(
+          "GlobalApplicationOverview stats ------------------------------> Failure");
+    }
+
+    if (localOverView.numberOfApproved == 0 &&
+        localOverView.numberOfNew == 10 &&
+        localOverView.numberOfCompleted == 0 &&
+        localOverView.totalApplications == 10) {
+      print("LocalApplicationOverview stats --> SUCCESS");
+    } else {
+      print(
+          "LocalApplicationOverview stats ------------------------------> Failure");
+    }
+  }
+
+  Future<void> testBookingApplicationStatusChange() async {
+    List<BookingApplication> applications = await _gs
+        .getTokenApplicationService()
+        .getApplications(
+            TEST_COVID_BOOKING_FORM_ID,
+            "Selenium-Covid-Vacination-Center",
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null);
+
+    BookingApplication bs1 = applications[0];
+    _gs.getTokenApplicationService().updateApplicationStatus(
+        bs1.id, ApplicationStatus.APPROVED, "Notes on Approval");
+
+    BookingApplication bs2 = applications[1];
+    _gs.getTokenApplicationService().updateApplicationStatus(
+        bs2.id, ApplicationStatus.APPROVED, "Notes on Approval for app 2");
+
+    BookingApplication bs3 = applications[2];
+    _gs.getTokenApplicationService().updateApplicationStatus(
+        bs3.id, ApplicationStatus.COMPLETED, "Notes on Completion");
+
+    BookingApplication bs7 = applications[6];
+    _gs.getTokenApplicationService().updateApplicationStatus(
+        bs7.id, ApplicationStatus.ONHOLD, "Notes on putting on Hold");
+
+    BookingApplication bs10 = applications[9];
+    _gs.getTokenApplicationService().updateApplicationStatus(bs10.id,
+        ApplicationStatus.REJECTED, "Notes on rejecting this application");
+
+    BookingApplicationsOverview globalOverView = await _gs
+        .getTokenApplicationService()
+        .getBookingApplicationOverview(TEST_COVID_BOOKING_FORM_ID, null);
+
+    BookingApplicationsOverview localOverView = await _gs
+        .getTokenApplicationService()
+        .getBookingApplicationOverview(
+            TEST_COVID_BOOKING_FORM_ID, "Selenium-Covid-Vacination-Center");
+
+    if (globalOverView.numberOfApproved == 2 &&
+        globalOverView.numberOfNew == 5 &&
+        globalOverView.numberOfCompleted == 1 &&
+        globalOverView.totalApplications == 10 &&
+        globalOverView.numberOfPutOnHold == 1 &&
+        globalOverView.numberOfRejected == 1) {
+      print("GlobalApplicationOverview stats --> SUCCESS");
+    } else {
+      print(
+          "GlobalApplicationOverview stats ------------------------------> Failure");
+    }
+
+    if (localOverView.numberOfApproved == 2 &&
+        localOverView.numberOfNew == 5 &&
+        localOverView.numberOfCompleted == 1 &&
+        localOverView.totalApplications == 10 &&
+        localOverView.numberOfPutOnHold == 1 &&
+        localOverView.numberOfRejected == 1) {
+      print("LocalApplicationOverview stats --> SUCCESS");
+    } else {
+      print(
+          "LocalApplicationOverview stats ------------------------------> Failure");
+    }
+
+    List<BookingApplication> approvedApplications = await _gs
+        .getTokenApplicationService()
+        .getApplications(
+            TEST_COVID_BOOKING_FORM_ID,
+            "Selenium-Covid-Vacination-Center",
+            ApplicationStatus.APPROVED,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null);
+
+    if (approvedApplications.length == 2) {
+      print("ApprovedApplicationCount stats --> SUCCESS");
+    } else {
+      print(
+          "ApprovedApplicationCount stats ------------------------------> Failure");
+    }
   }
 }

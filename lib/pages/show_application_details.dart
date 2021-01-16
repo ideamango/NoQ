@@ -61,9 +61,9 @@ class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
   //   return list;
   // }
 
-  List<String> idProofTypesStrList = List<String>();
+  List<Value> idProofTypesStrList = List<Value>();
   List<Item> idProofTypes = List<Item>();
-  List<String> medConditionsStrList = List<String>();
+  List<Value> medConditionsStrList = List<Value>();
   List<Item> medConditions = List<Item>();
   Map<String, TextEditingController> listOfControllers =
       new Map<String, TextEditingController>();
@@ -94,29 +94,29 @@ class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
 
   initBookingForm() {
     fields = List<Field>();
-    idProofTypesStrList.add('Passport');
-    idProofTypesStrList.add('Driving License');
-    idProofTypesStrList.add('Aadhar');
-    idProofTypesStrList.add('PAN');
+    idProofTypesStrList.add(Value('Passport'));
+    idProofTypesStrList.add(Value('Driving License'));
+    idProofTypesStrList.add(Value('Aadhar'));
+    idProofTypesStrList.add(Value('PAN'));
     idProofTypesStrList.forEach((element) {
       idProofTypes.add(Item(element, false));
     });
-    medConditionsStrList.add('Chronic Kidney Disease');
-    medConditionsStrList.add('Liver Disease');
-    medConditionsStrList.add('Overweight and Severe Obesity');
+    medConditionsStrList.add(Value('Chronic Kidney Disease'));
+    medConditionsStrList.add(Value('Liver Disease'));
+    medConditionsStrList.add(Value('Overweight and Severe Obesity'));
     medConditionsStrList
-        .add('Other Cardiovascular and Cerebrovascular Diseases');
-    medConditionsStrList.add('Haemoglobin Disorders');
-    medConditionsStrList.add('Pregnancy');
-    medConditionsStrList.add('Heart Conditions');
-    medConditionsStrList.add('Chronic Lung Disease');
-    medConditionsStrList.add('HIV or Weakened Immune System');
+        .add(Value('Other Cardiovascular and Cerebrovascular Diseases'));
+    medConditionsStrList.add(Value('Haemoglobin Disorders'));
+    medConditionsStrList.add(Value('Pregnancy'));
+    medConditionsStrList.add(Value('Heart Conditions'));
+    medConditionsStrList.add(Value('Chronic Lung Disease'));
+    medConditionsStrList.add(Value('HIV or Weakened Immune System'));
 
-    medConditionsStrList.add('Neurologic Conditions such as Dementia');
+    medConditionsStrList.add(Value('Neurologic Conditions such as Dementia'));
 
-    medConditionsStrList.add('Diabetes');
+    medConditionsStrList.add(Value('Diabetes'));
 
-    medConditionsStrList.add('Others (Specify below)');
+    medConditionsStrList.add(Value('Others (Specify below)'));
 
     medConditionsStrList.forEach((element) {
       medConditions.add(Item(element, false));
@@ -144,8 +144,8 @@ class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
     idProofField = FormInputFieldOptionsWithAttachments("Id Proof", true,
         "Please upload Government Id proof", idProofTypesStrList, false);
     idProofField.responseFilePaths = List<String>();
-    idProofField.responseValues = new List<String>();
-    idProofField.responseValues.add("DL");
+    idProofField.responseValues = new List<Value>();
+    idProofField.responseValues.add(Value("DL"));
 
     healthDetailsInput = FormInputFieldOptions(
         "Medical Conditions",
@@ -153,9 +153,9 @@ class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
         "Please select all known medical conditions you have",
         medConditionsStrList,
         true);
-    healthDetailsInput.responseValues = new List<String>();
-    healthDetailsInput.responseValues.add("Liver Disease");
-    healthDetailsInput.responseValues.add("Heart Disease");
+    healthDetailsInput.responseValues = new List<Value>();
+    healthDetailsInput.responseValues.add(Value("liver"));
+    healthDetailsInput.responseValues.add(Value("heart"));
 
     healthDetailsDesc = FormInputFieldText(
         "Decription of medical conditions (optional)",
@@ -207,7 +207,6 @@ class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
             "Your request will be approved based on the information provided by you.",
         footerMsg:
             "Please carry same ID proof (uploaded here) to the Vaccination center for verification purpose.",
-        formFields: fields,
         autoApproved: false);
 
     // bookingApplication = new BookingApplication();
@@ -468,7 +467,7 @@ class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
                 }
                 for (int i = 0; i < newfield.responseValues.length; i++) {
                   if (conds != "")
-                    conds = conds + "  &  " + newfield.responseValues[i];
+                    conds = conds + "  &  " + newfield.responseValues[i].value;
                   else
                     conds = conds + newfield.responseValues[i].toString();
                 }
@@ -618,12 +617,12 @@ class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
                 }
                 for (int i = 0; i < newfield.responseValues.length; i++) {
                   if (conds != "")
-                    conds = conds + "  &  " + newfield.responseValues[i];
+                    conds = conds + "  &  " + newfield.responseValues[i].value;
                   else
-                    conds = conds + newfield.responseValues[i].toString();
+                    conds = conds + newfield.responseValues[i].value;
                 }
               } else
-                conds = newfield.responseValues[0].toString();
+                conds = newfield.responseValues[0].value;
               listOfControllers[field.label].text = conds;
             }
             break;
@@ -708,10 +707,11 @@ class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
                     return Container(
                       padding: EdgeInsets.fromLTRB(5, 5, 5, 0),
                       //  height: MediaQuery.of(context).size.height * .3,
-                      child: buildChildItem(ba.responseForm.formFields[index]),
+                      child: buildChildItem(
+                          ba.responseForm.getFormFields()[index]),
                     );
                   },
-                  itemCount: ba.responseForm.formFields.length,
+                  itemCount: ba.responseForm.getFormFields().length,
                 ),
               )
             ],

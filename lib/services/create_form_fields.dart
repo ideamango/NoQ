@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:noq/db/db_model/booking_form.dart';
 
 import 'package:noq/style.dart';
-import 'package:noq/widget/griditem.dart';
-import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 
 class CreateFormFields extends StatefulWidget {
   @override
@@ -53,32 +51,32 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
         "Duration of visit", true, "Enter purpose of visit", 0, 1000);
     FormInputFieldNumber f5 = new FormInputFieldNumber(
         "Address", true, "Address for Communication", 0, 1000);
-    List<String> list = new List<String>();
-    list.add("Diabetes");
-    list.add("Asthma");
-    list.add("Blood Pressure");
-    list.add("Allergy");
-    list.add("Hyper Tension");
-    list.add("Thyroid");
+    List<Value> list = new List<Value>();
+    list.add(Value("Diabetes"));
+    list.add(Value("Asthma"));
+    list.add(Value("Blood Pressure"));
+    list.add(Value("Allergy"));
+    list.add(Value("Hyper Tension"));
+    list.add(Value("Thyroid"));
 
     FormInputFieldOptions f3 = new FormInputFieldOptions("Medical Conditions",
         true, "Medical COnditions(Select any)", list, true);
 
     list.forEach((element) {
-      listf3.add(Item(element, false));
+      listf3.add(Item(element.value, false));
     });
     mapOfOptionsFields[f3.label] = listf3;
 
-    List<String> list2 = new List<String>();
-    list2.add("Diabetesiii");
-    list2.add("Asthmayyyyy");
-    list2.add("Blood Pressurebbbb");
-    list2.add("Allergyxxxx");
+    List<Value> list2 = new List<Value>();
+    list2.add(Value("Diabetesiii"));
+    list2.add(Value("Asthmayyyyy"));
+    list2.add(Value("Blood Pressurebbbb"));
+    list2.add(Value("Allergyxxxx"));
 
     FormInputFieldOptions f4 = new FormInputFieldOptions(
         "Surgeries, if any", true, "Surgery(Select any)", list, false);
     for (int i = 0; i < list2.length; i++) {
-      listf4.add(Item(list2[i], false));
+      listf4.add(Item(list2[i].value, false));
     }
     mapOfOptionsFields[f4.label] = listf4;
 
@@ -92,7 +90,6 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
         formName: "Token Allocation form",
         footerMsg: "Footer",
         headerMsg: "header",
-        formFields: listOfFields,
         autoApproved: true);
   }
 
@@ -256,10 +253,10 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
                       //color: Colors.grey,
                       //   height: MediaQuery.of(context).size.height * .55,
                       width: MediaQuery.of(context).size.width * .95,
-                      child: buildChildItem(dummyForm.formFields[index], index),
+                      child: buildChildItem(dummyForm.getFormFields()[index], index),
                     );
                   },
-                  itemCount: dummyForm.formFields.length,
+                  itemCount: dummyForm.getFormFields().length,
                 ),
               ),
               Row(

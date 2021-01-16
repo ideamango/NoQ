@@ -215,7 +215,7 @@ class GlobalState {
 
     if (_gs._applicationService == null) {
       _gs._applicationService =
-          new BookingApplicationService(_gs._secondaryFirebaseApp);
+          new BookingApplicationService(_gs._secondaryFirebaseApp, _gs);
     }
 
     if (_gs._conf == null) {
