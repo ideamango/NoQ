@@ -429,11 +429,15 @@ class BookingApplicationService {
 
     final DocumentReference formRef = fStore.doc('bookingForms/' + formId);
 
-    DocumentSnapshot doc = await formRef.get();
+    try {
+      DocumentSnapshot doc = await formRef.get();
 
-    if (doc.exists) {
-      Map<String, dynamic> map = doc.data();
-      form = BookingForm.fromJson(map);
+      if (doc.exists) {
+        Map<String, dynamic> map = doc.data();
+        form = BookingForm.fromJson(map);
+      }
+    } catch (e) {
+      print(e.toString());
     }
 
     return form;

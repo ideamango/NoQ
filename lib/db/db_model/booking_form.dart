@@ -22,10 +22,14 @@ class BookingForm {
       this.autoApproved});
 
   String addField(Field field) {
+    if (_formFields == null) {
+      _formFields = List<Field>();
+    }
     int numberOfFields = _formFields.length;
     numberOfFields = ++numberOfFields * 10;
     String key = "KEY" + numberOfFields.toString();
     field.key = key;
+    _formFields.add(field);
     return key;
   }
 
@@ -329,7 +333,9 @@ class FormInputFieldDateTime extends Field {
         'isMandatory': isMandatory,
         "infoMessage": infoMessage,
         'type': type,
-        'responseDateTime': responseDateTime.millisecondsSinceEpoch
+        'responseDateTime': responseDateTime != null
+            ? responseDateTime.millisecondsSinceEpoch
+            : null
       };
 
   static FormInputFieldDateTime fromJson(Map<String, dynamic> json) {
