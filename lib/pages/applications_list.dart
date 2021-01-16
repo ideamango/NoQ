@@ -252,7 +252,9 @@ class _ApplicationsListState extends State<ApplicationsList> {
         footerMsg:
             "Please carry same ID proof (uploaded here) to the Vaccination center for verification purpose.",
         autoApproved: false);
-
+    for (var field in fields) {
+      bookingForm.addField(field);
+    }
     bookingApplication1 = new BookingApplication();
     //slot
 
@@ -298,9 +300,6 @@ class _ApplicationsListState extends State<ApplicationsList> {
     bookingApplication4.userId = _gs.getCurrentUser().id;
     bookingApplication4.status = ApplicationStatus.INPROCESS;
     bookingApplication4.responseForm = bookingForm;
-    // bookingApplication4.responseForm.formFields[0].label = "Application4";
-    // bookingApplication3.responseForm.formFields[0].label = "Application3";
-    // bookingApplication2.responseForm.formFields[0].label = "Application2";
 
     List<BookingApplication> list = new List<BookingApplication>();
     list.add(bookingApplication1);
