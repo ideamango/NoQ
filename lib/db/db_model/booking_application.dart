@@ -204,14 +204,14 @@ class BookingApplicationsOverview {
   String
       entityId; //this will be null for the global applications record for a global bookingFormId (i.e. which is shared across the Entities)
 
-  int totalApplications;
-  int numberOfNew;
-  int numberOfApproved;
-  int numberOfRejected;
-  int numberOfPutOnHold;
-  int numberOfInProcess;
-  int numberOfCompleted;
-  int numberOfCancelled;
+  int totalApplications = 0;
+  int numberOfNew = 0;
+  int numberOfApproved = 0;
+  int numberOfRejected = 0;
+  int numberOfPutOnHold = 0;
+  int numberOfInProcess = 0;
+  int numberOfCompleted = 0;
+  int numberOfCancelled = 0;
 
   Map<String, dynamic> toJson() => {
         'id': id,

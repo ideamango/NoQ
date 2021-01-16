@@ -90,6 +90,9 @@ class BookingForm {
       } else if (value["type"] ==
           EnumToString.convertToString(FieldType.OPTIONS_ATTACHMENTS)) {
         values.add(FormInputFieldOptionsWithAttachments.fromJson(value));
+      } else if (value["type"] ==
+          EnumToString.convertToString(FieldType.BOOL)) {
+        values.add(FormInputFieldBool.fromJson(value));
       }
     }
     return values;
@@ -344,8 +347,9 @@ class FormInputFieldDateTime extends Field {
         json['label'], json['isMandatory'], json['infoMessage']);
     field.isMeta = json['isMeta'];
     field.id = json['id'];
-    field.responseDateTime =
-        DateTime.fromMillisecondsSinceEpoch(json['responseDateTime']);
+    field.responseDateTime = json['responseDateTime'] != null
+        ? DateTime.fromMillisecondsSinceEpoch(json['responseDateTime'])
+        : null;
 
     return field;
   }

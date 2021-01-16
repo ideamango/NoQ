@@ -70,18 +70,26 @@ class BookingApplicationService {
       query = query.where("bookingFormId", isEqualTo: bookingFormID);
     }
 
-    singleValueFields.forEach((key, val) {
-      query = query.where(key, isEqualTo: val);
-    });
+    if (singleValueFields != null) {
+      singleValueFields.forEach((key, val) {
+        query = query.where(key, isEqualTo: val);
+      });
+    }
 
-    for (MultiValuedQuery multiValuedQuery in multipleValueFields) {
-      if (multiValuedQuery.partialMatch) {
-        query = query.where(multiValuedQuery.key,
-            arrayContainsAny: multiValuedQuery.values);
-      } else {
-        query = query.where(multiValuedQuery.key,
-            arrayContains: multiValuedQuery.values);
+    if (multipleValueFields != null) {
+      for (MultiValuedQuery multiValuedQuery in multipleValueFields) {
+        if (multiValuedQuery.partialMatch) {
+          query = query.where(multiValuedQuery.key,
+              arrayContainsAny: multiValuedQuery.values);
+        } else {
+          query = query.where(multiValuedQuery.key,
+              arrayContains: multiValuedQuery.values);
+        }
       }
+    }
+
+    if (rangeQueries != null) {
+      //TODO
     }
 
     if (Utils.isNotNullOrEmpty(orderByFieldName)) {
@@ -129,7 +137,7 @@ class BookingApplicationService {
     BookingApplicationsOverview globalCounter;
 
     Exception exception;
-    String bookingApplicationId;
+    String bookingApplicationId = ba.id;
     String bookingFormId = ba.bookingFormId;
     String localCounterId = bookingFormId + "#" + entityId;
     String globalCounterId = bookingFormId;
@@ -187,7 +195,7 @@ class BookingApplicationService {
             globalCounter = BookingApplicationsOverview.fromJson(map);
           } else {
             globalCounter = new BookingApplicationsOverview(
-                bookingFormId: bf.id, entityId: null);
+                bookingFormId: bookingFormId, entityId: null);
           }
         }
 
@@ -197,7 +205,7 @@ class BookingApplicationService {
           localCounter = BookingApplicationsOverview.fromJson(map);
         } else {
           localCounter = new BookingApplicationsOverview(
-              bookingFormId: bf.id, entityId: entityId);
+              bookingFormId: bookingFormId, entityId: entityId);
         }
 
         if (bf.autoApproved) {
@@ -252,7 +260,6 @@ class BookingApplicationService {
 
     Exception exception;
     DateTime now = DateTime.now();
-    ;
 
     final User user = getFirebaseAuth().currentUser;
     FirebaseFirestore fStore = getFirestore();
@@ -261,6 +268,7 @@ class BookingApplicationService {
     BookingApplication application;
     BookingApplicationsOverview localCounter;
     BookingApplicationsOverview globalCounter;
+    ApplicationStatus existingStatus;
 
     String localCounterId;
     String globalCounterId;
@@ -274,6 +282,7 @@ class BookingApplicationService {
 
         if (applicationSnapshot.exists) {
           application = BookingApplication.fromJson(applicationSnapshot.data());
+          existingStatus = application.status;
           if (application.timeOfSubmission == null ||
               application.status == ApplicationStatus.CANCELLED) {
             throw new Exception(
@@ -324,7 +333,7 @@ class BookingApplicationService {
             localCounter.numberOfApproved++;
           }
 
-          //generate the token and send the notification to the applicant
+          //TODO: generate the token and send the notification to the applicant
 
         } else if (status == ApplicationStatus.COMPLETED) {
           application.timeOfCompletion = now;
@@ -363,6 +372,44 @@ class BookingApplicationService {
             localCounter.numberOfRejected++;
           }
         }
+
+        if (existingStatus == ApplicationStatus.APPROVED) {
+          if (globalCounter != null) {
+            globalCounter.numberOfApproved--;
+          }
+          if (localCounter != null) {
+            localCounter.numberOfApproved--;
+          }
+        } else if (existingStatus == ApplicationStatus.COMPLETED) {
+          if (globalCounter != null) {
+            globalCounter.numberOfCompleted--;
+          }
+          if (localCounter != null) {
+            localCounter.numberOfCompleted--;
+          }
+        } else if (existingStatus == ApplicationStatus.INPROCESS) {
+          if (globalCounter != null) {
+            globalCounter.numberOfInProcess--;
+          }
+          if (localCounter != null) {
+            localCounter.numberOfInProcess--;
+          }
+        } else if (existingStatus == ApplicationStatus.ONHOLD) {
+          if (globalCounter != null) {
+            globalCounter.numberOfPutOnHold--;
+          }
+          if (localCounter != null) {
+            localCounter.numberOfPutOnHold--;
+          }
+        } else if (existingStatus == ApplicationStatus.REJECTED) {
+          if (globalCounter != null) {
+            globalCounter.numberOfRejected--;
+          }
+          if (localCounter != null) {
+            localCounter.numberOfRejected--;
+          }
+        }
+
         application.status = status;
 
         tx.set(applicationRef, application.toJson());

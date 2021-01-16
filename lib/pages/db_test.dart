@@ -1348,6 +1348,7 @@ class DBTest {
 
       bf.isSystemTemplate = true;
       bf.id = TEST_COVID_BOOKING_FORM_ID;
+      bf.autoApproved = false;
 
       FormInputFieldText nameInput = FormInputFieldText("Name of the Applicant",
           true, "Please enter your name as per Government ID proof", 50);
@@ -1514,10 +1515,12 @@ class DBTest {
 
       BookingApplication ba = new BookingApplication();
       ba.responseForm = bf;
+      ba.bookingFormId = bf.id;
       ba.id =
           TEST_COVID_BOOKING_FORM_ID + "#" + "TestApplicationID" + i.toString();
 
       BookingApplicationService tas = _gs.getTokenApplicationService();
+
       await tas.submitApplication(ba, Covid_Vacination_center);
     }
 
