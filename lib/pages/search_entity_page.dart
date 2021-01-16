@@ -104,8 +104,8 @@ class _SearchEntityPageState extends State<SearchEntityPage>
           children: <Widget>[
             Container(
                 padding: EdgeInsets.all(0),
-                width: MediaQuery.of(context).size.width * .15,
-                height: MediaQuery.of(context).size.width * .15,
+                width: MediaQuery.of(context).size.width * .16,
+                height: MediaQuery.of(context).size.width * .12,
                 child: image),
             Text(
               name,

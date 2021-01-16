@@ -1,3 +1,4 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
 import 'package:noq/db/db_model/entity.dart';
@@ -216,7 +217,7 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
                   child: Column(
                     children: <Widget>[
                       Container(
-                        height: MediaQuery.of(context).size.width * .1,
+                        height: MediaQuery.of(context).size.width * .11,
                         padding: EdgeInsets.fromLTRB(6, 0, 0, 0),
                         decoration: darkContainer,
                         child: Row(
@@ -227,33 +228,39 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
                               color: Colors.white,
                             ),
                             SizedBox(width: 12),
-                            Flexible(
+                            SizedBox(
+                              width: MediaQuery.of(context).size.width * .8,
+                              height: MediaQuery.of(context).size.width * .11,
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: <Widget>[
                                   (selectedSlot == null)
-                                      ? Text(
+                                      ? AutoSizeText(
                                           "Select from available slots on " +
                                               _dateFormatted +
                                               ".",
+                                          minFontSize: 8,
                                           style: TextStyle(
                                               color: Colors.white,
                                               fontSize: 13),
                                         )
                                       : (isBooked(selectedSlot.dateTime,
                                               entity.entityId))
-                                          ? Text(
+                                          ? AutoSizeText(
                                               'You already have a booking at $bookingTime on $bookingDate',
+                                              minFontSize: 8,
                                               style: TextStyle(
                                                   color: primaryAccentColor,
                                                   fontSize: 13),
                                             )
-                                          : Text(
+                                          : AutoSizeText(
                                               'You selected a slot at $bookingTime on $bookingDate',
+                                              minFontSize: 8,
+                                              maxFontSize: 13,
                                               style: TextStyle(
-                                                  color: highlightColor,
-                                                  fontSize: 13),
+                                                color: highlightColor,
+                                              ),
                                             ),
                                 ],
                               ),
@@ -516,92 +523,96 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
     bool isBookedFlg = isBooked(sl.dateTime, entity.entityId);
     return Column(
       children: <Widget>[
-        RaisedButton(
-          elevation: (isDisabled(sl.dateTime))
-              ? 0
-              : ((isSelected(sl.dateTime) == true) ? 0.0 : 10.0),
-          padding: EdgeInsets.all(2),
-          child: Text(
-            hrs + ':' + mnts,
-            style: TextStyle(
-              fontSize: 12,
-              color: isDisabled(sl.dateTime)
-                  ? Colors.grey[500]
-                  : (isBookedFlg ? Colors.white : primaryDarkColor),
-              // textDirection: TextDirection.ltr,
-              // textAlign: TextAlign.center,
+        Container(
+          child: RaisedButton(
+            elevation: (isDisabled(sl.dateTime))
+                ? 0
+                : ((isSelected(sl.dateTime) == true) ? 0.0 : 10.0),
+            padding: EdgeInsets.all(2),
+            child: Text(
+              hrs + ':' + mnts,
+              style: TextStyle(
+                fontSize: 12,
+                color: isDisabled(sl.dateTime)
+                    ? Colors.grey[500]
+                    : (isBookedFlg ? Colors.white : primaryDarkColor),
+                // textDirection: TextDirection.ltr,
+                // textAlign: TextAlign.center,
+              ),
             ),
-          ),
 
-          autofocus: false,
-          color: (isDisabled(sl.dateTime))
-              ? disabledColor
-              : ((isBookedFlg)
-                  ? Colors.greenAccent[700]
-                  : ((sl.isFull != true && isSelected(sl.dateTime) == true)
-                      ? highlightColor
-                      : (sl.isFull == false)
-                          ? Colors.cyan[50]
-                          : btnDisabledolor)),
+            autofocus: false,
+            color: (isDisabled(sl.dateTime))
+                ? disabledColor
+                : ((isBookedFlg)
+                    ? Colors.greenAccent[700]
+                    : ((sl.isFull != true && isSelected(sl.dateTime) == true)
+                        ? highlightColor
+                        : (sl.isFull == false)
+                            ? Colors.cyan[50]
+                            : btnDisabledolor)),
 
-          disabledColor: Colors.grey[200],
-          //textTheme: ButtonTextTheme.normal,
-          //highlightColor: Colors.green,
-          // highlightElevation: 10.0,
-          splashColor: (sl.isFull == true) ? highlightColor : null,
-          shape: (isSelected(sl.dateTime) == true)
-              ? RoundedRectangleBorder(
-                  borderRadius: new BorderRadius.circular(5.0),
-                  // side: BorderSide(color: highlightColor),
-                )
-              : RoundedRectangleBorder(
-                  borderRadius: new BorderRadius.circular(5.0),
-                  // side: BorderSide(color: Colors.white),
-                ),
-          onPressed: () {
-            if (!isDisabled(sl.dateTime)) {
+            disabledColor: Colors.grey[200],
+            //textTheme: ButtonTextTheme.normal,
+            //highlightColor: Colors.green,
+            // highlightElevation: 10.0,
+            splashColor: (sl.isFull == true) ? highlightColor : null,
+            shape: (isSelected(sl.dateTime) == true)
+                ? RoundedRectangleBorder(
+                    borderRadius: new BorderRadius.circular(5.0),
+                    // side: BorderSide(color: highlightColor),
+                  )
+                : RoundedRectangleBorder(
+                    borderRadius: new BorderRadius.circular(5.0),
+                    // side: BorderSide(color: Colors.white),
+                  ),
+            onPressed: () {
+              if (!isDisabled(sl.dateTime)) {
 //Check if booking form is required then take request else show form.
-              if (Utils.isNotNullOrEmpty(entity.bookingFormId)) {
-                //Show Booking request form
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => CovidTokenBookingFormPage(
-                              entityId: entity.entityId,
-                              bookingFormId: entity.bookingFormId,
-                              preferredSlotTime: sl.dateTime,
-                            )));
-              } else {
-                if (isBooked(sl.dateTime, entity.entityId)) {
-                  Utils.showMyFlushbar(
+                if (Utils.isNotNullOrEmpty(entity.bookingFormId)) {
+                  //Show Booking request form
+                  Navigator.push(
                       context,
-                      Icons.info_outline,
-                      Duration(seconds: 6),
-                      alreadyHaveBooking,
-                      wantToBookAnotherSlot);
-                  return null;
+                      MaterialPageRoute(
+                          builder: (context) => CovidTokenBookingFormPage(
+                                entityId: entity.entityId,
+                                bookingFormId: entity.bookingFormId,
+                                preferredSlotTime: sl.dateTime,
+                              )));
+                } else {
+                  if (isBooked(sl.dateTime, entity.entityId)) {
+                    Utils.showMyFlushbar(
+                        context,
+                        Icons.info_outline,
+                        Duration(seconds: 6),
+                        alreadyHaveBooking,
+                        wantToBookAnotherSlot);
+                    return null;
+                  }
+                  if (sl.isFull == false) {
+                    setState(() {
+                      //unselect previously selected slot
+                      selectedSlot = sl;
+                    });
+                  } else
+                    return null;
                 }
-                if (sl.isFull == false) {
-                  setState(() {
-                    //unselect previously selected slot
-                    selectedSlot = sl;
-                  });
-                } else
-                  return null;
-              }
-            } else
-              return null;
-          },
+              } else
+                return null;
+            },
+          ),
         ),
-        Text(sl.currentNumber.toString() + ' Booked',
-            style: TextStyle(
-              color: Colors.black,
-              // fontWeight: FontWeight.w800,
-              //fontFamily: 'Roboto',
-              letterSpacing: 0.5,
-              fontSize: 11.0,
-              //height: 2,
-            )),
+        Container(
+          child: Text(sl.currentNumber.toString() + ' Booked',
+              style: TextStyle(
+                color: Colors.black,
+                // fontWeight: FontWeight.w800,
+                //fontFamily: 'Roboto',
+                letterSpacing: 0.5,
+                fontSize: 7.0,
+                //height: 2,
+              )),
+        ),
       ],
     );
   }
