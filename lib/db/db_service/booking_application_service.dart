@@ -1,9 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:enum_to_string/enum_to_string.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:noq/constants.dart';
 import 'package:noq/db/db_model/booking_application.dart';
 import 'package:noq/db/db_model/booking_form.dart';
+import 'package:noq/db/db_service/query.dart';
 
 import 'package:noq/enum/application_status.dart';
 import 'package:noq/enum/entity_type.dart';
@@ -34,18 +36,69 @@ class BookingApplicationService {
 
   Future<List<BookingApplication>> getApplications(
       String bookingFormID,
-      EntityType type,
       String entityId,
-      String userId,
       ApplicationStatus status,
-      DateTime toDate,
-      DateTime fromDate,
-      Map<String, String> fieldValues,
+      String userId,
+      Map<String, dynamic> singleValueFields,
+      List<MultiValuedQuery> multipleValueFields,
+      List<RangeQuery> rangeQueries,
+      String orderByFieldName,
+      bool isDescending,
       int page,
       int takeCount) async {
     FirebaseFirestore fStore = getFirestore();
+    CollectionReference collectionRef =
+        fStore.collection('bookingApplications');
 
-    return null;
+    String statusStr = EnumToString.convertToString(status);
+
+    Query query = collectionRef;
+
+    if (Utils.isNotNullOrEmpty(userId)) {
+      query = query.where("userId", isEqualTo: userId);
+    }
+
+    if (status != null) {
+      query = query.where("status", isEqualTo: statusStr);
+    }
+
+    if (Utils.isNotNullOrEmpty(entityId)) {
+      query = query.where("entityId", isEqualTo: entityId);
+    }
+
+    if (Utils.isNotNullOrEmpty(bookingFormID)) {
+      query = query.where("bookingFormId", isEqualTo: bookingFormID);
+    }
+
+    singleValueFields.forEach((key, val) {
+      query = query.where(key, isEqualTo: val);
+    });
+
+    for (MultiValuedQuery multiValuedQuery in multipleValueFields) {
+      if (multiValuedQuery.partialMatch) {
+        query = query.where(multiValuedQuery.key,
+            arrayContainsAny: multiValuedQuery.values);
+      } else {
+        query = query.where(multiValuedQuery.key,
+            arrayContains: multiValuedQuery.values);
+      }
+    }
+
+    if (Utils.isNotNullOrEmpty(orderByFieldName)) {
+      query = query.orderBy(orderByFieldName, descending: isDescending);
+    }
+
+    List<BookingApplication> applications = new List<BookingApplication>();
+
+    QuerySnapshot qs = await query.get();
+    List<QueryDocumentSnapshot> qds = qs.docs;
+    for (QueryDocumentSnapshot doc in qds) {
+      if (doc.exists) {
+        applications.add(BookingApplication.fromJson(doc.data()));
+      }
+    }
+
+    return applications;
   }
 
   //To be done by the Applicant
@@ -100,7 +153,8 @@ class BookingApplicationService {
 
       bf = BookingForm.fromJson(map);
     } else {
-      return false; //no form exists, hence can't proceed
+      return throw new Exception(
+          "For this booking application the corresponding Form does not exists"); //no form exists, hence can't proceed
     }
 
     await fStore.runTransaction((Transaction tx) async {
@@ -208,24 +262,15 @@ class BookingApplicationService {
     BookingApplicationsOverview localCounter;
     BookingApplicationsOverview globalCounter;
 
-    String bookingApplicationId;
-
     String localCounterId;
     String globalCounterId;
 
     final DocumentReference applicationRef =
-        fStore.doc('bookingApplications/' + bookingApplicationId);
-
-    final DocumentReference localCounterRef =
-        fStore.doc('counter/' + localCounterId);
-
-    final DocumentReference globalCounterRef =
-        fStore.doc('counter/' + globalCounterId);
+        fStore.doc('bookingApplications/' + applicationId);
 
     await fStore.runTransaction((Transaction tx) async {
       try {
         DocumentSnapshot applicationSnapshot = await tx.get(applicationRef);
-        DocumentSnapshot localCounterSnapshot = await tx.get(localCounterRef);
 
         if (applicationSnapshot.exists) {
           application = BookingApplication.fromJson(applicationSnapshot.data());
@@ -243,6 +288,14 @@ class BookingApplicationService {
 
         localCounterId = bookingFormId + "#" + entityId;
         globalCounterId = bookingFormId;
+
+        final DocumentReference localCounterRef =
+            fStore.doc('counter/' + localCounterId);
+
+        final DocumentReference globalCounterRef =
+            fStore.doc('counter/' + globalCounterId);
+
+        DocumentSnapshot localCounterSnapshot = await tx.get(localCounterRef);
 
         if (bf.isSystemTemplate) {
           DocumentSnapshot globalCounterSnapshot =
@@ -384,5 +437,45 @@ class BookingApplicationService {
     }
 
     return form;
+  }
+
+  Future<bool> deleteCounter(String counterId) async {
+    FirebaseFirestore fStore = getFirestore();
+
+    final DocumentReference counterRef = fStore.doc('counter/' + counterId);
+
+    try {
+      counterRef.delete();
+    } catch (e) {
+      return false;
+    }
+    return true;
+  }
+
+  Future<bool> deleteBookingForm(String formId) async {
+    FirebaseFirestore fStore = getFirestore();
+
+    final DocumentReference formRef = fStore.doc('bookingForms/' + formId);
+
+    try {
+      formRef.delete();
+    } catch (e) {
+      return false;
+    }
+    return true;
+  }
+
+  Future<bool> deleteApplication(String applicationId) async {
+    FirebaseFirestore fStore = getFirestore();
+
+    final DocumentReference applicationRef =
+        fStore.doc('bookingApplications/' + applicationId);
+
+    try {
+      applicationRef.delete();
+    } catch (e) {
+      return false;
+    }
+    return true;
   }
 }

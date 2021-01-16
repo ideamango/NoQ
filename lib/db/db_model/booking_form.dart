@@ -1,4 +1,6 @@
+import 'package:enum_to_string/enum_to_string.dart';
 import 'package:flutter/material.dart';
+import 'package:noq/enum/field_type.dart';
 import 'package:uuid/uuid.dart';
 
 class BookingForm {
@@ -6,7 +8,7 @@ class BookingForm {
   String formName;
   String headerMsg;
   String footerMsg;
-  List<Field> formFields;
+  List<Field> _formFields;
   bool autoApproved = true;
 
   //This is not supposed to be created by Entity Manager or Admin, right not will be done via backend on Request.
@@ -17,19 +19,26 @@ class BookingForm {
       {@required this.formName,
       @required this.headerMsg,
       this.footerMsg,
-      @required this.formFields,
       this.autoApproved});
+
+  String addField(Field field) {
+    int numberOfFields = _formFields.length;
+    numberOfFields = ++numberOfFields * 10;
+    String key = "KEY" + numberOfFields.toString();
+    field.key = key;
+    return key;
+  }
 
   Map<String, dynamic> toJson() => {
         'formName': formName,
         'headerMsg': headerMsg,
         'footerMsg': footerMsg,
-        'formFieldList': formFieldsToJson(formFields),
+        'formFields': _formFieldsToJson(_formFields),
         'autoApproved': autoApproved,
         'isSystemTemplate': isSystemTemplate
       };
 
-  List<dynamic> formFieldsToJson(List<Field> fields) {
+  List<dynamic> _formFieldsToJson(List<Field> fields) {
     List<dynamic> fieldsJson = new List<dynamic>();
     if (fields == null) return null;
     for (Field sl in fields) {
@@ -44,32 +53,53 @@ class BookingForm {
         formName: json['formName'],
         headerMsg: json['headerMsg'],
         footerMsg: json['footerMsg'],
-        formFields: convertToOptionValuesFromJson(json['formFieldList']),
         autoApproved: json['autoApproved']);
 
     bf.isSystemTemplate = json['isSystemTemplate'];
+    bf._formFields = _convertToOptionValuesFromJson(json['formFields']);
 
     return bf;
   }
 
-  static List<Field> convertToOptionValuesFromJson(List<dynamic> fieldsJson) {
+  static List<Field> _convertToOptionValuesFromJson(List<dynamic> fieldsJson) {
     List<Field> values = new List<Field>();
     if (fieldsJson == null) return null;
 
     for (Map<String, dynamic> value in fieldsJson) {
-      if (value["type"] == "TEXT") {
+      if (value["type"] == EnumToString.convertToString(FieldType.TEXT)) {
         values.add(FormInputFieldText.fromJson(value));
-      } else if (value["type"] == "NUMBER") {
+      } else if (value["type"] ==
+          EnumToString.convertToString(FieldType.NUMBER)) {
         values.add(FormInputFieldNumber.fromJson(value));
-      } else if (value["type"] == "OPTIONS") {
+      } else if (value["type"] ==
+          EnumToString.convertToString(FieldType.OPTIONS)) {
         values.add(FormInputFieldOptions.fromJson(value));
+      } else if (value["type"] ==
+          EnumToString.convertToString(FieldType.ATTACHMENT)) {
+        values.add(FormInputFieldAttachment.fromJson(value));
+      } else if (value["type"] ==
+          EnumToString.convertToString(FieldType.DATETIME)) {
+        values.add(FormInputFieldDateTime.fromJson(value));
+      } else if (value["type"] ==
+          EnumToString.convertToString(FieldType.PHONE)) {
+        values.add(FormInputFieldPhone.fromJson(value));
+      } else if (value["type"] ==
+          EnumToString.convertToString(FieldType.OPTIONS_ATTACHMENTS)) {
+        values.add(FormInputFieldOptionsWithAttachments.fromJson(value));
       }
     }
     return values;
   }
+
+  List<Field> getFormFields() {
+    //returning duplicate list, to ensure that original list is modified only via
+    //addField method to maintain the order of the key
+    return _formFields.toList();
+  }
 }
 
 class Field {
+  String key;
   String id = Uuid().v1();
   String label;
   bool isMeta = false;
@@ -91,10 +121,11 @@ class FormInputFieldText extends Field {
     this.isMandatory = isMandatory;
     this.infoMessage = infoMessage;
     this.maxLength = maxLength;
-    this.type = "TEXT";
+    this.type = EnumToString.convertToString(FieldType.TEXT); //"TEXT";
   }
 
   Map<String, dynamic> toJson() => {
+        'key': key,
         'id': id,
         'maxLength': maxLength,
         'label': label,
@@ -108,14 +139,15 @@ class FormInputFieldText extends Field {
   static FormInputFieldText fromJson(Map<String, dynamic> json) {
     if (json == null) return null;
 
-    FormInputFieldText textField = FormInputFieldText(json['label'],
+    FormInputFieldText field = FormInputFieldText(json['label'],
         json['isMandatory'], json['infoMessage'], json['maxLength']);
 
-    textField.id = json["id"];
-    textField.isMeta = json["isMeta"];
-    textField.response = json['response'];
+    field.key = json["key"];
+    field.id = json["id"];
+    field.isMeta = json["isMeta"];
+    field.response = json['response'];
 
-    return textField;
+    return field;
   }
 }
 
@@ -132,10 +164,11 @@ class FormInputFieldNumber extends Field {
     this.minValue = minValue;
     this.infoMessage = infoMessage;
     this.maxValue = maxValue;
-    this.type = "NUMBER";
+    this.type = EnumToString.convertToString(FieldType.NUMBER); //"NUMBER";
   }
 
   Map<String, dynamic> toJson() => {
+        'key': key,
         'id': id,
         'label': label,
         'isMeta': isMeta,
@@ -149,17 +182,17 @@ class FormInputFieldNumber extends Field {
 
   static FormInputFieldNumber fromJson(Map<String, dynamic> json) {
     if (json == null) return null;
-    FormInputFieldNumber numberField = FormInputFieldNumber(
+    FormInputFieldNumber field = FormInputFieldNumber(
         json['label'],
         json['isMandatory'],
         json['infoMessage'],
         json['minValue'],
         json['maxValue']);
-    numberField.isMeta = json['isMeta'];
-    numberField.id = json['id'];
-    numberField.response = json['response'];
+    field.isMeta = json['isMeta'];
+    field.id = json['id'];
+    field.response = json['response'];
 
-    return numberField;
+    return field;
   }
 }
 
@@ -175,10 +208,11 @@ class FormInputFieldOptions extends Field {
     this.infoMessage = infoMessage;
     this.options = options;
     this.isMultiSelect = isMultiSelect;
-    this.type = "OPTIONS";
+    this.type = EnumToString.convertToString(FieldType.OPTIONS); //"OPTIONS";
   }
 
   Map<String, dynamic> toJson() => {
+        'key': key,
         'id': id,
         'label': label,
         'isMeta': isMeta,
@@ -191,15 +225,15 @@ class FormInputFieldOptions extends Field {
 
   static FormInputFieldOptions fromJson(Map<String, dynamic> json) {
     if (json == null) return null;
-    FormInputFieldOptions optionsField = FormInputFieldOptions(
+    FormInputFieldOptions field = FormInputFieldOptions(
         json['label'],
         json['isMandatory'],
         json['infoMessage'],
         convertToValuesFromJson(json['options']),
         json['isMultiSelect']);
-    optionsField.isMeta = json['isMeta'];
-    optionsField.id = json['id'];
-    return optionsField;
+    field.isMeta = json['isMeta'];
+    field.id = json['id'];
+    return field;
   }
 
   static List<Value> convertToValuesFromJson(List<dynamic> valuesJson) {
@@ -234,10 +268,12 @@ class FormInputFieldAttachment extends Field {
     this.label = label;
     this.isMandatory = isMandatory;
     this.infoMessage = infoMessage;
-    this.type = "ATTACHMENT";
+    this.type =
+        EnumToString.convertToString(FieldType.ATTACHMENT); //"ATTACHMENT";
   }
 
   Map<String, dynamic> toJson() => {
+        'key': key,
         'id': id,
         'label': label,
         'isMeta': isMeta,
@@ -259,15 +295,15 @@ class FormInputFieldAttachment extends Field {
 
   static FormInputFieldAttachment fromJson(Map<String, dynamic> json) {
     if (json == null) return null;
-    FormInputFieldAttachment attachmentField = FormInputFieldAttachment(
+    FormInputFieldAttachment field = FormInputFieldAttachment(
         json['label'], json['isMandatory'], json['infoMessage']);
-    attachmentField.isMeta = json['isMeta'];
-    attachmentField.id = json['id'];
-    attachmentField.responseFilePaths =
+    field.isMeta = json['isMeta'];
+    field.id = json['id'];
+    field.responseFilePaths =
         convertToPathValuesFromJson(json['responseFilePaths']);
-    attachmentField.maxAttachments = json['maxAttachments'];
+    field.maxAttachments = json['maxAttachments'];
 
-    return attachmentField;
+    return field;
   }
 }
 
@@ -282,10 +318,11 @@ class FormInputFieldDateTime extends Field {
     this.label = label;
     this.isMandatory = isMandatory;
     this.infoMessage = infoMessage;
-    this.type = "DATETIME";
+    this.type = EnumToString.convertToString(FieldType.DATETIME); //"DATETIME";
   }
 
   Map<String, dynamic> toJson() => {
+        'key': key,
         'id': id,
         'label': label,
         'isMeta': isMeta,
@@ -297,14 +334,14 @@ class FormInputFieldDateTime extends Field {
 
   static FormInputFieldDateTime fromJson(Map<String, dynamic> json) {
     if (json == null) return null;
-    FormInputFieldDateTime dateTimeField = FormInputFieldDateTime(
+    FormInputFieldDateTime field = FormInputFieldDateTime(
         json['label'], json['isMandatory'], json['infoMessage']);
-    dateTimeField.isMeta = json['isMeta'];
-    dateTimeField.id = json['id'];
-    dateTimeField.responseDateTime =
+    field.isMeta = json['isMeta'];
+    field.id = json['id'];
+    field.responseDateTime =
         DateTime.fromMillisecondsSinceEpoch(json['responseDateTime']);
 
-    return dateTimeField;
+    return field;
   }
 }
 
@@ -317,10 +354,11 @@ class FormInputFieldPhone extends Field {
     this.label = label;
     this.isMandatory = isMandatory;
     this.infoMessage = infoMessage;
-    this.type = "DATETIME";
+    this.type = EnumToString.convertToString(FieldType.PHONE); //"PHONE";
   }
 
   Map<String, dynamic> toJson() => {
+        'key': key,
         'id': id,
         'label': label,
         'isMeta': isMeta,
@@ -332,13 +370,13 @@ class FormInputFieldPhone extends Field {
 
   static FormInputFieldPhone fromJson(Map<String, dynamic> json) {
     if (json == null) return null;
-    FormInputFieldPhone phoneField = FormInputFieldPhone(
+    FormInputFieldPhone field = FormInputFieldPhone(
         json['label'], json['isMandatory'], json['infoMessage']);
-    phoneField.isMeta = json['isMeta'];
-    phoneField.id = json['id'];
-    phoneField.responsePhone = json['responsePhone'];
+    field.isMeta = json['isMeta'];
+    field.id = json['id'];
+    field.responsePhone = json['responsePhone'];
 
-    return phoneField;
+    return field;
   }
 }
 
@@ -357,10 +395,12 @@ class FormInputFieldOptionsWithAttachments extends Field {
     this.infoMessage = infoMessage;
     this.options = options;
     this.isMultiSelect = isMultiSelect;
-    this.type = "OPTIONS_ATTACHMENTS";
+    this.type = EnumToString.convertToString(
+        FieldType.OPTIONS_ATTACHMENTS); //"OPTIONS_ATTACHMENTS";
   }
 
   Map<String, dynamic> toJson() => {
+        'key': key,
         'id': id,
         'label': label,
         'isMeta': isMeta,
@@ -376,19 +416,19 @@ class FormInputFieldOptionsWithAttachments extends Field {
   static FormInputFieldOptionsWithAttachments fromJson(
       Map<String, dynamic> json) {
     if (json == null) return null;
-    FormInputFieldOptionsWithAttachments optionsFieldWithAttachments =
+    FormInputFieldOptionsWithAttachments fields =
         FormInputFieldOptionsWithAttachments(
             json['label'],
             json['isMandatory'],
             json['infoMessage'],
             convertToValuesFromJson(json['options']),
             json['isMultiSelect']);
-    optionsFieldWithAttachments.isMeta = json["isMeta"];
-    optionsFieldWithAttachments.id = json['id'];
-    optionsFieldWithAttachments.responseFilePaths =
+    fields.isMeta = json["isMeta"];
+    fields.id = json['id'];
+    fields.responseFilePaths =
         convertToStringsFromJson(json['responseFilePaths']);
-    optionsFieldWithAttachments.maxAttachments = json['maxAttachments'];
-    return optionsFieldWithAttachments;
+    fields.maxAttachments = json['maxAttachments'];
+    return fields;
   }
 
   static List<Value> convertToValuesFromJson(List<dynamic> valuesJson) {
@@ -418,6 +458,45 @@ class FormInputFieldOptionsWithAttachments extends Field {
       usersJson.add(val.toJson());
     }
     return usersJson;
+  }
+}
+
+class FormInputFieldBool extends Field {
+  bool response;
+  bool defaultValue;
+
+  FormInputFieldBool(
+      String label, bool isMandatory, String infoMessage, bool defaultValue) {
+    this.label = label;
+    this.isMandatory = isMandatory;
+    this.infoMessage = infoMessage;
+    this.defaultValue = defaultValue;
+    this.type = EnumToString.convertToString(FieldType.BOOL);
+  }
+
+  Map<String, dynamic> toJson() => {
+        'key': key,
+        'id': id,
+        'label': label,
+        'isMeta': isMeta,
+        'isMandatory': isMandatory,
+        "infoMessage": infoMessage,
+        "type": type,
+        "defaultValue": defaultValue,
+        'response': response
+      };
+
+  static FormInputFieldBool fromJson(Map<String, dynamic> json) {
+    if (json == null) return null;
+
+    FormInputFieldBool field = FormInputFieldBool(json['label'],
+        json['isMandatory'], json['infoMessage'], json["defaultValue"]);
+
+    field.id = json["id"];
+    field.isMeta = json["isMeta"];
+    field.response = json['response'];
+
+    return field;
   }
 }
 

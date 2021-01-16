@@ -152,9 +152,9 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage>
   bool _isValid = false;
   Employee contact;
 
-  List<String> idProofTypesStrList = List<String>();
+  List<Value> idProofTypesStrList = List<Value>();
   List<Item> idProofTypes = List<Item>();
-  List<String> medConditionsStrList = List<String>();
+  List<Value> medConditionsStrList = List<Value>();
   List<Item> medConditions = List<Item>();
   List<File> _images = [];
   //File _image; // Used only if you need a single picture
@@ -202,32 +202,32 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage>
 
   initBookingForm() {
     fields = List<Field>();
-    idProofTypesStrList.add('Passport');
-    idProofTypesStrList.add('Driving License');
-    idProofTypesStrList.add('Aadhar');
-    idProofTypesStrList.add('PAN');
+    idProofTypesStrList.add(Value('Passport'));
+    idProofTypesStrList.add(Value('Driving License'));
+    idProofTypesStrList.add(Value('Aadhar'));
+    idProofTypesStrList.add(Value('PAN'));
     idProofTypesStrList.forEach((element) {
-      idProofTypes.add(Item(element, false));
+      idProofTypes.add(Item(element.value, false));
     });
-    medConditionsStrList.add('Chronic Kidney Disease');
-    medConditionsStrList.add('Liver Disease');
-    medConditionsStrList.add('Overweight and Severe Obesity');
+    medConditionsStrList.add(Value('Chronic Kidney Disease'));
+    medConditionsStrList.add(Value('Liver Disease'));
+    medConditionsStrList.add(Value('Overweight and Severe Obesity'));
     medConditionsStrList
-        .add('Other Cardiovascular and Cerebrovascular Diseases');
-    medConditionsStrList.add('Haemoglobin Disorders');
-    medConditionsStrList.add('Pregnancy');
-    medConditionsStrList.add('Heart Conditions');
-    medConditionsStrList.add('Chronic Lung Disease');
-    medConditionsStrList.add('HIV or Weakened Immune System');
+        .add(Value('Other Cardiovascular and Cerebrovascular Diseases'));
+    medConditionsStrList.add(Value('Haemoglobin Disorders'));
+    medConditionsStrList.add(Value('Pregnancy'));
+    medConditionsStrList.add(Value('Heart Conditions'));
+    medConditionsStrList.add(Value('Chronic Lung Disease'));
+    medConditionsStrList.add(Value('HIV or Weakened Immune System'));
 
-    medConditionsStrList.add('Neurologic Conditions such as Dementia');
+    medConditionsStrList.add(Value('Neurologic Conditions such as Dementia'));
 
-    medConditionsStrList.add('Diabetes');
+    medConditionsStrList.add(Value('Diabetes'));
 
-    medConditionsStrList.add('Others (Specify below)');
+    medConditionsStrList.add(Value('Others (Specify below)'));
 
     medConditionsStrList.forEach((element) {
-      medConditions.add(Item(element, false));
+      medConditions.add(Item(element.value, false));
     });
     nameInput = FormInputFieldText("Name of Person", true,
         "Please enter your name as per Government ID proof", 50);
@@ -249,7 +249,7 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage>
     idProofField = FormInputFieldOptionsWithAttachments("Id Proof File Url",
         true, "Please upload Government Id proof", idProofTypesStrList, false);
     idProofField.responseFilePaths = List<String>();
-    idProofField.responseValues = new List<String>();
+    idProofField.responseValues = new List<Value>();
     fields.add(idProofField);
 
     healthDetailsInput = FormInputFieldOptions(
@@ -296,7 +296,6 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage>
             "Your request will be approved based on the information provided by you.",
         footerMsg:
             "Please carry same ID proof (uploaded here) to the Vaccination center for verification purpose.",
-        formFields: fields,
         autoApproved: false);
 
     bookingApplication = new BookingApplication();
@@ -580,7 +579,7 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage>
                             idProofTypes.forEach((element) {
                               element.isSelected = false;
                             });
-                            _idProofType = item.text;
+                            _idProofType = item.text.value;
                             idProofField.responseValues.add(item.text);
                             setState(() {
                               item.isSelected = newSelectionValue;
@@ -599,7 +598,7 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage>
                               padding: EdgeInsets.fromLTRB(8, 5, 8, 5),
                               margin: EdgeInsets.all(8),
                               // color: Colors.orange,
-                              child: Text(item.text))))
+                              child: Text(item.text.value))))
                       .toList()
                       .cast<Widget>(),
                 ),
@@ -668,7 +667,7 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage>
                               padding: EdgeInsets.fromLTRB(8, 5, 8, 5),
                               margin: EdgeInsets.all(8),
                               // color: Colors.orange,
-                              child: Text(item.text))))
+                              child: Text(item.text.value))))
                       .toList()
                       .cast<Widget>(),
                 ),
@@ -2787,7 +2786,7 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage>
 }
 
 class Item {
-  String text;
+  Value text;
   bool isSelected;
   String lastSelected;
 
