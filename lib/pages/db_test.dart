@@ -25,7 +25,9 @@ import 'package:noq/constants.dart';
 import 'package:noq/global_state.dart';
 
 class DBTest {
-  String TEST_COVID_BOOKING_FORM_ID = COVID_BOOKING_FORM_ID + "TEST";
+  String TEST_COVID_BOOKING_FORM_ID = COVID_BOOKING_FORM_ID + "TEST2";
+
+  String Covid_Vacination_center = "Selenium-Covid-Vacination-Center" + "Test2";
   GlobalState _gs;
   DBTest() {
     GlobalState.clearGlobalState();
@@ -304,9 +306,7 @@ class DBTest {
       //delete user
       await _gs.getUserService().deleteCurrentUser();
 
-      await _gs
-          .getEntityService()
-          .deleteEntity("Selenium-Covid-Vacination-Center");
+      await _gs.getEntityService().deleteEntity(Covid_Vacination_center);
 
       //delete booking form, NOTE: should not be done for the TEST_COVID_BOOKING_FORM_ID else Ids of the field are going to change and queries would fail
       await _gs
@@ -319,7 +319,7 @@ class DBTest {
 
       //delete local counter
       String localCounterId =
-          TEST_COVID_BOOKING_FORM_ID + "#" + "Selenium-Covid-Vacination-Center";
+          TEST_COVID_BOOKING_FORM_ID + "#" + Covid_Vacination_center;
       await _gs.getTokenApplicationService().deleteCounter(localCounterId);
 
       //delete application
@@ -328,7 +328,7 @@ class DBTest {
             "#" +
             "TestApplicationID" +
             i.toString();
-        await _gs.getTokenApplicationService().deleteBookingForm(applicationId);
+        await _gs.getTokenApplicationService().deleteApplication(applicationId);
       }
     } catch (e) {
       print("Error occurred in cleaning.. may be DB is already cleaned.");
@@ -1421,7 +1421,7 @@ class DBTest {
 
     MyGeoFirePoint geoPoint = new MyGeoFirePoint(17.444317, 78.355321);
     Entity entity = new Entity(
-        entityId: "Selenium-Covid-Vacination-Center",
+        entityId: Covid_Vacination_center,
         name: "Selenium Covid Vacination Center",
         address: adrs,
         advanceDays: 7,
@@ -1457,9 +1457,8 @@ class DBTest {
       print("Exception occured " + e.toString());
     }
 
-    Entity seleniumVacCenter = await _gs
-        .getEntityService()
-        .getEntity("Selenium-Covid-Vacination-Center");
+    Entity seleniumVacCenter =
+        await _gs.getEntityService().getEntity(Covid_Vacination_center);
 
     return bf;
 
@@ -1486,7 +1485,8 @@ class DBTest {
       FormInputFieldDateTime ageInput = bf.getFormFields()[1];
       ageInput.responseDateTime = DateTime(2001, 8, 6);
 
-      FormInputFieldOptions healthDetailsInput = bf.getFormFields()[2];
+      FormInputFieldOptionsWithAttachments healthDetailsInput =
+          bf.getFormFields()[2];
       healthDetailsInput.responseValues = new List<Value>();
       healthDetailsInput.responseValues.add(healthDetailsInput.options[1]);
       healthDetailsInput.responseValues.add(healthDetailsInput.options[3]);
@@ -1495,6 +1495,7 @@ class DBTest {
       idProof.responseValues = new List<Value>();
       idProof.responseValues.add(idProof.options[1]);
       idProof.responseValues.add(idProof.options[3]);
+      idProof.responseFilePaths = List<String>();
       idProof.responseFilePaths.add(
           "https://firebasestorage.googleapis.com/v0/b/sukoon-india.appspot.com/o/8d33fca0-567c-11eb-ab9e-3186f616ddb9%238d3200d0-567c-11eb-8f72-39e1ef14fb06%23O72Pv6XakoRlxNKYbZLruYaMlwi1%23scaled_f511c73a-5c2b-43b6-91b7-fe1698dffb671714737705318816047.jpg?alt=media&token=d4b890c9-ff3c-4529-a65f-493e29763b61");
       idProof.responseFilePaths.add(
@@ -1505,6 +1506,7 @@ class DBTest {
       frontLineWorker.responseValues = new List<Value>();
       frontLineWorker.responseValues.add(frontLineWorker.options[0]);
       frontLineWorker.responseValues.add(frontLineWorker.options[2]);
+      frontLineWorker.responseFilePaths = List<String>();
       frontLineWorker.responseFilePaths.add(
           "https://firebasestorage.googleapis.com/v0/b/sukoon-india.appspot.com/o/8d33fca0-567c-11eb-ab9e-3186f616ddb9%238d3200d0-567c-11eb-8f72-39e1ef14fb06%23O72Pv6XakoRlxNKYbZLruYaMlwi1%23scaled_f511c73a-5c2b-43b6-91b7-fe1698dffb671714737705318816047.jpg?alt=media&token=d4b890c9-ff3c-4529-a65f-493e29763b61");
       frontLineWorker.responseFilePaths.add(
@@ -1516,7 +1518,7 @@ class DBTest {
           TEST_COVID_BOOKING_FORM_ID + "#" + "TestApplicationID" + i.toString();
 
       BookingApplicationService tas = _gs.getTokenApplicationService();
-      await tas.submitApplication(ba, "Selenium-Covid-Vacination-Center");
+      await tas.submitApplication(ba, Covid_Vacination_center);
     }
 
     BookingApplicationsOverview globalOverView = await _gs
@@ -1526,7 +1528,7 @@ class DBTest {
     BookingApplicationsOverview localOverView = await _gs
         .getTokenApplicationService()
         .getBookingApplicationOverview(
-            TEST_COVID_BOOKING_FORM_ID, "Selenium-Covid-Vacination-Center");
+            TEST_COVID_BOOKING_FORM_ID, Covid_Vacination_center);
 
     if (globalOverView.numberOfApproved == 0 &&
         globalOverView.numberOfNew == 10 &&
@@ -1552,18 +1554,8 @@ class DBTest {
   Future<void> testBookingApplicationStatusChange() async {
     List<BookingApplication> applications = await _gs
         .getTokenApplicationService()
-        .getApplications(
-            TEST_COVID_BOOKING_FORM_ID,
-            "Selenium-Covid-Vacination-Center",
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null);
+        .getApplications(TEST_COVID_BOOKING_FORM_ID, Covid_Vacination_center,
+            null, null, null, null, null, null, null, null, null);
 
     BookingApplication bs1 = applications[0];
     _gs.getTokenApplicationService().updateApplicationStatus(
@@ -1592,7 +1584,7 @@ class DBTest {
     BookingApplicationsOverview localOverView = await _gs
         .getTokenApplicationService()
         .getBookingApplicationOverview(
-            TEST_COVID_BOOKING_FORM_ID, "Selenium-Covid-Vacination-Center");
+            TEST_COVID_BOOKING_FORM_ID, Covid_Vacination_center);
 
     if (globalOverView.numberOfApproved == 2 &&
         globalOverView.numberOfNew == 5 &&
@@ -1622,7 +1614,7 @@ class DBTest {
         .getTokenApplicationService()
         .getApplications(
             TEST_COVID_BOOKING_FORM_ID,
-            "Selenium-Covid-Vacination-Center",
+            Covid_Vacination_center,
             ApplicationStatus.APPROVED,
             null,
             null,
