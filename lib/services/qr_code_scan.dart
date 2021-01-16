@@ -1,5 +1,6 @@
 import 'dart:async';
-import 'package:barcode_scan_fix/barcode_scan.dart';
+import 'package:barcode_scan_javalite/barcode_scan.dart';
+import 'package:barcode_scan_javalite/platform_wrapper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:noq/constants.dart';
@@ -11,10 +12,11 @@ import 'package:noq/utils.dart';
 
 class QrCodeScanner {
   static Future scan(BuildContext context) async {
-    String scanResult = "";
+    ScanResult result;
+    var scanResult = "";
     try {
-      scanResult = await BarcodeScanner.scan();
-
+      result = await BarcodeScanner.scan();
+      scanResult = result.rawContent;
       if (scanResult.contains('entityId')) {
         List<String> url = scanResult.split('entityId');
         String entityId;
@@ -34,7 +36,7 @@ class QrCodeScanner {
             invalidQRCode, correctQRCode);
       }
     } on PlatformException catch (e) {
-      if (e.code == BarcodeScanner.CameraAccessDenied) {
+      if (e.code == BarcodeScanner.cameraAccessDenied) {
         Utils.showMyFlushbar(context, Icons.info, Duration(seconds: 5),
             cameraAccess, openCameraAccessSetting);
         Utils.showLocationAccessDialog(context, openCameraAccessSetting);
