@@ -5,6 +5,7 @@ import 'package:noq/constants.dart';
 import 'package:noq/db/db_model/booking_application.dart';
 import 'package:noq/db/db_model/booking_form.dart';
 import 'package:noq/enum/application_status.dart';
+import 'package:noq/enum/field_type.dart';
 import 'package:noq/global_state.dart';
 import 'package:noq/pages/covid_token_booking_form.dart';
 import 'package:noq/pages/overview_page.dart';
@@ -352,38 +353,38 @@ class _ApplicationsListState extends State<ApplicationsList> {
     if (field != null) {
       if (field.isMandatory) {
         switch (field.type) {
-          case "TEXT":
+          case FieldType.TEXT:
             {
               FormInputFieldText newfield = field;
               fieldWidget = Text(newfield.response);
             }
             break;
-          case "NUMBER":
+          case FieldType.NUMBER:
             {
               FormInputFieldNumber newfield = field;
               fieldWidget = Text(newfield.response.toString());
             }
             break;
-          case "PHONE":
+          case FieldType.PHONE:
             {
               FormInputFieldNumber newfield = field;
               fieldWidget = Text("+91 ${newfield.response.toString()}");
             }
             break;
 
-          case "DATETIME":
+          case FieldType.DATETIME:
             {
               FormInputFieldDateTime newfield = field;
               fieldWidget = Text(newfield.responseDateTime.toString());
             }
             break;
-          case "OPTIONS":
+          case FieldType.OPTIONS:
             {
               FormInputFieldOptions newfield = field;
               fieldWidget = Text(newfield.responseValues.toString());
             }
             break;
-          case "OPTIONS_ATTACHMENTS":
+          case FieldType.OPTIONS_ATTACHMENTS:
             {
               FormInputFieldOptionsWithAttachments newfield = field;
               fieldWidget = Column(

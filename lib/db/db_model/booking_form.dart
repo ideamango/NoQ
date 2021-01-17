@@ -114,7 +114,7 @@ class Field {
   bool isMeta = false;
   bool isMandatory;
   String infoMessage;
-  String type;
+  FieldType type;
   Map<String, dynamic> toJson() => {
         //action implementation is in the derived classes
       };
@@ -130,7 +130,7 @@ class FormInputFieldText extends Field {
     this.isMandatory = isMandatory;
     this.infoMessage = infoMessage;
     this.maxLength = maxLength;
-    this.type = EnumToString.convertToString(FieldType.TEXT); //"TEXT";
+    this.type = FieldType.TEXT;
   }
 
   Map<String, dynamic> toJson() => {
@@ -141,7 +141,7 @@ class FormInputFieldText extends Field {
         'isMeta': isMeta,
         'isMandatory': isMandatory,
         "infoMessage": infoMessage,
-        "type": type,
+        "type": EnumToString.convertToString(type),
         'response': response
       };
 
@@ -173,7 +173,7 @@ class FormInputFieldNumber extends Field {
     this.minValue = minValue;
     this.infoMessage = infoMessage;
     this.maxValue = maxValue;
-    this.type = EnumToString.convertToString(FieldType.NUMBER); //"NUMBER";
+    this.type = FieldType.NUMBER; //"NUMBER";
   }
 
   Map<String, dynamic> toJson() => {
@@ -185,7 +185,7 @@ class FormInputFieldNumber extends Field {
         "infoMessage": infoMessage,
         'minValue': minValue,
         'maxValue': maxValue,
-        'type': type,
+        'type': EnumToString.convertToString(type),
         'response': response
       };
 
@@ -218,7 +218,7 @@ class FormInputFieldOptions extends Field {
     this.infoMessage = infoMessage;
     this.options = options;
     this.isMultiSelect = isMultiSelect;
-    this.type = EnumToString.convertToString(FieldType.OPTIONS); //"OPTIONS";
+    this.type = FieldType.OPTIONS; //"OPTIONS";
   }
 
   Map<String, dynamic> toJson() => {
@@ -230,7 +230,7 @@ class FormInputFieldOptions extends Field {
         "infoMessage": infoMessage,
         'options': convertValuesToJson(options),
         'isMultiSelect': isMultiSelect,
-        'type': type
+        'type': EnumToString.convertToString(type)
       };
 
   static FormInputFieldOptions fromJson(Map<String, dynamic> json) {
@@ -279,8 +279,7 @@ class FormInputFieldAttachment extends Field {
     this.label = label;
     this.isMandatory = isMandatory;
     this.infoMessage = infoMessage;
-    this.type =
-        EnumToString.convertToString(FieldType.ATTACHMENT); //"ATTACHMENT";
+    this.type = FieldType.ATTACHMENT; //"ATTACHMENT";
   }
 
   Map<String, dynamic> toJson() => {
@@ -290,7 +289,7 @@ class FormInputFieldAttachment extends Field {
         'isMeta': isMeta,
         'isMandatory': isMandatory,
         "infoMessage": infoMessage,
-        'type': type,
+        'type': EnumToString.convertToString(type),
         'responseFilePaths': responseFilePaths,
         'maxAttachments': maxAttachments
       };
@@ -330,7 +329,7 @@ class FormInputFieldDateTime extends Field {
     this.label = label;
     this.isMandatory = isMandatory;
     this.infoMessage = infoMessage;
-    this.type = EnumToString.convertToString(FieldType.DATETIME); //"DATETIME";
+    this.type = FieldType.DATETIME; //"DATETIME";
   }
 
   Map<String, dynamic> toJson() => {
@@ -340,7 +339,7 @@ class FormInputFieldDateTime extends Field {
         'isMeta': isMeta,
         'isMandatory': isMandatory,
         "infoMessage": infoMessage,
-        'type': type,
+        'type': EnumToString.convertToString(type),
         'responseDateTime': responseDateTime != null
             ? responseDateTime.millisecondsSinceEpoch
             : null
@@ -370,7 +369,7 @@ class FormInputFieldPhone extends Field {
     this.label = label;
     this.isMandatory = isMandatory;
     this.infoMessage = infoMessage;
-    this.type = EnumToString.convertToString(FieldType.PHONE); //"PHONE";
+    this.type = FieldType.PHONE; //"PHONE";
   }
 
   Map<String, dynamic> toJson() => {
@@ -380,7 +379,7 @@ class FormInputFieldPhone extends Field {
         'isMeta': isMeta,
         'isMandatory': isMandatory,
         "infoMessage": infoMessage,
-        'type': type,
+        'type': EnumToString.convertToString(type),
         'responsePhone': responsePhone
       };
 
@@ -411,8 +410,7 @@ class FormInputFieldOptionsWithAttachments extends Field {
     this.infoMessage = infoMessage;
     this.options = options;
     this.isMultiSelect = isMultiSelect;
-    this.type = EnumToString.convertToString(
-        FieldType.OPTIONS_ATTACHMENTS); //"OPTIONS_ATTACHMENTS";
+    this.type = FieldType.OPTIONS_ATTACHMENTS; //"OPTIONS_ATTACHMENTS";
   }
 
   Map<String, dynamic> toJson() => {
@@ -424,7 +422,7 @@ class FormInputFieldOptionsWithAttachments extends Field {
         "infoMessage": infoMessage,
         'options': convertValuesToJson(options),
         'isMultiSelect': isMultiSelect,
-        'type': type,
+        'type': EnumToString.convertToString(type),
         'responseFilePaths': responseFilePaths,
         'maxAttachments': maxAttachments
       };
@@ -488,7 +486,7 @@ class FormInputFieldBool extends Field {
     this.isMandatory = isMandatory;
     this.infoMessage = infoMessage;
     this.defaultValue = defaultValue;
-    this.type = EnumToString.convertToString(FieldType.BOOL);
+    this.type = FieldType.BOOL;
   }
 
   Map<String, dynamic> toJson() => {
@@ -498,7 +496,7 @@ class FormInputFieldBool extends Field {
         'isMeta': isMeta,
         'isMandatory': isMandatory,
         "infoMessage": infoMessage,
-        "type": type,
+        "type": EnumToString.convertToString(type),
         "defaultValue": defaultValue,
         'response': response
       };

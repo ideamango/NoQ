@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:noq/db/db_model/booking_application.dart';
 import 'package:noq/db/db_model/booking_form.dart';
 import 'package:noq/enum/application_status.dart';
+import 'package:noq/enum/field_type.dart';
 import 'package:noq/global_state.dart';
 import 'package:noq/pages/applications_list.dart';
 import 'package:noq/pages/covid_token_booking_form.dart';
@@ -263,7 +264,7 @@ class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
     if (field != null) {
       if (field.isMandatory) {
         switch (field.type) {
-          case "TEXT":
+          case FieldType.TEXT:
             {
               FormInputFieldText newfield = field;
               fieldWidget = SizedBox(
@@ -301,7 +302,7 @@ class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
                   newfield.response.toString();
             }
             break;
-          case "NUMBER":
+          case FieldType.NUMBER:
             {
               FormInputFieldNumber newfield = field;
               fieldWidget = SizedBox(
@@ -339,7 +340,7 @@ class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
                   (newfield.response.toString());
             }
             break;
-          case "PHONE":
+          case FieldType.PHONE:
             {
               FormInputFieldNumber newfield = field;
               fieldWidget = SizedBox(
@@ -378,7 +379,7 @@ class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
             }
             break;
 
-          case "DATETIME":
+          case FieldType.DATETIME:
             {
               FormInputFieldDateTime newfield = field;
               fieldWidget = SizedBox(
@@ -424,7 +425,7 @@ class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
                       : newfield.label;
             }
             break;
-          case "OPTIONS":
+          case FieldType.OPTIONS:
             {
               FormInputFieldOptions newfield = field;
               fieldWidget = SizedBox(
@@ -476,7 +477,7 @@ class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
               listOfControllers[field.label].text = conds;
             }
             break;
-          case "OPTIONS_ATTACHMENTS":
+          case FieldType.OPTIONS_ATTACHMENTS:
             {
               FormInputFieldOptionsWithAttachments newfield = field;
               // Widget attachmentList = Container(

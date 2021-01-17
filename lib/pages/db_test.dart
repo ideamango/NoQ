@@ -25,9 +25,10 @@ import 'package:noq/constants.dart';
 import 'package:noq/global_state.dart';
 
 class DBTest {
-  String TEST_COVID_BOOKING_FORM_ID = COVID_BOOKING_FORM_ID + "TEST2";
+  String TEST_COVID_BOOKING_FORM_ID = COVID_BOOKING_FORM_ID + "TEST";
 
-  String Covid_Vacination_center = "Selenium-Covid-Vacination-Center" + "Test2";
+  String Covid_Vacination_center = "Selenium-Covid-Vacination-Center" + "Test";
+
   GlobalState _gs;
   DBTest() {
     GlobalState.clearGlobalState();

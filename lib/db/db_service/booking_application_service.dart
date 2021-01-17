@@ -128,6 +128,8 @@ class BookingApplicationService {
       throw Exception("Insufficient arguements to submit the application");
     }
 
+    bool isSucess = false;
+
     final User user = getFirebaseAuth().currentUser;
     FirebaseFirestore fStore = getFirestore();
     String userPhone = user.phoneNumber;
@@ -209,16 +211,22 @@ class BookingApplicationService {
         }
 
         if (bf.autoApproved) {
-          globalCounter.numberOfApproved++;
+          if (globalCounter != null) {
+            globalCounter.numberOfApproved++;
+          }
           localCounter.numberOfApproved++;
           ba.approvedBy = SYSTEM;
           ba.notesOnApproval = AUTO_APPROVED;
           ba.timeOfApproval = now;
         } else {
-          globalCounter.numberOfNew++;
+          if (globalCounter != null) {
+            globalCounter.numberOfNew++;
+          }
           localCounter.numberOfNew++;
         }
-        globalCounter.totalApplications++;
+        if (globalCounter != null) {
+          globalCounter.totalApplications++;
+        }
         localCounter.totalApplications++;
 
         //if auto approved, then generate the token
@@ -231,8 +239,12 @@ class BookingApplicationService {
         if (globalCounter != null) {
           tx.set(globalCounterRef, globalCounter.toJson());
         }
+
+        isSucess = true;
       } catch (e) {
         exception = e;
+        print("Application ");
+        isSucess = false;
       }
     });
 
@@ -328,6 +340,7 @@ class BookingApplicationService {
         if (status == ApplicationStatus.APPROVED) {
           application.timeOfApproval = now;
           application.notesOnApproval = note;
+          application.approvedBy = userPhone;
           if (globalCounter != null) {
             globalCounter.numberOfApproved++;
           }
@@ -340,6 +353,7 @@ class BookingApplicationService {
         } else if (status == ApplicationStatus.COMPLETED) {
           application.timeOfCompletion = now;
           application.notesOnCompletion = note;
+          application.completedBy = userPhone;
           if (globalCounter != null) {
             globalCounter.numberOfCompleted++;
           }
@@ -349,6 +363,7 @@ class BookingApplicationService {
         } else if (status == ApplicationStatus.INPROCESS) {
           application.timeOfInProcess = now;
           application.notesInProcess = note;
+          application.processedBy = userPhone;
           if (globalCounter != null) {
             globalCounter.numberOfInProcess++;
           }
@@ -358,6 +373,7 @@ class BookingApplicationService {
         } else if (status == ApplicationStatus.ONHOLD) {
           application.timeOfPuttingOnHold = now;
           application.notesOnPuttingOnHold = note;
+          application.putOnHoldBy = userPhone;
           if (globalCounter != null) {
             globalCounter.numberOfPutOnHold++;
           }
@@ -367,6 +383,7 @@ class BookingApplicationService {
         } else if (status == ApplicationStatus.REJECTED) {
           application.timeOfRejection = now;
           application.notesOnRejection = note;
+          application.rejectedBy = userPhone;
           if (globalCounter != null) {
             globalCounter.numberOfRejected++;
           }

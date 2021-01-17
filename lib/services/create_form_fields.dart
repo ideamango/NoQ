@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:noq/db/db_model/booking_form.dart';
+import 'package:noq/enum/field_type.dart';
 
 import 'package:noq/style.dart';
 
@@ -99,7 +100,7 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
     }
     Widget newField;
     switch (field.type) {
-      case "TEXT":
+      case FieldType.TEXT:
         {
           newField = TextFormField(
             obscureText: false,
@@ -119,7 +120,7 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
           );
         }
         break;
-      case "NUMBER":
+      case FieldType.NUMBER:
         {
           newField = TextFormField(
             obscureText: false,
@@ -139,7 +140,7 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
           );
         }
         break;
-      case "OPTIONS":
+      case FieldType.OPTIONS:
         {
           // list.add("Diabetes");
           // list.add("Asthma");
@@ -253,7 +254,8 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
                       //color: Colors.grey,
                       //   height: MediaQuery.of(context).size.height * .55,
                       width: MediaQuery.of(context).size.width * .95,
-                      child: buildChildItem(dummyForm.getFormFields()[index], index),
+                      child: buildChildItem(
+                          dummyForm.getFormFields()[index], index),
                     );
                   },
                   itemCount: dummyForm.getFormFields().length,
