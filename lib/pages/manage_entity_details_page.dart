@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:geolocator/geolocator.dart';
@@ -61,7 +62,7 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
   //Fields used in info - animated container
   double _width = 0;
   double _height = 0;
-  EdgeInsets _margin = EdgeInsets.fromLTRB(0, 0, 0, 0);
+  EdgeInsets _margin = EdgeInsets.fromLTRB(5, 0, 5, 0);
   Widget _text;
   bool _isExpanded = false;
   bool _publicExpandClick = false;
@@ -2290,7 +2291,7 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
           _item = '+91' + newValue;
         },
       );
-
+      double rowWidth = MediaQuery.of(context).size.width * .9;
       return MaterialApp(
         debugShowCheckedModeBanner: false,
         // title: 'Add child entities',
@@ -2399,7 +2400,7 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
                 },
               ),
               title: Text(Utils.getEntityTypeDisplayName(entity.type),
-                  style: whiteBoldTextStyle1),
+                  style: drawerdefaultTextStyle),
             ),
             body: Center(
               child: new SafeArea(
@@ -2409,442 +2410,17 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
                   key: _entityDetailsFormKey,
                   autovalidate: _autoValidate,
                   child: new ListView(
-                    padding: const EdgeInsets.all(5.0),
+                    padding: const EdgeInsets.all(10.0),
                     children: <Widget>[
                       Container(
-                        width: MediaQuery.of(context).size.width * .9,
-                        margin: EdgeInsets.all(0),
+                        decoration: BoxDecoration(
+                            border: Border.all(color: containerColor),
+                            color: Colors.grey[50],
+                            shape: BoxShape.rectangle,
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(5.0))),
+                        margin: EdgeInsets.all(5),
                         padding: EdgeInsets.all(0),
-                        // padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
-                        decoration: BoxDecoration(
-                            border: Border.all(color: containerColor),
-                            color: Colors.grey[50],
-                            shape: BoxShape.rectangle,
-                            borderRadius:
-                                BorderRadius.all(Radius.circular(5.0))),
-                        child: Column(
-                          mainAxisSize: MainAxisSize.max,
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: <Widget>[
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              mainAxisSize: MainAxisSize.max,
-                              children: <Widget>[
-                                Container(
-                                  width:
-                                      MediaQuery.of(context).size.width * .15,
-                                  child: FlatButton(
-                                      visualDensity: VisualDensity.compact,
-                                      padding: EdgeInsets.all(0),
-                                      child: Row(
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: <Widget>[
-                                          Text('Public',
-                                              style: TextStyle(fontSize: 12)),
-                                          SizedBox(
-                                            width: MediaQuery.of(context)
-                                                    .size
-                                                    .width *
-                                                .05,
-                                            height: MediaQuery.of(context)
-                                                    .size
-                                                    .height *
-                                                .02,
-                                            child: Icon(
-                                              Icons.info,
-                                              color: Colors.blueGrey[600],
-                                              size: 14,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                      onPressed: () {
-                                        if (!_isExpanded) {
-                                          setState(() {
-                                            _publicExpandClick = true;
-                                            _isExpanded = true;
-                                            _margin =
-                                                EdgeInsets.fromLTRB(0, 0, 0, 8);
-                                            _width = MediaQuery.of(context)
-                                                    .size
-                                                    .width *
-                                                .9;
-                                            _text = RichText(
-                                                text: TextSpan(
-                                                    style: subHeadingTextStyle,
-                                                    children: <TextSpan>[
-                                                  TextSpan(
-                                                      text: publicInfo,
-                                                      style:
-                                                          buttonXSmlTextStyle)
-                                                ]));
-
-                                            _height = 60;
-                                          });
-                                        } else {
-                                          //if bookable info is being shown
-                                          if (_publicExpandClick) {
-                                            setState(() {
-                                              _width = 0;
-                                              _height = 0;
-                                              _isExpanded = false;
-                                              _publicExpandClick = false;
-                                            });
-                                          } else {
-                                            setState(() {
-                                              _publicExpandClick = true;
-                                              _activeExpandClick = false;
-                                              _bookExpandClick = false;
-                                              _isExpanded = true;
-                                              _margin = EdgeInsets.fromLTRB(
-                                                  0, 0, 0, 8);
-                                              _width = MediaQuery.of(context)
-                                                      .size
-                                                      .width *
-                                                  .9;
-                                              _text = RichText(
-                                                  text: TextSpan(
-                                                      style:
-                                                          subHeadingTextStyle,
-                                                      children: <TextSpan>[
-                                                    TextSpan(
-                                                        text: publicInfo,
-                                                        style:
-                                                            buttonXSmlTextStyle)
-                                                  ]));
-
-                                              _height = 60;
-                                            });
-                                          }
-                                        }
-                                      }),
-                                ),
-                                SizedBox(
-                                  height:
-                                      MediaQuery.of(context).size.height * .08,
-                                  width:
-                                      MediaQuery.of(context).size.width * .14,
-                                  child: Transform.scale(
-                                    scale: 0.6,
-                                    alignment: Alignment.centerLeft,
-                                    child: Switch(
-                                      materialTapTargetSize:
-                                          MaterialTapTargetSize.shrinkWrap,
-                                      value: isPublic,
-                                      onChanged: (value) {
-                                        setState(() {
-                                          isPublic = value;
-                                          entity.isPublic = value;
-                                          print(isPublic);
-                                          //}
-                                        });
-                                      },
-                                      // activeTrackColor: Colors.green,
-                                      activeColor: highlightColor,
-                                      inactiveThumbColor: Colors.grey[300],
-                                    ),
-                                  ),
-                                ),
-                                Container(
-                                  width: MediaQuery.of(context).size.width * .2,
-                                  child: FlatButton(
-                                      visualDensity: VisualDensity.compact,
-                                      padding: EdgeInsets.all(0),
-                                      child: Row(
-                                          mainAxisSize: MainAxisSize.min,
-                                          children: <Widget>[
-                                            Text('Bookable',
-                                                style: TextStyle(fontSize: 12)),
-                                            SizedBox(
-                                              width: MediaQuery.of(context)
-                                                      .size
-                                                      .width *
-                                                  .05,
-                                              height: MediaQuery.of(context)
-                                                      .size
-                                                      .height *
-                                                  .02,
-                                              child: Icon(Icons.info,
-                                                  color: Colors.blueGrey[600],
-                                                  size: 14),
-                                            ),
-                                          ]),
-                                      onPressed: () {
-                                        if (!_isExpanded) {
-                                          setState(() {
-                                            _bookExpandClick = true;
-                                            _isExpanded = true;
-                                            _margin =
-                                                EdgeInsets.fromLTRB(0, 0, 0, 8);
-                                            _width = MediaQuery.of(context)
-                                                    .size
-                                                    .width *
-                                                .9;
-                                            _text = RichText(
-                                                text: TextSpan(
-                                                    style: subHeadingTextStyle,
-                                                    children: <TextSpan>[
-                                                  TextSpan(
-                                                      text: bookableInfo,
-                                                      style:
-                                                          buttonXSmlTextStyle)
-                                                ]));
-                                            _height = 60;
-                                          });
-                                        } else {
-                                          //if bookable info is being shown
-                                          if (_bookExpandClick) {
-                                            setState(() {
-                                              _width = 0;
-                                              _height = 0;
-                                              _isExpanded = false;
-                                              _bookExpandClick = false;
-                                            });
-                                          } else {
-                                            setState(() {
-                                              _publicExpandClick = false;
-                                              _activeExpandClick = false;
-                                              _bookExpandClick = true;
-                                              _isExpanded = true;
-                                              _margin = EdgeInsets.fromLTRB(
-                                                  0, 0, 0, 8);
-                                              _width = MediaQuery.of(context)
-                                                      .size
-                                                      .width *
-                                                  .9;
-                                              _text = RichText(
-                                                  text: TextSpan(
-                                                      style:
-                                                          subHeadingTextStyle,
-                                                      children: <TextSpan>[
-                                                    TextSpan(
-                                                        text: bookableInfo,
-                                                        style:
-                                                            buttonXSmlTextStyle)
-                                                  ]));
-
-                                              _height = 60;
-                                            });
-                                          }
-                                        }
-                                      }),
-                                ),
-                                SizedBox(
-                                  height:
-                                      MediaQuery.of(context).size.height * .08,
-                                  width:
-                                      MediaQuery.of(context).size.width * .14,
-                                  child: Transform.scale(
-                                    scale: 0.6,
-                                    alignment: Alignment.centerLeft,
-                                    child: Switch(
-                                      materialTapTargetSize:
-                                          MaterialTapTargetSize.shrinkWrap,
-                                      value: isBookable,
-                                      onChanged: (value) {
-                                        setState(() {
-                                          isBookable = value;
-                                          entity.isBookable = value;
-
-                                          if (value) {
-                                            showConfirmationDialog();
-                                            //TODO: SMita - show msg with info, yes/no
-                                          }
-                                          print(isBookable);
-                                        });
-                                      },
-                                      // activeTrackColor: Colors.green,
-                                      activeColor: highlightColor,
-                                      inactiveThumbColor: Colors.grey[300],
-                                    ),
-                                  ),
-                                ),
-                                Container(
-                                  width:
-                                      MediaQuery.of(context).size.width * .15,
-                                  child: FlatButton(
-                                    visualDensity: VisualDensity.compact,
-                                    padding: EdgeInsets.all(0),
-                                    child: Row(
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: <Widget>[
-                                          Text('Active',
-                                              style: TextStyle(fontSize: 12)),
-                                          SizedBox(
-                                            width: MediaQuery.of(context)
-                                                    .size
-                                                    .width *
-                                                .05,
-                                            height: MediaQuery.of(context)
-                                                    .size
-                                                    .height *
-                                                .02,
-                                            child: Icon(Icons.info,
-                                                color: Colors.blueGrey[600],
-                                                size: 15),
-                                          ),
-                                        ]),
-                                    onPressed: () {
-                                      if (!_isExpanded) {
-                                        setState(() {
-                                          _activeExpandClick = true;
-                                          _isExpanded = true;
-                                          _margin =
-                                              EdgeInsets.fromLTRB(0, 0, 0, 8);
-                                          _width = MediaQuery.of(context)
-                                                  .size
-                                                  .width *
-                                              .9;
-                                          _text = RichText(
-                                              text: TextSpan(
-                                                  style: subHeadingTextStyle,
-                                                  children: <TextSpan>[
-                                                TextSpan(
-                                                    text: activeDef,
-                                                    style: buttonXSmlTextStyle)
-                                              ]));
-
-                                          _height = 60;
-                                        });
-                                      } else {
-                                        //if bookable info is being shown
-                                        if (_activeExpandClick) {
-                                          setState(() {
-                                            _width = 0;
-                                            _height = 0;
-                                            _isExpanded = false;
-                                            _activeExpandClick = false;
-                                          });
-                                        } else {
-                                          setState(() {
-                                            _publicExpandClick = false;
-                                            _activeExpandClick = true;
-                                            _bookExpandClick = false;
-                                            _isExpanded = true;
-                                            _margin =
-                                                EdgeInsets.fromLTRB(0, 0, 0, 8);
-                                            _width = MediaQuery.of(context)
-                                                    .size
-                                                    .width *
-                                                .9;
-                                            _text = RichText(
-                                                text: TextSpan(
-                                                    style: subHeadingTextStyle,
-                                                    children: <TextSpan>[
-                                                  TextSpan(
-                                                      text: activeDef,
-                                                      style:
-                                                          buttonXSmlTextStyle)
-                                                ]));
-
-                                            _height = 60;
-                                          });
-                                        }
-                                      }
-                                    },
-                                  ),
-                                ),
-                                SizedBox(
-                                  height:
-                                      MediaQuery.of(context).size.height * .08,
-                                  width:
-                                      MediaQuery.of(context).size.width * .14,
-                                  child: Transform.scale(
-                                    scale: 0.6,
-                                    alignment: Alignment.centerLeft,
-                                    child: Switch(
-                                      materialTapTargetSize:
-                                          MaterialTapTargetSize.shrinkWrap,
-                                      value: isActive,
-                                      onChanged: (value) {
-                                        setState(() {
-                                          if (value) {
-                                            validateField = true;
-                                            _autoValidate = true;
-                                            bool retVal = false;
-                                            bool locValid = false;
-                                            if (validateAllFields())
-                                              retVal = true;
-                                            if (validateLatLon())
-                                              locValid = true;
-
-                                            if (!locValid || !retVal) {
-                                              if (!locValid) {
-                                                Utils.showMyFlushbar(
-                                                    context,
-                                                    Icons.info_outline,
-                                                    Duration(
-                                                      seconds: 6,
-                                                    ),
-                                                    shouldSetLocation,
-                                                    pressUseCurrentLocation);
-                                              } else if (!retVal) {
-                                                //Show flushbar with info that fields has invalid data
-                                                Utils.showMyFlushbar(
-                                                    context,
-                                                    Icons.info_outline,
-                                                    Duration(
-                                                      seconds: 6,
-                                                    ),
-                                                    "Missing Information!!",
-                                                    'Making a place "ACTIVE" requires all mandatory information to be filled in. Please provide the details and Save.');
-                                              }
-                                            } else {
-                                              validateField = false;
-                                              isActive = value;
-                                              entity.isActive = value;
-                                              print(isActive);
-                                            }
-                                          } else {
-                                            isActive = value;
-                                            validateField = false;
-                                            _autoValidate = false;
-                                            entity.isActive = value;
-                                            print(isActive);
-                                          }
-                                        });
-                                      },
-                                      // activeTrackColor: Colors.green,
-                                      activeColor: highlightColor,
-                                      inactiveThumbColor: Colors.grey[300],
-                                    ),
-                                  ),
-                                )
-                              ],
-                            ),
-                            AnimatedContainer(
-                              padding: EdgeInsets.all(2),
-                              margin: _margin,
-                              // Use the properties stored in the State class.
-                              width: _width,
-                              height: _height,
-                              alignment: Alignment.center,
-                              decoration: BoxDecoration(
-                                color: Colors.blueGrey[500],
-                                border: Border.all(color: primaryAccentColor),
-                                borderRadius: _borderRadius,
-                              ),
-                              // Define how long the animation should take.
-                              duration: Duration(seconds: 1),
-                              // Provide an optional curve to make the animation feel smoother.
-                              curve: Curves.easeInOutCirc,
-                              child: Center(child: _text),
-                            ),
-                          ],
-                        ),
-                      ),
-
-                      SizedBox(
-                        height: 7,
-                      ),
-
-                      Container(
-                        decoration: BoxDecoration(
-                            border: Border.all(color: containerColor),
-                            color: Colors.grey[50],
-                            shape: BoxShape.rectangle,
-                            borderRadius:
-                                BorderRadius.all(Radius.circular(5.0))),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: <Widget>[
@@ -2924,6 +2500,8 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
                         height: 7,
                       ),
                       Container(
+                        margin: EdgeInsets.all(5),
+                        padding: EdgeInsets.all(0),
                         decoration: BoxDecoration(
                             border: Border.all(color: containerColor),
                             color: Colors.grey[50],
@@ -2999,6 +2577,8 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
                         height: 7,
                       ),
                       Container(
+                        margin: EdgeInsets.all(5),
+                        padding: EdgeInsets.all(0),
                         decoration: BoxDecoration(
                             border: Border.all(color: containerColor),
                             color: Colors.grey[50],
@@ -3029,29 +2609,6 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
                                                 color: Colors.white,
                                                 fontSize: 15),
                                           ),
-                                          SizedBox(
-                                              width: MediaQuery.of(context)
-                                                      .size
-                                                      .width *
-                                                  0.5),
-                                          InkWell(
-                                            child: Text(
-                                              "Clear",
-                                              style:
-                                                  offerClearTextStyleWithUnderLine,
-                                            ),
-                                            onTap: () {
-                                              setState(() {
-                                                clearOfferDetail();
-                                              });
-                                            },
-                                          ),
-                                          // RaisedButton.icon(
-                                          //   onPressed: clearOfferDetail,
-                                          //   icon: Icon(Icons.clear_sharp,
-                                          //       size: 15.0),
-                                          //   label: Text("Clear"),
-                                          // )
                                         ],
                                       ),
                                       backgroundColor: Colors.blueGrey[500],
@@ -3089,6 +2646,29 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
                                           Expanded(child: endDateField),
                                         ],
                                       ),
+                                      Row(
+                                        children: [
+                                          Container(
+                                              width: MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                  .3,
+                                              child: FlatButton(
+                                                //elevation: 20,
+                                                color: Colors.transparent,
+                                                splashColor: highlightColor,
+                                                textColor: btnColor,
+                                                shape: RoundedRectangleBorder(
+                                                    side: BorderSide(
+                                                        color: btnColor)),
+                                                child: Text(
+                                                  'Clear',
+                                                  textAlign: TextAlign.center,
+                                                ),
+                                                onPressed: clearOfferDetail,
+                                              )),
+                                        ],
+                                      )
                                     ],
                                   ),
                                 ),
@@ -3101,6 +2681,8 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
                         height: 7,
                       ),
                       Container(
+                        margin: EdgeInsets.all(5),
+                        padding: EdgeInsets.all(0),
                         decoration: BoxDecoration(
                             border: Border.all(color: containerColor),
                             color: Colors.grey[50],
@@ -3132,7 +2714,6 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
                                                 color: Colors.white,
                                                 fontSize: 15),
                                           ),
-                                          SizedBox(width: 5),
                                         ],
                                       ),
                                       backgroundColor: Colors.blueGrey[500],
@@ -3195,9 +2776,7 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
                                     children: <Widget>[
                                       clearBtn,
                                       Container(
-                                        width:
-                                            MediaQuery.of(context).size.width *
-                                                .6,
+                                        width: rowWidth * .58,
                                         child: RaisedButton(
                                           elevation: 10,
                                           color: btnColor,
@@ -3226,6 +2805,8 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
                       ),
 
                       Container(
+                        margin: EdgeInsets.all(5),
+                        padding: EdgeInsets.all(0),
                         decoration: BoxDecoration(
                             border: Border.all(color: containerColor),
                             color: Colors.grey[50],
@@ -3307,6 +2888,8 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
                       ),
                       //THIS CONTAINER
                       Container(
+                        margin: EdgeInsets.all(5),
+                        padding: EdgeInsets.all(0),
                         decoration: BoxDecoration(
                             border: Border.all(color: containerColor),
                             color: Colors.grey[50],
@@ -3378,7 +2961,7 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
                                       padding: EdgeInsets.fromLTRB(0, 0, 4, 0),
                                       height:
                                           MediaQuery.of(context).size.width *
-                                              .13,
+                                              .18,
                                       decoration: BoxDecoration(
                                           border:
                                               Border.all(color: borderColor),
@@ -3471,6 +3054,8 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
                       ),
                       //THIS CONTAINER
                       Container(
+                        margin: EdgeInsets.all(5),
+                        padding: EdgeInsets.all(0),
                         decoration: BoxDecoration(
                             border: Border.all(color: containerColor),
                             color: Colors.white,
@@ -3596,6 +3181,443 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
                             ),
                           ],
                         ),
+                      ),
+
+                      Container(
+                        width: MediaQuery.of(context).size.width * .9,
+                        margin: EdgeInsets.all(5),
+                        padding: EdgeInsets.all(0),
+                        // padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
+                        decoration: BoxDecoration(
+                            border: Border.all(color: containerColor),
+                            color: Colors.grey[50],
+                            shape: BoxShape.rectangle,
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(5.0))),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.max,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: <Widget>[
+                            Column(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              mainAxisSize: MainAxisSize.max,
+                              children: <Widget>[
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Container(
+                                      alignment: Alignment.centerLeft,
+                                      padding:
+                                          EdgeInsets.fromLTRB(10, 0, 10, 0),
+                                      width: rowWidth * .4,
+                                      child: FlatButton(
+                                          visualDensity: VisualDensity.compact,
+                                          padding: EdgeInsets.all(0),
+                                          child: Row(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: <Widget>[
+                                              Text('Public',
+                                                  style:
+                                                      TextStyle(fontSize: 14)),
+                                              SizedBox(
+                                                width: MediaQuery.of(context)
+                                                        .size
+                                                        .width *
+                                                    .1,
+                                                // height: MediaQuery.of(context)
+                                                //         .size
+                                                //         .height *
+                                                //     .02,
+                                                child: Icon(
+                                                  Icons.info,
+                                                  color: Colors.blueGrey[600],
+                                                  size: 22,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                          onPressed: () {
+                                            if (!_isExpanded) {
+                                              setState(() {
+                                                _publicExpandClick = true;
+                                                _isExpanded = true;
+                                                _margin = EdgeInsets.fromLTRB(
+                                                    0, 0, 0, 8);
+                                                _width = MediaQuery.of(context)
+                                                        .size
+                                                        .width *
+                                                    .9;
+                                                _text = AutoSizeText(activeDef,
+                                                    minFontSize: 8,
+                                                    maxFontSize: 14,
+                                                    style:
+                                                        textBotSheetTextStyle);
+
+                                                _height = 60;
+                                              });
+                                            } else {
+                                              //if bookable info is being shown
+                                              if (_publicExpandClick) {
+                                                setState(() {
+                                                  _width = 0;
+                                                  _height = 0;
+                                                  _isExpanded = false;
+                                                  _publicExpandClick = false;
+                                                });
+                                              } else {
+                                                setState(() {
+                                                  _publicExpandClick = true;
+                                                  _activeExpandClick = false;
+                                                  _bookExpandClick = false;
+                                                  _isExpanded = true;
+                                                  _margin = EdgeInsets.fromLTRB(
+                                                      0, 0, 0, 8);
+                                                  _width =
+                                                      MediaQuery.of(context)
+                                                              .size
+                                                              .width *
+                                                          .9;
+                                                  _text = AutoSizeText(
+                                                      activeDef,
+                                                      minFontSize: 8,
+                                                      maxFontSize: 14,
+                                                      style:
+                                                          textBotSheetTextStyle);
+
+                                                  _height = 60;
+                                                });
+                                              }
+                                            }
+                                          }),
+                                    ),
+                                    SizedBox(
+                                      height:
+                                          MediaQuery.of(context).size.height *
+                                              .08,
+                                      width: MediaQuery.of(context).size.width *
+                                          .15,
+                                      child: Transform.scale(
+                                        scale: 1,
+                                        alignment: Alignment.centerRight,
+                                        child: Switch(
+                                          materialTapTargetSize:
+                                              MaterialTapTargetSize.shrinkWrap,
+                                          value: isPublic,
+                                          onChanged: (value) {
+                                            setState(() {
+                                              isPublic = value;
+                                              entity.isPublic = value;
+                                              print(isPublic);
+                                              //}
+                                            });
+                                          },
+                                          // activeTrackColor: Colors.green,
+                                          activeColor: Colors.green,
+                                          inactiveThumbColor: Colors.grey[300],
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Container(
+                                      alignment: Alignment.centerLeft,
+                                      padding:
+                                          EdgeInsets.fromLTRB(10, 0, 10, 0),
+                                      width: rowWidth * .4,
+                                      child: FlatButton(
+                                          visualDensity: VisualDensity.compact,
+                                          padding: EdgeInsets.all(0),
+                                          child: Row(
+                                              mainAxisSize: MainAxisSize.min,
+                                              children: <Widget>[
+                                                Text('Bookable',
+                                                    style: TextStyle(
+                                                        fontSize: 14)),
+                                                SizedBox(
+                                                  width: MediaQuery.of(context)
+                                                          .size
+                                                          .width *
+                                                      .1,
+                                                  // height: MediaQuery.of(context)
+                                                  //         .size
+                                                  //         .height *
+                                                  //     .02,
+                                                  child: Icon(Icons.info,
+                                                      color:
+                                                          Colors.blueGrey[600],
+                                                      size: 22),
+                                                ),
+                                              ]),
+                                          onPressed: () {
+                                            if (!_isExpanded) {
+                                              setState(() {
+                                                _bookExpandClick = true;
+                                                _isExpanded = true;
+                                                _margin = EdgeInsets.fromLTRB(
+                                                    0, 0, 0, 8);
+                                                _width = MediaQuery.of(context)
+                                                        .size
+                                                        .width *
+                                                    .9;
+                                                _text = AutoSizeText(activeDef,
+                                                    minFontSize: 8,
+                                                    maxFontSize: 14,
+                                                    style:
+                                                        textBotSheetTextStyle);
+                                                _height = 60;
+                                              });
+                                            } else {
+                                              //if bookable info is being shown
+                                              if (_bookExpandClick) {
+                                                setState(() {
+                                                  _width = 0;
+                                                  _height = 0;
+                                                  _isExpanded = false;
+                                                  _bookExpandClick = false;
+                                                });
+                                              } else {
+                                                setState(() {
+                                                  _publicExpandClick = false;
+                                                  _activeExpandClick = false;
+                                                  _bookExpandClick = true;
+                                                  _isExpanded = true;
+                                                  _margin = EdgeInsets.fromLTRB(
+                                                      0, 0, 0, 8);
+                                                  _width =
+                                                      MediaQuery.of(context)
+                                                              .size
+                                                              .width *
+                                                          .9;
+                                                  _text = AutoSizeText(
+                                                      activeDef,
+                                                      minFontSize: 8,
+                                                      maxFontSize: 14,
+                                                      style:
+                                                          textBotSheetTextStyle);
+
+                                                  _height = 60;
+                                                });
+                                              }
+                                            }
+                                          }),
+                                    ),
+                                    SizedBox(
+                                      height:
+                                          MediaQuery.of(context).size.height *
+                                              .08,
+                                      width: MediaQuery.of(context).size.width *
+                                          .15,
+                                      child: Transform.scale(
+                                        scale: 1,
+                                        alignment: Alignment.centerRight,
+                                        child: Switch(
+                                          materialTapTargetSize:
+                                              MaterialTapTargetSize.shrinkWrap,
+                                          value: isBookable,
+                                          onChanged: (value) {
+                                            setState(() {
+                                              isBookable = value;
+                                              entity.isBookable = value;
+
+                                              if (value) {
+                                                showConfirmationDialog();
+                                                //TODO: SMita - show msg with info, yes/no
+                                              }
+                                              print(isBookable);
+                                            });
+                                          },
+                                          // activeTrackColor: Colors.green,
+                                          activeColor: Colors.green,
+                                          inactiveThumbColor: Colors.grey[300],
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Container(
+                                      alignment: Alignment.centerLeft,
+                                      padding:
+                                          EdgeInsets.fromLTRB(10, 0, 10, 0),
+                                      width: rowWidth * .4,
+                                      child: FlatButton(
+                                        visualDensity: VisualDensity.compact,
+                                        padding: EdgeInsets.all(0),
+                                        child: Row(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: <Widget>[
+                                              Text('Active',
+                                                  style:
+                                                      TextStyle(fontSize: 14)),
+                                              SizedBox(
+                                                width: MediaQuery.of(context)
+                                                        .size
+                                                        .width *
+                                                    .1,
+                                                // height: MediaQuery.of(context)
+                                                //         .size
+                                                //         .height *
+                                                //     .02,
+                                                child: Icon(Icons.info,
+                                                    color: Colors.blueGrey[600],
+                                                    size: 22),
+                                              ),
+                                            ]),
+                                        onPressed: () {
+                                          if (!_isExpanded) {
+                                            setState(() {
+                                              _activeExpandClick = true;
+                                              _isExpanded = true;
+                                              _margin = EdgeInsets.fromLTRB(
+                                                  0, 0, 0, 8);
+                                              _width = MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                  .9;
+                                              _text = AutoSizeText(activeDef,
+                                                  minFontSize: 8,
+                                                  maxFontSize: 14,
+                                                  style: textBotSheetTextStyle);
+
+                                              _height = 60;
+                                            });
+                                          } else {
+                                            //if bookable info is being shown
+                                            if (_activeExpandClick) {
+                                              setState(() {
+                                                _width = 0;
+                                                _height = 0;
+                                                _isExpanded = false;
+                                                _activeExpandClick = false;
+                                              });
+                                            } else {
+                                              setState(() {
+                                                _publicExpandClick = false;
+                                                _activeExpandClick = true;
+                                                _bookExpandClick = false;
+                                                _isExpanded = true;
+                                                _margin = EdgeInsets.fromLTRB(
+                                                    0, 0, 0, 8);
+                                                _width = MediaQuery.of(context)
+                                                        .size
+                                                        .width *
+                                                    .9;
+                                                _text = AutoSizeText(activeDef,
+                                                    minFontSize: 8,
+                                                    maxFontSize: 14,
+                                                    style:
+                                                        textBotSheetTextStyle);
+
+                                                _height = 60;
+                                              });
+                                            }
+                                          }
+                                        },
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      height:
+                                          MediaQuery.of(context).size.height *
+                                              .08,
+                                      width: MediaQuery.of(context).size.width *
+                                          .15,
+                                      child: Transform.scale(
+                                        scale: 1,
+                                        alignment: Alignment.centerRight,
+                                        child: Switch(
+                                          materialTapTargetSize:
+                                              MaterialTapTargetSize.shrinkWrap,
+                                          value: isActive,
+                                          onChanged: (value) {
+                                            setState(() {
+                                              if (value) {
+                                                validateField = true;
+                                                _autoValidate = true;
+                                                bool retVal = false;
+                                                bool locValid = false;
+                                                if (validateAllFields())
+                                                  retVal = true;
+                                                if (validateLatLon())
+                                                  locValid = true;
+
+                                                if (!locValid || !retVal) {
+                                                  if (!locValid) {
+                                                    Utils.showMyFlushbar(
+                                                        context,
+                                                        Icons.info_outline,
+                                                        Duration(
+                                                          seconds: 6,
+                                                        ),
+                                                        shouldSetLocation,
+                                                        pressUseCurrentLocation);
+                                                  } else if (!retVal) {
+                                                    //Show flushbar with info that fields has invalid data
+                                                    Utils.showMyFlushbar(
+                                                        context,
+                                                        Icons.info_outline,
+                                                        Duration(
+                                                          seconds: 6,
+                                                        ),
+                                                        "Missing Information!!",
+                                                        'Making a place "ACTIVE" requires all mandatory information to be filled in. Please provide the details and Save.');
+                                                  }
+                                                } else {
+                                                  validateField = false;
+                                                  isActive = value;
+                                                  entity.isActive = value;
+                                                  print(isActive);
+                                                }
+                                              } else {
+                                                isActive = value;
+                                                validateField = false;
+                                                _autoValidate = false;
+                                                entity.isActive = value;
+                                                print(isActive);
+                                              }
+                                            });
+                                          },
+                                          // activeTrackColor: Colors.green,
+                                          activeColor: Colors.green,
+                                          inactiveThumbColor: Colors.grey[300],
+                                        ),
+                                      ),
+                                    )
+                                  ],
+                                ),
+                              ],
+                            ),
+                            AnimatedContainer(
+                              padding: EdgeInsets.all(5),
+                              margin: EdgeInsets.all(5),
+                              // Use the properties stored in the State class.
+                              width: _width,
+                              height: _height,
+                              alignment: Alignment.center,
+                              decoration: BoxDecoration(
+                                color: Colors.transparent,
+                                border: Border.all(color: Colors.blueGrey),
+                                borderRadius: _borderRadius,
+                              ),
+                              // Define how long the animation should take.
+                              duration: Duration(seconds: 1),
+                              // Provide an optional curve to make the animation feel smoother.
+                              curve: Curves.easeInOutCirc,
+                              child: Center(child: _text),
+                            ),
+                          ],
+                        ),
+                      ),
+
+                      SizedBox(
+                        height: 7,
                       ),
                       Builder(
                         builder: (context) => RaisedButton(
