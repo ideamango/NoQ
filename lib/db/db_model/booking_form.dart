@@ -200,6 +200,7 @@ class FormInputFieldNumber extends Field {
     field.isMeta = json['isMeta'];
     field.id = json['id'];
     field.response = json['response'];
+    field.key = json["key"];
 
     return field;
   }
@@ -242,6 +243,7 @@ class FormInputFieldOptions extends Field {
         json['isMultiSelect']);
     field.isMeta = json['isMeta'];
     field.id = json['id'];
+    field.key = json["key"];
     return field;
   }
 
@@ -311,6 +313,7 @@ class FormInputFieldAttachment extends Field {
     field.responseFilePaths =
         convertToPathValuesFromJson(json['responseFilePaths']);
     field.maxAttachments = json['maxAttachments'];
+    field.key = json["key"];
 
     return field;
   }
@@ -352,6 +355,7 @@ class FormInputFieldDateTime extends Field {
     field.responseDateTime = json['responseDateTime'] != null
         ? DateTime.fromMillisecondsSinceEpoch(json['responseDateTime'])
         : null;
+    field.key = json["key"];
 
     return field;
   }
@@ -387,7 +391,7 @@ class FormInputFieldPhone extends Field {
     field.isMeta = json['isMeta'];
     field.id = json['id'];
     field.responsePhone = json['responsePhone'];
-
+    field.key = json["key"];
     return field;
   }
 }
@@ -428,19 +432,20 @@ class FormInputFieldOptionsWithAttachments extends Field {
   static FormInputFieldOptionsWithAttachments fromJson(
       Map<String, dynamic> json) {
     if (json == null) return null;
-    FormInputFieldOptionsWithAttachments fields =
+    FormInputFieldOptionsWithAttachments field =
         FormInputFieldOptionsWithAttachments(
             json['label'],
             json['isMandatory'],
             json['infoMessage'],
             convertToValuesFromJson(json['options']),
             json['isMultiSelect']);
-    fields.isMeta = json["isMeta"];
-    fields.id = json['id'];
-    fields.responseFilePaths =
+    field.isMeta = json["isMeta"];
+    field.id = json['id'];
+    field.responseFilePaths =
         convertToStringsFromJson(json['responseFilePaths']);
-    fields.maxAttachments = json['maxAttachments'];
-    return fields;
+    field.maxAttachments = json['maxAttachments'];
+    field.key = json["key"];
+    return field;
   }
 
   static List<Value> convertToValuesFromJson(List<dynamic> valuesJson) {
@@ -507,6 +512,7 @@ class FormInputFieldBool extends Field {
     field.id = json["id"];
     field.isMeta = json["isMeta"];
     field.response = json['response'];
+    field.key = json["key"];
 
     return field;
   }
