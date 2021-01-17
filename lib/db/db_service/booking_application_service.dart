@@ -426,8 +426,11 @@ class BookingApplicationService {
         if (globalCounter != null) {
           tx.set(globalCounterRef, globalCounter.toJson());
         }
+
+        requestProcessed = true;
       } catch (ex) {
         requestProcessed = false;
+        print(ex.toString());
       }
     });
 

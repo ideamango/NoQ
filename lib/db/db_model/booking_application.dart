@@ -65,7 +65,7 @@ class BookingApplication {
           : null,
       'notesInProcess': notesInProcess,
       'processedBy': processedBy,
-      'timeOfAcceptance': (timeOfApproval != null)
+      'timeOfApproval': (timeOfApproval != null)
           ? timeOfApproval.millisecondsSinceEpoch
           : null,
       'notesOnApproval': notesOnApproval,
