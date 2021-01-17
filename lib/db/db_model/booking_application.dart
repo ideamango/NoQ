@@ -50,6 +50,7 @@ class BookingApplication {
   Map<String, dynamic> toJson() {
     Map<String, dynamic> map = {
       'id': id,
+      'responseForm': responseForm.toJson(),
       'bookingFormId': bookingFormId,
       'tokenId': tokenId,
       'entityId': entityId,
@@ -64,7 +65,7 @@ class BookingApplication {
           : null,
       'notesInProcess': notesInProcess,
       'processedBy': processedBy,
-      'timeOfAcceptance': (timeOfApproval != null)
+      'timeOfApproval': (timeOfApproval != null)
           ? timeOfApproval.millisecondsSinceEpoch
           : null,
       'notesOnApproval': notesOnApproval,
@@ -119,8 +120,10 @@ class BookingApplication {
           EnumToString.convertToString(FieldType.OPTIONS_ATTACHMENTS)) {
         FormInputFieldOptionsWithAttachments t = f;
         List<String> fieldValueIds = List<String>();
-        for (Value val in t.responseValues) {
-          fieldValueIds.add(val.key);
+        if (t.responseValues != null) {
+          for (Value val in t.responseValues) {
+            fieldValueIds.add(val.key);
+          }
         }
         map[t.key] = fieldValueIds;
       } else if (f.type == EnumToString.convertToString(FieldType.BOOL)) {
@@ -139,6 +142,7 @@ class BookingApplication {
     BookingApplication ba =
         BookingApplication(entityId: json['entityId'], responseForm: bf);
     ba.bookingFormId = bf.id;
+    ba.id = json['id'];
 
     ba.tokenId = json['tokenId'];
     ba.userId = json['userId'];
@@ -204,14 +208,14 @@ class BookingApplicationsOverview {
   String
       entityId; //this will be null for the global applications record for a global bookingFormId (i.e. which is shared across the Entities)
 
-  int totalApplications;
-  int numberOfNew;
-  int numberOfApproved;
-  int numberOfRejected;
-  int numberOfPutOnHold;
-  int numberOfInProcess;
-  int numberOfCompleted;
-  int numberOfCancelled;
+  int totalApplications = 0;
+  int numberOfNew = 0;
+  int numberOfApproved = 0;
+  int numberOfRejected = 0;
+  int numberOfPutOnHold = 0;
+  int numberOfInProcess = 0;
+  int numberOfCompleted = 0;
+  int numberOfCancelled = 0;
 
   Map<String, dynamic> toJson() => {
         'id': id,

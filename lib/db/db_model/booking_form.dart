@@ -34,6 +34,7 @@ class BookingForm {
   }
 
   Map<String, dynamic> toJson() => {
+        'id': id,
         'formName': formName,
         'headerMsg': headerMsg,
         'footerMsg': footerMsg,
@@ -59,6 +60,7 @@ class BookingForm {
         footerMsg: json['footerMsg'],
         autoApproved: json['autoApproved']);
 
+    bf.id = json["id"];
     bf.isSystemTemplate = json['isSystemTemplate'];
     bf._formFields = _convertToOptionValuesFromJson(json['formFields']);
 
@@ -90,6 +92,9 @@ class BookingForm {
       } else if (value["type"] ==
           EnumToString.convertToString(FieldType.OPTIONS_ATTACHMENTS)) {
         values.add(FormInputFieldOptionsWithAttachments.fromJson(value));
+      } else if (value["type"] ==
+          EnumToString.convertToString(FieldType.BOOL)) {
+        values.add(FormInputFieldBool.fromJson(value));
       }
     }
     return values;
@@ -344,8 +349,9 @@ class FormInputFieldDateTime extends Field {
         json['label'], json['isMandatory'], json['infoMessage']);
     field.isMeta = json['isMeta'];
     field.id = json['id'];
-    field.responseDateTime =
-        DateTime.fromMillisecondsSinceEpoch(json['responseDateTime']);
+    field.responseDateTime = json['responseDateTime'] != null
+        ? DateTime.fromMillisecondsSinceEpoch(json['responseDateTime'])
+        : null;
 
     return field;
   }
