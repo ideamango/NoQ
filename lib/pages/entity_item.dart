@@ -246,49 +246,43 @@ class EntityRowState extends State<EntityRow> {
                 ],
               ),
               verticalSpacer,
-              Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: <Widget>[
-                    Container(
-                      height: MediaQuery.of(context).size.height * .04,
-                      width: MediaQuery.of(context).size.width * .884,
-                      child: FlatButton(
-                        // elevation: 7,
-                        color: Colors.white,
-                        textColor: Colors.white,
-                        shape: RoundedRectangleBorder(
-                            side: BorderSide(color: Colors.blueGrey[500]),
-                            borderRadius:
-                                BorderRadius.all(Radius.circular(5.0))),
-                        splashColor: highlightColor,
-                        child: Text(
-                          'Manage Details',
-                          style:
-                              TextStyle(color: primaryDarkColor, fontSize: 13),
-                        ),
-                        // Text(
-                        //   (_metaEntity.name != null)
-                        //       ? (_metaEntity.name)
-                        //       : (_metaEntity.type),
-                        //   style: labelTextStyle,
-                        // ),
+              Container(
+                height: MediaQuery.of(context).size.height * .05,
+                width: MediaQuery.of(context).size.width * .884,
+                child: FlatButton(
+                  // elevation: 7,
+                  color: Colors.white,
+                  textColor: Colors.white,
+                  shape: RoundedRectangleBorder(
+                      side: BorderSide(color: Colors.blueGrey[500]),
+                      borderRadius: BorderRadius.all(Radius.circular(5.0))),
+                  splashColor: highlightColor,
+                  child: Text(
+                    'Manage Details',
+                    style: TextStyle(color: primaryDarkColor, fontSize: 13),
+                  ),
+                  // Text(
+                  //   (_metaEntity.name != null)
+                  //       ? (_metaEntity.name)
+                  //       : (_metaEntity.type),
+                  //   style: labelTextStyle,
+                  // ),
 
-                        //Icon(Icons.arrow_forward),
+                  //Icon(Icons.arrow_forward),
 
-                        onPressed: () {
-                          print("To Add details page");
-                          showServiceForm();
-                        },
-                      ),
-                    ),
-                  ]),
+                  onPressed: () {
+                    print("To Add details page");
+                    showServiceForm();
+                  },
+                ),
+              ),
               SizedBox(height: 5),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
                   Container(
                     width: MediaQuery.of(context).size.width * .42,
-                    height: MediaQuery.of(context).size.height * .04,
+                    height: MediaQuery.of(context).size.height * .05,
                     child: FlatButton(
                       // elevation: 7,
                       color: Colors.white,
@@ -308,7 +302,7 @@ class EntityRowState extends State<EntityRow> {
                   ),
                   Container(
                     width: MediaQuery.of(context).size.width * .42,
-                    height: MediaQuery.of(context).size.height * .04,
+                    height: MediaQuery.of(context).size.height * .05,
                     child: FlatButton(
                       // elevation: 7,
                       color: Colors.white,

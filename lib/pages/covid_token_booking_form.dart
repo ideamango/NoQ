@@ -207,7 +207,7 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage>
     idProofTypesStrList.add(Value('Aadhar'));
     idProofTypesStrList.add(Value('PAN'));
     idProofTypesStrList.forEach((element) {
-      idProofTypes.add(Item(element.value, false));
+      idProofTypes.add(Item(element, false));
     });
     medConditionsStrList.add(Value('Chronic Kidney Disease'));
     medConditionsStrList.add(Value('Liver Disease'));
@@ -227,7 +227,7 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage>
     medConditionsStrList.add(Value('Others (Specify below)'));
 
     medConditionsStrList.forEach((element) {
-      medConditions.add(Item(element.value, false));
+      medConditions.add(Item(element, false));
     });
     nameInput = FormInputFieldText("Name of Person", true,
         "Please enter your name as per Government ID proof", 50);

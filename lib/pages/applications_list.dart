@@ -45,13 +45,22 @@ class _ApplicationsListState extends State<ApplicationsList> {
   void initState() {
     super.initState();
     getGlobalState().whenComplete(() {
+      //******gettinmg dummy data -remove this afterwards */
       getListOfData();
-      if (this.mounted) {
-        setState(() {
+
+      _gs
+          .getTokenApplicationService()
+          .getApplications(widget.bookingFormId, widget.entityId, widget.status,
+              null, null, null, null, null, null, null, null)
+          .then((value) {
+        listOfBa = value;
+        if (this.mounted) {
+          setState(() {
+            initCompleted = true;
+          });
+        } else
           initCompleted = true;
-        });
-      } else
-        initCompleted = true;
+      });
     });
   }
 
@@ -903,7 +912,7 @@ class _ApplicationsListState extends State<ApplicationsList> {
           child: Scaffold(
             appBar: CustomAppBarWithBackButton(
               backRoute: UserHomePage(),
-              titleTxt: "Approved Requests",
+              titleTxt: widget.titleText,
             ),
             body: Center(
               child: Column(

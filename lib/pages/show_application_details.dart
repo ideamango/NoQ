@@ -807,6 +807,9 @@ class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
                                 color: Colors.white,
                               ),
                             ),
+                            SizedBox(
+                              width: 2,
+                            ),
                             Icon(
                               Icons.check_circle,
                               color: Colors.white,
@@ -833,6 +836,9 @@ class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
                             ),
                             // style: buttonTextStyle,
                           ),
+                          SizedBox(
+                            width: 2,
+                          ),
                           Icon(
                             Icons.pan_tool_rounded,
                             color: Colors.white,
@@ -858,6 +864,9 @@ class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
                             style: TextStyle(
                               color: Colors.white,
                             ),
+                          ),
+                          SizedBox(
+                            width: 2,
                           ),
                           Icon(
                             Icons.cancel_rounded,
