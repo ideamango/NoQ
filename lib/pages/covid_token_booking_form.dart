@@ -154,6 +154,7 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage>
 
   List<Value> idProofTypesStrList = List<Value>();
   List<Item> idProofTypes = List<Item>();
+  List<Item> frontlineList = List<Item>();
   List<Value> medConditionsStrList = List<Value>();
   List<Item> medConditions = List<Item>();
   List<File> _images = [];
@@ -168,7 +169,8 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage>
   FormInputFieldText alternatePhone;
   String _idProofType;
   FormInputFieldOptionsWithAttachments idProofField;
-  FormInputFieldOptions healthDetailsInput;
+  FormInputFieldOptionsWithAttachments frontlineWorkerField;
+  FormInputFieldOptionsWithAttachments healthDetailsInput;
   FormInputFieldText healthDetailsDesc;
   FormInputFieldText latInput;
   FormInputFieldText lonInput;
@@ -194,109 +196,49 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage>
 
     getGlobalState().whenComplete(() {
       initBookingForm();
+    });
+  }
+
+  initBookingForm() async {
+    _gs
+        .getTokenApplicationService()
+        .getBookingForm(widget.bookingFormId)
+        .then((value) {
+      if (value == null) {
+        //TODO: return to show slots page
+
+      } else {
+        bookingForm = value;
+        for (Field f in bookingForm.getFormFields()) {
+          if (f.key == "KEY10")
+            nameInput = f;
+          else if (f.key == "KEY20")
+            dobInput = f;
+          else if (f.key == "KEY30") {
+            healthDetailsInput = f; //Validate this field
+            for (Value val in healthDetailsInput.options) {
+              medConditions.add(Item(val, false));
+            }
+            healthDetailsInput.responseFilePaths = new List<String>();
+          } else if (f.key == "KEY40") {
+            frontlineWorkerField = f;
+            for (Value val in frontlineWorkerField.options) {
+              frontlineList.add(Item(val, false));
+            }
+            frontlineWorkerField.responseFilePaths = new List<String>();
+          } else if (f.key == "KEY50") {
+            idProofField = f;
+            for (Value val in idProofField.options) {
+              idProofTypes.add(Item(val, false));
+            }
+            idProofField.responseFilePaths = new List<String>();
+          }
+        }
+      }
       setState(() {
         _initCompleted = true;
       });
     });
-  }
-
-  initBookingForm() {
-    fields = List<Field>();
-    idProofTypesStrList.add(Value('Passport'));
-    idProofTypesStrList.add(Value('Driving License'));
-    idProofTypesStrList.add(Value('Aadhar'));
-    idProofTypesStrList.add(Value('PAN'));
-    idProofTypesStrList.forEach((element) {
-      idProofTypes.add(Item(element, false));
-    });
-    medConditionsStrList.add(Value('Chronic Kidney Disease'));
-    medConditionsStrList.add(Value('Liver Disease'));
-    medConditionsStrList.add(Value('Overweight and Severe Obesity'));
-    medConditionsStrList
-        .add(Value('Other Cardiovascular and Cerebrovascular Diseases'));
-    medConditionsStrList.add(Value('Haemoglobin Disorders'));
-    medConditionsStrList.add(Value('Pregnancy'));
-    medConditionsStrList.add(Value('Heart Conditions'));
-    medConditionsStrList.add(Value('Chronic Lung Disease'));
-    medConditionsStrList.add(Value('HIV or Weakened Immune System'));
-
-    medConditionsStrList.add(Value('Neurologic Conditions such as Dementia'));
-
-    medConditionsStrList.add(Value('Diabetes'));
-
-    medConditionsStrList.add(Value('Others (Specify below)'));
-
-    medConditionsStrList.forEach((element) {
-      medConditions.add(Item(element, false));
-    });
-    nameInput = FormInputFieldText("Name of Person", true,
-        "Please enter your name as per Government ID proof", 50);
-    fields.add(nameInput);
-    dobInput = FormInputFieldDateTime(
-      "Select Date of Birth",
-      true,
-      "Please select your Date of Birth",
-    );
-
-    fields.add(dobInput);
-    primaryPhone = FormInputFieldText(
-        "Primary Contact Number", true, "Primary Contact Number", 10);
-    fields.add(primaryPhone);
-    alternatePhone = FormInputFieldText(
-        "Primary Contact Number", false, "Primary Contact Number", 10);
-    fields.add(alternatePhone);
-
-    idProofField = FormInputFieldOptionsWithAttachments("Id Proof File Url",
-        true, "Please upload Government Id proof", idProofTypesStrList, false);
-    idProofField.responseFilePaths = List<String>();
-    idProofField.responseValues = new List<Value>();
-    fields.add(idProofField);
-
-    healthDetailsInput = FormInputFieldOptions(
-        "Medical Conditions",
-        true,
-        "Please select all known medical conditions you have",
-        medConditionsStrList,
-        true);
-    fields.add(healthDetailsInput);
-    healthDetailsDesc = FormInputFieldText(
-        "Decription of medical conditions (optional)",
-        true,
-        "Decription of medical conditions (optional)",
-        200);
-    fields.add(healthDetailsDesc);
-    latInput = FormInputFieldText(
-        "Current Location Latitude", false, "Current Location Latitude", 20);
-    fields.add(latInput);
-    lonInput = FormInputFieldText(
-        "Current Location Longitude", false, "Current Location Longitude", 20);
-    fields.add(lonInput);
-    addressInput = FormInputFieldText(
-        "Apartment/ House No./ Lane", false, "Apartment/ House No./ Lane", 60);
-    fields.add(addressInput);
-    addresslandmark = FormInputFieldText("Landmark", false, "Landmark", 40);
-    fields.add(addresslandmark);
-    addressLocality = FormInputFieldText("Locality", false, "Locality", 40);
-    fields.add(addressLocality);
-    addressCity = FormInputFieldText("City", false, "City", 30);
-    fields.add(addressCity);
-    addressState = FormInputFieldText("State", false, "State", 30);
-    fields.add(addressState);
-    addressCountry = FormInputFieldText("Country", false, "Country", 30);
-    fields.add(addressCountry);
-    addressPin = FormInputFieldText("Pin Code", false, "Pin Code", 30);
-    fields.add(addressPin);
-    notesInput =
-        FormInputFieldText("Notes (optional)", false, "Notes (optional)", 100);
-    fields.add(notesInput);
-
-    bookingForm = new BookingForm(
-        formName: "Covid-19 Vacination Applicant Details",
-        headerMsg:
-            "Your request will be approved based on the information provided by you.",
-        footerMsg:
-            "Please carry same ID proof (uploaded here) to the Vaccination center for verification purpose.",
-        autoApproved: false);
 
     bookingApplication = new BookingApplication();
     //slot
@@ -307,6 +249,7 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage>
     bookingApplication.userId = _gs.getCurrentUser().id;
     bookingApplication.status = ApplicationStatus.NEW;
     bookingApplication.responseForm = bookingForm;
+    print("Booking application set");
   }
 
   @override
@@ -395,16 +338,6 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage>
     return await ref.getDownloadURL();
   }
 
-  // Future<bool> removeFile(String imageUrl) async {
-  //   Reference ref = _gs.firebaseStorage.refFromURL(imageUrl);
-  //   print(imageUrl);
-  //   await ref.delete();
-
-  //   print('File Deleted');
-
-  //   return true;
-  // }
-
   Future<void> getGlobalState() async {
     _gs = await GlobalState.getGlobalState();
     _phCountryCode = _gs.getConfigurations().phCountryCode;
@@ -422,8 +355,6 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage>
 
   _getAddressFromLatLng(Position position) async {
     setState(() {
-      // entity.coordinates =
-      //     new MyGeoFirePoint(position.latitude, position.longitude);
       _latController.text = position.latitude.toString();
       _lonController.text = position.longitude.toString();
     });
@@ -510,7 +441,7 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage>
         controller: _nameController,
         keyboardType: TextInputType.text,
         decoration: CommonStyle.textFieldStyle(
-            labelTextStr: "Name of Person",
+            labelTextStr: nameInput.label,
             hintTextStr: "Please enter your name as per Government ID proof"),
         validator: validateText,
         onSaved: (String value) {
@@ -526,7 +457,7 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage>
         style: textInputTextStyle,
         controller: _dobController,
         decoration: CommonStyle.textFieldStyle(
-            labelTextStr: "Select Date of Birth", hintTextStr: ""),
+            labelTextStr: dobInput.label, hintTextStr: ""),
         validator: validateText,
         onTap: () {
           setState(() {
@@ -574,6 +505,52 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage>
           notesInput.response = value;
         },
       );
+      final frontlineField = Column(
+        children: [
+          Row(
+            children: [
+              Expanded(
+                child: Wrap(
+                  children: frontlineList
+                      .map((item) => GestureDetector(
+                          onTap: () {
+                            bool newSelectionValue = !(item.isSelected);
+
+                            frontlineList.forEach((element) {
+                              element.isSelected = false;
+                            });
+                            _idProofType = item.text.value;
+                            idProofField.responseValues.add(item.text);
+                            setState(() {
+                              item.isSelected = newSelectionValue;
+                            });
+                          },
+                          child: Container(
+                              decoration: new BoxDecoration(
+                                  border:
+                                      Border.all(color: Colors.blueGrey[200]),
+                                  shape: BoxShape.rectangle,
+                                  color: (!item.isSelected)
+                                      ? Colors.cyan[50]
+                                      : highlightColor,
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(30.0))),
+                              padding: EdgeInsets.fromLTRB(8, 5, 8, 5),
+                              margin: EdgeInsets.all(8),
+                              // color: Colors.orange,
+                              child: Text(item.text.value))))
+                      .toList()
+                      .cast<Widget>(),
+                ),
+              ),
+            ],
+          ),
+          Divider(
+            thickness: 1.5,
+          )
+        ],
+      );
+
       final idTypeField = Column(
         children: [
           Row(
@@ -722,7 +699,7 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage>
         controller: _primaryPhoneController,
         decoration: InputDecoration(
           prefixText: '+91',
-          labelText: 'Primary Contact Number',
+          labelText: 'Applicant\'s Phone Number',
           enabledBorder:
               UnderlineInputBorder(borderSide: BorderSide(color: Colors.grey)),
           focusedBorder: UnderlineInputBorder(
@@ -744,37 +721,37 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage>
           if (value != "") primaryPhone.response = _phCountryCode + (value);
         },
       );
-      final alternatePhoneField = TextFormField(
-        obscureText: false,
-        maxLines: 1,
-        minLines: 1,
-        style: textInputTextStyle,
-        keyboardType: TextInputType.phone,
-        controller: _alternatePhoneController,
-        decoration: InputDecoration(
-          prefixText: '+91',
-          labelText: 'Alternate Contact Number',
-          enabledBorder:
-              UnderlineInputBorder(borderSide: BorderSide(color: Colors.grey)),
-          focusedBorder: UnderlineInputBorder(
-              borderSide: BorderSide(color: Colors.orange)),
-        ),
-        validator: (value) {
-          if (validateField) {
-            if (validateText(value) == null) {
-              return Utils.validateMobileField(value);
-            } else
-              return null;
-          } else
-            return null;
-        },
-        onChanged: (value) {
-          if (value != "") alternatePhone.response = _phCountryCode + (value);
-        },
-        onSaved: (String value) {
-          if (value != "") alternatePhone.response = _phCountryCode + (value);
-        },
-      );
+      // final alternatePhoneField = TextFormField(
+      //   obscureText: false,
+      //   maxLines: 1,
+      //   minLines: 1,
+      //   style: textInputTextStyle,
+      //   keyboardType: TextInputType.phone,
+      //   controller: _alternatePhoneController,
+      //   decoration: InputDecoration(
+      //     prefixText: '+91',
+      //     labelText: 'Alternate Contact Number',
+      //     enabledBorder:
+      //         UnderlineInputBorder(borderSide: BorderSide(color: Colors.grey)),
+      //     focusedBorder: UnderlineInputBorder(
+      //         borderSide: BorderSide(color: Colors.orange)),
+      //   ),
+      //   validator: (value) {
+      //     if (validateField) {
+      //       if (validateText(value) == null) {
+      //         return Utils.validateMobileField(value);
+      //       } else
+      //         return null;
+      //     } else
+      //       return null;
+      //   },
+      //   onChanged: (value) {
+      //     if (value != "") alternatePhone.response = _phCountryCode + (value);
+      //   },
+      //   onSaved: (String value) {
+      //     if (value != "") alternatePhone.response = _phCountryCode + (value);
+      //   },
+      // );
 
       final latField = Container(
           width: MediaQuery.of(context).size.width * .3,
@@ -1079,94 +1056,6 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage>
         });
       }
 
-      // Future<void> showConfirmationDialog() async {
-      //   bool returnVal = await showDialog(
-      //       barrierDismissible: false,
-      //       context: context,
-      //       builder: (_) => AlertDialog(
-      //             titlePadding: EdgeInsets.fromLTRB(5, 10, 0, 0),
-      //             contentPadding: EdgeInsets.all(0),
-      //             actionsPadding: EdgeInsets.all(0),
-      //             //buttonPadding: EdgeInsets.all(0),
-      //             title: Column(
-      //               crossAxisAlignment: CrossAxisAlignment.start,
-      //               children: <Widget>[
-      //                 Text(
-      //                   bookable,
-      //                   style: TextStyle(
-      //                     fontSize: 15,
-      //                     color: Colors.blueGrey[600],
-      //                   ),
-      //                 ),
-      //                 verticalSpacer,
-      //                 Text(
-      //                   'Are you sure you make the Place "Bookable"?',
-      //                   style: TextStyle(
-      //                     fontSize: 15,
-      //                     color: Colors.blueGrey[600],
-      //                   ),
-      //                 ),
-      //                 verticalSpacer,
-      //                 // myDivider,
-      //               ],
-      //             ),
-      //             content: Divider(
-      //               color: Colors.blueGrey[400],
-      //               height: 1,
-      //               //indent: 40,
-      //               //endIndent: 30,
-      //             ),
-
-      //             //content: Text('This is my content'),
-      //             actions: <Widget>[
-      //               SizedBox(
-      //                 height: 24,
-      //                 child: RaisedButton(
-      //                   elevation: 0,
-      //                   color: Colors.transparent,
-      //                   splashColor: highlightColor.withOpacity(.8),
-      //                   textColor: Colors.orange,
-      //                   shape: RoundedRectangleBorder(
-      //                       side: BorderSide(color: Colors.orange)),
-      //                   child: Text('Yes'),
-      //                   onPressed: () {
-      //                     Navigator.of(_).pop(true);
-      //                   },
-      //                 ),
-      //               ),
-      //               SizedBox(
-      //                 height: 24,
-      //                 child: RaisedButton(
-      //                   elevation: 20,
-      //                   autofocus: true,
-      //                   focusColor: highlightColor,
-      //                   splashColor: highlightColor,
-      //                   color: Colors.white,
-      //                   textColor: Colors.orange,
-      //                   shape: RoundedRectangleBorder(
-      //                       side: BorderSide(color: Colors.orange)),
-      //                   child: Text('No'),
-      //                   onPressed: () {
-      //                     Navigator.of(_).pop(false);
-      //                   },
-      //                 ),
-      //               ),
-      //             ],
-      //           ));
-
-      //   if (returnVal) {
-      //     setState(() {
-      //       isBookable = true;
-      //     });
-      //     entity.isBookable = true;
-      //   } else {
-      //     setState(() {
-      //       isBookable = false;
-      //     });
-      //     entity.isBookable = false;
-      //   }
-      // }
-
       return MaterialApp(
         debugShowCheckedModeBanner: false,
         // title: 'Add child entities',
@@ -1287,433 +1176,6 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage>
                   child: new ListView(
                     padding: const EdgeInsets.all(5.0),
                     children: <Widget>[
-                      // Container(
-                      //   width: MediaQuery.of(context).size.width * .9,
-                      //   margin: EdgeInsets.all(0),
-                      //   padding: EdgeInsets.all(0),
-                      //   // padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
-                      //   decoration: BoxDecoration(
-                      //       border: Border.all(color: containerColor),
-                      //       color: Colors.grey[50],
-                      //       shape: BoxShape.rectangle,
-                      //       borderRadius:
-                      //           BorderRadius.all(Radius.circular(5.0))),
-                      //   child: Column(
-                      //     mainAxisSize: MainAxisSize.max,
-                      //     mainAxisAlignment: MainAxisAlignment.center,
-                      //     children: <Widget>[
-                      //       Row(
-                      //         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      //         mainAxisSize: MainAxisSize.max,
-                      //         children: <Widget>[
-                      //           Container(
-                      //             width:
-                      //                 MediaQuery.of(context).size.width * .15,
-                      //             child: FlatButton(
-                      //                 visualDensity: VisualDensity.compact,
-                      //                 padding: EdgeInsets.all(0),
-                      //                 child: Row(
-                      //                   mainAxisSize: MainAxisSize.min,
-                      //                   children: <Widget>[
-                      //                     Text('Public',
-                      //                         style: TextStyle(fontSize: 12)),
-                      //                     SizedBox(
-                      //                       width: MediaQuery.of(context)
-                      //                               .size
-                      //                               .width *
-                      //                           .05,
-                      //                       height: MediaQuery.of(context)
-                      //                               .size
-                      //                               .height *
-                      //                           .02,
-                      //                       child: Icon(
-                      //                         Icons.info,
-                      //                         color: Colors.blueGrey[600],
-                      //                         size: 14,
-                      //                       ),
-                      //                     ),
-                      //                   ],
-                      //                 ),
-                      //                 onPressed: () {
-                      //                   if (!_isExpanded) {
-                      //                     setState(() {
-                      //                       _publicExpandClick = true;
-                      //                       _isExpanded = true;
-                      //                       _margin =
-                      //                           EdgeInsets.fromLTRB(0, 0, 0, 8);
-                      //                       _width = MediaQuery.of(context)
-                      //                               .size
-                      //                               .width *
-                      //                           .9;
-                      //                       _text = RichText(
-                      //                           text: TextSpan(
-                      //                               style: subHeadingTextStyle,
-                      //                               children: <TextSpan>[
-                      //                             TextSpan(
-                      //                                 text: publicInfo,
-                      //                                 style:
-                      //                                     buttonXSmlTextStyle)
-                      //                           ]));
-
-                      //                       _height = 60;
-                      //                     });
-                      //                   } else {
-                      //                     //if bookable info is being shown
-                      //                     if (_publicExpandClick) {
-                      //                       setState(() {
-                      //                         _width = 0;
-                      //                         _height = 0;
-                      //                         _isExpanded = false;
-                      //                         _publicExpandClick = false;
-                      //                       });
-                      //                     } else {
-                      //                       setState(() {
-                      //                         _publicExpandClick = true;
-                      //                         _activeExpandClick = false;
-                      //                         _bookExpandClick = false;
-                      //                         _isExpanded = true;
-                      //                         _margin = EdgeInsets.fromLTRB(
-                      //                             0, 0, 0, 8);
-                      //                         _width = MediaQuery.of(context)
-                      //                                 .size
-                      //                                 .width *
-                      //                             .9;
-                      //                         _text = RichText(
-                      //                             text: TextSpan(
-                      //                                 style:
-                      //                                     subHeadingTextStyle,
-                      //                                 children: <TextSpan>[
-                      //                               TextSpan(
-                      //                                   text: publicInfo,
-                      //                                   style:
-                      //                                       buttonXSmlTextStyle)
-                      //                             ]));
-
-                      //                         _height = 60;
-                      //                       });
-                      //                     }
-                      //                   }
-                      //                 }),
-                      //           ),
-                      //           SizedBox(
-                      //             height:
-                      //                 MediaQuery.of(context).size.height * .08,
-                      //             width:
-                      //                 MediaQuery.of(context).size.width * .14,
-                      //             child: Transform.scale(
-                      //               scale: 0.6,
-                      //               alignment: Alignment.centerLeft,
-                      //               child: Switch(
-                      //                 materialTapTargetSize:
-                      //                     MaterialTapTargetSize.shrinkWrap,
-                      //                 value: isPublic,
-                      //                 onChanged: (value) {
-                      //                   setState(() {
-                      //                     isPublic = value;
-                      //                     entity.isPublic = value;
-                      //                     print(isPublic);
-                      //                     //}
-                      //                   });
-                      //                 },
-                      //                 // activeTrackColor: Colors.green,
-                      //                 activeColor: highlightColor,
-                      //                 inactiveThumbColor: Colors.grey[300],
-                      //               ),
-                      //             ),
-                      //           ),
-                      //           Container(
-                      //             width: MediaQuery.of(context).size.width * .2,
-                      //             child: FlatButton(
-                      //                 visualDensity: VisualDensity.compact,
-                      //                 padding: EdgeInsets.all(0),
-                      //                 child: Row(
-                      //                     mainAxisSize: MainAxisSize.min,
-                      //                     children: <Widget>[
-                      //                       Text('Bookable',
-                      //                           style: TextStyle(fontSize: 12)),
-                      //                       SizedBox(
-                      //                         width: MediaQuery.of(context)
-                      //                                 .size
-                      //                                 .width *
-                      //                             .05,
-                      //                         height: MediaQuery.of(context)
-                      //                                 .size
-                      //                                 .height *
-                      //                             .02,
-                      //                         child: Icon(Icons.info,
-                      //                             color: Colors.blueGrey[600],
-                      //                             size: 14),
-                      //                       ),
-                      //                     ]),
-                      //                 onPressed: () {
-                      //                   if (!_isExpanded) {
-                      //                     setState(() {
-                      //                       _bookExpandClick = true;
-                      //                       _isExpanded = true;
-                      //                       _margin =
-                      //                           EdgeInsets.fromLTRB(0, 0, 0, 8);
-                      //                       _width = MediaQuery.of(context)
-                      //                               .size
-                      //                               .width *
-                      //                           .9;
-                      //                       _text = RichText(
-                      //                           text: TextSpan(
-                      //                               style: subHeadingTextStyle,
-                      //                               children: <TextSpan>[
-                      //                             TextSpan(
-                      //                                 text: bookableInfo,
-                      //                                 style:
-                      //                                     buttonXSmlTextStyle)
-                      //                           ]));
-                      //                       _height = 60;
-                      //                     });
-                      //                   } else {
-                      //                     //if bookable info is being shown
-                      //                     if (_bookExpandClick) {
-                      //                       setState(() {
-                      //                         _width = 0;
-                      //                         _height = 0;
-                      //                         _isExpanded = false;
-                      //                         _bookExpandClick = false;
-                      //                       });
-                      //                     } else {
-                      //                       setState(() {
-                      //                         _publicExpandClick = false;
-                      //                         _activeExpandClick = false;
-                      //                         _bookExpandClick = true;
-                      //                         _isExpanded = true;
-                      //                         _margin = EdgeInsets.fromLTRB(
-                      //                             0, 0, 0, 8);
-                      //                         _width = MediaQuery.of(context)
-                      //                                 .size
-                      //                                 .width *
-                      //                             .9;
-                      //                         _text = RichText(
-                      //                             text: TextSpan(
-                      //                                 style:
-                      //                                     subHeadingTextStyle,
-                      //                                 children: <TextSpan>[
-                      //                               TextSpan(
-                      //                                   text: bookableInfo,
-                      //                                   style:
-                      //                                       buttonXSmlTextStyle)
-                      //                             ]));
-
-                      //                         _height = 60;
-                      //                       });
-                      //                     }
-                      //                   }
-                      //                 }),
-                      //           ),
-                      //           SizedBox(
-                      //             height:
-                      //                 MediaQuery.of(context).size.height * .08,
-                      //             width:
-                      //                 MediaQuery.of(context).size.width * .14,
-                      //             child: Transform.scale(
-                      //               scale: 0.6,
-                      //               alignment: Alignment.centerLeft,
-                      //               child: Switch(
-                      //                 materialTapTargetSize:
-                      //                     MaterialTapTargetSize.shrinkWrap,
-                      //                 value: isBookable,
-                      //                 onChanged: (value) {
-                      //                   setState(() {
-                      //                     isBookable = value;
-                      //                     entity.isBookable = value;
-
-                      //                     if (value) {
-                      //                       showConfirmationDialog();
-                      //                       //TODO: SMita - show msg with info, yes/no
-                      //                     }
-                      //                     print(isBookable);
-                      //                   });
-                      //                 },
-                      //                 // activeTrackColor: Colors.green,
-                      //                 activeColor: highlightColor,
-                      //                 inactiveThumbColor: Colors.grey[300],
-                      //               ),
-                      //             ),
-                      //           ),
-                      //           Container(
-                      //             width:
-                      //                 MediaQuery.of(context).size.width * .15,
-                      //             child: FlatButton(
-                      //               visualDensity: VisualDensity.compact,
-                      //               padding: EdgeInsets.all(0),
-                      //               child: Row(
-                      //                   mainAxisSize: MainAxisSize.min,
-                      //                   children: <Widget>[
-                      //                     Text('Active',
-                      //                         style: TextStyle(fontSize: 12)),
-                      //                     SizedBox(
-                      //                       width: MediaQuery.of(context)
-                      //                               .size
-                      //                               .width *
-                      //                           .05,
-                      //                       height: MediaQuery.of(context)
-                      //                               .size
-                      //                               .height *
-                      //                           .02,
-                      //                       child: Icon(Icons.info,
-                      //                           color: Colors.blueGrey[600],
-                      //                           size: 15),
-                      //                     ),
-                      //                   ]),
-                      //               onPressed: () {
-                      //                 if (!_isExpanded) {
-                      //                   setState(() {
-                      //                     _activeExpandClick = true;
-                      //                     _isExpanded = true;
-                      //                     _margin =
-                      //                         EdgeInsets.fromLTRB(0, 0, 0, 8);
-                      //                     _width = MediaQuery.of(context)
-                      //                             .size
-                      //                             .width *
-                      //                         .9;
-                      //                     _text = RichText(
-                      //                         text: TextSpan(
-                      //                             style: subHeadingTextStyle,
-                      //                             children: <TextSpan>[
-                      //                           TextSpan(
-                      //                               text: activeDef,
-                      //                               style: buttonXSmlTextStyle)
-                      //                         ]));
-
-                      //                     _height = 60;
-                      //                   });
-                      //                 } else {
-                      //                   //if bookable info is being shown
-                      //                   if (_activeExpandClick) {
-                      //                     setState(() {
-                      //                       _width = 0;
-                      //                       _height = 0;
-                      //                       _isExpanded = false;
-                      //                       _activeExpandClick = false;
-                      //                     });
-                      //                   } else {
-                      //                     setState(() {
-                      //                       _publicExpandClick = false;
-                      //                       _activeExpandClick = true;
-                      //                       _bookExpandClick = false;
-                      //                       _isExpanded = true;
-                      //                       _margin =
-                      //                           EdgeInsets.fromLTRB(0, 0, 0, 8);
-                      //                       _width = MediaQuery.of(context)
-                      //                               .size
-                      //                               .width *
-                      //                           .9;
-                      //                       _text = RichText(
-                      //                           text: TextSpan(
-                      //                               style: subHeadingTextStyle,
-                      //                               children: <TextSpan>[
-                      //                             TextSpan(
-                      //                                 text: activeDef,
-                      //                                 style:
-                      //                                     buttonXSmlTextStyle)
-                      //                           ]));
-
-                      //                       _height = 60;
-                      //                     });
-                      //                   }
-                      //                 }
-                      //               },
-                      //             ),
-                      //           ),
-                      //           SizedBox(
-                      //             height:
-                      //                 MediaQuery.of(context).size.height * .08,
-                      //             width:
-                      //                 MediaQuery.of(context).size.width * .14,
-                      //             child: Transform.scale(
-                      //               scale: 0.6,
-                      //               alignment: Alignment.centerLeft,
-                      //               child: Switch(
-                      //                 materialTapTargetSize:
-                      //                     MaterialTapTargetSize.shrinkWrap,
-                      //                 value: isActive,
-                      //                 onChanged: (value) {
-                      //                   setState(() {
-                      //                     if (value) {
-                      //                       validateField = true;
-                      //                       _autoValidate = true;
-                      //                       bool retVal = false;
-                      //                       bool locValid = false;
-                      //                       if (validateAllFields())
-                      //                         retVal = true;
-                      //                       if (validateLatLon())
-                      //                         locValid = true;
-
-                      //                       if (!locValid || !retVal) {
-                      //                         if (!locValid) {
-                      //                           Utils.showMyFlushbar(
-                      //                               context,
-                      //                               Icons.info_outline,
-                      //                               Duration(
-                      //                                 seconds: 6,
-                      //                               ),
-                      //                               shouldSetLocation,
-                      //                               pressUseCurrentLocation);
-                      //                         } else if (!retVal) {
-                      //                           //Show flushbar with info that fields has invalid data
-                      //                           Utils.showMyFlushbar(
-                      //                               context,
-                      //                               Icons.info_outline,
-                      //                               Duration(
-                      //                                 seconds: 6,
-                      //                               ),
-                      //                               "Missing Information!!",
-                      //                               'Making a place "ACTIVE" requires all mandatory information to be filled in. Please provide the details and Save.');
-                      //                         }
-                      //                       } else {
-                      //                         validateField = false;
-                      //                         isActive = value;
-                      //                         entity.isActive = value;
-                      //                         print(isActive);
-                      //                       }
-                      //                     } else {
-                      //                       isActive = value;
-                      //                       validateField = false;
-                      //                       _autoValidate = false;
-                      //                       entity.isActive = value;
-                      //                       print(isActive);
-                      //                     }
-                      //                   });
-                      //                 },
-                      //                 // activeTrackColor: Colors.green,
-                      //                 activeColor: highlightColor,
-                      //                 inactiveThumbColor: Colors.grey[300],
-                      //               ),
-                      //             ),
-                      //           )
-                      //         ],
-                      //       ),
-                      //       AnimatedContainer(
-                      //         padding: EdgeInsets.all(2),
-                      //         margin: _margin,
-                      //         // Use the properties stored in the State class.
-                      //         width: _width,
-                      //         height: _height,
-                      //         alignment: Alignment.center,
-                      //         decoration: BoxDecoration(
-                      //           color: Colors.blueGrey[500],
-                      //           border: Border.all(color: primaryAccentColor),
-                      //           borderRadius: _borderRadius,
-                      //         ),
-                      //         // Define how long the animation should take.
-                      //         duration: Duration(seconds: 1),
-                      //         // Provide an optional curve to make the animation feel smoother.
-                      //         curve: Curves.easeInOutCirc,
-                      //         child: Center(child: _text),
-                      //       ),
-                      //     ],
-                      //   ),
-                      // ),
-
-                      // SizedBox(
-                      //   height: 7,
-                      // ),
-
                       Container(
                         decoration: BoxDecoration(
                             border: Border.all(color: containerColor),
@@ -1779,7 +1241,7 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage>
                                       //   descField,
                                       dobField,
                                       primaryPhoneField,
-                                      alternatePhoneField,
+                                      // alternatePhoneField,
                                     ],
                                   ),
                                 ),
@@ -1816,7 +1278,7 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage>
                                       title: Row(
                                         children: <Widget>[
                                           Text(
-                                            "ID Proof Details",
+                                            frontlineWorkerField.label,
                                             style: TextStyle(
                                                 color: Colors.white,
                                                 fontSize: 15),
@@ -1838,6 +1300,136 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage>
                                             children: <Widget>[
                                               Expanded(
                                                 child: Text(basicInfoStr,
+                                                    style: buttonXSmlTextStyle),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                                Container(
+                                  padding: EdgeInsets.only(left: 5.0, right: 5),
+                                  child: Column(children: <Widget>[
+                                    frontlineField,
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        (Utils.isNullOrEmpty(
+                                                frontlineWorkerField
+                                                    .responseFilePaths))
+                                            ? Container(
+                                                child: Text(
+                                                "No Image Selected",
+                                                style: TextStyle(
+                                                    color: (validateField)
+                                                        ? Colors.red
+                                                        : Colors.black),
+                                              ))
+                                            : Container(
+                                                width: MediaQuery.of(context)
+                                                        .size
+                                                        .width *
+                                                    .6,
+                                                child: ListView.builder(
+                                                  padding: EdgeInsets.all(
+                                                      MediaQuery.of(context)
+                                                              .size
+                                                              .width *
+                                                          .03),
+                                                  //  controller: _childScrollController,
+                                                  scrollDirection:
+                                                      Axis.vertical,
+
+                                                  shrinkWrap: true,
+                                                  //   itemExtent: itemSize,
+                                                  //scrollDirection: Axis.vertical,
+                                                  itemBuilder:
+                                                      (BuildContext context,
+                                                          int index) {
+                                                    return Container(
+                                                      padding: EdgeInsets.only(
+                                                          bottom: 5),
+                                                      child: showImageList(
+                                                          //TODO:17Jan Check this
+                                                          context,
+                                                          _images[index]),
+                                                    );
+                                                  },
+                                                  itemCount:
+                                                      frontlineWorkerField
+                                                          .responseFilePaths
+                                                          .length,
+                                                ),
+                                              ),
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.end,
+                                          children: [
+                                            selectFileBtn,
+                                            clickPicForUploadBtn
+                                          ],
+                                        ),
+                                      ],
+                                    ),
+                                  ]),
+                                ),
+                              ]),
+                            ]),
+                      ),
+                      SizedBox(
+                        height: 7,
+                      ),
+                      Container(
+                        decoration: BoxDecoration(
+                            border: Border.all(color: containerColor),
+                            color: Colors.grey[50],
+                            shape: BoxShape.rectangle,
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(5.0))),
+                        child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: <Widget>[
+                              Column(children: <Widget>[
+                                Container(
+                                  //padding: EdgeInsets.only(left: 5),
+                                  decoration: darkContainer,
+                                  child: Theme(
+                                    data: ThemeData(
+                                      unselectedWidgetColor: Colors.white,
+                                      accentColor: Colors.grey[50],
+                                    ),
+                                    child: CustomExpansionTile(
+                                      //key: PageStorageKey(this.widget.headerTitle),
+                                      initiallyExpanded: false,
+                                      title: Row(
+                                        children: <Widget>[
+                                          Text(
+                                            idProofField.label,
+                                            style: TextStyle(
+                                                color: Colors.white,
+                                                fontSize: 15),
+                                          ),
+                                          SizedBox(width: 5),
+                                        ],
+                                      ),
+                                      backgroundColor: Colors.blueGrey[500],
+
+                                      children: <Widget>[
+                                        new Container(
+                                          width: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                              .94,
+                                          decoration: darkContainer,
+                                          padding: EdgeInsets.all(2.0),
+                                          child: Row(
+                                            children: <Widget>[
+                                              Expanded(
+                                                child: Text(
+                                                    idProofField.infoMessage,
                                                     style: buttonXSmlTextStyle),
                                               ),
                                             ],
@@ -1913,7 +1505,6 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage>
                               ]),
                             ]),
                       ),
-
                       SizedBox(
                         height: 7,
                       ),
@@ -1943,10 +1534,11 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage>
                                       title: Row(
                                         children: <Widget>[
                                           Text(
-                                            "Medical History",
+                                            healthDetailsInput.label,
                                             style: TextStyle(
                                                 color: Colors.white,
                                                 fontSize: 15),
+                                            overflow: TextOverflow.ellipsis,
                                           ),
                                           SizedBox(width: 5),
                                         ],
@@ -1964,7 +1556,9 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage>
                                           child: Row(
                                             children: <Widget>[
                                               Expanded(
-                                                child: Text(basicInfoStr,
+                                                child: Text(
+                                                    healthDetailsInput
+                                                        .infoMessage,
                                                     style: buttonXSmlTextStyle),
                                               ),
                                             ],
@@ -1978,21 +1572,68 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage>
                                   padding: EdgeInsets.only(left: 5.0, right: 5),
                                   child: Column(
                                     children: <Widget>[
-                                      // nameField,
-
                                       medicalConditionsField,
-                                      medicalConditionsDescField,
-                                      // opensTimeField,
-                                      // closeTimeField,
-                                      // breakSartTimeField,
-                                      // breakEndTimeField,
-                                      // daysClosedField,
-                                      //  slotDuration,
-                                      // advBookingInDays,
-                                      // maxpeopleInASlot,
-                                      // startDateField,
-                                      // whatsappPhone,
-                                      // callingPhone,
+                                      //medicalConditionsDescField,
+
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          (Utils.isNullOrEmpty(idProofField
+                                                  .responseFilePaths))
+                                              ? Container(
+                                                  child: Text(
+                                                  "No Image Selected",
+                                                  style: TextStyle(
+                                                      color: (validateField)
+                                                          ? Colors.red
+                                                          : Colors.black),
+                                                ))
+                                              : Container(
+                                                  width: MediaQuery.of(context)
+                                                          .size
+                                                          .width *
+                                                      .6,
+                                                  child: ListView.builder(
+                                                    padding: EdgeInsets.all(
+                                                        MediaQuery.of(context)
+                                                                .size
+                                                                .width *
+                                                            .03),
+                                                    //  controller: _childScrollController,
+                                                    scrollDirection:
+                                                        Axis.vertical,
+
+                                                    shrinkWrap: true,
+                                                    //   itemExtent: itemSize,
+                                                    //scrollDirection: Axis.vertical,
+                                                    itemBuilder:
+                                                        (BuildContext context,
+                                                            int index) {
+                                                      return Container(
+                                                        padding:
+                                                            EdgeInsets.only(
+                                                                bottom: 5),
+                                                        child: showImageList(
+                                                            context,
+                                                            _images[index]),
+                                                      );
+                                                    },
+                                                    itemCount: idProofField
+                                                        .responseFilePaths
+                                                        .length,
+                                                  ),
+                                                ),
+                                          Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.end,
+                                            children: [
+                                              selectFileBtn,
+                                              clickPicForUploadBtn
+                                            ],
+                                          ),
+                                        ],
+                                      ),
                                     ],
                                   ),
                                 ),
@@ -2031,7 +1672,7 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage>
                       //                 title: Row(
                       //                   children: <Widget>[
                       //                     Text(
-                      //                       "Payment Details",
+                      //                       "Current Location Details",
                       //                       style: TextStyle(
                       //                           color: Colors.white,
                       //                           fontSize: 15),
@@ -2052,7 +1693,7 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage>
                       //                     child: Row(
                       //                       children: <Widget>[
                       //                         Expanded(
-                      //                           child: Text(paymentInfoStr,
+                      //                           child: Text(locationInfoStr,
                       //                               style: buttonXSmlTextStyle),
                       //                         ),
                       //                       ],
@@ -2068,8 +1709,57 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage>
                       //         padding: EdgeInsets.only(left: 5.0, right: 5),
                       //         child: Column(
                       //           children: <Widget>[
-                      //             gPayPhone,
-                      //             paytmPhone,
+                      //             Column(children: <Widget>[
+                      //               Container(
+                      //                 padding: EdgeInsets.all(4),
+                      //                 width: MediaQuery.of(context).size.width *
+                      //                     .95,
+                      //                 child: RichText(
+                      //                     text: TextSpan(
+                      //                         style: highlightSubTextStyle,
+                      //                         children: <TextSpan>[
+                      //                       TextSpan(
+                      //                           text: pressUseCurrentLocation),
+                      //                       TextSpan(
+                      //                           text: whyLocationIsRequired),
+                      //                     ])),
+                      //               ),
+                      //               Row(
+                      //                 mainAxisAlignment:
+                      //                     MainAxisAlignment.spaceAround,
+                      //                 children: <Widget>[
+                      //                   latField,
+                      //                   lonField,
+                      //                 ],
+                      //               ),
+                      //               verticalSpacer,
+                      //             ]),
+                      //             Row(
+                      //               mainAxisAlignment:
+                      //                   MainAxisAlignment.spaceAround,
+                      //               children: <Widget>[
+                      //                 clearBtn,
+                      //                 Container(
+                      //                   width:
+                      //                       MediaQuery.of(context).size.width *
+                      //                           .6,
+                      //                   child: RaisedButton(
+                      //                     elevation: 10,
+                      //                     color: btnColor,
+                      //                     splashColor: highlightColor,
+                      //                     textColor: Colors.white,
+                      //                     shape: RoundedRectangleBorder(
+                      //                         side:
+                      //                             BorderSide(color: btnColor)),
+                      //                     child: Text(
+                      //                       userCurrentLoc,
+                      //                       textAlign: TextAlign.center,
+                      //                     ),
+                      //                     onPressed: useCurrLocation,
+                      //                   ),
+                      //                 ),
+                      //               ],
+                      //             ),
                       //           ],
                       //         ),
                       //       ),
@@ -2086,6 +1776,7 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage>
                       //       shape: BoxShape.rectangle,
                       //       borderRadius:
                       //           BorderRadius.all(Radius.circular(5.0))),
+                      //   //padding: EdgeInsets.all(5.0),
                       //   child: Column(
                       //     crossAxisAlignment: CrossAxisAlignment.start,
                       //     children: <Widget>[
@@ -2105,34 +1796,12 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage>
                       //                 title: Row(
                       //                   children: <Widget>[
                       //                     Text(
-                      //                       "Offer Details",
+                      //                       "Address",
                       //                       style: TextStyle(
                       //                           color: Colors.white,
                       //                           fontSize: 15),
                       //                     ),
-                      //                     SizedBox(
-                      //                         width: MediaQuery.of(context)
-                      //                                 .size
-                      //                                 .width *
-                      //                             0.5),
-                      //                     InkWell(
-                      //                       child: Text(
-                      //                         "Clear",
-                      //                         style:
-                      //                             offerClearTextStyleWithUnderLine,
-                      //                       ),
-                      //                       onTap: () {
-                      //                         setState(() {
-                      //                           clearOfferDetail();
-                      //                         });
-                      //                       },
-                      //                     ),
-                      //                     // RaisedButton.icon(
-                      //                     //   onPressed: clearOfferDetail,
-                      //                     //   icon: Icon(Icons.clear_sharp,
-                      //                     //       size: 15.0),
-                      //                     //   label: Text("Clear"),
-                      //                     // )
+                      //                     SizedBox(width: 5),
                       //                   ],
                       //                 ),
                       //                 backgroundColor: Colors.blueGrey[500],
@@ -2148,7 +1817,7 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage>
                       //                     child: Row(
                       //                       children: <Widget>[
                       //                         Expanded(
-                      //                           child: Text(offerInfoStr,
+                      //                           child: Text(addressInfoStr,
                       //                               style: buttonXSmlTextStyle),
                       //                         ),
                       //                       ],
@@ -2158,22 +1827,21 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage>
                       //               ),
                       //             ),
                       //           ),
-                      //           Container(
-                      //             padding: EdgeInsets.only(left: 5.0, right: 5),
-                      //             child: Column(
-                      //               children: <Widget>[
-                      //                 messageField,
-                      //                 couponField,
-                      //                 Row(
-                      //                   children: <Widget>[
-                      //                     Expanded(child: startDateField),
-                      //                     Expanded(child: endDateField),
-                      //                   ],
-                      //                 ),
-                      //               ],
-                      //             ),
-                      //           ),
                       //         ],
+                      //       ),
+                      //       Container(
+                      //         padding: EdgeInsets.only(left: 5.0, right: 5),
+                      //         child: Column(
+                      //           children: <Widget>[
+                      //             adrsField1,
+                      //             landmarkField2,
+                      //             localityField,
+                      //             cityField,
+                      //             stateField,
+                      //             pinField,
+                      //             countryField,
+                      //           ],
+                      //         ),
                       //       ),
                       //     ],
                       //   ),
@@ -2181,211 +1849,6 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage>
                       // SizedBox(
                       //   height: 7,
                       // ),
-                      Container(
-                        decoration: BoxDecoration(
-                            border: Border.all(color: containerColor),
-                            color: Colors.grey[50],
-                            shape: BoxShape.rectangle,
-                            borderRadius:
-                                BorderRadius.all(Radius.circular(5.0))),
-                        //padding: EdgeInsets.all(5.0),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            Column(
-                              children: <Widget>[
-                                Container(
-                                  //padding: EdgeInsets.only(left: 5),
-                                  decoration: darkContainer,
-                                  child: Theme(
-                                    data: ThemeData(
-                                      unselectedWidgetColor: Colors.white,
-                                      accentColor: Colors.grey[50],
-                                    ),
-                                    child: CustomExpansionTile(
-                                      //key: PageStorageKey(this.widget.headerTitle),
-                                      initiallyExpanded: false,
-                                      title: Row(
-                                        children: <Widget>[
-                                          Text(
-                                            "Current Location Details",
-                                            style: TextStyle(
-                                                color: Colors.white,
-                                                fontSize: 15),
-                                          ),
-                                          SizedBox(width: 5),
-                                        ],
-                                      ),
-                                      backgroundColor: Colors.blueGrey[500],
-
-                                      children: <Widget>[
-                                        new Container(
-                                          width: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
-                                              .94,
-                                          decoration: darkContainer,
-                                          padding: EdgeInsets.all(2.0),
-                                          child: Row(
-                                            children: <Widget>[
-                                              Expanded(
-                                                child: Text(locationInfoStr,
-                                                    style: buttonXSmlTextStyle),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                            Container(
-                              padding: EdgeInsets.only(left: 5.0, right: 5),
-                              child: Column(
-                                children: <Widget>[
-                                  Column(children: <Widget>[
-                                    Container(
-                                      padding: EdgeInsets.all(4),
-                                      width: MediaQuery.of(context).size.width *
-                                          .95,
-                                      child: RichText(
-                                          text: TextSpan(
-                                              style: highlightSubTextStyle,
-                                              children: <TextSpan>[
-                                            TextSpan(
-                                                text: pressUseCurrentLocation),
-                                            TextSpan(
-                                                text: whyLocationIsRequired),
-                                          ])),
-                                    ),
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceAround,
-                                      children: <Widget>[
-                                        latField,
-                                        lonField,
-                                      ],
-                                    ),
-                                    verticalSpacer,
-                                  ]),
-                                  Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceAround,
-                                    children: <Widget>[
-                                      clearBtn,
-                                      Container(
-                                        width:
-                                            MediaQuery.of(context).size.width *
-                                                .6,
-                                        child: RaisedButton(
-                                          elevation: 10,
-                                          color: btnColor,
-                                          splashColor: highlightColor,
-                                          textColor: Colors.white,
-                                          shape: RoundedRectangleBorder(
-                                              side:
-                                                  BorderSide(color: btnColor)),
-                                          child: Text(
-                                            userCurrentLoc,
-                                            textAlign: TextAlign.center,
-                                          ),
-                                          onPressed: useCurrLocation,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      SizedBox(
-                        height: 7,
-                      ),
-
-                      Container(
-                        decoration: BoxDecoration(
-                            border: Border.all(color: containerColor),
-                            color: Colors.grey[50],
-                            shape: BoxShape.rectangle,
-                            borderRadius:
-                                BorderRadius.all(Radius.circular(5.0))),
-                        //padding: EdgeInsets.all(5.0),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            Column(
-                              children: <Widget>[
-                                Container(
-                                  //padding: EdgeInsets.only(left: 5),
-                                  decoration: darkContainer,
-                                  child: Theme(
-                                    data: ThemeData(
-                                      unselectedWidgetColor: Colors.white,
-                                      accentColor: Colors.grey[50],
-                                    ),
-                                    child: CustomExpansionTile(
-                                      //key: PageStorageKey(this.widget.headerTitle),
-                                      initiallyExpanded: false,
-                                      title: Row(
-                                        children: <Widget>[
-                                          Text(
-                                            "Address",
-                                            style: TextStyle(
-                                                color: Colors.white,
-                                                fontSize: 15),
-                                          ),
-                                          SizedBox(width: 5),
-                                        ],
-                                      ),
-                                      backgroundColor: Colors.blueGrey[500],
-
-                                      children: <Widget>[
-                                        new Container(
-                                          width: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
-                                              .94,
-                                          decoration: darkContainer,
-                                          padding: EdgeInsets.all(2.0),
-                                          child: Row(
-                                            children: <Widget>[
-                                              Expanded(
-                                                child: Text(addressInfoStr,
-                                                    style: buttonXSmlTextStyle),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                            Container(
-                              padding: EdgeInsets.only(left: 5.0, right: 5),
-                              child: Column(
-                                children: <Widget>[
-                                  adrsField1,
-                                  landmarkField2,
-                                  localityField,
-                                  cityField,
-                                  stateField,
-                                  pinField,
-                                  countryField,
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      SizedBox(
-                        height: 7,
-                      ),
                       Container(
                         padding: EdgeInsets.only(left: 5.0, right: 5),
                         decoration: BoxDecoration(
@@ -2400,321 +1863,32 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage>
                       SizedBox(
                         height: 7,
                       ),
-                      Container(
-                        padding: EdgeInsets.only(left: 5.0, right: 5),
-                        decoration: BoxDecoration(
-                            border: Border.all(color: containerColor),
-                            color: Colors.grey[50],
-                            shape: BoxShape.rectangle,
-                            borderRadius:
-                                BorderRadius.all(Radius.circular(5.0))),
-                        //padding: EdgeInsets.all(5.0),
-                        child: Text(
-                          bookingForm.footerMsg,
-                          style: TextStyle(
-                              color: Colors.orangeAccent.shade400,
-                              //fontWeight: FontWeight.w600,
-                              fontFamily: 'Montserrat',
+                      (Utils.isNotNullOrEmpty(bookingForm.footerMsg)
+                          ? Container(
+                              padding: EdgeInsets.only(left: 5.0, right: 5),
+                              decoration: BoxDecoration(
+                                  border: Border.all(color: containerColor),
+                                  color: Colors.grey[50],
+                                  shape: BoxShape.rectangle,
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(5.0))),
+                              //padding: EdgeInsets.all(5.0),
+                              child: Text(
+                                bookingForm.footerMsg,
+                                // bookingForm.footerMsg,
+                                style: TextStyle(
+                                    color: Colors.orangeAccent.shade400,
+                                    //fontWeight: FontWeight.w600,
+                                    fontFamily: 'Montserrat',
 
-                              // decoration: TextDecoration.underline,
-                              fontSize: 16.0),
-                        ),
-                      ),
+                                    // decoration: TextDecoration.underline,
+                                    fontSize: 16.0),
+                              ),
+                            )
+                          : Container()),
                       SizedBox(
                         height: 7,
                       ),
-                      //THIS CONTAINER
-                      // Container(
-                      //   decoration: BoxDecoration(
-                      //       border: Border.all(color: containerColor),
-                      //       color: Colors.grey[50],
-                      //       shape: BoxShape.rectangle,
-                      //       borderRadius:
-                      //           BorderRadius.all(Radius.circular(5.0))),
-                      //   // padding: EdgeInsets.all(5.0),
-                      //   child: Column(
-                      //     crossAxisAlignment: CrossAxisAlignment.start,
-                      //     children: <Widget>[
-                      //       Column(
-                      //         children: <Widget>[
-                      //           Container(
-                      //             //padding: EdgeInsets.only(left: 5),
-                      //             decoration: darkContainer,
-                      //             child: Theme(
-                      //               data: ThemeData(
-                      //                 unselectedWidgetColor: Colors.white,
-                      //                 accentColor: Colors.grey[50],
-                      //               ),
-                      //               child: CustomExpansionTile(
-                      //                 //key: PageStorageKey(this.widget.headerTitle),
-                      //                 initiallyExpanded: false,
-                      //                 title: Row(
-                      //                   children: <Widget>[
-                      //                     Text(
-                      //                       "Assign an Admin",
-                      //                       style: TextStyle(
-                      //                           color: Colors.white,
-                      //                           fontSize: 15),
-                      //                     ),
-                      //                     SizedBox(width: 5),
-                      //                   ],
-                      //                 ),
-                      //                 // trailing: IconButton(
-                      //                 //   icon: Icon(Icons.add_circle,
-                      //                 //       color: highlightColor, size: 40),
-                      //                 //   onPressed: () {
-                      //                 //     addNewAdminRow();
-                      //                 //   },
-                      //                 // ),
-                      //                 backgroundColor: Colors.blueGrey[500],
-                      //                 children: <Widget>[
-                      //                   new Container(
-                      //                     width: MediaQuery.of(context)
-                      //                             .size
-                      //                             .width *
-                      //                         .94,
-                      //                     decoration: darkContainer,
-                      //                     padding: EdgeInsets.all(2.0),
-                      //                     child: Row(
-                      //                       children: <Widget>[
-                      //                         Expanded(
-                      //                           child: Text(adminInfoStr,
-                      //                               style: buttonXSmlTextStyle),
-                      //                         ),
-                      //                       ],
-                      //                     ),
-                      //                   ),
-                      //                 ],
-                      //               ),
-                      //             ),
-                      //           ),
-                      //           //Add Admins list
-                      //           Column(
-                      //             children: <Widget>[
-                      //               Container(
-                      //                 margin: EdgeInsets.all(4),
-                      //                 padding: EdgeInsets.fromLTRB(0, 0, 4, 0),
-                      //                 height:
-                      //                     MediaQuery.of(context).size.width *
-                      //                         .13,
-                      //                 decoration: BoxDecoration(
-                      //                     border:
-                      //                         Border.all(color: borderColor),
-                      //                     color: Colors.white,
-                      //                     shape: BoxShape.rectangle,
-                      //                     borderRadius: BorderRadius.all(
-                      //                         Radius.circular(5.0))),
-                      //                 child: Row(
-                      //                   // mainAxisAlignment: MainAxisAlignment.end,
-                      //                   children: <Widget>[
-                      //                     Expanded(
-                      //                       child: adminInputField,
-                      //                     ),
-                      //                     Container(
-                      //                       padding:
-                      //                           EdgeInsets.fromLTRB(0, 0, 0, 0),
-                      //                       width: MediaQuery.of(context)
-                      //                               .size
-                      //                               .width *
-                      //                           .1,
-                      //                       height: MediaQuery.of(context)
-                      //                               .size
-                      //                               .width *
-                      //                           .1,
-                      //                       child: IconButton(
-                      //                           padding: EdgeInsets.all(0),
-                      //                           icon: Icon(Icons.person_add,
-                      //                               color: highlightColor,
-                      //                               size: 38),
-                      //                           onPressed: () {
-                      //                             if (_adminItemController
-                      //                                         .text ==
-                      //                                     null ||
-                      //                                 _adminItemController
-                      //                                     .text.isEmpty) {
-                      //                               Utils.showMyFlushbar(
-                      //                                   context,
-                      //                                   Icons.info_outline,
-                      //                                   Duration(
-                      //                                     seconds: 4,
-                      //                                   ),
-                      //                                   "Something Missing ..",
-                      //                                   "Please enter Phone number !!");
-                      //                             } else {
-                      //                               bool result = adminPhoneKey
-                      //                                   .currentState
-                      //                                   .validate();
-                      //                               if (result) {
-                      //                                 _addNewAdminRow();
-                      //                                 _adminItemController
-                      //                                     .text = "";
-                      //                               } else {
-                      //                                 Utils.showMyFlushbar(
-                      //                                     context,
-                      //                                     Icons.info_outline,
-                      //                                     Duration(
-                      //                                       seconds: 5,
-                      //                                     ),
-                      //                                     "Oops!! Seems like the phone number is not valid",
-                      //                                     "Please check and try again !!");
-                      //                               }
-                      //                             }
-                      //                           }),
-                      //                     ),
-                      //                   ],
-                      //                 ),
-                      //               ),
-                      //               ListView.builder(
-                      //                 shrinkWrap: true,
-                      //                 //scrollDirection: Axis.vertical,
-                      //                 itemBuilder:
-                      //                     (BuildContext context, int index) {
-                      //                   return new Column(
-                      //                       children: adminsList
-                      //                           .map(_buildServiceItem)
-                      //                           .toList());
-                      //                 },
-                      //                 itemCount: 1,
-                      //               ),
-                      //             ],
-                      //           ),
-                      //         ],
-                      //       ),
-                      //     ],
-                      //   ),
-                      // ),
-
-                      // SizedBox(
-                      //   height: 7,
-                      // ),
-                      // //THIS CONTAINER
-                      // Container(
-                      //   decoration: BoxDecoration(
-                      //       border: Border.all(color: containerColor),
-                      //       color: Colors.white,
-                      //       shape: BoxShape.rectangle,
-                      //       borderRadius:
-                      //           BorderRadius.all(Radius.circular(5.0))),
-                      //   // padding: EdgeInsets.all(5.0),
-                      //   child: Column(
-                      //     crossAxisAlignment: CrossAxisAlignment.start,
-                      //     children: <Widget>[
-                      //       Column(
-                      //         children: <Widget>[
-                      //           Container(
-                      //             //padding: EdgeInsets.only(left: 5),
-                      //             decoration: darkContainer,
-                      //             child: Theme(
-                      //               data: ThemeData(
-                      //                 unselectedWidgetColor: Colors.white,
-                      //                 accentColor: Colors.grey[50],
-                      //               ),
-                      //               child: CustomExpansionTile(
-                      //                 //key: PageStorageKey(this.widget.headerTitle),
-                      //                 initiallyExpanded: false,
-                      //                 title: Row(
-                      //                   children: <Widget>[
-                      //                     Text(
-                      //                       "Add a Manager",
-                      //                       style: TextStyle(
-                      //                           color: Colors.white,
-                      //                           fontSize: 15),
-                      //                     ),
-                      //                     SizedBox(width: 5),
-                      //                   ],
-                      //                 ),
-                      //                 backgroundColor: Colors.blueGrey[500],
-
-                      //                 children: <Widget>[
-                      //                   new Container(
-                      //                     width: MediaQuery.of(context)
-                      //                             .size
-                      //                             .width *
-                      //                         .94,
-                      //                     decoration: darkContainer,
-                      //                     padding: EdgeInsets.all(2.0),
-                      //                     child: Row(
-                      //                       children: <Widget>[
-                      //                         Expanded(
-                      //                           child: Text(contactInfoStr,
-                      //                               style: buttonXSmlTextStyle),
-                      //                         ),
-                      //                       ],
-                      //                     ),
-                      //                   ),
-                      //                 ],
-                      //               ),
-                      //             ),
-                      //           ),
-                      //           Container(
-                      //             color: Colors.grey[100],
-                      //             padding:
-                      //                 const EdgeInsets.fromLTRB(8.0, 0, 8, 0),
-                      //             child: Row(
-                      //               mainAxisAlignment: MainAxisAlignment.end,
-                      //               children: <Widget>[
-                      //                 // Expanded(
-                      //                 //   child: roleType,
-                      //                 // ),
-                      //                 Container(
-                      //                   child: IconButton(
-                      //                     icon: Icon(Icons.person_add,
-                      //                         color: highlightColor, size: 40),
-                      //                     onPressed: () {
-                      //                       _addNewContactRow();
-                      //                     },
-                      //                   ),
-                      //                 ),
-                      //               ],
-                      //             ),
-                      //           ),
-                      //           (_msg != null)
-                      //               ? Text(
-                      //                   _msg,
-                      //                   style: errorTextStyle,
-                      //                 )
-                      //               : Container(),
-                      //           if (!Utils.isNullOrEmpty(contactList))
-                      //             Column(children: contactRowWidgets),
-                      //           // Expanded(
-                      //           //   child: ListView.builder(
-                      //           //       itemCount: contactList.length,
-                      //           //       itemBuilder:
-                      //           //           (BuildContext context, int index) {
-                      //           //         return Column(
-                      //           //             children: contactList
-                      //           //                 .map(buildContactItem)
-                      //           //                 .toList());
-                      //           //       }),
-                      //           // ),
-                      //           // Column(
-                      //           //   children: <Widget>[
-                      //           //     new Expanded(
-                      //           //       child: ListView.builder(
-                      //           //         //  controller: _childScrollController,
-                      //           //         reverse: true,
-                      //           //         shrinkWrap: true,
-                      //           //         // itemExtent: itemSize,
-                      //           //         //scrollDirection: Axis.vertical,
-                      //           //         itemBuilder:
-                      //           //             (BuildContext context, int index) {
-                      //           //           return ContactRow(
-                      //           //             contact: contactList[index],
-                      //           //             entity: entity,
-                      //           //             list: contactList,
-                      //           //           );
-                      //           //         },
-                      //           //         itemCount: contactList.length,
-                      //           //       ),
-                      //           //     ),
-                      //           //   ],
-                      //           // ),
-                      //           //
-                      //         ],
-                      //       ),
-                      //     ],
-                      //   ),
-                      // ),
                       Builder(
                         builder: (context) => RaisedButton(
                             color: btnColor,
