@@ -47,6 +47,8 @@ class BookingApplication {
 
   DateTime preferredSlotTiming;
 
+  String notes;
+
   Map<String, dynamic> toJson() {
     Map<String, dynamic> map = {
       'id': id,
@@ -92,32 +94,32 @@ class BookingApplication {
       'preferredSlotTiming': (preferredSlotTiming != null)
           ? preferredSlotTiming.millisecondsSinceEpoch
           : null,
+      'notes': notes
     };
 
     for (Field f in responseForm.getFormFields()) {
-      if (f.type == EnumToString.convertToString(FieldType.TEXT)) {
+      if (f.type == FieldType.TEXT) {
         FormInputFieldText t = f;
         map[t.key] = t.response;
-      } else if (f.type == EnumToString.convertToString(FieldType.NUMBER)) {
+      } else if (f.type == FieldType.NUMBER) {
         FormInputFieldNumber t = f;
         map[t.key] = t.response;
-      } else if (f.type == EnumToString.convertToString(FieldType.OPTIONS)) {
+      } else if (f.type == FieldType.OPTIONS) {
         FormInputFieldOptions t = f;
         List<String> fieldValueIds = List<String>();
         for (Value val in t.responseValues) {
           fieldValueIds.add(val.key);
         }
         map[t.key] = fieldValueIds;
-      } else if (f.type == EnumToString.convertToString(FieldType.ATTACHMENT)) {
+      } else if (f.type == FieldType.ATTACHMENT) {
         FormInputFieldAttachment t = f;
-      } else if (f.type == EnumToString.convertToString(FieldType.DATETIME)) {
+      } else if (f.type == FieldType.DATETIME) {
         FormInputFieldDateTime t = f;
         map[t.key] = t.responseDateTime;
-      } else if (f.type == EnumToString.convertToString(FieldType.PHONE)) {
+      } else if (f.type == FieldType.PHONE) {
         FormInputFieldPhone t = f;
         map[t.key] = t.responsePhone;
-      } else if (f.type ==
-          EnumToString.convertToString(FieldType.OPTIONS_ATTACHMENTS)) {
+      } else if (f.type == FieldType.OPTIONS_ATTACHMENTS) {
         FormInputFieldOptionsWithAttachments t = f;
         List<String> fieldValueIds = List<String>();
         if (t.responseValues != null) {
@@ -126,7 +128,7 @@ class BookingApplication {
           }
         }
         map[t.key] = fieldValueIds;
-      } else if (f.type == EnumToString.convertToString(FieldType.BOOL)) {
+      } else if (f.type == FieldType.BOOL) {
         FormInputFieldBool t = f;
         map[t.key] = t.response;
       }
@@ -146,6 +148,7 @@ class BookingApplication {
 
     ba.tokenId = json['tokenId'];
     ba.userId = json['userId'];
+    ba.notes = json['notes'];
 
     ba.status =
         EnumToString.fromString(ApplicationStatus.values, json['status']);

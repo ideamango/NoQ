@@ -25,9 +25,9 @@ import 'package:noq/constants.dart';
 import 'package:noq/global_state.dart';
 
 class DBTest {
-  String TEST_COVID_BOOKING_FORM_ID = COVID_BOOKING_FORM_ID + "TEST2";
+  String TEST_COVID_BOOKING_FORM_ID = COVID_BOOKING_FORM_ID + "TEST";
 
-  String Covid_Vacination_center = "Selenium-Covid-Vacination-Center" + "Test2";
+  String Covid_Vacination_center = "Selenium-Covid-Vacination-Center" + "Test";
 
   GlobalState _gs;
   DBTest() {
@@ -1344,7 +1344,8 @@ class DBTest {
           formName: "Covid-19 Vacination Applicant Details",
           headerMsg:
               "You request will be approved based on the information provided by you, please enter the correct information.",
-          footerMsg: "",
+          footerMsg:
+              "Applicant must carry the same ID proof documents to the vacination center. Also mark your presence 15 minutes prior to your alloted time. Failing to do so will result in cancellation of your application.",
           autoApproved: true);
 
       bf.isSystemTemplate = true;
@@ -1353,11 +1354,12 @@ class DBTest {
 
       FormInputFieldText nameInput = FormInputFieldText("Name of the Applicant",
           true, "Please enter your name as per Government ID proof", 50);
+      nameInput.isMeta = true;
 
       bf.addField(nameInput);
 
       FormInputFieldDateTime dob = FormInputFieldDateTime(
-          "Date of birth of the Applicant",
+          "Date of Birth of the Applicant",
           true,
           "Please select the applicant's Date of Birth");
 
@@ -1366,7 +1368,7 @@ class DBTest {
       FormInputFieldOptionsWithAttachments healthDetailsInput =
           FormInputFieldOptionsWithAttachments(
               "Pre-existing Medical Conditions",
-              true,
+              false,
               "Please select all known medical conditions the applicant have",
               [
                 Value('Chronic kidney disease'),
@@ -1383,13 +1385,15 @@ class DBTest {
               ],
               true);
 
+      healthDetailsInput.isMeta = true;
+
       bf.addField(healthDetailsInput);
 
       FormInputFieldOptionsWithAttachments frontLineWorkerProof =
           FormInputFieldOptionsWithAttachments(
-              "Only for Front line workers",
+              "Only for Frontline workers",
               false,
-              "Please select the category by Applicant's profession and upload a corresponding ID proof",
+              "Please select the category by Applicant's profession and upload a supporting ID proof/documents. Applicant must carry these documents along with him/her to the Vaccination Center.",
               [
                 Value('Medical Professional'),
                 Value('Government Official'),
@@ -1397,14 +1401,15 @@ class DBTest {
                 Value('Others'),
               ],
               false);
+      frontLineWorkerProof.isMeta = true;
 
       bf.addField(frontLineWorkerProof);
 
       FormInputFieldOptionsWithAttachments idProof =
           FormInputFieldOptionsWithAttachments(
-              "Pre-existing Medical Conditions",
+              "Government Issued ID Proof",
               true,
-              "Please select all known medical conditions the applicant have",
+              "Select valid government issued ID Proof and upload its images. The applicant must carry these documents along with him/her to the Vaccination Center.",
               [
                 Value('PAN'),
                 Value('Passport'),
@@ -1416,6 +1421,13 @@ class DBTest {
               true);
 
       bf.addField(idProof);
+
+      FormInputFieldPhone phoneField = FormInputFieldPhone(
+          "Applicant's phone number",
+          true,
+          "Please enter the applicant's phone number");
+
+      bf.addField(phoneField);
     }
 
     //NOTE: If this is executed, every time the ID of the field is going to change
