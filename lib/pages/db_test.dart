@@ -1561,23 +1561,23 @@ class DBTest {
             null, null, null, null, null, null, null, null, null);
 
     BookingApplication bs1 = applications[0];
-    _gs.getTokenApplicationService().updateApplicationStatus(
+    await _gs.getTokenApplicationService().updateApplicationStatus(
         bs1.id, ApplicationStatus.APPROVED, "Notes on Approval");
 
     BookingApplication bs2 = applications[1];
-    _gs.getTokenApplicationService().updateApplicationStatus(
+    await _gs.getTokenApplicationService().updateApplicationStatus(
         bs2.id, ApplicationStatus.APPROVED, "Notes on Approval for app 2");
 
     BookingApplication bs3 = applications[2];
-    _gs.getTokenApplicationService().updateApplicationStatus(
+    await _gs.getTokenApplicationService().updateApplicationStatus(
         bs3.id, ApplicationStatus.COMPLETED, "Notes on Completion");
 
     BookingApplication bs7 = applications[6];
-    _gs.getTokenApplicationService().updateApplicationStatus(
+    await _gs.getTokenApplicationService().updateApplicationStatus(
         bs7.id, ApplicationStatus.ONHOLD, "Notes on putting on Hold");
 
     BookingApplication bs10 = applications[9];
-    _gs.getTokenApplicationService().updateApplicationStatus(bs10.id,
+    await _gs.getTokenApplicationService().updateApplicationStatus(bs10.id,
         ApplicationStatus.REJECTED, "Notes on rejecting this application");
 
     //now get the ApplicationOver object to check the count
