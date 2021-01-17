@@ -93,7 +93,7 @@ class _OverviewPageState extends State<OverviewPage> {
               //color: Colors.blueGrey[800],
               padding: EdgeInsets.all(10),
               child: Column(
-                  // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
                     verticalSpacer,
                     Card(
@@ -312,7 +312,7 @@ class _OverviewPageState extends State<OverviewPage> {
                                           .45,
                                       height:
                                           MediaQuery.of(context).size.height *
-                                              .17,
+                                              .15,
                                       padding: EdgeInsets.all(10),
                                       child: Column(
                                         mainAxisAlignment:
