@@ -93,7 +93,7 @@ class _OverviewPageState extends State<OverviewPage> {
               //color: Colors.blueGrey[800],
               padding: EdgeInsets.all(10),
               child: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  // mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
                     verticalSpacer,
                     Card(
@@ -229,7 +229,7 @@ class _OverviewPageState extends State<OverviewPage> {
                             },
                             child: Container(
                                 width: MediaQuery.of(context).size.width * .42,
-                                height: MediaQuery.of(context).size.width * .2,
+                                // height: MediaQuery.of(context).size.width * .22,
                                 child: Stack(
                                   alignment: Alignment.topRight,
                                   children: [
@@ -247,8 +247,8 @@ class _OverviewPageState extends State<OverviewPage> {
                                             minFontSize: 8,
                                             overflow: TextOverflow.ellipsis,
                                             style: TextStyle(
-                                              fontWeight: FontWeight.w600,
                                               fontSize: 30,
+                                              fontWeight: FontWeight.w600,
                                               color: Colors.blueGrey[800],
                                               fontFamily: 'Roboto',
                                             ),
@@ -302,8 +302,8 @@ class _OverviewPageState extends State<OverviewPage> {
                             },
                             child: Container(
                                 width: MediaQuery.of(context).size.width * .45,
-                                height:
-                                    MediaQuery.of(context).size.height * .15,
+                                // height:
+                                //    MediaQuery.of(context).size.height * .15,
                                 child: Stack(
                                   alignment: Alignment.topRight,
                                   children: [
@@ -312,7 +312,7 @@ class _OverviewPageState extends State<OverviewPage> {
                                           .45,
                                       height:
                                           MediaQuery.of(context).size.height *
-                                              .15,
+                                              .17,
                                       padding: EdgeInsets.all(10),
                                       child: Column(
                                         mainAxisAlignment:
@@ -449,7 +449,7 @@ class _OverviewPageState extends State<OverviewPage> {
                             },
                             child: Container(
                                 width: MediaQuery.of(context).size.width * .35,
-                                height: MediaQuery.of(context).size.width * .25,
+                                //   height: MediaQuery.of(context).size.width * .25,
                                 child: Stack(
                                   alignment: Alignment.topRight,
                                   children: [
@@ -518,7 +518,7 @@ class _OverviewPageState extends State<OverviewPage> {
                             },
                             child: Container(
                                 width: MediaQuery.of(context).size.width * .45,
-                                height: MediaQuery.of(context).size.width * .25,
+                                height: MediaQuery.of(context).size.width * .3,
                                 child: Stack(
                                   alignment: Alignment.topRight,
                                   children: [

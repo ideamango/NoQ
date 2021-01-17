@@ -81,7 +81,6 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
     }
     getGlobalState().whenComplete(() => _loadSlots());
   }
-
   Future<void> _loadSlots() async {
     //Format date to display in UI
     final dtFormat = new DateFormat(dateDisplayFormat);
@@ -91,7 +90,6 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
     getSlotsListForEntity(entity, _date).then((slotList) {
       setState(() {
         _slotList = slotList;
-
         _initCompleted = true;
       });
     }).catchError((onError) {
