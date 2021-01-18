@@ -44,7 +44,7 @@ class _CustomBottomBarState extends State<CustomBottomBar> {
         ),
         BottomNavigationBarItem(
           icon: Icon(Icons.favorite),
-          title: Text('My Favourites'),
+          title: Text('Favourites'),
         ),
         BottomNavigationBarItem(
           icon: Icon(Icons.account_circle),

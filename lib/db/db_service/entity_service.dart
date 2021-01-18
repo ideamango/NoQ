@@ -35,6 +35,9 @@ class EntityService {
   }
 
   Future<bool> upsertEntity(Entity entity) async {
+    if (entity.type == EntityType.PLACE_TYPE_COVID19_VACCINATION_CENTER) {
+      entity.bookingFormId = "0ba22050-5347-11eb-929a-87c3b00dc095TEST";
+    }
     final fAuth.User fireUser = getFirebaseAuth().currentUser;
     String regNum = entity.regNum;
 

@@ -81,6 +81,7 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
     }
     getGlobalState().whenComplete(() => _loadSlots());
   }
+
   Future<void> _loadSlots() async {
     //Format date to display in UI
     final dtFormat = new DateFormat(dateDisplayFormat);
