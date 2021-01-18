@@ -165,8 +165,8 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage>
   BookingApplication bookingApplication;
   FormInputFieldText nameInput;
   FormInputFieldDateTime dobInput;
-  FormInputFieldText primaryPhone;
-  FormInputFieldText alternatePhone;
+  FormInputFieldPhone primaryPhone;
+  
   String _idProofType;
   FormInputFieldOptionsWithAttachments idProofField;
   FormInputFieldOptionsWithAttachments frontlineWorkerField;
@@ -699,7 +699,7 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage>
         controller: _primaryPhoneController,
         decoration: InputDecoration(
           prefixText: '+91',
-          labelText: 'Applicant\'s Phone Number',
+          labelText: primaryPhone.label,
           enabledBorder:
               UnderlineInputBorder(borderSide: BorderSide(color: Colors.grey)),
           focusedBorder: UnderlineInputBorder(
