@@ -145,19 +145,10 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage>
   Position pos;
   GlobalState _gs;
   String _phCountryCode;
-  bool setActive = false;
-  //final Geolocator geolocator = Geolocator()..forceAndroidLocationManager;
 
-  ///from contact page
-  bool _isValid = false;
-  Employee contact;
-
-  List<Value> idProofTypesStrList = List<Value>();
-  List<Item> idProofTypes = List<Item>();
-  List<Item> frontlineList = List<Item>();
-  List<Value> medConditionsStrList = List<Value>();
-  List<Item> medConditions = List<Item>();
-  List<File> _images = [];
+  List<File> _idProofimages = [];
+  List<File> _frontLineProofimages = [];
+  List<File> _medCondsProofimages = [];
   //File _image; // Used only if you need a single picture
   // String _downloadUrl;
   BookingForm bookingForm;
@@ -166,22 +157,26 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage>
   FormInputFieldText nameInput;
   FormInputFieldDateTime dobInput;
   FormInputFieldPhone primaryPhone;
-  
+  FormInputFieldText notesInput;
+
   String _idProofType;
   FormInputFieldOptionsWithAttachments idProofField;
   FormInputFieldOptionsWithAttachments frontlineWorkerField;
-  FormInputFieldOptionsWithAttachments healthDetailsInput;
-  FormInputFieldText healthDetailsDesc;
-  FormInputFieldText latInput;
-  FormInputFieldText lonInput;
-  FormInputFieldText addressInput;
-  FormInputFieldText addresslandmark;
-  FormInputFieldText addressLocality;
-  FormInputFieldText addressCity;
-  FormInputFieldText addressState;
-  FormInputFieldText addressCountry;
-  FormInputFieldText notesInput;
-  FormInputFieldText addressPin;
+  FormInputFieldOptionsWithAttachments medConditionsField;
+  List<Item> idProofTypesList = List<Item>();
+  List<Item> frontlineTypesList = List<Item>();
+  List<Item> medConditionsList = List<Item>();
+  // FormInputFieldText healthDetailsDesc;
+  // FormInputFieldText latInput;
+  // FormInputFieldText lonInput;
+  // FormInputFieldText addressInput;
+  // FormInputFieldText addresslandmark;
+  // FormInputFieldText addressLocality;
+  // FormInputFieldText addressCity;
+  // FormInputFieldText addressState;
+  // FormInputFieldText addressCountry;
+  // FormInputFieldText notesInput;
+  // FormInputFieldText addressPin;
   String validationErrMsg = "";
   String submissionDoneMsg =
       "Thanks for Submitting application. We will contact you soon";
@@ -215,41 +210,44 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage>
           else if (f.key == "KEY20")
             dobInput = f;
           else if (f.key == "KEY30") {
-            healthDetailsInput = f; //Validate this field
-            for (Value val in healthDetailsInput.options) {
-              medConditions.add(Item(val, false));
+            medConditionsField = f; //Validate this field
+            medConditionsField.responseValues = new List<Value>();
+            for (Value val in medConditionsField.options) {
+              medConditionsList.add(Item(val, false));
             }
-            healthDetailsInput.responseFilePaths = new List<String>();
+            medConditionsField.responseFilePaths = new List<String>();
           } else if (f.key == "KEY40") {
             frontlineWorkerField = f;
+            frontlineWorkerField.responseValues = new List<Value>();
             for (Value val in frontlineWorkerField.options) {
-              frontlineList.add(Item(val, false));
+              frontlineTypesList.add(Item(val, false));
             }
             frontlineWorkerField.responseFilePaths = new List<String>();
           } else if (f.key == "KEY50") {
             idProofField = f;
+            idProofField.responseValues = new List<Value>();
             for (Value val in idProofField.options) {
-              idProofTypes.add(Item(val, false));
+              idProofTypesList.add(Item(val, false));
             }
             idProofField.responseFilePaths = new List<String>();
-          }
+          } else if (f.key == "KEY60") primaryPhone = f;
         }
-      }
-      setState(() {
-        _initCompleted = true;
-      });
-    });
+        bookingApplication = new BookingApplication();
+        //slot
+        bookingApplication.preferredSlotTiming = widget.preferredSlotTime;
 
-    bookingApplication = new BookingApplication();
-    //slot
-    bookingApplication.preferredSlotTiming = widget.preferredSlotTime;
-    //bookingFormId
-    bookingApplication.bookingFormId = widget.bookingFormId;
-    bookingApplication.entityId = entityId;
-    bookingApplication.userId = _gs.getCurrentUser().id;
-    bookingApplication.status = ApplicationStatus.NEW;
-    bookingApplication.responseForm = bookingForm;
-    print("Booking application set");
+        //bookingFormId
+        bookingApplication.bookingFormId = widget.bookingFormId;
+        bookingApplication.entityId = entityId;
+        bookingApplication.userId = _gs.getCurrentUser().id;
+        bookingApplication.status = ApplicationStatus.NEW;
+        bookingApplication.responseForm = bookingForm;
+        print("Booking application set");
+        setState(() {
+          _initCompleted = true;
+        });
+      }
+    });
   }
 
   @override
@@ -262,7 +260,7 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage>
     _dobController.dispose();
   }
 
-  bool validateIdProof() {
+  bool validateAllFields() {
     if (!Utils.isNotNullOrEmpty(_nameController.text))
       validationErrMsg = nameMissingMsg;
     if (!Utils.isNotNullOrEmpty(_dobController.text))
@@ -270,7 +268,27 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage>
     if (!Utils.isNotNullOrEmpty(_idProofType))
       validationErrMsg = validationErrMsg + '\n' + idProofTypeMissingMsg;
     if (Utils.isNullOrEmpty(idProofField.responseFilePaths))
-      validationErrMsg = validationErrMsg + '\n' + uploadValidIdProofMsg;
+      validationErrMsg = validationErrMsg + '\n' + idProofFileMissingMsg;
+    //MedCondTypeMissing
+    if (!Utils.isNullOrEmpty(medConditionsField.responseFilePaths)) {
+      if (Utils.isNullOrEmpty(medConditionsField.responseValues))
+        validationErrMsg = validationErrMsg + '\n' + medCondsTypeMissingMsg;
+    }
+    //MedCOns fILE missing
+    if (!Utils.isNullOrEmpty(medConditionsField.responseValues)) {
+      if (Utils.isNullOrEmpty(medConditionsField.responseFilePaths))
+        validationErrMsg = validationErrMsg + '\n' + medCondsFileMissingMsg;
+    }
+    //MedCondTypeMissing
+    if (!Utils.isNullOrEmpty(frontlineWorkerField.responseFilePaths)) {
+      if (Utils.isNullOrEmpty(frontlineWorkerField.responseValues))
+        validationErrMsg = validationErrMsg + '\n' + frontLineTypeMissingMsg;
+    }
+    //MedCOns fILE missing
+    if (!Utils.isNullOrEmpty(frontlineWorkerField.responseValues)) {
+      if (Utils.isNullOrEmpty(frontlineWorkerField.responseFilePaths))
+        validationErrMsg = validationErrMsg + '\n' + frontLineFileMissingMsg;
+    }
 
     if (Utils.isNotNullOrEmpty(validationErrMsg))
       return false;
@@ -278,10 +296,11 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage>
       return true;
   }
 
-  Future getImageForIdProof(bool gallery) async {
+  Future<File> captureImage(bool gallery) async {
     ImagePicker picker = ImagePicker();
     PickedFile pickedFile;
-    // Let user select photo from gallery
+    File newImageFile;
+
     if (gallery) {
       pickedFile = await picker.getImage(
           source: ImageSource.gallery,
@@ -298,33 +317,25 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage>
           imageQuality: 50);
     }
 
-    setState(() {
-      if (pickedFile != null) {
-        File newImageFile = File(pickedFile.path);
+    if (pickedFile != null) {
+      newImageFile = File(pickedFile.path);
+    }
+    return newImageFile;
+  }
 
-        //Change File name
-        // print('Original path: ${newImageFile.path}');
-        // String dir = path.dirname(newImageFile.path);
-        // String newPath = path.join(dir, '$fileName');
-        // print('NewPath: $newPath');
-        // newImageFile.renameSync(newPath);
-        // print('NEW PATH in _images ${newImageFile.path}');
-        _images.add(newImageFile);
+  addIdProofFiles(File newImage) {
+    _idProofimages.add(newImage);
+    idProofField.responseFilePaths.add(newImage.path);
+  }
 
-        idProofCounter++;
-        // _image = File(pickedFile.path);
-        //  uploadFile(newImageFile).then((value) {
-        // print(value)
-        // print('NEW PATH in responsePaths $newPath');
+  addFrontlineFiles(File newImage) {
+    _frontLineProofimages.add(newImage);
+    frontlineWorkerField.responseFilePaths.add(newImage.path);
+  }
 
-        idProofField.responseFilePaths.add(newImageFile.path);
-
-        // });
-        print("before i think");
-      } else {
-        print('No image selected.');
-      }
-    });
+  addMedCondsFiles(File newImage) {
+    _medCondsProofimages.add(newImage);
+    medConditionsField.responseFilePaths.add(newImage.path);
   }
 
   Future<String> uploadFilesToServer(
@@ -386,7 +397,8 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage>
     return date;
   }
 
-  Widget showImageList(BuildContext context, File imageUrl) {
+  Widget showImageList(
+      BuildContext context, File imageUrl, List<File> filesList) {
     return Stack(
       alignment: AlignmentDirectional.topEnd,
       children: [
@@ -407,19 +419,13 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage>
                 if (value) {
                   print('REMOVE path in responsePaths $imageUrl');
                   setState(() {
-                    print(imageUrl);
-                    print(_images.length);
-                    _images.removeWhere((element) => element == imageUrl);
-                    print(_images.length);
-                    print(idProofField.responseFilePaths.length);
-                    idProofField.responseFilePaths
-                        .removeWhere((element) => element == imageUrl.path);
-                    print(idProofField.responseFilePaths.length);
+                    filesList.removeWhere((element) => element == imageUrl);
+
+                    // idProofField.responseFilePaths
+                    //     .removeWhere((element) => element == imageUrl.path);
                   });
                 }
               });
-
-              //Update field path values and remove this file url.
             });
           },
         )
@@ -441,9 +447,12 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage>
         controller: _nameController,
         keyboardType: TextInputType.text,
         decoration: CommonStyle.textFieldStyle(
-            labelTextStr: nameInput.label,
+            labelTextStr: nameInput != null ? nameInput.label : "",
             hintTextStr: "Please enter your name as per Government ID proof"),
         validator: validateText,
+        onChanged: (String value) {
+          nameInput.response = value;
+        },
         onSaved: (String value) {
           nameInput.response = value;
         },
@@ -502,25 +511,25 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage>
         maxLength: null,
         maxLines: 3,
         onSaved: (String value) {
-          notesInput.response = value;
+          bookingApplication.notes = value;
         },
       );
-      final frontlineField = Column(
+      final frontlineFieldInput = Column(
         children: [
           Row(
             children: [
               Expanded(
                 child: Wrap(
-                  children: frontlineList
+                  children: frontlineTypesList
                       .map((item) => GestureDetector(
                           onTap: () {
                             bool newSelectionValue = !(item.isSelected);
 
-                            frontlineList.forEach((element) {
+                            frontlineTypesList.forEach((element) {
                               element.isSelected = false;
                             });
-                            _idProofType = item.text.value;
-                            idProofField.responseValues.add(item.text);
+                            // _idProofType = item.text.value;
+                            frontlineWorkerField.responseValues.add(item.value);
                             setState(() {
                               item.isSelected = newSelectionValue;
                             });
@@ -538,7 +547,7 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage>
                               padding: EdgeInsets.fromLTRB(8, 5, 8, 5),
                               margin: EdgeInsets.all(8),
                               // color: Colors.orange,
-                              child: Text(item.text.value))))
+                              child: Text(item.value.value))))
                       .toList()
                       .cast<Widget>(),
                 ),
@@ -557,16 +566,17 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage>
             children: [
               Expanded(
                 child: Wrap(
-                  children: idProofTypes
+                  alignment: WrapAlignment.center,
+                  children: idProofTypesList
                       .map((item) => GestureDetector(
                           onTap: () {
                             bool newSelectionValue = !(item.isSelected);
 
-                            idProofTypes.forEach((element) {
+                            idProofTypesList.forEach((element) {
                               element.isSelected = false;
                             });
-                            _idProofType = item.text.value;
-                            idProofField.responseValues.add(item.text);
+                            _idProofType = item.value.value;
+                            idProofField.responseValues.add(item.value);
                             setState(() {
                               item.isSelected = newSelectionValue;
                             });
@@ -584,7 +594,7 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage>
                               padding: EdgeInsets.fromLTRB(8, 5, 8, 5),
                               margin: EdgeInsets.all(8),
                               // color: Colors.orange,
-                              child: Text(item.text.value))))
+                              child: Text(item.value.value))))
                       .toList()
                       .cast<Widget>(),
                 ),
@@ -596,24 +606,92 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage>
           )
         ],
       );
-      final selectFileBtn = IconButton(
+      final clickPicForIdProofBtn = IconButton(
           padding: EdgeInsets.zero,
           icon: Icon(
             Icons.camera_alt_rounded,
             color: primaryDarkColor,
           ),
           onPressed: () {
-            getImageForIdProof(false);
+            captureImage(false).then((value) {
+              if (value != null) {
+                addIdProofFiles(value);
+              }
+              setState(() {});
+            });
           });
-      final clickPicForUploadBtn = IconButton(
+      final selectPicForIdProofBtn = IconButton(
           padding: EdgeInsets.zero,
           icon: Icon(
             Icons.attach_file,
             color: primaryDarkColor,
           ),
           onPressed: () {
-            getImageForIdProof(true);
+            captureImage(true).then((value) {
+              if (value != null) {
+                addIdProofFiles(value);
+              }
+              setState(() {});
+            });
           });
+      final clickPicForMedCondsBtn = IconButton(
+          padding: EdgeInsets.zero,
+          icon: Icon(
+            Icons.camera_alt_rounded,
+            color: primaryDarkColor,
+          ),
+          onPressed: () {
+            captureImage(false).then((value) {
+              if (value != null) {
+                addMedCondsFiles(value);
+              }
+              setState(() {});
+            });
+          });
+      final selectPicsForMedCondsBtn = IconButton(
+          padding: EdgeInsets.zero,
+          icon: Icon(
+            Icons.attach_file,
+            color: primaryDarkColor,
+          ),
+          onPressed: () {
+            captureImage(true).then((value) {
+              if (value != null) {
+                addMedCondsFiles(value);
+              }
+              setState(() {});
+            });
+          });
+      final clickPicForfrontLineBtn = IconButton(
+          padding: EdgeInsets.zero,
+          icon: Icon(
+            Icons.camera_alt_rounded,
+            color: primaryDarkColor,
+          ),
+          onPressed: () {
+            captureImage(false).then((value) {
+              if (value != null) {
+                addFrontlineFiles(value);
+              }
+              setState(() {});
+            });
+          });
+
+      final selectPicForFrontLineBtn = IconButton(
+          padding: EdgeInsets.zero,
+          icon: Icon(
+            Icons.attach_file,
+            color: primaryDarkColor,
+          ),
+          onPressed: () {
+            captureImage(true).then((value) {
+              if (value != null) {
+                addFrontlineFiles(value);
+              }
+              setState(() {});
+            });
+          });
+
       final medicalConditionsField = Column(
         children: [
           Row(
@@ -627,7 +705,7 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage>
               Expanded(
                 child: Wrap(
                   alignment: WrapAlignment.center,
-                  children: medConditions
+                  children: medConditionsList
                       .map((item) => GestureDetector(
                           onTap: () {
                             bool newSelectionValue = !(item.isSelected);
@@ -635,6 +713,8 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage>
                             // medConditions.forEach((element) {
                             //   element.isSelected = false;
                             // });
+
+                            medConditionsField.responseValues.add(item.value);
 
                             setState(() {
                               item.isSelected = newSelectionValue;
@@ -653,7 +733,7 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage>
                               padding: EdgeInsets.fromLTRB(8, 5, 8, 5),
                               margin: EdgeInsets.all(8),
                               // color: Colors.orange,
-                              child: Text(item.text.value))))
+                              child: Text(item.value.value))))
                       .toList()
                       .cast<Widget>(),
                 ),
@@ -665,31 +745,31 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage>
           )
         ],
       );
-      final medicalConditionsDescField = TextFormField(
-        obscureText: false,
-        //minLines: 1,
-        style: textInputTextStyle,
-        controller: _medDescController,
-        decoration: CommonStyle.textFieldStyle(
-            labelTextStr: "Description of above condition (optional)",
-            hintTextStr: ""),
-        // validator: (String value) {
-        //   if (!Utils.isNotNullOrEmpty(value)) {
-        //     validationErrMsg = validationErrMsg + nameMissingMsg;
-        //     return validationErrMsg;
-        //   } else
-        //     return null;
-        // },
-        keyboardType: TextInputType.multiline,
-        maxLength: null,
-        maxLines: 3,
-        onChanged: (String value) {
-          healthDetailsDesc.response = value;
-        },
-        onSaved: (String value) {
-          healthDetailsDesc.response = value;
-        },
-      );
+      // final medicalConditionsDescField = TextFormField(
+      //   obscureText: false,
+      //   //minLines: 1,
+      //   style: textInputTextStyle,
+      //   controller: _medDescController,
+      //   decoration: CommonStyle.textFieldStyle(
+      //       labelTextStr: "Description of above condition (optional)",
+      //       hintTextStr: ""),
+      //   // validator: (String value) {
+      //   //   if (!Utils.isNotNullOrEmpty(value)) {
+      //   //     validationErrMsg = validationErrMsg + nameMissingMsg;
+      //   //     return validationErrMsg;
+      //   //   } else
+      //   //     return null;
+      //   // },
+      //   keyboardType: TextInputType.multiline,
+      //   maxLength: null,
+      //   maxLines: 3,
+      //   onChanged: (String value) {
+      //     healthDetailsDesc.response = value;
+      //   },
+      //   onSaved: (String value) {
+      //     healthDetailsDesc.response = value;
+      //   },
+      // );
       final primaryPhoneField = TextFormField(
         obscureText: false,
         maxLines: 1,
@@ -699,7 +779,8 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage>
         controller: _primaryPhoneController,
         decoration: InputDecoration(
           prefixText: '+91',
-          labelText: primaryPhone.label,
+          labelText:
+              (primaryPhone != null) ? primaryPhone.label : "Name of Applicant",
           enabledBorder:
               UnderlineInputBorder(borderSide: BorderSide(color: Colors.grey)),
           focusedBorder: UnderlineInputBorder(
@@ -715,10 +796,12 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage>
             return null;
         },
         onChanged: (value) {
-          if (value != "") primaryPhone.response = _phCountryCode + (value);
+          if (value != "")
+            primaryPhone.responsePhone = _phCountryCode + (value);
         },
         onSaved: (String value) {
-          if (value != "") primaryPhone.response = _phCountryCode + (value);
+          if (value != "")
+            primaryPhone.responsePhone = _phCountryCode + (value);
         },
       );
       // final alternatePhoneField = TextFormField(
@@ -753,214 +836,214 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage>
       //   },
       // );
 
-      final latField = Container(
-          width: MediaQuery.of(context).size.width * .3,
-          child: TextFormField(
-            obscureText: false,
-            maxLines: 1,
-            minLines: 1,
-            enabled: false,
-            style: textInputTextStyle,
-            keyboardType: TextInputType.text,
-            controller: _latController,
-            decoration: CommonStyle.textFieldStyle(
-                labelTextStr: "Latitude", hintTextStr: ""),
-            validator: (String value) {
-              if (!Utils.isNotNullOrEmpty(value)) {
-                validationErrMsg = validationErrMsg + currLocMissingMsg;
-                return validationErrMsg;
-              } else
-                return null;
-            },
-            onChanged: (String value) {
-              latInput.response = value;
-            },
-            onSaved: (String value) {
-              latInput.response = value;
-            },
-          ));
+//       final latField = Container(
+//           width: MediaQuery.of(context).size.width * .3,
+//           child: TextFormField(
+//             obscureText: false,
+//             maxLines: 1,
+//             minLines: 1,
+//             enabled: false,
+//             style: textInputTextStyle,
+//             keyboardType: TextInputType.text,
+//             controller: _latController,
+//             decoration: CommonStyle.textFieldStyle(
+//                 labelTextStr: "Latitude", hintTextStr: ""),
+//             validator: (String value) {
+//               if (!Utils.isNotNullOrEmpty(value)) {
+//                 validationErrMsg = validationErrMsg + currLocMissingMsg;
+//                 return validationErrMsg;
+//               } else
+//                 return null;
+//             },
+//             onChanged: (String value) {
+//               latInput.response = value;
+//             },
+//             onSaved: (String value) {
+//               latInput.response = value;
+//             },
+//           ));
 
-      final lonField = Container(
-          width: MediaQuery.of(context).size.width * .3,
-          child: TextFormField(
-            obscureText: false,
-            maxLines: 1,
-            minLines: 1,
-            enabled: false,
-            style: textInputTextStyle,
-            keyboardType: TextInputType.text,
-            controller: _lonController,
-            decoration: CommonStyle.textFieldStyle(
-                labelTextStr: "Longitude", hintTextStr: ""),
-            validator: (value) {
-              return validateText(value);
-            },
-            onChanged: (String value) {
-              lonInput.response = value;
-            },
-            onSaved: (String value) {
-              lonInput.response = value;
-            },
-          ));
-      final clearBtn = Container(
-          width: MediaQuery.of(context).size.width * .3,
-          child: FlatButton(
-            //elevation: 20,
-            color: Colors.transparent,
-            splashColor: highlightColor,
-            textColor: btnColor,
-            shape: RoundedRectangleBorder(side: BorderSide(color: btnColor)),
-            child: Text(
-              'Clear',
-              textAlign: TextAlign.center,
-            ),
-            onPressed: clearLocation,
-          ));
-//Address fields
-      final adrsField1 = TextFormField(
-        obscureText: false,
-        maxLines: 1,
-        minLines: 1,
-        style: textInputTextStyle,
-        keyboardType: TextInputType.text,
-        controller: _adrs1Controller,
-        decoration: CommonStyle.textFieldStyle(
-            labelTextStr: "Apartment/ House No./ Lane", hintTextStr: ""),
-        // validator: validateText,
-        onChanged: (String value) {
-          addressInput.response = value;
-          print("changed address");
-        },
-        onSaved: (String value) {
-          addressInput.response = value;
-          print("saved address");
-        },
-      );
-      final landmarkField2 = TextFormField(
-        obscureText: false,
-        maxLines: 1,
-        minLines: 1,
-        style: textInputTextStyle,
-        keyboardType: TextInputType.text,
-        controller: _landController,
-        decoration: InputDecoration(
-          labelText: 'Landmark',
-          enabledBorder:
-              UnderlineInputBorder(borderSide: BorderSide(color: Colors.grey)),
-          focusedBorder: UnderlineInputBorder(
-              borderSide: BorderSide(color: Colors.orange)),
-        ),
-        //validator: validateText,
-        onChanged: (String value) {
-          addresslandmark.response = value;
-          print("changed landmark");
-        },
-        onSaved: (String value) {
-          addresslandmark.response = value;
-          print("saved landmark");
-        },
-      );
-      final localityField = TextFormField(
-        obscureText: false,
-        maxLines: 1,
-        minLines: 1,
-        style: textInputTextStyle,
-        controller: _localityController,
-        keyboardType: TextInputType.text,
-        decoration: InputDecoration(
-          labelText: 'Locality',
-          enabledBorder:
-              UnderlineInputBorder(borderSide: BorderSide(color: Colors.grey)),
-          focusedBorder: UnderlineInputBorder(
-              borderSide: BorderSide(color: Colors.orange)),
-        ),
-        // validator: validateText,
-        onSaved: (String value) {
-          addressLocality.response = value;
-          print("saved address");
-        },
-      );
-      final cityField = TextFormField(
-        obscureText: false,
-        maxLines: 1,
-        minLines: 1,
-        style: textInputTextStyle,
-        keyboardType: TextInputType.text,
-        controller: _cityController,
-        decoration: InputDecoration(
-          labelText: 'City',
-          enabledBorder:
-              UnderlineInputBorder(borderSide: BorderSide(color: Colors.grey)),
-          focusedBorder: UnderlineInputBorder(
-              borderSide: BorderSide(color: Colors.orange)),
-        ),
-        // validator: validateText,
-        onSaved: (String value) {
-          addressCity.response = value;
-          print("saved address");
-        },
-      );
-      final stateField = TextFormField(
-        obscureText: false,
-        maxLines: 1,
-        minLines: 1,
-        style: textInputTextStyle,
-        keyboardType: TextInputType.text,
-        controller: _stateController,
-        decoration: InputDecoration(
-          labelText: 'State',
-          enabledBorder:
-              UnderlineInputBorder(borderSide: BorderSide(color: Colors.grey)),
-          focusedBorder: UnderlineInputBorder(
-              borderSide: BorderSide(color: Colors.orange)),
-        ),
-        // validator: validateText,
-        onSaved: (String value) {
-          addressState.response = value;
-          print("saved address");
-        },
-      );
-      final countryField = TextFormField(
-        obscureText: false,
-        maxLines: 1,
-        minLines: 1,
-        style: textInputTextStyle,
-        keyboardType: TextInputType.text,
-        controller: _countryController,
-        decoration: InputDecoration(
-          labelText: 'Country',
-          enabledBorder:
-              UnderlineInputBorder(borderSide: BorderSide(color: Colors.grey)),
-          focusedBorder: UnderlineInputBorder(
-              borderSide: BorderSide(color: Colors.orange)),
-        ),
-        //validator: validateText,
-        onSaved: (String value) {
-          addressCountry.response = value;
-          print("saved address");
-        },
-      );
-      final pinField = TextFormField(
-        obscureText: false,
-        maxLines: 1,
-        minLines: 1,
-        style: textInputTextStyle,
-        keyboardType: TextInputType.number,
-        controller: _pinController,
-        decoration: InputDecoration(
-          labelText: 'Postal code',
-          enabledBorder:
-              UnderlineInputBorder(borderSide: BorderSide(color: Colors.grey)),
-          focusedBorder: UnderlineInputBorder(
-              borderSide: BorderSide(color: Colors.orange)),
-        ),
-        // validator: validateText,
+//       final lonField = Container(
+//           width: MediaQuery.of(context).size.width * .3,
+//           child: TextFormField(
+//             obscureText: false,
+//             maxLines: 1,
+//             minLines: 1,
+//             enabled: false,
+//             style: textInputTextStyle,
+//             keyboardType: TextInputType.text,
+//             controller: _lonController,
+//             decoration: CommonStyle.textFieldStyle(
+//                 labelTextStr: "Longitude", hintTextStr: ""),
+//             validator: (value) {
+//               return validateText(value);
+//             },
+//             onChanged: (String value) {
+//               lonInput.response = value;
+//             },
+//             onSaved: (String value) {
+//               lonInput.response = value;
+//             },
+//           ));
+//       final clearBtn = Container(
+//           width: MediaQuery.of(context).size.width * .3,
+//           child: FlatButton(
+//             //elevation: 20,
+//             color: Colors.transparent,
+//             splashColor: highlightColor,
+//             textColor: btnColor,
+//             shape: RoundedRectangleBorder(side: BorderSide(color: btnColor)),
+//             child: Text(
+//               'Clear',
+//               textAlign: TextAlign.center,
+//             ),
+//             onPressed: clearLocation,
+//           ));
+// //Address fields
+//       final adrsField1 = TextFormField(
+//         obscureText: false,
+//         maxLines: 1,
+//         minLines: 1,
+//         style: textInputTextStyle,
+//         keyboardType: TextInputType.text,
+//         controller: _adrs1Controller,
+//         decoration: CommonStyle.textFieldStyle(
+//             labelTextStr: "Apartment/ House No./ Lane", hintTextStr: ""),
+//         // validator: validateText,
+//         onChanged: (String value) {
+//           addressInput.response = value;
+//           print("changed address");
+//         },
+//         onSaved: (String value) {
+//           addressInput.response = value;
+//           print("saved address");
+//         },
+//       );
+//       final landmarkField2 = TextFormField(
+//         obscureText: false,
+//         maxLines: 1,
+//         minLines: 1,
+//         style: textInputTextStyle,
+//         keyboardType: TextInputType.text,
+//         controller: _landController,
+//         decoration: InputDecoration(
+//           labelText: 'Landmark',
+//           enabledBorder:
+//               UnderlineInputBorder(borderSide: BorderSide(color: Colors.grey)),
+//           focusedBorder: UnderlineInputBorder(
+//               borderSide: BorderSide(color: Colors.orange)),
+//         ),
+//         //validator: validateText,
+//         onChanged: (String value) {
+//           addresslandmark.response = value;
+//           print("changed landmark");
+//         },
+//         onSaved: (String value) {
+//           addresslandmark.response = value;
+//           print("saved landmark");
+//         },
+//       );
+//       final localityField = TextFormField(
+//         obscureText: false,
+//         maxLines: 1,
+//         minLines: 1,
+//         style: textInputTextStyle,
+//         controller: _localityController,
+//         keyboardType: TextInputType.text,
+//         decoration: InputDecoration(
+//           labelText: 'Locality',
+//           enabledBorder:
+//               UnderlineInputBorder(borderSide: BorderSide(color: Colors.grey)),
+//           focusedBorder: UnderlineInputBorder(
+//               borderSide: BorderSide(color: Colors.orange)),
+//         ),
+//         // validator: validateText,
+//         onSaved: (String value) {
+//           addressLocality.response = value;
+//           print("saved address");
+//         },
+//       );
+//       final cityField = TextFormField(
+//         obscureText: false,
+//         maxLines: 1,
+//         minLines: 1,
+//         style: textInputTextStyle,
+//         keyboardType: TextInputType.text,
+//         controller: _cityController,
+//         decoration: InputDecoration(
+//           labelText: 'City',
+//           enabledBorder:
+//               UnderlineInputBorder(borderSide: BorderSide(color: Colors.grey)),
+//           focusedBorder: UnderlineInputBorder(
+//               borderSide: BorderSide(color: Colors.orange)),
+//         ),
+//         // validator: validateText,
+//         onSaved: (String value) {
+//           addressCity.response = value;
+//           print("saved address");
+//         },
+//       );
+//       final stateField = TextFormField(
+//         obscureText: false,
+//         maxLines: 1,
+//         minLines: 1,
+//         style: textInputTextStyle,
+//         keyboardType: TextInputType.text,
+//         controller: _stateController,
+//         decoration: InputDecoration(
+//           labelText: 'State',
+//           enabledBorder:
+//               UnderlineInputBorder(borderSide: BorderSide(color: Colors.grey)),
+//           focusedBorder: UnderlineInputBorder(
+//               borderSide: BorderSide(color: Colors.orange)),
+//         ),
+//         // validator: validateText,
+//         onSaved: (String value) {
+//           addressState.response = value;
+//           print("saved address");
+//         },
+//       );
+//       final countryField = TextFormField(
+//         obscureText: false,
+//         maxLines: 1,
+//         minLines: 1,
+//         style: textInputTextStyle,
+//         keyboardType: TextInputType.text,
+//         controller: _countryController,
+//         decoration: InputDecoration(
+//           labelText: 'Country',
+//           enabledBorder:
+//               UnderlineInputBorder(borderSide: BorderSide(color: Colors.grey)),
+//           focusedBorder: UnderlineInputBorder(
+//               borderSide: BorderSide(color: Colors.orange)),
+//         ),
+//         //validator: validateText,
+//         onSaved: (String value) {
+//           addressCountry.response = value;
+//           print("saved address");
+//         },
+//       );
+//       final pinField = TextFormField(
+//         obscureText: false,
+//         maxLines: 1,
+//         minLines: 1,
+//         style: textInputTextStyle,
+//         keyboardType: TextInputType.number,
+//         controller: _pinController,
+//         decoration: InputDecoration(
+//           labelText: 'Postal code',
+//           enabledBorder:
+//               UnderlineInputBorder(borderSide: BorderSide(color: Colors.grey)),
+//           focusedBorder: UnderlineInputBorder(
+//               borderSide: BorderSide(color: Colors.orange)),
+//         ),
+//         // validator: validateText,
 
-        onSaved: (String value) {
-          addressPin.response = value;
-          print("saved address");
-        },
-      );
+//         onSaved: (String value) {
+//           addressPin.response = value;
+//           print("saved address");
+//         },
+//       );
       Flushbar flush;
       bool _wasButtonClicked;
 
@@ -971,7 +1054,7 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage>
 
         validationErrMsg = "";
 
-        if (validateIdProof()) {
+        if (validateAllFields()) {
           Utils.showMyFlushbar(
               context,
               Icons.info_outline,
@@ -1001,6 +1084,35 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage>
           }
 
           idProofField.responseFilePaths = targetPaths;
+
+          targetPaths.clear();
+          for (String path in medConditionsField.responseFilePaths) {
+            String fileName = basename(path);
+            print(fileName);
+
+            String targetFileName =
+                '${bookingApplication.id}#${medConditionsField.id}#${_gs.getCurrentUser().id}#$fileName';
+
+            String targetPath = await uploadFilesToServer(path, targetFileName);
+            print(targetPath);
+            targetPaths.add(targetPath);
+          }
+          medConditionsField.responseFilePaths = targetPaths;
+
+          targetPaths.clear();
+          for (String path in frontlineWorkerField.responseFilePaths) {
+            String fileName = basename(path);
+            print(fileName);
+
+            String targetFileName =
+                '${bookingApplication.id}#${frontlineWorkerField.id}#${_gs.getCurrentUser().id}#$fileName';
+
+            String targetPath = await uploadFilesToServer(path, targetFileName);
+            print(targetPath);
+            targetPaths.add(targetPath);
+          }
+
+          frontlineWorkerField.responseFilePaths = targetPaths;
 
           _gs
               .getTokenApplicationService()
@@ -1312,7 +1424,7 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage>
                                 Container(
                                   padding: EdgeInsets.only(left: 5.0, right: 5),
                                   child: Column(children: <Widget>[
-                                    frontlineField,
+                                    frontlineFieldInput,
                                     Row(
                                       mainAxisAlignment:
                                           MainAxisAlignment.spaceBetween,
@@ -1353,14 +1465,14 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage>
                                                       padding: EdgeInsets.only(
                                                           bottom: 5),
                                                       child: showImageList(
-                                                          //TODO:17Jan Check this
                                                           context,
-                                                          _images[index]),
+                                                          _frontLineProofimages[
+                                                              index],
+                                                          _frontLineProofimages),
                                                     );
                                                   },
                                                   itemCount:
-                                                      frontlineWorkerField
-                                                          .responseFilePaths
+                                                      _frontLineProofimages
                                                           .length,
                                                 ),
                                               ),
@@ -1368,8 +1480,8 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage>
                                           mainAxisAlignment:
                                               MainAxisAlignment.end,
                                           children: [
-                                            selectFileBtn,
-                                            clickPicForUploadBtn
+                                            clickPicForfrontLineBtn,
+                                            selectPicForFrontLineBtn
                                           ],
                                         ),
                                       ],
@@ -1483,19 +1595,20 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage>
                                                           bottom: 5),
                                                       child: showImageList(
                                                           context,
-                                                          _images[index]),
+                                                          _idProofimages[index],
+                                                          _frontLineProofimages),
                                                     );
                                                   },
-                                                  itemCount: idProofField
-                                                      .responseFilePaths.length,
+                                                  itemCount:
+                                                      _idProofimages.length,
                                                 ),
                                               ),
                                         Row(
                                           mainAxisAlignment:
                                               MainAxisAlignment.end,
                                           children: [
-                                            selectFileBtn,
-                                            clickPicForUploadBtn
+                                            clickPicForIdProofBtn,
+                                            selectPicForIdProofBtn
                                           ],
                                         ),
                                       ],
@@ -1534,7 +1647,7 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage>
                                       title: Row(
                                         children: <Widget>[
                                           Text(
-                                            healthDetailsInput.label,
+                                            medConditionsField.label,
                                             style: TextStyle(
                                                 color: Colors.white,
                                                 fontSize: 15),
@@ -1557,7 +1670,7 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage>
                                             children: <Widget>[
                                               Expanded(
                                                 child: Text(
-                                                    healthDetailsInput
+                                                    medConditionsField
                                                         .infoMessage,
                                                     style: buttonXSmlTextStyle),
                                               ),
@@ -1616,20 +1729,22 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage>
                                                                 bottom: 5),
                                                         child: showImageList(
                                                             context,
-                                                            _images[index]),
+                                                            _medCondsProofimages[
+                                                                index],
+                                                            _frontLineProofimages),
                                                       );
                                                     },
-                                                    itemCount: idProofField
-                                                        .responseFilePaths
-                                                        .length,
+                                                    itemCount:
+                                                        _medCondsProofimages
+                                                            .length,
                                                   ),
                                                 ),
                                           Row(
                                             mainAxisAlignment:
                                                 MainAxisAlignment.end,
                                             children: [
-                                              selectFileBtn,
-                                              clickPicForUploadBtn
+                                              clickPicForMedCondsBtn,
+                                              selectPicsForMedCondsBtn,
                                             ],
                                           ),
                                         ],
@@ -1877,7 +1992,7 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage>
                                 bookingForm.footerMsg,
                                 // bookingForm.footerMsg,
                                 style: TextStyle(
-                                    color: Colors.orangeAccent.shade400,
+                                    color: Colors.orangeAccent.shade700,
                                     //fontWeight: FontWeight.w600,
                                     fontFamily: 'Montserrat',
 
@@ -1971,9 +2086,9 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage>
 }
 
 class Item {
-  Value text;
+  Value value;
   bool isSelected;
   String lastSelected;
 
-  Item(this.text, this.isSelected);
+  Item(this.value, this.isSelected);
 }

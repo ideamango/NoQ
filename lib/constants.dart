@@ -138,8 +138,15 @@ String entityUpsertErrStr = "Coold not Save the details!!";
 String entityUpsertErrSubStr = "Check your internet connection and try again.";
 
 //* Start * Validation error msgs for Token Booking form
-String uploadValidIdProofMsg = "Please upload valid ID proof.";
 String idProofTypeMissingMsg = "Please select Type of ID proof.";
+String idProofFileMissingMsg = "Please upload valid ID proof.";
+String medCondsTypeMissingMsg = "Please select Type of Medical Conditions";
+String medCondsFileMissingMsg =
+    "Please upload supporting documents for Medical Conditions";
+String frontLineTypeMissingMsg = "Please select Frontline Worker type";
+String frontLineFileMissingMsg =
+    "Please upload supporting documents for Frontline Worker";
+
 String nameMissingMsg = "Please provide name as per govt. ID proof.";
 String dobMissingMsg = "Please provide Date of Birth";
 String currLocMissingMsg = "Please select Current Location";

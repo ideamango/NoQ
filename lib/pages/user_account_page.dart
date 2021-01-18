@@ -4,10 +4,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:noq/constants.dart';
+import 'package:noq/db/db_model/booking_application.dart';
 import 'package:noq/db/db_model/user_token.dart';
 import 'package:noq/global_state.dart';
 import 'package:noq/pages/notifications_page.dart';
 import 'package:noq/pages/shopping_list.dart';
+import 'package:noq/pages/user_applications_list.dart';
 import 'package:noq/repository/slotRepository.dart';
 import 'package:noq/services/circular_progress.dart';
 import 'package:noq/services/url_services.dart';
@@ -38,6 +40,7 @@ class _UserAccountPageState extends State<UserAccountPage> {
   int i;
   List<UserToken> _pastBookingsList;
   List<UserToken> _newBookingsList;
+  List<BookingApplication> _listOfApplications;
   String _upcomingBkgStatus;
   String _pastBkgStatus;
   // UserAppData _userProfile;
@@ -47,7 +50,7 @@ class _UserAccountPageState extends State<UserAccountPage> {
   bool isPastSet = false;
 //Qr code scan result
   //ScanResult scanResult;
-  GlobalState _state;
+  GlobalState _gs;
   String _dynamicLink;
   String appID = "";
   String output = "";
@@ -72,8 +75,18 @@ class _UserAccountPageState extends State<UserAccountPage> {
         });
         print("App ID" + appID);
       });
-      _loadBookings();
-      _initCompleted = true;
+      _loadBookings().then((value) {
+        _gs
+            .getTokenApplicationService()
+            .getApplications(null, null, null, _gs.getCurrentUser().ph, null,
+                null, null, null, null, null, null)
+            .then((value) {
+          _listOfApplications = value;
+          setState(() {
+            _initCompleted = true;
+          });
+        });
+      });
     });
   }
 
@@ -90,7 +103,7 @@ class _UserAccountPageState extends State<UserAccountPage> {
   }
 
   Future<void> getGlobalState() async {
-    _state = await GlobalState.getGlobalState();
+    _gs = await GlobalState.getGlobalState();
   }
 
   Future scan() async {
@@ -119,12 +132,12 @@ class _UserAccountPageState extends State<UserAccountPage> {
   }
 
   void fetchDataFromGlobalState() {
-    if (!Utils.isNullOrEmpty(_state.bookings)) {
-      if (_state.bookings.length != 0) {
+    if (!Utils.isNullOrEmpty(_gs.bookings)) {
+      if (_gs.bookings.length != 0) {
         setState(() {
-          _pastBookingsList = _state.getPastBookings();
+          _pastBookingsList = _gs.getPastBookings();
 
-          _newBookingsList = _state.getUpcomingBookings();
+          _newBookingsList = _gs.getUpcomingBookings();
 
           if (_pastBookingsList.length != 0) {
             _pastBkgStatus = 'Success';
@@ -144,7 +157,7 @@ class _UserAccountPageState extends State<UserAccountPage> {
     }
   }
 
-  void _loadBookings() async {
+  Future<void> _loadBookings() async {
     //Fetch details from server
 
     //loadDataFromPrefs();
@@ -679,8 +692,8 @@ class _UserAccountPageState extends State<UserAccountPage> {
                                         TextSpan(text: userAccountHeadingTxt),
                                         TextSpan(text: "\n"),
                                         TextSpan(
-                                          text: _state.getCurrentUser() != null
-                                              ? _state.getCurrentUser().ph
+                                          text: _gs.getCurrentUser() != null
+                                              ? _gs.getCurrentUser().ph
                                               : "",
                                         )
                                       ])),
@@ -709,7 +722,7 @@ class _UserAccountPageState extends State<UserAccountPage> {
                                   children: <Widget>[
                                     Container(
                                       width: MediaQuery.of(context).size.width *
-                                          .42,
+                                          .43,
                                       child: RaisedButton(
                                           color: btnColor,
                                           textColor: Colors.white,
@@ -725,11 +738,14 @@ class _UserAccountPageState extends State<UserAccountPage> {
                                           },
                                           child: Row(
                                               mainAxisAlignment:
-                                                  MainAxisAlignment.center,
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
                                               children: <Widget>[
                                                 Icon(Icons.star),
                                                 Text(
-                                                  '  Rate the app',
+                                                  ' Rate the app',
+                                                  style:
+                                                      TextStyle(fontSize: 12),
                                                   textAlign: TextAlign.center,
                                                 ),
                                               ])),
@@ -737,7 +753,7 @@ class _UserAccountPageState extends State<UserAccountPage> {
                                     horizontalSpacer,
                                     Container(
                                       width: MediaQuery.of(context).size.width *
-                                          .42,
+                                          .43,
                                       child: RaisedButton(
                                         color: btnColor,
                                         textColor: Colors.white,
@@ -762,11 +778,12 @@ class _UserAccountPageState extends State<UserAccountPage> {
                                               },
                                         child: Row(
                                             mainAxisAlignment:
-                                                MainAxisAlignment.center,
+                                                MainAxisAlignment.spaceBetween,
                                             children: <Widget>[
                                               Icon(Icons.share),
                                               Text(
-                                                '  Invite friends',
+                                                'Invite friends',
+                                                style: TextStyle(fontSize: 12),
                                                 textAlign: TextAlign.center,
                                               ),
                                             ]),
@@ -774,6 +791,58 @@ class _UserAccountPageState extends State<UserAccountPage> {
                                     ),
                                   ],
                                 )),
+                          ),
+                          SizedBox(
+                            height: MediaQuery.of(context).size.height * .03,
+                          ),
+                          Card(
+                            margin: EdgeInsets.zero,
+                            elevation: 20,
+                            child: Theme(
+                              data: ThemeData(
+                                unselectedWidgetColor: Colors.grey[600],
+                                accentColor: btnColor,
+                              ),
+                              child: ExpansionTile(
+                                //key: PageStorageKey(this.widget.headerTitle),
+
+                                title: Text(
+                                  "My Applications",
+                                  style: TextStyle(
+                                      color: Colors.blueGrey[700],
+                                      fontSize: 17),
+                                ),
+                                backgroundColor: Colors.white,
+                                leading: Icon(
+                                  Icons.app_registration,
+                                  color: primaryIcon,
+                                ),
+                                children: <Widget>[
+                                  if (!Utils.isNullOrEmpty(_listOfApplications))
+                                   ListView.builder(
+                          padding: EdgeInsets.all(
+                              MediaQuery.of(context).size.width * .026),
+                        
+                          reverse: true,
+                          shrinkWrap: true,
+                          //itemExtent: itemSize,
+                          itemBuilder: (BuildContext context, int index) {
+                           
+                            return Container(
+                              margin: EdgeInsets.only(bottom: 5),
+                              child: UserApplicationsList(
+                                ba: _listOfApplications[index],
+                              ),
+                            );
+                          },
+                          itemCount: _listOfApplications.length,
+                        ),
+                                  if (Utils.isNullOrEmpty(_listOfApplications))
+                                    _emptyStorePage(
+                                        "No Applications yet.. ", bookNowMsg),
+                                ],
+                              ),
+                            ),
                           ),
                           SizedBox(
                             height: MediaQuery.of(context).size.height * .03,

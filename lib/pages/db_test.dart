@@ -1362,6 +1362,7 @@ class DBTest {
           "Date of Birth of the Applicant",
           true,
           "Please select the applicant's Date of Birth");
+      dob.isMeta = true;
 
       bf.addField(dob);
 

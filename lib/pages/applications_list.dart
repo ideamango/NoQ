@@ -47,7 +47,7 @@ class _ApplicationsListState extends State<ApplicationsList> {
     super.initState();
     getGlobalState().whenComplete(() {
       //******gettinmg dummy data -remove this afterwards */
-      getListOfData();
+      //  getListOfData();
 
       _gs
           .getTokenApplicationService()
@@ -69,7 +69,7 @@ class _ApplicationsListState extends State<ApplicationsList> {
     _gs = await GlobalState.getGlobalState();
   }
 
-  getListOfData() {
+  getListOfData() async {
     //TODO: Generate dummy data as of now, later change to actual data
 
     listOfBa = initBookingFormDummy();
@@ -446,6 +446,7 @@ class _ApplicationsListState extends State<ApplicationsList> {
     bool isMedicalMorbidities = false;
     String mbImg1;
     String mbImg2;
+    String medConds;
     TextEditingController notesController = new TextEditingController();
 
     listOfMeta.addAll(ba.responseForm
@@ -454,29 +455,33 @@ class _ApplicationsListState extends State<ApplicationsList> {
 
     for (var element in listOfMeta) {
       switch (element.label) {
-        case "Name of Person":
+        case "Name of the Applicant":
           name = (element as FormInputFieldText).response;
           break;
-        case "Date of Birth":
+        case "Date of Birth of the Applicant":
           FormInputFieldDateTime newfield = element;
           age = ((DateTime.now().difference(newfield.responseDateTime).inDays) /
                   365)
               .toStringAsFixed(0);
           break;
-        case "Is Frontline Worker":
+        case "Only for Frontline workers":
           FormInputFieldOptionsWithAttachments newfield = element;
           isFrontlineWorker = !Utils.isNullOrEmpty(newfield.responseValues);
           if (isFrontlineWorker) {
             fwImg1 = newfield.responseValues[0].value;
           }
           break;
-        case "Any Medical Conditions":
+        case "Pre-existing Medical Conditions":
           FormInputFieldOptionsWithAttachments newfield = element;
           isMedicalMorbidities = !Utils.isNullOrEmpty(newfield.responseValues);
           if (isMedicalMorbidities) {
-            mbImg1 = newfield.responseValues[0].value;
-            if (newfield.responseValues.length > 1)
-              mbImg2 = newfield.responseValues[1].value;
+            for (Value val in newfield.responseValues) {
+              if (!Utils.isNotNullOrEmpty(medConds)) medConds = "";
+              medConds = medConds + val.value.toString();
+            }
+            // mbImg1 = newfield.responseValues[0].value;
+            // if (newfield.responseValues.length > 1)
+            //   mbImg2 = newfield.responseValues[1].value;
           }
           break;
         default:
@@ -484,7 +489,7 @@ class _ApplicationsListState extends State<ApplicationsList> {
       }
     }
 
-    double cardHeight = MediaQuery.of(context).size.height * .22;
+    double cardHeight = MediaQuery.of(context).size.height * .2;
     double cardWidth = MediaQuery.of(context).size.width * .95;
     var medCondGroup = AutoSizeGroup();
     var labelGroup = AutoSizeGroup();
@@ -494,8 +499,8 @@ class _ApplicationsListState extends State<ApplicationsList> {
       "No Slots available"
     ];
 
-    String medConds =
-        mbImg1 + (Utils.isNotNullOrEmpty(mbImg2) ? " & $mbImg2" : "");
+    // String medConds =
+    //    Utils.isNotNullOrEmpty(mbImg1)? mbImg1 + (Utils.isNotNullOrEmpty(mbImg2) ? " & $mbImg2" : "");
 
     return GestureDetector(
       onTap: () {
@@ -513,6 +518,7 @@ class _ApplicationsListState extends State<ApplicationsList> {
           height: cardHeight,
 
           child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
               Padding(
                 padding: const EdgeInsets.fromLTRB(8, 10, 8, 4),
@@ -523,16 +529,19 @@ class _ApplicationsListState extends State<ApplicationsList> {
                       children: [
                         Row(
                           children: [
-                            AutoSizeText(
-                              "Name : ",
-                              group: labelGroup,
-                              minFontSize: 10,
-                              maxFontSize: 12,
-                              maxLines: 1,
-                              overflow: TextOverflow.clip,
-                              style: TextStyle(
-                                  color: Colors.blueGrey[700],
-                                  fontFamily: 'RalewayRegular'),
+                            SizedBox(
+                              width: cardWidth * .12,
+                              child: AutoSizeText(
+                                "Name : ",
+                                group: labelGroup,
+                                minFontSize: 10,
+                                maxFontSize: 12,
+                                maxLines: 1,
+                                overflow: TextOverflow.clip,
+                                style: TextStyle(
+                                    color: Colors.blueGrey[700],
+                                    fontFamily: 'RalewayRegular'),
+                              ),
                             ),
                             SizedBox(
                               width: cardWidth * .3,
@@ -552,44 +561,53 @@ class _ApplicationsListState extends State<ApplicationsList> {
                             ),
                           ],
                         ),
-                        horizontalSpacer,
                         Row(children: [
-                          AutoSizeText(
-                            "Age : ",
-                            group: labelGroup,
-                            minFontSize: 10,
-                            maxFontSize: 12,
-                            maxLines: 1,
-                            overflow: TextOverflow.clip,
-                            style: TextStyle(
-                                color: Colors.blueGrey[700],
-                                fontFamily: 'RalewayRegular'),
+                          SizedBox(
+                            width: cardWidth * .083,
+                            child: AutoSizeText(
+                              "Age : ",
+                              group: labelGroup,
+                              minFontSize: 10,
+                              maxFontSize: 12,
+                              maxLines: 1,
+                              overflow: TextOverflow.clip,
+                              style: TextStyle(
+                                  color: Colors.blueGrey[700],
+                                  fontFamily: 'RalewayRegular'),
+                            ),
                           ),
-                          Text(
-                            age,
-                            style: TextStyle(
-                                fontSize: 14,
-                                color: Colors.indigo[900],
-                                fontWeight: FontWeight.bold,
-                                fontFamily: 'RalewayRegular'),
+                          SizedBox(
+                            width: cardWidth * .08,
+                            child: Text(
+                              age,
+                              style: TextStyle(
+                                  fontSize: 13,
+                                  color: Colors.indigo[900],
+                                  fontWeight: FontWeight.bold,
+                                  fontFamily: 'RalewayRegular'),
+                            ),
                           ),
                         ]),
                       ],
                     ),
                     Row(children: [
-                      AutoSizeText(
-                        "Status : ",
-                        group: labelGroup,
-                        minFontSize: 10,
-                        maxFontSize: 12,
-                        maxLines: 1,
-                        overflow: TextOverflow.clip,
-                        style: TextStyle(
-                            color: Colors.blueGrey[700],
-                            fontFamily: 'RalewayRegular'),
+                      SizedBox(
+                        width: cardWidth * .12,
+                        child: AutoSizeText(
+                          "Status : ",
+                          group: labelGroup,
+                          minFontSize: 10,
+                          maxFontSize: 12,
+                          maxLines: 1,
+                          overflow: TextOverflow.clip,
+                          style: TextStyle(
+                              color: Colors.blueGrey[700],
+                              fontFamily: 'RalewayRegular'),
+                        ),
                       ),
                       Container(
-                        padding: EdgeInsets.all(4),
+                        padding: EdgeInsets.all(2),
+                        margin: EdgeInsets.all(0),
                         decoration: BoxDecoration(
                             color: (ba.status == ApplicationStatus.NEW)
                                 ? Colors.blue
@@ -604,14 +622,22 @@ class _ApplicationsListState extends State<ApplicationsList> {
                             shape: BoxShape.rectangle,
                             borderRadius:
                                 BorderRadius.all(Radius.circular(5.0))),
-                        child: Text(
-                          EnumToString.convertToString(ba.status),
-                          style: TextStyle(
-                              fontSize: 10,
-                              letterSpacing: 1,
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                              fontFamily: 'RalewayRegular'),
+                        child: SizedBox(
+                          width: cardWidth * .2,
+                          height: cardHeight * .11,
+                          child: Center(
+                            child: AutoSizeText(
+                                EnumToString.convertToString(ba.status),
+                                textAlign: TextAlign.center,
+                                minFontSize: 7,
+                                maxFontSize: 9,
+                                style: TextStyle(
+                                    fontSize: 9,
+                                    fontWeight: FontWeight.bold,
+                                    letterSpacing: 1,
+                                    color: Colors.white,
+                                    fontFamily: 'RalewayRegular')),
+                          ),
                         ),
                       ),
                     ]),
@@ -653,8 +679,7 @@ class _ApplicationsListState extends State<ApplicationsList> {
                   children: [
                     SizedBox(
                         width: cardWidth * .25,
-                        child: Row(
-                          // crossAxisAlignment: CrossAxisAlignment.start,
+                        child: Wrap(
                           children: [
                             AutoSizeText(
                               "Medical Issues",
@@ -695,16 +720,19 @@ class _ApplicationsListState extends State<ApplicationsList> {
               // ),
 
               Row(
-                //   mainAxisAlignment: MainAxisAlignment.end,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Container(
                       margin: EdgeInsets.zero,
                       padding: EdgeInsets.only(left: 8, top: 0),
-                      width: cardWidth * .65,
-                      height: cardHeight * .45,
+                      width: cardWidth * .5,
+                      height: cardHeight * .35,
                       child: TextFormField(
                         controller: listOfControllers[ba.id],
-                        style: TextStyle(fontSize: 12),
+                        style: TextStyle(
+                            fontSize: 12,
+                            color: Colors.blueGrey[700],
+                            fontFamily: 'RalewayRegular'),
                         decoration: InputDecoration(
                           labelText: 'Remarks',
                           enabledBorder: UnderlineInputBorder(
@@ -715,43 +743,65 @@ class _ApplicationsListState extends State<ApplicationsList> {
                         maxLines: 2,
                         keyboardType: TextInputType.text,
                       )),
-                  IconButton(
-                      visualDensity: VisualDensity.compact,
-                      padding: const EdgeInsets.symmetric(
-                          vertical: 2.0, horizontal: 8),
-                      color: Colors.green[400],
-                      onPressed: () {
-                        ba.notesOnApproval = listOfControllers[ba.id].text;
-                        setState(() {
-                          ba.status = ApplicationStatus.APPROVED;
-                        });
-                      },
-                      icon: Icon(Icons.check_circle)),
-                  IconButton(
-                    visualDensity: VisualDensity.compact,
-                    padding: const EdgeInsets.symmetric(
-                        vertical: 2.0, horizontal: 8),
-                    color: Colors.yellow[700],
-                    onPressed: () {
-                      ba.notesOnPuttingOnHold = listOfControllers[ba.id].text;
-                      setState(() {
-                        ba.status = ApplicationStatus.ONHOLD;
-                      });
-                    },
-                    icon: Icon(Icons.pan_tool_rounded),
-                  ),
-                  IconButton(
-                    visualDensity: VisualDensity.compact,
-                    padding: const EdgeInsets.symmetric(
-                        vertical: 2.0, horizontal: 8),
-                    color: Colors.red,
-                    onPressed: () {
-                      ba.notesOnRejection = listOfControllers[ba.id].text;
-                      setState(() {
-                        ba.status = ApplicationStatus.REJECTED;
-                      });
-                    },
-                    icon: Icon(Icons.cancel),
+                  Container(
+                    width: cardWidth * .42,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        IconButton(
+                            alignment: Alignment.bottomCenter,
+                            //    visualDensity: VisualDensity.compact,
+                            padding: const EdgeInsets.fromLTRB(8, 2, 8, 0),
+                            color: Colors.green[400],
+                            onPressed: () {
+                              ba.notesOnApproval =
+                                  listOfControllers[ba.id].text;
+                              setState(() {
+                                ba.status = ApplicationStatus.APPROVED;
+                              });
+                            },
+                            icon: Icon(
+                              Icons.check_circle,
+                              size: 30,
+                            )),
+                        IconButton(
+                          alignment: Alignment.bottomCenter,
+                          //    visualDensity: VisualDensity.compact,
+                          padding: const EdgeInsets.fromLTRB(8, 2, 8, 0),
+                          visualDensity: VisualDensity.compact,
+
+                          color: Colors.yellow[700],
+                          onPressed: () {
+                            ba.notesOnPuttingOnHold =
+                                listOfControllers[ba.id].text;
+                            setState(() {
+                              ba.status = ApplicationStatus.ONHOLD;
+                            });
+                          },
+                          icon: Icon(
+                            Icons.pan_tool_rounded,
+                            size: 30,
+                          ),
+                        ),
+                        IconButton(
+                          // visualDensity: VisualDensity.compact,
+                          alignment: Alignment.bottomCenter,
+                          //    visualDensity: VisualDensity.compact,
+                          padding: const EdgeInsets.fromLTRB(8, 2, 8, 0),
+                          color: Colors.red,
+                          onPressed: () {
+                            ba.notesOnRejection = listOfControllers[ba.id].text;
+                            setState(() {
+                              ba.status = ApplicationStatus.REJECTED;
+                            });
+                          },
+                          icon: Icon(
+                            Icons.cancel,
+                            size: 30,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ],
               ),

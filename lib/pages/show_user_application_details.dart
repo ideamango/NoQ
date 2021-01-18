@@ -16,17 +16,19 @@ import 'package:noq/utils.dart';
 import 'package:noq/widget/appbar.dart';
 import 'package:noq/widget/widgets.dart';
 
-class ShowApplicationDetails extends StatefulWidget {
+class ShowUserApplicationDetails extends StatefulWidget {
   final BookingApplication bookingApplication;
-  ShowApplicationDetails({
+  ShowUserApplicationDetails({
     Key key,
     @required this.bookingApplication,
   }) : super(key: key);
   @override
-  _ShowApplicationDetailsState createState() => _ShowApplicationDetailsState();
+  _ShowUserApplicationDetailsState createState() =>
+      _ShowUserApplicationDetailsState();
 }
 
-class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
+class _ShowUserApplicationDetailsState
+    extends State<ShowUserApplicationDetails> {
   bool initCompleted = false;
   GlobalState _gs;
   List<BookingApplication> list;
@@ -771,100 +773,56 @@ class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
                         ),
                       )),
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      RaisedButton(
-                          elevation: 8,
-                          color: Colors.green[400],
-                          onPressed: () {
-                            widget.bookingApplication.notesOnApproval =
-                                notesController.text;
-                            setState(() {
-                              widget.bookingApplication.status =
-                                  ApplicationStatus.APPROVED;
-                            });
+                      SizedBox(
+                        width: MediaQuery.of(context).size.width * .9,
+                        child: RaisedButton(
+                            elevation: 8,
+                            color: Colors.yellow[800],
+                            onPressed: () {
+                              //update status on server
+                              //TODO:GOV - Not working right now
+                              // _gs
+                              //     .getTokenApplicationService()
+                              //     .updateApplicationStatus(
+                              //         widget.bookingApplication.id,
+                              //         widget.bookingApplication.status,
+                              //         notesController.text)
+                              //     .then((value) {
+                              widget.bookingApplication.notesOnApproval =
+                                  notesController.text;
+                              setState(() {
+                                widget.bookingApplication.status =
+                                    ApplicationStatus.CANCELLED;
+                                // });
 
-                            Utils.showMyFlushbar(
-                                context,
-                                Icons.check,
-                                Duration(seconds: 4),
-                                "Application Saved!!",
-                                "");
-                            //TODO: Add server code
-                          },
-                          child: Row(children: [
-                            Text(
-                              "Approve",
-                              style: TextStyle(
-                                color: Colors.white,
-                              ),
-                            ),
-                            SizedBox(
-                              width: 2,
-                            ),
-                            Icon(
-                              Icons.check_circle,
-                              color: Colors.white,
-                            )
-                          ])),
-                      RaisedButton(
-                        color: Colors.yellow[700],
-                        onPressed: () {
-                          widget.bookingApplication.notesOnPuttingOnHold =
-                              notesController.text;
-                          setState(() {
-                            widget.bookingApplication.status =
-                                ApplicationStatus.ONHOLD;
-                          });
-
-                          Utils.showMyFlushbar(context, Icons.check,
-                              Duration(seconds: 4), "Application Saved!!", "");
-                        },
-                        child: Row(children: [
-                          Text(
-                            "On-Hold",
-                            style: TextStyle(
-                              color: Colors.white,
-                            ),
-                            // style: buttonTextStyle,
-                          ),
-                          SizedBox(
-                            width: 2,
-                          ),
-                          Icon(
-                            Icons.pan_tool_rounded,
-                            color: Colors.white,
-                          )
-                        ]),
-                      ),
-                      RaisedButton(
-                        color: Colors.red,
-                        onPressed: () {
-                          widget.bookingApplication.notesOnRejection =
-                              notesController.text;
-                          setState(() {
-                            widget.bookingApplication.status =
-                                ApplicationStatus.REJECTED;
-                          });
-
-                          Utils.showMyFlushbar(context, Icons.check,
-                              Duration(seconds: 4), "Application Saved!!", "");
-                        },
-                        child: Row(children: [
-                          Text(
-                            "Reject",
-                            style: TextStyle(
-                              color: Colors.white,
-                            ),
-                          ),
-                          SizedBox(
-                            width: 2,
-                          ),
-                          Icon(
-                            Icons.cancel_rounded,
-                            color: Colors.white,
-                          )
-                        ]),
+                                Utils.showMyFlushbar(
+                                    context,
+                                    Icons.check,
+                                    Duration(seconds: 4),
+                                    "Application Cancelled!!",
+                                    "");
+                              });
+                            },
+                            child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    "Cancel",
+                                    style: TextStyle(
+                                      fontSize: 15,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    width: 2,
+                                  ),
+                                  Icon(
+                                    Icons.block,
+                                    color: Colors.white,
+                                  )
+                                ])),
                       ),
                     ],
                   )

@@ -229,6 +229,7 @@ class FormInputFieldOptions extends Field {
         'isMandatory': isMandatory,
         "infoMessage": infoMessage,
         'options': convertValuesToJson(options),
+        'responseValues': convertValuesToJson(responseValues),
         'isMultiSelect': isMultiSelect,
         'type': EnumToString.convertToString(type)
       };
@@ -241,6 +242,7 @@ class FormInputFieldOptions extends Field {
         json['infoMessage'],
         convertToValuesFromJson(json['options']),
         json['isMultiSelect']);
+    field.responseValues = convertToValuesFromJson(json['responseValues']);
     field.isMeta = json['isMeta'];
     field.id = json['id'];
     field.key = json["key"];
@@ -423,6 +425,7 @@ class FormInputFieldOptionsWithAttachments extends Field {
         'options': convertValuesToJson(options),
         'isMultiSelect': isMultiSelect,
         'type': EnumToString.convertToString(type),
+        'responseValues': convertValuesToJson(responseValues),
         'responseFilePaths': responseFilePaths,
         'maxAttachments': maxAttachments
       };
@@ -441,6 +444,7 @@ class FormInputFieldOptionsWithAttachments extends Field {
     field.id = json['id'];
     field.responseFilePaths =
         convertToStringsFromJson(json['responseFilePaths']);
+    field.responseValues = convertToValuesFromJson(json['responseValues']);
     field.maxAttachments = json['maxAttachments'];
     field.key = json["key"];
     return field;

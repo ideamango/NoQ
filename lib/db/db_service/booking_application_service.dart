@@ -124,7 +124,10 @@ class BookingApplicationService {
     //Case 2: Create if not already created the BookingApplicationsOverview, and update the total counter and new counter
     //Case 3: If BookingForm is Auto Approved then generate the token immediately and set the numberOfApproved in counter by 1
 
-    if (ba == null || !Utils.isNotNullOrEmpty(ba.bookingFormId)) {
+    if (ba == null ||
+        !Utils.isNotNullOrEmpty(ba.bookingFormId) ||
+        ba.responseForm == null ||
+        !Utils.isNotNullOrEmpty(entityId)) {
       throw Exception("Insufficient arguements to submit the application");
     }
 
@@ -138,11 +141,12 @@ class BookingApplicationService {
     BookingApplicationsOverview localCounter;
     BookingApplicationsOverview globalCounter;
 
-    Exception exception;
     String bookingApplicationId = ba.id;
     String bookingFormId = ba.bookingFormId;
     String localCounterId = bookingFormId + "#" + entityId;
     String globalCounterId = bookingFormId;
+
+    print("Application $bookingApplicationId ");
 
     final DocumentReference applicationRef =
         fStore.doc('bookingApplications/' + bookingApplicationId);
@@ -242,8 +246,7 @@ class BookingApplicationService {
 
         isSucess = true;
       } catch (e) {
-        exception = e;
-        print("Application ");
+        print("Exception in Application $bookingApplicationId " + e.toString());
         isSucess = false;
       }
     });
