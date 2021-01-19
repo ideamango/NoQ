@@ -1070,7 +1070,7 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage>
 
           // bookingApplication.preferredSlotTiming =
           //TODO:Save Files and then submit application with the updated file path
-          List<String> targetPaths = List<String>();
+          List<String> idProofTargetPaths = List<String>();
           for (String path in idProofField.responseFilePaths) {
             String fileName = basename(path);
             print(fileName);
@@ -1080,12 +1080,12 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage>
 
             String targetPath = await uploadFilesToServer(path, targetFileName);
             print(targetPath);
-            targetPaths.add(targetPath);
+            idProofTargetPaths.add(targetPath);
           }
 
-          idProofField.responseFilePaths = targetPaths;
+          idProofField.responseFilePaths = idProofTargetPaths;
 
-          targetPaths.clear();
+          List<String> medCondsTargetPaths = List<String>();
           for (String path in medConditionsField.responseFilePaths) {
             String fileName = basename(path);
             print(fileName);
@@ -1095,11 +1095,11 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage>
 
             String targetPath = await uploadFilesToServer(path, targetFileName);
             print(targetPath);
-            targetPaths.add(targetPath);
+            medCondsTargetPaths.add(targetPath);
           }
-          medConditionsField.responseFilePaths = targetPaths;
+          medConditionsField.responseFilePaths = medCondsTargetPaths;
 
-          targetPaths.clear();
+          List<String> frontLineTargetPaths = List<String>();
           for (String path in frontlineWorkerField.responseFilePaths) {
             String fileName = basename(path);
             print(fileName);
@@ -1109,10 +1109,10 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage>
 
             String targetPath = await uploadFilesToServer(path, targetFileName);
             print(targetPath);
-            targetPaths.add(targetPath);
+            frontLineTargetPaths.add(targetPath);
           }
 
-          frontlineWorkerField.responseFilePaths = targetPaths;
+          frontlineWorkerField.responseFilePaths = frontLineTargetPaths;
 
           _gs
               .getTokenApplicationService()

@@ -308,7 +308,7 @@ class ContactRowState extends State<ContactRow> {
             ),
             textAlign: TextAlign.left,
           ),
-          SizedBox(width: 5),
+          SizedBox(width: 2),
           new WeekDaySelectorFormField(
             displayDays: [
               days.monday,
@@ -326,7 +326,7 @@ class ContactRowState extends State<ContactRow> {
             fillColor: Colors.blueGrey[400],
             selectedFillColor: highlightColor,
             boxConstraints: BoxConstraints(
-                minHeight: 25, minWidth: 25, maxHeight: 28, maxWidth: 28),
+                minHeight: 20, minWidth: 20, maxHeight: 24, maxWidth: 24),
             borderSide: BorderSide(color: Colors.white, width: 0),
             language: lang.en,
             onChange: (days) {

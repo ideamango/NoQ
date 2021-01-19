@@ -323,26 +323,10 @@ class _ApplicationsListState extends State<ApplicationsList> {
   Widget _emptyPage() {
     return Center(
       child: Container(
-        height: MediaQuery.of(context).size.height * .6,
+        height: MediaQuery.of(context).size.height * .8,
         alignment: Alignment.center,
-        child: SingleChildScrollView(
-          child: Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
-                SizedBox(height: MediaQuery.of(context).size.height * .02),
-                Container(
-                  color: Colors.transparent,
-                  child: Text("No Approved Requests!"),
-                  // child: Image(
-                  //image: AssetImage('assets/search_home.png'),
-                  // )
-                ),
-              ],
-            ),
-          ),
-        ),
+        child: Text(
+            "No ${EnumToString.convertToString(widget.status).toLowerCase()} Requests!"),
       ),
     );
   }
@@ -489,7 +473,7 @@ class _ApplicationsListState extends State<ApplicationsList> {
       }
     }
 
-    double cardHeight = MediaQuery.of(context).size.height * .2;
+    double cardHeight = MediaQuery.of(context).size.height * .24;
     double cardWidth = MediaQuery.of(context).size.width * .95;
     var medCondGroup = AutoSizeGroup();
     var labelGroup = AutoSizeGroup();
@@ -730,8 +714,8 @@ class _ApplicationsListState extends State<ApplicationsList> {
                       child: TextFormField(
                         controller: listOfControllers[ba.id],
                         style: TextStyle(
-                            fontSize: 12,
-                            color: Colors.blueGrey[700],
+                            fontSize: 10,
+                            color: Colors.blueGrey[800],
                             fontFamily: 'RalewayRegular'),
                         decoration: InputDecoration(
                           labelText: 'Remarks',
@@ -780,7 +764,7 @@ class _ApplicationsListState extends State<ApplicationsList> {
                           },
                           icon: Icon(
                             Icons.pan_tool_rounded,
-                            size: 30,
+                            size: 28,
                           ),
                         ),
                         IconButton(

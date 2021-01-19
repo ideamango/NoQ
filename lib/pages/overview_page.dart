@@ -41,13 +41,13 @@ class _OverviewPageState extends State<OverviewPage> {
         _bookingApplicationsOverview = value;
         //TODO : Start - Dummy Data remove later
         _bookingApplicationsOverview = new BookingApplicationsOverview();
-        _bookingApplicationsOverview.totalApplications = 3534565;
-        _bookingApplicationsOverview.numberOfNew = 5500;
-        _bookingApplicationsOverview.numberOfInProcess = 8500;
-        _bookingApplicationsOverview.numberOfRejected = 330;
-        _bookingApplicationsOverview.numberOfCancelled = 5900;
-        _bookingApplicationsOverview.numberOfPutOnHold = 66560;
-        _bookingApplicationsOverview.numberOfApproved = 500201;
+        _bookingApplicationsOverview.totalApplications = 35365;
+        _bookingApplicationsOverview.numberOfNew = 1;
+        _bookingApplicationsOverview.numberOfInProcess = 850;
+        _bookingApplicationsOverview.numberOfRejected = 30;
+        _bookingApplicationsOverview.numberOfCancelled = 50;
+        _bookingApplicationsOverview.numberOfPutOnHold = 2560;
+        _bookingApplicationsOverview.numberOfApproved = 50015;
         _bookingApplicationsOverview.numberOfCompleted = 1830500;
 //TODO : End - Dummy Data remove later
 
@@ -95,7 +95,7 @@ class _OverviewPageState extends State<OverviewPage> {
               child: Column(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
-                    verticalSpacer,
+                    //verticalSpacer,
                     Card(
                       elevation: 20,
                       color: Colors.blueGrey[500],
@@ -141,7 +141,7 @@ class _OverviewPageState extends State<OverviewPage> {
                             ],
                           )),
                     ),
-                    SizedBox(height: 12),
+                    SizedBox(height: 10),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
@@ -281,7 +281,7 @@ class _OverviewPageState extends State<OverviewPage> {
                         ),
                       ],
                     ),
-                    SizedBox(height: 12),
+                    SizedBox(height: 10),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
@@ -428,7 +428,7 @@ class _OverviewPageState extends State<OverviewPage> {
                         ),
                       ],
                     ),
-                    SizedBox(height: 12),
+                    SizedBox(height: 5),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
@@ -572,7 +572,7 @@ class _OverviewPageState extends State<OverviewPage> {
                         ),
                       ],
                     ),
-                    SizedBox(height: 12),
+                    SizedBox(height: 5),
                     Card(
                       elevation: 20,
                       color: Colors.greenAccent[700],
@@ -629,7 +629,7 @@ class _OverviewPageState extends State<OverviewPage> {
                             )),
                       ),
                     ),
-                    verticalSpacer,
+                    // verticalSpacer,
                   ]),
             ),
           ),

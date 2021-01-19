@@ -2410,7 +2410,7 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
                   key: _entityDetailsFormKey,
                   autovalidate: _autoValidate,
                   child: new ListView(
-                    padding: const EdgeInsets.all(10.0),
+                    padding: const EdgeInsets.all(8.0),
                     children: <Widget>[
                       Container(
                         decoration: BoxDecoration(

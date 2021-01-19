@@ -157,7 +157,7 @@ final textBotSheetTextStyle = TextStyle(
   // fontWeight: FontWeight.w800,
   fontFamily: 'Monsterrat',
   letterSpacing: 0.5,
-  fontSize: 12.0,
+  fontSize: 10.0,
   //height: 2,
 );
 final textLabelTextStyle = TextStyle(
