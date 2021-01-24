@@ -1540,11 +1540,11 @@ class DBTest {
 
     BookingApplicationsOverview globalOverView = await _gs
         .getTokenApplicationService()
-        .getBookingApplicationOverview(TEST_COVID_BOOKING_FORM_ID, null);
+        .getApplicationsOverview(TEST_COVID_BOOKING_FORM_ID, null);
 
     BookingApplicationsOverview localOverView = await _gs
         .getTokenApplicationService()
-        .getBookingApplicationOverview(
+        .getApplicationsOverview(
             TEST_COVID_BOOKING_FORM_ID, Covid_Vacination_center);
 
     if (globalOverView.numberOfApproved == 0 &&
@@ -1597,11 +1597,11 @@ class DBTest {
     //now get the ApplicationOver object to check the count
     BookingApplicationsOverview globalOverView = await _gs
         .getTokenApplicationService()
-        .getBookingApplicationOverview(TEST_COVID_BOOKING_FORM_ID, null);
+        .getApplicationsOverview(TEST_COVID_BOOKING_FORM_ID, null);
 
     BookingApplicationsOverview localOverView = await _gs
         .getTokenApplicationService()
-        .getBookingApplicationOverview(
+        .getApplicationsOverview(
             TEST_COVID_BOOKING_FORM_ID, Covid_Vacination_center);
 
     if (globalOverView.numberOfApproved == 2 &&

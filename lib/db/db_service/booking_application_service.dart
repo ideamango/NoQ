@@ -5,12 +5,23 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:noq/constants.dart';
 import 'package:noq/db/db_model/booking_application.dart';
 import 'package:noq/db/db_model/booking_form.dart';
+import 'package:noq/db/db_model/meta_entity.dart';
 import 'package:noq/db/db_service/query.dart';
 
 import 'package:noq/enum/application_status.dart';
 import 'package:noq/enum/entity_type.dart';
 import 'package:noq/global_state.dart';
 import 'package:noq/utils.dart';
+
+//Applications can be submitted without or with Time Slot
+//Show all the Applications for a given timeslot
+//Show all the tokens for a given timeslot
+//Show all the Applications for a given day or period
+//Show all the Applications for a given bookingFormID on day or period
+//Given a token, a QR code will be generated which will be used by the Admin to bring up the corresponding Application
+//Solution:
+//Store issued TokenID, SlotId with the Application object on Approval
+//Store ApplicationID and BookingFormID, BookingFormName with the Token object
 
 class BookingApplicationService {
   FirebaseApp _fb;
@@ -34,6 +45,27 @@ class BookingApplicationService {
     return FirebaseAuth.instanceFor(app: _fb);
   }
 
+  Future<BookingApplication> getApplication(String applicationId) async {
+    FirebaseFirestore fStore = getFirestore();
+
+    //TODO: Security - only the user who has submitted the Application or the Admin/Manager of the Entity should be able to access the application
+
+    final DocumentReference appRef =
+        fStore.doc('bookingApplications/' + applicationId);
+
+    BookingApplication ba;
+
+    DocumentSnapshot doc = await appRef.get();
+
+    if (doc.exists) {
+      Map<String, dynamic> map = doc.data();
+
+      ba = BookingApplication.fromJson(map);
+    }
+
+    return ba;
+  }
+
   Future<List<BookingApplication>> getApplications(
       String bookingFormID,
       String entityId,
@@ -46,6 +78,8 @@ class BookingApplicationService {
       bool isDescending,
       int page,
       int takeCount) async {
+    //TODO: Security - only the Admin/Manager of the Entity should be able to access the applications OR Super admin of the Global BookingForm
+
     FirebaseFirestore fStore = getFirestore();
     CollectionReference collectionRef =
         fStore.collection('bookingApplications');
@@ -118,7 +152,8 @@ class BookingApplicationService {
   }
 
   //To be done by the Applicant
-  Future<bool> submitApplication(BookingApplication ba, String entityId) async {
+  Future<bool> submitApplication(
+      BookingApplication ba, MetaEntity metaEntity) async {
     //Security: BookingApplication (Application Status by the applicant can be only Null, New, Cancelled), other statuses are reserved for the Manager/Admin
     //Case 1: Create the BookingApplication object in the Applications collection
     //Case 2: Create if not already created the BookingApplicationsOverview, and update the total counter and new counter
@@ -127,11 +162,11 @@ class BookingApplicationService {
     if (ba == null ||
         !Utils.isNotNullOrEmpty(ba.bookingFormId) ||
         ba.responseForm == null ||
-        !Utils.isNotNullOrEmpty(entityId)) {
+        metaEntity == null) {
       throw Exception("Insufficient arguements to submit the application");
     }
 
-    bool isSucess = false;
+    bool isSuccess = false;
 
     final User user = getFirebaseAuth().currentUser;
     FirebaseFirestore fStore = getFirestore();
@@ -143,7 +178,7 @@ class BookingApplicationService {
 
     String bookingApplicationId = ba.id;
     String bookingFormId = ba.bookingFormId;
-    String localCounterId = bookingFormId + "#" + entityId;
+    String localCounterId = bookingFormId + "#" + metaEntity.entityId;
     String globalCounterId = bookingFormId;
 
     print("Application $bookingApplicationId ");
@@ -188,7 +223,7 @@ class BookingApplicationService {
 
         //setting up the mandatory fields on the Application object
         ba.timeOfSubmission = now;
-        ba.entityId = entityId;
+        ba.entityId = metaEntity.entityId;
         ba.status = ApplicationStatus.NEW;
         ba.userId = userPhone;
 
@@ -211,7 +246,7 @@ class BookingApplicationService {
           localCounter = BookingApplicationsOverview.fromJson(map);
         } else {
           localCounter = new BookingApplicationsOverview(
-              bookingFormId: bookingFormId, entityId: entityId);
+              bookingFormId: bookingFormId, entityId: metaEntity.entityId);
         }
 
         if (bf.autoApproved) {
@@ -236,6 +271,14 @@ class BookingApplicationService {
         //if auto approved, then generate the token
         if (bf.autoApproved) {
           //generate the token
+          await _gs.getTokenService().generateTokenInTransaction(
+              tx,
+              userPhone,
+              metaEntity,
+              ba.preferredSlotTiming,
+              ba.id,
+              ba.bookingFormId,
+              ba.responseForm.formName);
         }
 
         tx.set(applicationRef, ba.toJson());
@@ -244,10 +287,11 @@ class BookingApplicationService {
           tx.set(globalCounterRef, globalCounter.toJson());
         }
 
-        isSucess = true;
+        isSuccess = true;
       } catch (e) {
-        print("Exception in Application $bookingApplicationId " + e.toString());
-        isSucess = false;
+        print("Exception in Application submission $bookingApplicationId " +
+            e.toString());
+        isSuccess = false;
       }
     });
 
@@ -264,13 +308,23 @@ class BookingApplicationService {
 
   //To be done by Manager of the Entity who has restricted rights
   Future<bool> updateApplicationStatus(
-      String applicationId, ApplicationStatus status, String note) async {
+      String applicationId,
+      ApplicationStatus status,
+      String note,
+      MetaEntity metaEntity,
+      DateTime tokenTime) async {
     //TODO Security: Application Status, Time of Respective Status Change and Status can only be updated by the Entity Manager/Entity Admin
     //TODO Security: Once submitted for review, the Application can't be edited by the Applicant
     //TODO Security: Application can be only accessed and Updated by Entity Manager/Admin
     if (status == ApplicationStatus.NEW ||
         status == ApplicationStatus.CANCELLED) {
       throw new Exception("Invalid Application Status for Admin/Manager");
+    }
+
+    if (status == ApplicationStatus.APPROVED &&
+        (metaEntity == null || tokenTime == null)) {
+      throw new Exception(
+          "Entity and Time are required for the Token generation on Approval");
     }
 
     Exception exception;
@@ -352,7 +406,18 @@ class BookingApplicationService {
           }
 
           //TODO: generate the token and send the notification to the applicant
-
+          //generate the token
+          //send notification
+          if (bf.generateTokenOnApproval) {
+            await _gs.getTokenService().generateTokenInTransaction(
+                tx,
+                userPhone,
+                metaEntity,
+                tokenTime,
+                application.id,
+                application.bookingFormId,
+                application.responseForm.formName);
+          }
         } else if (status == ApplicationStatus.COMPLETED) {
           application.timeOfCompletion = now;
           application.notesOnCompletion = note;
@@ -457,7 +522,7 @@ class BookingApplicationService {
     return requestProcessed;
   }
 
-  Future<BookingApplicationsOverview> getBookingApplicationOverview(
+  Future<BookingApplicationsOverview> getApplicationsOverview(
       String bookingFormId, String entityId) async {
     //entityId is optional param, assuming that bookingForm is Global Form/System form
     //if entityId is present, that means the counter is local to the Entity

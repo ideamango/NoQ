@@ -23,7 +23,10 @@ class UserToken {
       this.applepay,
       this.phone,
       this.rNum,
-      this.address});
+      this.address,
+      this.applicationId,
+      this.bookingFormId,
+      this.bookingFormName});
 
   String slotId; //entityID#20~06~01#9~30
   String entityId;
@@ -43,6 +46,9 @@ class UserToken {
   String phone;
   int rNum;
   String address;
+  String applicationId;
+  String bookingFormId;
+  String bookingFormName;
 
   //TokenDocumentId is SlotId#UserId it is not auto-generated, will help in not duplicating the record
 
@@ -64,7 +70,10 @@ class UserToken {
         'applepay': applepay,
         'phone': phone,
         'rNum': rNum,
-        'address': address
+        'address': address,
+        'applicationId': applicationId,
+        'bookingFormId': bookingFormId,
+        'bookingFormName': bookingFormName
       };
 
   static UserToken fromJson(Map<String, dynamic> json) {
@@ -89,7 +98,10 @@ class UserToken {
         applepay: json['applepay'],
         phone: json['phone'],
         rNum: json['rNum'],
-        address: json['address']);
+        address: json['address'],
+        applicationId: json['applicationId'],
+        bookingFormId: json['bookingFormId'],
+        bookingFormName: json['bookingFormName']);
   }
 
   String getTokenId() {

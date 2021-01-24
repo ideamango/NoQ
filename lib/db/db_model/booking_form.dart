@@ -10,6 +10,7 @@ class BookingForm {
   String footerMsg;
   List<Field> _formFields;
   bool autoApproved = true;
+  bool generateTokenOnApproval = true;
 
   //This is not supposed to be created by Entity Manager or Admin, right not will be done via backend on Request.
   //This implies that this BookingForm is global form not specific to any Entity
@@ -40,7 +41,8 @@ class BookingForm {
         'footerMsg': footerMsg,
         'formFields': _formFieldsToJson(_formFields),
         'autoApproved': autoApproved,
-        'isSystemTemplate': isSystemTemplate
+        'isSystemTemplate': isSystemTemplate,
+        'generateTokenOnApproval': generateTokenOnApproval
       };
 
   List<dynamic> _formFieldsToJson(List<Field> fields) {
@@ -63,6 +65,7 @@ class BookingForm {
     bf.id = json["id"];
     bf.isSystemTemplate = json['isSystemTemplate'];
     bf._formFields = _convertToOptionValuesFromJson(json['formFields']);
+    bf.generateTokenOnApproval = json["generateTokenOnApproval"];
 
     return bf;
   }
