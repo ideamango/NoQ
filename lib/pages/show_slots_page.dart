@@ -574,7 +574,7 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
                       context,
                       MaterialPageRoute(
                           builder: (context) => CovidTokenBookingFormPage(
-                                entityId: entity.entityId,
+                                metaEntity: entity,
                                 bookingFormId: entity.bookingFormId,
                                 preferredSlotTime: sl.dateTime,
                               )));

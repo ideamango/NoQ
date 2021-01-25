@@ -1535,7 +1535,10 @@ class DBTest {
 
       BookingApplicationService tas = _gs.getTokenApplicationService();
 
-      await tas.submitApplication(ba, Covid_Vacination_center);
+      Entity vacinationCenter =
+          await _gs.getEntityService().getEntity(Covid_Vacination_center);
+
+      await tas.submitApplication(ba, vacinationCenter.getMetaEntity());
     }
 
     BookingApplicationsOverview globalOverView = await _gs
@@ -1574,25 +1577,40 @@ class DBTest {
         .getApplications(TEST_COVID_BOOKING_FORM_ID, Covid_Vacination_center,
             null, null, null, null, null, null, null, null, null);
 
+    Entity testingCenter =
+        await _gs.getEntityService().getEntity(Covid_Vacination_center);
+
     BookingApplication bs1 = applications[0];
     await _gs.getTokenApplicationService().updateApplicationStatus(
-        bs1.id, ApplicationStatus.APPROVED, "Notes on Approval");
+        bs1.id,
+        ApplicationStatus.APPROVED,
+        "Notes on Approval",
+        testingCenter.getMetaEntity(),
+        bs1.preferredSlotTiming);
 
     BookingApplication bs2 = applications[1];
     await _gs.getTokenApplicationService().updateApplicationStatus(
-        bs2.id, ApplicationStatus.APPROVED, "Notes on Approval for app 2");
+        bs2.id,
+        ApplicationStatus.APPROVED,
+        "Notes on Approval for app 2",
+        testingCenter.getMetaEntity(),
+        bs2.preferredSlotTiming);
 
     BookingApplication bs3 = applications[2];
     await _gs.getTokenApplicationService().updateApplicationStatus(
-        bs3.id, ApplicationStatus.COMPLETED, "Notes on Completion");
+        bs3.id, ApplicationStatus.COMPLETED, "Notes on Completion", null, null);
 
     BookingApplication bs7 = applications[6];
-    await _gs.getTokenApplicationService().updateApplicationStatus(
-        bs7.id, ApplicationStatus.ONHOLD, "Notes on putting on Hold");
+    await _gs.getTokenApplicationService().updateApplicationStatus(bs7.id,
+        ApplicationStatus.ONHOLD, "Notes on putting on Hold", null, null);
 
     BookingApplication bs10 = applications[9];
-    await _gs.getTokenApplicationService().updateApplicationStatus(bs10.id,
-        ApplicationStatus.REJECTED, "Notes on rejecting this application");
+    await _gs.getTokenApplicationService().updateApplicationStatus(
+        bs10.id,
+        ApplicationStatus.REJECTED,
+        "Notes on rejecting this application",
+        null,
+        null);
 
     //now get the ApplicationOver object to check the count
     BookingApplicationsOverview globalOverView = await _gs
