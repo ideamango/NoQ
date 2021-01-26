@@ -318,14 +318,15 @@ final BoxDecoration rectLightContainer = new BoxDecoration(
 );
 final gradientBackground = new BoxDecoration(
   gradient: new LinearGradient(
-      colors: [
-        Colors.cyanAccent,
-        btnColor,
-      ],
-      begin: const FractionalOffset(0.0, 0.0),
-      end: const FractionalOffset(1.0, 0.0),
-      stops: [0.0, 1.0],
-      tileMode: TileMode.clamp),
+    // colors: [
+    //   Colors.cyanAccent,
+    //   btnColor,
+    // ],
+    begin: const FractionalOffset(0.0, 0.0),
+    end: const FractionalOffset(1.0, 0.0),
+    // stops: [0.0, 1.0],
+    // tileMode: TileMode.clamp
+  ),
 );
 
 class CommonStyle {

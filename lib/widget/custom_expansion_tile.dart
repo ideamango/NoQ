@@ -85,7 +85,7 @@ class _CustomExpansionTileState extends State<CustomExpansionTile>
   @override
   void initState() {
     super.initState();
-    _controller = AnimationController(duration: _kExpand, vsync: this);
+    _controller = AnimationController(duration: _kExpand);
     _easeOutAnimation =
         CurvedAnimation(parent: _controller, curve: Curves.easeOut);
     _easeInAnimation =
