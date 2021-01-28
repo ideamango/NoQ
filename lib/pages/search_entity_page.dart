@@ -146,7 +146,8 @@ class _SearchEntityPageState extends State<SearchEntityPage>
 
     registerCategorySelectEvent();
 
-    controller = AnimationController(duration: Duration(milliseconds: 600));
+    controller =
+        AnimationController(vsync: this, duration: Duration(milliseconds: 600));
 
     offset = Tween<Offset>(begin: Offset.zero, end: Offset(0.0, 10.0))
         .animate(controller);
