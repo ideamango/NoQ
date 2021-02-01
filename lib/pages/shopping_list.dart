@@ -1,19 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:noq/constants.dart';
-import 'package:noq/db/db_model/entity.dart';
 import 'package:noq/db/db_model/list_item.dart';
 import 'package:noq/db/db_model/message.dart';
 import 'package:noq/db/db_model/order.dart';
 import 'package:noq/db/db_model/user_token.dart';
-import 'package:noq/pages/service_entity.dart';
 import 'package:noq/repository/slotRepository.dart';
 import 'package:noq/services/url_services.dart';
 import 'package:noq/style.dart';
 import 'package:flutter/foundation.dart';
 import 'package:noq/utils.dart';
-import 'package:noq/widget/widgets.dart';
-import 'package:uuid/uuid.dart';
 
 class ShoppingList extends StatefulWidget {
   final UserToken token;
@@ -59,8 +54,8 @@ class _ShoppingListState extends State<ShoppingList> {
           deliveryAddress: null,
           orderCreatedDateTime: null,
           deliveryDateTime: null,
-          entityId: token.entityId,
-          userId: token.userId);
+          entityId: token.parent.entityId,
+          userId: token.parent.userId);
       token.order = ord;
       listOfShoppingItems = token.order.items;
     } else {
@@ -299,7 +294,7 @@ class _ShoppingListState extends State<ShoppingList> {
                         //concatenate.writeln("**************************");
                         concatenate.writeln("x~x~x~x~x~x~x~x~x~x~x~x~x");
 
-                        String phoneNo = token.entityWhatsApp;
+                        String phoneNo = token.parent.entityWhatsApp;
 
                         if (phoneNo != null) {
                           try {
@@ -354,7 +349,7 @@ class _ShoppingListState extends State<ShoppingList> {
                   color: Colors.white,
                   onPressed: () {
                     print("going back");
-                    updateToken(token);
+                    updateToken(token.parent);
                     Navigator.of(context).pop();
                   }),
               title: Text(

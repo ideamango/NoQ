@@ -269,7 +269,7 @@ class BookingApplicationService {
         localCounter.totalApplications++;
 
         //if auto approved, then generate the token
-        if (bf.autoApproved) {
+        if (bf.autoApproved && bf.generateTokenOnApproval) {
           //generate the token
           await _gs.getTokenService().generateTokenInTransaction(
               tx,

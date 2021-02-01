@@ -6,11 +6,13 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:noq/db/db_model/entity_slots.dart';
 import 'package:noq/db/db_model/meta_entity.dart';
 
-import 'package:noq/db/db_service/slot_full_exception.dart';
 import 'package:noq/db/db_model/user_token.dart';
 import 'package:noq/db/db_model/slot.dart';
-import 'package:noq/db/db_service/token_already_exists_exception.dart';
-import 'package:noq/db/db_service/token_not_exist_exception.dart';
+
+import 'package:noq/db/exceptions/max_token_reached_exception.dart';
+import 'package:noq/db/exceptions/no_token_found_exception.dart';
+import 'package:noq/db/exceptions/slot_full_exception.dart';
+import 'package:noq/db/exceptions/token_already_exists_exception.dart';
 
 class TokenService {
   FirebaseApp _fb;
@@ -59,7 +61,8 @@ class TokenService {
     return es;
   }
 
-  Future<UserToken> generateTokenInTransaction(
+  //this method is used to generate the Token by the user passed here, e.g. EntityAdmin can also generate ToKen for other users
+  Future<UserTokens> generateTokenInTransaction(
       Transaction tx,
       String userId,
       MetaEntity metaEntity,
@@ -67,7 +70,7 @@ class TokenService {
       String applicationId,
       String formId,
       String formName) async {
-    UserToken token;
+    UserTokens tokens;
     String entitySlotsDocId = metaEntity.entityId +
         "#" +
         dateTime.year.toString() +
@@ -94,9 +97,17 @@ class TokenService {
 
       if (entitySlotsSnapshot.exists) {
         DocumentSnapshot tokenSnapshot = await tx.get(tokRef);
-        if (tokenSnapshot.exists) {
+        if (tokenSnapshot.exists && metaEntity.maxTokensPerSlotByUser == 1) {
           throw new TokenAlreadyExistsException(
               "Token for this user is already booked");
+        }
+
+        tokens = UserTokens.fromJson(tokenSnapshot.data());
+
+        if (tokenSnapshot.exists &&
+            metaEntity.maxTokensPerSlotByUser == tokens.tokens.length) {
+          throw new MaxTokenReachedException(
+              "Can't book more than ${metaEntity.maxTokensPerSlotByUser.toString} tokens per slot");
         }
 
         //atleast one token is issued for the given entity for that day
@@ -145,32 +156,37 @@ class TokenService {
         // Save the EntitySlots using set method
         tx.set(entitySlotsRef, es.toJson());
 
-        UserToken tok = new UserToken(
-            slotId: slotId,
-            entityId: metaEntity.entityId,
-            userId: userId,
+        if (tokens == null) {
+          tokens = new UserTokens(
+              slotId: slotId,
+              entityId: metaEntity.entityId,
+              userId: userId,
+              dateTime: dateTime,
+              maxAllowed: maxAllowed,
+              slotDuration: metaEntity.slotDuration,
+              entityName: metaEntity.name,
+              lat: metaEntity.lat,
+              lon: metaEntity.lon,
+              entityWhatsApp: metaEntity.whatsapp,
+              gpay: metaEntity.gpay,
+              paytm: metaEntity.paytm,
+              applepay: metaEntity.applepay,
+              phone: metaEntity.phone,
+              rNum: (Random().nextInt(5000) + 100),
+              address: metaEntity.address,
+              tokens: new List<UserToken>());
+        }
+
+        UserToken newToken = new UserToken(
             number: newNumber,
-            dateTime: dateTime,
-            maxAllowed: maxAllowed,
-            slotDuration: metaEntity.slotDuration,
-            entityName: metaEntity.name,
-            lat: metaEntity.lat,
-            lon: metaEntity.lon,
-            entityWhatsApp: metaEntity.whatsapp,
-            gpay: metaEntity.gpay,
-            paytm: metaEntity.paytm,
-            applepay: metaEntity.applepay,
             order: null,
-            phone: metaEntity.phone,
-            rNum: (Random().nextInt(5000) + 100),
-            address: metaEntity.address,
             applicationId: applicationId,
             bookingFormId: formId,
-            bookingFormName: formName);
-        //create token
-        tx.set(tokRef, tok.toJson());
+            bookingFormName: formName,
+            parent: tokens);
 
-        token = tok;
+        tokens.tokens.add(newToken);
+        tx.set(tokRef, tokens.toJson());
       } else {
         //This is the first token for the entity for the given day
         int maxAllowed = metaEntity.maxAllowed;
@@ -210,11 +226,10 @@ class TokenService {
             isFull: false);
         es.slots.add(sl);
 
-        UserToken tok = new UserToken(
+        tokens = new UserTokens(
             slotId: slotId,
             entityId: metaEntity.entityId,
             userId: userId,
-            number: 1,
             dateTime: dateTime,
             maxAllowed: maxAllowed,
             slotDuration: slotDuration,
@@ -225,21 +240,26 @@ class TokenService {
             gpay: metaEntity.gpay,
             paytm: metaEntity.paytm,
             applepay: metaEntity.applepay,
-            order: null,
             phone: metaEntity.phone,
             rNum: (Random().nextInt(5000) + 100),
             address: metaEntity.address,
+            tokens: new List<UserToken>());
+
+        UserToken newToken = new UserToken(
+            number: 1,
+            order: null,
             applicationId: applicationId,
             bookingFormId: formId,
-            bookingFormName: formName);
+            bookingFormName: formName,
+            parent: tokens);
+
+        tokens.tokens.add(newToken);
 
         //create EntitySlots with one slot in it
         tx.set(entitySlotsRef, es.toJson());
+
         //create Token
-
-        tx.set(tokRef, tok.toJson());
-
-        token = tok;
+        tx.set(tokRef, tokens.toJson());
       }
     } catch (e) {
       print(
@@ -247,13 +267,14 @@ class TokenService {
       throw e;
     }
 
-    return token;
+    return tokens;
   }
 
   Future<UserToken> autoGenerateTokenForNextAvailableSlot(
       MetaEntity metaEntity, DateTime preferredDateTime, Transaction tx) {}
 
-  Future<UserToken> generateToken(
+  //this method is used to generate the Token by the current user for himself
+  Future<UserTokens> generateToken(
       MetaEntity metaEntity, DateTime dateTime) async {
     final User user = getFirebaseAuth().currentUser;
     FirebaseFirestore fStore = getFirestore();
@@ -264,176 +285,12 @@ class TokenService {
 
     //TODO: To run the validation on DateTime for holidays, break, advnanceDays and during closing hours
 
-    String entitySlotsDocId = metaEntity.entityId +
-        "#" +
-        dateTime.year.toString() +
-        "~" +
-        dateTime.month.toString() +
-        "~" +
-        dateTime.day.toString();
-
-    String slotId = entitySlotsDocId +
-        "#" +
-        dateTime.hour.toString() +
-        "~" +
-        dateTime.minute.toString();
-
-    final DocumentReference entitySlotsRef =
-        fStore.doc('slots/' + entitySlotsDocId);
-
-    final DocumentReference tokRef =
-        fStore.doc('tokens/' + slotId + "#" + userPhone);
-
-    UserToken token;
+    UserTokens tokens;
 
     await fStore.runTransaction((Transaction tx) async {
       try {
-        DocumentSnapshot entitySlotsSnapshot = await tx.get(entitySlotsRef);
-        EntitySlots es;
-
-        if (entitySlotsSnapshot.exists) {
-          DocumentSnapshot tokenSnapshot = await tx.get(tokRef);
-          if (tokenSnapshot.exists) {
-            throw new TokenAlreadyExistsException(
-                "Token for this user is already booked");
-          }
-
-          //atleast one token is issued for the given entity for that day
-          es = EntitySlots.fromJson(entitySlotsSnapshot.data());
-          int maxAllowed = es.maxAllowed;
-
-          int slotCount = -1;
-          bool slotExist = false;
-          int newNumber = 1;
-          for (var sl in es.slots) {
-            slotCount++;
-            if (sl.dateTime.hour == dateTime.hour &&
-                sl.dateTime.minute == dateTime.minute) {
-              //slot already exists for given time
-              if (sl.isFull) {
-                throw new SlotFullException(
-                    "Token can't be generated as the slot is full");
-              }
-
-              newNumber = sl.currentNumber + 1;
-
-              if (sl.maxAllowed == newNumber) {
-                // set the isFull for that slot to true
-                sl.isFull = true;
-              }
-              // set the current number to be incremented
-              sl.currentNumber = newNumber;
-
-              slotExist = true;
-              break;
-            }
-          }
-
-          if (!slotExist) {
-            // Create a new Slot with current number as 1 and add to the Slots list of Entity_Slots object
-            Slot sl = new Slot(
-                currentNumber: 1,
-                slotId: slotId,
-                maxAllowed: es.maxAllowed,
-                dateTime: dateTime,
-                slotDuration: es.slotDuration,
-                isFull: false);
-            es.slots.add(sl);
-          }
-
-          // Save the EntitySlots using set method
-          tx.set(entitySlotsRef, es.toJson());
-
-          UserToken tok = new UserToken(
-              slotId: slotId,
-              entityId: metaEntity.entityId,
-              userId: userPhone,
-              number: newNumber,
-              dateTime: dateTime,
-              maxAllowed: maxAllowed,
-              slotDuration: metaEntity.slotDuration,
-              entityName: metaEntity.name,
-              lat: metaEntity.lat,
-              lon: metaEntity.lon,
-              entityWhatsApp: metaEntity.whatsapp,
-              gpay: metaEntity.gpay,
-              paytm: metaEntity.paytm,
-              applepay: metaEntity.applepay,
-              order: null,
-              phone: metaEntity.phone,
-              rNum: (Random().nextInt(5000) + 100),
-              address: metaEntity.address);
-          //create token
-          tx.set(tokRef, tok.toJson());
-
-          token = tok;
-        } else {
-          //This is the first token for the entity for the given day
-          int maxAllowed = metaEntity.maxAllowed;
-          int slotDuration = metaEntity.slotDuration;
-          List<String> closedOn = metaEntity.closedOn;
-          int breakStartHour = metaEntity.breakStartHour;
-          int breakStartMinute = metaEntity.breakStartMinute;
-          int breakEndHour = metaEntity.breakEndHour;
-          int breakEndMinute = metaEntity.breakEndMinute;
-          int startTimeHour = metaEntity.startTimeHour;
-          int startTimeMinute = metaEntity.startTimeHour;
-          int endTimeHour = metaEntity.endTimeHour;
-          int endTimeMinute = metaEntity.endTimeMinute;
-
-          EntitySlots es = new EntitySlots(
-              slots: new List<Slot>(),
-              entityId: metaEntity.entityId,
-              date: new DateTime(dateTime.year, dateTime.month, dateTime.day),
-              maxAllowed: maxAllowed,
-              slotDuration: slotDuration,
-              closedOn: closedOn,
-              breakStartHour: breakStartHour,
-              breakStartMinute: breakStartMinute,
-              breakEndHour: breakEndHour,
-              breakEndMinute: breakEndMinute,
-              startTimeHour: startTimeHour,
-              startTimeMinute: startTimeMinute,
-              endTimeHour: endTimeHour,
-              endTimeMinute: endTimeMinute);
-
-          Slot sl = new Slot(
-              currentNumber: 1,
-              slotId: slotId,
-              maxAllowed: es.maxAllowed,
-              dateTime: dateTime,
-              slotDuration: es.slotDuration,
-              isFull: false);
-          es.slots.add(sl);
-
-          UserToken tok = new UserToken(
-              slotId: slotId,
-              entityId: metaEntity.entityId,
-              userId: userPhone,
-              number: 1,
-              dateTime: dateTime,
-              maxAllowed: maxAllowed,
-              slotDuration: slotDuration,
-              entityName: metaEntity.name,
-              lat: metaEntity.lat,
-              lon: metaEntity.lon,
-              entityWhatsApp: metaEntity.whatsapp,
-              gpay: metaEntity.gpay,
-              paytm: metaEntity.paytm,
-              applepay: metaEntity.applepay,
-              order: null,
-              phone: metaEntity.phone,
-              rNum: (Random().nextInt(5000) + 100),
-              address: metaEntity.address);
-
-          //create EntitySlots with one slot in it
-          tx.set(entitySlotsRef, es.toJson());
-          //create Token
-
-          tx.set(tokRef, tok.toJson());
-
-          token = tok;
-        }
+        tokens = await generateTokenInTransaction(
+            tx, userPhone, metaEntity, dateTime, null, null, null);
       } catch (e) {
         print("Error while generting token -> Transaction Error: " +
             e.toString());
@@ -459,10 +316,11 @@ class TokenService {
       throw exception;
     }
 
-    return token;
+    return tokens;
   }
 
-  Future<bool> cancelToken(String tokenId) async {
+  Future<bool> cancelToken(String tokenId, [int number]) async {
+    //number param is optional, only required when multiple tokens are booked by the user for the same slot
     //get the token, mark it cancelled
     //get the slot from the token
     //increase the slot maxallowed by one
@@ -479,17 +337,38 @@ class TokenService {
       try {
         DocumentSnapshot tokenSnapshot = await tx.get(tokRef);
         if (tokenSnapshot.exists) {
-          if (tokenSnapshot.data()['userId'] != userPhone) {
-            throw new TokenNotExistsException(
+          UserTokens tokens = UserTokens.fromJson(tokenSnapshot.data());
+          if (tokens.userId != userPhone) {
+            throw new NoTokenFoundException(
                 "Token does not belong to the requested user");
           }
 
-          int currentNum = tokenSnapshot.data()['number'];
-          if (currentNum == -1) {
-            throw new Exception("Token is already cancelled");
+          if (number == null && tokens.tokens.length > 1) {
+            throw new Exception(
+                "User has more than one token for the slot, please specify Token number to be cancelled");
           }
 
-          String slotId = tokenSnapshot.data()['slotId'];
+          bool numberMatched = false;
+
+          for (UserToken tok in tokens.tokens) {
+            if (number == null && tokens.tokens.length == 1) {
+              tok.number = -1;
+              numberMatched = true;
+              break;
+            } else {
+              if (tok.number == number) {
+                tok.number = -1;
+                numberMatched = true;
+              }
+            }
+          }
+
+          if (!numberMatched) {
+            throw new Exception(
+                "Supplied token number for the cancellation did not match");
+          }
+
+          String slotId = tokens.slotId;
           List<String> parts = slotId.split("#");
 
           String entitySlotsDocId = parts[0] + "#" + parts[1];
@@ -497,7 +376,7 @@ class TokenService {
           final DocumentReference entitySlotsRef =
               fStore.doc('slots/' + entitySlotsDocId);
 
-          DocumentSnapshot doc = await entitySlotsRef.get();
+          DocumentSnapshot doc = await tx.get(entitySlotsRef);
 
           Map<String, dynamic> map = doc.data();
 
@@ -511,14 +390,14 @@ class TokenService {
           }
 
           //update the token with number as -1
-          tx.update(tokRef, <String, dynamic>{'number': -1});
+          tx.set(tokRef, tokens.toJson());
 
           //change the max allowed by 1, if a token is cancelled
           tx.set(entitySlotsRef, es.toJson());
 
           isCancelled = true;
         } else {
-          throw new TokenNotExistsException("Token does not exists");
+          throw new NoTokenFoundException("Token does not exists");
         }
       } catch (e) {
         print(
@@ -531,7 +410,7 @@ class TokenService {
   }
 
   Future<List<UserToken>> getAllTokensForSlot(String slotId) async {
-    List<UserToken> tokens = new List<UserToken>();
+    List<UserToken> userTokens = new List<UserToken>();
     User user = getFirebaseAuth().currentUser;
     if (user == null) return null;
     FirebaseFirestore fStore = getFirestore();
@@ -545,20 +424,22 @@ class TokenService {
           .get();
 
       for (DocumentSnapshot ds in qs.docs) {
-        UserToken tok = UserToken.fromJson(ds.data());
-        tokens.add(tok);
+        UserTokens tokens = UserTokens.fromJson(ds.data());
+        for (UserToken tok in tokens.tokens) {
+          userTokens.add(tok);
+        }
       }
     } catch (e) {
       print(
           "Error while fetching all tokens for a given slot: " + e.toString());
     }
 
-    return tokens;
+    return userTokens;
   }
 
-  Future<List<UserToken>> getAllTokensForCurrentUser(
+  Future<List<UserTokens>> getAllTokensForCurrentUser(
       DateTime from, DateTime to) async {
-    List<UserToken> tokens = new List<UserToken>();
+    List<UserTokens> tokens = new List<UserTokens>();
     User user = getFirebaseAuth().currentUser;
     if (user == null) return null;
     FirebaseFirestore fStore = getFirestore();
@@ -584,7 +465,7 @@ class TokenService {
       }
 
       for (DocumentSnapshot ds in qs.docs) {
-        UserToken tok = UserToken.fromJson(ds.data());
+        UserTokens tok = UserTokens.fromJson(ds.data());
         tokens.add(tok);
       }
     } catch (e) {
@@ -594,9 +475,9 @@ class TokenService {
     return tokens;
   }
 
-  Future<List<UserToken>> getTokensForEntityBookedByCurrentUser(
+  Future<List<UserTokens>> getTokensForEntityBookedByCurrentUser(
       String entityId, DateTime date) async {
-    List<UserToken> tokens = new List<UserToken>();
+    List<UserTokens> tokens = new List<UserTokens>();
     User user = getFirebaseAuth().currentUser;
     FirebaseFirestore fStore = getFirestore();
     DateTime inputDate = new DateTime(date.year, date.month, date.day);
@@ -613,7 +494,7 @@ class TokenService {
           .get();
 
       for (DocumentSnapshot ds in qs.docs) {
-        UserToken tok = UserToken.fromJson(ds.data());
+        UserTokens tok = UserTokens.fromJson(ds.data());
         tokens.add(tok);
       }
     } catch (e) {
@@ -655,17 +536,17 @@ class TokenService {
     return true;
   }
 
-  Future<bool> updateToken(UserToken token) async {
+  Future<bool> updateToken(UserTokens tokens) async {
     //this should be restricted on Server, only to be used for testcases
     final User user = getFirebaseAuth().currentUser;
     FirebaseFirestore fStore = getFirestore();
 
-    DocumentReference tokRef = fStore.doc('tokens/' + token.getTokenId());
+    DocumentReference tokRef = fStore.doc('tokens/' + tokens.getTokenId());
 
     try {
       DocumentSnapshot doc = await tokRef.get();
       if (doc.exists) {
-        await tokRef.update(token.toJson());
+        await tokRef.update(tokens.toJson());
         return true;
       }
     } catch (e) {

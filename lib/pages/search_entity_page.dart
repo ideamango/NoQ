@@ -4,19 +4,15 @@ import 'package:flutter/rendering.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:intl/intl.dart';
 import 'package:noq/constants.dart';
-import 'package:noq/db/db_model/address.dart';
 import 'package:noq/db/db_model/entity.dart';
 import 'package:noq/db/db_model/meta_entity.dart';
 import 'package:noq/db/db_model/user_token.dart';
-import 'package:noq/db/db_service/entity_service.dart';
 import 'package:noq/enum/entity_type.dart';
 import 'package:noq/events/event_bus.dart';
 import 'package:noq/events/events.dart';
 import 'package:noq/global_state.dart';
 import 'package:noq/pages/contact_us.dart';
-import 'package:noq/pages/covid_token_booking_form.dart';
 import 'package:noq/pages/search_child_entity_page.dart';
-import 'package:noq/pages/show_booking_form.dart';
 import 'package:noq/pages/show_slots_page.dart';
 import 'package:noq/services/circular_progress.dart';
 import 'package:noq/services/url_services.dart';
@@ -26,7 +22,6 @@ import 'package:noq/widget/appbar.dart';
 import 'package:noq/widget/bottom_nav_bar.dart';
 import 'package:noq/widget/page_animation.dart';
 import 'package:noq/widget/widgets.dart';
-import 'package:share/share.dart';
 
 import '../userHomePage.dart';
 import 'package:eventify/eventify.dart' as Eventify;
@@ -1666,9 +1661,9 @@ class _SearchEntityPageState extends State<SearchEntityPage>
     for (UserToken obj in (_state.bookings)) {
       if ((compareDateFormat
                   .format(dt)
-                  .compareTo(compareDateFormat.format(obj.dateTime)) ==
+                  .compareTo(compareDateFormat.format(obj.parent.dateTime)) ==
               0) &&
-          (obj.entityId == sid && obj.number != -1)) {
+          (obj.parent.entityId == sid && obj.number != -1)) {
         dateBooked = true;
       }
     }

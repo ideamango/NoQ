@@ -15,15 +15,6 @@ Future<File> get localFile async {
   return File('$path/noq_db.txt');
 }
 
-String generateJson(GlobalState state) {
-  //TODO: SMIta - null exception thrown , check
-  //String json = jsonEncode(state);
-  Map<String, dynamic> json = state.toJson();
-
-  String jsonStr = jsonEncode(json);
-  return jsonStr;
-}
-
 void writeData(Map<String, dynamic> gsJson) async {
   // json = jsonEncode(dummyUser);
   final file = await localFile;
