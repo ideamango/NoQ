@@ -86,7 +86,8 @@ class TokenService {
         dateTime.minute.toString();
 
     FirebaseFirestore fStore = getFirestore();
-    final DocumentReference entitySlotsRef = fStore.doc('slots/' + slotId);
+    final DocumentReference entitySlotsRef =
+        fStore.doc('slots/' + entitySlotsDocId);
 
     final DocumentReference tokRef =
         fStore.doc('tokens/' + slotId + "#" + userId);

@@ -1456,7 +1456,8 @@ class DBTest {
         phone: "+918328592031",
         gpay: "+919611009823",
         whatsapp: "+918328592031",
-        bookingFormId: bf.id);
+        bookingFormId: bf.id,
+        maxTokensPerSlotByUser: 2);
 
     try {
       entity.regNum = "testReg111";
@@ -1464,9 +1465,6 @@ class DBTest {
     } catch (e) {
       print("Exception occured " + e.toString());
     }
-
-    Entity seleniumVacCenter =
-        await _gs.getEntityService().getEntity(Covid_Vacination_center);
 
     return bf;
 

@@ -526,6 +526,11 @@ class BookingApplicationService {
       String bookingFormId, String entityId) async {
     //entityId is optional param, assuming that bookingForm is Global Form/System form
     //if entityId is present, that means the counter is local to the Entity
+
+    if (!Utils.isNotNullOrEmpty(bookingFormId)) {
+      throw new Exception("FormId can't be null");
+    }
+
     FirebaseFirestore fStore = getFirestore();
     BookingApplicationsOverview counter;
 
