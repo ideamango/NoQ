@@ -316,12 +316,21 @@ class EntityRowState extends State<EntityRow> {
                       ),
                       onPressed: () {
                         print("Over To overview page");
+                        if (Utils.isNotNullOrEmpty(_metaEntity.bookingFormId)) {
+                          Navigator.of(context)
+                              .push(PageAnimation.createRoute(OverviewPage(
+                            bookingFormId: _metaEntity.bookingFormId,
+                            entityId: _metaEntity.entityId,
+                          )));
+                        } else {
+                          Utils.showMyFlushbar(
+                              context,
+                              Icons.info_outline,
+                              Duration(seconds: 5),
+                              "No Bookings found as of now!!",
+                              "");
+                        }
 
-                        Navigator.of(context)
-                            .push(PageAnimation.createRoute(OverviewPage(
-                          bookingFormId: _metaEntity.bookingFormId,
-                          entityId: _metaEntity.entityId,
-                        )));
                         // Navigator.of(context)
                         //     .push(PageAnimation.createRoute(ManageBookings(
                         //   metaEntity: _metaEntity,
