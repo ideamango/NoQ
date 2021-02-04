@@ -819,24 +819,26 @@ class _UserAccountPageState extends State<UserAccountPage> {
                                 ),
                                 children: <Widget>[
                                   if (!Utils.isNullOrEmpty(_listOfApplications))
-                                    ListView.builder(
-                                      padding: EdgeInsets.all(
-                                          MediaQuery.of(context).size.width *
-                                              .026),
+                                    Scrollbar(
+                                      child: ListView.builder(
+                                        padding: EdgeInsets.all(
+                                            MediaQuery.of(context).size.width *
+                                                .026),
 
-                                      reverse: true,
-                                      shrinkWrap: true,
-                                      //itemExtent: itemSize,
-                                      itemBuilder:
-                                          (BuildContext context, int index) {
-                                        return Container(
-                                          margin: EdgeInsets.only(bottom: 5),
-                                          child: UserApplicationsList(
-                                            ba: _listOfApplications[index],
-                                          ),
-                                        );
-                                      },
-                                      itemCount: _listOfApplications.length,
+                                        reverse: true,
+                                        shrinkWrap: true,
+                                        //itemExtent: itemSize,
+                                        itemBuilder:
+                                            (BuildContext context, int index) {
+                                          return Container(
+                                            margin: EdgeInsets.only(bottom: 5),
+                                            child: UserApplicationsList(
+                                              ba: _listOfApplications[index],
+                                            ),
+                                          );
+                                        },
+                                        itemCount: _listOfApplications.length,
+                                      ),
                                     ),
                                   if (Utils.isNullOrEmpty(_listOfApplications))
                                     _emptyStorePage(
