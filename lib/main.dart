@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:io';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -7,24 +6,15 @@ import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:noq/db/db_model/entity.dart';
-import 'package:noq/db/db_service/entity_service.dart';
-import 'package:noq/events/event_bus.dart';
-import 'package:noq/events/local_notification_data.dart';
-import 'package:noq/global_state.dart';
+
 import 'package:noq/login_page.dart';
-import 'package:noq/pages/search_entity_page.dart';
-import 'package:noq/pages/favs_list_page.dart';
-import 'package:noq/repository/StoreRepository.dart';
+
 import 'package:noq/services/init_screen.dart';
 import 'package:noq/userHomePage.dart';
 import 'package:noq/utils.dart';
 import 'package:timezone/data/latest.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 import 'package:flutter_native_timezone/flutter_native_timezone.dart';
-
-import 'events/events.dart';
 
 //import 'services/authService.dart';
 

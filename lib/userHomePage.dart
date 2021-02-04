@@ -1,28 +1,17 @@
 import 'dart:async';
 
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flushbar/flushbar_route.dart';
 import 'package:flutter/material.dart';
-import 'package:geoflutterfire/geoflutterfire.dart';
 import 'package:noq/constants.dart';
-import 'package:noq/db/db_model/address.dart';
-import 'package:noq/db/db_model/my_geo_fire_point.dart';
-import 'package:noq/db/db_service/db_main.dart';
-import 'package:noq/db/db_service/entity_service.dart';
-import 'package:noq/db/db_service/token_service.dart';
-import 'package:noq/db/db_service/user_service.dart';
+
 import 'package:noq/global_state.dart';
 import 'package:noq/pages/how_to_reg_for_business.dart';
 import 'package:noq/pages/how_to_reg_for_users.dart';
 import 'package:noq/pages/search_entity_page.dart';
 import 'package:noq/pages/db_test.dart';
 import 'package:noq/pages/shopping_list.dart';
-import 'package:noq/repository/local_db_repository.dart';
 import 'package:noq/repository/slotRepository.dart';
 import 'package:noq/services/circular_progress.dart';
 import 'package:noq/services/url_services.dart';
-import 'package:noq/services/qr_code_generate.dart';
 import 'package:noq/services/qr_code_scan.dart';
 import 'package:noq/style.dart';
 import 'package:intl/intl.dart';
@@ -33,20 +22,8 @@ import 'package:noq/widget/carousel_home_page.dart';
 import 'package:noq/widget/header.dart';
 import 'package:noq/widget/page_animation.dart';
 import 'package:noq/widget/widgets.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-//import 'package:barcode_scan/barcode_scan.dart';
-import 'package:flutter/services.dart';
 
-import 'db/db_model/configurations.dart';
-import 'db/db_model/entity.dart';
-import 'db/db_model/entity_private.dart';
-import 'db/db_model/entity_slots.dart';
-import 'db/db_model/meta_entity.dart';
-import 'db/db_model/meta_user.dart';
-import 'db/db_model/slot.dart';
-import 'db/db_model/app_user.dart';
 import 'db/db_model/user_token.dart';
-import 'db/db_service/configurations_service.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 //import 'path';
 
@@ -496,7 +473,7 @@ class _UserHomePageState extends State<UserHomePage> {
     ]));
   }
 
-  Widget _buildItem(UserToken booking) {
+  Widget _buildItem(UserToken token) {
     // String address = Utils.getFormattedAddress(booking.address);
 
     return Container(
@@ -529,7 +506,7 @@ class _UserHomePageState extends State<UserHomePage> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
                           Text(
-                            booking.getDisplayName(),
+                            token.getDisplayName(),
                             style: tokenTextStyle,
                             textAlign: TextAlign.left,
                             overflow: TextOverflow.ellipsis,
@@ -558,9 +535,9 @@ class _UserHomePageState extends State<UserHomePage> {
                               0,
                               0),
                           child: Text(
-                            booking.entityName +
-                                (booking.address != null
-                                    ? (', ' + booking.address)
+                            token.parent.entityName +
+                                (token.parent.address != null
+                                    ? (', ' + token.parent.address)
                                     : ''),
                             overflow: TextOverflow.ellipsis,
                             style: tokenDataTextStyle,
@@ -589,15 +566,15 @@ class _UserHomePageState extends State<UserHomePage> {
                                       size: 20,
                                     ),
                                     onPressed: () {
-                                      if (booking.phone != null) {
+                                      if (token.parent.phone != null) {
                                         try {
-                                          callPhone(booking.phone);
+                                          callPhone(token.parent.phone);
                                         } catch (error) {
                                           Utils.showMyFlushbar(
                                               context,
                                               Icons.error,
                                               Duration(seconds: 5),
-                                              "Could not connect call to the number ${booking.phone} !!",
+                                              "Could not connect call to the number ${token.parent.phone} !!",
                                               "Try again later.");
                                         }
                                       } else {
@@ -625,7 +602,7 @@ class _UserHomePageState extends State<UserHomePage> {
                                   ),
                                   onPressed: () {
                                     //If booking is past booking then no sense of cancelling , show msg to user
-                                    if (booking.dateTime
+                                    if (token.parent.dateTime
                                         .isBefore(DateTime.now()))
                                       Utils.showMyFlushbar(
                                           context,
@@ -634,10 +611,10 @@ class _UserHomePageState extends State<UserHomePage> {
                                           "This booking token has already expired!!",
                                           "");
                                     //booking number is -1 means its already been cancelled, Do Nothing
-                                    if (booking.number == -1)
+                                    if (token.number == -1)
                                       return null;
                                     else
-                                      showCancelBooking(booking);
+                                      showCancelBooking(token);
                                   },
                                 ),
                               ),
@@ -657,10 +634,10 @@ class _UserHomePageState extends State<UserHomePage> {
                                     onPressed: () {
                                       try {
                                         launchURL(
-                                            booking.entityName,
-                                            booking.address,
-                                            booking.lat,
-                                            booking.lon);
+                                            token.parent.entityName,
+                                            token.parent.address,
+                                            token.parent.lat,
+                                            token.parent.lon);
                                       } catch (error) {
                                         Utils.showMyFlushbar(
                                             context,
@@ -684,12 +661,13 @@ class _UserHomePageState extends State<UserHomePage> {
                                     color: Colors.white,
                                   ),
                                   onPressed: () {
-                                    String phoneNo = booking.entityWhatsApp;
+                                    String phoneNo =
+                                        token.parent.entityWhatsApp;
                                     if (phoneNo != null && phoneNo != "") {
                                       try {
                                         launchWhatsApp(
                                             message: whatsappMessageToPlaceOwner +
-                                                booking.getDisplayName() +
+                                                token.getDisplayName() +
                                                 "\n\n<Type your message here..>",
                                             phone: phoneNo);
                                       } catch (error) {
@@ -724,7 +702,7 @@ class _UserHomePageState extends State<UserHomePage> {
                                     color: lightIcon,
                                     size: 22,
                                   ),
-                                  onPressed: () => showShoppingList(booking),
+                                  onPressed: () => showShoppingList(token),
                                 ),
                               ),
                             ],
@@ -750,7 +728,7 @@ class _UserHomePageState extends State<UserHomePage> {
                   children: <Widget>[
                     //verticalSpacer,
                     Text(
-                      dtFormat.format(booking.dateTime),
+                      dtFormat.format(token.parent.dateTime),
                       style: tokenDataTextStyle,
                     ),
                     Container(
@@ -762,10 +740,11 @@ class _UserHomePageState extends State<UserHomePage> {
                       children: <Widget>[
                         // Text('Time: ', style: tokenHeadingTextStyle),
                         Text(
-                          Utils.formatTime(booking.dateTime.hour.toString()) +
+                          Utils.formatTime(
+                                  token.parent.dateTime.hour.toString()) +
                               ':' +
                               Utils.formatTime(
-                                  booking.dateTime.minute.toString()),
+                                  token.parent.dateTime.minute.toString()),
                           style: tokenDateTextStyle,
                         ),
                       ],
@@ -774,7 +753,7 @@ class _UserHomePageState extends State<UserHomePage> {
                 ),
               ),
             ]),
-            if (booking.number == -1)
+            if (token.number == -1)
               new Positioned(
                 left: MediaQuery.of(context).size.width * .5,
                 bottom: MediaQuery.of(context).size.width * .14,

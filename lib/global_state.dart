@@ -249,8 +249,17 @@ class GlobalState {
       DateTime fromDate = DateTime.now().subtract(new Duration(days: 60));
       DateTime toDate = DateTime.now().add(new Duration(days: 30));
 
-      _gs.bookings =
+      List<UserTokens> listTokens =
           await _gs._tokenService.getAllTokensForCurrentUser(fromDate, toDate);
+      if (listTokens != null && listTokens.length > 0) {
+        _gs.bookings = new List<UserToken>();
+
+        for (UserTokens tokens in listTokens) {
+          for (UserToken token in tokens.tokens) {
+            _gs.bookings.add(token);
+          }
+        }
+      }
     }
 
     //unlock
@@ -362,27 +371,30 @@ class GlobalState {
   List<UserToken> getPastBookings() {
     List<UserToken> pastBookings = new List<UserToken>();
     DateTime now = DateTime.now();
-    for (UserToken bk in bookings) {
-      if (bk.dateTime.isBefore(now)) pastBookings.add(bk);
+
+    for (UserToken tok in bookings) {
+      if (tok.parent.dateTime.isBefore(now)) pastBookings.add(tok);
     }
 
-    pastBookings.sort((a, b) =>
-        (a.dateTime.millisecondsSinceEpoch > b.dateTime.millisecondsSinceEpoch)
-            ? -1
-            : 1);
+    pastBookings.sort((a, b) => (a.parent.dateTime.millisecondsSinceEpoch >
+            b.parent.dateTime.millisecondsSinceEpoch)
+        ? -1
+        : 1);
     return pastBookings;
   }
 
   List<UserToken> getUpcomingBookings() {
     List<UserToken> newBookings = new List<UserToken>();
     DateTime now = DateTime.now();
-    for (UserToken bk in bookings) {
-      if (!bk.dateTime.isBefore(now)) newBookings.add(bk);
+
+    for (UserToken tok in bookings) {
+      if (!tok.parent.dateTime.isBefore(now)) newBookings.add(tok);
     }
-    newBookings.sort((a, b) =>
-        (a.dateTime.millisecondsSinceEpoch > b.dateTime.millisecondsSinceEpoch)
-            ? 1
-            : -1);
+
+    newBookings.sort((a, b) => (a.parent.dateTime.millisecondsSinceEpoch >
+            b.parent.dateTime.millisecondsSinceEpoch)
+        ? 1
+        : -1);
     return newBookings;
   }
 
@@ -444,13 +456,15 @@ class GlobalState {
     return true;
   }
 
-  Future<UserToken> addBooking(MetaEntity meta, Slot slot) async {
-    UserToken token;
-    token = await _tokenService.generateToken(meta, slot.dateTime);
-    if (token != null) {
-      bookings.add(token);
+  Future<UserTokens> addBooking(MetaEntity meta, Slot slot) async {
+    UserTokens tokens;
+    tokens = await _tokenService.generateToken(meta, slot.dateTime);
+    if (tokens != null) {
+      for (UserToken tok in tokens.tokens) {
+        bookings.add(tok);
+      }
     }
-    return token;
+    return tokens;
   }
 
   static clearGlobalState() {
@@ -477,28 +491,12 @@ class GlobalState {
     _gs = null;
   }
 
-  Future<bool> cancelBooking(String tokenId) async {
+  Future<bool> cancelBooking(String tokenId, [int number]) async {
     return await _tokenService.cancelToken(tokenId);
   }
 
   static Future<void> saveGlobalState() async {
     // writeData(_gs.toJson());
-  }
-
-  Map<String, dynamic> toJson() => {
-        'currentUser': _currentUser.toJson(),
-        'conf': _conf.toJson(),
-        'bookings': convertBookingsListToJson(this.bookings),
-        'pastSearches': convertPastSearchesListToJson(this.lastSearchResults)
-      };
-
-  List<dynamic> convertBookingsListToJson(List<UserToken> tokens) {
-    List<dynamic> bookingListJson = new List<dynamic>();
-    if (tokens == null) return bookingListJson;
-    for (UserToken token in tokens) {
-      bookingListJson.add(token.toJson());
-    }
-    return bookingListJson;
   }
 
   List<dynamic> convertPastSearchesListToJson(List<Entity> metaEntities) {
@@ -521,17 +519,6 @@ class GlobalState {
       }
     }
     return metaEntities;
-  }
-
-  static List<UserToken> convertToBookingsFromJson(List<dynamic> bookingsJson) {
-    List<UserToken> bookings = new List<UserToken>();
-    if (bookingsJson != null) {
-      for (Map<String, dynamic> json in bookingsJson) {
-        UserToken token = UserToken.fromJson(json);
-        bookings.add(token);
-      }
-    }
-    return bookings;
   }
 
   bool _isNotificationInitialized = false;

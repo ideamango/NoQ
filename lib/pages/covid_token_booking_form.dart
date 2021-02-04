@@ -12,6 +12,7 @@ import 'package:noq/db/db_model/booking_application.dart';
 import 'package:noq/db/db_model/booking_form.dart';
 import 'package:noq/db/db_model/employee.dart';
 import 'package:noq/db/db_model/entity.dart';
+import 'package:noq/db/db_model/meta_entity.dart';
 import 'package:noq/db/db_model/my_geo_fire_point.dart';
 import 'package:noq/db/db_model/offer.dart';
 import 'package:noq/enum/application_status.dart';
@@ -29,12 +30,12 @@ import 'package:noq/widget/widgets.dart';
 import 'package:path/path.dart';
 
 class CovidTokenBookingFormPage extends StatefulWidget {
-  final String entityId;
+  final MetaEntity metaEntity;
   final String bookingFormId;
   final DateTime preferredSlotTime;
   CovidTokenBookingFormPage(
       {Key key,
-      @required this.entityId,
+      @required this.metaEntity,
       @required this.bookingFormId,
       @required this.preferredSlotTime})
       : super(key: key);
@@ -116,7 +117,7 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage>
   Employee cp1 = new Employee();
   Address adrs = new Address();
 
-  String entityId;
+  MetaEntity metaEntity;
 
   ScrollController _scrollController;
   final itemSize = 80.0;
@@ -187,7 +188,7 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage>
   @override
   void initState() {
     super.initState();
-    entityId = this.widget.entityId;
+    metaEntity = this.widget.metaEntity;
 
     getGlobalState().whenComplete(() {
       initBookingForm();
@@ -238,7 +239,7 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage>
 
         //bookingFormId
         bookingApplication.bookingFormId = widget.bookingFormId;
-        bookingApplication.entityId = entityId;
+        bookingApplication.entityId = metaEntity.entityId;
         bookingApplication.userId = _gs.getCurrentUser().id;
         bookingApplication.status = ApplicationStatus.NEW;
         bookingApplication.responseForm = bookingForm;
@@ -1116,7 +1117,7 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage>
 
           _gs
               .getTokenApplicationService()
-              .submitApplication(bookingApplication, entityId)
+              .submitApplication(bookingApplication, metaEntity)
               .then((value) {
             if (value) {
               Utils.showMyFlushbar(

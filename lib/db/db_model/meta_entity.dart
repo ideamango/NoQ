@@ -38,7 +38,9 @@ class MetaEntity {
       this.phone,
       this.hasChildren,
       this.isBookable,
-      this.bookingFormId});
+      this.bookingFormId,
+      this.maxTokensPerSlotByUser,
+      this.maxPeoplePerToken});
   MetaEntity.withValues({this.entityId, this.type});
 
   //SlotDocumentId is entityID#20~06~01 it is not auto-generated, will help in not duplicating the record
@@ -73,6 +75,8 @@ class MetaEntity {
   bool hasChildren;
   bool isBookable;
   String bookingFormId;
+  int maxTokensPerSlotByUser;
+  int maxPeoplePerToken;
 
   static MetaEntity fromJson(Map<String, dynamic> json) {
     if (json == null) return null;
@@ -103,7 +107,9 @@ class MetaEntity {
         phone: json['phone'],
         hasChildren: json['hasChildren'],
         isBookable: json['isBookable'],
-        bookingFormId: json['bookingFormId']);
+        bookingFormId: json['bookingFormId'],
+        maxTokensPerSlotByUser: json['maxTokensPerSlotByUser'],
+        maxPeoplePerToken: json['maxPeoplePerToken']);
   }
 
   static List<String> convertToClosedOnArrayFromJson(List<dynamic> daysJson) {
@@ -141,7 +147,9 @@ class MetaEntity {
         'phone': phone,
         'hasChildren': hasChildren,
         'isBookable': isBookable,
-        'bookingFormId': bookingFormId
+        'bookingFormId': bookingFormId,
+        'maxTokensPerSlotByUser': maxTokensPerSlotByUser,
+        'maxPeoplePerToken': maxPeoplePerToken
       };
 
   bool isEqual(MetaEntity metaEnt) {
@@ -166,7 +174,9 @@ class MetaEntity {
         metaEnt.gpay == this.gpay &&
         metaEnt.applepay == this.applepay &&
         metaEnt.isBookable == this.isBookable &&
-        metaEnt.bookingFormId == this.bookingFormId) {
+        metaEnt.bookingFormId == this.bookingFormId &&
+        metaEnt.maxTokensPerSlotByUser == this.maxTokensPerSlotByUser &&
+        metaEnt.maxPeoplePerToken == this.maxPeoplePerToken) {
       if (this.closedOn != null && metaEnt.closedOn != null) {
         int matchCount = 0;
 

@@ -36,7 +36,7 @@ class _OverviewPageState extends State<OverviewPage> {
     getGlobalState().whenComplete(() {
       _gs
           .getTokenApplicationService()
-          .getBookingApplicationOverview(widget.bookingFormId, widget.entityId)
+          .getApplicationsOverview(widget.bookingFormId, widget.entityId)
           .then((value) {
         _bookingApplicationsOverview = value;
         //TODO : Start - Dummy Data remove later
