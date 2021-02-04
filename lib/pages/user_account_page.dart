@@ -255,9 +255,9 @@ class _UserAccountPageState extends State<UserAccountPage> {
                               0,
                               0),
                           child: Text(
-                            booking.entityName +
-                                (booking.address != null
-                                    ? (', ' + booking.address)
+                            booking.parent.entityName +
+                                (booking.parent.address != null
+                                    ? (', ' + booking.parent.address)
                                     : ''),
                             overflow: TextOverflow.ellipsis,
                             style: tokenDataTextStyle,
@@ -286,15 +286,15 @@ class _UserAccountPageState extends State<UserAccountPage> {
                                       size: 20,
                                     ),
                                     onPressed: () {
-                                      if (booking.phone != null) {
+                                      if (booking.parent.phone != null) {
                                         try {
-                                          callPhone(booking.phone);
+                                          callPhone(booking.parent.phone);
                                         } catch (error) {
                                           Utils.showMyFlushbar(
                                               context,
                                               Icons.error,
                                               Duration(seconds: 5),
-                                              "Could not connect call to the number ${booking.phone} !!",
+                                              "Could not connect call to the number ${booking.parent.phone} !!",
                                               "Try again later.");
                                         }
                                       } else {
@@ -322,7 +322,7 @@ class _UserAccountPageState extends State<UserAccountPage> {
                                   ),
                                   onPressed: () {
                                     //If booking is past booking then no sense of cancelling , show msg to user
-                                    if (booking.dateTime
+                                    if (booking.parent.dateTime
                                         .isBefore(DateTime.now()))
                                       Utils.showMyFlushbar(
                                           context,
@@ -354,10 +354,10 @@ class _UserAccountPageState extends State<UserAccountPage> {
                                     onPressed: () {
                                       try {
                                         launchURL(
-                                            booking.entityName,
-                                            booking.address,
-                                            booking.lat,
-                                            booking.lon);
+                                            booking.parent.entityName,
+                                            booking.parent.address,
+                                            booking.parent.lat,
+                                            booking.parent.lon);
                                       } catch (error) {
                                         Utils.showMyFlushbar(
                                             context,
@@ -381,7 +381,8 @@ class _UserAccountPageState extends State<UserAccountPage> {
                                     color: Colors.white,
                                   ),
                                   onPressed: () {
-                                    String phoneNo = booking.entityWhatsApp;
+                                    String phoneNo =
+                                        booking.parent.entityWhatsApp;
                                     if (phoneNo != null && phoneNo != "") {
                                       try {
                                         launchWhatsApp(
@@ -447,7 +448,7 @@ class _UserAccountPageState extends State<UserAccountPage> {
                   children: <Widget>[
                     //verticalSpacer,
                     Text(
-                      dtFormat.format(booking.dateTime),
+                      dtFormat.format(booking.parent.dateTime),
                       style: tokenDataTextStyle,
                     ),
                     Container(
@@ -459,10 +460,11 @@ class _UserAccountPageState extends State<UserAccountPage> {
                       children: <Widget>[
                         // Text('Time: ', style: tokenHeadingTextStyle),
                         Text(
-                          Utils.formatTime(booking.dateTime.hour.toString()) +
+                          Utils.formatTime(
+                                  booking.parent.dateTime.hour.toString()) +
                               ':' +
                               Utils.formatTime(
-                                  booking.dateTime.minute.toString()),
+                                  booking.parent.dateTime.minute.toString()),
                           style: tokenDateTextStyle,
                         ),
                       ],

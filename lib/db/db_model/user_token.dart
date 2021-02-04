@@ -2,14 +2,12 @@ import 'package:intl/intl.dart';
 import 'package:noq/db/db_model/list_item.dart';
 import 'package:noq/db/db_model/order.dart';
 import 'package:noq/utils.dart';
-import 'dart:math';
 
-class UserToken {
-  UserToken(
+class UserTokens {
+  UserTokens(
       {this.slotId,
       this.entityId,
       this.userId,
-      this.number,
       this.dateTime,
       this.maxAllowed,
       this.slotDuration,
@@ -17,18 +15,17 @@ class UserToken {
       this.lat,
       this.lon,
       this.entityWhatsApp,
-      this.order,
       this.gpay,
       this.paytm,
       this.applepay,
       this.phone,
       this.rNum,
-      this.address});
+      this.address,
+      this.tokens});
 
   String slotId; //entityID#20~06~01#9~30
   String entityId;
   String userId;
-  int number;
   DateTime dateTime;
   int maxAllowed;
   int slotDuration;
@@ -36,13 +33,13 @@ class UserToken {
   double lat;
   double lon;
   String entityWhatsApp;
-  Order order;
   String gpay;
   String paytm;
   String applepay;
   String phone;
   int rNum;
   String address;
+  List<UserToken> tokens;
 
   //TokenDocumentId is SlotId#UserId it is not auto-generated, will help in not duplicating the record
 
@@ -50,7 +47,6 @@ class UserToken {
         'slotId': slotId,
         'entityId': entityId,
         'userId': userId,
-        'number': number,
         'dateTime': dateTime != null ? dateTime.millisecondsSinceEpoch : null,
         'maxAllowed': maxAllowed,
         'slotDuration': slotDuration,
@@ -58,22 +54,21 @@ class UserToken {
         'lat': lat,
         'lon': lon,
         'entityWhatsApp': entityWhatsApp,
-        'order': order != null ? order.toJson() : null,
         'gpay': gpay,
         'paytm': paytm,
         'applepay': applepay,
         'phone': phone,
         'rNum': rNum,
-        'address': address
+        'address': address,
+        'tokens': tokensToJson(tokens)
       };
 
-  static UserToken fromJson(Map<String, dynamic> json) {
+  static UserTokens fromJson(Map<String, dynamic> json) {
     if (json == null) return null;
-    return new UserToken(
+    UserTokens tokens = new UserTokens(
         slotId: json['slotId'],
         entityId: json['entityId'],
         userId: json['userId'],
-        number: json['number'],
         dateTime: json['dateTime'] != null
             ? new DateTime.fromMillisecondsSinceEpoch(json['dateTime'])
             : null,
@@ -83,13 +78,39 @@ class UserToken {
         lat: json['lat'],
         lon: json['lon'],
         entityWhatsApp: json['entityWhatsApp'],
-        order: Order.fromJson(json['order']),
         gpay: json['gpay'],
         paytm: json['paytm'],
         applepay: json['applepay'],
         phone: json['phone'],
         rNum: json['rNum'],
-        address: json['address']);
+        address: json['address'],
+        tokens: convertToTokensFromJson(json['tokens']));
+
+    for (UserToken token in tokens.tokens) {
+      token.parent = tokens;
+    }
+
+    return tokens;
+  }
+
+  static List<UserToken> convertToTokensFromJson(List<dynamic> toksJson) {
+    List<UserToken> toks = new List<UserToken>();
+    if (toksJson == null) return toks;
+
+    for (Map<String, dynamic> json in toksJson) {
+      UserToken sl = UserToken.fromJson(json);
+      toks.add(sl);
+    }
+    return toks;
+  }
+
+  List<dynamic> tokensToJson(List<UserToken> toks) {
+    List<dynamic> tokensJson = new List<dynamic>();
+    if (toks == null) return tokensJson;
+    for (UserToken tok in tokens) {
+      tokensJson.add(tok.toJson());
+    }
+    return tokensJson;
   }
 
   String getTokenId() {
@@ -99,14 +120,25 @@ class UserToken {
     return slotId + '#' + userId;
   }
 
-  String getDisplayName() {
-    //First 3 chars of the Entity name, followed by the date and then time and Token number
-    //E.g. BAT-200708-0930-10
+  String getDisplayNamePrefix() {
     String name = entityName.substring(0, 3).toUpperCase();
     DateFormat formatter = DateFormat('-yyMMdd-hhmm-');
     String formattedDate = formatter.format(dateTime);
 
-    return name + formattedDate + number.toString();
+    String prefix = name + formattedDate;
+    return prefix;
+  }
+
+  List<String> getDisplayNames() {
+    //First 3 chars of the Entity name, followed by the date and then time and Token number
+    //E.g. BAT-200708-0930-10
+
+    List<String> tokenNames = List<String>();
+    for (UserToken tok in tokens) {
+      tokenNames.add(tok.getDisplayName());
+    }
+
+    return tokenNames;
   }
 
   List<dynamic> metaEntitiesToJson(List<ListItem> items) {
@@ -135,5 +167,44 @@ class UserToken {
       return item.toIso8601String();
     }
     return item;
+  }
+}
+
+class UserToken {
+  UserToken(
+      {this.number,
+      this.order,
+      this.applicationId,
+      this.bookingFormId,
+      this.bookingFormName,
+      this.parent});
+
+  Order order;
+  int number;
+  String applicationId;
+  String bookingFormId;
+  String bookingFormName;
+  UserTokens parent;
+
+  Map<String, dynamic> toJson() => {
+        'number': number,
+        'order': order != null ? order.toJson() : null,
+        'applicationId': applicationId,
+        'bookingFormId': bookingFormId,
+        'bookingFormName': bookingFormName
+      };
+
+  static UserToken fromJson(Map<String, dynamic> json) {
+    if (json == null) return null;
+    return new UserToken(
+        number: json['number'],
+        order: Order.fromJson(json['order']),
+        applicationId: json['applicationId'],
+        bookingFormId: json['bookingFormId'],
+        bookingFormName: json['bookingFormName']);
+  }
+
+  String getDisplayName() {
+    return parent.getDisplayNamePrefix() + number.toString();
   }
 }

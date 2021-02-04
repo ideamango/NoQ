@@ -4,10 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:noq/db/db_model/entity.dart';
 import 'package:noq/db/db_model/meta_entity.dart';
 import 'package:noq/db/db_model/slot.dart';
-import 'package:noq/db/db_model/user_token.dart';
-import 'package:noq/db/db_service/entity_service.dart';
-import 'package:noq/db/db_service/slot_full_exception.dart';
-import 'package:noq/db/db_service/token_already_exists_exception.dart';
+import 'package:noq/db/exceptions/slot_full_exception.dart';
+import 'package:noq/db/exceptions/token_already_exists_exception.dart';
 import 'package:noq/global_state.dart';
 import 'package:noq/pages/covid_token_booking_form.dart';
 import 'package:noq/pages/search_child_entity_page.dart';
@@ -19,7 +17,6 @@ import 'package:noq/repository/slotRepository.dart';
 import 'package:noq/style.dart';
 import 'package:noq/utils.dart';
 import 'package:noq/widget/appbar.dart';
-import 'package:noq/widget/bottom_nav_bar.dart';
 import 'package:noq/widget/header.dart';
 import 'package:noq/widget/widgets.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -501,8 +498,8 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
 
   bool isBooked(DateTime dateTime, String entityId) {
     for (int i = 0; i < _gs.bookings.length; i++) {
-      if (_gs.bookings[i].entityId == entityId &&
-          _gs.bookings[i].dateTime == dateTime) {
+      if (_gs.bookings[i].parent.entityId == entityId &&
+          _gs.bookings[i].parent.dateTime == dateTime) {
         if (_gs.bookings[i].number != -1) return true;
       }
     }
@@ -574,7 +571,7 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
                       context,
                       MaterialPageRoute(
                           builder: (context) => CovidTokenBookingFormPage(
-                                entityId: entity.entityId,
+                                metaEntity: entity,
                                 bookingFormId: entity.bookingFormId,
                                 preferredSlotTime: sl.dateTime,
                               )));

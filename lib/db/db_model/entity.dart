@@ -44,7 +44,9 @@ class Entity {
       this.applepay,
       this.offer,
       this.phone,
-      this.bookingFormId});
+      this.bookingFormId,
+      this.maxTokensPerSlotByUser,
+      this.maxPeoplePerToken});
 
   //SlotDocumentId is entityID#20~06~01 it is not auto-generated, will help in not duplicating the record
   String entityId;
@@ -87,6 +89,8 @@ class Entity {
   String phone;
   MetaEntity _meta;
   String bookingFormId;
+  int maxTokensPerSlotByUser = 1;
+  int maxPeoplePerToken = 1;
 
   Map<String, dynamic> toJson() => {
         'entityId': entityId,
@@ -126,7 +130,9 @@ class Entity {
         'applepay': applepay,
         'offer': offer != null ? offer.toJson() : null,
         'phone': phone,
-        'bookingFormId': bookingFormId
+        'bookingFormId': bookingFormId,
+        'maxTokensPerSlotByUser': maxTokensPerSlotByUser,
+        'maxPeoplePerToken': maxPeoplePerToken
       };
 
   List<dynamic> usersToJson(List<MetaUser> users) {
@@ -195,7 +201,9 @@ class Entity {
         applepay: json['applepay'],
         offer: Offer.fromJson(json['offer']),
         phone: json['phone'],
-        bookingFormId: json['bookingFormId']);
+        bookingFormId: json['bookingFormId'],
+        maxTokensPerSlotByUser: json['maxTokensPerSlotByUser'],
+        maxPeoplePerToken: json['maxPeoplePerToken']);
   }
 
   static Address convertToAddressFromJson(Map<String, dynamic> json) {

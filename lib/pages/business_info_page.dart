@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:noq/constants.dart';
+
 import 'package:noq/db/db_model/entity_slots.dart';
 import 'package:noq/db/db_model/meta_entity.dart';
 import 'package:noq/db/db_model/slot.dart';
@@ -8,17 +8,13 @@ import 'package:noq/db/db_service/token_service.dart';
 import 'package:noq/global_state.dart';
 import 'package:noq/pages/manage_entity_list_page.dart';
 import 'package:noq/repository/slotRepository.dart';
-import 'package:noq/services/timeline_view.dart';
-import 'package:noq/services/url_services.dart';
+
 import 'package:noq/style.dart';
 import 'package:noq/userHomePage.dart';
 import 'package:noq/utils.dart';
 import 'package:noq/widget/appbar.dart';
-import 'package:noq/widget/custom_expansion_tile.dart';
-import 'package:noq/widget/header.dart';
+
 import 'package:noq/widget/page_animation.dart';
-import 'package:noq/widget/widgets.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class ManageBookings extends StatefulWidget {
   final MetaEntity metaEntity;
@@ -114,7 +110,7 @@ class _ManageBookingsState extends State<ManageBookings> {
 
   buildChildItem(UserToken token) {
     return Container(
-      child: Text(token.userId),
+      child: Text(token.parent.userId),
     );
   }
 

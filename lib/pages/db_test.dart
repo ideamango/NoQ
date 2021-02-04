@@ -27,7 +27,7 @@ import 'package:noq/global_state.dart';
 class DBTest {
   String TEST_COVID_BOOKING_FORM_ID = COVID_BOOKING_FORM_ID + "TEST";
 
-  String Covid_Vacination_center = "Selenium-Covid-Vacination-Center" + "Test";
+  String Covid_Vacination_center = "Selenium-Covid-Vacination-Center";
 
   GlobalState _gs;
   DBTest() {
@@ -408,7 +408,7 @@ class DBTest {
     print("Token generation started..");
 
     try {
-      UserToken tok1 = await _gs.getTokenService().generateToken(
+      UserTokens tok1 = await _gs.getTokenService().generateToken(
           child1.getMetaEntity(), new DateTime(2020, 7, 6, 10, 30, 0, 0));
     } catch (e) {
       print("generate token threw Slotful exception");
@@ -416,21 +416,21 @@ class DBTest {
 
     print("Tok1 generated");
 
-    UserToken tok21 = await _gs.getTokenService().generateToken(
+    UserTokens tok21 = await _gs.getTokenService().generateToken(
         child1.getMetaEntity(), new DateTime(2020, 7, 7, 12, 30, 0, 0));
     print("Tok21 generated");
 
-    UserToken tok22 = await _gs.getTokenService().generateToken(
+    UserTokens tok22 = await _gs.getTokenService().generateToken(
         child1.getMetaEntity(), new DateTime(2020, 7, 7, 10, 30, 0, 0));
     print("Tok22 generated");
 
-    UserToken tok3 = await _gs.getTokenService().generateToken(
+    UserTokens tok3 = await _gs.getTokenService().generateToken(
         child1.getMetaEntity(), new DateTime(2020, 7, 8, 10, 30, 0, 0));
     print("Tok3 generated");
 
     print("Token generation ended.");
 
-    List<UserToken> toks = await _gs
+    List<UserTokens> toks = await _gs
         .getTokenService()
         .getAllTokensForCurrentUser(
             new DateTime(2020, 7, 8), new DateTime(2020, 7, 9));
@@ -438,13 +438,6 @@ class DBTest {
         toks.length.toString());
 
     bool isAdminAssignedOnEntity = false;
-
-    // for (MetaUser me in child1.admins) {
-    //   if (me.ph == '+913611009823') {
-    //     isAdminAssignedOnEntity = true;
-    //     break;
-    //   }
-    // }
 
     final DocumentReference entityPrivateRef =
         fStore.doc('entities/' + child1.entityId + '/private_data/private');
@@ -500,7 +493,7 @@ class DBTest {
           "TokenService.getAllTokensForCurrentUser -----------------------> FAILURE");
     }
 
-    List<UserToken> toksBetween6thAnd9th = await _gs
+    List<UserTokens> toksBetween6thAnd9th = await _gs
         .getTokenService()
         .getAllTokensForCurrentUser(
             new DateTime(2020, 7, 6), new DateTime(2020, 7, 9));
@@ -512,7 +505,7 @@ class DBTest {
           "TokenService.getAllTokensForCurrentUser -----------------------> FAILURE");
     }
 
-    List<UserToken> allToksFromToday = await _gs
+    List<UserTokens> allToksFromToday = await _gs
         .getTokenService()
         .getAllTokensForCurrentUser(new DateTime(2020, 7, 7), null);
 
@@ -534,7 +527,7 @@ class DBTest {
       print("TokenService.getEntitySlots -----------------------> FAILURE");
     }
 
-    List<UserToken> toksForDayForEntity = await _gs
+    List<UserTokens> toksForDayForEntity = await _gs
         .getTokenService()
         .getTokensForEntityBookedByCurrentUser(
             'Child101-1', new DateTime(2020, 7, 7));
@@ -554,14 +547,14 @@ class DBTest {
       print("TokenService.cancelToken ------> FAILURE");
     }
 
-    List<UserToken> toksForDayForEntityAfterCancellation = await _gs
+    List<UserTokens> toksForDayForEntityAfterCancellation = await _gs
         .getTokenService()
         .getTokensForEntityBookedByCurrentUser(
             'Child101-1', new DateTime(2020, 7, 7));
-    for (UserToken tokenOnSeventh in toksForDayForEntityAfterCancellation) {
+    for (UserTokens tokenOnSeventh in toksForDayForEntityAfterCancellation) {
       if (tokenOnSeventh.slotId + "#" + tokenOnSeventh.userId ==
           "Child101-1#2020~7~7#10~30#+919999999999") {
-        if (tokenOnSeventh.number == -1) {
+        if (tokenOnSeventh.tokens[0].number == -1) {
           print("TokenService.cancelToken ------> Success");
         } else {
           print("TokenService.cancelToken --------------------> FAILURE");
@@ -1463,7 +1456,8 @@ class DBTest {
         phone: "+918328592031",
         gpay: "+919611009823",
         whatsapp: "+918328592031",
-        bookingFormId: bf.id);
+        bookingFormId: bf.id,
+        maxTokensPerSlotByUser: 2);
 
     try {
       entity.regNum = "testReg111";
@@ -1471,9 +1465,6 @@ class DBTest {
     } catch (e) {
       print("Exception occured " + e.toString());
     }
-
-    Entity seleniumVacCenter =
-        await _gs.getEntityService().getEntity(Covid_Vacination_center);
 
     return bf;
 
@@ -1532,19 +1523,23 @@ class DBTest {
       ba.bookingFormId = bf.id;
       ba.id =
           TEST_COVID_BOOKING_FORM_ID + "#" + "TestApplicationID" + i.toString();
+      ba.preferredSlotTiming = DateTime.now().add(Duration(days: 1));
 
       BookingApplicationService tas = _gs.getTokenApplicationService();
 
-      await tas.submitApplication(ba, Covid_Vacination_center);
+      Entity vacinationCenter =
+          await _gs.getEntityService().getEntity(Covid_Vacination_center);
+
+      await tas.submitApplication(ba, vacinationCenter.getMetaEntity());
     }
 
     BookingApplicationsOverview globalOverView = await _gs
         .getTokenApplicationService()
-        .getBookingApplicationOverview(TEST_COVID_BOOKING_FORM_ID, null);
+        .getApplicationsOverview(TEST_COVID_BOOKING_FORM_ID, null);
 
     BookingApplicationsOverview localOverView = await _gs
         .getTokenApplicationService()
-        .getBookingApplicationOverview(
+        .getApplicationsOverview(
             TEST_COVID_BOOKING_FORM_ID, Covid_Vacination_center);
 
     if (globalOverView.numberOfApproved == 0 &&
@@ -1574,34 +1569,49 @@ class DBTest {
         .getApplications(TEST_COVID_BOOKING_FORM_ID, Covid_Vacination_center,
             null, null, null, null, null, null, null, null, null);
 
+    Entity testingCenter =
+        await _gs.getEntityService().getEntity(Covid_Vacination_center);
+
     BookingApplication bs1 = applications[0];
     await _gs.getTokenApplicationService().updateApplicationStatus(
-        bs1.id, ApplicationStatus.APPROVED, "Notes on Approval");
+        bs1.id,
+        ApplicationStatus.APPROVED,
+        "Notes on Approval",
+        testingCenter.getMetaEntity(),
+        bs1.preferredSlotTiming);
 
     BookingApplication bs2 = applications[1];
     await _gs.getTokenApplicationService().updateApplicationStatus(
-        bs2.id, ApplicationStatus.APPROVED, "Notes on Approval for app 2");
+        bs2.id,
+        ApplicationStatus.APPROVED,
+        "Notes on Approval for app 2",
+        testingCenter.getMetaEntity(),
+        bs2.preferredSlotTiming);
 
     BookingApplication bs3 = applications[2];
     await _gs.getTokenApplicationService().updateApplicationStatus(
-        bs3.id, ApplicationStatus.COMPLETED, "Notes on Completion");
+        bs3.id, ApplicationStatus.COMPLETED, "Notes on Completion", null, null);
 
     BookingApplication bs7 = applications[6];
-    await _gs.getTokenApplicationService().updateApplicationStatus(
-        bs7.id, ApplicationStatus.ONHOLD, "Notes on putting on Hold");
+    await _gs.getTokenApplicationService().updateApplicationStatus(bs7.id,
+        ApplicationStatus.ONHOLD, "Notes on putting on Hold", null, null);
 
     BookingApplication bs10 = applications[9];
-    await _gs.getTokenApplicationService().updateApplicationStatus(bs10.id,
-        ApplicationStatus.REJECTED, "Notes on rejecting this application");
+    await _gs.getTokenApplicationService().updateApplicationStatus(
+        bs10.id,
+        ApplicationStatus.REJECTED,
+        "Notes on rejecting this application",
+        null,
+        null);
 
     //now get the ApplicationOver object to check the count
     BookingApplicationsOverview globalOverView = await _gs
         .getTokenApplicationService()
-        .getBookingApplicationOverview(TEST_COVID_BOOKING_FORM_ID, null);
+        .getApplicationsOverview(TEST_COVID_BOOKING_FORM_ID, null);
 
     BookingApplicationsOverview localOverView = await _gs
         .getTokenApplicationService()
-        .getBookingApplicationOverview(
+        .getApplicationsOverview(
             TEST_COVID_BOOKING_FORM_ID, Covid_Vacination_center);
 
     if (globalOverView.numberOfApproved == 2 &&

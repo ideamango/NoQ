@@ -7,12 +7,12 @@ import 'package:noq/db/db_model/app_user.dart';
 import 'package:noq/db/db_model/entity.dart';
 import 'package:noq/db/db_model/entity_private.dart';
 import 'package:noq/db/db_model/meta_entity.dart';
-import 'package:noq/db/db_service/access_denied_exception.dart';
-import 'package:noq/db/db_service/entity_does_not_exists_exception.dart';
+import 'package:noq/db/exceptions/access_denied_exception.dart';
+import 'package:noq/db/exceptions/entity_does_not_exists_exception.dart';
+import 'package:noq/db/exceptions/user_does_not_exists_exception.dart';
 import 'package:noq/enum/entity_type.dart';
 
 import '../../constants.dart';
-import 'user_does_not_exists_exception.dart';
 
 class EntityService {
   FirebaseApp _fb;
