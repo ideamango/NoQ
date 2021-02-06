@@ -45,18 +45,6 @@ class _OverviewPageState extends State<OverviewPage> {
           .getApplicationsOverview(widget.bookingFormId, widget.entityId)
           .then((value) {
         _bookingApplicationsOverview = value;
-//         //TODO : Start - Dummy Data remove later
-        _bookingApplicationsOverview = new BookingApplicationsOverview();
-        // _bookingApplicationsOverview.totalApplications = 35365;
-        // _bookingApplicationsOverview.numberOfNew = 1;
-        // _bookingApplicationsOverview.numberOfInProcess = 850;
-        // _bookingApplicationsOverview.numberOfRejected = 30;
-        // _bookingApplicationsOverview.numberOfCancelled = 50;
-        // _bookingApplicationsOverview.numberOfPutOnHold = 2560;
-        // _bookingApplicationsOverview.numberOfApproved = 50015;
-        // _bookingApplicationsOverview.numberOfCompleted = 1830500;
-// //TODO : End - Dummy Data remove later
-
         if (this.mounted) {
           setState(() {
             initCompleted = true;
