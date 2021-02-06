@@ -46,7 +46,7 @@ class _OverviewPageState extends State<OverviewPage> {
           .then((value) {
         _bookingApplicationsOverview = value;
 //         //TODO : Start - Dummy Data remove later
-        _bookingApplicationsOverview = new BookingApplicationsOverview();
+        //_bookingApplicationsOverview = new BookingApplicationsOverview();
         // _bookingApplicationsOverview.totalApplications = 35365;
         // _bookingApplicationsOverview.numberOfNew = 1;
         // _bookingApplicationsOverview.numberOfInProcess = 850;
