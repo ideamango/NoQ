@@ -1365,6 +1365,7 @@ class DBTest {
               false,
               "Please select all known medical conditions the applicant have",
               [
+                Value('None'),
                 Value('Chronic kidney disease'),
                 Value('Chronic lung disease'),
                 Value('Diabetes'),
@@ -1380,6 +1381,7 @@ class DBTest {
               true);
 
       healthDetailsInput.isMeta = true;
+      healthDetailsInput.defaultValueIndex = 0;
 
       bf.addField(healthDetailsInput);
 
@@ -1389,6 +1391,7 @@ class DBTest {
               false,
               "Please select the category by Applicant's profession and upload a supporting ID proof/documents. Applicant must carry these documents along with him/her to the Vaccination Center.",
               [
+                Value('None'),
                 Value('Medical Professional'),
                 Value('Government Official'),
                 Value('MP/MLA'),
@@ -1396,7 +1399,7 @@ class DBTest {
               ],
               false);
       frontLineWorkerProof.isMeta = true;
-
+      frontLineWorkerProof.defaultValueIndex = 0;
       bf.addField(frontLineWorkerProof);
 
       FormInputFieldOptionsWithAttachments idProof =

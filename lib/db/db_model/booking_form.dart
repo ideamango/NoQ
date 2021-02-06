@@ -213,6 +213,8 @@ class FormInputFieldOptions extends Field {
   List<Value> options;
   bool isMultiSelect;
   List<Value> responseValues;
+  int defaultValueIndex =
+      -1; //if there is a default value then it should start from 0
 
   FormInputFieldOptions(String label, bool isMandatory, String infoMessage,
       List<Value> options, bool isMultiSelect) {
@@ -234,7 +236,8 @@ class FormInputFieldOptions extends Field {
         'options': convertValuesToJson(options),
         'responseValues': convertValuesToJson(responseValues),
         'isMultiSelect': isMultiSelect,
-        'type': EnumToString.convertToString(type)
+        'type': EnumToString.convertToString(type),
+        'defaultValueIndex': defaultValueIndex
       };
 
   static FormInputFieldOptions fromJson(Map<String, dynamic> json) {
@@ -249,6 +252,7 @@ class FormInputFieldOptions extends Field {
     field.isMeta = json['isMeta'];
     field.id = json['id'];
     field.key = json["key"];
+    field.defaultValueIndex = json["defaultValueIndex"];
     return field;
   }
 
@@ -404,6 +408,8 @@ class FormInputFieldOptionsWithAttachments extends Field {
   List<Value> options;
   bool isMultiSelect;
   List<Value> responseValues;
+  int defaultValueIndex =
+      -1; //if there is a default value then it should start from 0
 
   List<String> responseFilePaths;
   int maxAttachments = 2;
@@ -430,7 +436,8 @@ class FormInputFieldOptionsWithAttachments extends Field {
         'type': EnumToString.convertToString(type),
         'responseValues': convertValuesToJson(responseValues),
         'responseFilePaths': responseFilePaths,
-        'maxAttachments': maxAttachments
+        'maxAttachments': maxAttachments,
+        'defaultValueIndex': defaultValueIndex
       };
 
   static FormInputFieldOptionsWithAttachments fromJson(
@@ -450,6 +457,7 @@ class FormInputFieldOptionsWithAttachments extends Field {
     field.responseValues = convertToValuesFromJson(json['responseValues']);
     field.maxAttachments = json['maxAttachments'];
     field.key = json["key"];
+    field.defaultValueIndex = json["defaultValueIndex"];
     return field;
   }
 
