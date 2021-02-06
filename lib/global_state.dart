@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
@@ -21,7 +20,6 @@ import 'package:noq/enum/entity_type.dart';
 import 'package:noq/events/local_notification_data.dart';
 import 'package:noq/location.dart';
 import 'package:noq/services/auth_service.dart';
-import 'package:noq/services/location_util.dart';
 import 'package:noq/tuple.dart';
 
 import 'package:noq/utils.dart';
@@ -248,12 +246,11 @@ class GlobalState {
     if (_gs.bookings == null) {
       DateTime fromDate = DateTime.now().subtract(new Duration(days: 60));
       DateTime toDate = DateTime.now().add(new Duration(days: 30));
+      _gs.bookings = new List<UserToken>();
 
       List<UserTokens> listTokens =
           await _gs._tokenService.getAllTokensForCurrentUser(fromDate, toDate);
       if (listTokens != null && listTokens.length > 0) {
-        _gs.bookings = new List<UserToken>();
-
         for (UserTokens tokens in listTokens) {
           for (UserToken token in tokens.tokens) {
             _gs.bookings.add(token);

@@ -891,13 +891,15 @@ class _FavsListPageState extends State<FavsListPage> {
     bool dateBooked = false;
     // UserAppData user = _userProfile;
 
-    for (UserToken obj in (_state.bookings)) {
-      if ((compareDateFormat
-                  .format(dt)
-                  .compareTo(compareDateFormat.format(obj.parent.dateTime)) ==
-              0) &&
-          (obj.parent.entityId == sid)) {
-        dateBooked = true;
+    if (_state.bookings != null) {
+      for (UserToken obj in (_state.bookings)) {
+        if ((compareDateFormat
+                    .format(dt)
+                    .compareTo(compareDateFormat.format(obj.parent.dateTime)) ==
+                0) &&
+            (obj.parent.entityId == sid)) {
+          dateBooked = true;
+        }
       }
     }
     Widget dtItem = Container(

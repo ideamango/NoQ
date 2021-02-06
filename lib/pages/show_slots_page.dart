@@ -497,6 +497,10 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
   }
 
   bool isBooked(DateTime dateTime, String entityId) {
+    if (_gs.bookings == null) {
+      return false;
+    }
+
     for (int i = 0; i < _gs.bookings.length; i++) {
       if (_gs.bookings[i].parent.entityId == entityId &&
           _gs.bookings[i].parent.dateTime == dateTime) {
