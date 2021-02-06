@@ -71,9 +71,15 @@ class _ApplicationsListState extends State<ApplicationsList> {
   }
 
   getListOfData() async {
-    //TODO: Generate dummy data as of now, later change to actual data
+    _gs
+        .getTokenApplicationService()
+        .getApplications(widget.bookingFormId, widget.metaEntity.entityId,
+            widget.status, null, null, null, null, null, true, 1, 20)
+        .then((value) {
+      if (Utils.isNullOrEmpty(value)) listOfBa = value;
+    });
 
-    listOfBa = initBookingFormDummy();
+    //listOfBa = initBookingFormDummy();
   }
 
   initBookingFormDummy() {
@@ -745,13 +751,25 @@ class _ApplicationsListState extends State<ApplicationsList> {
                                   .getTokenApplicationService()
                                   .updateApplicationStatus(
                                       ba.id,
-                                      ba.status,
+                                      ApplicationStatus.APPROVED,
                                       listOfControllers[ba.id].text,
                                       widget.metaEntity,
                                       ba.preferredSlotTiming)
-                                  .then((value) => setState(() {
-                                        ba.status = ApplicationStatus.APPROVED;
-                                      }));
+                                  .then((value) {
+                                if (value) {
+                                  setState(() {
+                                    ba.status = ApplicationStatus.APPROVED;
+                                  });
+                                } else {
+                                  print("Could not update application status");
+                                  Utils.showMyFlushbar(
+                                      context,
+                                      Icons.check,
+                                      Duration(seconds: 4),
+                                      "Oops! Application could not be saved!!",
+                                      "");
+                                }
+                              });
 //Update application status change on server.
                             },
                             icon: Icon(
@@ -773,13 +791,25 @@ class _ApplicationsListState extends State<ApplicationsList> {
                                 .getTokenApplicationService()
                                 .updateApplicationStatus(
                                     ba.id,
-                                    ba.status,
+                                    ApplicationStatus.ONHOLD,
                                     listOfControllers[ba.id].text,
                                     widget.metaEntity,
                                     ba.preferredSlotTiming)
-                                .then((value) => setState(() {
-                                      ba.status = ApplicationStatus.ONHOLD;
-                                    }));
+                                .then((value) {
+                              if (value) {
+                                setState(() {
+                                  ba.status = ApplicationStatus.ONHOLD;
+                                });
+                              } else {
+                                print("Could not update application status");
+                                Utils.showMyFlushbar(
+                                    context,
+                                    Icons.check,
+                                    Duration(seconds: 4),
+                                    "Oops! Application could not be saved!!",
+                                    "");
+                              }
+                            });
                           },
                           icon: Icon(
                             Icons.pan_tool_rounded,
@@ -798,13 +828,25 @@ class _ApplicationsListState extends State<ApplicationsList> {
                                 .getTokenApplicationService()
                                 .updateApplicationStatus(
                                     ba.id,
-                                    ba.status,
+                                    ApplicationStatus.REJECTED,
                                     listOfControllers[ba.id].text,
                                     widget.metaEntity,
                                     ba.preferredSlotTiming)
-                                .then((value) => setState(() {
-                                      ba.status = ApplicationStatus.REJECTED;
-                                    }));
+                                .then((value) {
+                              if (value) {
+                                setState(() {
+                                  ba.status = ApplicationStatus.REJECTED;
+                                });
+                              } else {
+                                print("Could not update application status");
+                                Utils.showMyFlushbar(
+                                    context,
+                                    Icons.check,
+                                    Duration(seconds: 4),
+                                    "Oops! Application could not be saved!!",
+                                    "");
+                              }
+                            });
                           },
                           icon: Icon(
                             Icons.cancel,

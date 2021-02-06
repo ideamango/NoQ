@@ -788,7 +788,7 @@ class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
                                   .getTokenApplicationService()
                                   .updateApplicationStatus(
                                       widget.bookingApplication.id,
-                                      widget.bookingApplication.status,
+                                      ApplicationStatus.APPROVED,
                                       listOfControllers[
                                               widget.bookingApplication.id]
                                           .text,
@@ -796,16 +796,26 @@ class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
                                       widget.bookingApplication
                                           .preferredSlotTiming)
                                   .then((value) {
-                                setState(() {
-                                  widget.bookingApplication.status =
-                                      ApplicationStatus.APPROVED;
-                                });
-                                Utils.showMyFlushbar(
-                                    context,
-                                    Icons.check,
-                                    Duration(seconds: 4),
-                                    "Application Saved!!",
-                                    "");
+                                if (value) {
+                                  setState(() {
+                                    widget.bookingApplication.status =
+                                        ApplicationStatus.APPROVED;
+                                  });
+                                  Utils.showMyFlushbar(
+                                      context,
+                                      Icons.check,
+                                      Duration(seconds: 4),
+                                      "Application Saved!!",
+                                      "");
+                                } else {
+                                  print("Could not update application status");
+                                  Utils.showMyFlushbar(
+                                      context,
+                                      Icons.check,
+                                      Duration(seconds: 4),
+                                      "Oops! Application could not be saved!!",
+                                      "");
+                                }
                               });
 
                               print("Approved");
@@ -830,17 +840,42 @@ class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
                           onPressed: () {
                             widget.bookingApplication.notesOnPuttingOnHold =
                                 notesController.text;
-                            setState(() {
-                              widget.bookingApplication.status =
-                                  ApplicationStatus.ONHOLD;
-                            });
 
-                            Utils.showMyFlushbar(
-                                context,
-                                Icons.check,
-                                Duration(seconds: 4),
-                                "Application Saved!!",
-                                "");
+                            _gs
+                                .getTokenApplicationService()
+                                .updateApplicationStatus(
+                                    widget.bookingApplication.id,
+                                    ApplicationStatus.ONHOLD,
+                                    listOfControllers[
+                                            widget.bookingApplication.id]
+                                        .text,
+                                    widget.metaEntity,
+                                    widget
+                                        .bookingApplication.preferredSlotTiming)
+                                .then((value) {
+                              if (value) {
+                                setState(() {
+                                  widget.bookingApplication.status =
+                                      ApplicationStatus.ONHOLD;
+                                });
+
+                                Utils.showMyFlushbar(
+                                    context,
+                                    Icons.check,
+                                    Duration(seconds: 4),
+                                    "Application Saved!!",
+                                    "");
+                              } else {
+                                print("Could not update application status");
+                                Utils.showMyFlushbar(
+                                    context,
+                                    Icons.check,
+                                    Duration(seconds: 4),
+                                    "Oops! Application could not be saved!!",
+                                    "");
+                              }
+                            });
+                            print("On-Hold done");
                           },
                           child: Row(children: [
                             Text(
@@ -864,17 +899,42 @@ class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
                           onPressed: () {
                             widget.bookingApplication.notesOnRejection =
                                 notesController.text;
-                            setState(() {
-                              widget.bookingApplication.status =
-                                  ApplicationStatus.REJECTED;
-                            });
 
-                            Utils.showMyFlushbar(
-                                context,
-                                Icons.check,
-                                Duration(seconds: 4),
-                                "Application Saved!!",
-                                "");
+                            _gs
+                                .getTokenApplicationService()
+                                .updateApplicationStatus(
+                                    widget.bookingApplication.id,
+                                    ApplicationStatus.REJECTED,
+                                    listOfControllers[
+                                            widget.bookingApplication.id]
+                                        .text,
+                                    widget.metaEntity,
+                                    widget
+                                        .bookingApplication.preferredSlotTiming)
+                                .then((value) {
+                              if (value) {
+                                setState(() {
+                                  widget.bookingApplication.status =
+                                      ApplicationStatus.REJECTED;
+                                });
+
+                                Utils.showMyFlushbar(
+                                    context,
+                                    Icons.check,
+                                    Duration(seconds: 4),
+                                    "Application Saved!!",
+                                    "");
+                              } else {
+                                print("Could not update application status");
+                                Utils.showMyFlushbar(
+                                    context,
+                                    Icons.check,
+                                    Duration(seconds: 4),
+                                    "Oops! Application could not be saved!!",
+                                    "");
+                              }
+                            });
+                            print("On-Hold done");
                           },
                           child: Row(children: [
                             Text(
