@@ -1659,15 +1659,18 @@ class _SearchEntityPageState extends State<SearchEntityPage>
       bool isBookingAllowed, int advanceDays, DateTime dt, String dayOfWeek) {
     bool dateBooked = false;
 
-    for (UserToken obj in (_state.bookings)) {
-      if ((compareDateFormat
-                  .format(dt)
-                  .compareTo(compareDateFormat.format(obj.parent.dateTime)) ==
-              0) &&
-          (obj.parent.entityId == sid && obj.number != -1)) {
-        dateBooked = true;
+    if (_state.bookings != null) {
+      for (UserToken obj in (_state.bookings)) {
+        if ((compareDateFormat
+                    .format(dt)
+                    .compareTo(compareDateFormat.format(obj.parent.dateTime)) ==
+                0) &&
+            (obj.parent.entityId == sid && obj.number != -1)) {
+          dateBooked = true;
+        }
       }
     }
+
     Widget dtItem = Container(
       margin: EdgeInsets.all(2),
       child: SizedBox.fromSize(

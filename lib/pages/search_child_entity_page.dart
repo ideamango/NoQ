@@ -1581,13 +1581,15 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
       bool isBookingAllowed, int advanceDays, DateTime dt, String dayOfWeek) {
     bool dateBooked = false;
 
-    for (UserToken obj in (_state.bookings)) {
-      if ((compareDateFormat
-                  .format(dt)
-                  .compareTo(compareDateFormat.format(obj.parent.dateTime)) ==
-              0) &&
-          (obj.parent.entityId == sid && obj.number != -1)) {
-        dateBooked = true;
+    if (_state.bookings != null) {
+      for (UserToken obj in (_state.bookings)) {
+        if ((compareDateFormat
+                    .format(dt)
+                    .compareTo(compareDateFormat.format(obj.parent.dateTime)) ==
+                0) &&
+            (obj.parent.entityId == sid && obj.number != -1)) {
+          dateBooked = true;
+        }
       }
     }
     Widget dtItem = Container(

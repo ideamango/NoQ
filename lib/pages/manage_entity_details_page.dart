@@ -24,7 +24,6 @@ import 'package:noq/repository/StoreRepository.dart';
 import 'package:noq/services/circular_progress.dart';
 import 'package:noq/style.dart';
 import 'package:noq/utils.dart';
-import 'package:noq/widget/bottom_nav_bar.dart';
 import 'package:noq/widget/custom_expansion_tile.dart';
 import 'package:noq/widget/page_animation.dart';
 import 'package:noq/widget/weekday_selector.dart';
@@ -1974,7 +1973,12 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
               true);
 
           _entityDetailsFormKey.currentState.save();
-          entity.bookingFormId = COVID_BOOKING_FORM_ID;
+
+          //TODO: this hardcoding is to be removed, BookingFORM should be assigned dynamically by the Admin (either create or choose existing form)
+          if (entity.type == EntityType.PLACE_TYPE_COVID19_VACCINATION_CENTER) {
+            entity.bookingFormId = COVID_BOOKING_FORM_ID;
+          }
+
           upsertEntity(entity, _regNumController.text).then((value) {
             if (value) {
               // Assign admins to newly upserted entity
