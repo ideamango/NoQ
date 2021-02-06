@@ -317,11 +317,11 @@ class EntityRowState extends State<EntityRow> {
                       onPressed: () {
                         print("Over To overview page");
                         if (Utils.isNotNullOrEmpty(_metaEntity.bookingFormId)) {
-                          Navigator.of(context)
-                              .push(PageAnimation.createRoute(OverviewPage(
-                            bookingFormId: _metaEntity.bookingFormId,
-                            entityId: _metaEntity.entityId,
-                          )));
+                          Navigator.of(context).push(PageAnimation.createRoute(
+                              OverviewPage(
+                                  bookingFormId: _metaEntity.bookingFormId,
+                                  entityId: _metaEntity.entityId,
+                                  metaEntity: _metaEntity)));
                         } else {
                           Utils.showMyFlushbar(
                               context,

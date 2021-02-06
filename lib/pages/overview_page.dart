@@ -1,6 +1,7 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:noq/db/db_model/booking_application.dart';
+import 'package:noq/db/db_model/meta_entity.dart';
 import 'package:noq/enum/application_status.dart';
 import 'package:noq/global_state.dart';
 import 'package:noq/pages/manage_entity_list_page.dart';
@@ -17,7 +18,12 @@ import 'package:noq/widget/widgets.dart';
 class OverviewPage extends StatefulWidget {
   final String entityId;
   final String bookingFormId;
-  OverviewPage({Key key, @required this.entityId, @required this.bookingFormId})
+  final MetaEntity metaEntity;
+  OverviewPage(
+      {Key key,
+      @required this.entityId,
+      @required this.bookingFormId,
+      @required this.metaEntity})
       : super(key: key);
   @override
   _OverviewPageState createState() => _OverviewPageState();
@@ -39,17 +45,17 @@ class _OverviewPageState extends State<OverviewPage> {
           .getApplicationsOverview(widget.bookingFormId, widget.entityId)
           .then((value) {
         _bookingApplicationsOverview = value;
-        //TODO : Start - Dummy Data remove later
+//         //TODO : Start - Dummy Data remove later
         _bookingApplicationsOverview = new BookingApplicationsOverview();
-        _bookingApplicationsOverview.totalApplications = 35365;
-        _bookingApplicationsOverview.numberOfNew = 1;
-        _bookingApplicationsOverview.numberOfInProcess = 850;
-        _bookingApplicationsOverview.numberOfRejected = 30;
-        _bookingApplicationsOverview.numberOfCancelled = 50;
-        _bookingApplicationsOverview.numberOfPutOnHold = 2560;
-        _bookingApplicationsOverview.numberOfApproved = 50015;
-        _bookingApplicationsOverview.numberOfCompleted = 1830500;
-//TODO : End - Dummy Data remove later
+        // _bookingApplicationsOverview.totalApplications = 35365;
+        // _bookingApplicationsOverview.numberOfNew = 1;
+        // _bookingApplicationsOverview.numberOfInProcess = 850;
+        // _bookingApplicationsOverview.numberOfRejected = 30;
+        // _bookingApplicationsOverview.numberOfCancelled = 50;
+        // _bookingApplicationsOverview.numberOfPutOnHold = 2560;
+        // _bookingApplicationsOverview.numberOfApproved = 50015;
+        // _bookingApplicationsOverview.numberOfCompleted = 1830500;
+// //TODO : End - Dummy Data remove later
 
         if (this.mounted) {
           setState(() {
@@ -159,7 +165,7 @@ class _OverviewPageState extends State<OverviewPage> {
                               print("Showing how to book time-slot");
                               Navigator.of(context).push(
                                   PageAnimation.createRoute(ApplicationsList(
-                                entityId: widget.entityId,
+                                metaEntity: widget.metaEntity,
                                 bookingFormId: widget.bookingFormId,
                                 status: ApplicationStatus.NEW,
                                 titleText: "New Applications",
@@ -227,7 +233,7 @@ class _OverviewPageState extends State<OverviewPage> {
                               print("Showing how to book time-slot");
                               Navigator.of(context).push(
                                   PageAnimation.createRoute(ApplicationsList(
-                                entityId: widget.entityId,
+                                metaEntity: widget.metaEntity,
                                 bookingFormId: widget.bookingFormId,
                                 status: ApplicationStatus.INPROCESS,
                                 titleText: "In-Process Applications",
@@ -301,7 +307,7 @@ class _OverviewPageState extends State<OverviewPage> {
                               print("Showing how to book time-slot");
                               Navigator.of(context).push(
                                   PageAnimation.createRoute(ApplicationsList(
-                                entityId: widget.entityId,
+                                metaEntity: widget.metaEntity,
                                 bookingFormId: widget.bookingFormId,
                                 status: ApplicationStatus.REJECTED,
                                 titleText: "Rejected Applications",
@@ -374,7 +380,7 @@ class _OverviewPageState extends State<OverviewPage> {
                               print("Showing how to book time-slot");
                               Navigator.of(context).push(
                                   PageAnimation.createRoute(ApplicationsList(
-                                entityId: widget.entityId,
+                                metaEntity: widget.metaEntity,
                                 bookingFormId: widget.bookingFormId,
                                 status: ApplicationStatus.CANCELLED,
                                 titleText: "Cancelled Applications",
@@ -449,7 +455,7 @@ class _OverviewPageState extends State<OverviewPage> {
                               print("Showing how to book time-slot");
                               Navigator.of(context).push(
                                   PageAnimation.createRoute(ApplicationsList(
-                                entityId: widget.entityId,
+                                metaEntity: widget.metaEntity,
                                 bookingFormId: widget.bookingFormId,
                                 status: ApplicationStatus.ONHOLD,
                                 titleText: "On-Hold Applications",
@@ -518,7 +524,7 @@ class _OverviewPageState extends State<OverviewPage> {
                               print("Showing how to book time-slot");
                               Navigator.of(context).push(
                                   PageAnimation.createRoute(ApplicationsList(
-                                entityId: widget.entityId,
+                                metaEntity: widget.metaEntity,
                                 bookingFormId: widget.bookingFormId,
                                 status: ApplicationStatus.APPROVED,
                                 titleText: "Approved Applications",

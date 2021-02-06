@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:noq/constants.dart';
 import 'package:noq/db/db_model/booking_application.dart';
 import 'package:noq/db/db_model/booking_form.dart';
+import 'package:noq/db/db_model/meta_entity.dart';
 import 'package:noq/enum/application_status.dart';
 import 'package:noq/enum/field_type.dart';
 import 'package:noq/global_state.dart';
@@ -19,13 +20,13 @@ import 'package:noq/widget/page_animation.dart';
 import 'package:noq/widget/widgets.dart';
 
 class ApplicationsList extends StatefulWidget {
-  final String entityId;
+  final MetaEntity metaEntity;
   final String bookingFormId;
   final ApplicationStatus status;
   final String titleText;
   ApplicationsList(
       {Key key,
-      @required this.entityId,
+      @required this.metaEntity,
       @required this.bookingFormId,
       @required this.status,
       @required this.titleText})
@@ -51,8 +52,8 @@ class _ApplicationsListState extends State<ApplicationsList> {
 
       _gs
           .getTokenApplicationService()
-          .getApplications(widget.bookingFormId, widget.entityId, widget.status,
-              null, null, null, null, null, null, null, null)
+          .getApplications(widget.bookingFormId, widget.metaEntity.entityId,
+              widget.status, null, null, null, null, null, null, null, null)
           .then((value) {
         listOfBa = value;
         if (this.mounted) {
@@ -740,9 +741,18 @@ class _ApplicationsListState extends State<ApplicationsList> {
                             onPressed: () {
                               ba.notesOnApproval =
                                   listOfControllers[ba.id].text;
-                              setState(() {
-                                ba.status = ApplicationStatus.APPROVED;
-                              });
+                              _gs
+                                  .getTokenApplicationService()
+                                  .updateApplicationStatus(
+                                      ba.id,
+                                      ba.status,
+                                      listOfControllers[ba.id].text,
+                                      widget.metaEntity,
+                                      ba.preferredSlotTiming)
+                                  .then((value) => setState(() {
+                                        ba.status = ApplicationStatus.APPROVED;
+                                      }));
+//Update application status change on server.
                             },
                             icon: Icon(
                               Icons.check_circle,
@@ -758,9 +768,18 @@ class _ApplicationsListState extends State<ApplicationsList> {
                           onPressed: () {
                             ba.notesOnPuttingOnHold =
                                 listOfControllers[ba.id].text;
-                            setState(() {
-                              ba.status = ApplicationStatus.ONHOLD;
-                            });
+
+                            _gs
+                                .getTokenApplicationService()
+                                .updateApplicationStatus(
+                                    ba.id,
+                                    ba.status,
+                                    listOfControllers[ba.id].text,
+                                    widget.metaEntity,
+                                    ba.preferredSlotTiming)
+                                .then((value) => setState(() {
+                                      ba.status = ApplicationStatus.ONHOLD;
+                                    }));
                           },
                           icon: Icon(
                             Icons.pan_tool_rounded,
@@ -775,9 +794,17 @@ class _ApplicationsListState extends State<ApplicationsList> {
                           color: Colors.red,
                           onPressed: () {
                             ba.notesOnRejection = listOfControllers[ba.id].text;
-                            setState(() {
-                              ba.status = ApplicationStatus.REJECTED;
-                            });
+                            _gs
+                                .getTokenApplicationService()
+                                .updateApplicationStatus(
+                                    ba.id,
+                                    ba.status,
+                                    listOfControllers[ba.id].text,
+                                    widget.metaEntity,
+                                    ba.preferredSlotTiming)
+                                .then((value) => setState(() {
+                                      ba.status = ApplicationStatus.REJECTED;
+                                    }));
                           },
                           icon: Icon(
                             Icons.cancel,
