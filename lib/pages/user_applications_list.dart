@@ -436,7 +436,10 @@ class _UserApplicationsListState extends State<UserApplicationsList> {
                     Wrap(children: [
                       SizedBox(
                         width: cardWidth * .63,
-                        child: AutoSizeText(medConds,
+                        child: AutoSizeText(
+                            (Utils.isNotNullOrEmpty(medConds)
+                                ? medConds
+                                : "None"),
                             group: medCondGroup,
                             minFontSize: 12,
                             maxFontSize: 14,
