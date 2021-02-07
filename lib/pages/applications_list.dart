@@ -754,29 +754,29 @@ class _ApplicationsListState extends State<ApplicationsList> {
                                   .getTokenApplicationService()
                                   .updateApplicationStatus(
                                       ba.id,
-                                      ApplicationStatus.APPROVED,
+                                      ApplicationStatus.COMPLETED,
                                       listOfControllers[ba.id].text,
                                       widget.metaEntity,
                                       ba.preferredSlotTiming)
                                   .then((value) {
                                 if (value) {
                                   setState(() {
-                                    ba.status = ApplicationStatus.APPROVED;
+                                    ba.status = ApplicationStatus.COMPLETED;
                                   });
                                 } else {
                                   print("Could not update application status");
                                   Utils.showMyFlushbar(
                                       context,
-                                      Icons.check,
+                                      Icons.thumb_up,
                                       Duration(seconds: 4),
-                                      "Oops! Application could not be saved!!",
+                                      "Oops! Application status could not be updated to Completed!!",
                                       "");
                                 }
                               });
 //Update application status change on server.
                             },
                             icon: Icon(
-                              Icons.check_circle,
+                              Icons.thumb_up,
                               size: 30,
                             )),
                         IconButton(
@@ -809,7 +809,7 @@ class _ApplicationsListState extends State<ApplicationsList> {
                                     context,
                                     Icons.check,
                                     Duration(seconds: 4),
-                                    "Oops! Application could not be saved!!",
+                                    "Oops! Application could not be put On-Hold!!",
                                     "");
                               }
                             });
@@ -846,7 +846,7 @@ class _ApplicationsListState extends State<ApplicationsList> {
                                     context,
                                     Icons.check,
                                     Duration(seconds: 4),
-                                    "Oops! Application could not be saved!!",
+                                    "Oops! Application could not be Rejected!!",
                                     "");
                               }
                             });

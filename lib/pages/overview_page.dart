@@ -61,6 +61,28 @@ class _OverviewPageState extends State<OverviewPage> {
     });
   }
 
+  refreshData() {
+    _gs
+        .getTokenApplicationService()
+        .getApplicationsOverview(widget.bookingFormId, widget.entityId)
+        .then((value) {
+      _bookingApplicationsOverview = value;
+      if (this.mounted) {
+        setState(() {
+          initCompleted = true;
+        });
+      } else
+        initCompleted = true;
+    });
+
+    Future.delayed(Duration(seconds: 1)).then((value) {
+      setState(() {
+        _completedCount = _bookingApplicationsOverview.numberOfCompleted;
+        _totalReceivedCount = _bookingApplicationsOverview.totalApplications;
+      });
+    });
+  }
+
   Future<void> getGlobalState() async {
     _gs = await GlobalState.getGlobalState();
   }
@@ -74,6 +96,7 @@ class _OverviewPageState extends State<OverviewPage> {
   Widget build(BuildContext context) {
     String pageTitle = "Overview";
     if (initCompleted) {
+      refreshData();
       return MaterialApp(
         debugShowCheckedModeBanner: false,
         theme: ThemeData.light().copyWith(),
