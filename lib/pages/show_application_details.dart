@@ -250,11 +250,6 @@ class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
     );
   }
 
-  // List<Widget> showListOfData() {
-  //   return list.map(_buildItem).toList();
-  //   // return _stores.map((contact) => new ChildItem(contact.name)).toList();
-  // }
-
   Widget buildChildItem(Field field) {
     if (!listOfControllers.containsKey(field.label)) {
       listOfControllers[field.label] = new TextEditingController();
@@ -580,8 +575,9 @@ class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
                                           loadingBuilder: (BuildContext context,
                                               Widget child,
                                               ImageChunkEvent loadingProgress) {
-                                            if (loadingProgress == null)
+                                            if (loadingProgress == null) {
                                               return child;
+                                            }
                                             return Center(
                                               child: CircularProgressIndicator(
                                                 value: loadingProgress
@@ -609,16 +605,18 @@ class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
             if (newfield.isMultiSelect) {
               if (Utils.isNullOrEmpty(newfield.responseValues)) {
                 conds = "None";
-              }
-              for (int i = 0; i < newfield.responseValues.length; i++) {
-                if (conds != "")
-                  conds = conds + "  &  " + newfield.responseValues[i].value;
-                else
-                  conds = conds + newfield.responseValues[i].value;
+              } else {
+                for (int i = 0; i < newfield.responseValues.length; i++) {
+                  if (conds != "")
+                    conds = conds + "  &  " + newfield.responseValues[i].value;
+                  else
+                    conds = conds + newfield.responseValues[i].value;
+                }
               }
             } else {
-              if (newfield.responseValues.length > 0)
-                conds = newfield.responseValues[0].value;
+              conds = Utils.isNullOrEmpty(newfield.responseValues)
+                  ? "None"
+                  : newfield.responseValues[0].value;
             }
             listOfControllers[field.label].text = conds;
           }
@@ -782,6 +780,63 @@ class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
                       children: [
                         RaisedButton(
                             elevation: 8,
+                            color: Colors.purple,
+                            onPressed: () {
+                              widget.bookingApplication.notesOnApproval =
+                                  notesController.text;
+                              _gs
+                                  .getTokenApplicationService()
+                                  .updateApplicationStatus(
+                                      widget.bookingApplication.id,
+                                      ApplicationStatus.COMPLETED,
+                                      listOfControllers[
+                                              widget.bookingApplication.id]
+                                          .text,
+                                      widget.metaEntity,
+                                      widget.bookingApplication
+                                          .preferredSlotTiming)
+                                  .then((value) {
+                                if (value) {
+                                  setState(() {
+                                    widget.bookingApplication.status =
+                                        ApplicationStatus.COMPLETED;
+                                  });
+                                  Utils.showMyFlushbar(
+                                      context,
+                                      Icons.check,
+                                      Duration(seconds: 4),
+                                      "Application Saved!!",
+                                      "");
+                                } else {
+                                  print("Could not update application status");
+                                  Utils.showMyFlushbar(
+                                      context,
+                                      Icons.check,
+                                      Duration(seconds: 4),
+                                      "Oops! Application could not be saved!!",
+                                      "");
+                                }
+                              });
+
+                              print("Complete");
+                            },
+                            child: Row(children: [
+                              // Text(
+                              //   "Complete",
+                              //   style: TextStyle(
+                              //     color: Colors.white,
+                              //   ),
+                              // ),
+                              // SizedBox(
+                              //   width: 2,
+                              // ),
+                              Icon(
+                                Icons.thumb_up,
+                                color: Colors.white,
+                              )
+                            ])),
+                        RaisedButton(
+                            elevation: 8,
                             color: Colors.green[400],
                             onPressed: () {
                               widget.bookingApplication.notesOnApproval =
@@ -823,15 +878,15 @@ class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
                               print("Approved");
                             },
                             child: Row(children: [
-                              Text(
-                                "Approve",
-                                style: TextStyle(
-                                  color: Colors.white,
-                                ),
-                              ),
-                              SizedBox(
-                                width: 2,
-                              ),
+                              // Text(
+                              //   "Approve",
+                              //   style: TextStyle(
+                              //     color: Colors.white,
+                              //   ),
+                              // ),
+                              // SizedBox(
+                              //   width: 2,
+                              // ),
                               Icon(
                                 Icons.check_circle,
                                 color: Colors.white,
@@ -880,16 +935,16 @@ class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
                             print("On-Hold done");
                           },
                           child: Row(children: [
-                            Text(
-                              "On-Hold",
-                              style: TextStyle(
-                                color: Colors.white,
-                              ),
-                              // style: buttonTextStyle,
-                            ),
-                            SizedBox(
-                              width: 2,
-                            ),
+                            // Text(
+                            //   "On-Hold",
+                            //   style: TextStyle(
+                            //     color: Colors.white,
+                            //   ),
+                            //   // style: buttonTextStyle,
+                            // ),
+                            // SizedBox(
+                            //   width: 2,
+                            // ),
                             Icon(
                               Icons.pan_tool_rounded,
                               color: Colors.white,
@@ -939,15 +994,15 @@ class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
                             print("On-Hold done");
                           },
                           child: Row(children: [
-                            Text(
-                              "Reject",
-                              style: TextStyle(
-                                color: Colors.white,
-                              ),
-                            ),
-                            SizedBox(
-                              width: 2,
-                            ),
+                            // Text(
+                            //   "Reject",
+                            //   style: TextStyle(
+                            //     color: Colors.white,
+                            //   ),
+                            // ),
+                            // SizedBox(
+                            //   width: 2,
+                            // ),
                             Icon(
                               Icons.cancel_rounded,
                               color: Colors.white,

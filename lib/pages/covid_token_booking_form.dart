@@ -213,15 +213,25 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage>
           else if (f.key == "KEY30") {
             medConditionsField = f; //Validate this field
             medConditionsField.responseValues = new List<Value>();
-            for (Value val in medConditionsField.options) {
-              medConditionsList.add(Item(val, false));
+            for (int i = 0; i < medConditionsField.options.length; i++) {
+              if (medConditionsField.defaultValueIndex == i)
+                medConditionsList
+                    .add(Item(medConditionsField.options[i], true));
+              else
+                medConditionsList
+                    .add(Item(medConditionsField.options[i], false));
             }
             medConditionsField.responseFilePaths = new List<String>();
           } else if (f.key == "KEY40") {
             frontlineWorkerField = f;
             frontlineWorkerField.responseValues = new List<Value>();
-            for (Value val in frontlineWorkerField.options) {
-              frontlineTypesList.add(Item(val, false));
+            for (int i = 0; i < frontlineWorkerField.options.length; i++) {
+              if (frontlineWorkerField.defaultValueIndex == i)
+                frontlineTypesList
+                    .add(Item(frontlineWorkerField.options[i], true));
+              else
+                frontlineTypesList
+                    .add(Item(frontlineWorkerField.options[i], false));
             }
             frontlineWorkerField.responseFilePaths = new List<String>();
           } else if (f.key == "KEY50") {
@@ -271,6 +281,7 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage>
     if (Utils.isNullOrEmpty(idProofField.responseFilePaths))
       validationErrMsg = validationErrMsg + '\n' + idProofFileMissingMsg;
     //MedCondTypeMissing
+    //TODO CHECK this
     if (!Utils.isNullOrEmpty(medConditionsField.responseFilePaths)) {
       if (Utils.isNullOrEmpty(medConditionsField.responseValues))
         validationErrMsg = validationErrMsg + '\n' + medCondsTypeMissingMsg;
@@ -525,12 +536,18 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage>
                       .map((item) => GestureDetector(
                           onTap: () {
                             bool newSelectionValue = !(item.isSelected);
+                            if (frontlineWorkerField.isMultiSelect == false) {
+                              frontlineTypesList.forEach((element) {
+                                element.isSelected = false;
+                              });
+                            }
+                            if (item.isSelected == true)
+                              frontlineWorkerField.responseValues
+                                  .remove(item.value);
+                            else
+                              frontlineWorkerField.responseValues
+                                  .add(item.value);
 
-                            frontlineTypesList.forEach((element) {
-                              element.isSelected = false;
-                            });
-                            // _idProofType = item.text.value;
-                            frontlineWorkerField.responseValues.add(item.value);
                             setState(() {
                               item.isSelected = newSelectionValue;
                             });
@@ -573,11 +590,17 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage>
                           onTap: () {
                             bool newSelectionValue = !(item.isSelected);
 
-                            idProofTypesList.forEach((element) {
-                              element.isSelected = false;
-                            });
+                            if (idProofField.isMultiSelect == false) {
+                              idProofTypesList.forEach((element) {
+                                element.isSelected = false;
+                              });
+                            }
                             _idProofType = item.value.value;
-                            idProofField.responseValues.add(item.value);
+                            if (item.isSelected == true)
+                              idProofField.responseValues.remove(item.value);
+                            else
+                              idProofField.responseValues.add(item.value);
+
                             setState(() {
                               item.isSelected = newSelectionValue;
                             });
@@ -711,11 +734,16 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage>
                           onTap: () {
                             bool newSelectionValue = !(item.isSelected);
 
-                            // medConditions.forEach((element) {
-                            //   element.isSelected = false;
-                            // });
-
-                            medConditionsField.responseValues.add(item.value);
+                            if (medConditionsField.isMultiSelect == false) {
+                              medConditionsList.forEach((element) {
+                                element.isSelected = false;
+                              });
+                            }
+                            if (item.isSelected == true)
+                              medConditionsField.responseValues
+                                  .remove(item.value);
+                            else
+                              medConditionsField.responseValues.add(item.value);
 
                             setState(() {
                               item.isSelected = newSelectionValue;
@@ -1597,7 +1625,7 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage>
                                                       child: showImageList(
                                                           context,
                                                           _idProofimages[index],
-                                                          _frontLineProofimages),
+                                                          _idProofimages),
                                                     );
                                                   },
                                                   itemCount:
@@ -1732,7 +1760,7 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage>
                                                             context,
                                                             _medCondsProofimages[
                                                                 index],
-                                                            _frontLineProofimages),
+                                                            _medCondsProofimages),
                                                       );
                                                     },
                                                     itemCount:
