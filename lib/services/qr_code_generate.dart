@@ -20,7 +20,12 @@ import 'package:share/share.dart';
 class GenerateScreen extends StatefulWidget {
   final String entityId;
   final String entityName;
-  GenerateScreen({Key key, @required this.entityId, @required this.entityName})
+  final dynamic backRoute;
+  GenerateScreen(
+      {Key key,
+      @required this.entityId,
+      @required this.entityName,
+      @required this.backRoute})
       : super(key: key);
   @override
   State<StatefulWidget> createState() => GenerateScreenState();

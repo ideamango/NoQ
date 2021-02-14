@@ -286,19 +286,41 @@ class _UserApplicationsListState extends State<UserApplicationsList> {
               Padding(
                 padding: const EdgeInsets.fromLTRB(8, 10, 8, 4),
                 child: Row(mainAxisAlignment: MainAxisAlignment.end, children: [
-                  SizedBox(
-                    width: cardWidth * .15,
-                    child: AutoSizeText(
-                      "Status : ",
-                      group: labelGroup,
-                      minFontSize: 10,
-                      maxFontSize: 12,
-                      maxLines: 1,
-                      overflow: TextOverflow.clip,
-                      style: TextStyle(
-                          color: Colors.blueGrey[700],
-                          fontFamily: 'RalewayRegular'),
-                    ),
+                  // SizedBox(
+                  //   width: cardWidth * .15,
+                  //   child: AutoSizeText(
+                  //     "Status : ",
+                  //     group: labelGroup,
+                  //     minFontSize: 10,
+                  //     maxFontSize: 12,
+                  //     maxLines: 1,
+                  //     overflow: TextOverflow.clip,
+                  //     style: TextStyle(
+                  //         color: Colors.blueGrey[700],
+                  //         fontFamily: 'RalewayRegular'),
+                  //   ),
+                  // ),
+                  Container(
+                    padding: EdgeInsets.all(0),
+                    margin: EdgeInsets.all(5),
+                    height: 28.0,
+                    width: 28.0,
+                    child: IconButton(
+                        padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
+                        alignment: Alignment.center,
+                        highlightColor: Colors.orange[300],
+                        icon: ImageIcon(
+                          AssetImage('assets/qrcode.png'),
+                          size: 25,
+                          color: primaryIcon,
+                        ),
+                        onPressed: () {
+                          print(ba.entityId);
+                          Navigator.of(context).push(PageAnimation.createRoute(
+                              GenerateScreen(
+                                  entityId: ba.entityId,
+                                  entityName: "Application QR code")));
+                        }),
                   ),
                   Container(
                     padding: EdgeInsets.all(2),
