@@ -480,7 +480,7 @@ class _ApplicationsListState extends State<ApplicationsList> {
       }
     }
 
-    double cardHeight = MediaQuery.of(context).size.height * .24;
+    double cardHeight = MediaQuery.of(context).size.height * .3;
     double cardWidth = MediaQuery.of(context).size.width * .95;
     var medCondGroup = AutoSizeGroup();
     var labelGroup = AutoSizeGroup();
@@ -517,6 +517,7 @@ class _ApplicationsListState extends State<ApplicationsList> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Row(
                           children: [
@@ -525,17 +526,17 @@ class _ApplicationsListState extends State<ApplicationsList> {
                               child: AutoSizeText(
                                 "Name : ",
                                 group: labelGroup,
-                                minFontSize: 10,
-                                maxFontSize: 12,
+                                minFontSize: 12,
+                                maxFontSize: 13,
                                 maxLines: 1,
                                 overflow: TextOverflow.clip,
                                 style: TextStyle(
-                                    color: Colors.blueGrey[700],
-                                    fontFamily: 'RalewayRegular'),
+                                    color: Colors.blueGrey[900],
+                                    fontFamily: 'Roboto'),
                               ),
                             ),
                             SizedBox(
-                              width: cardWidth * .3,
+                              width: cardWidth * .4,
                               //height: cardHeight * .1,
                               child: AutoSizeText(
                                 name,
@@ -558,13 +559,13 @@ class _ApplicationsListState extends State<ApplicationsList> {
                             child: AutoSizeText(
                               "Age : ",
                               group: labelGroup,
-                              minFontSize: 10,
-                              maxFontSize: 12,
+                              minFontSize: 12,
+                              maxFontSize: 13,
                               maxLines: 1,
                               overflow: TextOverflow.clip,
                               style: TextStyle(
                                   color: Colors.blueGrey[700],
-                                  fontFamily: 'RalewayRegular'),
+                                  fontFamily: 'Roboto'),
                             ),
                           ),
                           SizedBox(
@@ -582,20 +583,20 @@ class _ApplicationsListState extends State<ApplicationsList> {
                       ],
                     ),
                     Row(children: [
-                      SizedBox(
-                        width: cardWidth * .12,
-                        child: AutoSizeText(
-                          "Status : ",
-                          group: labelGroup,
-                          minFontSize: 10,
-                          maxFontSize: 12,
-                          maxLines: 1,
-                          overflow: TextOverflow.clip,
-                          style: TextStyle(
-                              color: Colors.blueGrey[700],
-                              fontFamily: 'RalewayRegular'),
-                        ),
-                      ),
+                      // SizedBox(
+                      //   width: cardWidth * .12,
+                      //   child: AutoSizeText(
+                      //     "Status : ",
+                      //     group: labelGroup,
+                      //     minFontSize: 10,
+                      //     maxFontSize: 12,
+                      //     maxLines: 1,
+                      //     overflow: TextOverflow.clip,
+                      //     style: TextStyle(
+                      //         color: Colors.blueGrey[700],
+                      //         fontFamily: 'RalewayRegular'),
+                      //   ),
+                      // ),
                       Container(
                         padding: EdgeInsets.all(2),
                         margin: EdgeInsets.all(0),
@@ -609,7 +610,10 @@ class _ApplicationsListState extends State<ApplicationsList> {
                                         : (ba.status ==
                                                 ApplicationStatus.APPROVED
                                             ? Colors.green[400]
-                                            : Colors.blueGrey))),
+                                            : (ba.status ==
+                                                    ApplicationStatus.COMPLETED
+                                                ? Colors.purple
+                                                : Colors.blueGrey)))),
                             shape: BoxShape.rectangle,
                             borderRadius:
                                 BorderRadius.all(Radius.circular(5.0))),
@@ -636,20 +640,18 @@ class _ApplicationsListState extends State<ApplicationsList> {
                 ),
               ),
               Padding(
-                padding:
-                    const EdgeInsets.symmetric(vertical: 2.0, horizontal: 8),
+                padding: const EdgeInsets.fromLTRB(8, 10, 8, 4),
                 child: Row(
                   children: [
                     AutoSizeText(
                       "Is a FrontLine Worker",
                       group: labelGroup,
-                      minFontSize: 10,
-                      maxFontSize: 12,
+                      minFontSize: 12,
+                      maxFontSize: 13,
                       maxLines: 1,
                       overflow: TextOverflow.clip,
                       style: TextStyle(
-                          color: Colors.blueGrey[700],
-                          fontFamily: 'RalewayRegular'),
+                          color: Colors.blueGrey[900], fontFamily: 'Roboto'),
                     ),
                     horizontalSpacer,
                     (isFrontlineWorker)
@@ -664,8 +666,7 @@ class _ApplicationsListState extends State<ApplicationsList> {
                 ),
               ),
               Padding(
-                padding:
-                    const EdgeInsets.symmetric(vertical: 2.0, horizontal: 8),
+                padding: const EdgeInsets.fromLTRB(8, 10, 8, 4),
                 child: Row(
                   children: [
                     SizedBox(
@@ -675,13 +676,13 @@ class _ApplicationsListState extends State<ApplicationsList> {
                             AutoSizeText(
                               "Medical Issues",
                               group: labelGroup,
-                              minFontSize: 10,
-                              maxFontSize: 12,
+                              minFontSize: 12,
+                              maxFontSize: 13,
                               maxLines: 1,
                               overflow: TextOverflow.clip,
                               style: TextStyle(
-                                  color: Colors.blueGrey[700],
-                                  fontFamily: 'RalewayRegular'),
+                                  color: Colors.blueGrey[900],
+                                  fontFamily: 'Roboto'),
                             ),
                           ],
                         )),
@@ -706,26 +707,19 @@ class _ApplicationsListState extends State<ApplicationsList> {
                   ],
                 ),
               ),
-              // Divider(
-              //   indent: 5,
-              //   thickness: 1,
-              //   height: 5,
-              //   color: Colors.blueGrey[300],
-              // ),
-
               Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                //  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Container(
                       margin: EdgeInsets.zero,
-                      padding: EdgeInsets.only(left: 8, top: 0),
-                      width: cardWidth * .5,
-                      height: cardHeight * .35,
+                      padding: EdgeInsets.fromLTRB(8, 0, 0, 0),
+                      width: cardWidth * .9,
+                      height: cardHeight * .2,
                       child: TextFormField(
                         controller: listOfControllers[ba.id],
                         style: TextStyle(
-                            fontSize: 10,
-                            color: Colors.blueGrey[800],
+                            fontSize: 15,
+                            color: Colors.blueGrey[900],
                             fontFamily: 'RalewayRegular'),
                         decoration: InputDecoration(
                           labelText: 'Remarks',
@@ -734,19 +728,24 @@ class _ApplicationsListState extends State<ApplicationsList> {
                           focusedBorder: UnderlineInputBorder(
                               borderSide: BorderSide(color: Colors.orange)),
                         ),
-                        maxLines: 2,
+                        maxLines: 1,
                         keyboardType: TextInputType.text,
                       )),
+                ],
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
                   Container(
-                    width: cardWidth * .42,
+                    width: cardWidth * .5,
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         IconButton(
-                            alignment: Alignment.bottomCenter,
+                            alignment: Alignment.center,
                             //    visualDensity: VisualDensity.compact,
                             padding: const EdgeInsets.fromLTRB(8, 2, 8, 0),
-                            color: Colors.green[400],
+                            color: Colors.purple[400],
                             onPressed: () {
                               ba.notesOnApproval =
                                   listOfControllers[ba.id].text;
@@ -764,13 +763,13 @@ class _ApplicationsListState extends State<ApplicationsList> {
                                     ba.status = ApplicationStatus.COMPLETED;
                                   });
                                 } else {
-                                  print("Could not update application status");
+                                  print("Could not update application");
                                   Utils.showMyFlushbar(
                                       context,
-                                      Icons.thumb_up,
+                                      Icons.error,
                                       Duration(seconds: 4),
-                                      "Oops! Application status could not be updated to Completed!!",
-                                      "");
+                                      "Oops! Application could not be marked Completed!!",
+                                      "Try again later.");
                                 }
                               });
 //Update application status change on server.
@@ -780,7 +779,44 @@ class _ApplicationsListState extends State<ApplicationsList> {
                               size: 30,
                             )),
                         IconButton(
-                          alignment: Alignment.bottomCenter,
+                            alignment: Alignment.center,
+                            //    visualDensity: VisualDensity.compact,
+                            padding: const EdgeInsets.fromLTRB(8, 2, 8, 0),
+                            color: Colors.green[400],
+                            onPressed: () {
+                              ba.notesOnApproval =
+                                  listOfControllers[ba.id].text;
+                              _gs
+                                  .getTokenApplicationService()
+                                  .updateApplicationStatus(
+                                      ba.id,
+                                      ApplicationStatus.APPROVED,
+                                      listOfControllers[ba.id].text,
+                                      widget.metaEntity,
+                                      ba.preferredSlotTiming)
+                                  .then((value) {
+                                if (value) {
+                                  setState(() {
+                                    ba.status = ApplicationStatus.APPROVED;
+                                  });
+                                } else {
+                                  print("Could not update application status");
+                                  Utils.showMyFlushbar(
+                                      context,
+                                      Icons.thumb_up,
+                                      Duration(seconds: 4),
+                                      "Oops! Application status could not be updated to Approved!!",
+                                      "");
+                                }
+                              });
+//Update application status change on server.
+                            },
+                            icon: Icon(
+                              Icons.check_circle,
+                              size: 30,
+                            )),
+                        IconButton(
+                          alignment: Alignment.center,
                           //    visualDensity: VisualDensity.compact,
                           padding: const EdgeInsets.fromLTRB(8, 2, 8, 0),
                           visualDensity: VisualDensity.compact,
@@ -821,7 +857,7 @@ class _ApplicationsListState extends State<ApplicationsList> {
                         ),
                         IconButton(
                           // visualDensity: VisualDensity.compact,
-                          alignment: Alignment.bottomCenter,
+                          alignment: Alignment.center,
                           //    visualDensity: VisualDensity.compact,
                           padding: const EdgeInsets.fromLTRB(8, 2, 8, 0),
                           color: Colors.red,

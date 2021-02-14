@@ -167,21 +167,21 @@ class _OverviewPageState extends State<OverviewPage> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
-                        Card(
-                          elevation: 20,
-                          color: Colors.blue[300],
-                          child: GestureDetector(
-                            onTap: () {
-                              //User clicked on show how, lets show them.
-                              print("Showing how to book time-slot");
-                              Navigator.of(context).push(
-                                  PageAnimation.createRoute(ApplicationsList(
-                                metaEntity: widget.metaEntity,
-                                bookingFormId: widget.bookingFormId,
-                                status: ApplicationStatus.NEW,
-                                titleText: "New Applications",
-                              )));
-                            },
+                        GestureDetector(
+                          onTap: () {
+                            //User clicked on show how, lets show them.
+                            print("Showing how to book time-slot");
+                            Navigator.of(context).push(
+                                PageAnimation.createRoute(ApplicationsList(
+                              metaEntity: widget.metaEntity,
+                              bookingFormId: widget.bookingFormId,
+                              status: ApplicationStatus.NEW,
+                              titleText: "New Applications",
+                            )));
+                          },
+                          child: Card(
+                            elevation: 20,
+                            color: Colors.blue[300],
                             child: Container(
                                 height: MediaQuery.of(context).size.height * .1,
                                 width: MediaQuery.of(context).size.width * .34,
@@ -235,21 +235,21 @@ class _OverviewPageState extends State<OverviewPage> {
                                 )),
                           ),
                         ),
-                        Card(
-                          elevation: 20,
-                          color: Colors.amberAccent.withOpacity(0.7),
-                          child: GestureDetector(
-                            onTap: () {
-                              //User clicked on show how, lets show them.
-                              print("Showing how to book time-slot");
-                              Navigator.of(context).push(
-                                  PageAnimation.createRoute(ApplicationsList(
-                                metaEntity: widget.metaEntity,
-                                bookingFormId: widget.bookingFormId,
-                                status: ApplicationStatus.INPROCESS,
-                                titleText: "In-Process Applications",
-                              )));
-                            },
+                        GestureDetector(
+                          onTap: () {
+                            //User clicked on show how, lets show them.
+                            print("Showing how to book time-slot");
+                            Navigator.of(context).push(
+                                PageAnimation.createRoute(ApplicationsList(
+                              metaEntity: widget.metaEntity,
+                              bookingFormId: widget.bookingFormId,
+                              status: ApplicationStatus.INPROCESS,
+                              titleText: "In-Process Applications",
+                            )));
+                          },
+                          child: Card(
+                            elevation: 20,
+                            color: Colors.amberAccent.withOpacity(0.7),
                             child: Container(
                                 width: MediaQuery.of(context).size.width * .42,
                                 height:
@@ -309,21 +309,21 @@ class _OverviewPageState extends State<OverviewPage> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
-                        Card(
-                          elevation: 20,
-                          color: Colors.orangeAccent.withOpacity(0.7),
-                          child: GestureDetector(
-                            onTap: () {
-                              //User clicked on show how, lets show them.
-                              print("Showing how to book time-slot");
-                              Navigator.of(context).push(
-                                  PageAnimation.createRoute(ApplicationsList(
-                                metaEntity: widget.metaEntity,
-                                bookingFormId: widget.bookingFormId,
-                                status: ApplicationStatus.REJECTED,
-                                titleText: "Rejected Applications",
-                              )));
-                            },
+                        GestureDetector(
+                          onTap: () {
+                            //User clicked on show how, lets show them.
+                            print("Showing how to book time-slot");
+                            Navigator.of(context).push(
+                                PageAnimation.createRoute(ApplicationsList(
+                              metaEntity: widget.metaEntity,
+                              bookingFormId: widget.bookingFormId,
+                              status: ApplicationStatus.REJECTED,
+                              titleText: "Rejected Applications",
+                            )));
+                          },
+                          child: Card(
+                            elevation: 20,
+                            color: Colors.orangeAccent.withOpacity(0.7),
                             child: Container(
                                 width: MediaQuery.of(context).size.width * .45,
                                 // height:
@@ -382,21 +382,21 @@ class _OverviewPageState extends State<OverviewPage> {
                                 )),
                           ),
                         ),
-                        Card(
-                          elevation: 20,
-                          color: Colors.pink[200],
-                          child: GestureDetector(
-                            onTap: () {
-                              //User clicked on show how, lets show them.
-                              print("Showing how to book time-slot");
-                              Navigator.of(context).push(
-                                  PageAnimation.createRoute(ApplicationsList(
-                                metaEntity: widget.metaEntity,
-                                bookingFormId: widget.bookingFormId,
-                                status: ApplicationStatus.CANCELLED,
-                                titleText: "Cancelled Applications",
-                              )));
-                            },
+                        GestureDetector(
+                          onTap: () {
+                            //User clicked on show how, lets show them.
+                            print("Showing how to book time-slot");
+                            Navigator.of(context).push(
+                                PageAnimation.createRoute(ApplicationsList(
+                              metaEntity: widget.metaEntity,
+                              bookingFormId: widget.bookingFormId,
+                              status: ApplicationStatus.CANCELLED,
+                              titleText: "Cancelled Applications",
+                            )));
+                          },
+                          child: Card(
+                            elevation: 20,
+                            color: Colors.pink[200],
                             child: Container(
                                 width: MediaQuery.of(context).size.width * .3,
                                 height: MediaQuery.of(context).size.height * .1,
@@ -457,21 +457,21 @@ class _OverviewPageState extends State<OverviewPage> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
-                        Card(
-                          elevation: 20,
-                          color: Colors.greenAccent,
-                          child: GestureDetector(
-                            onTap: () {
-                              //User clicked on show how, lets show them.
-                              print("Showing how to book time-slot");
-                              Navigator.of(context).push(
-                                  PageAnimation.createRoute(ApplicationsList(
-                                metaEntity: widget.metaEntity,
-                                bookingFormId: widget.bookingFormId,
-                                status: ApplicationStatus.ONHOLD,
-                                titleText: "On-Hold Applications",
-                              )));
-                            },
+                        GestureDetector(
+                          onTap: () {
+                            //User clicked on show how, lets show them.
+                            print("Showing how to book time-slot");
+                            Navigator.of(context).push(
+                                PageAnimation.createRoute(ApplicationsList(
+                              metaEntity: widget.metaEntity,
+                              bookingFormId: widget.bookingFormId,
+                              status: ApplicationStatus.ONHOLD,
+                              titleText: "On-Hold Applications",
+                            )));
+                          },
+                          child: Card(
+                            elevation: 20,
+                            color: Colors.greenAccent,
                             child: Container(
                                 width: MediaQuery.of(context).size.width * .35,
                                 height: MediaQuery.of(context).size.height * .1,
@@ -526,21 +526,21 @@ class _OverviewPageState extends State<OverviewPage> {
                                 )),
                           ),
                         ),
-                        Card(
-                          elevation: 20,
-                          color: Colors.blueAccent,
-                          child: GestureDetector(
-                            onTap: () {
-                              //User clicked on show how, lets show them.
-                              print("Showing how to book time-slot");
-                              Navigator.of(context).push(
-                                  PageAnimation.createRoute(ApplicationsList(
-                                metaEntity: widget.metaEntity,
-                                bookingFormId: widget.bookingFormId,
-                                status: ApplicationStatus.APPROVED,
-                                titleText: "Approved Applications",
-                              )));
-                            },
+                        GestureDetector(
+                          onTap: () {
+                            //User clicked on show how, lets show them.
+                            print("Showing how to book time-slot");
+                            Navigator.of(context).push(
+                                PageAnimation.createRoute(ApplicationsList(
+                              metaEntity: widget.metaEntity,
+                              bookingFormId: widget.bookingFormId,
+                              status: ApplicationStatus.APPROVED,
+                              titleText: "Approved Applications",
+                            )));
+                          },
+                          child: Card(
+                            elevation: 20,
+                            color: Colors.blueAccent,
                             child: Container(
                                 width: MediaQuery.of(context).size.width * .45,
                                 height:
@@ -656,6 +656,7 @@ class _OverviewPageState extends State<OverviewPage> {
                             )),
                       ),
                     ),
+
                     // verticalSpacer,
                   ]),
             ),

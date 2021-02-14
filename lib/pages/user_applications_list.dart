@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:noq/constants.dart';
 import 'package:noq/db/db_model/booking_application.dart';
 import 'package:noq/db/db_model/booking_form.dart';
+import 'package:noq/db/db_model/entity.dart';
+import 'package:noq/db/db_model/meta_entity.dart';
 import 'package:noq/enum/application_status.dart';
 import 'package:noq/enum/field_type.dart';
 import 'package:noq/global_state.dart';
@@ -12,6 +14,7 @@ import 'package:noq/pages/overview_page.dart';
 import 'package:noq/pages/show_application_details.dart';
 import 'package:noq/pages/show_user_application_details.dart';
 import 'package:noq/services/circular_progress.dart';
+import 'package:noq/services/qr_code_generate.dart';
 import 'package:noq/style.dart';
 import 'package:noq/userHomePage.dart';
 import 'package:noq/utils.dart';
@@ -57,6 +60,28 @@ class _UserApplicationsListState extends State<UserApplicationsList> {
 
   Future<void> getGlobalState() async {
     _gs = await GlobalState.getGlobalState();
+  }
+
+  shareQr(MetaEntity metaEntity) {
+    Entity en;
+    _gs.getEntity(metaEntity.entityId, false).then((value) {
+      bool isSavedOnServer = true;
+      if (value != null) {
+        en = value.item1;
+        isSavedOnServer = value.item2;
+      }
+
+      if (!isSavedOnServer) {
+        Utils.showMyFlushbar(
+            context,
+            Icons.info,
+            Duration(seconds: 4),
+            "Important details are missing in entity, Please fill those first.",
+            "Save Entity and then Share!!");
+      } else
+        Navigator.of(context).push(PageAnimation.createRoute(GenerateScreen(
+            entityId: metaEntity.entityId, entityName: metaEntity.name)));
+    });
   }
 
   Widget _emptyPage() {
