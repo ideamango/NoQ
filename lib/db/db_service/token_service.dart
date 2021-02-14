@@ -14,6 +14,8 @@ import 'package:noq/db/exceptions/no_token_found_exception.dart';
 import 'package:noq/db/exceptions/slot_full_exception.dart';
 import 'package:noq/db/exceptions/token_already_exists_exception.dart';
 
+import '../../utils.dart';
+
 class TokenService {
   FirebaseApp _fb;
 
@@ -32,6 +34,92 @@ class TokenService {
   FirebaseAuth getFirebaseAuth() {
     if (_fb == null) return FirebaseAuth.instance;
     return FirebaseAuth.instanceFor(app: _fb);
+  }
+
+  Future<List<List<Slot>>> getSlotsFromNow(
+      MetaEntity me, bool onlyFreeSlot) async {
+    FirebaseFirestore fStore = getFirestore();
+    CollectionReference collectionRef = fStore.collection('slots');
+
+    DateTime currentDate = DateTime.now();
+    int holidaySkip = 0;
+    int dayCount = 0;
+    while (true) {
+      DateTime nextDay = currentDate.add(Duration(days: dayCount));
+      dayCount++;
+      for (String closedDay in me.closedOn) {
+        if (Utils.getDayNumber(closedDay.toLowerCase()) == nextDay.weekday) {
+          holidaySkip++;
+          break;
+        }
+      }
+      if (dayCount - holidaySkip == me.advanceDays) {
+        break;
+      }
+    }
+
+    Query query = collectionRef;
+
+    query = query.where("entityId", isEqualTo: me.entityId);
+
+    query = query.where("date", isGreaterThanOrEqualTo: DateTime.now());
+
+    if (me.advanceDays > 1) {
+      query = query.where("date",
+          isLessThanOrEqualTo:
+              DateTime.now().add(Duration(days: dayCount - 1)));
+    }
+
+    List<EntitySlots> entitySlots = new List<EntitySlots>();
+
+    QuerySnapshot qs = await query.get();
+    List<QueryDocumentSnapshot> qds = qs.docs;
+    for (QueryDocumentSnapshot doc in qds) {
+      if (doc.exists) {
+        entitySlots.add(EntitySlots.fromJson(doc.data()));
+      }
+    }
+
+    List<List<Slot>> dayWiseSlots = List<List<Slot>>();
+
+    for (int i = 0; i < dayCount; i++) {
+      DateTime date = currentDate.add(Duration(days: i));
+      EntitySlots currentES;
+      for (EntitySlots es in entitySlots) {
+        if (es.date.year == date.year &&
+            es.date.month == date.month &&
+            es.date.day == date.day) {
+          currentES = es;
+          break;
+        }
+      }
+
+      if (currentES == null) {
+        if (!Utils.checkIfClosed(date, me.closedOn)) {
+          currentES = EntitySlots(
+              slots: null,
+              entityId: me.entityId,
+              maxAllowed: me.maxAllowed,
+              date: date,
+              slotDuration: me.slotDuration,
+              closedOn: me.closedOn,
+              breakStartHour: me.breakStartHour,
+              breakStartMinute: me.breakStartMinute,
+              breakEndHour: me.breakEndHour,
+              breakEndMinute: me.breakEndMinute,
+              startTimeHour: me.startTimeHour,
+              startTimeMinute: me.startTimeMinute,
+              endTimeHour: me.endTimeHour,
+              endTimeMinute: me.endTimeMinute);
+        }
+      }
+
+      if (currentES != null) {
+        dayWiseSlots.add(Utils.getSlots(currentES, me, date));
+      }
+    }
+
+    return dayWiseSlots;
   }
 
   Future<EntitySlots> getEntitySlots(String entityId, DateTime date) async {
@@ -198,7 +286,7 @@ class TokenService {
         int breakEndHour = metaEntity.breakEndHour;
         int breakEndMinute = metaEntity.breakEndMinute;
         int startTimeHour = metaEntity.startTimeHour;
-        int startTimeMinute = metaEntity.startTimeHour;
+        int startTimeMinute = metaEntity.startTimeMinute;
         int endTimeHour = metaEntity.endTimeHour;
         int endTimeMinute = metaEntity.endTimeMinute;
 
@@ -481,18 +569,22 @@ class TokenService {
     List<UserTokens> tokens = new List<UserTokens>();
     User user = getFirebaseAuth().currentUser;
     FirebaseFirestore fStore = getFirestore();
-    DateTime inputDate = new DateTime(date.year, date.month, date.day);
-    DateTime nextDay = inputDate.add(new Duration(days: 1));
 
     try {
-      QuerySnapshot qs = await fStore
+      Query q = fStore
           .collection('tokens')
-          .where("dateTime",
-              isGreaterThanOrEqualTo: date.millisecondsSinceEpoch)
-          .where("dateTime", isLessThan: nextDay.millisecondsSinceEpoch)
           .where("userId", isEqualTo: user.phoneNumber)
-          .where("entityId", isEqualTo: entityId)
-          .get();
+          .where("entityId", isEqualTo: entityId);
+      if (date != null) {
+        DateTime inputDate = new DateTime(date.year, date.month, date.day);
+        DateTime nextDay = inputDate.add(new Duration(days: 1));
+        q = q
+            .where("dateTime",
+                isGreaterThanOrEqualTo: date.millisecondsSinceEpoch)
+            .where("dateTime", isLessThan: nextDay.millisecondsSinceEpoch);
+      }
+
+      QuerySnapshot qs = await q.get();
 
       for (DocumentSnapshot ds in qs.docs) {
         UserTokens tok = UserTokens.fromJson(ds.data());

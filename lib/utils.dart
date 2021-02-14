@@ -5,6 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:noq/db/db_model/address.dart';
+import 'package:noq/db/db_model/meta_entity.dart';
 import 'package:noq/enum/entity_type.dart';
 import 'package:noq/global_state.dart';
 import 'package:noq/pages/favs_list_page.dart';
@@ -17,6 +18,8 @@ import 'package:uuid/uuid.dart';
 
 import 'constants.dart';
 import 'db/db_model/entity.dart';
+import 'db/db_model/entity_slots.dart';
+import 'db/db_model/slot.dart';
 
 class Utils {
   static String getDayOfWeek(DateTime date) {
@@ -47,6 +50,16 @@ class Utils {
         return "Day";
         break;
     }
+  }
+
+  static bool checkIfClosed(DateTime date, List<String> closedOn) {
+    for (String dayClosed in closedOn) {
+      if (getDayNumber(dayClosed) == date.weekday) {
+        return true;
+      }
+    }
+
+    return false;
   }
 
   static bool isNullOrEmpty(List<dynamic> list) {
@@ -310,6 +323,45 @@ class Utils {
     return daysList;
   }
 
+  static int getDayNumber(String day) {
+    switch (day) {
+      case 'monday':
+        {
+          return 1;
+        }
+
+      case 'tuesday':
+        {
+          return 2;
+        }
+
+      case 'wednesday':
+        {
+          return 3;
+        }
+
+      case 'thursday':
+        {
+          return 4;
+        }
+
+      case 'friday':
+        {
+          return 5;
+        }
+
+      case 'saturday':
+        {
+          return 6;
+        }
+
+      case 'sunday':
+        {
+          return 7;
+        }
+    }
+  }
+
   static bool isNumeric(String s) {
     if (s == null) {
       return false;
@@ -357,6 +409,86 @@ class Utils {
         }
       });
     });
+  }
+
+  static List<Slot> getSlots(
+      EntitySlots entitySlots, MetaEntity me, DateTime dateTime) {
+    DateTime breakStartTime;
+    DateTime breakEndTime;
+    DateTime dayStartTime;
+    DateTime dayEndTime;
+    List<Slot> slotList = new List<Slot>();
+
+    dayStartTime = new DateTime(dateTime.year, dateTime.month, dateTime.day,
+        me.startTimeHour, me.startTimeMinute);
+    dayEndTime = new DateTime(dateTime.year, dateTime.month, dateTime.day,
+        me.endTimeHour, me.endTimeMinute);
+    if (me.breakEndHour == null || me.breakStartHour == null) {
+      breakStartTime = dayStartTime;
+      breakEndTime = dayStartTime;
+    } else {
+      breakStartTime = new DateTime(dateTime.year, dateTime.month, dateTime.day,
+          me.breakStartHour, me.breakEndMinute);
+      breakEndTime = new DateTime(dateTime.year, dateTime.month, dateTime.day,
+          me.breakEndHour, me.breakEndMinute);
+    }
+
+    int firstHalfDuration = breakStartTime.difference(dayStartTime).inMinutes;
+
+    int secondHalfDuration = dayEndTime.difference(breakEndTime).inMinutes;
+
+    int numberOfSlotsInFirstHalf = firstHalfDuration ~/ me.slotDuration;
+
+    int numberOfSlotsInSecondHalf = secondHalfDuration ~/ me.slotDuration;
+
+    //no slots are booked for this entity yet on this date
+    for (int count = 0; count < numberOfSlotsInFirstHalf; count++) {
+      int minutesToAdd = count * me.slotDuration;
+      DateTime dt = dayStartTime.add(new Duration(minutes: minutesToAdd));
+      Slot sl = checkIfSlotExists(entitySlots, dt);
+      if (sl == null) {
+        sl = new Slot(
+            slotId: "",
+            currentNumber: 0,
+            maxAllowed: me.maxAllowed,
+            dateTime: dt,
+            slotDuration: me.slotDuration,
+            isFull: false);
+      }
+
+      slotList.add(sl);
+    }
+
+    for (int count = 0; count < numberOfSlotsInSecondHalf; count++) {
+      int minutesToAdd = count * me.slotDuration;
+      DateTime dt = breakEndTime.add(new Duration(minutes: minutesToAdd));
+      Slot sl = checkIfSlotExists(entitySlots, dt);
+      if (sl == null) {
+        sl = new Slot(
+            slotId: "",
+            currentNumber: 0,
+            maxAllowed: me.maxAllowed,
+            dateTime: dt,
+            slotDuration: me.slotDuration,
+            isFull: false);
+      }
+
+      slotList.add(sl);
+    }
+    return slotList;
+  }
+
+  static Slot checkIfSlotExists(EntitySlots entitySlots, DateTime dt) {
+    if (entitySlots == null || entitySlots.slots == null) {
+      return null;
+    }
+
+    for (Slot sl in entitySlots.slots) {
+      if (sl.dateTime.compareTo(dt) == 0) {
+        return sl;
+      }
+    }
+    return null;
   }
 
   static Entity createEntity(EntityType entityType, [String parentId]) {

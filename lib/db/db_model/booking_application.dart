@@ -220,6 +220,8 @@ class BookingApplicationsOverview {
   int numberOfCompleted = 0;
   int numberOfCancelled = 0;
 
+  Map<String, Stats> dailyStats; //key should be year#month#day
+
   Map<String, dynamic> toJson() => {
         'id': id,
         'bookingFormId': bookingFormId,
@@ -231,7 +233,8 @@ class BookingApplicationsOverview {
         'numberOfRejected': numberOfRejected,
         'numberOfPutOnHold': numberOfPutOnHold,
         'numberOfCompleted': numberOfCompleted,
-        'numberOfCancelled': numberOfCancelled
+        'numberOfCancelled': numberOfCancelled,
+        'dailyStats': convertFromMap(dailyStats)
       };
 
   static BookingApplicationsOverview fromJson(Map<String, dynamic> json) {
@@ -241,6 +244,62 @@ class BookingApplicationsOverview {
         bookingFormId: json['bookingFormId'], entityId: json['entityId']);
 
     overview.id = json['id'];
+    overview.totalApplications = json['totalApplications'];
+    overview.numberOfNew = json['numberOfNew'];
+    overview.numberOfInProcess = json['numberOfInProcess'];
+    overview.numberOfApproved = json['numberOfApproved'];
+    overview.numberOfRejected = json['numberOfRejected'];
+    overview.numberOfPutOnHold = json['numberOfPutOnHold'];
+    overview.numberOfCompleted = json['numberOfCompleted'];
+    overview.numberOfCancelled = json['numberOfCancelled'];
+    overview.dailyStats = convertToMapFromJSON(json['dailyStats']);
+    return overview;
+  }
+
+  Map<String, dynamic> convertFromMap(Map<String, Stats> dailyStats) {
+    if (dailyStats == null) {
+      return null;
+    }
+
+    Map<String, dynamic> map = Map<String, dynamic>();
+
+    dailyStats.forEach((k, v) => map[k] = v.toJson());
+
+    return map;
+  }
+
+  static Map<String, Stats> convertToMapFromJSON(Map<dynamic, dynamic> map) {
+    Map<String, Stats> roles = new Map<String, Stats>();
+    map.forEach((k, v) => roles[k] = Stats.fromJson(v));
+    return roles;
+  }
+}
+
+class Stats {
+  int totalApplications = 0;
+  int numberOfNew = 0;
+  int numberOfApproved = 0;
+  int numberOfRejected = 0;
+  int numberOfPutOnHold = 0;
+  int numberOfInProcess = 0;
+  int numberOfCompleted = 0;
+  int numberOfCancelled = 0;
+
+  Map<String, dynamic> toJson() => {
+        'totalApplications': totalApplications,
+        'numberOfNew': numberOfNew,
+        'numberOfInProcess': numberOfInProcess,
+        'numberOfApproved': numberOfApproved,
+        'numberOfRejected': numberOfRejected,
+        'numberOfPutOnHold': numberOfPutOnHold,
+        'numberOfCompleted': numberOfCompleted,
+        'numberOfCancelled': numberOfCancelled
+      };
+
+  static Stats fromJson(Map<String, dynamic> json) {
+    if (json == null) return null;
+
+    Stats overview = Stats();
     overview.totalApplications = json['totalApplications'];
     overview.numberOfNew = json['numberOfNew'];
     overview.numberOfInProcess = json['numberOfInProcess'];

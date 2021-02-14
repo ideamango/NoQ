@@ -616,8 +616,10 @@ class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
                 else
                   conds = conds + newfield.responseValues[i].value;
               }
-            } else
-              conds = newfield.responseValues[0].value;
+            } else {
+              if (newfield.responseValues.length > 0)
+                conds = newfield.responseValues[0].value;
+            }
             listOfControllers[field.label].text = conds;
           }
           break;

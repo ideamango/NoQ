@@ -4,6 +4,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:noq/constants.dart';
 import 'package:noq/db/db_model/booking_application.dart';
+import 'package:noq/db/db_model/booking_application.dart';
+import 'package:noq/db/db_model/booking_application.dart';
 import 'package:noq/db/db_model/booking_form.dart';
 import 'package:noq/db/db_model/meta_entity.dart';
 import 'package:noq/db/db_service/query.dart';
@@ -167,6 +169,7 @@ class BookingApplicationService {
     }
 
     bool isSuccess = false;
+    DateTime now = DateTime.now();
 
     final User user = getFirebaseAuth().currentUser;
     FirebaseFirestore fStore = getFirestore();
@@ -178,10 +181,9 @@ class BookingApplicationService {
 
     String bookingApplicationId = ba.id;
     String bookingFormId = ba.bookingFormId;
-    String localCounterId = bookingFormId + "#" + metaEntity.entityId;
-    String globalCounterId = bookingFormId;
-
-    print("Application $bookingApplicationId ");
+    String localCounterId =
+        bookingFormId + "#" + metaEntity.entityId + "#" + now.year.toString();
+    String globalCounterId = bookingFormId + "#" + now.year.toString();
 
     final DocumentReference applicationRef =
         fStore.doc('bookingApplications/' + bookingApplicationId);
@@ -196,6 +198,12 @@ class BookingApplicationService {
         fStore.doc('counter/' + globalCounterId);
 
     DocumentSnapshot doc = await bookingFormRef.get();
+
+    String dailyStatsKey = now.year.toString() +
+        "#" +
+        now.month.toString() +
+        "#" +
+        now.day.toString();
 
     if (doc.exists) {
       Map<String, dynamic> map = doc.data();
@@ -219,8 +227,6 @@ class BookingApplicationService {
           }
         }
 
-        DateTime now = DateTime.now();
-
         //setting up the mandatory fields on the Application object
         ba.timeOfSubmission = now;
         ba.entityId = metaEntity.entityId;
@@ -238,6 +244,15 @@ class BookingApplicationService {
             globalCounter = new BookingApplicationsOverview(
                 bookingFormId: bookingFormId, entityId: null);
           }
+
+          if (globalCounter.dailyStats == null) {
+            globalCounter.dailyStats = Map<String, Stats>();
+          }
+
+          if (!globalCounter.dailyStats.containsKey(dailyStatsKey)) {
+            Stats todayStats = new Stats();
+            globalCounter.dailyStats[dailyStatsKey] = todayStats;
+          }
         }
 
         //local Counter to be updated or created
@@ -249,24 +264,39 @@ class BookingApplicationService {
               bookingFormId: bookingFormId, entityId: metaEntity.entityId);
         }
 
+        if (localCounter.dailyStats == null) {
+          localCounter.dailyStats = Map<String, Stats>();
+        }
+
+        if (!localCounter.dailyStats.containsKey(dailyStatsKey)) {
+          Stats todayStats = new Stats();
+          localCounter.dailyStats[dailyStatsKey] = todayStats;
+        }
+
         if (bf.autoApproved) {
           if (globalCounter != null) {
             globalCounter.numberOfApproved++;
+            globalCounter.dailyStats[dailyStatsKey].numberOfApproved++;
           }
           localCounter.numberOfApproved++;
+          localCounter.dailyStats[dailyStatsKey].numberOfApproved++;
           ba.approvedBy = SYSTEM;
           ba.notesOnApproval = AUTO_APPROVED;
           ba.timeOfApproval = now;
         } else {
           if (globalCounter != null) {
             globalCounter.numberOfNew++;
+            globalCounter.dailyStats[dailyStatsKey].numberOfNew++;
           }
           localCounter.numberOfNew++;
+          localCounter.dailyStats[dailyStatsKey].numberOfNew++;
         }
         if (globalCounter != null) {
           globalCounter.totalApplications++;
+          globalCounter.dailyStats[dailyStatsKey].totalApplications++;
         }
         localCounter.totalApplications++;
+        localCounter.dailyStats[dailyStatsKey].totalApplications++;
 
         //if auto approved, then generate the token
         if (bf.autoApproved && bf.generateTokenOnApproval) {
@@ -343,6 +373,12 @@ class BookingApplicationService {
     String globalCounterId;
     bool requestProcessed = false;
 
+    String dailyStatsKey = now.year.toString() +
+        "#" +
+        now.month.toString() +
+        "#" +
+        now.day.toString();
+
     final DocumentReference applicationRef =
         fStore.doc('bookingApplications/' + applicationId);
 
@@ -366,8 +402,9 @@ class BookingApplicationService {
         String entityId = application.entityId;
         String bookingFormId = application.bookingFormId;
 
-        localCounterId = bookingFormId + "#" + entityId;
-        globalCounterId = bookingFormId;
+        localCounterId =
+            bookingFormId + "#" + entityId + "#" + now.year.toString();
+        globalCounterId = bookingFormId + "#" + now.year.toString();
 
         final DocumentReference localCounterRef =
             fStore.doc('counter/' + localCounterId);
@@ -400,9 +437,11 @@ class BookingApplicationService {
           application.approvedBy = userPhone;
           if (globalCounter != null) {
             globalCounter.numberOfApproved++;
+            globalCounter.dailyStats[dailyStatsKey].numberOfApproved++;
           }
           if (localCounter != null) {
             localCounter.numberOfApproved++;
+            localCounter.dailyStats[dailyStatsKey].numberOfApproved++;
           }
 
           //TODO: generate the token and send the notification to the applicant
@@ -424,9 +463,11 @@ class BookingApplicationService {
           application.completedBy = userPhone;
           if (globalCounter != null) {
             globalCounter.numberOfCompleted++;
+            globalCounter.dailyStats[dailyStatsKey].numberOfCompleted++;
           }
           if (localCounter != null) {
             localCounter.numberOfCompleted++;
+            localCounter.dailyStats[dailyStatsKey].numberOfCompleted++;
           }
         } else if (status == ApplicationStatus.INPROCESS) {
           application.timeOfInProcess = now;
@@ -434,9 +475,11 @@ class BookingApplicationService {
           application.processedBy = userPhone;
           if (globalCounter != null) {
             globalCounter.numberOfInProcess++;
+            globalCounter.dailyStats[dailyStatsKey].numberOfInProcess++;
           }
           if (localCounter != null) {
             localCounter.numberOfInProcess++;
+            localCounter.dailyStats[dailyStatsKey].numberOfInProcess++;
           }
         } else if (status == ApplicationStatus.ONHOLD) {
           application.timeOfPuttingOnHold = now;
@@ -444,9 +487,11 @@ class BookingApplicationService {
           application.putOnHoldBy = userPhone;
           if (globalCounter != null) {
             globalCounter.numberOfPutOnHold++;
+            globalCounter.dailyStats[dailyStatsKey].numberOfPutOnHold++;
           }
           if (localCounter != null) {
             localCounter.numberOfPutOnHold++;
+            localCounter.dailyStats[dailyStatsKey].numberOfPutOnHold++;
           }
         } else if (status == ApplicationStatus.REJECTED) {
           application.timeOfRejection = now;
@@ -454,9 +499,11 @@ class BookingApplicationService {
           application.rejectedBy = userPhone;
           if (globalCounter != null) {
             globalCounter.numberOfRejected++;
+            globalCounter.dailyStats[dailyStatsKey].numberOfRejected++;
           }
           if (localCounter != null) {
             localCounter.numberOfRejected++;
+            localCounter.dailyStats[dailyStatsKey].numberOfRejected++;
           }
         }
 
@@ -523,7 +570,7 @@ class BookingApplicationService {
   }
 
   Future<BookingApplicationsOverview> getApplicationsOverview(
-      String bookingFormId, String entityId) async {
+      String bookingFormId, String entityId, int year) async {
     //entityId is optional param, assuming that bookingForm is Global Form/System form
     //if entityId is present, that means the counter is local to the Entity
 
@@ -531,13 +578,17 @@ class BookingApplicationService {
       throw new Exception("FormId can't be null");
     }
 
+    if (year == null) {
+      throw new Exception("Year can't be null");
+    }
+
     FirebaseFirestore fStore = getFirestore();
     BookingApplicationsOverview counter;
 
     final DocumentReference counterRef = fStore.doc('counter/' +
         (Utils.isNotNullOrEmpty(entityId)
-            ? bookingFormId + "#" + entityId
-            : bookingFormId));
+            ? bookingFormId + "#" + entityId + "#" + year.toString()
+            : bookingFormId + "#" + year.toString()));
 
     DocumentSnapshot doc = await counterRef.get();
 
