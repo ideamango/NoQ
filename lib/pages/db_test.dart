@@ -23,6 +23,7 @@ import 'package:noq/events/events.dart';
 import 'package:noq/events/local_notification_data.dart';
 import 'package:noq/constants.dart';
 import 'package:noq/global_state.dart';
+import 'package:noq/utils.dart';
 
 class DBTest {
   String TEST_COVID_BOOKING_FORM_ID = COVID_BOOKING_FORM_ID + "TEST";
@@ -314,13 +315,20 @@ class DBTest {
           .getTokenApplicationService()
           .deleteBookingForm(TEST_COVID_BOOKING_FORM_ID);
 
+      DateTime now = DateTime.now();
+
       //delete globalCounter
-      String globalCounterId = TEST_COVID_BOOKING_FORM_ID;
+      String globalCounterId =
+          TEST_COVID_BOOKING_FORM_ID + "#" + now.year.toString();
       await _gs.getTokenApplicationService().deleteCounter(globalCounterId);
 
       //delete local counter
-      String localCounterId =
-          TEST_COVID_BOOKING_FORM_ID + "#" + Covid_Vacination_center;
+      String localCounterId = TEST_COVID_BOOKING_FORM_ID +
+          "#" +
+          Covid_Vacination_center +
+          "#" +
+          now.year.toString();
+
       await _gs.getTokenApplicationService().deleteCounter(localCounterId);
 
       //delete application
@@ -330,6 +338,24 @@ class DBTest {
             "TestApplicationID" +
             i.toString();
         await _gs.getTokenApplicationService().deleteApplication(applicationId);
+      }
+
+      List<UserTokens> tokens = await _gs
+          .getTokenService()
+          .getTokensForEntityBookedByCurrentUser(Covid_Vacination_center, null);
+
+      for (UserTokens toks in tokens) {
+        try {
+          await _gs.getTokenService().deleteToken(toks.getTokenId());
+        } catch (ex) {
+          //ignore
+        }
+
+        try {
+          await _gs.getTokenService().deleteToken(toks.slotId);
+        } catch (ex) {
+          //ignore
+        }
       }
     } catch (e) {
       print("Error occurred in cleaning.. may be DB is already cleaned.");
@@ -850,8 +876,10 @@ class DBTest {
     }
 
     BookingForm bf = await testCovidCenterBookingForm();
-    await testBookingApplicationSubmission(bf);
+    Entity covVacinationCenter = await testBookingApplicationSubmission(bf);
     await testBookingApplicationStatusChange();
+
+    await testAvailableFreeSlots(covVacinationCenter.getMetaEntity());
 
     print(
         "<==========================================TESTING DONE=========================================>");
@@ -1439,7 +1467,7 @@ class DBTest {
         isPublic: true,
         maxAllowed: 60,
         slotDuration: 60,
-        closedOn: [WEEK_DAY_MONDAY],
+        closedOn: [WEEK_DAY_MONDAY, WEEK_DAY_FRIDAY],
         breakStartHour: 13,
         breakStartMinute: 30,
         breakEndHour: 14,
@@ -1483,10 +1511,14 @@ class DBTest {
     // }
   }
 
-  Future<void> testBookingApplicationSubmission(BookingForm bf) async {
+  Future<Entity> testBookingApplicationSubmission(BookingForm bf) async {
     //Case 1: Application submission
     //Case 2: Application state change by Admin
     //Case 3: Counter increment for Global and Local both
+
+    Entity vacinationCenter =
+        await _gs.getEntityService().getEntity(Covid_Vacination_center);
+
     for (int i = 0; i < 10; i++) {
       FormInputFieldText nameInput = bf.getFormFields()[0];
       nameInput.response = "FN LN " + i.toString();
@@ -1526,24 +1558,30 @@ class DBTest {
       ba.bookingFormId = bf.id;
       ba.id =
           TEST_COVID_BOOKING_FORM_ID + "#" + "TestApplicationID" + i.toString();
-      ba.preferredSlotTiming = DateTime.now().add(Duration(days: 1));
+      DateTime now = DateTime.now();
+      ba.preferredSlotTiming = DateTime(now.year, now.month, now.day,
+              vacinationCenter.startTimeHour, vacinationCenter.startTimeMinute)
+          .add(Duration(days: 1));
+
+      if (Utils.checkIfClosed(
+          ba.preferredSlotTiming, vacinationCenter.closedOn)) {
+        ba.preferredSlotTiming = ba.preferredSlotTiming.add(Duration(days: 1));
+      }
 
       BookingApplicationService tas = _gs.getTokenApplicationService();
-
-      Entity vacinationCenter =
-          await _gs.getEntityService().getEntity(Covid_Vacination_center);
 
       await tas.submitApplication(ba, vacinationCenter.getMetaEntity());
     }
 
     BookingApplicationsOverview globalOverView = await _gs
         .getTokenApplicationService()
-        .getApplicationsOverview(TEST_COVID_BOOKING_FORM_ID, null);
+        .getApplicationsOverview(
+            TEST_COVID_BOOKING_FORM_ID, null, DateTime.now().year);
 
     BookingApplicationsOverview localOverView = await _gs
         .getTokenApplicationService()
-        .getApplicationsOverview(
-            TEST_COVID_BOOKING_FORM_ID, Covid_Vacination_center);
+        .getApplicationsOverview(TEST_COVID_BOOKING_FORM_ID,
+            Covid_Vacination_center, DateTime.now().year);
 
     if (globalOverView.numberOfApproved == 0 &&
         globalOverView.numberOfNew == 10 &&
@@ -1564,6 +1602,8 @@ class DBTest {
       print(
           "LocalApplicationOverview stats after submission ------------------------------> Failure");
     }
+
+    return vacinationCenter;
   }
 
   Future<void> testBookingApplicationStatusChange() async {
@@ -1610,12 +1650,13 @@ class DBTest {
     //now get the ApplicationOver object to check the count
     BookingApplicationsOverview globalOverView = await _gs
         .getTokenApplicationService()
-        .getApplicationsOverview(TEST_COVID_BOOKING_FORM_ID, null);
+        .getApplicationsOverview(
+            TEST_COVID_BOOKING_FORM_ID, null, DateTime.now().year);
 
     BookingApplicationsOverview localOverView = await _gs
         .getTokenApplicationService()
-        .getApplicationsOverview(
-            TEST_COVID_BOOKING_FORM_ID, Covid_Vacination_center);
+        .getApplicationsOverview(TEST_COVID_BOOKING_FORM_ID,
+            Covid_Vacination_center, DateTime.now().year);
 
     if (globalOverView.numberOfApproved == 2 &&
         globalOverView.numberOfNew == 5 &&
@@ -1661,6 +1702,16 @@ class DBTest {
     } else {
       print(
           "ApprovedApplicationCount stats ------------------------------> Failure");
+    }
+  }
+
+  Future<void> testAvailableFreeSlots(MetaEntity me) async {
+    List<List<Slot>> listOfslots =
+        await _gs.getTokenService().getSlotsFromNow(me, true);
+    if (listOfslots.length == 7 && listOfslots[6].length == 9) {
+      print("Getting free slots --> SUCCESS");
+    } else {
+      print("Getting free slots ------------------------------> Failure");
     }
   }
 }

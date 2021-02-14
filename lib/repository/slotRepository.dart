@@ -11,88 +11,17 @@ import 'package:noq/events/events.dart';
 import 'package:noq/events/local_notification_data.dart';
 import 'package:noq/global_state.dart';
 
+import '../utils.dart';
+
 Future<List<Slot>> getSlotsListForEntity(
     MetaEntity entity, DateTime dateTime) async {
   EntitySlots entitySlots;
-  List<Slot> slotList = new List<Slot>();
-  DateTime breakStartTime;
-  DateTime breakEndTime;
-  DateTime dayStartTime;
-  DateTime dayEndTime;
+
   GlobalState gs = await GlobalState.getGlobalState();
   entitySlots =
       await gs.getTokenService().getEntitySlots(entity.entityId, dateTime);
-  dayStartTime = new DateTime(dateTime.year, dateTime.month, dateTime.day,
-      entity.startTimeHour, entity.startTimeMinute);
-  dayEndTime = new DateTime(dateTime.year, dateTime.month, dateTime.day,
-      entity.endTimeHour, entity.endTimeMinute);
 
-  if (entity.breakEndHour == null || entity.breakStartHour == null) {
-    breakStartTime = dayStartTime;
-    breakEndTime = dayStartTime;
-  } else {
-    breakStartTime = new DateTime(dateTime.year, dateTime.month, dateTime.day,
-        entity.breakStartHour, entity.breakEndMinute);
-    breakEndTime = new DateTime(dateTime.year, dateTime.month, dateTime.day,
-        entity.breakEndHour, entity.breakEndMinute);
-  }
-
-  int firstHalfDuration = breakStartTime.difference(dayStartTime).inMinutes;
-
-  int secondHalfDuration = dayEndTime.difference(breakEndTime).inMinutes;
-
-  int numberOfSlotsInFirstHalf = firstHalfDuration ~/ entity.slotDuration;
-
-  int numberOfSlotsInSecondHalf = secondHalfDuration ~/ entity.slotDuration;
-
-  //no slots are booked for this entity yet on this date
-  for (int count = 0; count < numberOfSlotsInFirstHalf; count++) {
-    int minutesToAdd = count * entity.slotDuration;
-    DateTime dt = dayStartTime.add(new Duration(minutes: minutesToAdd));
-    Slot sl = checkIfSlotExists(entitySlots, dt);
-    if (sl == null) {
-      sl = new Slot(
-          slotId: "",
-          currentNumber: 0,
-          maxAllowed: entity.maxAllowed,
-          dateTime: dt,
-          slotDuration: entity.slotDuration,
-          isFull: false);
-    }
-
-    slotList.add(sl);
-  }
-
-  for (int count = 0; count < numberOfSlotsInSecondHalf; count++) {
-    int minutesToAdd = count * entity.slotDuration;
-    DateTime dt = breakEndTime.add(new Duration(minutes: minutesToAdd));
-    Slot sl = checkIfSlotExists(entitySlots, dt);
-    if (sl == null) {
-      sl = new Slot(
-          slotId: "",
-          currentNumber: 0,
-          maxAllowed: entity.maxAllowed,
-          dateTime: dt,
-          slotDuration: entity.slotDuration,
-          isFull: false);
-    }
-
-    slotList.add(sl);
-  }
-  return slotList;
-}
-
-Slot checkIfSlotExists(EntitySlots entitySlots, DateTime dt) {
-  if (entitySlots == null) {
-    return null;
-  }
-
-  for (Slot sl in entitySlots.slots) {
-    if (sl.dateTime.compareTo(dt) == 0) {
-      return sl;
-    }
-  }
-  return null;
+  return Utils.getSlots(entitySlots, entity, dateTime);
 }
 
 Future<UserToken> bookSlotForStore(MetaEntity meta, Slot slot) async {
