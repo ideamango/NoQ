@@ -352,7 +352,15 @@ class DBTest {
         }
 
         try {
-          await _gs.getTokenService().deleteToken(toks.slotId);
+          String slotsId = toks.entityId +
+              "#" +
+              toks.dateTime.year.toString() +
+              "~" +
+              toks.dateTime.month.toString() +
+              "~" +
+              toks.dateTime.day.toString();
+
+          await _gs.getTokenService().deleteSlot(slotsId);
         } catch (ex) {
           //ignore
         }
