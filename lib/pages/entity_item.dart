@@ -144,7 +144,10 @@ class EntityRowState extends State<EntityRow> {
               "Save Entity and then Share!!");
         } else
           Navigator.of(context).push(PageAnimation.createRoute(GenerateScreen(
-              entityId: _metaEntity.entityId, entityName: _metaEntity.name)));
+            entityId: _metaEntity.entityId,
+            entityName: _metaEntity.name,
+            backRoute: "EntityList",
+          )));
       });
     }
 

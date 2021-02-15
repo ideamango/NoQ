@@ -5,10 +5,12 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:noq/db/db_model/address.dart';
+import 'package:noq/db/db_model/booking_application.dart';
 import 'package:noq/db/db_model/meta_entity.dart';
 import 'package:noq/enum/entity_type.dart';
 import 'package:noq/global_state.dart';
 import 'package:noq/pages/favs_list_page.dart';
+import 'package:noq/pages/show_user_application_details.dart';
 import 'package:noq/services/auth_service.dart';
 import 'package:noq/style.dart';
 import 'package:noq/widget/weekday_selector.dart';
@@ -411,6 +413,29 @@ class Utils {
     });
   }
 
+  static void showApplicationDetails(
+      BuildContext context, String applicationID) async {
+    Utils.showMyFlushbar(context, Icons.info, Duration(seconds: 3),
+        "Loading the Application details...", "Hold on!");
+
+    GlobalState gs = await GlobalState.getGlobalState();
+    BookingApplication bookingApplication;
+
+    gs.getTokenApplicationService().getApplication(applicationID).then((value) {
+      if (value == null)
+        Utils.showMyFlushbar(context, Icons.info, Duration(seconds: 3),
+            "The application does not exists!", "");
+
+      bookingApplication = value;
+
+      Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+              builder: (context) => ShowUserApplicationDetails(
+                  bookingApplication: bookingApplication)));
+    });
+  }
+
   static List<Slot> getSlots(
       EntitySlots entitySlots, MetaEntity me, DateTime dateTime) {
     DateTime breakStartTime;
@@ -591,6 +616,38 @@ class Utils {
         description: entityShareMessage,
         imageUrl: Uri.parse(
             'https://firebasestorage.googleapis.com/v0/b/sukoon-india.appspot.com/o/ic_launcher-web.png?alt=media&token=d0bb835d-e569-4f38-ad6e-fa0fed822cc7'),
+      ),
+    );
+    final link = await parameters.buildUrl();
+    // final ShortDynamicLink shortenedLink = await parameters.buildShortLink();
+    // print("short url");
+    // print(shortenedLink);
+    //return shortenedLink.shortUrl;
+    return link;
+  }
+
+  static Future<Uri> createQrScreenForUserApplications(
+      String applID, String entityName) async {
+    String msgTitle = entityName + entityShareByOwnerHeading;
+    final DynamicLinkParameters parameters = DynamicLinkParameters(
+      // This should match firebase but without the username query param
+      uriPrefix: shareURLPrefix,
+      // This can be whatever you want for the uri, https://yourapp.com/groupinvite?username=$userName
+      link: Uri.parse(shareURLPrefix + '/?applicationID=$applID'),
+      androidParameters: AndroidParameters(
+          packageName: bundleId,
+          minimumVersion: 1,
+          fallbackUrl: Uri.parse('https://bigpiq.com/#product')),
+      iosParameters: IosParameters(
+        bundleId: bundleId,
+        minimumVersion: '1',
+        appStoreId: appStoreId,
+      ),
+      socialMetaTagParameters: SocialMetaTagParameters(
+        title: msgTitle,
+        description: entityShareMessage,
+        imageUrl: Uri.parse(
+            'https://firebasestorage.googleapis.com/v0/b/sukoon-india.appspot.com/o/lesss_logo_with_name.png?alt=media&token=b54e4576-54f9-4a94-99dd-c3846f712307'),
       ),
     );
     final link = await parameters.buildUrl();

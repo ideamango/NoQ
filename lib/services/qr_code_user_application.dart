@@ -19,40 +19,33 @@ import 'package:flutter/rendering.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:share/share.dart';
 
-class GenerateScreen extends StatefulWidget {
-  final String entityId;
+class GenerateQrUserApplication extends StatefulWidget {
+  final String applicationId;
   final String entityName;
   final String backRoute;
-  GenerateScreen(
+  GenerateQrUserApplication(
       {Key key,
-      @required this.entityId,
+      @required this.applicationId,
       @required this.entityName,
       @required this.backRoute})
       : super(key: key);
   @override
-  State<StatefulWidget> createState() => GenerateScreenState();
+  State<StatefulWidget> createState() => GenerateQrUserApplicationState();
 }
 
-class GenerateScreenState extends State<GenerateScreen> {
-  static const double _topSectionTopPadding = 5.0;
-  static const double _topSectionBottomPadding = 2.0;
-  static const double _topSectionHeight = 5.0;
+class GenerateQrUserApplicationState extends State<GenerateQrUserApplication> {
   dynamic route;
 
   GlobalKey globalKey = new GlobalKey();
   String _dataString;
-  String _inputErrorText;
-  final TextEditingController _textController = TextEditingController();
   Directory tempDir;
   Uri uriLink;
   bool _initCompleted = false;
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     generateQrCode();
-
     if (widget.backRoute == "UserAppsList") {
       route = UserAccountPage();
     }
@@ -63,14 +56,13 @@ class GenerateScreenState extends State<GenerateScreen> {
 
   void generateQrCode() {
     //dataString needs to be set, using this the Qr code is generated.
-
-    Utils.createDynamicLinkFullWithParams(widget.entityId, widget.entityName)
+    Utils.createQrScreenForUserApplications(
+            widget.applicationId, widget.entityName)
         .then((value) {
       uriLink = value;
       // var _dynamicLink = Uri.https(uriLink.authority, uriLink.path).toString();
       var _dynamicLink = uriLink;
       _dataString = _dynamicLink.toString();
-      _inputErrorText = null;
       setState(() {
         _initCompleted = true;
       });
@@ -113,8 +105,9 @@ class GenerateScreenState extends State<GenerateScreen> {
     try {
       //Dynamic Link Text
       //'LESSs ~ Book your peace of mind!!'
-      String msgTitle = qrCodeShareHeading + " - " + widget.entityName;
-      String msgBody = qrCodeShareMessage;
+      // String msgTitle = qrCodeShareHeading + " - " + widget.entityName;
+      String msgTitle = "Share QR code title";
+      String msgBody = "Share QR code body";
 
       RenderRepaintBoundary boundary =
           globalKey.currentContext.findRenderObject();

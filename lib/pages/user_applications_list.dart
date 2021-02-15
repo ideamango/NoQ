@@ -15,6 +15,7 @@ import 'package:noq/pages/show_application_details.dart';
 import 'package:noq/pages/show_user_application_details.dart';
 import 'package:noq/services/circular_progress.dart';
 import 'package:noq/services/qr_code_generate.dart';
+import 'package:noq/services/qr_code_user_application.dart';
 import 'package:noq/style.dart';
 import 'package:noq/userHomePage.dart';
 import 'package:noq/utils.dart';
@@ -79,8 +80,12 @@ class _UserApplicationsListState extends State<UserApplicationsList> {
             "Important details are missing in entity, Please fill those first.",
             "Save Entity and then Share!!");
       } else
-        Navigator.of(context).push(PageAnimation.createRoute(GenerateScreen(
-            entityId: metaEntity.entityId, entityName: metaEntity.name)));
+        Navigator.of(context)
+            .push(PageAnimation.createRoute(GenerateQrUserApplication(
+          applicationId: widget.ba.id,
+          entityName: metaEntity.name,
+          backRoute: "UserAppsList",
+        )));
     });
   }
 
@@ -285,77 +290,84 @@ class _UserApplicationsListState extends State<UserApplicationsList> {
             children: [
               Padding(
                 padding: const EdgeInsets.fromLTRB(8, 10, 8, 4),
-                child: Row(mainAxisAlignment: MainAxisAlignment.end, children: [
-                  // SizedBox(
-                  //   width: cardWidth * .15,
-                  //   child: AutoSizeText(
-                  //     "Status : ",
-                  //     group: labelGroup,
-                  //     minFontSize: 10,
-                  //     maxFontSize: 12,
-                  //     maxLines: 1,
-                  //     overflow: TextOverflow.clip,
-                  //     style: TextStyle(
-                  //         color: Colors.blueGrey[700],
-                  //         fontFamily: 'RalewayRegular'),
-                  //   ),
-                  // ),
-                  Container(
-                    padding: EdgeInsets.all(0),
-                    margin: EdgeInsets.all(5),
-                    height: 28.0,
-                    width: 28.0,
-                    child: IconButton(
-                        padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
-                        alignment: Alignment.center,
-                        highlightColor: Colors.orange[300],
-                        icon: ImageIcon(
-                          AssetImage('assets/qrcode.png'),
-                          size: 25,
-                          color: primaryIcon,
-                        ),
-                        onPressed: () {
-                          print(ba.entityId);
-                          Navigator.of(context).push(PageAnimation.createRoute(
-                              GenerateScreen(
-                                  entityId: ba.entityId,
-                                  entityName: "Application QR code")));
-                        }),
-                  ),
-                  Container(
-                    padding: EdgeInsets.all(2),
-                    margin: EdgeInsets.all(0),
-                    decoration: BoxDecoration(
-                        color: (ba.status == ApplicationStatus.NEW)
-                            ? Colors.blue
-                            : (ba.status == ApplicationStatus.ONHOLD
-                                ? Colors.yellow[700]
-                                : (ba.status == ApplicationStatus.REJECTED
-                                    ? Colors.red
-                                    : (ba.status == ApplicationStatus.APPROVED
-                                        ? Colors.green[400]
-                                        : Colors.blueGrey))),
-                        shape: BoxShape.rectangle,
-                        borderRadius: BorderRadius.all(Radius.circular(5.0))),
-                    child: SizedBox(
-                      width: cardWidth * .2,
-                      height: cardHeight * .11,
-                      child: Center(
-                        child: AutoSizeText(
-                            EnumToString.convertToString(ba.status),
-                            textAlign: TextAlign.center,
-                            minFontSize: 7,
-                            maxFontSize: 9,
-                            style: TextStyle(
-                                fontSize: 9,
-                                fontWeight: FontWeight.bold,
-                                letterSpacing: 1,
-                                color: Colors.white,
-                                fontFamily: 'RalewayRegular')),
+                child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      // SizedBox(
+                      //   width: cardWidth * .15,
+                      //   child: AutoSizeText(
+                      //     "Status : ",
+                      //     group: labelGroup,
+                      //     minFontSize: 10,
+                      //     maxFontSize: 12,
+                      //     maxLines: 1,
+                      //     overflow: TextOverflow.clip,
+                      //     style: TextStyle(
+                      //         color: Colors.blueGrey[700],
+                      //         fontFamily: 'RalewayRegular'),
+                      //   ),
+                      // ),
+                      Container(
+                        padding: EdgeInsets.all(0),
+                        margin: EdgeInsets.all(5),
+                        height: 28.0,
+                        width: 28.0,
+                        child: IconButton(
+                            padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
+                            alignment: Alignment.center,
+                            highlightColor: Colors.orange[300],
+                            icon: ImageIcon(
+                              AssetImage('assets/qrcode.png'),
+                              size: 25,
+                              color: primaryIcon,
+                            ),
+                            onPressed: () {
+                              print(ba.entityId);
+                              Navigator.of(context).push(
+                                  PageAnimation.createRoute(
+                                      GenerateQrUserApplication(
+                                entityName: "Application QR code",
+                                backRoute: "UserAppsList",
+                                applicationId: widget.ba.id,
+                              )));
+                            }),
                       ),
-                    ),
-                  ),
-                ]),
+                      Container(
+                        padding: EdgeInsets.all(2),
+                        margin: EdgeInsets.all(0),
+                        decoration: BoxDecoration(
+                            color: (ba.status == ApplicationStatus.NEW)
+                                ? Colors.blue
+                                : (ba.status == ApplicationStatus.ONHOLD
+                                    ? Colors.yellow[700]
+                                    : (ba.status == ApplicationStatus.REJECTED
+                                        ? Colors.red
+                                        : (ba.status ==
+                                                ApplicationStatus.APPROVED
+                                            ? Colors.green[400]
+                                            : Colors.blueGrey))),
+                            shape: BoxShape.rectangle,
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(5.0))),
+                        child: SizedBox(
+                          width: cardWidth * .2,
+                          height: cardHeight * .11,
+                          child: Center(
+                            child: AutoSizeText(
+                                EnumToString.convertToString(ba.status),
+                                textAlign: TextAlign.center,
+                                minFontSize: 7,
+                                maxFontSize: 9,
+                                style: TextStyle(
+                                    fontSize: 9,
+                                    fontWeight: FontWeight.bold,
+                                    letterSpacing: 1,
+                                    color: Colors.white,
+                                    fontFamily: 'RalewayRegular')),
+                          ),
+                        ),
+                      ),
+                    ]),
               ),
               Padding(
                 padding: const EdgeInsets.fromLTRB(8, 10, 8, 4),
