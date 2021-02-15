@@ -200,9 +200,9 @@ class BookingApplicationService {
     DocumentSnapshot doc = await bookingFormRef.get();
 
     String dailyStatsKey = now.year.toString() +
-        "#" +
+        "~" +
         now.month.toString() +
-        "#" +
+        "~" +
         now.day.toString();
 
     if (doc.exists) {
@@ -374,9 +374,9 @@ class BookingApplicationService {
     bool requestProcessed = false;
 
     String dailyStatsKey = now.year.toString() +
-        "#" +
+        "~" +
         now.month.toString() +
-        "#" +
+        "~" +
         now.day.toString();
 
     final DocumentReference applicationRef =
@@ -437,11 +437,23 @@ class BookingApplicationService {
           application.approvedBy = userPhone;
           if (globalCounter != null) {
             globalCounter.numberOfApproved++;
-            globalCounter.dailyStats[dailyStatsKey].numberOfApproved++;
+            if (globalCounter.dailyStats.containsKey(dailyStatsKey)) {
+              globalCounter.dailyStats[dailyStatsKey].numberOfApproved++;
+            } else {
+              Stats todayStats = new Stats();
+              globalCounter.dailyStats[dailyStatsKey] = todayStats;
+              globalCounter.dailyStats[dailyStatsKey].numberOfApproved++;
+            }
           }
           if (localCounter != null) {
             localCounter.numberOfApproved++;
-            localCounter.dailyStats[dailyStatsKey].numberOfApproved++;
+            if (localCounter.dailyStats.containsKey(dailyStatsKey)) {
+              localCounter.dailyStats[dailyStatsKey].numberOfApproved++;
+            } else {
+              Stats todayStats = new Stats();
+              localCounter.dailyStats[dailyStatsKey] = todayStats;
+              localCounter.dailyStats[dailyStatsKey].numberOfApproved++;
+            }
           }
 
           //TODO: generate the token and send the notification to the applicant
@@ -463,11 +475,23 @@ class BookingApplicationService {
           application.completedBy = userPhone;
           if (globalCounter != null) {
             globalCounter.numberOfCompleted++;
-            globalCounter.dailyStats[dailyStatsKey].numberOfCompleted++;
+            if (globalCounter.dailyStats.containsKey(dailyStatsKey)) {
+              globalCounter.dailyStats[dailyStatsKey].numberOfCompleted++;
+            } else {
+              Stats todayStats = new Stats();
+              globalCounter.dailyStats[dailyStatsKey] = todayStats;
+              globalCounter.dailyStats[dailyStatsKey].numberOfCompleted++;
+            }
           }
           if (localCounter != null) {
             localCounter.numberOfCompleted++;
-            localCounter.dailyStats[dailyStatsKey].numberOfCompleted++;
+            if (localCounter.dailyStats.containsKey(dailyStatsKey)) {
+              localCounter.dailyStats[dailyStatsKey].numberOfCompleted++;
+            } else {
+              Stats todayStats = new Stats();
+              localCounter.dailyStats[dailyStatsKey] = todayStats;
+              localCounter.dailyStats[dailyStatsKey].numberOfCompleted++;
+            }
           }
         } else if (status == ApplicationStatus.INPROCESS) {
           application.timeOfInProcess = now;
@@ -475,11 +499,23 @@ class BookingApplicationService {
           application.processedBy = userPhone;
           if (globalCounter != null) {
             globalCounter.numberOfInProcess++;
-            globalCounter.dailyStats[dailyStatsKey].numberOfInProcess++;
+            if (globalCounter.dailyStats.containsKey(dailyStatsKey)) {
+              globalCounter.dailyStats[dailyStatsKey].numberOfInProcess++;
+            } else {
+              Stats todayStats = new Stats();
+              globalCounter.dailyStats[dailyStatsKey] = todayStats;
+              globalCounter.dailyStats[dailyStatsKey].numberOfInProcess++;
+            }
           }
           if (localCounter != null) {
             localCounter.numberOfInProcess++;
-            localCounter.dailyStats[dailyStatsKey].numberOfInProcess++;
+            if (localCounter.dailyStats.containsKey(dailyStatsKey)) {
+              localCounter.dailyStats[dailyStatsKey].numberOfInProcess++;
+            } else {
+              Stats todayStats = new Stats();
+              localCounter.dailyStats[dailyStatsKey] = todayStats;
+              localCounter.dailyStats[dailyStatsKey].numberOfInProcess++;
+            }
           }
         } else if (status == ApplicationStatus.ONHOLD) {
           application.timeOfPuttingOnHold = now;
@@ -487,11 +523,23 @@ class BookingApplicationService {
           application.putOnHoldBy = userPhone;
           if (globalCounter != null) {
             globalCounter.numberOfPutOnHold++;
-            globalCounter.dailyStats[dailyStatsKey].numberOfPutOnHold++;
+            if (globalCounter.dailyStats.containsKey(dailyStatsKey)) {
+              globalCounter.dailyStats[dailyStatsKey].numberOfPutOnHold++;
+            } else {
+              Stats todayStats = new Stats();
+              globalCounter.dailyStats[dailyStatsKey] = todayStats;
+              globalCounter.dailyStats[dailyStatsKey].numberOfPutOnHold++;
+            }
           }
           if (localCounter != null) {
             localCounter.numberOfPutOnHold++;
-            localCounter.dailyStats[dailyStatsKey].numberOfPutOnHold++;
+            if (localCounter.dailyStats.containsKey(dailyStatsKey)) {
+              localCounter.dailyStats[dailyStatsKey].numberOfPutOnHold++;
+            } else {
+              Stats todayStats = new Stats();
+              localCounter.dailyStats[dailyStatsKey] = todayStats;
+              localCounter.dailyStats[dailyStatsKey].numberOfPutOnHold++;
+            }
           }
         } else if (status == ApplicationStatus.REJECTED) {
           application.timeOfRejection = now;
@@ -499,11 +547,23 @@ class BookingApplicationService {
           application.rejectedBy = userPhone;
           if (globalCounter != null) {
             globalCounter.numberOfRejected++;
-            globalCounter.dailyStats[dailyStatsKey].numberOfRejected++;
+            if (globalCounter.dailyStats.containsKey(dailyStatsKey)) {
+              globalCounter.dailyStats[dailyStatsKey].numberOfRejected++;
+            } else {
+              Stats todayStats = new Stats();
+              globalCounter.dailyStats[dailyStatsKey] = todayStats;
+              globalCounter.dailyStats[dailyStatsKey].numberOfRejected++;
+            }
           }
           if (localCounter != null) {
             localCounter.numberOfRejected++;
-            localCounter.dailyStats[dailyStatsKey].numberOfRejected++;
+            if (localCounter.dailyStats.containsKey(dailyStatsKey)) {
+              localCounter.dailyStats[dailyStatsKey].numberOfRejected++;
+            } else {
+              Stats todayStats = new Stats();
+              localCounter.dailyStats[dailyStatsKey] = todayStats;
+              localCounter.dailyStats[dailyStatsKey].numberOfRejected++;
+            }
           }
         }
 
