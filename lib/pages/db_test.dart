@@ -310,10 +310,12 @@ class DBTest {
 
       await _gs.getEntityService().deleteEntity(Covid_Vacination_center);
 
-      //delete booking form, NOTE: should not be done for the TEST_COVID_BOOKING_FORM_ID else Ids of the field are going to change and queries would fail
-      await _gs
-          .getTokenApplicationService()
-          .deleteBookingForm(TEST_COVID_BOOKING_FORM_ID);
+      //delete booking form, NOTE: should not be done for the TEST_COVID_BOOKING_FORM_ID else Ids of the field are
+      //going to change and queries would fail
+      //commenting it for now, delete the BookingForm only when required
+      // await _gs
+      //     .getTokenApplicationService()
+      //     .deleteBookingForm(TEST_COVID_BOOKING_FORM_ID);
 
       DateTime now = DateTime.now();
 
@@ -1688,6 +1690,32 @@ class DBTest {
     } else {
       print(
           "LocalApplicationOverview stats after status change ------------------------------> Failure");
+    }
+
+    String dailyStatsKey = DateTime.now().year.toString() +
+        "~" +
+        DateTime.now().month.toString() +
+        "~" +
+        DateTime.now().day.toString();
+
+    Stats localStats = localOverView.dailyStats[dailyStatsKey];
+
+    if (localStats.numberOfApproved == 2 && localStats.numberOfNew == 10) {
+      print(
+          "LocalApplicationOverview Daily Stats after status change --> SUCCESS");
+    } else {
+      print(
+          "LocalApplicationOverview Daily stats after status change ------------------------------> Failure");
+    }
+
+    Stats globalStats = globalOverView.dailyStats[dailyStatsKey];
+
+    if (globalStats.numberOfApproved == 2 && globalStats.numberOfNew == 10) {
+      print(
+          "GlobalApplicationOverview Daily Stats after status change --> SUCCESS");
+    } else {
+      print(
+          "GlobalApplicationOverview Daily stats after status change ------------------------------> Failure");
     }
 
     List<BookingApplication> approvedApplications = await _gs

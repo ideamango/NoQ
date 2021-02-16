@@ -276,7 +276,6 @@ class BookingApplicationsOverview {
 }
 
 class Stats {
-  int totalApplications = 0;
   int numberOfNew = 0;
   int numberOfApproved = 0;
   int numberOfRejected = 0;
@@ -286,7 +285,6 @@ class Stats {
   int numberOfCancelled = 0;
 
   Map<String, dynamic> toJson() => {
-        'totalApplications': totalApplications,
         'numberOfNew': numberOfNew,
         'numberOfInProcess': numberOfInProcess,
         'numberOfApproved': numberOfApproved,
@@ -300,7 +298,6 @@ class Stats {
     if (json == null) return null;
 
     Stats overview = Stats();
-    overview.totalApplications = json['totalApplications'];
     overview.numberOfNew = json['numberOfNew'];
     overview.numberOfInProcess = json['numberOfInProcess'];
     overview.numberOfApproved = json['numberOfApproved'];

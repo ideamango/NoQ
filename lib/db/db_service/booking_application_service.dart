@@ -276,9 +276,11 @@ class BookingApplicationService {
         if (bf.autoApproved) {
           if (globalCounter != null) {
             globalCounter.numberOfApproved++;
+            globalCounter.dailyStats[dailyStatsKey].numberOfNew++;
             globalCounter.dailyStats[dailyStatsKey].numberOfApproved++;
           }
           localCounter.numberOfApproved++;
+          localCounter.dailyStats[dailyStatsKey].numberOfNew++;
           localCounter.dailyStats[dailyStatsKey].numberOfApproved++;
           ba.approvedBy = SYSTEM;
           ba.notesOnApproval = AUTO_APPROVED;
@@ -293,10 +295,8 @@ class BookingApplicationService {
         }
         if (globalCounter != null) {
           globalCounter.totalApplications++;
-          globalCounter.dailyStats[dailyStatsKey].totalApplications++;
         }
         localCounter.totalApplications++;
-        localCounter.dailyStats[dailyStatsKey].totalApplications++;
 
         //if auto approved, then generate the token
         if (bf.autoApproved && bf.generateTokenOnApproval) {
