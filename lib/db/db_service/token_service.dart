@@ -119,6 +119,26 @@ class TokenService {
       }
     }
 
+    if (onlyFreeSlot) {
+      List<List<Slot>> dayWiseFreeSlots = List<List<Slot>>();
+      int count = -1;
+      for (List<Slot> slots in dayWiseSlots) {
+        bool dayExist = false;
+        for (Slot sl in slots) {
+          if (!sl.isFull) {
+            if (!dayExist) {
+              dayWiseFreeSlots.add(List<Slot>());
+              dayExist = true;
+              count++;
+            }
+            dayWiseFreeSlots[count].add(sl);
+          }
+        }
+      }
+
+      return dayWiseFreeSlots;
+    }
+
     return dayWiseSlots;
   }
 
