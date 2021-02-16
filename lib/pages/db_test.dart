@@ -1743,8 +1743,16 @@ class DBTest {
 
   Future<void> testAvailableFreeSlots(MetaEntity me) async {
     List<List<Slot>> listOfslots =
-        await _gs.getTokenService().getSlotsFromNow(me, true);
+        await _gs.getTokenService().getSlotsFromNow(me, false);
     if (listOfslots.length == 7 && listOfslots[6].length == 9) {
+      print("Getting all slots --> SUCCESS");
+    } else {
+      print("Getting all slots ------------------------------> Failure");
+    }
+
+    List<List<Slot>> listOfFreeSlots =
+        await _gs.getTokenService().getSlotsFromNow(me, true);
+    if (listOfFreeSlots.length == 7 && listOfFreeSlots[6].length == 9) {
       print("Getting free slots --> SUCCESS");
     } else {
       print("Getting free slots ------------------------------> Failure");
