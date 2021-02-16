@@ -10,10 +10,12 @@ import 'package:noq/pages/applications_list.dart';
 import 'package:noq/pages/covid_token_booking_form.dart';
 import 'package:noq/pages/overview_page.dart';
 import 'package:noq/services/circular_progress.dart';
+import 'package:noq/services/qr_code_user_application.dart';
 import 'package:noq/style.dart';
 import 'package:noq/userHomePage.dart';
 import 'package:noq/utils.dart';
 import 'package:noq/widget/appbar.dart';
+import 'package:noq/widget/page_animation.dart';
 import 'package:noq/widget/widgets.dart';
 
 class ShowUserApplicationDetails extends StatefulWidget {
@@ -653,42 +655,73 @@ class _ShowUserApplicationDetailsState
             children: <Widget>[
               Container(
                 padding: EdgeInsets.all(8),
-                child: Row(mainAxisAlignment: MainAxisAlignment.end, children: [
-                  AutoSizeText(
-                    "Status : ",
-                    minFontSize: 10,
-                    maxFontSize: 12,
-                    maxLines: 1,
-                    overflow: TextOverflow.clip,
-                    style: TextStyle(
-                        color: Colors.blueGrey[700],
-                        fontFamily: 'RalewayRegular'),
-                  ),
-                  Container(
-                    padding: EdgeInsets.all(4),
-                    decoration: BoxDecoration(
-                        color: (ba.status == ApplicationStatus.NEW)
-                            ? Colors.blue
-                            : (ba.status == ApplicationStatus.ONHOLD
-                                ? Colors.yellow[700]
-                                : (ba.status == ApplicationStatus.REJECTED
-                                    ? Colors.red
-                                    : (ba.status == ApplicationStatus.APPROVED
-                                        ? Colors.green[400]
-                                        : Colors.blueGrey))),
-                        shape: BoxShape.rectangle,
-                        borderRadius: BorderRadius.all(Radius.circular(5.0))),
-                    child: Text(
-                      EnumToString.convertToString(ba.status),
-                      style: TextStyle(
-                          fontSize: 10,
-                          letterSpacing: 1,
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                          fontFamily: 'RalewayRegular'),
-                    ),
-                  ),
-                ]),
+                child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // AutoSizeText(
+                      //   "Status : ",
+                      //   minFontSize: 10,
+                      //   maxFontSize: 12,
+                      //   maxLines: 1,
+                      //   overflow: TextOverflow.clip,
+                      //   style: TextStyle(
+                      //       color: Colors.blueGrey[700],
+                      //       fontFamily: 'RalewayRegular'),
+                      // ),
+                      Container(
+                        padding: EdgeInsets.all(0),
+                        margin: EdgeInsets.all(0),
+                        // height: MediaQuery.of(context).size.width * .3,
+                        // width: MediaQuery.of(context).size.width * .3,
+                        child: IconButton(
+                            padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
+                            alignment: Alignment.topLeft,
+                            highlightColor: Colors.orange[300],
+                            icon: ImageIcon(
+                              AssetImage('assets/qrcode.png'),
+                              size: 30,
+                              color: primaryIcon,
+                            ),
+                            onPressed: () {
+                              print(ba.entityId);
+                              Navigator.of(context).push(
+                                  PageAnimation.createRoute(
+                                      GenerateQrUserApplication(
+                                entityName: "Application QR code",
+                                backRoute: "UserAppsList",
+                                applicationId: ba.id,
+                              )));
+                            }),
+                      ),
+
+                      Container(
+                        padding: EdgeInsets.all(4),
+                        decoration: BoxDecoration(
+                            color: (ba.status == ApplicationStatus.NEW)
+                                ? Colors.blue
+                                : (ba.status == ApplicationStatus.ONHOLD
+                                    ? Colors.yellow[700]
+                                    : (ba.status == ApplicationStatus.REJECTED
+                                        ? Colors.red
+                                        : (ba.status ==
+                                                ApplicationStatus.APPROVED
+                                            ? Colors.green[400]
+                                            : Colors.blueGrey))),
+                            shape: BoxShape.rectangle,
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(5.0))),
+                        child: Text(
+                          EnumToString.convertToString(ba.status),
+                          style: TextStyle(
+                              fontSize: 10,
+                              letterSpacing: 1,
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                              fontFamily: 'RalewayRegular'),
+                        ),
+                      ),
+                    ]),
               ),
               Expanded(
                 child: ListView.builder(
@@ -709,7 +742,28 @@ class _ShowUserApplicationDetailsState
                   },
                   itemCount: ba.responseForm.getFormFields().length,
                 ),
-              )
+              ),
+              Container(
+                  padding: EdgeInsets.fromLTRB(8, 0, 8, 8),
+                  margin: EdgeInsets.all(8),
+                  child: Card(
+                    elevation: 8,
+                    child: TextField(
+                      controller: notesController,
+                      decoration: InputDecoration(
+                        labelText: 'Remarks',
+                        enabledBorder: OutlineInputBorder(
+                            borderSide: BorderSide(color: Colors.grey)),
+                        focusedBorder: OutlineInputBorder(
+                            borderSide: BorderSide(color: Colors.orange)),
+                        // errorText:
+                        //     _validate ? 'Please enter your message' : null,
+                      ),
+                      keyboardType: TextInputType.multiline,
+                      maxLength: null,
+                      maxLines: 2,
+                    ),
+                  )),
             ],
           ),
         ),
@@ -753,27 +807,6 @@ class _ShowUserApplicationDetailsState
               child: Column(
                 children: <Widget>[
                   Expanded(child: _buildItem(widget.bookingApplication)),
-                  Container(
-                      padding: EdgeInsets.fromLTRB(8, 0, 8, 8),
-                      margin: EdgeInsets.all(8),
-                      child: Card(
-                        elevation: 8,
-                        child: TextField(
-                          controller: notesController,
-                          decoration: InputDecoration(
-                            labelText: 'Remarks',
-                            enabledBorder: OutlineInputBorder(
-                                borderSide: BorderSide(color: Colors.grey)),
-                            focusedBorder: OutlineInputBorder(
-                                borderSide: BorderSide(color: Colors.orange)),
-                            // errorText:
-                            //     _validate ? 'Please enter your message' : null,
-                          ),
-                          keyboardType: TextInputType.multiline,
-                          maxLength: null,
-                          maxLines: 2,
-                        ),
-                      )),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
