@@ -198,9 +198,11 @@ class _UserAccountPageState extends State<UserAccountPage> {
   }
 
   Widget _buildItem(UserToken booking) {
+    double ticketwidth = MediaQuery.of(context).size.width * .95;
+    double ticketHeight = MediaQuery.of(context).size.width * .8 / 2.7;
     return Container(
-        width: MediaQuery.of(context).size.width * .95,
-        height: MediaQuery.of(context).size.width * .8 / 2.7,
+        width: ticketwidth,
+        height: ticketHeight,
         decoration: BoxDecoration(
           image: DecorationImage(
             image: AssetImage('assets/ticket.jpg'),
@@ -449,10 +451,10 @@ class _UserAccountPageState extends State<UserAccountPage> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
                     Container(
-                      padding: EdgeInsets.fromLTRB(0, 8, 0, 0),
+                      padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
                       margin: EdgeInsets.all(0),
-                      // height: MediaQuery.of(context).size.width * .3,
-                      // width: MediaQuery.of(context).size.width * .3,
+                      height: ticketwidth * .1,
+                      width: ticketwidth * .1,
                       child: IconButton(
                           padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
                           alignment: Alignment.center,
