@@ -3,6 +3,7 @@ import 'package:enum_to_string/enum_to_string.dart';
 import 'package:flutter/material.dart';
 import 'package:noq/db/db_model/booking_application.dart';
 import 'package:noq/db/db_model/booking_form.dart';
+import 'package:noq/db/db_model/meta_entity.dart';
 import 'package:noq/enum/application_status.dart';
 import 'package:noq/enum/field_type.dart';
 import 'package:noq/global_state.dart';
@@ -20,9 +21,11 @@ import 'package:noq/widget/widgets.dart';
 
 class ShowUserApplicationDetails extends StatefulWidget {
   final BookingApplication bookingApplication;
+  final bool isAdmin;
   ShowUserApplicationDetails({
     Key key,
     @required this.bookingApplication,
+    @required this.isAdmin,
   }) : super(key: key);
   @override
   _ShowUserApplicationDetailsState createState() =>
@@ -35,16 +38,27 @@ class _ShowUserApplicationDetailsState
   GlobalState _gs;
   List<BookingApplication> list;
   TextEditingController notesController = new TextEditingController();
-
+  MetaEntity metaEntity;
   @override
   void initState() {
     super.initState();
     getGlobalState().whenComplete(() {
       //getListOfData();
       if (this.mounted) {
-        setState(() {
-          initCompleted = true;
-        });
+        if (widget.isAdmin) {
+          _gs.getEntity(widget.bookingApplication.entityId).then((value) {
+            if (value != null) {
+              metaEntity = value.item1.getMetaEntity();
+            }
+            setState(() {
+              initCompleted = true;
+            });
+          });
+        } else {
+          setState(() {
+            initCompleted = true;
+          });
+        }
       } else
         initCompleted = true;
     });
@@ -601,25 +615,28 @@ class _ShowUserApplicationDetailsState
                               .toList()
                               .cast<Widget>(),
                         )
-                      : SizedBox(),
+                      : SizedBox(
+                          child: Text("No attachments found."),
+                        ),
                 ],
               ),
             );
             String conds = "";
 
-            if (newfield.isMultiSelect) {
-              if (Utils.isNullOrEmpty(newfield.responseValues)) {
-                conds = "None";
-              }
-              for (int i = 0; i < newfield.responseValues.length; i++) {
-                if (conds != "")
-                  conds = conds + "  &  " + newfield.responseValues[i].value;
-                else
-                  conds = conds + newfield.responseValues[i].value;
-              }
+            if (Utils.isNullOrEmpty(newfield.responseValues)) {
+              conds = "None";
             } else {
-              if (newfield.responseValues.length > 0)
-                conds = newfield.responseValues[0].value;
+              if (newfield.isMultiSelect) {
+                for (int i = 0; i < newfield.responseValues.length; i++) {
+                  if (conds != "")
+                    conds = conds + "  &  " + newfield.responseValues[i].value;
+                  else
+                    conds = conds + newfield.responseValues[i].value;
+                }
+              } else {
+                if (newfield.responseValues.length > 0)
+                  conds = newfield.responseValues[0].value;
+              }
             }
             listOfControllers[field.label].text = conds;
           }
@@ -808,55 +825,301 @@ class _ShowUserApplicationDetailsState
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      SizedBox(
-                        width: MediaQuery.of(context).size.width * .9,
-                        child: RaisedButton(
-                            elevation: 8,
-                            color: Colors.yellow[800],
-                            onPressed: () {
-                              //update status on server
-                              //TODO:GOV - Not working right now
-                              // _gs
-                              //     .getTokenApplicationService()
-                              //     .updateApplicationStatus(
-                              //         widget.bookingApplication.id,
-                              //         widget.bookingApplication.status,
-                              //         notesController.text)
-                              //     .then((value) {
-                              widget.bookingApplication.notesOnApproval =
-                                  notesController.text;
-                              setState(() {
-                                widget.bookingApplication.status =
-                                    ApplicationStatus.CANCELLED;
-                                // });
+                      if (!widget.isAdmin)
+                        SizedBox(
+                          width: MediaQuery.of(context).size.width * .9,
+                          child: RaisedButton(
+                              elevation: 8,
+                              color: Colors.yellow[800],
+                              onPressed: () {
+                                //update status on server
+                                //TODO:GOV - Not working right now
+                                // _gs
+                                //     .getTokenApplicationService()
+                                //     .updateApplicationStatus(
+                                //         widget.bookingApplication.id,
+                                //         widget.bookingApplication.status,
+                                //         notesController.text)
+                                //     .then((value) {
+                                widget.bookingApplication.notesOnApproval =
+                                    notesController.text;
+                                setState(() {
+                                  widget.bookingApplication.status =
+                                      ApplicationStatus.CANCELLED;
+                                  // });
 
-                                Utils.showMyFlushbar(
-                                    context,
-                                    Icons.check,
-                                    Duration(seconds: 4),
-                                    "Application Cancelled!!",
-                                    "");
-                              });
-                            },
-                            child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Text(
-                                    "Cancel",
-                                    style: TextStyle(
-                                      fontSize: 15,
-                                      color: Colors.white,
+                                  Utils.showMyFlushbar(
+                                      context,
+                                      Icons.check,
+                                      Duration(seconds: 4),
+                                      "Application Cancelled!!",
+                                      "");
+                                });
+                              },
+                              child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Text(
+                                      "Cancel",
+                                      style: TextStyle(
+                                        fontSize: 15,
+                                        color: Colors.white,
+                                      ),
                                     ),
-                                  ),
-                                  SizedBox(
-                                    width: 2,
-                                  ),
+                                    SizedBox(
+                                      width: 2,
+                                    ),
+                                    Icon(
+                                      Icons.block,
+                                      color: Colors.white,
+                                    )
+                                  ])),
+                        ),
+                      if (widget.isAdmin && metaEntity != null)
+                        Container(
+                          padding: EdgeInsets.all(0),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              RaisedButton(
+                                  elevation: 8,
+                                  color: Colors.purple,
+                                  onPressed: () {
+                                    widget.bookingApplication.notesOnApproval =
+                                        notesController.text;
+                                    _gs
+                                        .getTokenApplicationService()
+                                        .updateApplicationStatus(
+                                            widget.bookingApplication.id,
+                                            ApplicationStatus.COMPLETED,
+                                            listOfControllers[widget
+                                                    .bookingApplication.id]
+                                                .text,
+                                            metaEntity,
+                                            widget.bookingApplication
+                                                .preferredSlotTiming)
+                                        .then((value) {
+                                      if (value) {
+                                        setState(() {
+                                          widget.bookingApplication.status =
+                                              ApplicationStatus.COMPLETED;
+                                        });
+                                        Utils.showMyFlushbar(
+                                            context,
+                                            Icons.check,
+                                            Duration(seconds: 4),
+                                            "Application Saved!!",
+                                            "");
+                                      } else {
+                                        print(
+                                            "Could not update application status");
+                                        Utils.showMyFlushbar(
+                                            context,
+                                            Icons.check,
+                                            Duration(seconds: 4),
+                                            "Oops! Application could not be saved!!",
+                                            "");
+                                      }
+                                    });
+
+                                    print("Complete");
+                                  },
+                                  child: Row(children: [
+                                    // Text(
+                                    //   "Complete",
+                                    //   style: TextStyle(
+                                    //     color: Colors.white,
+                                    //   ),
+                                    // ),
+                                    // SizedBox(
+                                    //   width: 2,
+                                    // ),
+                                    Icon(
+                                      Icons.thumb_up,
+                                      color: Colors.white,
+                                    )
+                                  ])),
+                              RaisedButton(
+                                  elevation: 8,
+                                  color: Colors.green[400],
+                                  onPressed: () {
+                                    widget.bookingApplication.notesOnApproval =
+                                        notesController.text;
+                                    _gs
+                                        .getTokenApplicationService()
+                                        .updateApplicationStatus(
+                                            widget.bookingApplication.id,
+                                            ApplicationStatus.APPROVED,
+                                            listOfControllers[widget
+                                                    .bookingApplication.id]
+                                                .text,
+                                            metaEntity,
+                                            widget.bookingApplication
+                                                .preferredSlotTiming)
+                                        .then((value) {
+                                      if (value) {
+                                        setState(() {
+                                          widget.bookingApplication.status =
+                                              ApplicationStatus.APPROVED;
+                                        });
+                                        Utils.showMyFlushbar(
+                                            context,
+                                            Icons.check,
+                                            Duration(seconds: 4),
+                                            "Application Saved!!",
+                                            "");
+                                      } else {
+                                        print(
+                                            "Could not update application status");
+                                        Utils.showMyFlushbar(
+                                            context,
+                                            Icons.check,
+                                            Duration(seconds: 4),
+                                            "Oops! Application could not be saved!!",
+                                            "");
+                                      }
+                                    });
+
+                                    print("Approved");
+                                  },
+                                  child: Row(children: [
+                                    // Text(
+                                    //   "Approve",
+                                    //   style: TextStyle(
+                                    //     color: Colors.white,
+                                    //   ),
+                                    // ),
+                                    // SizedBox(
+                                    //   width: 2,
+                                    // ),
+                                    Icon(
+                                      Icons.check_circle,
+                                      color: Colors.white,
+                                    )
+                                  ])),
+                              RaisedButton(
+                                color: Colors.yellow[700],
+                                onPressed: () {
+                                  widget.bookingApplication
+                                          .notesOnPuttingOnHold =
+                                      notesController.text;
+
+                                  _gs
+                                      .getTokenApplicationService()
+                                      .updateApplicationStatus(
+                                          widget.bookingApplication.id,
+                                          ApplicationStatus.ONHOLD,
+                                          listOfControllers[
+                                                  widget.bookingApplication.id]
+                                              .text,
+                                          metaEntity,
+                                          widget.bookingApplication
+                                              .preferredSlotTiming)
+                                      .then((value) {
+                                    if (value) {
+                                      setState(() {
+                                        widget.bookingApplication.status =
+                                            ApplicationStatus.ONHOLD;
+                                      });
+
+                                      Utils.showMyFlushbar(
+                                          context,
+                                          Icons.check,
+                                          Duration(seconds: 4),
+                                          "Application Saved!!",
+                                          "");
+                                    } else {
+                                      print(
+                                          "Could not update application status");
+                                      Utils.showMyFlushbar(
+                                          context,
+                                          Icons.check,
+                                          Duration(seconds: 4),
+                                          "Oops! Application could not be saved!!",
+                                          "");
+                                    }
+                                  });
+                                  print("On-Hold done");
+                                },
+                                child: Row(children: [
+                                  // Text(
+                                  //   "On-Hold",
+                                  //   style: TextStyle(
+                                  //     color: Colors.white,
+                                  //   ),
+                                  //   // style: buttonTextStyle,
+                                  // ),
+                                  // SizedBox(
+                                  //   width: 2,
+                                  // ),
                                   Icon(
-                                    Icons.block,
+                                    Icons.pan_tool_rounded,
                                     color: Colors.white,
                                   )
-                                ])),
-                      ),
+                                ]),
+                              ),
+                              RaisedButton(
+                                color: Colors.red,
+                                onPressed: () {
+                                  widget.bookingApplication.notesOnRejection =
+                                      notesController.text;
+
+                                  _gs
+                                      .getTokenApplicationService()
+                                      .updateApplicationStatus(
+                                          widget.bookingApplication.id,
+                                          ApplicationStatus.REJECTED,
+                                          listOfControllers[
+                                                  widget.bookingApplication.id]
+                                              .text,
+                                          metaEntity,
+                                          widget.bookingApplication
+                                              .preferredSlotTiming)
+                                      .then((value) {
+                                    if (value) {
+                                      setState(() {
+                                        widget.bookingApplication.status =
+                                            ApplicationStatus.REJECTED;
+                                      });
+
+                                      Utils.showMyFlushbar(
+                                          context,
+                                          Icons.check,
+                                          Duration(seconds: 4),
+                                          "Application Saved!!",
+                                          "");
+                                    } else {
+                                      print(
+                                          "Could not update application status");
+                                      Utils.showMyFlushbar(
+                                          context,
+                                          Icons.check,
+                                          Duration(seconds: 4),
+                                          "Oops! Application could not be saved!!",
+                                          "");
+                                    }
+                                  });
+                                  print("On-Hold done");
+                                },
+                                child: Row(children: [
+                                  // Text(
+                                  //   "Reject",
+                                  //   style: TextStyle(
+                                  //     color: Colors.white,
+                                  //   ),
+                                  // ),
+                                  // SizedBox(
+                                  //   width: 2,
+                                  // ),
+                                  Icon(
+                                    Icons.cancel_rounded,
+                                    color: Colors.white,
+                                  )
+                                ]),
+                              ),
+                            ],
+                          ),
+                        )
                     ],
                   )
                 ],

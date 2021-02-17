@@ -275,6 +275,7 @@ class _UserApplicationsListState extends State<UserApplicationsList> {
         Navigator.of(context)
             .push(PageAnimation.createRoute(ShowUserApplicationDetails(
           bookingApplication: ba,
+          isAdmin: false,
         )));
       },
       child: Card(

@@ -432,7 +432,9 @@ class Utils {
           context,
           MaterialPageRoute(
               builder: (context) => ShowUserApplicationDetails(
-                  bookingApplication: bookingApplication)));
+                    bookingApplication: bookingApplication,
+                    isAdmin: true,
+                  )));
     });
   }
 
