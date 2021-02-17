@@ -49,6 +49,10 @@ String whatsappMessage =
     "Hey!! Are you worried about safety in the crowded place or long waiting in queues? \nNo worries, book your peace of mind with LESSs mobile app. \nBook your slot when it's Less crowded and Stay Safe!!";
 
 String qrCodeShareHeading = "You Safety and Convenience is our top priority!";
+String applicationShareTitle =
+    "View the application details you have submitted";
+String applicationShareMessage =
+    "For your next visit, book an appointment when the crowd is less.\n\nScan the QR to Download the LESSs app and start booking your peace of mind!";
 
 String qrCodeShareMessage =
     "For your next visit, book an appointment when the crowd is less.\n\nScan the QR to Download the LESSs app and start booking your peace of mind!";

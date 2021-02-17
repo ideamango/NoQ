@@ -495,8 +495,8 @@ class _ShowUserApplicationDetailsState
 
             fieldWidget = Container(
               padding: EdgeInsets.fromLTRB(5, 0, 0, 5),
-              decoration: BoxDecoration(
-                  border: Border.all(color: Colors.indigo[800], width: 1.5)),
+              // decoration: BoxDecoration(
+              //     border: Border.all(color: Colors.indigo[800], width: 1.5)),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -744,26 +744,24 @@ class _ShowUserApplicationDetailsState
                 ),
               ),
               Container(
-                  padding: EdgeInsets.fromLTRB(8, 0, 8, 8),
-                  margin: EdgeInsets.all(8),
-                  child: Card(
-                    elevation: 8,
-                    child: TextField(
-                      controller: notesController,
-                      decoration: InputDecoration(
-                        labelText: 'Remarks',
-                        enabledBorder: OutlineInputBorder(
-                            borderSide: BorderSide(color: Colors.grey)),
-                        focusedBorder: OutlineInputBorder(
-                            borderSide: BorderSide(color: Colors.orange)),
-                        // errorText:
-                        //     _validate ? 'Please enter your message' : null,
-                      ),
-                      keyboardType: TextInputType.multiline,
-                      maxLength: null,
-                      maxLines: 2,
-                    ),
-                  )),
+                padding: EdgeInsets.fromLTRB(8, 0, 8, 8),
+                margin: EdgeInsets.all(8),
+                child: TextField(
+                  controller: notesController,
+                  decoration: InputDecoration(
+                    labelText: 'Remarks',
+                    enabledBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.grey)),
+                    focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.orange)),
+                    // errorText:
+                    //     _validate ? 'Please enter your message' : null,
+                  ),
+                  keyboardType: TextInputType.multiline,
+                  maxLength: null,
+                  maxLines: 2,
+                ),
+              ),
             ],
           ),
         ),

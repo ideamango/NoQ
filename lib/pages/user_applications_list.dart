@@ -257,7 +257,7 @@ class _UserApplicationsListState extends State<UserApplicationsList> {
       }
     }
 
-    double cardHeight = MediaQuery.of(context).size.height * .2;
+    double cardHeight = MediaQuery.of(context).size.height * .18;
     double cardWidth = MediaQuery.of(context).size.width * .9;
     var medCondGroup = AutoSizeGroup();
     var labelGroup = AutoSizeGroup();
@@ -286,12 +286,13 @@ class _UserApplicationsListState extends State<UserApplicationsList> {
           height: cardHeight,
 
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Padding(
-                padding: const EdgeInsets.fromLTRB(8, 10, 8, 4),
+                padding: const EdgeInsets.fromLTRB(8, 8, 8, 4),
                 child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       // SizedBox(
                       //   width: cardWidth * .15,
@@ -309,12 +310,12 @@ class _UserApplicationsListState extends State<UserApplicationsList> {
                       // ),
                       Container(
                         padding: EdgeInsets.all(0),
-                        margin: EdgeInsets.all(5),
+                        margin: EdgeInsets.all(0),
                         height: 28.0,
                         width: 28.0,
                         child: IconButton(
                             padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
-                            alignment: Alignment.center,
+                            alignment: Alignment.topLeft,
                             highlightColor: Colors.orange[300],
                             icon: ImageIcon(
                               AssetImage('assets/qrcode.png'),
@@ -471,8 +472,7 @@ class _UserApplicationsListState extends State<UserApplicationsList> {
                 ),
               ),
               Padding(
-                padding:
-                    const EdgeInsets.symmetric(vertical: 2.0, horizontal: 8),
+                padding: const EdgeInsets.fromLTRB(8, 0, 8, 8),
                 child: Row(
                   children: [
                     SizedBox(
