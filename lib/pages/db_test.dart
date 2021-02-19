@@ -887,7 +887,9 @@ class DBTest {
 
     BookingForm bf = await testCovidCenterBookingForm();
     Entity covVacinationCenter = await testBookingApplicationSubmission(bf);
-    await testBookingApplicationStatusChange();
+    BookingApplication approvedBA = await testBookingApplicationStatusChange();
+
+    await testApplicationCancellation(approvedBA);
 
     await testAvailableFreeSlots(covVacinationCenter.getMetaEntity());
 
@@ -1616,7 +1618,7 @@ class DBTest {
     return vacinationCenter;
   }
 
-  Future<void> testBookingApplicationStatusChange() async {
+  Future<BookingApplication> testBookingApplicationStatusChange() async {
     List<BookingApplication> applications = await _gs
         .getTokenApplicationService()
         .getApplications(TEST_COVID_BOOKING_FORM_ID, Covid_Vacination_center,
@@ -1734,6 +1736,104 @@ class DBTest {
             null);
 
     if (approvedApplications.length == 2) {
+      print("ApprovedApplicationCount stats --> SUCCESS");
+    } else {
+      print(
+          "ApprovedApplicationCount stats ------------------------------> Failure");
+    }
+
+    return bs2;
+  }
+
+  Future<void> testApplicationCancellation(
+      BookingApplication approvedBA) async {
+    bool isCancelled = await _gs.getTokenApplicationService().withDrawApplication(
+        approvedBA.id,
+        "Cancelled the application and as a result the token should also get cancelled");
+
+    //now get the ApplicationOver object to check the count
+    BookingApplicationsOverview globalOverView = await _gs
+        .getTokenApplicationService()
+        .getApplicationsOverview(
+            TEST_COVID_BOOKING_FORM_ID, null, DateTime.now().year);
+
+    BookingApplicationsOverview localOverView = await _gs
+        .getTokenApplicationService()
+        .getApplicationsOverview(TEST_COVID_BOOKING_FORM_ID,
+            Covid_Vacination_center, DateTime.now().year);
+
+    if (globalOverView.numberOfApproved == 1 &&
+        globalOverView.numberOfNew == 5 &&
+        globalOverView.numberOfCompleted == 1 &&
+        globalOverView.totalApplications == 10 &&
+        globalOverView.numberOfPutOnHold == 1 &&
+        globalOverView.numberOfRejected == 1 &&
+        globalOverView.numberOfCancelled == 1) {
+      print("GlobalApplicationOverview stats after cancellation --> SUCCESS");
+    } else {
+      print(
+          "GlobalApplicationOverview stats after cancellation ------------------------------> Failure");
+    }
+
+    if (localOverView.numberOfApproved == 1 &&
+        localOverView.numberOfNew == 5 &&
+        localOverView.numberOfCompleted == 1 &&
+        localOverView.totalApplications == 10 &&
+        localOverView.numberOfPutOnHold == 1 &&
+        localOverView.numberOfRejected == 1 &&
+        globalOverView.numberOfCancelled == 1) {
+      print("LocalApplicationOverview stats after cancellation --> SUCCESS");
+    } else {
+      print(
+          "LocalApplicationOverview stats after cancellation ------------------------------> Failure");
+    }
+
+    String dailyStatsKey = DateTime.now().year.toString() +
+        "~" +
+        DateTime.now().month.toString() +
+        "~" +
+        DateTime.now().day.toString();
+
+    Stats localStats = localOverView.dailyStats[dailyStatsKey];
+
+    if (localStats.numberOfCancelled == 1 &&
+        localStats.numberOfApproved == 2 &&
+        localStats.numberOfNew == 10) {
+      print(
+          "LocalApplicationOverview Daily Stats after cancellation --> SUCCESS");
+    } else {
+      print(
+          "LocalApplicationOverview Daily stats after cancellation ------------------------------> Failure");
+    }
+
+    Stats globalStats = globalOverView.dailyStats[dailyStatsKey];
+
+    if (globalStats.numberOfCancelled == 1 &&
+        globalStats.numberOfApproved == 2 &&
+        globalStats.numberOfNew == 10) {
+      print(
+          "GlobalApplicationOverview Daily Stats after cancellation --> SUCCESS");
+    } else {
+      print(
+          "GlobalApplicationOverview Daily stats after cancellation ------------------------------> Failure");
+    }
+
+    List<BookingApplication> approvedApplications = await _gs
+        .getTokenApplicationService()
+        .getApplications(
+            TEST_COVID_BOOKING_FORM_ID,
+            Covid_Vacination_center,
+            ApplicationStatus.APPROVED,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null);
+
+    if (approvedApplications.length == 1) {
       print("ApprovedApplicationCount stats --> SUCCESS");
     } else {
       print(
