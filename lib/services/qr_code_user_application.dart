@@ -106,8 +106,8 @@ class GenerateQrUserApplicationState extends State<GenerateQrUserApplication> {
       //Dynamic Link Text
       //'LESSs ~ Book your peace of mind!!'
       // String msgTitle = qrCodeShareHeading + " - " + widget.entityName;
-      String msgTitle = "Share QR code title";
-      String msgBody = "Share QR code body";
+      String msgTitle = applicationShareMessage;
+      String msgBody = qrCodeShareMessage;
 
       RenderRepaintBoundary boundary =
           globalKey.currentContext.findRenderObject();

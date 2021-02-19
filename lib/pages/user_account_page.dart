@@ -1,6 +1,7 @@
 //import 'package:barcode_scan/barcode_scan.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:noq/constants.dart';
@@ -12,6 +13,7 @@ import 'package:noq/pages/shopping_list.dart';
 import 'package:noq/pages/user_applications_list.dart';
 import 'package:noq/repository/slotRepository.dart';
 import 'package:noq/services/circular_progress.dart';
+import 'package:noq/services/qr_code_user_application.dart';
 import 'package:noq/services/url_services.dart';
 import 'package:noq/style.dart';
 import 'package:noq/userHomePage.dart';
@@ -196,9 +198,11 @@ class _UserAccountPageState extends State<UserAccountPage> {
   }
 
   Widget _buildItem(UserToken booking) {
+    double ticketwidth = MediaQuery.of(context).size.width * .95;
+    double ticketHeight = MediaQuery.of(context).size.width * .8 / 2.7;
     return Container(
-        width: MediaQuery.of(context).size.width * .95,
-        height: MediaQuery.of(context).size.width * .7 / 2.7,
+        width: ticketwidth,
+        height: ticketHeight,
         decoration: BoxDecoration(
           image: DecorationImage(
             image: AssetImage('assets/ticket.jpg'),
@@ -211,7 +215,7 @@ class _UserAccountPageState extends State<UserAccountPage> {
                 Widget>[
               Container(
                 width: MediaQuery.of(context).size.width * .7,
-                height: MediaQuery.of(context).size.width * .7 / 3.5,
+                height: MediaQuery.of(context).size.width * .8 / 3.5,
                 child: Column(
                   //mainAxisSize: MainAxisSize.max,
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -446,7 +450,36 @@ class _UserAccountPageState extends State<UserAccountPage> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
-                    //verticalSpacer,
+                    Container(
+                      padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
+                      margin: EdgeInsets.all(0),
+                      height: ticketwidth * .1,
+                      width: ticketwidth * .1,
+                      child: IconButton(
+                          padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
+                          alignment: Alignment.center,
+                          highlightColor: Colors.orange[300],
+                          mouseCursor: SystemMouseCursors.click,
+                          icon: ImageIcon(
+                            AssetImage('assets/qrcode.png'),
+                            size: 30,
+                            color: Colors.white,
+                          ),
+                          onPressed: () {
+                            print(booking.applicationId);
+
+                            Navigator.of(context).push(
+                                PageAnimation.createRoute(
+                                    GenerateQrUserApplication(
+                              entityName: "Application QR code",
+                              backRoute: "UserAppsList",
+                              applicationId: booking.applicationId,
+                            )));
+                          }),
+                    ),
+                    Container(
+                      height: 5,
+                    ),
                     Text(
                       dtFormat.format(booking.parent.dateTime),
                       style: tokenDataTextStyle,
@@ -656,9 +689,10 @@ class _UserAccountPageState extends State<UserAccountPage> {
               titleTxt: title,
             ),
             body: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
                 Container(
-                  height: MediaQuery.of(context).size.height * .7,
+                  height: MediaQuery.of(context).size.height * .78,
                   child: Scrollbar(
                     child: SingleChildScrollView(
                       padding: EdgeInsets.all(
@@ -963,7 +997,8 @@ class _UserAccountPageState extends State<UserAccountPage> {
                   ),
                 ),
                 Container(
-                  height: MediaQuery.of(context).size.height * .06,
+                  padding: EdgeInsets.fromLTRB(0, 0, 0, 10),
+                  height: MediaQuery.of(context).size.height * .07,
                   width: MediaQuery.of(context).size.width,
                   child: RaisedButton(
                       color: btnColor,
