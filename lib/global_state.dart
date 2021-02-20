@@ -295,24 +295,19 @@ class GlobalState {
   }
 
   Future<Tuple<Entity, bool>> getEntity(String id,
-      [bool fetchFromServer = true]) async {
-    if (_entities.containsKey(id)) {
-      return new Tuple(item1: _entities[id], item2: _entityState[id]);
-    } else {
-      //load from server
-      if (fetchFromServer) {
-        Entity ent = await _entityService.getEntity(id);
-        if (ent == null) {
-          return null;
-        }
-
-        _entities[id] = ent;
-        _entityState[id] = true;
-
-        return new Tuple(item1: ent, item2: true);
-      } else {
+      [bool fetchFromServer = false]) async {
+    if (fetchFromServer || !_entities.containsKey(id)) {
+      Entity ent = await _entityService.getEntity(id);
+      if (ent == null) {
         return null;
       }
+
+      _entities[id] = ent;
+      _entityState[id] = true;
+
+      return new Tuple(item1: ent, item2: true);
+    } else if (_entities.containsKey(id)) {
+      return new Tuple(item1: _entities[id], item2: _entityState[id]);
     }
   }
 
