@@ -197,7 +197,7 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage>
 
   initBookingForm() async {
     _gs
-        .getTokenApplicationService()
+        .getApplicationService()
         .getBookingForm(widget.bookingFormId)
         .then((value) {
       if (value == null) {
@@ -1144,7 +1144,7 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage>
           frontlineWorkerField.responseFilePaths = frontLineTargetPaths;
 
           _gs
-              .getTokenApplicationService()
+              .getApplicationService()
               .submitApplication(bookingApplication, metaEntity)
               .then((value) {
             if (value) {

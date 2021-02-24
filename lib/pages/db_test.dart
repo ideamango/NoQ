@@ -323,7 +323,7 @@ class DBTest {
       //delete globalCounter
       String globalCounterId =
           TEST_COVID_BOOKING_FORM_ID + "#" + now.year.toString();
-      await _gs.getTokenApplicationService().deleteCounter(globalCounterId);
+      await _gs.getApplicationService().deleteCounter(globalCounterId);
 
       //delete local counter
       String localCounterId = TEST_COVID_BOOKING_FORM_ID +
@@ -332,7 +332,7 @@ class DBTest {
           "#" +
           now.year.toString();
 
-      await _gs.getTokenApplicationService().deleteCounter(localCounterId);
+      await _gs.getApplicationService().deleteCounter(localCounterId);
 
       //delete application
       for (int i = 0; i < 10; i++) {
@@ -340,7 +340,7 @@ class DBTest {
             "#" +
             "TestApplicationID" +
             i.toString();
-        await _gs.getTokenApplicationService().deleteApplication(applicationId);
+        await _gs.getApplicationService().deleteApplication(applicationId);
       }
 
       List<UserTokens> tokens = await _gs
@@ -1370,7 +1370,7 @@ class DBTest {
         address: "Shop 61, Towli Chowk Bazar, Gachibowli");
 
     BookingForm bf = await _gs
-        .getTokenApplicationService()
+        .getApplicationService()
         .getBookingForm(TEST_COVID_BOOKING_FORM_ID);
 
     if (bf == null) {
@@ -1469,7 +1469,7 @@ class DBTest {
     }
 
     //NOTE: If this is executed, every time the ID of the field is going to change
-    await _gs.getTokenApplicationService().saveBookingForm(bf);
+    await _gs.getApplicationService().saveBookingForm(bf);
 
     List<MetaForm> forms = List<MetaForm>();
     forms.add(MetaForm(id: bf.id, name: bf.formName));
@@ -1584,18 +1584,18 @@ class DBTest {
         ba.preferredSlotTiming = ba.preferredSlotTiming.add(Duration(days: 1));
       }
 
-      BookingApplicationService tas = _gs.getTokenApplicationService();
+      BookingApplicationService tas = _gs.getApplicationService();
 
       await tas.submitApplication(ba, vacinationCenter.getMetaEntity());
     }
 
     BookingApplicationsOverview globalOverView = await _gs
-        .getTokenApplicationService()
+        .getApplicationService()
         .getApplicationsOverview(
             TEST_COVID_BOOKING_FORM_ID, null, DateTime.now().year);
 
     BookingApplicationsOverview localOverView = await _gs
-        .getTokenApplicationService()
+        .getApplicationService()
         .getApplicationsOverview(TEST_COVID_BOOKING_FORM_ID,
             Covid_Vacination_center, DateTime.now().year);
 
@@ -1624,7 +1624,7 @@ class DBTest {
 
   Future<BookingApplication> testBookingApplicationStatusChange() async {
     List<BookingApplication> applications = await _gs
-        .getTokenApplicationService()
+        .getApplicationService()
         .getApplications(TEST_COVID_BOOKING_FORM_ID, Covid_Vacination_center,
             null, null, null, null, null, null, null, null, null);
 
@@ -1632,7 +1632,7 @@ class DBTest {
         await _gs.getEntityService().getEntity(Covid_Vacination_center);
 
     BookingApplication bs1 = applications[0];
-    await _gs.getTokenApplicationService().updateApplicationStatus(
+    await _gs.getApplicationService().updateApplicationStatus(
         bs1.id,
         ApplicationStatus.APPROVED,
         "Notes on Approval",
@@ -1640,7 +1640,7 @@ class DBTest {
         bs1.preferredSlotTiming);
 
     BookingApplication bs2 = applications[1];
-    await _gs.getTokenApplicationService().updateApplicationStatus(
+    await _gs.getApplicationService().updateApplicationStatus(
         bs2.id,
         ApplicationStatus.APPROVED,
         "Notes on Approval for app 2",
@@ -1648,15 +1648,15 @@ class DBTest {
         bs2.preferredSlotTiming);
 
     BookingApplication bs3 = applications[2];
-    await _gs.getTokenApplicationService().updateApplicationStatus(
+    await _gs.getApplicationService().updateApplicationStatus(
         bs3.id, ApplicationStatus.COMPLETED, "Notes on Completion", null, null);
 
     BookingApplication bs7 = applications[6];
-    await _gs.getTokenApplicationService().updateApplicationStatus(bs7.id,
+    await _gs.getApplicationService().updateApplicationStatus(bs7.id,
         ApplicationStatus.ONHOLD, "Notes on putting on Hold", null, null);
 
     BookingApplication bs10 = applications[9];
-    await _gs.getTokenApplicationService().updateApplicationStatus(
+    await _gs.getApplicationService().updateApplicationStatus(
         bs10.id,
         ApplicationStatus.REJECTED,
         "Notes on rejecting this application",
@@ -1665,12 +1665,12 @@ class DBTest {
 
     //now get the ApplicationOver object to check the count
     BookingApplicationsOverview globalOverView = await _gs
-        .getTokenApplicationService()
+        .getApplicationService()
         .getApplicationsOverview(
             TEST_COVID_BOOKING_FORM_ID, null, DateTime.now().year);
 
     BookingApplicationsOverview localOverView = await _gs
-        .getTokenApplicationService()
+        .getApplicationService()
         .getApplicationsOverview(TEST_COVID_BOOKING_FORM_ID,
             Covid_Vacination_center, DateTime.now().year);
 
@@ -1725,7 +1725,7 @@ class DBTest {
     }
 
     List<BookingApplication> approvedApplications = await _gs
-        .getTokenApplicationService()
+        .getApplicationService()
         .getApplications(
             TEST_COVID_BOOKING_FORM_ID,
             Covid_Vacination_center,
@@ -1751,18 +1751,18 @@ class DBTest {
 
   Future<void> testApplicationCancellation(
       BookingApplication approvedBA) async {
-    bool isCancelled = await _gs.getTokenApplicationService().withDrawApplication(
+    bool isCancelled = await _gs.getApplicationService().withDrawApplication(
         approvedBA.id,
         "Cancelled the application and as a result the token should also get cancelled");
 
     //now get the ApplicationOver object to check the count
     BookingApplicationsOverview globalOverView = await _gs
-        .getTokenApplicationService()
+        .getApplicationService()
         .getApplicationsOverview(
             TEST_COVID_BOOKING_FORM_ID, null, DateTime.now().year);
 
     BookingApplicationsOverview localOverView = await _gs
-        .getTokenApplicationService()
+        .getApplicationService()
         .getApplicationsOverview(TEST_COVID_BOOKING_FORM_ID,
             Covid_Vacination_center, DateTime.now().year);
 
@@ -1823,7 +1823,7 @@ class DBTest {
     }
 
     List<BookingApplication> approvedApplications = await _gs
-        .getTokenApplicationService()
+        .getApplicationService()
         .getApplications(
             TEST_COVID_BOOKING_FORM_ID,
             Covid_Vacination_center,

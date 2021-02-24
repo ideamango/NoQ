@@ -41,7 +41,7 @@ class _OverviewPageState extends State<OverviewPage> {
     super.initState();
     getGlobalState().whenComplete(() {
       _gs
-          .getTokenApplicationService()
+          .getApplicationService()
           .getApplicationsOverview(
               widget.bookingFormId, widget.entityId, DateTime.now().year)
           .then((value) {
@@ -64,7 +64,7 @@ class _OverviewPageState extends State<OverviewPage> {
 
   refreshData() {
     _gs
-        .getTokenApplicationService()
+        .getApplicationService()
         .getApplicationsOverview(
             widget.bookingFormId, widget.entityId, DateTime.now().year)
         .then((value) {

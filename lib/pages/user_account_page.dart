@@ -79,7 +79,7 @@ class _UserAccountPageState extends State<UserAccountPage> {
       });
       _loadBookings().then((value) {
         _gs
-            .getTokenApplicationService()
+            .getApplicationService()
             .getApplications(null, null, null, _gs.getCurrentUser().ph, null,
                 null, null, null, null, null, null)
             .then((value) {

@@ -10,7 +10,7 @@ class BookingForm {
   String footerMsg;
   List<Field> _formFields;
   bool autoApproved = true;
-  bool tokenGenerationOnState = true;
+  bool generateTokenOnApproval = true;
   bool appointmentRequired = true;
 
   //This is not supposed to be created by Entity Manager or Admin, right not will be done via backend on Request.

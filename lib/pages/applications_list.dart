@@ -51,7 +51,7 @@ class _ApplicationsListState extends State<ApplicationsList> {
       //  getListOfData();
 
       _gs
-          .getTokenApplicationService()
+          .getApplicationService()
           .getApplications(widget.bookingFormId, widget.metaEntity.entityId,
               widget.status, null, null, null, null, null, null, null, null)
           .then((value) {
@@ -72,7 +72,7 @@ class _ApplicationsListState extends State<ApplicationsList> {
 
   getListOfData() async {
     _gs
-        .getTokenApplicationService()
+        .getApplicationService()
         .getApplications(widget.bookingFormId, widget.metaEntity.entityId,
             widget.status, null, null, null, null, null, true, 1, 20)
         .then((value) {
@@ -750,7 +750,7 @@ class _ApplicationsListState extends State<ApplicationsList> {
                               ba.notesOnApproval =
                                   listOfControllers[ba.id].text;
                               _gs
-                                  .getTokenApplicationService()
+                                  .getApplicationService()
                                   .updateApplicationStatus(
                                       ba.id,
                                       ApplicationStatus.COMPLETED,
@@ -787,7 +787,7 @@ class _ApplicationsListState extends State<ApplicationsList> {
                               ba.notesOnApproval =
                                   listOfControllers[ba.id].text;
                               _gs
-                                  .getTokenApplicationService()
+                                  .getApplicationService()
                                   .updateApplicationStatus(
                                       ba.id,
                                       ApplicationStatus.APPROVED,
@@ -827,7 +827,7 @@ class _ApplicationsListState extends State<ApplicationsList> {
                                 listOfControllers[ba.id].text;
 
                             _gs
-                                .getTokenApplicationService()
+                                .getApplicationService()
                                 .updateApplicationStatus(
                                     ba.id,
                                     ApplicationStatus.ONHOLD,
@@ -864,7 +864,7 @@ class _ApplicationsListState extends State<ApplicationsList> {
                           onPressed: () {
                             ba.notesOnRejection = listOfControllers[ba.id].text;
                             _gs
-                                .getTokenApplicationService()
+                                .getApplicationService()
                                 .updateApplicationStatus(
                                     ba.id,
                                     ApplicationStatus.REJECTED,

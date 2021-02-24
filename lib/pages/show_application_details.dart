@@ -785,7 +785,7 @@ class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
                               widget.bookingApplication.notesOnApproval =
                                   notesController.text;
                               _gs
-                                  .getTokenApplicationService()
+                                  .getApplicationService()
                                   .updateApplicationStatus(
                                       widget.bookingApplication.id,
                                       ApplicationStatus.COMPLETED,
@@ -842,7 +842,7 @@ class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
                               widget.bookingApplication.notesOnApproval =
                                   notesController.text;
                               _gs
-                                  .getTokenApplicationService()
+                                  .getApplicationService()
                                   .updateApplicationStatus(
                                       widget.bookingApplication.id,
                                       ApplicationStatus.APPROVED,
@@ -899,7 +899,7 @@ class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
                                 notesController.text;
 
                             _gs
-                                .getTokenApplicationService()
+                                .getApplicationService()
                                 .updateApplicationStatus(
                                     widget.bookingApplication.id,
                                     ApplicationStatus.ONHOLD,
@@ -958,7 +958,7 @@ class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
                                 notesController.text;
 
                             _gs
-                                .getTokenApplicationService()
+                                .getApplicationService()
                                 .updateApplicationStatus(
                                     widget.bookingApplication.id,
                                     ApplicationStatus.REJECTED,

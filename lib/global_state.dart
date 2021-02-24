@@ -274,7 +274,7 @@ class GlobalState {
     return _gs._entityService;
   }
 
-  BookingApplicationService getTokenApplicationService() {
+  BookingApplicationService getApplicationService() {
     return _gs._applicationService;
   }
 

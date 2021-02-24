@@ -7,6 +7,7 @@ import 'package:noq/db/db_model/slot.dart';
 import 'package:noq/db/exceptions/slot_full_exception.dart';
 import 'package:noq/db/exceptions/token_already_exists_exception.dart';
 import 'package:noq/global_state.dart';
+import 'package:noq/pages/booking_form_selection_page.dart';
 import 'package:noq/pages/covid_token_booking_form.dart';
 import 'package:noq/pages/search_child_entity_page.dart';
 import 'package:noq/pages/search_entity_page.dart';
@@ -570,15 +571,73 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
               if (!isDisabled(sl.dateTime)) {
 //Check if booking form is required then take request else show form.
                 if (!Utils.isNullOrEmpty(entity.forms)) {
-                  //Show Booking request form
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => CovidTokenBookingFormPage(
-                                metaEntity: entity,
-                                bookingFormId: entity.forms[0].id,
-                                preferredSlotTime: sl.dateTime,
-                              )));
+                  //Show Booking request form SELECTION page
+
+                  if (entity.forms.length > 1) {
+                    showDialog(
+                        barrierDismissible: false,
+                        context: context,
+                        builder: (_) => AlertDialog(
+                              titlePadding: EdgeInsets.fromLTRB(10, 15, 10, 10),
+                              contentPadding: EdgeInsets.all(0),
+                              actionsPadding: EdgeInsets.all(5),
+                              //buttonPadding: EdgeInsets.all(0),
+
+                              content: Container(
+                                padding: EdgeInsets.all(10),
+                                color: Colors.white,
+                                width: MediaQuery.of(context).size.width,
+                                height: MediaQuery.of(context).size.width,
+                                child: Stack(
+                                  alignment: Alignment.topRight,
+                                  children: [
+                                    Container(
+                                      padding:
+                                          EdgeInsets.fromLTRB(0, 20, 20, 20),
+                                      child: BookingFormSelection(
+                                        metaEntity: entity,
+                                        forms: entity.forms,
+                                        preferredSlotTime: sl.dateTime,
+                                      ),
+                                    ),
+                                    IconButton(
+                                      alignment: Alignment.topRight,
+                                      padding: EdgeInsets.zero,
+                                      icon: Icon(Icons.cancel_outlined,
+                                          color: Colors.blue[800], size: 20),
+                                      onPressed: () =>
+                                          Navigator.of(_).pop(true),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ));
+                  } else {
+                    _gs
+                        .getApplicationService()
+                        .getBookingForm(entity.forms[0].id)
+                        .then((value) {
+                      print(value.appointmentRequired);
+                      //Build FORM page and NAVIGATE to display
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => CovidTokenBookingFormPage(
+                                    metaEntity: entity,
+                                    bookingFormId: entity.forms[0].id,
+                                    preferredSlotTime: sl.dateTime,
+                                  )));
+                    });
+                  }
+
+                  // Navigator.push(
+                  //     context,
+                  //     MaterialPageRoute(
+                  //         builder: (context) => CovidTokenBookingFormPage(
+                  //               metaEntity: entity,
+                  //               bookingFormId: entity.forms[0].id,
+                  //               preferredSlotTime: sl.dateTime,
+                  //             )));
                 } else {
                   if (isBooked(sl.dateTime, entity.entityId)) {
                     Utils.showMyFlushbar(

@@ -421,7 +421,7 @@ class Utils {
     GlobalState gs = await GlobalState.getGlobalState();
     BookingApplication bookingApplication;
 
-    gs.getTokenApplicationService().getApplication(applicationID).then((value) {
+    gs.getApplicationService().getApplication(applicationID).then((value) {
       if (value == null)
         Utils.showMyFlushbar(context, Icons.info, Duration(seconds: 3),
             "The application does not exists!", "");
