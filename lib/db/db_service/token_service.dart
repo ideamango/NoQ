@@ -428,6 +428,89 @@ class TokenService {
     return tokens;
   }
 
+  Future<bool> cancelTokenInTransaction(
+      Transaction tx, String userId, String tokenId,
+      [int number]) async {
+    FirebaseFirestore fStore = getFirestore();
+
+    String userPhone = userId;
+
+    bool isCancelled = false;
+
+    final DocumentReference tokRef = fStore.doc('tokens/' + tokenId);
+    try {
+      DocumentSnapshot tokenSnapshot = await tx.get(tokRef);
+      if (tokenSnapshot.exists) {
+        UserTokens tokens = UserTokens.fromJson(tokenSnapshot.data());
+        if (tokens.userId != userPhone) {
+          throw new NoTokenFoundException(
+              "Token does not belong to the requested user");
+        }
+
+        if (number == null && tokens.tokens.length > 1) {
+          throw new Exception(
+              "User has more than one token for the slot, please specify Token number to be cancelled");
+        }
+
+        bool numberMatched = false;
+
+        for (UserToken tok in tokens.tokens) {
+          if (number == null && tokens.tokens.length == 1) {
+            tok.number = -1;
+            numberMatched = true;
+            break;
+          } else {
+            if (tok.number == number) {
+              tok.number = -1;
+              numberMatched = true;
+            }
+          }
+        }
+
+        if (!numberMatched) {
+          throw new Exception(
+              "Supplied token number for the cancellation did not match");
+        }
+
+        String slotId = tokens.slotId;
+        List<String> parts = slotId.split("#");
+
+        String entitySlotsDocId = parts[0] + "#" + parts[1];
+
+        final DocumentReference entitySlotsRef =
+            fStore.doc('slots/' + entitySlotsDocId);
+
+        DocumentSnapshot doc = await tx.get(entitySlotsRef);
+
+        Map<String, dynamic> map = doc.data();
+
+        EntitySlots es = EntitySlots.fromJson(map);
+        for (Slot sl in es.slots) {
+          if (sl.slotId == slotId) {
+            sl.maxAllowed++;
+            sl.isFull = false;
+            break;
+          }
+        }
+
+        //update the token with number as -1
+        tx.set(tokRef, tokens.toJson());
+
+        //change the max allowed by 1, if a token is cancelled
+        tx.set(entitySlotsRef, es.toJson());
+
+        isCancelled = true;
+      } else {
+        throw new NoTokenFoundException("Token does not exists");
+      }
+    } catch (e) {
+      print("Error while canceling token -> Transactio Error: " + e.toString());
+      isCancelled = false;
+    }
+
+    return isCancelled;
+  }
+
   Future<bool> cancelToken(String tokenId, [int number]) async {
     //number param is optional, only required when multiple tokens are booked by the user for the same slot
     //get the token, mark it cancelled
@@ -435,84 +518,14 @@ class TokenService {
     //increase the slot maxallowed by one
 
     final User user = getFirebaseAuth().currentUser;
-    FirebaseFirestore fStore = getFirestore();
     String userPhone = user.phoneNumber;
+    FirebaseFirestore fStore = getFirestore();
 
     bool isCancelled = false;
 
-    final DocumentReference tokRef = fStore.doc('tokens/' + tokenId);
-
     await fStore.runTransaction((Transaction tx) async {
-      try {
-        DocumentSnapshot tokenSnapshot = await tx.get(tokRef);
-        if (tokenSnapshot.exists) {
-          UserTokens tokens = UserTokens.fromJson(tokenSnapshot.data());
-          if (tokens.userId != userPhone) {
-            throw new NoTokenFoundException(
-                "Token does not belong to the requested user");
-          }
-
-          if (number == null && tokens.tokens.length > 1) {
-            throw new Exception(
-                "User has more than one token for the slot, please specify Token number to be cancelled");
-          }
-
-          bool numberMatched = false;
-
-          for (UserToken tok in tokens.tokens) {
-            if (number == null && tokens.tokens.length == 1) {
-              tok.number = -1;
-              numberMatched = true;
-              break;
-            } else {
-              if (tok.number == number) {
-                tok.number = -1;
-                numberMatched = true;
-              }
-            }
-          }
-
-          if (!numberMatched) {
-            throw new Exception(
-                "Supplied token number for the cancellation did not match");
-          }
-
-          String slotId = tokens.slotId;
-          List<String> parts = slotId.split("#");
-
-          String entitySlotsDocId = parts[0] + "#" + parts[1];
-
-          final DocumentReference entitySlotsRef =
-              fStore.doc('slots/' + entitySlotsDocId);
-
-          DocumentSnapshot doc = await tx.get(entitySlotsRef);
-
-          Map<String, dynamic> map = doc.data();
-
-          EntitySlots es = EntitySlots.fromJson(map);
-          for (Slot sl in es.slots) {
-            if (sl.slotId == slotId) {
-              sl.maxAllowed++;
-              sl.isFull = false;
-              break;
-            }
-          }
-
-          //update the token with number as -1
-          tx.set(tokRef, tokens.toJson());
-
-          //change the max allowed by 1, if a token is cancelled
-          tx.set(entitySlotsRef, es.toJson());
-
-          isCancelled = true;
-        } else {
-          throw new NoTokenFoundException("Token does not exists");
-        }
-      } catch (e) {
-        print(
-            "Error while canceling token -> Transactio Error: " + e.toString());
-        isCancelled = false;
-      }
+      isCancelled =
+          await cancelTokenInTransaction(tx, userPhone, tokenId, number);
     });
 
     return isCancelled;

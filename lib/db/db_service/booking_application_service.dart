@@ -8,6 +8,7 @@ import 'package:noq/db/db_model/booking_application.dart';
 import 'package:noq/db/db_model/booking_application.dart';
 import 'package:noq/db/db_model/booking_form.dart';
 import 'package:noq/db/db_model/meta_entity.dart';
+import 'package:noq/db/db_model/user_token.dart';
 import 'package:noq/db/db_service/query.dart';
 
 import 'package:noq/enum/application_status.dart';
@@ -301,14 +302,19 @@ class BookingApplicationService {
         //if auto approved, then generate the token
         if (bf.autoApproved && bf.generateTokenOnApproval) {
           //generate the token
-          await _gs.getTokenService().generateTokenInTransaction(
-              tx,
-              userPhone,
-              metaEntity,
-              ba.preferredSlotTiming,
-              ba.id,
-              ba.bookingFormId,
-              ba.responseForm.formName);
+          UserTokens toks = await _gs
+              .getTokenService()
+              .generateTokenInTransaction(
+                  tx,
+                  userPhone,
+                  metaEntity,
+                  ba.preferredSlotTiming,
+                  ba.id,
+                  ba.bookingFormId,
+                  ba.responseForm.formName);
+
+          UserToken lastTok = toks.tokens[toks.tokens.length - 1];
+          ba.tokenId = toks.getTokenId() + "#" + lastTok.number.toString();
         }
 
         tx.set(applicationRef, ba.toJson());
@@ -329,11 +335,196 @@ class BookingApplicationService {
   }
 
   //to be done by the Applicant
-  Future<bool> withDrawApplication(String applicationId) async {
+  Future<bool> withDrawApplication(
+      String applicationId, String notesOnCancellation) async {
     //set the BookingApplication status as cancelled
     //If the token is approved, cancel the token also
+    if (!Utils.isNotNullOrEmpty(applicationId)) {
+      throw Exception("Insufficient arguements to submit the application");
+    }
 
-    return false;
+    bool isSuccess = false;
+    DateTime now = DateTime.now();
+
+    final User user = getFirebaseAuth().currentUser;
+    FirebaseFirestore fStore = getFirestore();
+    String userPhone = user.phoneNumber;
+
+    BookingApplication ba;
+
+    BookingApplicationsOverview localCounter;
+    BookingApplicationsOverview globalCounter;
+
+    String bookingApplicationId = applicationId;
+
+    final DocumentReference applicationRef =
+        fStore.doc('bookingApplications/' + bookingApplicationId);
+
+    // final DocumentReference bookingFormRef =
+    //     fStore.doc('bookingForms/' + bookingFormId);
+    // DocumentSnapshot doc = await bookingFormRef.get();
+
+    String dailyStatsKey = now.year.toString() +
+        "~" +
+        now.month.toString() +
+        "~" +
+        now.day.toString();
+
+    await fStore.runTransaction((Transaction tx) async {
+      try {
+        DocumentSnapshot applicationSnapshot = await tx.get(applicationRef);
+
+        if (applicationSnapshot.exists) {
+          ba = BookingApplication.fromJson(applicationSnapshot.data());
+        } else {
+          throw new Exception(
+              "Application does not exists, it can't be cancelled");
+        }
+
+        ApplicationStatus existingStatus = ba.status;
+
+        String bookingFormId = ba.bookingFormId;
+
+        String localCounterId =
+            bookingFormId + "#" + ba.entityId + "#" + now.year.toString();
+        String globalCounterId = bookingFormId + "#" + now.year.toString();
+
+        final DocumentReference localCounterRef =
+            fStore.doc('counter/' + localCounterId);
+        DocumentSnapshot localCounterSnapshot = await tx.get(localCounterRef);
+
+        final DocumentReference globalCounterRef =
+            fStore.doc('counter/' + globalCounterId);
+
+        ba.status = ApplicationStatus.CANCELLED;
+        ba.timeOfCancellation = DateTime.now();
+        ba.notesOnCancellation = notesOnCancellation;
+
+        if (ba.responseForm.isSystemTemplate) {
+          DocumentSnapshot globalCounterSnapshot =
+              await tx.get(globalCounterRef);
+          //global counters have to be update or created
+          if (globalCounterSnapshot.exists) {
+            Map<String, dynamic> map = globalCounterSnapshot.data();
+            globalCounter = BookingApplicationsOverview.fromJson(map);
+          } else {
+            globalCounter = new BookingApplicationsOverview(
+                bookingFormId: bookingFormId, entityId: null);
+          }
+
+          if (globalCounter.dailyStats == null) {
+            globalCounter.dailyStats = Map<String, Stats>();
+          }
+
+          if (!globalCounter.dailyStats.containsKey(dailyStatsKey)) {
+            Stats todayStats = new Stats();
+            globalCounter.dailyStats[dailyStatsKey] = todayStats;
+          }
+        }
+
+        //local Counter to be updated or created
+        if (localCounterSnapshot.exists) {
+          Map<String, dynamic> map = localCounterSnapshot.data();
+          localCounter = BookingApplicationsOverview.fromJson(map);
+        } else {
+          localCounter = new BookingApplicationsOverview(
+              bookingFormId: bookingFormId, entityId: ba.entityId);
+        }
+
+        if (localCounter.dailyStats == null) {
+          localCounter.dailyStats = Map<String, Stats>();
+        }
+
+        if (!localCounter.dailyStats.containsKey(dailyStatsKey)) {
+          Stats todayStats = new Stats();
+          localCounter.dailyStats[dailyStatsKey] = todayStats;
+        }
+
+        if (globalCounter != null) {
+          globalCounter.numberOfCancelled++;
+          globalCounter.dailyStats[dailyStatsKey].numberOfCancelled++;
+        }
+        localCounter.numberOfCancelled++;
+        localCounter.dailyStats[dailyStatsKey].numberOfCancelled++;
+
+        //token id should be stored as part of the application
+        if (Utils.isNotNullOrEmpty(ba.tokenId)) {
+          //token id format - Selenium-Covid-Vacination-Center#2021~2~17#10~30#9898989899#2
+
+          List<String> tokenIdSplitted = ba.tokenId.split("#");
+
+          String number = tokenIdSplitted[tokenIdSplitted.length - 1];
+          int tokenNumber = int.parse(number);
+
+          int beforeLastHash = ba.tokenId.length - number.length - 1;
+
+          String tokenId = ba.tokenId.substring(0, beforeLastHash);
+
+          //cancel the token
+          await _gs
+              .getTokenService()
+              .cancelTokenInTransaction(tx, userPhone, tokenId, tokenNumber);
+        }
+
+        if (existingStatus == ApplicationStatus.APPROVED) {
+          if (globalCounter != null) {
+            globalCounter.numberOfApproved--;
+          }
+          if (localCounter != null) {
+            localCounter.numberOfApproved--;
+          }
+        } else if (existingStatus == ApplicationStatus.NEW) {
+          if (globalCounter != null) {
+            globalCounter.numberOfNew--;
+          }
+          if (localCounter != null) {
+            localCounter.numberOfNew--;
+          }
+        } else if (existingStatus == ApplicationStatus.COMPLETED) {
+          if (globalCounter != null) {
+            globalCounter.numberOfCompleted--;
+          }
+          if (localCounter != null) {
+            localCounter.numberOfCompleted--;
+          }
+        } else if (existingStatus == ApplicationStatus.INPROCESS) {
+          if (globalCounter != null) {
+            globalCounter.numberOfInProcess--;
+          }
+          if (localCounter != null) {
+            localCounter.numberOfInProcess--;
+          }
+        } else if (existingStatus == ApplicationStatus.ONHOLD) {
+          if (globalCounter != null) {
+            globalCounter.numberOfPutOnHold--;
+          }
+          if (localCounter != null) {
+            localCounter.numberOfPutOnHold--;
+          }
+        } else if (existingStatus == ApplicationStatus.REJECTED) {
+          if (globalCounter != null) {
+            globalCounter.numberOfRejected--;
+          }
+          if (localCounter != null) {
+            localCounter.numberOfRejected--;
+          }
+        }
+
+        tx.set(applicationRef, ba.toJson());
+        tx.set(localCounterRef, localCounter.toJson());
+        if (globalCounter != null) {
+          tx.set(globalCounterRef, globalCounter.toJson());
+        }
+
+        isSuccess = true;
+      } catch (e) {
+        print("Exception in Application submission $bookingApplicationId " +
+            e.toString());
+        isSuccess = false;
+      }
+    });
+
+    return isSuccess;
   }
 
   //To be done by Manager of the Entity who has restricted rights
@@ -460,14 +651,20 @@ class BookingApplicationService {
           //generate the token
           //send notification
           if (bf.generateTokenOnApproval) {
-            await _gs.getTokenService().generateTokenInTransaction(
-                tx,
-                userPhone,
-                metaEntity,
-                tokenTime,
-                application.id,
-                application.bookingFormId,
-                application.responseForm.formName);
+            UserTokens toks = await _gs
+                .getTokenService()
+                .generateTokenInTransaction(
+                    tx,
+                    userPhone,
+                    metaEntity,
+                    tokenTime,
+                    application.id,
+                    application.bookingFormId,
+                    application.responseForm.formName);
+
+            UserToken lastTok = toks.tokens[toks.tokens.length - 1];
+            application.tokenId =
+                toks.getTokenId() + "#" + lastTok.number.toString();
           }
         } else if (status == ApplicationStatus.COMPLETED) {
           application.timeOfCompletion = now;
