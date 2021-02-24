@@ -692,7 +692,7 @@ class _UserAccountPageState extends State<UserAccountPage> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
                 Container(
-                  height: MediaQuery.of(context).size.height * .78,
+                  height: MediaQuery.of(context).size.height * .74,
                   child: Scrollbar(
                     child: SingleChildScrollView(
                       padding: EdgeInsets.all(
@@ -774,10 +774,10 @@ class _UserAccountPageState extends State<UserAccountPage> {
                                           },
                                           child: Row(
                                               mainAxisAlignment:
-                                                  MainAxisAlignment
-                                                      .spaceBetween,
+                                                  MainAxisAlignment.center,
                                               children: <Widget>[
                                                 Icon(Icons.star),
+                                                horizontalSpacer,
                                                 Text(
                                                   ' Rate the app',
                                                   style:
@@ -814,9 +814,10 @@ class _UserAccountPageState extends State<UserAccountPage> {
                                               },
                                         child: Row(
                                             mainAxisAlignment:
-                                                MainAxisAlignment.spaceBetween,
+                                                MainAxisAlignment.center,
                                             children: <Widget>[
                                               Icon(Icons.share),
+                                              horizontalSpacer,
                                               Text(
                                                 'Invite friends',
                                                 style: TextStyle(fontSize: 12),
@@ -997,9 +998,9 @@ class _UserAccountPageState extends State<UserAccountPage> {
                   ),
                 ),
                 Container(
-                  padding: EdgeInsets.fromLTRB(0, 0, 0, 10),
-                  height: MediaQuery.of(context).size.height * .07,
-                  width: MediaQuery.of(context).size.width,
+                  // padding: EdgeInsets.fromLTRB(0, 0, 0, 10),
+                  height: MediaQuery.of(context).size.height * .06,
+                  width: MediaQuery.of(context).size.width * .95,
                   child: RaisedButton(
                       color: btnColor,
                       textColor: Colors.white,

@@ -7,6 +7,7 @@ import 'package:noq/db/db_model/slot.dart';
 import 'package:noq/db/exceptions/slot_full_exception.dart';
 import 'package:noq/db/exceptions/token_already_exists_exception.dart';
 import 'package:noq/global_state.dart';
+import 'package:noq/pages/applications_list.dart';
 import 'package:noq/pages/covid_token_booking_form.dart';
 import 'package:noq/pages/search_child_entity_page.dart';
 import 'package:noq/pages/search_entity_page.dart';
@@ -23,12 +24,12 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:intl/intl.dart';
 import 'package:noq/constants.dart';
 
-class ShowSlotsPage extends StatefulWidget {
+class SlotSelectionPage extends StatefulWidget {
   final MetaEntity metaEntity;
   final DateTime dateTime;
   final String forPage;
 
-  ShowSlotsPage(
+  SlotSelectionPage(
       {Key key,
       @required this.metaEntity,
       @required this.dateTime,
@@ -36,10 +37,10 @@ class ShowSlotsPage extends StatefulWidget {
       : super(key: key);
 
   @override
-  _ShowSlotsPageState createState() => _ShowSlotsPageState();
+  _SlotSelectionPageState createState() => _SlotSelectionPageState();
 }
 
-class _ShowSlotsPageState extends State<ShowSlotsPage> {
+class _SlotSelectionPageState extends State<SlotSelectionPage> {
   bool _initCompleted = false;
   String errMsg;
   String _storeId;
@@ -76,16 +77,16 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
     if (entity.parentId != null) {
       getEntityDetails(entity.parentId).then((value) => parentEntity = value);
     }
-    getGlobalState().whenComplete(() => _loadSlots());
+    getGlobalState().whenComplete(() => _loadSlots(_date));
   }
 
-  Future<void> _loadSlots() async {
+  Future<void> _loadSlots(DateTime datetime) async {
     //Format date to display in UI
     final dtFormat = new DateFormat(dateDisplayFormat);
-    _dateFormatted = dtFormat.format(_date);
+    _dateFormatted = dtFormat.format(datetime);
 
     //Fetch details from server
-    getSlotsListForEntity(entity, _date).then((slotList) {
+    getSlotsListForEntity(entity, datetime).then((slotList) {
       setState(() {
         _slotList = slotList;
         _initCompleted = true;
@@ -174,24 +175,6 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
               DateFormat.Hm().format(selectedSlot.dateTime).toString();
         }
 
-        dynamic backRoute;
-        if (widget.forPage == 'MainSearch') backRoute = SearchEntityPage();
-        if (widget.forPage == 'ChildSearch')
-          backRoute = SearchChildEntityPage(
-            pageName: "Search",
-            parentName: parentEntity.name,
-            childList: parentEntity.childEntities,
-            parentId: parentEntity.entityId,
-          );
-        if (widget.forPage == 'FavsSearch')
-          backRoute = SearchChildEntityPage(
-            pageName: "FavsSearch",
-            parentName: parentEntity.name,
-            childList: parentEntity.childEntities,
-            parentId: parentEntity.entityId,
-          );
-        if (widget.forPage == 'FavsList') backRoute = FavsListPage();
-
         return MaterialApp(
           debugShowCheckedModeBanner: false,
           theme: ThemeData.light().copyWith(),
@@ -200,8 +183,6 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
               drawer: CustomDrawer(
                 phone: _gs.getCurrentUser().ph,
               ),
-              appBar: CustomAppBarWithBackButton(
-                  titleTxt: _storeName, backRoute: backRoute),
               body: Padding(
                 padding: const EdgeInsets.fromLTRB(6, 6, 6, 6),
                 child: Container(
@@ -213,25 +194,29 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
                   child: Column(
                     children: <Widget>[
                       Container(
-                        height: MediaQuery.of(context).size.width * .11,
+                        height: MediaQuery.of(context).size.width * .15,
                         padding: EdgeInsets.fromLTRB(6, 0, 0, 0),
                         decoration: darkContainer,
                         child: Row(
                           children: <Widget>[
-                            Icon(
-                              Icons.check_circle,
-                              size: 35,
-                              color: Colors.white,
+                            //verticalSpacer,
+                            IconButton(
+                              icon: Icon(
+                                Icons.cancel,
+                                size: 30,
+                                color: Colors.white,
+                              ),
+                              onPressed: () {
+                                Navigator.pop(context);
+                              },
                             ),
-                            SizedBox(width: 12),
-                            SizedBox(
-                              width: MediaQuery.of(context).size.width * .8,
-                              height: MediaQuery.of(context).size.width * .11,
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: <Widget>[
-                                  (selectedSlot == null)
+                            //  SizedBox(width: 10),
+                            Wrap(
+                              children: [
+                                SizedBox(
+                                  width: MediaQuery.of(context).size.width * .6,
+                                  // height: MediaQuery.of(context).size.width * .11,
+                                  child: (selectedSlot == null)
                                       ? AutoSizeText(
                                           "Select from available slots on " +
                                               _dateFormatted +
@@ -258,8 +243,22 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
                                                 color: highlightColor,
                                               ),
                                             ),
-                                ],
+                                ),
+                              ],
+                            ),
+
+                            IconButton(
+                              padding: EdgeInsets.all(0),
+                              icon: Icon(
+                                Icons.arrow_forward_ios,
+                                size: 20,
+                                color: Colors.white,
                               ),
+                              onPressed: () {
+                                _loadSlots(_date.add(Duration(days: 1)));
+
+                                //Navigator.pop(context);
+                              },
                             ),
                           ],
                         ),

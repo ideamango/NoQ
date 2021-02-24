@@ -841,7 +841,7 @@ class _ShowUserApplicationDetailsState
                                 //         widget.bookingApplication.status,
                                 //         notesController.text)
                                 //     .then((value) {
-                                widget.bookingApplication.notesOnApproval =
+                                widget.bookingApplication.notesOnCancellation =
                                     notesController.text;
                                 setState(() {
                                   widget.bookingApplication.status =
