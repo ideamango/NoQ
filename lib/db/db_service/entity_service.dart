@@ -7,10 +7,12 @@ import 'package:noq/db/db_model/app_user.dart';
 import 'package:noq/db/db_model/entity.dart';
 import 'package:noq/db/db_model/entity_private.dart';
 import 'package:noq/db/db_model/meta_entity.dart';
+import 'package:noq/db/db_model/meta_form.dart';
 import 'package:noq/db/exceptions/access_denied_exception.dart';
 import 'package:noq/db/exceptions/entity_does_not_exists_exception.dart';
 import 'package:noq/db/exceptions/user_does_not_exists_exception.dart';
 import 'package:noq/enum/entity_type.dart';
+import 'package:noq/utils.dart';
 
 import '../../constants.dart';
 
@@ -35,8 +37,14 @@ class EntityService {
   }
 
   Future<bool> upsertEntity(Entity entity) async {
-    if (entity.type == EntityType.PLACE_TYPE_COVID19_VACCINATION_CENTER) {
-      entity.bookingFormId = "0ba22050-5347-11eb-929a-87c3b00dc095TEST";
+    if (entity.type == EntityType.PLACE_TYPE_COVID19_VACCINATION_CENTER &&
+        Utils.isNullOrEmpty(entity.forms)) {
+      MetaForm mForm =
+          MetaForm(id: COVID_BOOKING_FORM_ID, name: COVID_BOOKING_FORM_NAME);
+      if (entity.forms == null) {
+        entity.forms = List<MetaForm>();
+      }
+      entity.forms.add(mForm);
     }
     final fAuth.User fireUser = getFirebaseAuth().currentUser;
     String regNum = entity.regNum;

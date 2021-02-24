@@ -10,6 +10,7 @@ import 'package:noq/db/db_model/entity.dart';
 import 'package:noq/db/db_model/entity_private.dart';
 import 'package:noq/db/db_model/entity_slots.dart';
 import 'package:noq/db/db_model/meta_entity.dart';
+import 'package:noq/db/db_model/meta_form.dart';
 import 'package:noq/db/db_model/my_geo_fire_point.dart';
 import 'package:noq/db/db_model/offer.dart';
 import 'package:noq/db/db_model/slot.dart';
@@ -26,7 +27,7 @@ import 'package:noq/global_state.dart';
 import 'package:noq/utils.dart';
 
 class DBTest {
-  String TEST_COVID_BOOKING_FORM_ID = COVID_BOOKING_FORM_ID + "TEST";
+  String TEST_COVID_BOOKING_FORM_ID = COVID_BOOKING_FORM_ID;
 
   String Covid_Vacination_center = "Selenium-Covid-Vacination-Center";
 
@@ -1470,6 +1471,9 @@ class DBTest {
     //NOTE: If this is executed, every time the ID of the field is going to change
     await _gs.getTokenApplicationService().saveBookingForm(bf);
 
+    List<MetaForm> forms = List<MetaForm>();
+    forms.add(MetaForm(id: bf.id, name: bf.formName));
+
     MyGeoFirePoint geoPoint = new MyGeoFirePoint(17.444317, 78.355321);
     Entity entity = new Entity(
         entityId: Covid_Vacination_center,
@@ -1499,7 +1503,7 @@ class DBTest {
         phone: "+918328592031",
         gpay: "+919611009823",
         whatsapp: "+918328592031",
-        bookingFormId: bf.id,
+        forms: forms,
         maxTokensPerSlotByUser: 2);
 
     try {

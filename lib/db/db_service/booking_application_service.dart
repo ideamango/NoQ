@@ -169,6 +169,8 @@ class BookingApplicationService {
       throw Exception("Insufficient arguements to submit the application");
     }
 
+    Exception e;
+
     bool isSuccess = false;
     DateTime now = DateTime.now();
 
@@ -324,12 +326,17 @@ class BookingApplicationService {
         }
 
         isSuccess = true;
-      } catch (e) {
+      } catch (ex) {
         print("Exception in Application submission $bookingApplicationId " +
             e.toString());
+        e = ex;
         isSuccess = false;
       }
     });
+
+    if (e != null) {
+      throw e;
+    }
 
     return false;
   }
@@ -548,7 +555,7 @@ class BookingApplicationService {
           "Entity and Time are required for the Token generation on Approval");
     }
 
-    Exception exception;
+    Exception e;
     DateTime now = DateTime.now();
 
     final User user = getFirebaseAuth().currentUser;
@@ -820,8 +827,13 @@ class BookingApplicationService {
       } catch (ex) {
         requestProcessed = false;
         print(ex.toString());
+        e = ex;
       }
     });
+
+    if (e != null) {
+      throw e;
+    }
 
     return requestProcessed;
   }

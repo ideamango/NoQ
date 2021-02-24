@@ -10,6 +10,7 @@ import 'package:noq/db/db_model/employee.dart';
 import 'package:noq/db/db_model/entity.dart';
 import 'package:noq/db/db_model/entity_private.dart';
 import 'package:noq/db/db_model/meta_entity.dart';
+import 'package:noq/db/db_model/meta_form.dart';
 import 'package:noq/db/db_model/my_geo_fire_point.dart';
 import 'package:noq/db/db_model/app_user.dart';
 import 'package:noq/db/db_service/user_service.dart';
@@ -1975,8 +1976,14 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
           _entityDetailsFormKey.currentState.save();
 
           //TODO: this hardcoding is to be removed, BookingFORM should be assigned dynamically by the Admin (either create or choose existing form)
-          if (entity.type == EntityType.PLACE_TYPE_COVID19_VACCINATION_CENTER) {
-            entity.bookingFormId = COVID_BOOKING_FORM_ID;
+          if (entity.type == EntityType.PLACE_TYPE_COVID19_VACCINATION_CENTER &&
+              Utils.isNullOrEmpty(entity.forms)) {
+            MetaForm mForm = MetaForm(
+                id: COVID_BOOKING_FORM_ID, name: COVID_BOOKING_FORM_NAME);
+            if (entity.forms == null) {
+              entity.forms = List<MetaForm>();
+            }
+            entity.forms.add(mForm);
           }
 
           upsertEntity(entity, _regNumController.text).then((value) {

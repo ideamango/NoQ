@@ -2,9 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:noq/constants.dart';
 import 'package:noq/db/db_model/entity.dart';
 import 'package:noq/db/db_model/meta_entity.dart';
-import 'package:noq/db/db_service/entity_service.dart';
-import 'package:noq/pages/business_info_page.dart';
-import 'package:noq/pages/manage_child_entity_details_page.dart';
+
 import 'package:noq/pages/manage_entity_details_page.dart';
 import 'package:noq/pages/overview_page.dart';
 import 'package:noq/services/circular_progress.dart';
@@ -15,7 +13,6 @@ import 'package:noq/pages/manage_child_entity_list_page.dart';
 import 'package:noq/utils.dart';
 import 'package:noq/widget/page_animation.dart';
 import 'package:noq/widget/widgets.dart';
-import 'package:share/share.dart';
 
 import '../global_state.dart';
 
@@ -319,10 +316,10 @@ class EntityRowState extends State<EntityRow> {
                       ),
                       onPressed: () {
                         print("Over To overview page");
-                        if (Utils.isNotNullOrEmpty(_metaEntity.bookingFormId)) {
+                        if (!Utils.isNullOrEmpty(_metaEntity.forms)) {
                           Navigator.of(context).push(PageAnimation.createRoute(
                               OverviewPage(
-                                  bookingFormId: _metaEntity.bookingFormId,
+                                  bookingFormId: _metaEntity.forms[0].id,
                                   entityId: _metaEntity.entityId,
                                   metaEntity: _metaEntity)));
                         } else {

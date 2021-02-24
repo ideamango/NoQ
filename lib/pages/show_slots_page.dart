@@ -569,14 +569,14 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
             onPressed: () {
               if (!isDisabled(sl.dateTime)) {
 //Check if booking form is required then take request else show form.
-                if (Utils.isNotNullOrEmpty(entity.bookingFormId)) {
+                if (!Utils.isNullOrEmpty(entity.forms)) {
                   //Show Booking request form
                   Navigator.push(
                       context,
                       MaterialPageRoute(
                           builder: (context) => CovidTokenBookingFormPage(
                                 metaEntity: entity,
-                                bookingFormId: entity.bookingFormId,
+                                bookingFormId: entity.forms[0].id,
                                 preferredSlotTime: sl.dateTime,
                               )));
                 } else {

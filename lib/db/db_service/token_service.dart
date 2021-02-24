@@ -178,6 +178,8 @@ class TokenService {
       String applicationId,
       String formId,
       String formName) async {
+    Exception e;
+
     UserTokens tokens;
     String entitySlotsDocId = metaEntity.entityId +
         "#" +
@@ -370,9 +372,13 @@ class TokenService {
         //create Token
         tx.set(tokRef, tokens.toJson());
       }
-    } catch (e) {
+    } catch (ex) {
       print(
           "Error while generting token -> Transaction Error: " + e.toString());
+      e = ex;
+    }
+
+    if (e != null) {
       throw e;
     }
 

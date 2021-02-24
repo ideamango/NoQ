@@ -1,4 +1,5 @@
 import 'package:enum_to_string/enum_to_string.dart';
+import 'package:noq/db/db_model/meta_form.dart';
 import 'package:noq/db/db_model/offer.dart';
 import 'package:noq/enum/entity_type.dart';
 
@@ -38,7 +39,7 @@ class MetaEntity {
       this.phone,
       this.hasChildren,
       this.isBookable,
-      this.bookingFormId,
+      this.forms,
       this.maxTokensPerSlotByUser,
       this.maxPeoplePerToken});
   MetaEntity.withValues({this.entityId, this.type});
@@ -74,7 +75,7 @@ class MetaEntity {
   String phone;
   bool hasChildren;
   bool isBookable;
-  String bookingFormId;
+  List<MetaForm> forms;
   int maxTokensPerSlotByUser;
   int maxPeoplePerToken;
 
@@ -107,7 +108,6 @@ class MetaEntity {
         phone: json['phone'],
         hasChildren: json['hasChildren'],
         isBookable: json['isBookable'],
-        bookingFormId: json['bookingFormId'],
         maxTokensPerSlotByUser: json['maxTokensPerSlotByUser'],
         maxPeoplePerToken: json['maxPeoplePerToken']);
   }
@@ -147,7 +147,6 @@ class MetaEntity {
         'phone': phone,
         'hasChildren': hasChildren,
         'isBookable': isBookable,
-        'bookingFormId': bookingFormId,
         'maxTokensPerSlotByUser': maxTokensPerSlotByUser,
         'maxPeoplePerToken': maxPeoplePerToken
       };
@@ -174,7 +173,6 @@ class MetaEntity {
         metaEnt.gpay == this.gpay &&
         metaEnt.applepay == this.applepay &&
         metaEnt.isBookable == this.isBookable &&
-        metaEnt.bookingFormId == this.bookingFormId &&
         metaEnt.maxTokensPerSlotByUser == this.maxTokensPerSlotByUser &&
         metaEnt.maxPeoplePerToken == this.maxPeoplePerToken) {
       if (this.closedOn != null && metaEnt.closedOn != null) {
