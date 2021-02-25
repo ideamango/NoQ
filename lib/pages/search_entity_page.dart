@@ -1609,7 +1609,7 @@ class _SearchEntityPageState extends State<SearchEntityPage>
         context,
         MaterialPageRoute(
             builder: (context) => ShowSlotsPage(
-                  entity: entity.getMetaEntity(),
+                  metaEntity: entity.getMetaEntity(),
                   dateTime: dateTime,
                   forPage: 'MainSearch',
                 )));

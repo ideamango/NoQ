@@ -840,7 +840,7 @@ class _FavsListPageState extends State<FavsListPage> {
     //Check INTERNET connection first.
 
     Navigator.of(context).push(PageAnimation.createRoute(ShowSlotsPage(
-      entity: store,
+      metaEntity: store,
       dateTime: dateTime,
       forPage: 'FavsList',
     )));

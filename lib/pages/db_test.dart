@@ -314,9 +314,9 @@ class DBTest {
       //delete booking form, NOTE: should not be done for the TEST_COVID_BOOKING_FORM_ID else Ids of the field are
       //going to change and queries would fail
       //commenting it for now, delete the BookingForm only when required
-      // await _gs
-      //     .getTokenApplicationService()
-      //     .deleteBookingForm(TEST_COVID_BOOKING_FORM_ID);
+      await _gs
+          .getApplicationService()
+          .deleteBookingForm(TEST_COVID_BOOKING_FORM_ID);
 
       DateTime now = DateTime.now();
 
@@ -1456,7 +1456,7 @@ class DBTest {
                 Value('Bank Passbook'),
                 Value('Any other government issued photo ID'),
               ],
-              true);
+              false);
 
       bf.addField(idProof);
 

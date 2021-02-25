@@ -1,4 +1,5 @@
 import 'dart:async';
+
 import 'dart:io';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/gestures.dart';
@@ -18,6 +19,7 @@ import 'package:noq/db/db_model/offer.dart';
 import 'package:noq/enum/application_status.dart';
 import 'package:noq/global_state.dart';
 import 'package:noq/pages/search_entity_page.dart';
+import 'package:noq/pages/show_slots_page.dart';
 import 'package:noq/services/circular_progress.dart';
 import 'package:noq/style.dart';
 import 'package:noq/utils.dart';
@@ -526,6 +528,23 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage>
           bookingApplication.notes = value;
         },
       );
+
+      // final prefTimeSlotField = Row(
+      //   children: [
+      //     Text("Click to choose preferred Time-Slot"),
+      //     IconButton(
+      //         icon: Icon(Icons.date_range),
+      //         onPressed: () {
+      //           print("Show time- slots");
+
+      //           pickDate(context).then((value) {
+      //             if (value != null) {
+      //               showAvailableSlotsPopUp(context, metaEntity, value);
+      //             }
+      //           });
+      //         })
+      //   ],
+      // );
       final frontlineFieldInput = Column(
         children: [
           Row(
@@ -595,12 +614,14 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage>
                                 element.isSelected = false;
                               });
                             }
-                            _idProofType = item.value.value;
-                            if (item.isSelected == true)
-                              idProofField.responseValues.remove(item.value);
-                            else
-                              idProofField.responseValues.add(item.value);
 
+                            if (item.isSelected == true) {
+                              idProofField.responseValues.remove(item.value);
+                              _idProofType = null;
+                            } else {
+                              idProofField.responseValues.add(item.value);
+                              _idProofType = item.value.value;
+                            }
                             setState(() {
                               item.isSelected = newSelectionValue;
                             });
@@ -734,6 +755,30 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage>
                           onTap: () {
                             bool newSelectionValue = !(item.isSelected);
 
+                            if (item.value ==
+                                medConditionsField.options[
+                                    medConditionsField.defaultValueIndex]) {
+                              if (!Utils.isNullOrEmpty(
+                                      medConditionsField.responseValues) &&
+                                  item.isSelected == false) {
+                                print("returning");
+                                return null;
+                              }
+                              if (Utils.isNullOrEmpty(
+                                  medConditionsField.responseValues)) {
+                                setState(() {
+                                  item.isSelected = newSelectionValue;
+                                });
+                              }
+                            }
+
+                            if (Utils.isNullOrEmpty(
+                                medConditionsField.responseValues)) {
+                              medConditionsList.forEach((element) {
+                                element.isSelected = false;
+                              });
+                            }
+
                             if (medConditionsField.isMultiSelect == false) {
                               medConditionsList.forEach((element) {
                                 element.isSelected = false;
@@ -742,8 +787,9 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage>
                             if (item.isSelected == true)
                               medConditionsField.responseValues
                                   .remove(item.value);
-                            else
+                            else {
                               medConditionsField.responseValues.add(item.value);
+                            }
 
                             setState(() {
                               item.isSelected = newSelectionValue;
@@ -1993,6 +2039,20 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage>
                       // SizedBox(
                       //   height: 7,
                       // ),
+                      // Container(
+                      //   padding: EdgeInsets.only(left: 5.0, right: 5),
+                      //   decoration: BoxDecoration(
+                      //       border: Border.all(color: containerColor),
+                      //       color: Colors.grey[50],
+                      //       shape: BoxShape.rectangle,
+                      //       borderRadius:
+                      //           BorderRadius.all(Radius.circular(5.0))),
+                      //   //padding: EdgeInsets.all(5.0),
+                      //   child: prefTimeSlotField,
+                      // ),
+                      SizedBox(
+                        height: 7,
+                      ),
                       Container(
                         padding: EdgeInsets.only(left: 5.0, right: 5),
                         decoration: BoxDecoration(

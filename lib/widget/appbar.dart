@@ -88,8 +88,9 @@ class _CustomAppBarWithBackButtonState
           color: Colors.white,
           onPressed: () {
             Navigator.of(context).pop();
-            Navigator.of(context)
-                .push(PageAnimation.createRoute(widget.backRoute));
+            if (widget.backRoute != null)
+              Navigator.of(context)
+                  .push(PageAnimation.createRoute(widget.backRoute));
           }),
 
       actions: <Widget>[

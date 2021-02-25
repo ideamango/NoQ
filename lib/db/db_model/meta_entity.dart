@@ -108,6 +108,7 @@ class MetaEntity {
         phone: json['phone'],
         hasChildren: json['hasChildren'],
         isBookable: json['isBookable'],
+        forms: convertToMetaFormsFromJson(json['forms']),
         maxTokensPerSlotByUser: json['maxTokensPerSlotByUser'],
         maxPeoplePerToken: json['maxPeoplePerToken']);
   }
@@ -120,6 +121,26 @@ class MetaEntity {
       days.add(day);
     }
     return days;
+  }
+
+  static List<MetaForm> convertToMetaFormsFromJson(List<dynamic> metaFormJson) {
+    List<MetaForm> metaForms = new List<MetaForm>();
+    if (metaFormJson == null) return metaForms;
+
+    for (Map<String, dynamic> json in metaFormJson) {
+      MetaForm metaEnt = MetaForm.fromJson(json);
+      metaForms.add(metaEnt);
+    }
+    return metaForms;
+  }
+
+  List<dynamic> metaFormsToJson(List<MetaForm> metaForms) {
+    List<dynamic> usersJson = new List<dynamic>();
+    if (metaForms == null) return usersJson;
+    for (MetaForm meta in metaForms) {
+      usersJson.add(meta.toJson());
+    }
+    return usersJson;
   }
 
   Map<String, dynamic> toJson() => {
@@ -147,6 +168,7 @@ class MetaEntity {
         'phone': phone,
         'hasChildren': hasChildren,
         'isBookable': isBookable,
+        'forms': metaFormsToJson(forms),
         'maxTokensPerSlotByUser': maxTokensPerSlotByUser,
         'maxPeoplePerToken': maxPeoplePerToken
       };

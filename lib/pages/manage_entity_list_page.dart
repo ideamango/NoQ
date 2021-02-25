@@ -32,7 +32,7 @@ class _ManageEntityListPageState extends State<ManageEntityListPage> {
   ScrollController _scrollController;
   double itemSize = 100.00;
   List<String> entityTypes;
-  GlobalState _state;
+  GlobalState _gs;
   bool stateInitFinished = false;
 
   bool _initCompleted = false;
@@ -121,19 +121,19 @@ class _ManageEntityListPageState extends State<ManageEntityListPage> {
   }
 
   Future<void> getGlobalState() async {
-    _state = await GlobalState.getGlobalState();
+    _gs = await GlobalState.getGlobalState();
   }
 
   initialize() async {
     await getGlobalState();
     metaEntitiesList = List<MetaEntity>();
-    if (!Utils.isNullOrEmpty(_state.getCurrentUser().entities)) {
+    if (!Utils.isNullOrEmpty(_gs.getCurrentUser().entities)) {
       //Check if entity is child and parent os same entity is also enlisted in entities then dont show child.
       // Show only first level entities to user.
-      for (MetaEntity m in _state.getCurrentUser().entities) {
+      for (MetaEntity m in _gs.getCurrentUser().entities) {
         bool isAdminOfParent = false;
         if (m.parentId != null) {
-          for (MetaEntity parent in _state.getCurrentUser().entities) {
+          for (MetaEntity parent in _gs.getCurrentUser().entities) {
             if (parent.entityId == m.parentId) {
               isAdminOfParent = true;
               break;
@@ -146,7 +146,7 @@ class _ManageEntityListPageState extends State<ManageEntityListPage> {
       }
     }
 
-    entityTypes = _state.getConfigurations().entityTypes;
+    entityTypes = _gs.getConfigurations().entityTypes;
     setState(() {
       stateInitFinished = true;
     });
@@ -154,7 +154,7 @@ class _ManageEntityListPageState extends State<ManageEntityListPage> {
 
   void _addNewServiceRow() {
     Entity entity = Utils.createEntity(_entityType);
-    _state.putEntity(entity, false);
+    _gs.putEntity(entity, false);
     MetaEntity metaEn = entity.getMetaEntity();
 
     setState(() {
