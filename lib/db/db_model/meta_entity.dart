@@ -1,4 +1,5 @@
 import 'package:enum_to_string/enum_to_string.dart';
+import 'package:noq/db/db_model/meta_form.dart';
 import 'package:noq/db/db_model/offer.dart';
 import 'package:noq/enum/entity_type.dart';
 
@@ -38,7 +39,7 @@ class MetaEntity {
       this.phone,
       this.hasChildren,
       this.isBookable,
-      this.bookingFormId,
+      this.forms,
       this.maxTokensPerSlotByUser,
       this.maxPeoplePerToken});
   MetaEntity.withValues({this.entityId, this.type});
@@ -74,7 +75,7 @@ class MetaEntity {
   String phone;
   bool hasChildren;
   bool isBookable;
-  String bookingFormId;
+  List<MetaForm> forms;
   int maxTokensPerSlotByUser;
   int maxPeoplePerToken;
 
@@ -107,7 +108,7 @@ class MetaEntity {
         phone: json['phone'],
         hasChildren: json['hasChildren'],
         isBookable: json['isBookable'],
-        bookingFormId: json['bookingFormId'],
+        forms: convertToMetaFormsFromJson(json['forms']),
         maxTokensPerSlotByUser: json['maxTokensPerSlotByUser'],
         maxPeoplePerToken: json['maxPeoplePerToken']);
   }
@@ -120,6 +121,26 @@ class MetaEntity {
       days.add(day);
     }
     return days;
+  }
+
+  static List<MetaForm> convertToMetaFormsFromJson(List<dynamic> metaFormJson) {
+    List<MetaForm> metaForms = new List<MetaForm>();
+    if (metaFormJson == null) return metaForms;
+
+    for (Map<String, dynamic> json in metaFormJson) {
+      MetaForm metaEnt = MetaForm.fromJson(json);
+      metaForms.add(metaEnt);
+    }
+    return metaForms;
+  }
+
+  List<dynamic> metaFormsToJson(List<MetaForm> metaForms) {
+    List<dynamic> usersJson = new List<dynamic>();
+    if (metaForms == null) return usersJson;
+    for (MetaForm meta in metaForms) {
+      usersJson.add(meta.toJson());
+    }
+    return usersJson;
   }
 
   Map<String, dynamic> toJson() => {
@@ -147,7 +168,7 @@ class MetaEntity {
         'phone': phone,
         'hasChildren': hasChildren,
         'isBookable': isBookable,
-        'bookingFormId': bookingFormId,
+        'forms': metaFormsToJson(forms),
         'maxTokensPerSlotByUser': maxTokensPerSlotByUser,
         'maxPeoplePerToken': maxPeoplePerToken
       };
@@ -174,7 +195,6 @@ class MetaEntity {
         metaEnt.gpay == this.gpay &&
         metaEnt.applepay == this.applepay &&
         metaEnt.isBookable == this.isBookable &&
-        metaEnt.bookingFormId == this.bookingFormId &&
         metaEnt.maxTokensPerSlotByUser == this.maxTokensPerSlotByUser &&
         metaEnt.maxPeoplePerToken == this.maxPeoplePerToken) {
       if (this.closedOn != null && metaEnt.closedOn != null) {

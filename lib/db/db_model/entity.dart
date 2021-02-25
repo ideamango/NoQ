@@ -2,6 +2,7 @@ import 'package:enum_to_string/enum_to_string.dart';
 import 'package:noq/db/db_model/address.dart';
 import 'package:noq/db/db_model/employee.dart';
 import 'package:noq/db/db_model/meta_entity.dart';
+import 'package:noq/db/db_model/meta_form.dart';
 import 'package:noq/db/db_model/meta_user.dart';
 import 'package:noq/db/db_model/my_geo_fire_point.dart';
 import 'package:noq/db/db_model/offer.dart';
@@ -44,7 +45,7 @@ class Entity {
       this.applepay,
       this.offer,
       this.phone,
-      this.bookingFormId,
+      this.forms,
       this.maxTokensPerSlotByUser,
       this.maxPeoplePerToken});
 
@@ -88,7 +89,7 @@ class Entity {
   Offer offer;
   String phone;
   MetaEntity _meta;
-  String bookingFormId;
+  List<MetaForm> forms;
   int maxTokensPerSlotByUser = 1;
   int maxPeoplePerToken = 1;
 
@@ -130,7 +131,7 @@ class Entity {
         'applepay': applepay,
         'offer': offer != null ? offer.toJson() : null,
         'phone': phone,
-        'bookingFormId': bookingFormId,
+        'forms': metaFormsToJson(forms),
         'maxTokensPerSlotByUser': maxTokensPerSlotByUser,
         'maxPeoplePerToken': maxPeoplePerToken
       };
@@ -157,6 +158,15 @@ class Entity {
     List<dynamic> usersJson = new List<dynamic>();
     if (metaEntities == null) return usersJson;
     for (MetaEntity meta in metaEntities) {
+      usersJson.add(meta.toJson());
+    }
+    return usersJson;
+  }
+
+  List<dynamic> metaFormsToJson(List<MetaForm> metaForms) {
+    List<dynamic> usersJson = new List<dynamic>();
+    if (metaForms == null) return usersJson;
+    for (MetaForm meta in metaForms) {
       usersJson.add(meta.toJson());
     }
     return usersJson;
@@ -201,7 +211,7 @@ class Entity {
         applepay: json['applepay'],
         offer: Offer.fromJson(json['offer']),
         phone: json['phone'],
-        bookingFormId: json['bookingFormId'],
+        forms: convertToMetaFormsFromJson(json['forms']),
         maxTokensPerSlotByUser: json['maxTokensPerSlotByUser'],
         maxPeoplePerToken: json['maxPeoplePerToken']);
   }
@@ -242,6 +252,17 @@ class Entity {
       metaEntities.add(metaEnt);
     }
     return metaEntities;
+  }
+
+  static List<MetaForm> convertToMetaFormsFromJson(List<dynamic> metaFormJson) {
+    List<MetaForm> metaForms = new List<MetaForm>();
+    if (metaFormJson == null) return metaForms;
+
+    for (Map<String, dynamic> json in metaFormJson) {
+      MetaForm metaEnt = MetaForm.fromJson(json);
+      metaForms.add(metaEnt);
+    }
+    return metaForms;
   }
 
   static List<String> convertToClosedOnArrayFromJson(List<dynamic> daysJson) {
@@ -290,7 +311,7 @@ class Entity {
               ? true
               : false,
           isBookable: isBookable,
-          bookingFormId: bookingFormId);
+          forms: forms);
     } else {
       _meta.name = name;
       _meta.type = type;
@@ -324,7 +345,7 @@ class Entity {
       _meta.hasChildren =
           (childEntities != null && childEntities.length > 0) ? true : false;
       _meta.isBookable = isBookable;
-      _meta.bookingFormId = bookingFormId;
+      _meta.forms = forms;
     }
     return _meta;
   }

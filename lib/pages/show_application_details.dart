@@ -19,11 +19,10 @@ import 'package:noq/widget/widgets.dart';
 
 class ShowApplicationDetails extends StatefulWidget {
   final BookingApplication bookingApplication;
-  final MetaEntity metaEntity;
+
   ShowApplicationDetails({
     Key key,
     @required this.bookingApplication,
-    @required this.metaEntity,
   }) : super(key: key);
   @override
   _ShowApplicationDetailsState createState() => _ShowApplicationDetailsState();
@@ -34,6 +33,7 @@ class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
   GlobalState _gs;
   List<BookingApplication> list;
   TextEditingController notesController = new TextEditingController();
+  MetaEntity metaEntity;
 
   @override
   void initState() {
@@ -41,8 +41,11 @@ class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
     getGlobalState().whenComplete(() {
       //getListOfData();
       if (this.mounted) {
-        setState(() {
-          initCompleted = true;
+        _gs.getEntity(widget.bookingApplication.entityId).then((value) {
+          if (value != null) metaEntity = value.item1.getMetaEntity();
+          setState(() {
+            initCompleted = true;
+          });
         });
       } else
         initCompleted = true;
@@ -784,39 +787,50 @@ class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
                             onPressed: () {
                               widget.bookingApplication.notesOnApproval =
                                   notesController.text;
-                              _gs
-                                  .getTokenApplicationService()
-                                  .updateApplicationStatus(
-                                      widget.bookingApplication.id,
-                                      ApplicationStatus.COMPLETED,
-                                      listOfControllers[
-                                              widget.bookingApplication.id]
-                                          .text,
-                                      widget.metaEntity,
-                                      widget.bookingApplication
-                                          .preferredSlotTiming)
-                                  .then((value) {
-                                if (value) {
-                                  setState(() {
-                                    widget.bookingApplication.status =
-                                        ApplicationStatus.COMPLETED;
-                                  });
-                                  Utils.showMyFlushbar(
-                                      context,
-                                      Icons.check,
-                                      Duration(seconds: 4),
-                                      "Application Saved!!",
-                                      "");
-                                } else {
-                                  print("Could not update application status");
-                                  Utils.showMyFlushbar(
-                                      context,
-                                      Icons.check,
-                                      Duration(seconds: 4),
-                                      "Oops! Application could not be saved!!",
-                                      "");
-                                }
-                              });
+                              if (metaEntity != null) {
+                                _gs
+                                    .getApplicationService()
+                                    .updateApplicationStatus(
+                                        widget.bookingApplication.id,
+                                        ApplicationStatus.COMPLETED,
+                                        listOfControllers[
+                                                widget.bookingApplication.id]
+                                            .text,
+                                        metaEntity,
+                                        widget.bookingApplication
+                                            .preferredSlotTiming)
+                                    .then((value) {
+                                  if (value) {
+                                    setState(() {
+                                      widget.bookingApplication.status =
+                                          ApplicationStatus.COMPLETED;
+                                    });
+                                    Utils.showMyFlushbar(
+                                        context,
+                                        Icons.check,
+                                        Duration(seconds: 4),
+                                        "Application Saved!!",
+                                        "");
+                                  } else {
+                                    print(
+                                        "Could not update application status");
+                                    Utils.showMyFlushbar(
+                                        context,
+                                        Icons.check,
+                                        Duration(seconds: 4),
+                                        "Oops! Application could not be saved!!",
+                                        "");
+                                  }
+                                });
+                              } else {
+                                print("Could not update application status");
+                                Utils.showMyFlushbar(
+                                    context,
+                                    Icons.check,
+                                    Duration(seconds: 4),
+                                    "Oops! Application could not be saved!!",
+                                    "");
+                              }
 
                               print("Complete");
                             },
@@ -842,18 +856,19 @@ class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
                               widget.bookingApplication.notesOnApproval =
                                   notesController.text;
                               _gs
-                                  .getTokenApplicationService()
+                                  .getApplicationService()
                                   .updateApplicationStatus(
                                       widget.bookingApplication.id,
                                       ApplicationStatus.APPROVED,
-                                      listOfControllers[
-                                              widget.bookingApplication.id]
-                                          .text,
-                                      widget.metaEntity,
+                                      widget.bookingApplication.notesOnApproval,
+                                      metaEntity,
                                       widget.bookingApplication
                                           .preferredSlotTiming)
                                   .then((value) {
                                 if (value) {
+                                  //Show available time slota, allot one slot, then approve.
+                                  // Utils.showAvailableSlotsPopUp(
+                                  //   context, metaEntity, DateTime.now());
                                   setState(() {
                                     widget.bookingApplication.status =
                                         ApplicationStatus.APPROVED;
@@ -899,14 +914,14 @@ class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
                                 notesController.text;
 
                             _gs
-                                .getTokenApplicationService()
+                                .getApplicationService()
                                 .updateApplicationStatus(
                                     widget.bookingApplication.id,
                                     ApplicationStatus.ONHOLD,
                                     listOfControllers[
                                             widget.bookingApplication.id]
                                         .text,
-                                    widget.metaEntity,
+                                    metaEntity,
                                     widget
                                         .bookingApplication.preferredSlotTiming)
                                 .then((value) {
@@ -958,14 +973,14 @@ class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
                                 notesController.text;
 
                             _gs
-                                .getTokenApplicationService()
+                                .getApplicationService()
                                 .updateApplicationStatus(
                                     widget.bookingApplication.id,
                                     ApplicationStatus.REJECTED,
                                     listOfControllers[
                                             widget.bookingApplication.id]
                                         .text,
-                                    widget.metaEntity,
+                                    metaEntity,
                                     widget
                                         .bookingApplication.preferredSlotTiming)
                                 .then((value) {

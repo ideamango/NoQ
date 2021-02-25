@@ -1,6 +1,7 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:enum_to_string/enum_to_string.dart';
 import 'package:flutter/material.dart';
+import 'package:noq/SlotSelectionPage.dart';
 import 'package:noq/constants.dart';
 import 'package:noq/db/db_model/booking_application.dart';
 import 'package:noq/db/db_model/booking_form.dart';
@@ -11,6 +12,7 @@ import 'package:noq/global_state.dart';
 import 'package:noq/pages/covid_token_booking_form.dart';
 import 'package:noq/pages/overview_page.dart';
 import 'package:noq/pages/show_application_details.dart';
+import 'package:noq/pages/show_slots_page.dart';
 import 'package:noq/services/circular_progress.dart';
 import 'package:noq/style.dart';
 import 'package:noq/userHomePage.dart';
@@ -51,7 +53,7 @@ class _ApplicationsListState extends State<ApplicationsList> {
       //  getListOfData();
 
       _gs
-          .getTokenApplicationService()
+          .getApplicationService()
           .getApplications(widget.bookingFormId, widget.metaEntity.entityId,
               widget.status, null, null, null, null, null, null, null, null)
           .then((value) {
@@ -72,7 +74,7 @@ class _ApplicationsListState extends State<ApplicationsList> {
 
   getListOfData() async {
     _gs
-        .getTokenApplicationService()
+        .getApplicationService()
         .getApplications(widget.bookingFormId, widget.metaEntity.entityId,
             widget.status, null, null, null, null, null, true, 1, 20)
         .then((value) {
@@ -423,6 +425,40 @@ class _ApplicationsListState extends State<ApplicationsList> {
     return fieldsContainer;
   }
 
+  Future<DateTime> showAvailableSlotsPopUp(
+      BuildContext context, MetaEntity metaEntity, DateTime date) async {
+    DateTime selectedSlot;
+    bool returnVal = await showDialog(
+        barrierDismissible: false,
+        context: context,
+        builder: (_) => AlertDialog(
+              titlePadding: EdgeInsets.fromLTRB(10, 15, 10, 10),
+              contentPadding: EdgeInsets.all(0),
+              actionsPadding: EdgeInsets.all(5),
+              content: Container(
+                padding: EdgeInsets.all(10),
+                color: Colors.white,
+                width: MediaQuery.of(context).size.width,
+                child: Column(
+                  children: [
+                    // image,
+                    // ShowSlotsPage(
+                    //     metaEntity: metaEntity, dateTime: date, forPage: null),
+
+                    IconButton(
+                      alignment: Alignment.topRight,
+                      padding: EdgeInsets.zero,
+                      icon: Icon(Icons.cancel_outlined,
+                          color: Colors.red, size: 30),
+                      onPressed: () => Navigator.of(_).pop(true),
+                    ),
+                  ],
+                ),
+              ),
+            ));
+    return selectedSlot;
+  }
+
   Widget _buildItem(BookingApplication ba) {
     List<Field> listOfMeta = new List<Field>();
     if (!listOfControllers.containsKey(ba.id)) {
@@ -480,7 +516,7 @@ class _ApplicationsListState extends State<ApplicationsList> {
       }
     }
 
-    double cardHeight = MediaQuery.of(context).size.height * .3;
+    double cardHeight = MediaQuery.of(context).size.height * .4;
     double cardWidth = MediaQuery.of(context).size.width * .95;
     var medCondGroup = AutoSizeGroup();
     var labelGroup = AutoSizeGroup();
@@ -707,6 +743,89 @@ class _ApplicationsListState extends State<ApplicationsList> {
                   ],
                 ),
               ),
+              Padding(
+                  padding: const EdgeInsets.fromLTRB(8, 10, 8, 4),
+                  child: Column(
+                    children: [
+                      Row(
+                        children: [
+                          SizedBox(
+                              width: cardWidth * .45,
+                              child: Wrap(
+                                children: [
+                                  AutoSizeText(
+                                    "Preferred time-slot by User :",
+                                    group: labelGroup,
+                                    minFontSize: 12,
+                                    maxFontSize: 13,
+                                    maxLines: 1,
+                                    overflow: TextOverflow.clip,
+                                    style: TextStyle(
+                                        color: Colors.blueGrey[900],
+                                        fontFamily: 'Roboto'),
+                                  ),
+                                ],
+                              )),
+                          Wrap(children: [
+                            SizedBox(
+                              width: cardWidth * .25,
+                              child: AutoSizeText(
+                                  ((ba.preferredSlotTiming != null)
+                                      ? ba.preferredSlotTiming.toString()
+                                      : "None"),
+                                  group: medCondGroup,
+                                  minFontSize: 12,
+                                  maxFontSize: 14,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: TextStyle(
+                                      color: Colors.indigo[900],
+                                      fontWeight: FontWeight.bold,
+                                      fontFamily: 'RalewayRegular')),
+                            ),
+                          ]),
+                        ],
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          AutoSizeText(
+                            "Click to choose another Time-Slot",
+                            group: labelGroup,
+                            minFontSize: 12,
+                            maxFontSize: 13,
+                            maxLines: 1,
+                            overflow: TextOverflow.clip,
+                            style: TextStyle(
+                                color: Colors.blueGrey[900],
+                                fontFamily: 'Roboto'),
+                          ),
+                          IconButton(
+                              icon: Icon(Icons.date_range),
+                              onPressed: () {
+                                print("Show time- slots");
+                                // print(_fromPage);
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => SlotSelectionPage(
+                                              metaEntity: widget.metaEntity,
+                                              dateTime: ba.preferredSlotTiming,
+                                              forPage: "ApplicationList",
+                                            )));
+
+                                print('After showDialog:');
+                                // pickDate(context).then((value) {
+                                //   if (value != null) {
+                                // showAvailableSlotsPopUp(context,
+                                //     widget.metaEntity, ba.preferredSlotTiming);
+                                //   }
+                                // });
+                              })
+                        ],
+                      ),
+                    ],
+                  )),
               Row(
                 //  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -750,7 +869,7 @@ class _ApplicationsListState extends State<ApplicationsList> {
                               ba.notesOnApproval =
                                   listOfControllers[ba.id].text;
                               _gs
-                                  .getTokenApplicationService()
+                                  .getApplicationService()
                                   .updateApplicationStatus(
                                       ba.id,
                                       ApplicationStatus.COMPLETED,
@@ -787,7 +906,7 @@ class _ApplicationsListState extends State<ApplicationsList> {
                               ba.notesOnApproval =
                                   listOfControllers[ba.id].text;
                               _gs
-                                  .getTokenApplicationService()
+                                  .getApplicationService()
                                   .updateApplicationStatus(
                                       ba.id,
                                       ApplicationStatus.APPROVED,
@@ -827,7 +946,7 @@ class _ApplicationsListState extends State<ApplicationsList> {
                                 listOfControllers[ba.id].text;
 
                             _gs
-                                .getTokenApplicationService()
+                                .getApplicationService()
                                 .updateApplicationStatus(
                                     ba.id,
                                     ApplicationStatus.ONHOLD,
@@ -864,7 +983,7 @@ class _ApplicationsListState extends State<ApplicationsList> {
                           onPressed: () {
                             ba.notesOnRejection = listOfControllers[ba.id].text;
                             _gs
-                                .getTokenApplicationService()
+                                .getApplicationService()
                                 .updateApplicationStatus(
                                     ba.id,
                                     ApplicationStatus.REJECTED,

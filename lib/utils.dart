@@ -10,6 +10,7 @@ import 'package:noq/db/db_model/meta_entity.dart';
 import 'package:noq/enum/entity_type.dart';
 import 'package:noq/global_state.dart';
 import 'package:noq/pages/favs_list_page.dart';
+import 'package:noq/pages/show_slots_page.dart';
 import 'package:noq/pages/show_user_application_details.dart';
 import 'package:noq/services/auth_service.dart';
 import 'package:noq/style.dart';
@@ -421,7 +422,7 @@ class Utils {
     GlobalState gs = await GlobalState.getGlobalState();
     BookingApplication bookingApplication;
 
-    gs.getTokenApplicationService().getApplication(applicationID).then((value) {
+    gs.getApplicationService().getApplication(applicationID).then((value) {
       if (value == null)
         Utils.showMyFlushbar(context, Icons.info, Duration(seconds: 3),
             "The application does not exists!", "");
