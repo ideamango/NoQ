@@ -1858,4 +1858,166 @@ class DBTest {
       print("Getting free slots ------------------------------> Failure");
     }
   }
+
+  Future<BookingForm> testMultipleBookingFormsWithSchool() async {
+    Address adrs = new Address(
+        city: "Hyderbad",
+        state: "Telangana",
+        country: "India",
+        address: "Shop 61, Towli Chowk Bazar, Gachibowli");
+
+    BookingForm bf = await _gs
+        .getTokenApplicationService()
+        .getBookingForm(TEST_COVID_BOOKING_FORM_ID);
+
+    if (bf == null) {
+      bf = new BookingForm(
+          formName: "Covid-19 Vacination Applicant Details",
+          headerMsg:
+              "You request will be approved based on the information provided by you, please enter the correct information.",
+          footerMsg:
+              "Applicant must carry the same ID proof documents to the vacination center. Also mark your presence 15 minutes prior to your alloted time. Failing to do so will result in cancellation of your application.",
+          autoApproved: true);
+
+      bf.isSystemTemplate = true;
+      bf.id = TEST_COVID_BOOKING_FORM_ID;
+      bf.autoApproved = false;
+
+      FormInputFieldText nameInput = FormInputFieldText("Name of the Applicant",
+          true, "Please enter your name as per Government ID proof", 50);
+      nameInput.isMeta = true;
+
+      bf.addField(nameInput);
+
+      FormInputFieldDateTime dob = FormInputFieldDateTime(
+          "Date of Birth of the Applicant",
+          true,
+          "Please select the applicant's Date of Birth");
+      dob.isMeta = true;
+
+      bf.addField(dob);
+
+      FormInputFieldOptionsWithAttachments healthDetailsInput =
+          FormInputFieldOptionsWithAttachments(
+              "Pre-existing Medical Conditions",
+              false,
+              "Please select all known medical conditions the applicant have",
+              [
+                Value('None'),
+                Value('Chronic kidney disease'),
+                Value('Chronic lung disease'),
+                Value('Diabetes'),
+                Value('Heart Conditions'),
+                Value('Other Cardiovascular and Cerebrovascular Diseases'),
+                Value("Hemoglobin disorders"),
+                Value("HIV or weakened Immune System"),
+                Value("Liver disease"),
+                Value("Neurologic conditions such as dementia"),
+                Value("Overweight and Severe Obesity"),
+                Value("Pregnancy")
+              ],
+              true);
+
+      healthDetailsInput.isMeta = true;
+      healthDetailsInput.defaultValueIndex = 0;
+
+      bf.addField(healthDetailsInput);
+
+      FormInputFieldOptionsWithAttachments frontLineWorkerProof =
+          FormInputFieldOptionsWithAttachments(
+              "Only for Frontline workers",
+              false,
+              "Please select the category by Applicant's profession and upload a supporting ID proof/documents. Applicant must carry these documents along with him/her to the Vaccination Center.",
+              [
+                Value('None'),
+                Value('Medical Professional'),
+                Value('Government Official'),
+                Value('MP/MLA'),
+                Value('Others'),
+              ],
+              false);
+      frontLineWorkerProof.isMeta = true;
+      frontLineWorkerProof.defaultValueIndex = 0;
+      bf.addField(frontLineWorkerProof);
+
+      FormInputFieldOptionsWithAttachments idProof =
+          FormInputFieldOptionsWithAttachments(
+              "Government Issued ID Proof",
+              true,
+              "Select valid government issued ID Proof and upload its images. The applicant must carry these documents along with him/her to the Vaccination Center.",
+              [
+                Value('PAN'),
+                Value('Passport'),
+                Value('Driving License'),
+                Value('Aadhaar Card'),
+                Value('Bank Passbook'),
+                Value('Any other government issued photo ID'),
+              ],
+              true);
+
+      bf.addField(idProof);
+
+      FormInputFieldPhone phoneField = FormInputFieldPhone(
+          "Applicant's phone number",
+          true,
+          "Please enter the applicant's phone number");
+
+      bf.addField(phoneField);
+    }
+
+    //NOTE: If this is executed, every time the ID of the field is going to change
+    await _gs.getTokenApplicationService().saveBookingForm(bf);
+
+    MyGeoFirePoint geoPoint = new MyGeoFirePoint(17.444317, 78.355321);
+    Entity entity = new Entity(
+        entityId: Covid_Vacination_center,
+        name: "Selenium Covid Vacination Center",
+        address: adrs,
+        advanceDays: 7,
+        isPublic: true,
+        maxAllowed: 60,
+        slotDuration: 60,
+        closedOn: [WEEK_DAY_MONDAY, WEEK_DAY_FRIDAY],
+        breakStartHour: 13,
+        breakStartMinute: 30,
+        breakEndHour: 14,
+        breakEndMinute: 30,
+        startTimeHour: 10,
+        startTimeMinute: 30,
+        endTimeHour: 21,
+        endTimeMinute: 0,
+        parentId: null,
+        type: EntityType.PLACE_TYPE_COVID19_VACCINATION_CENTER,
+        isBookable: true,
+        isActive: true,
+        verificationStatus: VERIFICATION_VERIFIED,
+        coordinates: geoPoint,
+        offer: null,
+        paytm: "+919611009823",
+        phone: "+918328592031",
+        gpay: "+919611009823",
+        whatsapp: "+918328592031",
+        bookingFormId: bf.id,
+        maxTokensPerSlotByUser: 2);
+
+    try {
+      entity.regNum = "testReg111";
+      await _gs.getEntityService().upsertEntity(entity);
+    } catch (e) {
+      print("Exception occured " + e.toString());
+    }
+
+    return bf;
+
+    // FormInputFieldOptions options =
+    //     seleniumVacCenter.tokenBookingForm.formFields[2];
+
+    // if (seleniumVacCenter.tokenBookingForm.formFields.length == 3 &&
+    //     options.values.length == 11) {
+    //   print("Token Booking Form Fields tested --> SUCCESS");
+    // } else {
+    //   print(
+    //       "Token Booking Form Fields tested -----------------------> FAILURE");
+    // }
+  }
 }

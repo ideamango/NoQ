@@ -28,8 +28,12 @@
                 <data android:host="in.lesss.net" android:scheme="https" />
                 <data android:host="in.lesss.net" android:scheme="http" />
             </intent-filter>
+            <intent-filter>
+                <action android:name="FLUTTER_NOTIFICATION_CLICK" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
         </activity>
-        <activity android:name="com.apptreesoftware.barcodescan.BarcodeScannerActivity"/>
+        <activity android:name="com.apptreesoftware.barcodescan.BarcodeScannerActivity" />
         <receiver android:name="com.dexterous.flutterlocalnotifications.ScheduledNotificationBootReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
@@ -42,5 +46,5 @@
              This is used by the Flutter tool to generate GeneratedPluginRegistrant.java -->
         <meta-data android:name="flutterEmbedding" android:value="2" />
     </application>
-     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.INTERNET" />
 </manifest>
