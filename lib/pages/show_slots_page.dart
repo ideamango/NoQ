@@ -3,6 +3,7 @@ import 'package:flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
 import 'package:noq/db/db_model/entity.dart';
 import 'package:noq/db/db_model/meta_entity.dart';
+import 'package:noq/db/db_model/meta_form.dart';
 import 'package:noq/db/db_model/slot.dart';
 import 'package:noq/db/exceptions/slot_full_exception.dart';
 import 'package:noq/db/exceptions/token_already_exists_exception.dart';
@@ -572,6 +573,9 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
 //Check if booking form is required then take request else show form.
                 if (!Utils.isNullOrEmpty(entity.forms)) {
                   //Show Booking request form SELECTION page
+                  MetaForm f = entity.forms[0];
+                  //TESTING TODO: Remove later
+                  entity.forms.add(f);
 
                   if (entity.forms.length > 1) {
                     showDialog(
@@ -598,6 +602,7 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
                                         metaEntity: entity,
                                         forms: entity.forms,
                                         preferredSlotTime: sl.dateTime,
+                                        backRoute: SearchEntityPage(),
                                       ),
                                     ),
                                     IconButton(
@@ -618,7 +623,7 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
                         .getBookingForm(entity.forms[0].id)
                         .then((value) {
                       print(value.appointmentRequired);
-                      //Build FORM page and NAVIGATE to display
+                      //TODO: Build FORM page and NAVIGATE to display
                       Navigator.push(
                           context,
                           MaterialPageRoute(
@@ -626,6 +631,7 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
                                     metaEntity: entity,
                                     bookingFormId: entity.forms[0].id,
                                     preferredSlotTime: sl.dateTime,
+                                    backRoute: SearchEntityPage(),
                                   )));
                     });
                   }

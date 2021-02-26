@@ -35,11 +35,13 @@ class CovidTokenBookingFormPage extends StatefulWidget {
   final MetaEntity metaEntity;
   final String bookingFormId;
   final DateTime preferredSlotTime;
+  final dynamic backRoute;
   CovidTokenBookingFormPage(
       {Key key,
       @required this.metaEntity,
       @required this.bookingFormId,
-      @required this.preferredSlotTime})
+      @required this.preferredSlotTime,
+      @required this.backRoute})
       : super(key: key);
   @override
   _CovidTokenBookingFormPageState createState() =>
@@ -1219,8 +1221,7 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage>
       }
 
       backRoute() {
-        Navigator.of(context)
-            .push(PageAnimation.createRoute(SearchEntityPage()));
+        Navigator.of(context).push(PageAnimation.createRoute(widget.backRoute));
       }
 
       processSaveWithTimer() async {
