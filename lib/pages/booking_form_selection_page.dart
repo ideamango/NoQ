@@ -4,6 +4,7 @@ import 'package:noq/db/db_model/meta_form.dart';
 import 'package:noq/global_state.dart';
 import 'package:noq/pages/covid_token_booking_form.dart';
 import 'package:noq/pages/manage_entity_list_page.dart';
+import 'package:noq/pages/overview_page.dart';
 import 'package:noq/style.dart';
 import 'package:noq/utils.dart';
 import 'package:noq/widget/appbar.dart';
@@ -14,12 +15,14 @@ class BookingFormSelection extends StatefulWidget {
   final MetaEntity metaEntity;
   final List<MetaForm> forms;
   final DateTime preferredSlotTime;
+  final dynamic isAdmin;
   final dynamic backRoute;
   BookingFormSelection(
       {Key key,
       @required this.metaEntity,
       @required this.forms,
       @required this.preferredSlotTime,
+      @required this.isAdmin,
       @required this.backRoute})
       : super(key: key);
 
@@ -41,25 +44,6 @@ class _BookingFormSelectionState extends State<BookingFormSelection> {
     super.initState();
     // metaEntity = this.widget.metaEntity;
     forms = this.widget.forms;
-//SMITA TODO - Remove later after testing
-    MetaForm m1 = new MetaForm(
-        description: "Dummy formgfh",
-        id: "StrGuid1",
-        name: "Dummy Frgghm name");
-    MetaForm m2 = new MetaForm(
-        description: "Dummy fordfgm",
-        id: "StrGuid2",
-        name: "Dummy Frhgyutym name");
-    MetaForm m3 = new MetaForm(
-        description: "Dummy formdfg",
-        id: "StrGuid3",
-        name: "Dummy Frm dfgname");
-    forms.add(m1);
-    forms.add(m2);
-    forms.add(m3);
-
-//SMITA TODO - Remove later after testing
-
     getGlobalState().whenComplete(() {
       setState(() {
         initCompleted = true;
@@ -74,13 +58,22 @@ class _BookingFormSelectionState extends State<BookingFormSelection> {
   void _handleRadioValueChange1(int value) {
     setState(() {
       _selectedValue = value;
-      fwdRoute = CovidTokenBookingFormPage(
-        bookingFormId: forms[_selectedValue].id,
-        metaEntity: widget.metaEntity,
-        //TODO: getting null check this - SMITA
-        preferredSlotTime: widget.preferredSlotTime,
-        backRoute: ManageEntityListPage(),
-      );
+      if (!widget.isAdmin) {
+        fwdRoute = CovidTokenBookingFormPage(
+          bookingFormId: forms[_selectedValue].id,
+          metaEntity: widget.metaEntity,
+          //TODO: getting null check this - SMITA
+          preferredSlotTime: widget.preferredSlotTime,
+          backRoute: ManageEntityListPage(),
+        );
+      } else {
+        //If admin then show overview page as per selected form id
+        fwdRoute = OverviewPage(
+          bookingFormId: widget.metaEntity.forms[0].id,
+          entityId: widget.metaEntity.entityId,
+          metaEntity: widget.metaEntity,
+        );
+      }
     });
   }
 
