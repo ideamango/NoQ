@@ -1,12 +1,15 @@
 import 'dart:async';
 
 import 'dart:io';
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:intl/intl.dart';
+import 'package:noq/SlotSelectionPage.dart';
 import 'package:noq/constants.dart';
 import 'package:noq/db/db_model/address.dart';
 import 'package:noq/db/db_model/booking_application.dart';
@@ -59,6 +62,7 @@ class _BookingApplicationFormPageState extends State<BookingApplicationFormPage>
   final GlobalKey<FormFieldState> contactPhoneKey =
       new GlobalKey<FormFieldState>();
   List<String> saveData = List<String>();
+  DateTime preferredSlotTime;
 
   //Fields used in info - animated container
   double _width = 0;
@@ -193,6 +197,7 @@ class _BookingApplicationFormPageState extends State<BookingApplicationFormPage>
   void initState() {
     super.initState();
     metaEntity = this.widget.metaEntity;
+    preferredSlotTime = this.widget.preferredSlotTime;
 
     getGlobalState().whenComplete(() {
       initBookingForm();
@@ -1364,6 +1369,171 @@ class _BookingApplicationFormPageState extends State<BookingApplicationFormPage>
                   child: new ListView(
                     padding: const EdgeInsets.all(5.0),
                     children: <Widget>[
+                      Container(
+                        decoration: BoxDecoration(
+                            border: Border.all(color: containerColor),
+                            color: Colors.grey[50],
+                            shape: BoxShape.rectangle,
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(5.0))),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            Column(
+                              children: <Widget>[
+                                Container(
+                                  //padding: EdgeInsets.only(left: 5),
+                                  decoration: darkContainer,
+                                  child: Theme(
+                                    data: ThemeData(
+                                      unselectedWidgetColor: Colors.white,
+                                      accentColor: Colors.grey[50],
+                                    ),
+                                    child: CustomExpansionTile(
+                                      //key: PageStorageKey(this.widget.headerTitle),
+                                      initiallyExpanded: false,
+                                      title: Row(
+                                        children: <Widget>[
+                                          Text(
+                                            "Selected Time Slot",
+                                            style: TextStyle(
+                                                color: Colors.white,
+                                                fontSize: 15),
+                                          ),
+                                          SizedBox(width: 5),
+                                        ],
+                                      ),
+                                      backgroundColor: Colors.blueGrey[500],
+
+                                      children: <Widget>[
+                                        new Container(
+                                          width: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                              .94,
+                                          decoration: darkContainer,
+                                          padding: EdgeInsets.all(2.0),
+                                          child: Row(
+                                            children: <Widget>[
+                                              Expanded(
+                                                child: Text(basicInfoStr,
+                                                    style: buttonXSmlTextStyle),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                                Container(
+                                  padding: EdgeInsets.fromLTRB(5, 8, 5, 5),
+                                  child: Column(
+                                    children: <Widget>[
+                                      Column(
+                                        children: [
+                                          Row(
+                                            children: [
+                                              SizedBox(
+                                                  // width: cardWidth * .45,
+                                                  child: Wrap(
+                                                children: [
+                                                  AutoSizeText(
+                                                    "Current time-slot :",
+                                                    //group: labelGroup,
+                                                    minFontSize: 15,
+                                                    maxFontSize: 15,
+                                                    maxLines: 2,
+                                                    overflow: TextOverflow.clip,
+                                                    style: fieldLabelTextStyle,
+                                                  ),
+                                                ],
+                                              )),
+                                              Wrap(children: [
+                                                Container(
+                                                  padding:
+                                                      EdgeInsets.only(left: 5),
+                                                  child: AutoSizeText(
+                                                      ((preferredSlotTime !=
+                                                              null)
+                                                          ? DateFormat(
+                                                                  'yyyy-MM-dd – kk:mm')
+                                                              .format(
+                                                                  preferredSlotTime)
+                                                          : "None"),
+                                                      // group: medCondGroup,
+                                                      minFontSize: 12,
+                                                      maxFontSize: 14,
+                                                      maxLines: 1,
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
+                                                      style: TextStyle(
+                                                        color: btnColor,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                      )),
+                                                ),
+                                              ]),
+                                            ],
+                                          ),
+                                          Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.start,
+                                            children: [
+                                              AutoSizeText(
+                                                "Click to choose another Time-Slot",
+                                                // group: labelGroup,
+                                                minFontSize: 15,
+                                                maxFontSize: 15,
+                                                maxLines: 2,
+                                                overflow: TextOverflow.clip,
+                                                style: fieldLabelTextStyle,
+                                              ),
+                                              IconButton(
+                                                  icon: Icon(
+                                                    Icons.date_range,
+                                                    color: btnColor,
+                                                  ),
+                                                  onPressed: () async {
+                                                    final result =
+                                                        await Navigator.push(
+                                                            context,
+                                                            MaterialPageRoute(
+                                                                builder:
+                                                                    (context) =>
+                                                                        SlotSelectionPage(
+                                                                          metaEntity:
+                                                                              widget.metaEntity,
+                                                                          dateTime:
+                                                                              preferredSlotTime,
+                                                                          forPage:
+                                                                              "ApplicationList",
+                                                                        )));
+
+                                                    print(result);
+                                                    setState(() {
+                                                      if (result != null)
+                                                        preferredSlotTime =
+                                                            result;
+                                                    });
+                                                  })
+                                            ],
+                                          ),
+                                        ],
+                                      ),
+
+                                      // alternatePhoneField,
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                      SizedBox(
+                        height: 7,
+                      ),
                       Container(
                         decoration: BoxDecoration(
                             border: Border.all(color: containerColor),

@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:noq/db/db_model/meta_entity.dart';
 import 'package:noq/db/db_model/meta_form.dart';
 import 'package:noq/global_state.dart';
+import 'package:noq/pages/booking_application_form.dart';
 import 'package:noq/pages/covid_token_booking_form.dart';
 import 'package:noq/pages/manage_entity_list_page.dart';
 import 'package:noq/pages/overview_page.dart';
+import 'package:noq/pages/search_entity_page.dart';
 import 'package:noq/style.dart';
 import 'package:noq/utils.dart';
 import 'package:noq/widget/appbar.dart';
@@ -59,12 +61,12 @@ class _BookingFormSelectionState extends State<BookingFormSelection> {
     setState(() {
       _selectedValue = value;
       if (!widget.isAdmin) {
-        fwdRoute = CovidTokenBookingFormPage(
+        fwdRoute = BookingApplicationFormPage(
           bookingFormId: forms[_selectedValue].id,
           metaEntity: widget.metaEntity,
           //TODO: getting null check this - SMITA
           preferredSlotTime: widget.preferredSlotTime,
-          backRoute: ManageEntityListPage(),
+          backRoute: SearchEntityPage(),
         );
       } else {
         //If admin then show overview page as per selected form id
