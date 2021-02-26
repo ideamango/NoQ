@@ -30,6 +30,7 @@ class DBTest {
   String TEST_COVID_BOOKING_FORM_ID = COVID_BOOKING_FORM_ID;
 
   String Covid_Vacination_center = "Selenium-Covid-Vacination-Center";
+  String Multi_Forms_School_ID = "Selenium-School_Multiple_Forms";
 
   GlobalState _gs;
   DBTest() {
@@ -276,6 +277,7 @@ class DBTest {
   }
 
   Future<void> clearAll() async {
+    DateTime now = DateTime.now();
     try {
       _gs = await GlobalState.getGlobalState();
       await _gs.getEntityService().deleteEntity('SportsEntity103');
@@ -317,8 +319,6 @@ class DBTest {
       await _gs
           .getApplicationService()
           .deleteBookingForm(TEST_COVID_BOOKING_FORM_ID);
-
-      DateTime now = DateTime.now();
 
       //delete globalCounter
       String globalCounterId =
@@ -370,6 +370,97 @@ class DBTest {
       }
     } catch (e) {
       print("Error occurred in cleaning.. may be DB is already cleaned.");
+    }
+
+    await _gs
+        .getApplicationService()
+        .deleteBookingForm(SCHOOL_GENERAL_NEW_ADMISSION_BOOKING_FORM_ID);
+
+    await _gs
+        .getApplicationService()
+        .deleteBookingForm(SCHOOL_GENERAL_TC_REQUEST_FORM_ID);
+
+    await _gs
+        .getApplicationService()
+        .deleteBookingForm(SCHOOL_GENERAL_GRIEVANCE_FORM_ID);
+
+    await _gs
+        .getApplicationService()
+        .deleteBookingForm(SCHOOL_GENERAL_INQUIRY_FORM_ID);
+
+    await _gs.getEntityService().deleteEntity(Multi_Forms_School_ID);
+
+    //delete globalCounter
+    String globalCounterNewAdmissionRequestFormId =
+        SCHOOL_GENERAL_NEW_ADMISSION_BOOKING_FORM_ID +
+            "#" +
+            now.year.toString();
+    await _gs
+        .getApplicationService()
+        .deleteCounter(globalCounterNewAdmissionRequestFormId);
+
+    //delete local counter
+    String localCounterNewAdmissionId =
+        SCHOOL_GENERAL_NEW_ADMISSION_BOOKING_FORM_ID +
+            "#" +
+            Multi_Forms_School_ID +
+            "#" +
+            now.year.toString();
+
+    await _gs.getApplicationService().deleteCounter(localCounterNewAdmissionId);
+
+    //delete globalCounter for TC form
+    String globalCounterTCRequestFormId =
+        SCHOOL_GENERAL_TC_REQUEST_FORM_ID + "#" + now.year.toString();
+    await _gs
+        .getApplicationService()
+        .deleteCounter(globalCounterTCRequestFormId);
+
+    //delete local counter for TC form
+    String localCounterTCId = SCHOOL_GENERAL_TC_REQUEST_FORM_ID +
+        "#" +
+        Multi_Forms_School_ID +
+        "#" +
+        now.year.toString();
+
+    await _gs.getApplicationService().deleteCounter(localCounterTCId);
+
+    List<BookingApplication> admissionApplications = await _gs
+        .getApplicationService()
+        .getApplications(
+            SCHOOL_GENERAL_NEW_ADMISSION_BOOKING_FORM_ID,
+            Multi_Forms_School_ID,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null);
+
+    for (BookingApplication ba in admissionApplications) {
+      await _gs.getApplicationService().deleteApplication(ba.id);
+    }
+
+    List<BookingApplication> tcApplications = await _gs
+        .getApplicationService()
+        .getApplications(
+            SCHOOL_GENERAL_NEW_ADMISSION_BOOKING_FORM_ID,
+            Multi_Forms_School_ID,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null);
+
+    for (BookingApplication ba in tcApplications) {
+      await _gs.getApplicationService().deleteApplication(ba.id);
     }
   }
 
@@ -893,6 +984,8 @@ class DBTest {
     await testApplicationCancellation(approvedBA);
 
     await testAvailableFreeSlots(covVacinationCenter.getMetaEntity());
+
+    await testMultipleBookingFormsWithSchoolEntity();
 
     print(
         "<==========================================TESTING DONE=========================================>");
@@ -1863,125 +1956,198 @@ class DBTest {
     }
   }
 
-  Future<BookingForm> testMultipleBookingFormsWithSchool() async {
+  Future<void> testMultipleBookingFormsWithSchoolEntity() async {
     Address adrs = new Address(
         city: "Hyderbad",
         state: "Telangana",
         country: "India",
         address: "Shop 61, Towli Chowk Bazar, Gachibowli");
 
-    BookingForm bf = await _gs
-        .getTokenApplicationService()
-        .getBookingForm(TEST_COVID_BOOKING_FORM_ID);
+    //admission form
+    BookingForm admissionForm = await _gs
+        .getApplicationService()
+        .getBookingForm(SCHOOL_GENERAL_NEW_ADMISSION_BOOKING_FORM_ID);
 
-    if (bf == null) {
-      bf = new BookingForm(
-          formName: "Covid-19 Vacination Applicant Details",
+    if (admissionForm == null) {
+      admissionForm = new BookingForm(
+          formName: "Admission Form",
           headerMsg:
               "You request will be approved based on the information provided by you, please enter the correct information.",
           footerMsg:
-              "Applicant must carry the same ID proof documents to the vacination center. Also mark your presence 15 minutes prior to your alloted time. Failing to do so will result in cancellation of your application.",
+              "Please carry Transfer Certificate, Birth Certificate, Photo ID of the Student, 3 passport photo of student, 1 photo of parent. Please mark your presence 5 minutes prior to your appointment time.",
           autoApproved: true);
 
-      bf.isSystemTemplate = true;
-      bf.id = TEST_COVID_BOOKING_FORM_ID;
-      bf.autoApproved = false;
+      admissionForm.isSystemTemplate = true;
+      admissionForm.id = SCHOOL_GENERAL_NEW_ADMISSION_BOOKING_FORM_ID;
+      admissionForm.autoApproved = false;
 
-      FormInputFieldText nameInput = FormInputFieldText("Name of the Applicant",
-          true, "Please enter your name as per Government ID proof", 50);
+      FormInputFieldText nameInput = FormInputFieldText(
+          "Name of the Student",
+          true,
+          "Please enter your name as per Government ID proof or Birth Certificate",
+          50);
       nameInput.isMeta = true;
 
-      bf.addField(nameInput);
+      admissionForm.addField(nameInput);
 
       FormInputFieldDateTime dob = FormInputFieldDateTime(
-          "Date of Birth of the Applicant",
+          "Date of Birth of the Student",
           true,
-          "Please select the applicant's Date of Birth");
+          "Please select the student's Date of Birth");
       dob.isMeta = true;
 
-      bf.addField(dob);
+      admissionForm.addField(dob);
 
-      FormInputFieldOptionsWithAttachments healthDetailsInput =
-          FormInputFieldOptionsWithAttachments(
-              "Pre-existing Medical Conditions",
-              false,
-              "Please select all known medical conditions the applicant have",
-              [
-                Value('None'),
-                Value('Chronic kidney disease'),
-                Value('Chronic lung disease'),
-                Value('Diabetes'),
-                Value('Heart Conditions'),
-                Value('Other Cardiovascular and Cerebrovascular Diseases'),
-                Value("Hemoglobin disorders"),
-                Value("HIV or weakened Immune System"),
-                Value("Liver disease"),
-                Value("Neurologic conditions such as dementia"),
-                Value("Overweight and Severe Obesity"),
-                Value("Pregnancy")
-              ],
-              true);
+      FormInputFieldOptions classDetailsInput = FormInputFieldOptions(
+          "Admission seeking for ",
+          false,
+          "Please select the class you are seeking admission for ",
+          [
+            Value('Nursery'),
+            Value('LKG'),
+            Value('UKG'),
+            Value('Class 1'),
+            Value('Class 2'),
+            Value('Class 3'),
+            Value('Class 4'),
+            Value('Class 5'),
+            Value('Class 6'),
+            Value('Class 7'),
+            Value('Class 8'),
+            Value('Class 9'),
+            Value('Class 10')
+          ],
+          false);
 
-      healthDetailsInput.isMeta = true;
-      healthDetailsInput.defaultValueIndex = 0;
+      classDetailsInput.isMeta = true;
+      classDetailsInput.defaultValueIndex = 0;
 
-      bf.addField(healthDetailsInput);
+      admissionForm.addField(classDetailsInput);
 
-      FormInputFieldOptionsWithAttachments frontLineWorkerProof =
-          FormInputFieldOptionsWithAttachments(
-              "Only for Frontline workers",
-              false,
-              "Please select the category by Applicant's profession and upload a supporting ID proof/documents. Applicant must carry these documents along with him/her to the Vaccination Center.",
-              [
-                Value('None'),
-                Value('Medical Professional'),
-                Value('Government Official'),
-                Value('MP/MLA'),
-                Value('Others'),
-              ],
-              false);
-      frontLineWorkerProof.isMeta = true;
-      frontLineWorkerProof.defaultValueIndex = 0;
-      bf.addField(frontLineWorkerProof);
+      FormInputFieldAttachment tcImage = FormInputFieldAttachment(
+          "Upload Transfer certificate",
+          false,
+          "If the student is moving from another school, you need to submit the original Transfer Certificate");
+
+      admissionForm.addField(tcImage);
 
       FormInputFieldOptionsWithAttachments idProof =
           FormInputFieldOptionsWithAttachments(
               "Government Issued ID Proof",
               true,
-              "Select valid government issued ID Proof and upload its images. The applicant must carry these documents along with him/her to the Vaccination Center.",
+              "Select valid government issued ID Proof and upload its images.",
               [
-                Value('PAN'),
+                Value('Birth Certificate'),
                 Value('Passport'),
-                Value('Driving License'),
                 Value('Aadhaar Card'),
                 Value('Bank Passbook'),
                 Value('Any other government issued photo ID'),
               ],
               true);
 
-      bf.addField(idProof);
-
-      FormInputFieldPhone phoneField = FormInputFieldPhone(
-          "Applicant's phone number",
-          true,
-          "Please enter the applicant's phone number");
-
-      bf.addField(phoneField);
+      admissionForm.addField(idProof);
     }
 
     //NOTE: If this is executed, every time the ID of the field is going to change
-    await _gs.getTokenApplicationService().saveBookingForm(bf);
+    await _gs.getApplicationService().saveBookingForm(admissionForm);
+
+    print("AdmissionForm for a school with is created");
+
+    //TC request
+    BookingForm tcForm = await _gs
+        .getApplicationService()
+        .getBookingForm(SCHOOL_GENERAL_TC_REQUEST_FORM_ID);
+
+    if (tcForm == null) {
+      tcForm = new BookingForm(
+          formName: "Transfer Certificate Request Form",
+          headerMsg:
+              "Please ensure that all dues are cleared before making this request.",
+          footerMsg: "",
+          autoApproved: true);
+
+      tcForm.isSystemTemplate = true;
+      tcForm.id = SCHOOL_GENERAL_TC_REQUEST_FORM_ID;
+      tcForm.autoApproved = true;
+
+      FormInputFieldText nameInput = FormInputFieldText(
+          "Name of the Student",
+          true,
+          "Please enter your name of the student as per school record",
+          50);
+      nameInput.isMeta = true;
+      nameInput.isMandatory = true;
+
+      tcForm.addField(nameInput);
+
+      FormInputFieldText rollNumberInput = FormInputFieldText(
+          "Student's roll number",
+          true,
+          "Please enter student's roll number",
+          50);
+      rollNumberInput.isMeta = true;
+      rollNumberInput.isMandatory = true;
+
+      tcForm.addField(rollNumberInput);
+
+      FormInputFieldOptions classDetailsInput = FormInputFieldOptions(
+          "Student's class",
+          false,
+          "Please select the current class of the student",
+          [
+            Value('Nursery'),
+            Value('LKG'),
+            Value('UKG'),
+            Value('Class 1'),
+            Value('Class 2'),
+            Value('Class 3'),
+            Value('Class 4'),
+            Value('Class 5'),
+            Value('Class 6'),
+            Value('Class 7'),
+            Value('Class 8'),
+            Value('Class 9'),
+            Value('Class 10')
+          ],
+          false);
+
+      classDetailsInput.isMeta = true;
+      classDetailsInput.defaultValueIndex = -1;
+      classDetailsInput.isMandatory = true;
+
+      tcForm.addField(classDetailsInput);
+
+      FormInputFieldOptions relationWithStudent = FormInputFieldOptions(
+          "Your relation",
+          false,
+          "Please select the current class of the student",
+          [Value('Self'), Value('Father'), Value('Mother'), Value('Gaurdian')],
+          false);
+
+      relationWithStudent.isMeta = false;
+      relationWithStudent.defaultValueIndex = -1;
+      relationWithStudent.isMandatory = true;
+    }
+
+    //NOTE: If this is executed, every time the ID of the field is going to change
+    await _gs.getApplicationService().saveBookingForm(tcForm);
+
+    print("TCForm for a school with is created");
+
+    List<MetaForm> forms = List<MetaForm>();
+    forms.add(MetaForm(id: admissionForm.id, name: admissionForm.formName));
+    forms.add(MetaForm(id: tcForm.id, name: tcForm.formName));
 
     MyGeoFirePoint geoPoint = new MyGeoFirePoint(17.444317, 78.355321);
     Entity entity = new Entity(
-        entityId: Covid_Vacination_center,
-        name: "Selenium Covid Vacination Center",
+        entityId: Multi_Forms_School_ID,
+        name: "Selenium International School",
         address: adrs,
         advanceDays: 7,
         isPublic: true,
-        maxAllowed: 60,
-        slotDuration: 60,
-        closedOn: [WEEK_DAY_MONDAY, WEEK_DAY_FRIDAY],
+        maxAllowed: 5,
+        slotDuration: 30,
+        closedOn: [WEEK_DAY_SUNDAY],
         breakStartHour: 13,
         breakStartMinute: 30,
         breakEndHour: 14,
@@ -1991,7 +2157,7 @@ class DBTest {
         endTimeHour: 21,
         endTimeMinute: 0,
         parentId: null,
-        type: EntityType.PLACE_TYPE_COVID19_VACCINATION_CENTER,
+        type: EntityType.PLACE_TYPE_SCHOOL,
         isBookable: true,
         isActive: true,
         verificationStatus: VERIFICATION_VERIFIED,
@@ -2001,27 +2167,16 @@ class DBTest {
         phone: "+918328592031",
         gpay: "+919611009823",
         whatsapp: "+918328592031",
-        bookingFormId: bf.id,
+        forms: forms,
         maxTokensPerSlotByUser: 2);
 
     try {
-      entity.regNum = "testReg111";
+      entity.regNum = "testReg2222";
       await _gs.getEntityService().upsertEntity(entity);
+      print("Creating a school with multiple forms");
     } catch (e) {
-      print("Exception occured " + e.toString());
+      print("Exception occured while creating a school with multiple form " +
+          e.toString());
     }
-
-    return bf;
-
-    // FormInputFieldOptions options =
-    //     seleniumVacCenter.tokenBookingForm.formFields[2];
-
-    // if (seleniumVacCenter.tokenBookingForm.formFields.length == 3 &&
-    //     options.values.length == 11) {
-    //   print("Token Booking Form Fields tested --> SUCCESS");
-    // } else {
-    //   print(
-    //       "Token Booking Form Fields tested -----------------------> FAILURE");
-    // }
   }
 }
