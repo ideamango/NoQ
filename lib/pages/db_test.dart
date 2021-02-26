@@ -30,6 +30,7 @@ class DBTest {
   String TEST_COVID_BOOKING_FORM_ID = COVID_BOOKING_FORM_ID;
 
   String Covid_Vacination_center = "Selenium-Covid-Vacination-Center";
+  String Multi_Forms_School_ID = "Selenium-School_Multiple_Forms";
 
   GlobalState _gs;
   DBTest() {
@@ -276,6 +277,7 @@ class DBTest {
   }
 
   Future<void> clearAll() async {
+    DateTime now = DateTime.now();
     try {
       _gs = await GlobalState.getGlobalState();
       await _gs.getEntityService().deleteEntity('SportsEntity103');
@@ -317,8 +319,6 @@ class DBTest {
       await _gs
           .getApplicationService()
           .deleteBookingForm(TEST_COVID_BOOKING_FORM_ID);
-
-      DateTime now = DateTime.now();
 
       //delete globalCounter
       String globalCounterId =
@@ -370,6 +370,97 @@ class DBTest {
       }
     } catch (e) {
       print("Error occurred in cleaning.. may be DB is already cleaned.");
+    }
+
+    await _gs
+        .getApplicationService()
+        .deleteBookingForm(SCHOOL_GENERAL_NEW_ADMISSION_BOOKING_FORM_ID);
+
+    await _gs
+        .getApplicationService()
+        .deleteBookingForm(SCHOOL_GENERAL_TC_REQUEST_FORM_ID);
+
+    await _gs
+        .getApplicationService()
+        .deleteBookingForm(SCHOOL_GENERAL_GRIEVANCE_FORM_ID);
+
+    await _gs
+        .getApplicationService()
+        .deleteBookingForm(SCHOOL_GENERAL_INQUIRY_FORM_ID);
+
+    await _gs.getEntityService().deleteEntity(Multi_Forms_School_ID);
+
+    //delete globalCounter
+    String globalCounterNewAdmissionRequestFormId =
+        SCHOOL_GENERAL_NEW_ADMISSION_BOOKING_FORM_ID +
+            "#" +
+            now.year.toString();
+    await _gs
+        .getApplicationService()
+        .deleteCounter(globalCounterNewAdmissionRequestFormId);
+
+    //delete local counter
+    String localCounterNewAdmissionId =
+        SCHOOL_GENERAL_NEW_ADMISSION_BOOKING_FORM_ID +
+            "#" +
+            Multi_Forms_School_ID +
+            "#" +
+            now.year.toString();
+
+    await _gs.getApplicationService().deleteCounter(localCounterNewAdmissionId);
+
+    //delete globalCounter for TC form
+    String globalCounterTCRequestFormId =
+        SCHOOL_GENERAL_TC_REQUEST_FORM_ID + "#" + now.year.toString();
+    await _gs
+        .getApplicationService()
+        .deleteCounter(globalCounterTCRequestFormId);
+
+    //delete local counter for TC form
+    String localCounterTCId = SCHOOL_GENERAL_TC_REQUEST_FORM_ID +
+        "#" +
+        Multi_Forms_School_ID +
+        "#" +
+        now.year.toString();
+
+    await _gs.getApplicationService().deleteCounter(localCounterTCId);
+
+    List<BookingApplication> admissionApplications = await _gs
+        .getApplicationService()
+        .getApplications(
+            SCHOOL_GENERAL_NEW_ADMISSION_BOOKING_FORM_ID,
+            Multi_Forms_School_ID,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null);
+
+    for (BookingApplication ba in admissionApplications) {
+      await _gs.getApplicationService().deleteApplication(ba.id);
+    }
+
+    List<BookingApplication> tcApplications = await _gs
+        .getApplicationService()
+        .getApplications(
+            SCHOOL_GENERAL_NEW_ADMISSION_BOOKING_FORM_ID,
+            Multi_Forms_School_ID,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null);
+
+    for (BookingApplication ba in tcApplications) {
+      await _gs.getApplicationService().deleteApplication(ba.id);
     }
   }
 
@@ -893,6 +984,8 @@ class DBTest {
     await testApplicationCancellation(approvedBA);
 
     await testAvailableFreeSlots(covVacinationCenter.getMetaEntity());
+
+    await testMultipleBookingFormsWithSchoolEntity();
 
     print(
         "<==========================================TESTING DONE=========================================>");
@@ -1860,6 +1953,230 @@ class DBTest {
       print("Getting free slots --> SUCCESS");
     } else {
       print("Getting free slots ------------------------------> Failure");
+    }
+  }
+
+  Future<void> testMultipleBookingFormsWithSchoolEntity() async {
+    Address adrs = new Address(
+        city: "Hyderbad",
+        state: "Telangana",
+        country: "India",
+        address: "Shop 61, Towli Chowk Bazar, Gachibowli");
+
+    //admission form
+    BookingForm admissionForm = await _gs
+        .getApplicationService()
+        .getBookingForm(SCHOOL_GENERAL_NEW_ADMISSION_BOOKING_FORM_ID);
+
+    if (admissionForm == null) {
+      admissionForm = new BookingForm(
+          formName: "Admission Form",
+          headerMsg:
+              "You request will be approved based on the information provided by you, please enter the correct information.",
+          footerMsg:
+              "Please carry Transfer Certificate, Birth Certificate, Photo ID of the Student, 3 passport photo of student, 1 photo of parent. Please mark your presence 5 minutes prior to your appointment time.",
+          autoApproved: true);
+
+      admissionForm.isSystemTemplate = true;
+      admissionForm.id = SCHOOL_GENERAL_NEW_ADMISSION_BOOKING_FORM_ID;
+      admissionForm.autoApproved = false;
+
+      FormInputFieldText nameInput = FormInputFieldText(
+          "Name of the Student",
+          true,
+          "Please enter your name as per Government ID proof or Birth Certificate",
+          50);
+      nameInput.isMeta = true;
+
+      admissionForm.addField(nameInput);
+
+      FormInputFieldDateTime dob = FormInputFieldDateTime(
+          "Date of Birth of the Student",
+          true,
+          "Please select the student's Date of Birth");
+      dob.isMeta = true;
+
+      admissionForm.addField(dob);
+
+      FormInputFieldOptions classDetailsInput = FormInputFieldOptions(
+          "Admission seeking for ",
+          false,
+          "Please select the class you are seeking admission for ",
+          [
+            Value('Nursery'),
+            Value('LKG'),
+            Value('UKG'),
+            Value('Class 1'),
+            Value('Class 2'),
+            Value('Class 3'),
+            Value('Class 4'),
+            Value('Class 5'),
+            Value('Class 6'),
+            Value('Class 7'),
+            Value('Class 8'),
+            Value('Class 9'),
+            Value('Class 10')
+          ],
+          false);
+
+      classDetailsInput.isMeta = true;
+      classDetailsInput.defaultValueIndex = 0;
+
+      admissionForm.addField(classDetailsInput);
+
+      FormInputFieldAttachment tcImage = FormInputFieldAttachment(
+          "Upload Transfer certificate",
+          false,
+          "If the student is moving from another school, you need to submit the original Transfer Certificate");
+
+      admissionForm.addField(tcImage);
+
+      FormInputFieldOptionsWithAttachments idProof =
+          FormInputFieldOptionsWithAttachments(
+              "Government Issued ID Proof",
+              true,
+              "Select valid government issued ID Proof and upload its images.",
+              [
+                Value('Birth Certificate'),
+                Value('Passport'),
+                Value('Aadhaar Card'),
+                Value('Bank Passbook'),
+                Value('Any other government issued photo ID'),
+              ],
+              true);
+
+      admissionForm.addField(idProof);
+    }
+
+    //NOTE: If this is executed, every time the ID of the field is going to change
+    await _gs.getApplicationService().saveBookingForm(admissionForm);
+
+    print("AdmissionForm for a school with is created");
+
+    //TC request
+    BookingForm tcForm = await _gs
+        .getApplicationService()
+        .getBookingForm(SCHOOL_GENERAL_TC_REQUEST_FORM_ID);
+
+    if (tcForm == null) {
+      tcForm = new BookingForm(
+          formName: "Transfer Certificate Request Form",
+          headerMsg:
+              "Please ensure that all dues are cleared before making this request.",
+          footerMsg: "",
+          autoApproved: true);
+
+      tcForm.isSystemTemplate = true;
+      tcForm.id = SCHOOL_GENERAL_TC_REQUEST_FORM_ID;
+      tcForm.autoApproved = true;
+
+      FormInputFieldText nameInput = FormInputFieldText(
+          "Name of the Student",
+          true,
+          "Please enter your name of the student as per school record",
+          50);
+      nameInput.isMeta = true;
+      nameInput.isMandatory = true;
+
+      tcForm.addField(nameInput);
+
+      FormInputFieldText rollNumberInput = FormInputFieldText(
+          "Student's roll number",
+          true,
+          "Please enter student's roll number",
+          50);
+      rollNumberInput.isMeta = true;
+      rollNumberInput.isMandatory = true;
+
+      tcForm.addField(rollNumberInput);
+
+      FormInputFieldOptions classDetailsInput = FormInputFieldOptions(
+          "Student's class",
+          false,
+          "Please select the current class of the student",
+          [
+            Value('Nursery'),
+            Value('LKG'),
+            Value('UKG'),
+            Value('Class 1'),
+            Value('Class 2'),
+            Value('Class 3'),
+            Value('Class 4'),
+            Value('Class 5'),
+            Value('Class 6'),
+            Value('Class 7'),
+            Value('Class 8'),
+            Value('Class 9'),
+            Value('Class 10')
+          ],
+          false);
+
+      classDetailsInput.isMeta = true;
+      classDetailsInput.defaultValueIndex = -1;
+      classDetailsInput.isMandatory = true;
+
+      tcForm.addField(classDetailsInput);
+
+      FormInputFieldOptions relationWithStudent = FormInputFieldOptions(
+          "Your relation",
+          false,
+          "Please select the current class of the student",
+          [Value('Self'), Value('Father'), Value('Mother'), Value('Gaurdian')],
+          false);
+
+      relationWithStudent.isMeta = false;
+      relationWithStudent.defaultValueIndex = -1;
+      relationWithStudent.isMandatory = true;
+    }
+
+    //NOTE: If this is executed, every time the ID of the field is going to change
+    await _gs.getApplicationService().saveBookingForm(tcForm);
+
+    print("TCForm for a school with is created");
+
+    List<MetaForm> forms = List<MetaForm>();
+    forms.add(MetaForm(id: admissionForm.id, name: admissionForm.formName));
+    forms.add(MetaForm(id: tcForm.id, name: tcForm.formName));
+
+    MyGeoFirePoint geoPoint = new MyGeoFirePoint(17.444317, 78.355321);
+    Entity entity = new Entity(
+        entityId: Multi_Forms_School_ID,
+        name: "Selenium International School",
+        address: adrs,
+        advanceDays: 7,
+        isPublic: true,
+        maxAllowed: 5,
+        slotDuration: 30,
+        closedOn: [WEEK_DAY_SUNDAY],
+        breakStartHour: 13,
+        breakStartMinute: 30,
+        breakEndHour: 14,
+        breakEndMinute: 30,
+        startTimeHour: 10,
+        startTimeMinute: 30,
+        endTimeHour: 21,
+        endTimeMinute: 0,
+        parentId: null,
+        type: EntityType.PLACE_TYPE_SCHOOL,
+        isBookable: true,
+        isActive: true,
+        verificationStatus: VERIFICATION_VERIFIED,
+        coordinates: geoPoint,
+        offer: null,
+        paytm: "+919611009823",
+        phone: "+918328592031",
+        gpay: "+919611009823",
+        whatsapp: "+918328592031",
+        forms: forms,
+        maxTokensPerSlotByUser: 2);
+
+    try {
+      entity.regNum = "testReg2222";
+      await _gs.getEntityService().upsertEntity(entity);
+      print("Creating a school with multiple forms");
+    } catch (e) {
+      print("Exception occured while creating a school with multiple form " +
+          e.toString());
     }
   }
 }
