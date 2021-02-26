@@ -3,10 +3,12 @@ import 'package:flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
 import 'package:noq/db/db_model/entity.dart';
 import 'package:noq/db/db_model/meta_entity.dart';
+import 'package:noq/db/db_model/meta_form.dart';
 import 'package:noq/db/db_model/slot.dart';
 import 'package:noq/db/exceptions/slot_full_exception.dart';
 import 'package:noq/db/exceptions/token_already_exists_exception.dart';
 import 'package:noq/global_state.dart';
+import 'package:noq/pages/booking_application_form.dart';
 import 'package:noq/pages/booking_form_selection_page.dart';
 import 'package:noq/pages/covid_token_booking_form.dart';
 import 'package:noq/pages/search_child_entity_page.dart';
@@ -19,6 +21,7 @@ import 'package:noq/style.dart';
 import 'package:noq/utils.dart';
 import 'package:noq/widget/appbar.dart';
 import 'package:noq/widget/header.dart';
+import 'package:noq/widget/page_animation.dart';
 import 'package:noq/widget/widgets.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:intl/intl.dart';
@@ -570,62 +573,50 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
             onPressed: () {
               if (!isDisabled(sl.dateTime)) {
 //Check if booking form is required then take request else show form.
+//TODO: Testing code Dummy remove later - Start
+                MetaForm m1 = new MetaForm(
+                    description: "Dummy formgfh",
+                    id: "StrGuid1",
+                    name: "Dummy Frgghm name");
+                MetaForm m2 = new MetaForm(
+                    description: "Dummy fordfgm",
+                    id: "StrGuid2",
+                    name: "Dummy Frhgyutym name");
+                MetaForm m3 = new MetaForm(
+                    description: "Dummy formdfg",
+                    id: "StrGuid3",
+                    name: "Dummy Frm dfgname");
+                entity.forms.add(m1);
+                entity.forms.add(m2);
+                entity.forms.add(m3);
+                //TODO: Testing code Dummy remove later - End
+
                 if (!Utils.isNullOrEmpty(entity.forms)) {
-                  //Show Booking request form SELECTION page
-
                   if (entity.forms.length > 1) {
-                    showDialog(
-                        barrierDismissible: false,
-                        context: context,
-                        builder: (_) => AlertDialog(
-                              titlePadding: EdgeInsets.fromLTRB(10, 15, 10, 10),
-                              contentPadding: EdgeInsets.all(0),
-                              actionsPadding: EdgeInsets.all(5),
-                              //buttonPadding: EdgeInsets.all(0),
-
-                              content: Container(
-                                padding: EdgeInsets.all(10),
-                                color: Colors.white,
-                                width: MediaQuery.of(context).size.width,
-                                height: MediaQuery.of(context).size.width,
-                                child: Stack(
-                                  alignment: Alignment.topRight,
-                                  children: [
-                                    Container(
-                                      padding:
-                                          EdgeInsets.fromLTRB(0, 20, 20, 20),
-                                      child: BookingFormSelection(
-                                        metaEntity: entity,
-                                        forms: entity.forms,
-                                        preferredSlotTime: sl.dateTime,
-                                      ),
-                                    ),
-                                    IconButton(
-                                      alignment: Alignment.topRight,
-                                      padding: EdgeInsets.zero,
-                                      icon: Icon(Icons.cancel_outlined,
-                                          color: Colors.blue[800], size: 20),
-                                      onPressed: () =>
-                                          Navigator.of(_).pop(true),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ));
+                    //Show Booking request form SELECTION page
+                    Navigator.of(context)
+                        .push(PageAnimation.createRoute(BookingFormSelection(
+                      forms: entity.forms,
+                      metaEntity: entity,
+                      preferredSlotTime: sl.dateTime,
+                      isAdmin: false,
+                      backRoute: SearchEntityPage(),
+                    )));
                   } else {
                     _gs
                         .getApplicationService()
                         .getBookingForm(entity.forms[0].id)
                         .then((value) {
                       print(value.appointmentRequired);
-                      //Build FORM page and NAVIGATE to display
+                      //TODO: Build FORM page and NAVIGATE to display
                       Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => CovidTokenBookingFormPage(
+                              builder: (context) => BookingApplicationFormPage(
                                     metaEntity: entity,
                                     bookingFormId: entity.forms[0].id,
                                     preferredSlotTime: sl.dateTime,
+                                    backRoute: SearchEntityPage(),
                                   )));
                     });
                   }

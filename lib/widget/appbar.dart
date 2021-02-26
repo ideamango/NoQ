@@ -113,3 +113,77 @@ class _CustomAppBarWithBackButtonState
     );
   }
 }
+
+class CustomAppBarWithBackFwdButton extends StatefulWidget
+    implements PreferredSizeWidget {
+  final String titleTxt;
+  final dynamic backRoute;
+  final dynamic fwdRoute;
+  CustomAppBarWithBackFwdButton(
+      {Key key,
+      @required this.titleTxt,
+      @required this.backRoute,
+      @required this.fwdRoute})
+      : preferredSize = Size.fromHeight(kToolbarHeight),
+        super(key: key);
+
+  @override
+  final Size preferredSize; // default is 56.0
+
+  @override
+  _CustomAppBarWithBackFwdButtonState createState() =>
+      _CustomAppBarWithBackFwdButtonState();
+}
+
+class _CustomAppBarWithBackFwdButtonState
+    extends State<CustomAppBarWithBackFwdButton> {
+  final GlobalKey _appBarKey = new GlobalKey();
+
+  @override
+  Widget build(BuildContext context) {
+    return AppBar(
+      key: _appBarKey,
+      title: Text(
+        widget.titleTxt,
+        style: TextStyle(color: Colors.white, fontSize: 16),
+        overflow: TextOverflow.ellipsis,
+      ),
+      flexibleSpace: Container(
+        decoration: gradientBackground,
+      ),
+      leading: IconButton(
+          padding: EdgeInsets.all(0),
+          alignment: Alignment.center,
+          highlightColor: Colors.orange[300],
+          icon: Icon(Icons.arrow_back_ios),
+          color: Colors.white,
+          onPressed: () {
+            Navigator.of(context).pop();
+            if (widget.backRoute != null)
+              Navigator.of(context)
+                  .push(PageAnimation.createRoute(widget.backRoute));
+          }),
+
+      actions: <Widget>[
+        IconButton(
+            icon: Icon(Icons.arrow_forward_ios),
+            color: Colors.white,
+            onPressed: () {
+              //Navigator.of(context).pop();
+              if (widget.fwdRoute != null)
+                Navigator.of(context)
+                    .push(PageAnimation.createRoute(widget.fwdRoute));
+            })
+      ],
+      // leading: Builder(
+      //   builder: (BuildContext context) {
+      //     return IconButton(
+      //       color: Colors.white,
+      //       icon: Icon(Icons.more_vert),
+      //       onPressed: () => Scaffold.of(context).openDrawer(),
+      //     );
+      //   },
+      // ),
+    );
+  }
+}

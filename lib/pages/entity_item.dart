@@ -2,8 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:noq/constants.dart';
 import 'package:noq/db/db_model/entity.dart';
 import 'package:noq/db/db_model/meta_entity.dart';
+import 'package:noq/db/db_model/meta_form.dart';
+import 'package:noq/pages/booking_form_selection_page.dart';
 
 import 'package:noq/pages/manage_entity_details_page.dart';
+import 'package:noq/pages/manage_entity_list_page.dart';
 import 'package:noq/pages/overview_page.dart';
 import 'package:noq/services/circular_progress.dart';
 import 'package:noq/services/qr_code_generate.dart';
@@ -246,36 +249,61 @@ class EntityRowState extends State<EntityRow> {
                 ],
               ),
               verticalSpacer,
-              Container(
-                height: MediaQuery.of(context).size.height * .05,
-                width: MediaQuery.of(context).size.width * .884,
-                child: FlatButton(
-                  // elevation: 7,
-                  color: Colors.white,
-                  textColor: Colors.white,
-                  shape: RoundedRectangleBorder(
-                      side: BorderSide(color: Colors.blueGrey[500]),
-                      borderRadius: BorderRadius.all(Radius.circular(5.0))),
-                  splashColor: highlightColor,
-                  child: Text(
-                    'Manage Details',
-                    style: TextStyle(color: primaryDarkColor, fontSize: 13),
+              Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: <
+                  Widget>[
+                Container(
+                  margin: EdgeInsets.all(0),
+                  padding: EdgeInsets.all(0),
+                  width: MediaQuery.of(context).size.width * .42,
+                  height: MediaQuery.of(context).size.height * .05,
+                  child: FlatButton(
+                    padding: EdgeInsets.all(0),
+                    color: Colors.white,
+                    textColor: Colors.white,
+                    shape: RoundedRectangleBorder(
+                        side: BorderSide(color: Colors.blueGrey[500]),
+                        borderRadius: BorderRadius.all(Radius.circular(5.0))),
+                    splashColor: highlightColor,
+                    child: Text(
+                      'Manage Details',
+                      style: TextStyle(color: primaryDarkColor, fontSize: 13),
+                    ),
+                    // Text(
+                    //   (_metaEntity.name != null)
+                    //       ? (_metaEntity.name)
+                    //       : (_metaEntity.type),
+                    //   style: labelTextStyle,
+                    // ),
+
+                    //Icon(Icons.arrow_forward),
+
+                    onPressed: () {
+                      print("To Add details page");
+                      showServiceForm();
+                    },
                   ),
-                  // Text(
-                  //   (_metaEntity.name != null)
-                  //       ? (_metaEntity.name)
-                  //       : (_metaEntity.type),
-                  //   style: labelTextStyle,
-                  // ),
-
-                  //Icon(Icons.arrow_forward),
-
-                  onPressed: () {
-                    print("To Add details page");
-                    showServiceForm();
-                  },
                 ),
-              ),
+                Container(
+                  width: MediaQuery.of(context).size.width * .42,
+                  height: MediaQuery.of(context).size.height * .05,
+                  child: FlatButton(
+                    // elevation: 7,
+                    color: Colors.white,
+                    splashColor: highlightColor.withOpacity(.8),
+                    shape: RoundedRectangleBorder(
+                        side: BorderSide(color: Colors.blueGrey[500]),
+                        borderRadius: BorderRadius.all(Radius.circular(5.0))),
+                    child: Text(
+                      'Child Places',
+                      style: TextStyle(color: primaryDarkColor, fontSize: 13),
+                    ),
+                    onPressed: () {
+                      print("To child list page");
+                      showChildListPage();
+                    },
+                  ),
+                ),
+              ]),
               SizedBox(height: 5),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -291,12 +319,60 @@ class EntityRowState extends State<EntityRow> {
                           side: BorderSide(color: Colors.blueGrey[500]),
                           borderRadius: BorderRadius.all(Radius.circular(5.0))),
                       child: Text(
-                        'Child Places',
+                        'Booking Applications',
                         style: TextStyle(color: primaryDarkColor, fontSize: 13),
                       ),
                       onPressed: () {
-                        print("To child list page");
-                        showChildListPage();
+                        print("Over To overview page");
+                        if (!Utils.isNullOrEmpty(_metaEntity.forms)) {
+//TODO: Show popup for differen available forms, admin selects a form then show corresponding overview page
+//TODO: Testing code Dummy remove later - Start
+                          MetaForm m1 = new MetaForm(
+                              description: "Dummy formgfh",
+                              id: "StrGuid1",
+                              name: "Dummy Frgghm name");
+                          MetaForm m2 = new MetaForm(
+                              description: "Dummy fordfgm",
+                              id: "StrGuid2",
+                              name: "Dummy Frhgyutym name");
+                          MetaForm m3 = new MetaForm(
+                              description: "Dummy formdfg",
+                              id: "StrGuid3",
+                              name: "Dummy Frm dfgname");
+                          _metaEntity.forms.add(m1);
+                          _metaEntity.forms.add(m2);
+                          _metaEntity.forms.add(m3);
+                          //TODO: Testing code Dummy remove later - End
+                          if (_metaEntity.forms.length > 1) {
+                            Navigator.of(context).push(
+                                PageAnimation.createRoute(BookingFormSelection(
+                              forms: _metaEntity.forms,
+                              metaEntity: _metaEntity,
+                              preferredSlotTime: null,
+                              isAdmin: true,
+                              backRoute: ManageEntityListPage(),
+                            )));
+                          } else {
+                            Navigator.of(context)
+                                .push(PageAnimation.createRoute(OverviewPage(
+                              bookingFormId: _metaEntity.forms[0].id,
+                              entityId: _metaEntity.entityId,
+                              metaEntity: _metaEntity,
+                            )));
+                          }
+                        } else {
+                          Utils.showMyFlushbar(
+                              context,
+                              Icons.info_outline,
+                              Duration(seconds: 5),
+                              "No Bookings found as of now!!",
+                              "");
+                        }
+
+                        // Navigator.of(context)
+                        //     .push(PageAnimation.createRoute(ManageBookings(
+                        //   metaEntity: _metaEntity,
+                        // )));
                       },
                     ),
                   ),
@@ -311,30 +387,11 @@ class EntityRowState extends State<EntityRow> {
                           side: BorderSide(color: Colors.blueGrey[500]),
                           borderRadius: BorderRadius.all(Radius.circular(5.0))),
                       child: Text(
-                        'Manage Bookings',
+                        'Booking Tokens',
                         style: TextStyle(color: primaryDarkColor, fontSize: 13),
                       ),
                       onPressed: () {
-                        print("Over To overview page");
-                        if (!Utils.isNullOrEmpty(_metaEntity.forms)) {
-                          Navigator.of(context).push(PageAnimation.createRoute(
-                              OverviewPage(
-                                  bookingFormId: _metaEntity.forms[0].id,
-                                  entityId: _metaEntity.entityId,
-                                  metaEntity: _metaEntity)));
-                        } else {
-                          Utils.showMyFlushbar(
-                              context,
-                              Icons.info_outline,
-                              Duration(seconds: 5),
-                              "No Bookings found as of now!!",
-                              "");
-                        }
-
-                        // Navigator.of(context)
-                        //     .push(PageAnimation.createRoute(ManageBookings(
-                        //   metaEntity: _metaEntity,
-                        // )));
+                        print("To child list page");
                       },
                     ),
                   ),

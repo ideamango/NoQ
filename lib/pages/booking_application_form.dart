@@ -31,12 +31,12 @@ import 'package:flushbar/flushbar.dart';
 import 'package:noq/widget/widgets.dart';
 import 'package:path/path.dart';
 
-class CovidTokenBookingFormPage extends StatefulWidget {
+class BookingApplicationFormPage extends StatefulWidget {
   final MetaEntity metaEntity;
   final String bookingFormId;
   final DateTime preferredSlotTime;
   final dynamic backRoute;
-  CovidTokenBookingFormPage(
+  BookingApplicationFormPage(
       {Key key,
       @required this.metaEntity,
       @required this.bookingFormId,
@@ -44,11 +44,11 @@ class CovidTokenBookingFormPage extends StatefulWidget {
       @required this.backRoute})
       : super(key: key);
   @override
-  _CovidTokenBookingFormPageState createState() =>
-      _CovidTokenBookingFormPageState();
+  _BookingApplicationFormPageState createState() =>
+      _BookingApplicationFormPageState();
 }
 
-class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage>
+class _BookingApplicationFormPageState extends State<BookingApplicationFormPage>
     with SingleTickerProviderStateMixin {
   bool _autoValidate = false;
   final GlobalKey<FormState> _tokenBookingDetailsFormKey =
