@@ -102,6 +102,10 @@ final inputTextStyle = TextStyle(
   fontSize: 16,
   height: 2,
 );
+final fieldLabelTextStyle = TextStyle(
+  color: Colors.grey[700],
+  fontSize: 16,
+);
 final lightLabelTextStyle = TextStyle(
     color: Colors.blueGrey[50],
     letterSpacing: 0.5,

@@ -19,6 +19,7 @@ import 'package:noq/style.dart';
 import 'package:noq/utils.dart';
 import 'package:noq/widget/appbar.dart';
 import 'package:noq/widget/header.dart';
+import 'package:noq/widget/weekday_selector.dart';
 import 'package:noq/widget/widgets.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:intl/intl.dart';
@@ -65,6 +66,7 @@ class _SlotSelectionPageState extends State<SlotSelectionPage> {
   MetaEntity entity;
   Entity parentEntity;
   DateTime currDateTime = DateTime.now();
+  DateTime slotSelectionDate;
 
   @override
   void initState() {
@@ -72,6 +74,9 @@ class _SlotSelectionPageState extends State<SlotSelectionPage> {
     _date = widget.dateTime;
     _storeId = entity.entityId;
     _storeName = entity.name;
+    if (_date != null) {
+      slotSelectionDate = _date;
+    }
 
     super.initState();
     if (entity.parentId != null) {
@@ -87,6 +92,11 @@ class _SlotSelectionPageState extends State<SlotSelectionPage> {
 
     //Fetch details from server
     getSlotsListForEntity(entity, datetime).then((slotList) {
+      for (Slot s in slotList) {
+        if (s.dateTime.compareTo(slotSelectionDate) == 0) {
+          selectedSlot = s;
+        }
+      }
       setState(() {
         _slotList = slotList;
         _initCompleted = true;
@@ -184,7 +194,7 @@ class _SlotSelectionPageState extends State<SlotSelectionPage> {
                 phone: _gs.getCurrentUser().ph,
               ),
               body: Padding(
-                padding: const EdgeInsets.fromLTRB(6, 6, 6, 6),
+                padding: const EdgeInsets.fromLTRB(6, 26, 6, 6),
                 child: Container(
                   decoration: BoxDecoration(
                       border: Border.all(color: borderColor),
@@ -198,23 +208,62 @@ class _SlotSelectionPageState extends State<SlotSelectionPage> {
                         padding: EdgeInsets.fromLTRB(6, 0, 0, 0),
                         decoration: darkContainer,
                         child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: <Widget>[
                             //verticalSpacer,
-                            IconButton(
-                              icon: Icon(
-                                Icons.cancel,
-                                size: 30,
-                                color: Colors.white,
+
+                            Container(
+                              width: MediaQuery.of(context).size.width * .16,
+                              child: FlatButton(
+                                padding: EdgeInsets.all(0),
+                                child: Row(
+                                  children: [
+                                    Icon(
+                                      Icons.arrow_back_ios,
+                                      size: 20,
+                                      color: (slotSelectionDate
+                                                  .compareTo(currDateTime) >=
+                                              0)
+                                          ? Colors.white
+                                          : Colors.blueGrey[300],
+                                    ),
+                                    Text("Prev",
+                                        style: TextStyle(
+                                            color: (slotSelectionDate.compareTo(
+                                                        currDateTime) >=
+                                                    0)
+                                                ? Colors.white
+                                                : Colors.blueGrey[300])),
+                                  ],
+                                ),
+                                onPressed: () {
+                                  print(slotSelectionDate
+                                      .compareTo(currDateTime));
+                                  if (slotSelectionDate
+                                          .compareTo(currDateTime) >=
+                                      0) {
+                                    slotSelectionDate = slotSelectionDate
+                                        .subtract(Duration(days: 1));
+                                    _loadSlots(slotSelectionDate);
+                                  } else {
+                                    Utils.showMyFlushbar(
+                                        context,
+                                        Icons.info,
+                                        Duration(seconds: 4),
+                                        "You cannot book for past date!",
+                                        "");
+                                  }
+
+                                  //Navigator.pop(context);
+                                },
                               ),
-                              onPressed: () {
-                                Navigator.pop(context);
-                              },
                             ),
                             //  SizedBox(width: 10),
                             Wrap(
                               children: [
                                 SizedBox(
-                                  width: MediaQuery.of(context).size.width * .6,
+                                  width:
+                                      MediaQuery.of(context).size.width * .52,
                                   // height: MediaQuery.of(context).size.width * .11,
                                   child: (selectedSlot == null)
                                       ? AutoSizeText(
@@ -247,18 +296,92 @@ class _SlotSelectionPageState extends State<SlotSelectionPage> {
                               ],
                             ),
 
-                            IconButton(
-                              padding: EdgeInsets.all(0),
-                              icon: Icon(
-                                Icons.arrow_forward_ios,
-                                size: 20,
-                                color: Colors.white,
-                              ),
-                              onPressed: () {
-                                _loadSlots(_date.add(Duration(days: 1)));
+                            Container(
+                              width: MediaQuery.of(context).size.width * .16,
+                              alignment: Alignment.centerRight,
+                              child: FlatButton(
+                                padding: EdgeInsets.all(0),
+                                child: Row(
+                                  children: [
+                                    Text("Next",
+                                        style: TextStyle(
+                                          color: (slotSelectionDate
+                                                      .add(Duration(days: 1))
+                                                      .compareTo(currDateTime
+                                                          .add(Duration(
+                                                              days: entity
+                                                                  .advanceDays))) >=
+                                                  0)
+                                              ? Colors.blueGrey[300]
+                                              : Colors.white,
+                                        )),
+                                    Icon(
+                                      Icons.arrow_forward_ios,
+                                      size: 20,
+                                      color: (slotSelectionDate
+                                                  .add(Duration(days: 1))
+                                                  .compareTo(currDateTime.add(
+                                                      Duration(
+                                                          days: entity
+                                                              .advanceDays))) >=
+                                              0)
+                                          ? Colors.blueGrey[300]
+                                          : Colors.white,
+                                    ),
+                                  ],
+                                ),
+                                onPressed: () {
+                                  print("Printn nextttt");
+                                  print(currDateTime);
+                                  print(entity.advanceDays);
 
-                                //Navigator.pop(context);
-                              },
+                                  // DateTime newDate = new DateTime(
+                                  //     slotSelectionDate
+                                  //         .add(Duration(days: 1))
+                                  //         .year,
+                                  //     slotSelectionDate
+                                  //         .add(Duration(days: 1))
+                                  //         .month,
+                                  //     slotSelectionDate
+                                  //         .add(Duration(days: 1))
+                                  //         .day,
+                                  //     selectedSlot.dateTime.hour,
+                                  //     selectedSlot.dateTime.minute);
+                                  // print(newDate);
+                                  // print(selectedSlot.dateTime.hour.toString);
+                                  // print(selectedSlot.dateTime.minute.toString);
+                                  if (slotSelectionDate
+                                          .add(Duration(days: 1))
+                                          .compareTo(currDateTime.add(Duration(
+                                              days: entity.advanceDays))) >=
+                                      0) {
+                                    Utils.showMyFlushbar(
+                                        context,
+                                        Icons.info,
+                                        Duration(seconds: 4),
+                                        "You cannot book beyond allowed advance days!",
+                                        "");
+
+                                    print("Gretaer than 0");
+                                  } else {
+                                    slotSelectionDate = slotSelectionDate
+                                        .add(Duration(days: 1));
+                                    _loadSlots(slotSelectionDate);
+                                  }
+
+                                  // print(slotSelectionDate
+                                  //     .add(Duration(days: metaEn.advanceDays))
+                                  //     .toString());
+                                  // print((currDateTime
+                                  //         .add(Duration(
+                                  //             days: metaEn.advanceDays))
+                                  //         .compareTo(slotSelectionDate) <=
+                                  //     0));
+
+                                  print(slotSelectionDate);
+                                  //Navigator.pop(context);
+                                },
+                              ),
                             ),
                           ],
                         ),
@@ -347,32 +470,60 @@ class _SlotSelectionPageState extends State<SlotSelectionPage> {
                             //   height: 10,
                             // ),
                             Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
+                              mainAxisAlignment: MainAxisAlignment.end,
                               children: <Widget>[
                                 SizedBox(
-                                  width: MediaQuery.of(context).size.width * .8,
-                                  height:
-                                      MediaQuery.of(context).size.height * .06,
+                                  width: MediaQuery.of(context).size.width * .3,
+                                  // height:
+                                  //     MediaQuery.of(context).size.height * .06,
                                   child: RaisedButton(
-                                    elevation: 10.0,
-                                    color: highlightColor,
-                                    splashColor: Colors.orangeAccent[700],
-                                    textColor: Colors.white,
+                                    elevation: 0.0,
+                                    color: Colors.white,
+                                    shape: RoundedRectangleBorder(
+                                        side: BorderSide(
+                                            color: Colors.blueGrey[500]),
+                                        borderRadius: BorderRadius.all(
+                                            Radius.circular(5.0))),
+                                    splashColor: highlightColor,
                                     child: Text(
-                                      'Book Slot',
-                                      style: TextStyle(fontSize: 20),
+                                      'Cancel',
+                                      style: TextStyle(
+                                        color: btnColor,
+                                        fontWeight: FontWeight.w700,
+                                        fontFamily: 'Montserrat',
+
+                                        fontSize: 15,
+                                        //height: 2,
+                                      ),
                                     ),
                                     onPressed: () {
-                                      if (selectedSlot != null)
-                                        bookSlot();
-                                      else {
-                                        Utils.showMyFlushbar(
-                                            context,
-                                            Icons.error,
-                                            Duration(seconds: 4),
-                                            forgotTimeSlot,
-                                            "");
-                                      }
+                                      Navigator.of(context).pop();
+                                    },
+                                  ),
+                                ),
+                                SizedBox(
+                                  width: 10,
+                                ),
+                                SizedBox(
+                                  width: MediaQuery.of(context).size.width * .3,
+                                  // height:
+                                  //     MediaQuery.of(context).size.height * .06,
+                                  child: RaisedButton(
+                                    elevation: 10.0,
+                                    color: btnColor,
+                                    splashColor: highlightColor,
+                                    shape: RoundedRectangleBorder(
+                                        side: BorderSide(
+                                            color: Colors.blueGrey[500]),
+                                        borderRadius: BorderRadius.all(
+                                            Radius.circular(5.0))),
+                                    child: Text(
+                                      'Ok',
+                                      style: buttonMedTextStyle,
+                                    ),
+                                    onPressed: () {
+                                      Navigator.of(context)
+                                          .pop(slotSelectionDate);
                                     },
                                   ),
                                 ),
@@ -592,7 +743,11 @@ class _SlotSelectionPageState extends State<SlotSelectionPage> {
                   if (sl.isFull == false) {
                     setState(() {
                       //unselect previously selected slot
+                      //TODO Smita: Update preferred selected slot also.
                       selectedSlot = sl;
+                      slotSelectionDate = selectedSlot.dateTime;
+                      print(slotSelectionDate);
+                      // = new DateTime()
                     });
                   } else
                     return null;
