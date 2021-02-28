@@ -864,6 +864,10 @@ class BookingApplicationService {
     if (doc.exists) {
       Map<String, dynamic> map = doc.data();
       counter = BookingApplicationsOverview.fromJson(map);
+    } else {
+      counter = BookingApplicationsOverview(
+          bookingFormId: bookingFormId, entityId: entityId);
+      counter.id = null;
     }
 
     return counter;
