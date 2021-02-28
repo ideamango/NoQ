@@ -74,8 +74,9 @@ class _SlotSelectionPageState extends State<SlotSelectionPage> {
     _date = widget.dateTime;
     _storeId = entity.entityId;
     _storeName = entity.name;
-
-    slotSelectionDate = _date;
+    if (_date != null) {
+      slotSelectionDate = _date;
+    }
 
     super.initState();
     if (entity.parentId != null) {
@@ -91,6 +92,11 @@ class _SlotSelectionPageState extends State<SlotSelectionPage> {
 
     //Fetch details from server
     getSlotsListForEntity(entity, datetime).then((slotList) {
+      for (Slot s in slotList) {
+        if (s.dateTime.compareTo(slotSelectionDate) == 0) {
+          selectedSlot = s;
+        }
+      }
       setState(() {
         _slotList = slotList;
         _initCompleted = true;
@@ -328,6 +334,22 @@ class _SlotSelectionPageState extends State<SlotSelectionPage> {
                                   print("Printn nextttt");
                                   print(currDateTime);
                                   print(entity.advanceDays);
+
+                                  // DateTime newDate = new DateTime(
+                                  //     slotSelectionDate
+                                  //         .add(Duration(days: 1))
+                                  //         .year,
+                                  //     slotSelectionDate
+                                  //         .add(Duration(days: 1))
+                                  //         .month,
+                                  //     slotSelectionDate
+                                  //         .add(Duration(days: 1))
+                                  //         .day,
+                                  //     selectedSlot.dateTime.hour,
+                                  //     selectedSlot.dateTime.minute);
+                                  // print(newDate);
+                                  // print(selectedSlot.dateTime.hour.toString);
+                                  // print(selectedSlot.dateTime.minute.toString);
                                   if (slotSelectionDate
                                           .add(Duration(days: 1))
                                           .compareTo(currDateTime.add(Duration(
@@ -721,7 +743,11 @@ class _SlotSelectionPageState extends State<SlotSelectionPage> {
                   if (sl.isFull == false) {
                     setState(() {
                       //unselect previously selected slot
+                      //TODO Smita: Update preferred selected slot also.
                       selectedSlot = sl;
+                      slotSelectionDate = selectedSlot.dateTime;
+                      print(slotSelectionDate);
+                      // = new DateTime()
                     });
                   } else
                     return null;
