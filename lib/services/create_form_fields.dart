@@ -1,10 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:noq/db/db_model/booking_form.dart';
+import 'package:noq/db/db_model/meta_entity.dart';
 import 'package:noq/enum/field_type.dart';
+import 'package:noq/global_state.dart';
+import 'package:noq/services/circular_progress.dart';
 
 import 'package:noq/style.dart';
 
 class CreateFormFields extends StatefulWidget {
+  final MetaEntity metaEntity;
+  final String bookingFormId;
+  final DateTime preferredSlotTime;
+  final dynamic backRoute;
+  CreateFormFields(
+      {Key key,
+      @required this.metaEntity,
+      @required this.bookingFormId,
+      @required this.preferredSlotTime,
+      @required this.backRoute})
+      : super(key: key);
+
   @override
   _CreateFormFieldsState createState() => _CreateFormFieldsState();
 }
@@ -19,79 +34,30 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
   BookingForm dummyForm;
   final itemSize = 100.0;
   List<String> dumList = new List<String>();
-  List<Item> selectedList = new List<Item>();
   Map<String, List<Item>> mapOfOptionsFields = Map<String, List<Item>>();
   List<Item> listf3 = new List<Item>();
   List<Item> listf4 = new List<Item>();
+  bool _initCompleted = false;
 
+  GlobalState _gs;
   @override
   void initState() {
     super.initState();
-    createDummyData();
-    selectedList = List();
-    // list.add(Item("Diabetes1", true));
-    // list.add(Item("Diabetes2", true));
-    // list.add(Item("Diabetes3", true));
-    // list.add(Item("Heart", true));
-    // list.add(Item("Lungs", false));
-    // list.add(Item("Kidney", false));
-    // list.add(Item("Asthma", true));
-    // list.add(Item("Blood Pressure", false));
-    // list.add(Item("Hyper Tension", false));
-    // list.add(Item("Thyroid", false));
+    getGlobalState().whenComplete(() {
+      _gs
+          .getApplicationService()
+          .getBookingForm(widget.bookingFormId)
+          .then((value) {
+        dummyForm = value;
+        setState(() {
+          _initCompleted = true;
+        });
+      });
+    });
   }
 
-  // double _height = 0;
-  // double _width = 0;
-  // bool _isExpanded = false;
-  createDummyData() {
-    List<Field> listOfFields = new List<Field>();
-    FormInputFieldText f1 =
-        new FormInputFieldText("Name", true, "Enter name of person", 20);
-    FormInputFieldNumber f2 = new FormInputFieldNumber(
-        "Duration of visit", true, "Enter purpose of visit", 0, 1000);
-    FormInputFieldNumber f5 = new FormInputFieldNumber(
-        "Address", true, "Address for Communication", 0, 1000);
-    List<Value> list = new List<Value>();
-    list.add(Value("Diabetes"));
-    list.add(Value("Asthma"));
-    list.add(Value("Blood Pressure"));
-    list.add(Value("Allergy"));
-    list.add(Value("Hyper Tension"));
-    list.add(Value("Thyroid"));
-
-    FormInputFieldOptions f3 = new FormInputFieldOptions("Medical Conditions",
-        true, "Medical COnditions(Select any)", list, true);
-
-    list.forEach((element) {
-      listf3.add(Item(element.value, false));
-    });
-    mapOfOptionsFields[f3.label] = listf3;
-
-    List<Value> list2 = new List<Value>();
-    list2.add(Value("Diabetesiii"));
-    list2.add(Value("Asthmayyyyy"));
-    list2.add(Value("Blood Pressurebbbb"));
-    list2.add(Value("Allergyxxxx"));
-
-    FormInputFieldOptions f4 = new FormInputFieldOptions(
-        "Surgeries, if any", true, "Surgery(Select any)", list, false);
-    for (int i = 0; i < list2.length; i++) {
-      listf4.add(Item(list2[i].value, false));
-    }
-    mapOfOptionsFields[f4.label] = listf4;
-
-    listOfFields.add(f1);
-    listOfFields.add(f2);
-    listOfFields.add(f3);
-    listOfFields.add(f4);
-    listOfFields.add(f5);
-
-    dummyForm = new BookingForm(
-        formName: "Token Allocation form",
-        footerMsg: "Footer",
-        headerMsg: "header",
-        autoApproved: true);
+  Future<void> getGlobalState() async {
+    _gs = await GlobalState.getGlobalState();
   }
 
   Widget buildChildItem(Field field, int index) {
@@ -234,81 +200,154 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: SafeArea(
-        child: Form(
-          key: _bookingFormKey,
-          child: Column(
-            children: [
-              Expanded(
-                child: ListView.builder(
-                  padding:
-                      EdgeInsets.all(MediaQuery.of(context).size.width * .026),
-                  // itemExtent: itemSize,
-                  // reverse: true,
-                  shrinkWrap: true,
-                  //scrollDirection: Axis.vertical,
-                  itemBuilder: (BuildContext context, int index) {
-                    _controllers.add(new TextEditingController());
-                    return Container(
-                      //color: Colors.grey,
-                      //   height: MediaQuery.of(context).size.height * .55,
-                      width: MediaQuery.of(context).size.width * .95,
-                      child: buildChildItem(
-                          dummyForm.getFormFields()[index], index),
-                    );
-                  },
-                  itemCount: dummyForm.getFormFields().length,
+    if (_initCompleted)
+      return MaterialApp(
+        debugShowCheckedModeBanner: false,
+        theme: ThemeData.light().copyWith(),
+        home: WillPopScope(
+          child: Scaffold(
+            appBar: AppBar(
+              actions: <Widget>[],
+              flexibleSpace: Container(
+                decoration: gradientBackground,
+              ),
+              leading: IconButton(
+                padding: EdgeInsets.all(0),
+                alignment: Alignment.center,
+                highlightColor: highlightColor,
+                icon: Icon(Icons.arrow_back),
+                color: Colors.white,
+                onPressed: () {
+                  print("going back");
+                  Navigator.of(context).pop();
+                },
+              ),
+              title: Text("Booking Request Form",
+                  style: TextStyle(color: Colors.white, fontSize: 16)),
+            ),
+            body: Center(
+              child: SafeArea(
+                child: Form(
+                  key: _bookingFormKey,
+                  child: Column(
+                    children: [
+                      Expanded(
+                        child: ListView.builder(
+                          padding: EdgeInsets.all(
+                              MediaQuery.of(context).size.width * .026),
+                          // itemExtent: itemSize,
+                          // reverse: true,
+                          shrinkWrap: true,
+                          //scrollDirection: Axis.vertical,
+                          itemBuilder: (BuildContext context, int index) {
+                            _controllers.add(new TextEditingController());
+                            return Container(
+                              //color: Colors.grey,
+                              //   height: MediaQuery.of(context).size.height * .55,
+                              width: MediaQuery.of(context).size.width * .95,
+                              child: buildChildItem(
+                                  dummyForm.getFormFields()[index], index),
+                            );
+                          },
+                          itemCount: dummyForm.getFormFields().length,
+                        ),
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          SizedBox(
+                            width: MediaQuery.of(context).size.width * .8,
+                            height: MediaQuery.of(context).size.height * .06,
+                            child: RaisedButton(
+                              elevation: 10.0,
+                              color: highlightColor,
+                              splashColor: Colors.orangeAccent[700],
+                              textColor: Colors.white,
+                              child: Text(
+                                'Save Details & Book Slot',
+                                style: TextStyle(fontSize: 20),
+                              ),
+                              onPressed: () {
+                                print('Save please');
+                              },
+                            ),
+                          ),
+                        ],
+                      ),
+
+                      // Text(dummyForm.formName),
+                      //  Text(dummyForm.headerMsg),
+                      // Container(
+                      //   child: TextFormField(
+                      //     obscureText: false,
+                      //     maxLines: 1,
+                      //     minLines: 1,
+                      //     style: textInputTextStyle,
+                      //     keyboardType: TextInputType.text,
+                      //     controller: _fieldController,
+                      //     decoration: CommonStyle.textFieldStyle(
+                      //         labelTextStr: "you", hintTextStr: ""),
+                      //     onChanged: (String value) {
+                      //       print(value);
+                      //     },
+                      //     onSaved: (String value) {
+                      //       print(value);
+                      //     },
+                      //   ),
+                      // ),
+                    ],
+                  ),
                 ),
               ),
-              Row(
+            ),
+          ),
+          onWillPop: () async {
+            return true;
+          },
+        ),
+      );
+    else {
+      return MaterialApp(
+        debugShowCheckedModeBanner: false,
+        theme: ThemeData.light().copyWith(),
+        home: WillPopScope(
+          child: Scaffold(
+            appBar: AppBar(
+              actions: <Widget>[],
+              flexibleSpace: Container(
+                decoration: gradientBackground,
+              ),
+              leading: IconButton(
+                padding: EdgeInsets.all(0),
+                alignment: Alignment.center,
+                highlightColor: highlightColor,
+                icon: Icon(Icons.arrow_back),
+                color: Colors.white,
+                onPressed: () {
+                  print("going back");
+                  Navigator.of(context).pop();
+                },
+              ),
+              title: Text("Booking Request Form",
+                  style: TextStyle(color: Colors.white, fontSize: 16)),
+            ),
+            body: Center(
+              child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
-                  SizedBox(
-                    width: MediaQuery.of(context).size.width * .8,
-                    height: MediaQuery.of(context).size.height * .06,
-                    child: RaisedButton(
-                      elevation: 10.0,
-                      color: highlightColor,
-                      splashColor: Colors.orangeAccent[700],
-                      textColor: Colors.white,
-                      child: Text(
-                        'Save Details & Book Slot',
-                        style: TextStyle(fontSize: 20),
-                      ),
-                      onPressed: () {
-                        print('Save please');
-                      },
-                    ),
-                  ),
+                  showCircularProgress(),
                 ],
               ),
-
-              // Text(dummyForm.formName),
-              //  Text(dummyForm.headerMsg),
-              // Container(
-              //   child: TextFormField(
-              //     obscureText: false,
-              //     maxLines: 1,
-              //     minLines: 1,
-              //     style: textInputTextStyle,
-              //     keyboardType: TextInputType.text,
-              //     controller: _fieldController,
-              //     decoration: CommonStyle.textFieldStyle(
-              //         labelTextStr: "you", hintTextStr: ""),
-              //     onChanged: (String value) {
-              //       print(value);
-              //     },
-              //     onSaved: (String value) {
-              //       print(value);
-              //     },
-              //   ),
-              // ),
-            ],
+            ),
+            //drawer: CustomDrawer(),
+            //bottomNavigationBar: CustomBottomBar(barIndex: 0),
           ),
+          onWillPop: () async {
+            return true;
+          },
         ),
-      ),
-    );
+      );
+    }
   }
 }
 

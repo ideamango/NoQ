@@ -35,7 +35,7 @@ final drawerdefaultTextStyle = TextStyle(
   //fontWeight: FontWeight.w800,
   fontFamily: 'Montserrat',
   // letterSpacing: 0.6,
-  fontSize: 16,
+  fontSize: 15,
   //height: 2,
 );
 

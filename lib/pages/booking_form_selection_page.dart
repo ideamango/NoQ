@@ -7,6 +7,7 @@ import 'package:noq/pages/covid_token_booking_form.dart';
 import 'package:noq/pages/manage_entity_list_page.dart';
 import 'package:noq/pages/overview_page.dart';
 import 'package:noq/pages/search_entity_page.dart';
+import 'package:noq/services/create_form_fields.dart';
 import 'package:noq/style.dart';
 import 'package:noq/utils.dart';
 import 'package:noq/widget/appbar.dart';
@@ -61,13 +62,20 @@ class _BookingFormSelectionState extends State<BookingFormSelection> {
     setState(() {
       _selectedValue = value;
       if (!widget.isAdmin) {
-        fwdRoute = BookingApplicationFormPage(
+        fwdRoute = CreateFormFields(
           bookingFormId: forms[_selectedValue].id,
           metaEntity: widget.metaEntity,
-          //TODO: getting null check this - SMITA
           preferredSlotTime: widget.preferredSlotTime,
           backRoute: SearchEntityPage(),
         );
+
+        // fwdRoute = BookingApplicationFormPage(
+        //   bookingFormId: forms[_selectedValue].id,
+        //   metaEntity: widget.metaEntity,
+        //   //TODO: getting null check this - SMITA
+        //   preferredSlotTime: widget.preferredSlotTime,
+        //   backRoute: SearchEntityPage(),
+        // );
       } else {
         //If admin then show overview page as per selected form id
         fwdRoute = OverviewPage(
@@ -132,7 +140,7 @@ class _BookingFormSelectionState extends State<BookingFormSelection> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
                   Text(
-                    "Select an application form",
+                    "Select the purpose for submitting application request",
                     style: TextStyle(
                       color: Colors.blueGrey[700],
                       fontFamily: 'RalewayRegular',

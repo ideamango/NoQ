@@ -18,11 +18,13 @@ import 'package:noq/widget/widgets.dart';
 class OverviewPage extends StatefulWidget {
   final String entityId;
   final String bookingFormId;
+  final String bookingFormName;
   final MetaEntity metaEntity;
   OverviewPage(
       {Key key,
       @required this.entityId,
       @required this.bookingFormId,
+      @required this.bookingFormName,
       @required this.metaEntity})
       : super(key: key);
   @override
@@ -45,6 +47,7 @@ class _OverviewPageState extends State<OverviewPage> {
           .getApplicationsOverview(
               widget.bookingFormId, widget.entityId, DateTime.now().year)
           .then((value) {
+        //TODO SMITA - check that applications overview doesn't come null.
         _bookingApplicationsOverview = value;
         if (this.mounted) {
           setState(() {
@@ -96,9 +99,12 @@ class _OverviewPageState extends State<OverviewPage> {
 
   @override
   Widget build(BuildContext context) {
-    String pageTitle = "Overview";
+    String pageTitle = "Overview of Applications";
     if (initCompleted) {
       refreshData();
+      String pageTitle = widget.bookingFormName != null
+          ? "Overview of ${widget.bookingFormName}"
+          : "Overview of Applications";
       return MaterialApp(
         debugShowCheckedModeBanner: false,
         theme: ThemeData.light().copyWith(),

@@ -29,6 +29,7 @@ class _CustomAppBarState extends State<CustomAppBar> {
       key: _appBarKey,
       title: Text(
         widget.titleTxt,
+        maxLines: 2,
         style: drawerdefaultTextStyle,
         overflow: TextOverflow.ellipsis,
       ),
@@ -74,7 +75,8 @@ class _CustomAppBarWithBackButtonState
       key: _appBarKey,
       title: Text(
         widget.titleTxt,
-        style: TextStyle(color: Colors.white, fontSize: 16),
+        maxLines: 2,
+        style: TextStyle(color: Colors.white, fontSize: 15),
         overflow: TextOverflow.ellipsis,
       ),
       flexibleSpace: Container(
@@ -145,7 +147,8 @@ class _CustomAppBarWithBackFwdButtonState
       key: _appBarKey,
       title: Text(
         widget.titleTxt,
-        style: TextStyle(color: Colors.white, fontSize: 16),
+        maxLines: 2,
+        style: TextStyle(color: Colors.white, fontSize: 15),
         overflow: TextOverflow.ellipsis,
       ),
       flexibleSpace: Container(

@@ -20,6 +20,7 @@ import 'package:noq/db/db_model/meta_entity.dart';
 import 'package:noq/db/db_model/my_geo_fire_point.dart';
 import 'package:noq/db/db_model/offer.dart';
 import 'package:noq/enum/application_status.dart';
+import 'package:noq/enum/field_type.dart';
 import 'package:noq/global_state.dart';
 import 'package:noq/pages/search_entity_page.dart';
 import 'package:noq/pages/show_slots_page.dart';
@@ -211,7 +212,9 @@ class _BookingApplicationFormPageState extends State<BookingApplicationFormPage>
         .then((value) {
       if (value == null) {
         //TODO: return to show slots page
-
+        setState(() {
+          _initCompleted = true;
+        });
       } else {
         bookingForm = value;
         for (Field f in bookingForm.getFormFields()) {
@@ -220,6 +223,20 @@ class _BookingApplicationFormPageState extends State<BookingApplicationFormPage>
           else if (f.key == "KEY20")
             dobInput = f;
           else if (f.key == "KEY30") {
+            print(f.type);
+
+            switch (f.type) {
+              case FieldType.OPTIONS:
+                FormInputFieldOptions newF = f;
+                fields.add(newF);
+
+                break;
+              case FieldType.OPTIONS_ATTACHMENTS:
+                break;
+
+              default:
+            }
+
             medConditionsField = f; //Validate this field
             medConditionsField.responseValues = new List<Value>();
             for (int i = 0; i < medConditionsField.options.length; i++) {
@@ -457,466 +474,509 @@ class _BookingApplicationFormPageState extends State<BookingApplicationFormPage>
   @override
   Widget build(BuildContext context) {
     if (_initCompleted) {
-      //Basic details field
-      final nameField = TextFormField(
-        obscureText: false,
-        //TODO: Add maxlength = 50
-        maxLines: 1,
-        minLines: 1,
-        autovalidateMode: AutovalidateMode.always,
-        style: textInputTextStyle,
-        controller: _nameController,
-        keyboardType: TextInputType.text,
-        decoration: CommonStyle.textFieldStyle(
-            labelTextStr: nameInput != null ? nameInput.label : "",
-            hintTextStr: "Please enter your name as per Government ID proof"),
-        validator: validateText,
-        onChanged: (String value) {
-          nameInput.response = value;
-        },
-        onSaved: (String value) {
-          nameInput.response = value;
-        },
-      );
+      if (bookingForm == null) {
+        return MaterialApp(
+          debugShowCheckedModeBanner: false,
+          theme: ThemeData.light().copyWith(),
+          home: WillPopScope(
+            child: Scaffold(
+              appBar: AppBar(
+                actions: <Widget>[],
+                flexibleSpace: Container(
+                  decoration: gradientBackground,
+                ),
+                leading: IconButton(
+                  padding: EdgeInsets.all(0),
+                  alignment: Alignment.center,
+                  highlightColor: highlightColor,
+                  icon: Icon(Icons.arrow_back),
+                  color: Colors.white,
+                  onPressed: () {
+                    print("going back");
+                    Navigator.of(context).pop();
+                  },
+                ),
+                title: Text("Booking Request Form",
+                    style: TextStyle(color: Colors.white, fontSize: 16)),
+              ),
 
-      final dobField = TextFormField(
-        obscureText: false,
-        //minLines: 1,
-        readOnly: true,
-        autovalidateMode: AutovalidateMode.always,
-        style: textInputTextStyle,
-        controller: _dobController,
-        decoration: CommonStyle.textFieldStyle(
-            labelTextStr: dobInput.label, hintTextStr: ""),
-        validator: validateText,
-        onTap: () {
-          setState(() {
-            pickDate(context).then((value) {
-              if (value != null) {
-                setState(() {
-                  insertOffer.startDateTime = value;
-                  dateString = value.day.toString() +
-                      " / " +
-                      value.month.toString() +
-                      " / " +
-                      value.year.toString();
-                  _dobController.text = dateString;
-                  // checkOfferDetailsFilled();
-                  offerFieldStatus = true;
-                });
-                dobInput.responseDateTime = value;
-              }
-            });
-          });
-        },
-        maxLength: null,
-        maxLines: 1,
-
-        onChanged: (String value) {
-          //  checkOfferDetailsFilled();
-        },
-        onSaved: (String value) {
-          //  dobInput.responseDateTime = DateTime.parse(value);
-          // checkOfferDetailsFilled();
-        },
-      );
-
-      final descField = TextFormField(
-        obscureText: false,
-        //minLines: 1,
-        style: textInputTextStyle,
-        //controller: _descController,
-        decoration: CommonStyle.textFieldStyle(
-            labelTextStr: "Notes (optional)", hintTextStr: ""),
-        keyboardType: TextInputType.multiline,
-        maxLength: null,
-        maxLines: 3,
-        onSaved: (String value) {
-          bookingApplication.notes = value;
-        },
-      );
-
-      // final prefTimeSlotField = Row(
-      //   children: [
-      //     Text("Click to choose preferred Time-Slot"),
-      //     IconButton(
-      //         icon: Icon(Icons.date_range),
-      //         onPressed: () {
-      //           print("Show time- slots");
-
-      //           pickDate(context).then((value) {
-      //             if (value != null) {
-      //               showAvailableSlotsPopUp(context, metaEntity, value);
-      //             }
-      //           });
-      //         })
-      //   ],
-      // );
-      final frontlineFieldInput = Column(
-        children: [
-          Row(
-            children: [
-              Expanded(
-                child: Wrap(
-                  children: frontlineTypesList
-                      .map((item) => GestureDetector(
-                          onTap: () {
-                            bool newSelectionValue = !(item.isSelected);
-                            if (frontlineWorkerField.isMultiSelect == false) {
-                              frontlineTypesList.forEach((element) {
-                                element.isSelected = false;
-                              });
-                            }
-                            if (item.isSelected == true)
-                              frontlineWorkerField.responseValues
-                                  .remove(item.value);
-                            else
-                              frontlineWorkerField.responseValues
-                                  .add(item.value);
-
-                            setState(() {
-                              item.isSelected = newSelectionValue;
-                            });
-                          },
-                          child: Container(
-                              decoration: new BoxDecoration(
-                                  border:
-                                      Border.all(color: Colors.blueGrey[200]),
-                                  shape: BoxShape.rectangle,
-                                  color: (!item.isSelected)
-                                      ? Colors.cyan[50]
-                                      : highlightColor,
-                                  borderRadius:
-                                      BorderRadius.all(Radius.circular(30.0))),
-                              padding: EdgeInsets.fromLTRB(8, 5, 8, 5),
-                              margin: EdgeInsets.all(8),
-                              // color: Colors.orange,
-                              child: Text(item.value.value))))
-                      .toList()
-                      .cast<Widget>(),
+              body: Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[Text("Application Form not found!!")],
                 ),
               ),
-            ],
+              //drawer: CustomDrawer(),
+              //bottomNavigationBar: CustomBottomBar(barIndex: 0),
+            ),
+            onWillPop: () async {
+              return true;
+            },
           ),
-          Divider(
-            thickness: 1.5,
-          )
-        ],
-      );
+        );
+      } else {
+        //Basic details field
+        final nameField = TextFormField(
+          obscureText: false,
+          //TODO: Add maxlength = 50
+          maxLines: 1,
+          minLines: 1,
+          autovalidateMode: AutovalidateMode.always,
+          style: textInputTextStyle,
+          controller: _nameController,
+          keyboardType: TextInputType.text,
+          decoration: CommonStyle.textFieldStyle(
+              labelTextStr: nameInput != null ? nameInput.label : "",
+              hintTextStr: "Please enter your name as per Government ID proof"),
+          validator: validateText,
+          onChanged: (String value) {
+            nameInput.response = value;
+          },
+          onSaved: (String value) {
+            nameInput.response = value;
+          },
+        );
 
-      final idTypeField = Column(
-        children: [
-          Row(
-            children: [
-              Expanded(
-                child: Wrap(
-                  alignment: WrapAlignment.center,
-                  children: idProofTypesList
-                      .map((item) => GestureDetector(
-                          onTap: () {
-                            bool newSelectionValue = !(item.isSelected);
+        final dobField = TextFormField(
+          obscureText: false,
+          //minLines: 1,
+          readOnly: true,
+          autovalidateMode: AutovalidateMode.always,
+          style: textInputTextStyle,
+          controller: _dobController,
+          decoration: CommonStyle.textFieldStyle(
+              labelTextStr: dobInput.label, hintTextStr: ""),
+          validator: validateText,
+          onTap: () {
+            setState(() {
+              pickDate(context).then((value) {
+                if (value != null) {
+                  setState(() {
+                    insertOffer.startDateTime = value;
+                    dateString = value.day.toString() +
+                        " / " +
+                        value.month.toString() +
+                        " / " +
+                        value.year.toString();
+                    _dobController.text = dateString;
+                    // checkOfferDetailsFilled();
+                    offerFieldStatus = true;
+                  });
+                  dobInput.responseDateTime = value;
+                }
+              });
+            });
+          },
+          maxLength: null,
+          maxLines: 1,
 
-                            if (idProofField.isMultiSelect == false) {
-                              idProofTypesList.forEach((element) {
-                                element.isSelected = false;
-                              });
-                            }
+          onChanged: (String value) {
+            //  checkOfferDetailsFilled();
+          },
+          onSaved: (String value) {
+            //  dobInput.responseDateTime = DateTime.parse(value);
+            // checkOfferDetailsFilled();
+          },
+        );
 
-                            if (item.isSelected == true) {
-                              idProofField.responseValues.remove(item.value);
-                              _idProofType = null;
-                            } else {
-                              idProofField.responseValues.add(item.value);
-                              _idProofType = item.value.value;
-                            }
-                            setState(() {
-                              item.isSelected = newSelectionValue;
-                            });
-                          },
-                          child: Container(
-                              decoration: new BoxDecoration(
-                                  border:
-                                      Border.all(color: Colors.blueGrey[200]),
-                                  shape: BoxShape.rectangle,
-                                  color: (!item.isSelected)
-                                      ? Colors.cyan[50]
-                                      : highlightColor,
-                                  borderRadius:
-                                      BorderRadius.all(Radius.circular(30.0))),
-                              padding: EdgeInsets.fromLTRB(8, 5, 8, 5),
-                              margin: EdgeInsets.all(8),
-                              // color: Colors.orange,
-                              child: Text(item.value.value))))
-                      .toList()
-                      .cast<Widget>(),
-                ),
-              ),
-            ],
-          ),
-          Divider(
-            thickness: 1.5,
-          )
-        ],
-      );
-      final clickPicForIdProofBtn = IconButton(
-          padding: EdgeInsets.zero,
-          icon: Icon(
-            Icons.camera_alt_rounded,
-            color: primaryDarkColor,
-          ),
-          onPressed: () {
-            captureImage(false).then((value) {
-              if (value != null) {
-                addIdProofFiles(value);
-              }
-              setState(() {});
-            });
-          });
-      final selectPicForIdProofBtn = IconButton(
-          padding: EdgeInsets.zero,
-          icon: Icon(
-            Icons.attach_file,
-            color: primaryDarkColor,
-          ),
-          onPressed: () {
-            captureImage(true).then((value) {
-              if (value != null) {
-                addIdProofFiles(value);
-              }
-              setState(() {});
-            });
-          });
-      final clickPicForMedCondsBtn = IconButton(
-          padding: EdgeInsets.zero,
-          icon: Icon(
-            Icons.camera_alt_rounded,
-            color: primaryDarkColor,
-          ),
-          onPressed: () {
-            captureImage(false).then((value) {
-              if (value != null) {
-                addMedCondsFiles(value);
-              }
-              setState(() {});
-            });
-          });
-      final selectPicsForMedCondsBtn = IconButton(
-          padding: EdgeInsets.zero,
-          icon: Icon(
-            Icons.attach_file,
-            color: primaryDarkColor,
-          ),
-          onPressed: () {
-            captureImage(true).then((value) {
-              if (value != null) {
-                addMedCondsFiles(value);
-              }
-              setState(() {});
-            });
-          });
-      final clickPicForfrontLineBtn = IconButton(
-          padding: EdgeInsets.zero,
-          icon: Icon(
-            Icons.camera_alt_rounded,
-            color: primaryDarkColor,
-          ),
-          onPressed: () {
-            captureImage(false).then((value) {
-              if (value != null) {
-                addFrontlineFiles(value);
-              }
-              setState(() {});
-            });
-          });
+        final descField = TextFormField(
+          obscureText: false,
+          //minLines: 1,
+          style: textInputTextStyle,
+          //controller: _descController,
+          decoration: CommonStyle.textFieldStyle(
+              labelTextStr: "Notes (optional)", hintTextStr: ""),
+          keyboardType: TextInputType.multiline,
+          maxLength: null,
+          maxLines: 3,
+          onSaved: (String value) {
+            bookingApplication.notes = value;
+          },
+        );
 
-      final selectPicForFrontLineBtn = IconButton(
-          padding: EdgeInsets.zero,
-          icon: Icon(
-            Icons.attach_file,
-            color: primaryDarkColor,
-          ),
-          onPressed: () {
-            captureImage(true).then((value) {
-              if (value != null) {
-                addFrontlineFiles(value);
-              }
-              setState(() {});
-            });
-          });
+        // final prefTimeSlotField = Row(
+        //   children: [
+        //     Text("Click to choose preferred Time-Slot"),
+        //     IconButton(
+        //         icon: Icon(Icons.date_range),
+        //         onPressed: () {
+        //           print("Show time- slots");
 
-      final medicalConditionsField = Column(
-        children: [
-          Row(
-            children: [
-              // Container(
-              //     width: MediaQuery.of(context).size.width * .2,
-              //     child: Text(
-              //       "Medical Conditions (If any)",
-              //       style: textInputTextStyle,
-              //     )),
-              Expanded(
-                child: Wrap(
-                  alignment: WrapAlignment.center,
-                  children: medConditionsList
-                      .map((item) => GestureDetector(
-                          onTap: () {
-                            bool newSelectionValue = !(item.isSelected);
-
-                            if (item.value ==
-                                medConditionsField.options[
-                                    medConditionsField.defaultValueIndex]) {
-                              if (!Utils.isNullOrEmpty(
-                                      medConditionsField.responseValues) &&
-                                  item.isSelected == false) {
-                                print("returning");
-                                return null;
-                              }
-                              if (Utils.isNullOrEmpty(
-                                  medConditionsField.responseValues)) {
-                                setState(() {
-                                  item.isSelected = newSelectionValue;
+        //           pickDate(context).then((value) {
+        //             if (value != null) {
+        //               showAvailableSlotsPopUp(context, metaEntity, value);
+        //             }
+        //           });
+        //         })
+        //   ],
+        // );
+        final frontlineFieldInput = Column(
+          children: [
+            Row(
+              children: [
+                Expanded(
+                  child: Wrap(
+                    children: frontlineTypesList
+                        .map((item) => GestureDetector(
+                            onTap: () {
+                              bool newSelectionValue = !(item.isSelected);
+                              if (frontlineWorkerField.isMultiSelect == false) {
+                                frontlineTypesList.forEach((element) {
+                                  element.isSelected = false;
                                 });
                               }
-                            }
+                              if (item.isSelected == true)
+                                frontlineWorkerField.responseValues
+                                    .remove(item.value);
+                              else
+                                frontlineWorkerField.responseValues
+                                    .add(item.value);
 
-                            if (Utils.isNullOrEmpty(
-                                medConditionsField.responseValues)) {
-                              medConditionsList.forEach((element) {
-                                element.isSelected = false;
+                              setState(() {
+                                item.isSelected = newSelectionValue;
                               });
-                            }
-
-                            if (medConditionsField.isMultiSelect == false) {
-                              medConditionsList.forEach((element) {
-                                element.isSelected = false;
-                              });
-                            }
-                            if (item.isSelected == true)
-                              medConditionsField.responseValues
-                                  .remove(item.value);
-                            else {
-                              medConditionsField.responseValues.add(item.value);
-                            }
-
-                            setState(() {
-                              item.isSelected = newSelectionValue;
-                            });
-                          },
-                          child: Container(
-                              decoration: new BoxDecoration(
-                                  border:
-                                      Border.all(color: Colors.blueGrey[200]),
-                                  shape: BoxShape.rectangle,
-                                  color: (!item.isSelected)
-                                      ? Colors.cyan[50]
-                                      : highlightColor,
-                                  borderRadius:
-                                      BorderRadius.all(Radius.circular(30.0))),
-                              padding: EdgeInsets.fromLTRB(8, 5, 8, 5),
-                              margin: EdgeInsets.all(8),
-                              // color: Colors.orange,
-                              child: Text(item.value.value))))
-                      .toList()
-                      .cast<Widget>(),
+                            },
+                            child: Container(
+                                decoration: new BoxDecoration(
+                                    border:
+                                        Border.all(color: Colors.blueGrey[200]),
+                                    shape: BoxShape.rectangle,
+                                    color: (!item.isSelected)
+                                        ? Colors.cyan[50]
+                                        : highlightColor,
+                                    borderRadius: BorderRadius.all(
+                                        Radius.circular(30.0))),
+                                padding: EdgeInsets.fromLTRB(8, 5, 8, 5),
+                                margin: EdgeInsets.all(8),
+                                // color: Colors.orange,
+                                child: Text(item.value.value))))
+                        .toList()
+                        .cast<Widget>(),
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
+            Divider(
+              thickness: 1.5,
+            )
+          ],
+        );
+
+        final idTypeField = Column(
+          children: [
+            Row(
+              children: [
+                Expanded(
+                  child: Wrap(
+                    alignment: WrapAlignment.center,
+                    children: idProofTypesList
+                        .map((item) => GestureDetector(
+                            onTap: () {
+                              bool newSelectionValue = !(item.isSelected);
+
+                              if (idProofField.isMultiSelect == false) {
+                                idProofTypesList.forEach((element) {
+                                  element.isSelected = false;
+                                });
+                              }
+
+                              if (item.isSelected == true) {
+                                idProofField.responseValues.remove(item.value);
+                                _idProofType = null;
+                              } else {
+                                idProofField.responseValues.add(item.value);
+                                _idProofType = item.value.value;
+                              }
+                              setState(() {
+                                item.isSelected = newSelectionValue;
+                              });
+                            },
+                            child: Container(
+                                decoration: new BoxDecoration(
+                                    border:
+                                        Border.all(color: Colors.blueGrey[200]),
+                                    shape: BoxShape.rectangle,
+                                    color: (!item.isSelected)
+                                        ? Colors.cyan[50]
+                                        : highlightColor,
+                                    borderRadius: BorderRadius.all(
+                                        Radius.circular(30.0))),
+                                padding: EdgeInsets.fromLTRB(8, 5, 8, 5),
+                                margin: EdgeInsets.all(8),
+                                // color: Colors.orange,
+                                child: Text(item.value.value))))
+                        .toList()
+                        .cast<Widget>(),
+                  ),
+                ),
+              ],
+            ),
+            Divider(
+              thickness: 1.5,
+            )
+          ],
+        );
+        final clickPicForIdProofBtn = IconButton(
+            padding: EdgeInsets.zero,
+            icon: Icon(
+              Icons.camera_alt_rounded,
+              color: primaryDarkColor,
+            ),
+            onPressed: () {
+              captureImage(false).then((value) {
+                if (value != null) {
+                  addIdProofFiles(value);
+                }
+                setState(() {});
+              });
+            });
+        final selectPicForIdProofBtn = IconButton(
+            padding: EdgeInsets.zero,
+            icon: Icon(
+              Icons.attach_file,
+              color: primaryDarkColor,
+            ),
+            onPressed: () {
+              captureImage(true).then((value) {
+                if (value != null) {
+                  addIdProofFiles(value);
+                }
+                setState(() {});
+              });
+            });
+        final clickPicForMedCondsBtn = IconButton(
+            padding: EdgeInsets.zero,
+            icon: Icon(
+              Icons.camera_alt_rounded,
+              color: primaryDarkColor,
+            ),
+            onPressed: () {
+              captureImage(false).then((value) {
+                if (value != null) {
+                  addMedCondsFiles(value);
+                }
+                setState(() {});
+              });
+            });
+        final selectPicsForMedCondsBtn = IconButton(
+            padding: EdgeInsets.zero,
+            icon: Icon(
+              Icons.attach_file,
+              color: primaryDarkColor,
+            ),
+            onPressed: () {
+              captureImage(true).then((value) {
+                if (value != null) {
+                  addMedCondsFiles(value);
+                }
+                setState(() {});
+              });
+            });
+        final clickPicForfrontLineBtn = IconButton(
+            padding: EdgeInsets.zero,
+            icon: Icon(
+              Icons.camera_alt_rounded,
+              color: primaryDarkColor,
+            ),
+            onPressed: () {
+              captureImage(false).then((value) {
+                if (value != null) {
+                  addFrontlineFiles(value);
+                }
+                setState(() {});
+              });
+            });
+
+        final selectPicForFrontLineBtn = IconButton(
+            padding: EdgeInsets.zero,
+            icon: Icon(
+              Icons.attach_file,
+              color: primaryDarkColor,
+            ),
+            onPressed: () {
+              captureImage(true).then((value) {
+                if (value != null) {
+                  addFrontlineFiles(value);
+                }
+                setState(() {});
+              });
+            });
+
+        final medicalConditionsField = Column(
+          children: [
+            Row(
+              children: [
+                // Container(
+                //     width: MediaQuery.of(context).size.width * .2,
+                //     child: Text(
+                //       "Medical Conditions (If any)",
+                //       style: textInputTextStyle,
+                //     )),
+                Expanded(
+                  child: Wrap(
+                    alignment: WrapAlignment.center,
+                    children: medConditionsList
+                        .map((item) => GestureDetector(
+                            onTap: () {
+                              bool newSelectionValue = !(item.isSelected);
+
+                              if (item.value ==
+                                  medConditionsField.options[
+                                      medConditionsField.defaultValueIndex]) {
+                                if (!Utils.isNullOrEmpty(
+                                        medConditionsField.responseValues) &&
+                                    item.isSelected == false) {
+                                  print("returning");
+                                  return null;
+                                }
+                                if (Utils.isNullOrEmpty(
+                                    medConditionsField.responseValues)) {
+                                  setState(() {
+                                    item.isSelected = newSelectionValue;
+                                  });
+                                }
+                              }
+
+                              if (Utils.isNullOrEmpty(
+                                  medConditionsField.responseValues)) {
+                                medConditionsList.forEach((element) {
+                                  element.isSelected = false;
+                                });
+                              }
+
+                              if (medConditionsField.isMultiSelect == false) {
+                                medConditionsList.forEach((element) {
+                                  element.isSelected = false;
+                                });
+                              }
+                              if (item.isSelected == true)
+                                medConditionsField.responseValues
+                                    .remove(item.value);
+                              else {
+                                medConditionsField.responseValues
+                                    .add(item.value);
+                              }
+
+                              setState(() {
+                                item.isSelected = newSelectionValue;
+                              });
+                            },
+                            child: Container(
+                                decoration: new BoxDecoration(
+                                    border:
+                                        Border.all(color: Colors.blueGrey[200]),
+                                    shape: BoxShape.rectangle,
+                                    color: (!item.isSelected)
+                                        ? Colors.cyan[50]
+                                        : highlightColor,
+                                    borderRadius: BorderRadius.all(
+                                        Radius.circular(30.0))),
+                                padding: EdgeInsets.fromLTRB(8, 5, 8, 5),
+                                margin: EdgeInsets.all(8),
+                                // color: Colors.orange,
+                                child: Text(item.value.value))))
+                        .toList()
+                        .cast<Widget>(),
+                  ),
+                ),
+              ],
+            ),
+            Divider(
+              thickness: 1.5,
+            )
+          ],
+        );
+        // final medicalConditionsDescField = TextFormField(
+        //   obscureText: false,
+        //   //minLines: 1,
+        //   style: textInputTextStyle,
+        //   controller: _medDescController,
+        //   decoration: CommonStyle.textFieldStyle(
+        //       labelTextStr: "Description of above condition (optional)",
+        //       hintTextStr: ""),
+        //   // validator: (String value) {
+        //   //   if (!Utils.isNotNullOrEmpty(value)) {
+        //   //     validationErrMsg = validationErrMsg + nameMissingMsg;
+        //   //     return validationErrMsg;
+        //   //   } else
+        //   //     return null;
+        //   // },
+        //   keyboardType: TextInputType.multiline,
+        //   maxLength: null,
+        //   maxLines: 3,
+        //   onChanged: (String value) {
+        //     healthDetailsDesc.response = value;
+        //   },
+        //   onSaved: (String value) {
+        //     healthDetailsDesc.response = value;
+        //   },
+        // );
+        final primaryPhoneField = TextFormField(
+          obscureText: false,
+          maxLines: 1,
+          minLines: 1,
+          style: textInputTextStyle,
+          keyboardType: TextInputType.phone,
+          controller: _primaryPhoneController,
+          decoration: InputDecoration(
+            prefixText: '+91',
+            labelText: (primaryPhone != null)
+                ? primaryPhone.label
+                : "Name of Applicant",
+            enabledBorder: UnderlineInputBorder(
+                borderSide: BorderSide(color: Colors.grey)),
+            focusedBorder: UnderlineInputBorder(
+                borderSide: BorderSide(color: Colors.orange)),
           ),
-          Divider(
-            thickness: 1.5,
-          )
-        ],
-      );
-      // final medicalConditionsDescField = TextFormField(
-      //   obscureText: false,
-      //   //minLines: 1,
-      //   style: textInputTextStyle,
-      //   controller: _medDescController,
-      //   decoration: CommonStyle.textFieldStyle(
-      //       labelTextStr: "Description of above condition (optional)",
-      //       hintTextStr: ""),
-      //   // validator: (String value) {
-      //   //   if (!Utils.isNotNullOrEmpty(value)) {
-      //   //     validationErrMsg = validationErrMsg + nameMissingMsg;
-      //   //     return validationErrMsg;
-      //   //   } else
-      //   //     return null;
-      //   // },
-      //   keyboardType: TextInputType.multiline,
-      //   maxLength: null,
-      //   maxLines: 3,
-      //   onChanged: (String value) {
-      //     healthDetailsDesc.response = value;
-      //   },
-      //   onSaved: (String value) {
-      //     healthDetailsDesc.response = value;
-      //   },
-      // );
-      final primaryPhoneField = TextFormField(
-        obscureText: false,
-        maxLines: 1,
-        minLines: 1,
-        style: textInputTextStyle,
-        keyboardType: TextInputType.phone,
-        controller: _primaryPhoneController,
-        decoration: InputDecoration(
-          prefixText: '+91',
-          labelText:
-              (primaryPhone != null) ? primaryPhone.label : "Name of Applicant",
-          enabledBorder:
-              UnderlineInputBorder(borderSide: BorderSide(color: Colors.grey)),
-          focusedBorder: UnderlineInputBorder(
-              borderSide: BorderSide(color: Colors.orange)),
-        ),
-        validator: (value) {
-          if (validateField) {
-            if (validateText(value) == null) {
-              return Utils.validateMobileField(value);
+          validator: (value) {
+            if (validateField) {
+              if (validateText(value) == null) {
+                return Utils.validateMobileField(value);
+              } else
+                return null;
             } else
               return null;
-          } else
-            return null;
-        },
-        onChanged: (value) {
-          if (value != "")
-            primaryPhone.responsePhone = _phCountryCode + (value);
-        },
-        onSaved: (String value) {
-          if (value != "")
-            primaryPhone.responsePhone = _phCountryCode + (value);
-        },
-      );
-      // final alternatePhoneField = TextFormField(
-      //   obscureText: false,
-      //   maxLines: 1,
-      //   minLines: 1,
-      //   style: textInputTextStyle,
-      //   keyboardType: TextInputType.phone,
-      //   controller: _alternatePhoneController,
-      //   decoration: InputDecoration(
-      //     prefixText: '+91',
-      //     labelText: 'Alternate Contact Number',
-      //     enabledBorder:
-      //         UnderlineInputBorder(borderSide: BorderSide(color: Colors.grey)),
-      //     focusedBorder: UnderlineInputBorder(
-      //         borderSide: BorderSide(color: Colors.orange)),
-      //   ),
-      //   validator: (value) {
-      //     if (validateField) {
-      //       if (validateText(value) == null) {
-      //         return Utils.validateMobileField(value);
-      //       } else
-      //         return null;
-      //     } else
-      //       return null;
-      //   },
-      //   onChanged: (value) {
-      //     if (value != "") alternatePhone.response = _phCountryCode + (value);
-      //   },
-      //   onSaved: (String value) {
-      //     if (value != "") alternatePhone.response = _phCountryCode + (value);
-      //   },
-      // );
+          },
+          onChanged: (value) {
+            if (value != "")
+              primaryPhone.responsePhone = _phCountryCode + (value);
+          },
+          onSaved: (String value) {
+            if (value != "")
+              primaryPhone.responsePhone = _phCountryCode + (value);
+          },
+        );
+        // final alternatePhoneField = TextFormField(
+        //   obscureText: false,
+        //   maxLines: 1,
+        //   minLines: 1,
+        //   style: textInputTextStyle,
+        //   keyboardType: TextInputType.phone,
+        //   controller: _alternatePhoneController,
+        //   decoration: InputDecoration(
+        //     prefixText: '+91',
+        //     labelText: 'Alternate Contact Number',
+        //     enabledBorder:
+        //         UnderlineInputBorder(borderSide: BorderSide(color: Colors.grey)),
+        //     focusedBorder: UnderlineInputBorder(
+        //         borderSide: BorderSide(color: Colors.orange)),
+        //   ),
+        //   validator: (value) {
+        //     if (validateField) {
+        //       if (validateText(value) == null) {
+        //         return Utils.validateMobileField(value);
+        //       } else
+        //         return null;
+        //     } else
+        //       return null;
+        //   },
+        //   onChanged: (value) {
+        //     if (value != "") alternatePhone.response = _phCountryCode + (value);
+        //   },
+        //   onSaved: (String value) {
+        //     if (value != "") alternatePhone.response = _phCountryCode + (value);
+        //   },
+        // );
 
 //       final latField = Container(
 //           width: MediaQuery.of(context).size.width * .3,
@@ -1126,814 +1186,695 @@ class _BookingApplicationFormPageState extends State<BookingApplicationFormPage>
 //           print("saved address");
 //         },
 //       );
-      Flushbar flush;
-      bool _wasButtonClicked;
+        Flushbar flush;
+        bool _wasButtonClicked;
 
-      saveRoute() async {
-        setState(() {
-          validateField = true;
-        });
-
-        validationErrMsg = "";
-
-        if (validateAllFields()) {
-          Utils.showMyFlushbar(
-              context,
-              Icons.info_outline,
-              Duration(
-                seconds: 4,
-              ),
-              "Saving details!! ",
-              "This would take just a moment.",
-              Colors.white,
-              true);
-
-          _tokenBookingDetailsFormKey.currentState.save();
-
-          // bookingApplication.preferredSlotTiming =
-          //TODO:Save Files and then submit application with the updated file path
-          List<String> idProofTargetPaths = List<String>();
-          for (String path in idProofField.responseFilePaths) {
-            String fileName = basename(path);
-            print(fileName);
-
-            String targetFileName =
-                '${bookingApplication.id}#${idProofField.id}#${_gs.getCurrentUser().id}#$fileName';
-
-            String targetPath = await uploadFilesToServer(path, targetFileName);
-            print(targetPath);
-            idProofTargetPaths.add(targetPath);
-          }
-
-          idProofField.responseFilePaths = idProofTargetPaths;
-
-          List<String> medCondsTargetPaths = List<String>();
-          for (String path in medConditionsField.responseFilePaths) {
-            String fileName = basename(path);
-            print(fileName);
-
-            String targetFileName =
-                '${bookingApplication.id}#${medConditionsField.id}#${_gs.getCurrentUser().id}#$fileName';
-
-            String targetPath = await uploadFilesToServer(path, targetFileName);
-            print(targetPath);
-            medCondsTargetPaths.add(targetPath);
-          }
-          medConditionsField.responseFilePaths = medCondsTargetPaths;
-
-          List<String> frontLineTargetPaths = List<String>();
-          for (String path in frontlineWorkerField.responseFilePaths) {
-            String fileName = basename(path);
-            print(fileName);
-
-            String targetFileName =
-                '${bookingApplication.id}#${frontlineWorkerField.id}#${_gs.getCurrentUser().id}#$fileName';
-
-            String targetPath = await uploadFilesToServer(path, targetFileName);
-            print(targetPath);
-            frontLineTargetPaths.add(targetPath);
-          }
-
-          frontlineWorkerField.responseFilePaths = frontLineTargetPaths;
-
-          _gs
-              .getApplicationService()
-              .submitApplication(bookingApplication, metaEntity)
-              .then((value) {
-            if (value) {
-              Utils.showMyFlushbar(
-                  context,
-                  Icons.check,
-                  Duration(
-                    seconds: 5,
-                  ),
-                  "Request submitted successfully!",
-                  'We will contact you as soon as slot opens up. Stay Safe!');
-            }
+        saveRoute() async {
+          setState(() {
+            validateField = true;
           });
-        } else {
-          print(validationErrMsg);
-          Utils.showMyFlushbar(
-              context,
-              Icons.error,
-              Duration(
-                seconds: 10,
-              ),
-              validationErrMsg,
-              "Please fill all mandatory fields and save again.",
-              Colors.red);
+
+          validationErrMsg = "";
+
+          if (validateAllFields()) {
+            Utils.showMyFlushbar(
+                context,
+                Icons.info_outline,
+                Duration(
+                  seconds: 4,
+                ),
+                "Saving details!! ",
+                "This would take just a moment.",
+                Colors.white,
+                true);
+
+            _tokenBookingDetailsFormKey.currentState.save();
+
+            // bookingApplication.preferredSlotTiming =
+            //TODO:Save Files and then submit application with the updated file path
+            List<String> idProofTargetPaths = List<String>();
+            for (String path in idProofField.responseFilePaths) {
+              String fileName = basename(path);
+              print(fileName);
+
+              String targetFileName =
+                  '${bookingApplication.id}#${idProofField.id}#${_gs.getCurrentUser().id}#$fileName';
+
+              String targetPath =
+                  await uploadFilesToServer(path, targetFileName);
+              print(targetPath);
+              idProofTargetPaths.add(targetPath);
+            }
+
+            idProofField.responseFilePaths = idProofTargetPaths;
+
+            List<String> medCondsTargetPaths = List<String>();
+            for (String path in medConditionsField.responseFilePaths) {
+              String fileName = basename(path);
+              print(fileName);
+
+              String targetFileName =
+                  '${bookingApplication.id}#${medConditionsField.id}#${_gs.getCurrentUser().id}#$fileName';
+
+              String targetPath =
+                  await uploadFilesToServer(path, targetFileName);
+              print(targetPath);
+              medCondsTargetPaths.add(targetPath);
+            }
+            medConditionsField.responseFilePaths = medCondsTargetPaths;
+
+            List<String> frontLineTargetPaths = List<String>();
+            for (String path in frontlineWorkerField.responseFilePaths) {
+              String fileName = basename(path);
+              print(fileName);
+
+              String targetFileName =
+                  '${bookingApplication.id}#${frontlineWorkerField.id}#${_gs.getCurrentUser().id}#$fileName';
+
+              String targetPath =
+                  await uploadFilesToServer(path, targetFileName);
+              print(targetPath);
+              frontLineTargetPaths.add(targetPath);
+            }
+
+            frontlineWorkerField.responseFilePaths = frontLineTargetPaths;
+
+            _gs
+                .getApplicationService()
+                .submitApplication(bookingApplication, metaEntity)
+                .then((value) {
+              if (value) {
+                Utils.showMyFlushbar(
+                    context,
+                    Icons.check,
+                    Duration(
+                      seconds: 5,
+                    ),
+                    "Request submitted successfully!",
+                    'We will contact you as soon as slot opens up. Stay Safe!');
+              }
+            });
+          } else {
+            print(validationErrMsg);
+            Utils.showMyFlushbar(
+                context,
+                Icons.error,
+                Duration(
+                  seconds: 10,
+                ),
+                validationErrMsg,
+                "Please fill all mandatory fields and save again.",
+                Colors.red);
+          }
         }
-      }
 
-      backRoute() {
-        Navigator.of(context).push(PageAnimation.createRoute(widget.backRoute));
-      }
+        backRoute() {
+          Navigator.of(context)
+              .push(PageAnimation.createRoute(widget.backRoute));
+        }
 
-      processSaveWithTimer() async {
-        var duration = new Duration(seconds: 0);
-        return new Timer(duration, saveRoute);
-      }
+        processSaveWithTimer() async {
+          var duration = new Duration(seconds: 0);
+          return new Timer(duration, saveRoute);
+        }
 
-      processGoBackWithTimer() async {
-        var duration = new Duration(seconds: 1);
-        return new Timer(duration, backRoute);
-      }
+        processGoBackWithTimer() async {
+          var duration = new Duration(seconds: 1);
+          return new Timer(duration, backRoute);
+        }
 
-      void useCurrLocation() {
-        Position pos;
-        Utils.getCurrLocation().then((value) {
-          pos = value;
-          if (pos == null)
-            Utils.showLocationAccessDialog(context, locationPermissionMsg);
-          _getAddressFromLatLng(pos);
-        });
-      }
+        void useCurrLocation() {
+          Position pos;
+          Utils.getCurrLocation().then((value) {
+            pos = value;
+            if (pos == null)
+              Utils.showLocationAccessDialog(context, locationPermissionMsg);
+            _getAddressFromLatLng(pos);
+          });
+        }
 
-      return MaterialApp(
-        debugShowCheckedModeBanner: false,
-        // title: 'Add child entities',
-        theme: ThemeData.light().copyWith(),
-        home: WillPopScope(
-          child: Scaffold(
-            appBar: AppBar(
-              actions: <Widget>[],
-              flexibleSpace: Container(
-                decoration: gradientBackground,
-              ),
-              leading: IconButton(
-                padding: EdgeInsets.all(0),
-                alignment: Alignment.center,
-                highlightColor: highlightColor,
-                icon: Icon(Icons.arrow_back),
-                color: Colors.white,
-                onPressed: () {
-                  print("going back");
+        return MaterialApp(
+          debugShowCheckedModeBanner: false,
+          // title: 'Add child entities',
+          theme: ThemeData.light().copyWith(),
+          home: WillPopScope(
+            child: Scaffold(
+              appBar: AppBar(
+                actions: <Widget>[],
+                flexibleSpace: Container(
+                  decoration: gradientBackground,
+                ),
+                leading: IconButton(
+                  padding: EdgeInsets.all(0),
+                  alignment: Alignment.center,
+                  highlightColor: highlightColor,
+                  icon: Icon(Icons.arrow_back),
+                  color: Colors.white,
+                  onPressed: () {
+                    print("going back");
 
-                  //Show flush bar to notify user
-                  if (flushStatus != "Showing") {
-                    flush = Flushbar<bool>(
-                      //padding: EdgeInsets.zero,
-                      margin: EdgeInsets.zero,
-                      flushbarPosition: FlushbarPosition.BOTTOM,
-                      flushbarStyle: FlushbarStyle.GROUNDED,
-                      reverseAnimationCurve: Curves.decelerate,
-                      forwardAnimationCurve: Curves.easeInToLinear,
-                      backgroundColor: headerBarColor,
-                      boxShadows: [
-                        BoxShadow(
-                            color: primaryAccentColor,
-                            offset: Offset(0.0, 2.0),
-                            blurRadius: 3.0)
-                      ],
-                      isDismissible: false,
-                      //duration: Duration(seconds: 4),
-                      icon: Icon(
-                        Icons.cancel,
-                        color: Colors.blueGrey[50],
-                      ),
-                      showProgressIndicator: true,
-                      progressIndicatorBackgroundColor: Colors.blueGrey[800],
-                      routeBlur: 10.0,
-                      titleText: Text(
-                        "Are you sure you want to leave this page?",
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 16.0,
-                            color: primaryAccentColor,
-                            fontFamily: "ShadowsIntoLightTwo"),
-                      ),
-                      messageText: Text(
-                        "The changes you made might be lost, if not saved.",
-                        style: TextStyle(
-                            fontSize: 10.0,
-                            color: Colors.blueGrey[50],
-                            fontFamily: "ShadowsIntoLightTwo"),
-                      ),
-
-                      mainButton: Column(
-                        children: <Widget>[
-                          FlatButton(
-                            padding: EdgeInsets.all(0),
-                            onPressed: () {
-                              flushStatus = "Empty";
-                              flush.dismiss(true); // result = true
-                            },
-                            child: Text(
-                              "Yes",
-                              style: TextStyle(color: highlightColor),
-                            ),
-                          ),
-                          FlatButton(
-                            padding: EdgeInsets.all(0),
-                            onPressed: () {
-                              flushStatus = "Empty";
-                              flush.dismiss(false); // result = true
-                            },
-                            child: Text(
-                              "No",
-                              style: TextStyle(color: highlightColor),
-                            ),
-                          ),
+                    //Show flush bar to notify user
+                    if (flushStatus != "Showing") {
+                      flush = Flushbar<bool>(
+                        //padding: EdgeInsets.zero,
+                        margin: EdgeInsets.zero,
+                        flushbarPosition: FlushbarPosition.BOTTOM,
+                        flushbarStyle: FlushbarStyle.GROUNDED,
+                        reverseAnimationCurve: Curves.decelerate,
+                        forwardAnimationCurve: Curves.easeInToLinear,
+                        backgroundColor: headerBarColor,
+                        boxShadows: [
+                          BoxShadow(
+                              color: primaryAccentColor,
+                              offset: Offset(0.0, 2.0),
+                              blurRadius: 3.0)
                         ],
-                      ),
-                    )..onStatusChanged = (FlushbarStatus status) {
-                        print("FlushbarStatus-------$status");
-                        if (status == FlushbarStatus.IS_APPEARING)
-                          flushStatus = "Showing";
-                        if (status == FlushbarStatus.DISMISSED)
-                          flushStatus = "Empty";
-                        print("gfdfgdfg");
-                      };
+                        isDismissible: false,
+                        //duration: Duration(seconds: 4),
+                        icon: Icon(
+                          Icons.cancel,
+                          color: Colors.blueGrey[50],
+                        ),
+                        showProgressIndicator: true,
+                        progressIndicatorBackgroundColor: Colors.blueGrey[800],
+                        routeBlur: 10.0,
+                        titleText: Text(
+                          "Are you sure you want to leave this page?",
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 16.0,
+                              color: primaryAccentColor,
+                              fontFamily: "ShadowsIntoLightTwo"),
+                        ),
+                        messageText: Text(
+                          "The changes you made might be lost, if not saved.",
+                          style: TextStyle(
+                              fontSize: 10.0,
+                              color: Colors.blueGrey[50],
+                              fontFamily: "ShadowsIntoLightTwo"),
+                        ),
 
-                    flush
-                      ..show(context).then((result) {
-                        _wasButtonClicked = result;
-                        flushStatus = "Empty";
-                        if (_wasButtonClicked) processGoBackWithTimer();
-                      });
-                  }
-
-                  print("flush already running");
-                },
-              ),
-              title: Text("Booking Request Form",
-                  style: TextStyle(color: Colors.white, fontSize: 16)),
-            ),
-            body: Center(
-              child: new SafeArea(
-                top: true,
-                bottom: true,
-                child: new Form(
-                  key: _tokenBookingDetailsFormKey,
-                  autovalidate: _autoValidate,
-                  child: new ListView(
-                    padding: const EdgeInsets.all(5.0),
-                    children: <Widget>[
-                      Container(
-                        decoration: BoxDecoration(
-                            border: Border.all(color: containerColor),
-                            color: Colors.grey[50],
-                            shape: BoxShape.rectangle,
-                            borderRadius:
-                                BorderRadius.all(Radius.circular(5.0))),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
+                        mainButton: Column(
                           children: <Widget>[
-                            Column(
-                              children: <Widget>[
-                                Container(
-                                  //padding: EdgeInsets.only(left: 5),
-                                  decoration: darkContainer,
-                                  child: Theme(
-                                    data: ThemeData(
-                                      unselectedWidgetColor: Colors.white,
-                                      accentColor: Colors.grey[50],
-                                    ),
-                                    child: CustomExpansionTile(
-                                      //key: PageStorageKey(this.widget.headerTitle),
-                                      initiallyExpanded: false,
-                                      title: Row(
+                            FlatButton(
+                              padding: EdgeInsets.all(0),
+                              onPressed: () {
+                                flushStatus = "Empty";
+                                flush.dismiss(true); // result = true
+                              },
+                              child: Text(
+                                "Yes",
+                                style: TextStyle(color: highlightColor),
+                              ),
+                            ),
+                            FlatButton(
+                              padding: EdgeInsets.all(0),
+                              onPressed: () {
+                                flushStatus = "Empty";
+                                flush.dismiss(false); // result = true
+                              },
+                              child: Text(
+                                "No",
+                                style: TextStyle(color: highlightColor),
+                              ),
+                            ),
+                          ],
+                        ),
+                      )..onStatusChanged = (FlushbarStatus status) {
+                          print("FlushbarStatus-------$status");
+                          if (status == FlushbarStatus.IS_APPEARING)
+                            flushStatus = "Showing";
+                          if (status == FlushbarStatus.DISMISSED)
+                            flushStatus = "Empty";
+                          print("gfdfgdfg");
+                        };
+
+                      flush
+                        ..show(context).then((result) {
+                          _wasButtonClicked = result;
+                          flushStatus = "Empty";
+                          if (_wasButtonClicked) processGoBackWithTimer();
+                        });
+                    }
+
+                    print("flush already running");
+                  },
+                ),
+                title: Text("Booking Request Form",
+                    style: TextStyle(color: Colors.white, fontSize: 16)),
+              ),
+              body: Center(
+                child: new SafeArea(
+                  top: true,
+                  bottom: true,
+                  child: new Form(
+                    key: _tokenBookingDetailsFormKey,
+                    autovalidate: _autoValidate,
+                    child: new ListView(
+                      padding: const EdgeInsets.all(5.0),
+                      children: <Widget>[
+                        Container(
+                          decoration: BoxDecoration(
+                              border: Border.all(color: containerColor),
+                              color: Colors.grey[50],
+                              shape: BoxShape.rectangle,
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(5.0))),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: <Widget>[
+                              Column(
+                                children: <Widget>[
+                                  Container(
+                                    //padding: EdgeInsets.only(left: 5),
+                                    decoration: darkContainer,
+                                    child: Theme(
+                                      data: ThemeData(
+                                        unselectedWidgetColor: Colors.white,
+                                        accentColor: Colors.grey[50],
+                                      ),
+                                      child: CustomExpansionTile(
+                                        //key: PageStorageKey(this.widget.headerTitle),
+                                        initiallyExpanded: false,
+                                        title: Row(
+                                          children: <Widget>[
+                                            Text(
+                                              "Selected Time Slot",
+                                              style: TextStyle(
+                                                  color: Colors.white,
+                                                  fontSize: 15),
+                                            ),
+                                            SizedBox(width: 5),
+                                          ],
+                                        ),
+                                        backgroundColor: Colors.blueGrey[500],
+
                                         children: <Widget>[
-                                          Text(
-                                            "Selected Time Slot",
-                                            style: TextStyle(
-                                                color: Colors.white,
-                                                fontSize: 15),
+                                          new Container(
+                                            width: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                .94,
+                                            decoration: darkContainer,
+                                            padding: EdgeInsets.all(2.0),
+                                            child: Row(
+                                              children: <Widget>[
+                                                Expanded(
+                                                  child: Text(basicInfoStr,
+                                                      style:
+                                                          buttonXSmlTextStyle),
+                                                ),
+                                              ],
+                                            ),
                                           ),
-                                          SizedBox(width: 5),
                                         ],
                                       ),
-                                      backgroundColor: Colors.blueGrey[500],
-
+                                    ),
+                                  ),
+                                  Container(
+                                    padding: EdgeInsets.fromLTRB(5, 8, 5, 5),
+                                    child: Column(
                                       children: <Widget>[
-                                        new Container(
-                                          width: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
-                                              .94,
-                                          decoration: darkContainer,
-                                          padding: EdgeInsets.all(2.0),
-                                          child: Row(
-                                            children: <Widget>[
-                                              Expanded(
-                                                child: Text(basicInfoStr,
-                                                    style: buttonXSmlTextStyle),
-                                              ),
-                                            ],
-                                          ),
+                                        Column(
+                                          children: [
+                                            Row(
+                                              children: [
+                                                SizedBox(
+                                                    // width: cardWidth * .45,
+                                                    child: Wrap(
+                                                  children: [
+                                                    AutoSizeText(
+                                                      "Current time-slot :",
+                                                      //group: labelGroup,
+                                                      minFontSize: 15,
+                                                      maxFontSize: 15,
+                                                      maxLines: 2,
+                                                      overflow:
+                                                          TextOverflow.clip,
+                                                      style:
+                                                          fieldLabelTextStyle,
+                                                    ),
+                                                  ],
+                                                )),
+                                                Wrap(children: [
+                                                  Container(
+                                                    padding: EdgeInsets.only(
+                                                        left: 5),
+                                                    child: AutoSizeText(
+                                                        ((preferredSlotTime !=
+                                                                null)
+                                                            ? DateFormat(
+                                                                    'yyyy-MM-dd – kk:mm')
+                                                                .format(
+                                                                    preferredSlotTime)
+                                                            : "None"),
+                                                        // group: medCondGroup,
+                                                        minFontSize: 12,
+                                                        maxFontSize: 14,
+                                                        maxLines: 1,
+                                                        overflow: TextOverflow
+                                                            .ellipsis,
+                                                        style: TextStyle(
+                                                          color: btnColor,
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                        )),
+                                                  ),
+                                                ]),
+                                              ],
+                                            ),
+                                            Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.start,
+                                              children: [
+                                                AutoSizeText(
+                                                  "Click to choose another Time-Slot",
+                                                  // group: labelGroup,
+                                                  minFontSize: 15,
+                                                  maxFontSize: 15,
+                                                  maxLines: 2,
+                                                  overflow: TextOverflow.clip,
+                                                  style: fieldLabelTextStyle,
+                                                ),
+                                                IconButton(
+                                                    icon: Icon(
+                                                      Icons.date_range,
+                                                      color: btnColor,
+                                                    ),
+                                                    onPressed: () async {
+                                                      final result =
+                                                          await Navigator.push(
+                                                              context,
+                                                              MaterialPageRoute(
+                                                                  builder:
+                                                                      (context) =>
+                                                                          SlotSelectionPage(
+                                                                            metaEntity:
+                                                                                widget.metaEntity,
+                                                                            dateTime:
+                                                                                preferredSlotTime,
+                                                                            forPage:
+                                                                                "ApplicationList",
+                                                                          )));
+
+                                                      print(result);
+                                                      setState(() {
+                                                        if (result != null)
+                                                          preferredSlotTime =
+                                                              result;
+                                                      });
+                                                    })
+                                              ],
+                                            ),
+                                          ],
                                         ),
+
+                                        // alternatePhoneField,
                                       ],
                                     ),
                                   ),
-                                ),
-                                Container(
-                                  padding: EdgeInsets.fromLTRB(5, 8, 5, 5),
-                                  child: Column(
-                                    children: <Widget>[
-                                      Column(
-                                        children: [
-                                          Row(
-                                            children: [
-                                              SizedBox(
-                                                  // width: cardWidth * .45,
-                                                  child: Wrap(
-                                                children: [
-                                                  AutoSizeText(
-                                                    "Current time-slot :",
-                                                    //group: labelGroup,
-                                                    minFontSize: 15,
-                                                    maxFontSize: 15,
-                                                    maxLines: 2,
-                                                    overflow: TextOverflow.clip,
-                                                    style: fieldLabelTextStyle,
-                                                  ),
-                                                ],
-                                              )),
-                                              Wrap(children: [
-                                                Container(
-                                                  padding:
-                                                      EdgeInsets.only(left: 5),
-                                                  child: AutoSizeText(
-                                                      ((preferredSlotTime !=
-                                                              null)
-                                                          ? DateFormat(
-                                                                  'yyyy-MM-dd – kk:mm')
-                                                              .format(
-                                                                  preferredSlotTime)
-                                                          : "None"),
-                                                      // group: medCondGroup,
-                                                      minFontSize: 12,
-                                                      maxFontSize: 14,
-                                                      maxLines: 1,
-                                                      overflow:
-                                                          TextOverflow.ellipsis,
-                                                      style: TextStyle(
-                                                        color: btnColor,
-                                                        fontWeight:
-                                                            FontWeight.bold,
-                                                      )),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                        SizedBox(
+                          height: 7,
+                        ),
+                        Container(
+                          decoration: BoxDecoration(
+                              border: Border.all(color: containerColor),
+                              color: Colors.grey[50],
+                              shape: BoxShape.rectangle,
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(5.0))),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: <Widget>[
+                              Column(
+                                children: <Widget>[
+                                  Container(
+                                    //padding: EdgeInsets.only(left: 5),
+                                    decoration: darkContainer,
+                                    child: Theme(
+                                      data: ThemeData(
+                                        unselectedWidgetColor: Colors.white,
+                                        accentColor: Colors.grey[50],
+                                      ),
+                                      child: CustomExpansionTile(
+                                        //key: PageStorageKey(this.widget.headerTitle),
+                                        initiallyExpanded: false,
+                                        title: Row(
+                                          children: <Widget>[
+                                            Text(
+                                              "Basic Details",
+                                              style: TextStyle(
+                                                  color: Colors.white,
+                                                  fontSize: 15),
+                                            ),
+                                            SizedBox(width: 5),
+                                          ],
+                                        ),
+                                        backgroundColor: Colors.blueGrey[500],
+
+                                        children: <Widget>[
+                                          new Container(
+                                            width: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                .94,
+                                            decoration: darkContainer,
+                                            padding: EdgeInsets.all(2.0),
+                                            child: Row(
+                                              children: <Widget>[
+                                                Expanded(
+                                                  child: Text(basicInfoStr,
+                                                      style:
+                                                          buttonXSmlTextStyle),
                                                 ),
-                                              ]),
-                                            ],
+                                              ],
+                                            ),
                                           ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                  Container(
+                                    padding:
+                                        EdgeInsets.only(left: 5.0, right: 5),
+                                    child: Column(
+                                      children: <Widget>[
+                                        nameField,
+                                        //   descField,
+                                        dobField,
+                                        primaryPhoneField,
+                                        // alternatePhoneField,
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                        SizedBox(
+                          height: 7,
+                        ),
+                        Container(
+                          decoration: BoxDecoration(
+                              border: Border.all(color: containerColor),
+                              color: Colors.grey[50],
+                              shape: BoxShape.rectangle,
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(5.0))),
+                          child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: <Widget>[
+                                Column(children: <Widget>[
+                                  Container(
+                                    //padding: EdgeInsets.only(left: 5),
+                                    decoration: darkContainer,
+                                    child: Theme(
+                                      data: ThemeData(
+                                        unselectedWidgetColor: Colors.white,
+                                        accentColor: Colors.grey[50],
+                                      ),
+                                      child: CustomExpansionTile(
+                                        //key: PageStorageKey(this.widget.headerTitle),
+                                        initiallyExpanded: false,
+                                        title: Row(
+                                          children: <Widget>[
+                                            Text(
+                                              frontlineWorkerField.label,
+                                              style: TextStyle(
+                                                  color: Colors.white,
+                                                  fontSize: 15),
+                                            ),
+                                            SizedBox(width: 5),
+                                          ],
+                                        ),
+                                        backgroundColor: Colors.blueGrey[500],
+
+                                        children: <Widget>[
+                                          new Container(
+                                            width: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                .94,
+                                            decoration: darkContainer,
+                                            padding: EdgeInsets.all(2.0),
+                                            child: Row(
+                                              children: <Widget>[
+                                                Expanded(
+                                                  child: Text(basicInfoStr,
+                                                      style:
+                                                          buttonXSmlTextStyle),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                  Container(
+                                    padding:
+                                        EdgeInsets.only(left: 5.0, right: 5),
+                                    child: Column(children: <Widget>[
+                                      frontlineFieldInput,
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          (Utils.isNullOrEmpty(
+                                                  frontlineWorkerField
+                                                      .responseFilePaths))
+                                              ? Container(
+                                                  child: Text(
+                                                  "No Image Selected",
+                                                  style: TextStyle(
+                                                      color: (validateField)
+                                                          ? Colors.red
+                                                          : Colors.black),
+                                                ))
+                                              : Container(
+                                                  width: MediaQuery.of(context)
+                                                          .size
+                                                          .width *
+                                                      .6,
+                                                  child: ListView.builder(
+                                                    padding: EdgeInsets.all(
+                                                        MediaQuery.of(context)
+                                                                .size
+                                                                .width *
+                                                            .03),
+                                                    //  controller: _childScrollController,
+                                                    scrollDirection:
+                                                        Axis.vertical,
+
+                                                    shrinkWrap: true,
+                                                    //   itemExtent: itemSize,
+                                                    //scrollDirection: Axis.vertical,
+                                                    itemBuilder:
+                                                        (BuildContext context,
+                                                            int index) {
+                                                      return Container(
+                                                        padding:
+                                                            EdgeInsets.only(
+                                                                bottom: 5),
+                                                        child: showImageList(
+                                                            context,
+                                                            _frontLineProofimages[
+                                                                index],
+                                                            _frontLineProofimages),
+                                                      );
+                                                    },
+                                                    itemCount:
+                                                        _frontLineProofimages
+                                                            .length,
+                                                  ),
+                                                ),
                                           Row(
                                             mainAxisAlignment:
-                                                MainAxisAlignment.start,
+                                                MainAxisAlignment.end,
                                             children: [
-                                              AutoSizeText(
-                                                "Click to choose another Time-Slot",
-                                                // group: labelGroup,
-                                                minFontSize: 15,
-                                                maxFontSize: 15,
-                                                maxLines: 2,
-                                                overflow: TextOverflow.clip,
-                                                style: fieldLabelTextStyle,
-                                              ),
-                                              IconButton(
-                                                  icon: Icon(
-                                                    Icons.date_range,
-                                                    color: btnColor,
-                                                  ),
-                                                  onPressed: () async {
-                                                    final result =
-                                                        await Navigator.push(
-                                                            context,
-                                                            MaterialPageRoute(
-                                                                builder:
-                                                                    (context) =>
-                                                                        SlotSelectionPage(
-                                                                          metaEntity:
-                                                                              widget.metaEntity,
-                                                                          dateTime:
-                                                                              preferredSlotTime,
-                                                                          forPage:
-                                                                              "ApplicationList",
-                                                                        )));
-
-                                                    print(result);
-                                                    setState(() {
-                                                      if (result != null)
-                                                        preferredSlotTime =
-                                                            result;
-                                                    });
-                                                  })
+                                              clickPicForfrontLineBtn,
+                                              selectPicForFrontLineBtn
                                             ],
                                           ),
                                         ],
                                       ),
-
-                                      // alternatePhoneField,
-                                    ],
+                                    ]),
                                   ),
-                                ),
-                              ],
-                            ),
-                          ],
+                                ]),
+                              ]),
                         ),
-                      ),
-                      SizedBox(
-                        height: 7,
-                      ),
-                      Container(
-                        decoration: BoxDecoration(
-                            border: Border.all(color: containerColor),
-                            color: Colors.grey[50],
-                            shape: BoxShape.rectangle,
-                            borderRadius:
-                                BorderRadius.all(Radius.circular(5.0))),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            Column(
+                        SizedBox(
+                          height: 7,
+                        ),
+                        Container(
+                          decoration: BoxDecoration(
+                              border: Border.all(color: containerColor),
+                              color: Colors.grey[50],
+                              shape: BoxShape.rectangle,
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(5.0))),
+                          child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: <Widget>[
-                                Container(
-                                  //padding: EdgeInsets.only(left: 5),
-                                  decoration: darkContainer,
-                                  child: Theme(
-                                    data: ThemeData(
-                                      unselectedWidgetColor: Colors.white,
-                                      accentColor: Colors.grey[50],
-                                    ),
-                                    child: CustomExpansionTile(
-                                      //key: PageStorageKey(this.widget.headerTitle),
-                                      initiallyExpanded: false,
-                                      title: Row(
-                                        children: <Widget>[
-                                          Text(
-                                            "Basic Details",
-                                            style: TextStyle(
-                                                color: Colors.white,
-                                                fontSize: 15),
-                                          ),
-                                          SizedBox(width: 5),
-                                        ],
+                                Column(children: <Widget>[
+                                  Container(
+                                    //padding: EdgeInsets.only(left: 5),
+                                    decoration: darkContainer,
+                                    child: Theme(
+                                      data: ThemeData(
+                                        unselectedWidgetColor: Colors.white,
+                                        accentColor: Colors.grey[50],
                                       ),
-                                      backgroundColor: Colors.blueGrey[500],
-
-                                      children: <Widget>[
-                                        new Container(
-                                          width: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
-                                              .94,
-                                          decoration: darkContainer,
-                                          padding: EdgeInsets.all(2.0),
-                                          child: Row(
-                                            children: <Widget>[
-                                              Expanded(
-                                                child: Text(basicInfoStr,
-                                                    style: buttonXSmlTextStyle),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                                Container(
-                                  padding: EdgeInsets.only(left: 5.0, right: 5),
-                                  child: Column(
-                                    children: <Widget>[
-                                      nameField,
-                                      //   descField,
-                                      dobField,
-                                      primaryPhoneField,
-                                      // alternatePhoneField,
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ),
-                      SizedBox(
-                        height: 7,
-                      ),
-                      Container(
-                        decoration: BoxDecoration(
-                            border: Border.all(color: containerColor),
-                            color: Colors.grey[50],
-                            shape: BoxShape.rectangle,
-                            borderRadius:
-                                BorderRadius.all(Radius.circular(5.0))),
-                        child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: <Widget>[
-                              Column(children: <Widget>[
-                                Container(
-                                  //padding: EdgeInsets.only(left: 5),
-                                  decoration: darkContainer,
-                                  child: Theme(
-                                    data: ThemeData(
-                                      unselectedWidgetColor: Colors.white,
-                                      accentColor: Colors.grey[50],
-                                    ),
-                                    child: CustomExpansionTile(
-                                      //key: PageStorageKey(this.widget.headerTitle),
-                                      initiallyExpanded: false,
-                                      title: Row(
-                                        children: <Widget>[
-                                          Text(
-                                            frontlineWorkerField.label,
-                                            style: TextStyle(
-                                                color: Colors.white,
-                                                fontSize: 15),
-                                          ),
-                                          SizedBox(width: 5),
-                                        ],
-                                      ),
-                                      backgroundColor: Colors.blueGrey[500],
-
-                                      children: <Widget>[
-                                        new Container(
-                                          width: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
-                                              .94,
-                                          decoration: darkContainer,
-                                          padding: EdgeInsets.all(2.0),
-                                          child: Row(
-                                            children: <Widget>[
-                                              Expanded(
-                                                child: Text(basicInfoStr,
-                                                    style: buttonXSmlTextStyle),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                                Container(
-                                  padding: EdgeInsets.only(left: 5.0, right: 5),
-                                  child: Column(children: <Widget>[
-                                    frontlineFieldInput,
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        (Utils.isNullOrEmpty(
-                                                frontlineWorkerField
-                                                    .responseFilePaths))
-                                            ? Container(
-                                                child: Text(
-                                                "No Image Selected",
-                                                style: TextStyle(
-                                                    color: (validateField)
-                                                        ? Colors.red
-                                                        : Colors.black),
-                                              ))
-                                            : Container(
-                                                width: MediaQuery.of(context)
-                                                        .size
-                                                        .width *
-                                                    .6,
-                                                child: ListView.builder(
-                                                  padding: EdgeInsets.all(
-                                                      MediaQuery.of(context)
-                                                              .size
-                                                              .width *
-                                                          .03),
-                                                  //  controller: _childScrollController,
-                                                  scrollDirection:
-                                                      Axis.vertical,
-
-                                                  shrinkWrap: true,
-                                                  //   itemExtent: itemSize,
-                                                  //scrollDirection: Axis.vertical,
-                                                  itemBuilder:
-                                                      (BuildContext context,
-                                                          int index) {
-                                                    return Container(
-                                                      padding: EdgeInsets.only(
-                                                          bottom: 5),
-                                                      child: showImageList(
-                                                          context,
-                                                          _frontLineProofimages[
-                                                              index],
-                                                          _frontLineProofimages),
-                                                    );
-                                                  },
-                                                  itemCount:
-                                                      _frontLineProofimages
-                                                          .length,
-                                                ),
-                                              ),
-                                        Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.end,
-                                          children: [
-                                            clickPicForfrontLineBtn,
-                                            selectPicForFrontLineBtn
+                                      child: CustomExpansionTile(
+                                        //key: PageStorageKey(this.widget.headerTitle),
+                                        initiallyExpanded: false,
+                                        title: Row(
+                                          children: <Widget>[
+                                            Text(
+                                              idProofField.label,
+                                              style: TextStyle(
+                                                  color: Colors.white,
+                                                  fontSize: 15),
+                                            ),
+                                            SizedBox(width: 5),
                                           ],
                                         ),
-                                      ],
-                                    ),
-                                  ]),
-                                ),
-                              ]),
-                            ]),
-                      ),
-                      SizedBox(
-                        height: 7,
-                      ),
-                      Container(
-                        decoration: BoxDecoration(
-                            border: Border.all(color: containerColor),
-                            color: Colors.grey[50],
-                            shape: BoxShape.rectangle,
-                            borderRadius:
-                                BorderRadius.all(Radius.circular(5.0))),
-                        child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: <Widget>[
-                              Column(children: <Widget>[
-                                Container(
-                                  //padding: EdgeInsets.only(left: 5),
-                                  decoration: darkContainer,
-                                  child: Theme(
-                                    data: ThemeData(
-                                      unselectedWidgetColor: Colors.white,
-                                      accentColor: Colors.grey[50],
-                                    ),
-                                    child: CustomExpansionTile(
-                                      //key: PageStorageKey(this.widget.headerTitle),
-                                      initiallyExpanded: false,
-                                      title: Row(
+                                        backgroundColor: Colors.blueGrey[500],
+
                                         children: <Widget>[
-                                          Text(
-                                            idProofField.label,
-                                            style: TextStyle(
-                                                color: Colors.white,
-                                                fontSize: 15),
-                                          ),
-                                          SizedBox(width: 5),
-                                        ],
-                                      ),
-                                      backgroundColor: Colors.blueGrey[500],
-
-                                      children: <Widget>[
-                                        new Container(
-                                          width: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
-                                              .94,
-                                          decoration: darkContainer,
-                                          padding: EdgeInsets.all(2.0),
-                                          child: Row(
-                                            children: <Widget>[
-                                              Expanded(
-                                                child: Text(
-                                                    idProofField.infoMessage,
-                                                    style: buttonXSmlTextStyle),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                                Container(
-                                  padding: EdgeInsets.only(left: 5.0, right: 5),
-                                  child: Column(children: <Widget>[
-                                    idTypeField,
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        (Utils.isNullOrEmpty(
-                                                idProofField.responseFilePaths))
-                                            ? Container(
-                                                child: Text(
-                                                "No Image Selected",
-                                                style: TextStyle(
-                                                    color: (validateField)
-                                                        ? Colors.red
-                                                        : Colors.black),
-                                              ))
-                                            : Container(
-                                                width: MediaQuery.of(context)
-                                                        .size
-                                                        .width *
-                                                    .6,
-                                                child: ListView.builder(
-                                                  padding: EdgeInsets.all(
-                                                      MediaQuery.of(context)
-                                                              .size
-                                                              .width *
-                                                          .03),
-                                                  //  controller: _childScrollController,
-                                                  scrollDirection:
-                                                      Axis.vertical,
-
-                                                  shrinkWrap: true,
-                                                  //   itemExtent: itemSize,
-                                                  //scrollDirection: Axis.vertical,
-                                                  itemBuilder:
-                                                      (BuildContext context,
-                                                          int index) {
-                                                    return Container(
-                                                      padding: EdgeInsets.only(
-                                                          bottom: 5),
-                                                      child: showImageList(
-                                                          context,
-                                                          _idProofimages[index],
-                                                          _idProofimages),
-                                                    );
-                                                  },
-                                                  itemCount:
-                                                      _idProofimages.length,
+                                          new Container(
+                                            width: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                .94,
+                                            decoration: darkContainer,
+                                            padding: EdgeInsets.all(2.0),
+                                            child: Row(
+                                              children: <Widget>[
+                                                Expanded(
+                                                  child: Text(
+                                                      idProofField.infoMessage,
+                                                      style:
+                                                          buttonXSmlTextStyle),
                                                 ),
-                                              ),
-                                        Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.end,
-                                          children: [
-                                            clickPicForIdProofBtn,
-                                            selectPicForIdProofBtn
-                                          ],
-                                        ),
-                                      ],
-                                    ),
-                                  ]),
-                                ),
-                              ]),
-                            ]),
-                      ),
-                      SizedBox(
-                        height: 7,
-                      ),
-                      Container(
-                        decoration: BoxDecoration(
-                            border: Border.all(color: containerColor),
-                            color: Colors.grey[50],
-                            shape: BoxShape.rectangle,
-                            borderRadius:
-                                BorderRadius.all(Radius.circular(5.0))),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            Column(
-                              children: <Widget>[
-                                Container(
-                                  //padding: EdgeInsets.only(left: 5),
-                                  decoration: darkContainer,
-                                  child: Theme(
-                                    data: ThemeData(
-                                      unselectedWidgetColor: Colors.white,
-                                      accentColor: Colors.grey[50],
-                                    ),
-                                    child: CustomExpansionTile(
-                                      //key: PageStorageKey(this.widget.headerTitle),
-                                      initiallyExpanded: false,
-                                      title: Row(
-                                        children: <Widget>[
-                                          Text(
-                                            medConditionsField.label,
-                                            style: TextStyle(
-                                                color: Colors.white,
-                                                fontSize: 15),
-                                            overflow: TextOverflow.ellipsis,
+                                              ],
+                                            ),
                                           ),
-                                          SizedBox(width: 5),
                                         ],
                                       ),
-                                      backgroundColor: Colors.blueGrey[500],
-
-                                      children: <Widget>[
-                                        new Container(
-                                          width: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
-                                              .94,
-                                          decoration: darkContainer,
-                                          padding: EdgeInsets.all(2.0),
-                                          child: Row(
-                                            children: <Widget>[
-                                              Expanded(
-                                                child: Text(
-                                                    medConditionsField
-                                                        .infoMessage,
-                                                    style: buttonXSmlTextStyle),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      ],
                                     ),
                                   ),
-                                ),
-                                Container(
-                                  padding: EdgeInsets.only(left: 5.0, right: 5),
-                                  child: Column(
-                                    children: <Widget>[
-                                      medicalConditionsField,
-                                      //medicalConditionsDescField,
-
+                                  Container(
+                                    padding:
+                                        EdgeInsets.only(left: 5.0, right: 5),
+                                    child: Column(children: <Widget>[
+                                      idTypeField,
                                       Row(
                                         mainAxisAlignment:
                                             MainAxisAlignment.spaceBetween,
@@ -1975,331 +1916,470 @@ class _BookingApplicationFormPageState extends State<BookingApplicationFormPage>
                                                                 bottom: 5),
                                                         child: showImageList(
                                                             context,
-                                                            _medCondsProofimages[
+                                                            _idProofimages[
                                                                 index],
-                                                            _medCondsProofimages),
+                                                            _idProofimages),
                                                       );
                                                     },
                                                     itemCount:
-                                                        _medCondsProofimages
-                                                            .length,
+                                                        _idProofimages.length,
                                                   ),
                                                 ),
                                           Row(
                                             mainAxisAlignment:
                                                 MainAxisAlignment.end,
                                             children: [
-                                              clickPicForMedCondsBtn,
-                                              selectPicsForMedCondsBtn,
+                                              clickPicForIdProofBtn,
+                                              selectPicForIdProofBtn
                                             ],
                                           ),
                                         ],
                                       ),
-                                    ],
+                                    ]),
                                   ),
-                                ),
-                              ],
-                            ),
-                          ],
+                                ]),
+                              ]),
                         ),
-                      ),
-                      SizedBox(
-                        height: 7,
-                      ),
-                      // Container(
-                      //   decoration: BoxDecoration(
-                      //       border: Border.all(color: containerColor),
-                      //       color: Colors.grey[50],
-                      //       shape: BoxShape.rectangle,
-                      //       borderRadius:
-                      //           BorderRadius.all(Radius.circular(5.0))),
-                      //   //padding: EdgeInsets.all(5.0),
-                      //   child: Column(
-                      //     crossAxisAlignment: CrossAxisAlignment.start,
-                      //     children: <Widget>[
-                      //       Column(
-                      //         children: <Widget>[
-                      //           Container(
-                      //             //padding: EdgeInsets.only(left: 5),
-                      //             decoration: darkContainer,
-                      //             child: Theme(
-                      //               data: ThemeData(
-                      //                 unselectedWidgetColor: Colors.white,
-                      //                 accentColor: Colors.grey[50],
-                      //               ),
-                      //               child: CustomExpansionTile(
-                      //                 //key: PageStorageKey(this.widget.headerTitle),
-                      //                 initiallyExpanded: false,
-                      //                 title: Row(
-                      //                   children: <Widget>[
-                      //                     Text(
-                      //                       "Current Location Details",
-                      //                       style: TextStyle(
-                      //                           color: Colors.white,
-                      //                           fontSize: 15),
-                      //                     ),
-                      //                     SizedBox(width: 5),
-                      //                   ],
-                      //                 ),
-                      //                 backgroundColor: Colors.blueGrey[500],
-
-                      //                 children: <Widget>[
-                      //                   new Container(
-                      //                     width: MediaQuery.of(context)
-                      //                             .size
-                      //                             .width *
-                      //                         .94,
-                      //                     decoration: darkContainer,
-                      //                     padding: EdgeInsets.all(2.0),
-                      //                     child: Row(
-                      //                       children: <Widget>[
-                      //                         Expanded(
-                      //                           child: Text(locationInfoStr,
-                      //                               style: buttonXSmlTextStyle),
-                      //                         ),
-                      //                       ],
-                      //                     ),
-                      //                   ),
-                      //                 ],
-                      //               ),
-                      //             ),
-                      //           ),
-                      //         ],
-                      //       ),
-                      //       Container(
-                      //         padding: EdgeInsets.only(left: 5.0, right: 5),
-                      //         child: Column(
-                      //           children: <Widget>[
-                      //             Column(children: <Widget>[
-                      //               Container(
-                      //                 padding: EdgeInsets.all(4),
-                      //                 width: MediaQuery.of(context).size.width *
-                      //                     .95,
-                      //                 child: RichText(
-                      //                     text: TextSpan(
-                      //                         style: highlightSubTextStyle,
-                      //                         children: <TextSpan>[
-                      //                       TextSpan(
-                      //                           text: pressUseCurrentLocation),
-                      //                       TextSpan(
-                      //                           text: whyLocationIsRequired),
-                      //                     ])),
-                      //               ),
-                      //               Row(
-                      //                 mainAxisAlignment:
-                      //                     MainAxisAlignment.spaceAround,
-                      //                 children: <Widget>[
-                      //                   latField,
-                      //                   lonField,
-                      //                 ],
-                      //               ),
-                      //               verticalSpacer,
-                      //             ]),
-                      //             Row(
-                      //               mainAxisAlignment:
-                      //                   MainAxisAlignment.spaceAround,
-                      //               children: <Widget>[
-                      //                 clearBtn,
-                      //                 Container(
-                      //                   width:
-                      //                       MediaQuery.of(context).size.width *
-                      //                           .6,
-                      //                   child: RaisedButton(
-                      //                     elevation: 10,
-                      //                     color: btnColor,
-                      //                     splashColor: highlightColor,
-                      //                     textColor: Colors.white,
-                      //                     shape: RoundedRectangleBorder(
-                      //                         side:
-                      //                             BorderSide(color: btnColor)),
-                      //                     child: Text(
-                      //                       userCurrentLoc,
-                      //                       textAlign: TextAlign.center,
-                      //                     ),
-                      //                     onPressed: useCurrLocation,
-                      //                   ),
-                      //                 ),
-                      //               ],
-                      //             ),
-                      //           ],
-                      //         ),
-                      //       ),
-                      //     ],
-                      //   ),
-                      // ),
-                      // SizedBox(
-                      //   height: 7,
-                      // ),
-                      // Container(
-                      //   decoration: BoxDecoration(
-                      //       border: Border.all(color: containerColor),
-                      //       color: Colors.grey[50],
-                      //       shape: BoxShape.rectangle,
-                      //       borderRadius:
-                      //           BorderRadius.all(Radius.circular(5.0))),
-                      //   //padding: EdgeInsets.all(5.0),
-                      //   child: Column(
-                      //     crossAxisAlignment: CrossAxisAlignment.start,
-                      //     children: <Widget>[
-                      //       Column(
-                      //         children: <Widget>[
-                      //           Container(
-                      //             //padding: EdgeInsets.only(left: 5),
-                      //             decoration: darkContainer,
-                      //             child: Theme(
-                      //               data: ThemeData(
-                      //                 unselectedWidgetColor: Colors.white,
-                      //                 accentColor: Colors.grey[50],
-                      //               ),
-                      //               child: CustomExpansionTile(
-                      //                 //key: PageStorageKey(this.widget.headerTitle),
-                      //                 initiallyExpanded: false,
-                      //                 title: Row(
-                      //                   children: <Widget>[
-                      //                     Text(
-                      //                       "Address",
-                      //                       style: TextStyle(
-                      //                           color: Colors.white,
-                      //                           fontSize: 15),
-                      //                     ),
-                      //                     SizedBox(width: 5),
-                      //                   ],
-                      //                 ),
-                      //                 backgroundColor: Colors.blueGrey[500],
-
-                      //                 children: <Widget>[
-                      //                   new Container(
-                      //                     width: MediaQuery.of(context)
-                      //                             .size
-                      //                             .width *
-                      //                         .94,
-                      //                     decoration: darkContainer,
-                      //                     padding: EdgeInsets.all(2.0),
-                      //                     child: Row(
-                      //                       children: <Widget>[
-                      //                         Expanded(
-                      //                           child: Text(addressInfoStr,
-                      //                               style: buttonXSmlTextStyle),
-                      //                         ),
-                      //                       ],
-                      //                     ),
-                      //                   ),
-                      //                 ],
-                      //               ),
-                      //             ),
-                      //           ),
-                      //         ],
-                      //       ),
-                      //       Container(
-                      //         padding: EdgeInsets.only(left: 5.0, right: 5),
-                      //         child: Column(
-                      //           children: <Widget>[
-                      //             adrsField1,
-                      //             landmarkField2,
-                      //             localityField,
-                      //             cityField,
-                      //             stateField,
-                      //             pinField,
-                      //             countryField,
-                      //           ],
-                      //         ),
-                      //       ),
-                      //     ],
-                      //   ),
-                      // ),
-                      // SizedBox(
-                      //   height: 7,
-                      // ),
-                      // Container(
-                      //   padding: EdgeInsets.only(left: 5.0, right: 5),
-                      //   decoration: BoxDecoration(
-                      //       border: Border.all(color: containerColor),
-                      //       color: Colors.grey[50],
-                      //       shape: BoxShape.rectangle,
-                      //       borderRadius:
-                      //           BorderRadius.all(Radius.circular(5.0))),
-                      //   //padding: EdgeInsets.all(5.0),
-                      //   child: prefTimeSlotField,
-                      // ),
-                      SizedBox(
-                        height: 7,
-                      ),
-                      Container(
-                        padding: EdgeInsets.only(left: 5.0, right: 5),
-                        decoration: BoxDecoration(
-                            border: Border.all(color: containerColor),
-                            color: Colors.grey[50],
-                            shape: BoxShape.rectangle,
-                            borderRadius:
-                                BorderRadius.all(Radius.circular(5.0))),
-                        //padding: EdgeInsets.all(5.0),
-                        child: descField,
-                      ),
-                      SizedBox(
-                        height: 7,
-                      ),
-                      (Utils.isNotNullOrEmpty(bookingForm.footerMsg)
-                          ? Container(
-                              padding: EdgeInsets.only(left: 5.0, right: 5),
-                              decoration: BoxDecoration(
-                                  border: Border.all(color: containerColor),
-                                  color: Colors.grey[50],
-                                  shape: BoxShape.rectangle,
-                                  borderRadius:
-                                      BorderRadius.all(Radius.circular(5.0))),
-                              //padding: EdgeInsets.all(5.0),
-                              child: Text(
-                                bookingForm.footerMsg,
-                                // bookingForm.footerMsg,
-                                style: TextStyle(
-                                    color: Colors.orangeAccent.shade700,
-                                    //fontWeight: FontWeight.w600,
-                                    fontFamily: 'Montserrat',
-
-                                    // decoration: TextDecoration.underline,
-                                    fontSize: 16.0),
-                              ),
-                            )
-                          : Container()),
-                      SizedBox(
-                        height: 7,
-                      ),
-                      Builder(
-                        builder: (context) => RaisedButton(
-                            color: btnColor,
-                            splashColor: highlightColor,
-                            child: Container(
-                              // width: MediaQuery.of(context).size.width * .35,
-                              child: Column(
+                        SizedBox(
+                          height: 7,
+                        ),
+                        Container(
+                          decoration: BoxDecoration(
+                              border: Border.all(color: containerColor),
+                              color: Colors.grey[50],
+                              shape: BoxShape.rectangle,
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(5.0))),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: <Widget>[
+                              Column(
                                 children: <Widget>[
-                                  Text(
-                                    'Save Details & Request Token',
-                                    style: buttonMedTextStyle,
+                                  Container(
+                                    //padding: EdgeInsets.only(left: 5),
+                                    decoration: darkContainer,
+                                    child: Theme(
+                                      data: ThemeData(
+                                        unselectedWidgetColor: Colors.white,
+                                        accentColor: Colors.grey[50],
+                                      ),
+                                      child: CustomExpansionTile(
+                                        //key: PageStorageKey(this.widget.headerTitle),
+                                        initiallyExpanded: false,
+                                        title: Row(
+                                          children: <Widget>[
+                                            Text(
+                                              medConditionsField.label,
+                                              style: TextStyle(
+                                                  color: Colors.white,
+                                                  fontSize: 15),
+                                              overflow: TextOverflow.ellipsis,
+                                            ),
+                                            SizedBox(width: 5),
+                                          ],
+                                        ),
+                                        backgroundColor: Colors.blueGrey[500],
+
+                                        children: <Widget>[
+                                          new Container(
+                                            width: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                .94,
+                                            decoration: darkContainer,
+                                            padding: EdgeInsets.all(2.0),
+                                            child: Row(
+                                              children: <Widget>[
+                                                Expanded(
+                                                  child: Text(
+                                                      medConditionsField
+                                                          .infoMessage,
+                                                      style:
+                                                          buttonXSmlTextStyle),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
                                   ),
-                                  // Text(
-                                  //   'Details of amenities/services',
-                                  //   style: buttonXSmlTextStyle,
-                                  // ),
+                                  Container(
+                                    padding:
+                                        EdgeInsets.only(left: 5.0, right: 5),
+                                    child: Column(
+                                      children: <Widget>[
+                                        medicalConditionsField,
+                                        //medicalConditionsDescField,
+
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            (Utils.isNullOrEmpty(idProofField
+                                                    .responseFilePaths))
+                                                ? Container(
+                                                    child: Text(
+                                                    "No Image Selected",
+                                                    style: TextStyle(
+                                                        color: (validateField)
+                                                            ? Colors.red
+                                                            : Colors.black),
+                                                  ))
+                                                : Container(
+                                                    width:
+                                                        MediaQuery.of(context)
+                                                                .size
+                                                                .width *
+                                                            .6,
+                                                    child: ListView.builder(
+                                                      padding: EdgeInsets.all(
+                                                          MediaQuery.of(context)
+                                                                  .size
+                                                                  .width *
+                                                              .03),
+                                                      //  controller: _childScrollController,
+                                                      scrollDirection:
+                                                          Axis.vertical,
+
+                                                      shrinkWrap: true,
+                                                      //   itemExtent: itemSize,
+                                                      //scrollDirection: Axis.vertical,
+                                                      itemBuilder:
+                                                          (BuildContext context,
+                                                              int index) {
+                                                        return Container(
+                                                          padding:
+                                                              EdgeInsets.only(
+                                                                  bottom: 5),
+                                                          child: showImageList(
+                                                              context,
+                                                              _medCondsProofimages[
+                                                                  index],
+                                                              _medCondsProofimages),
+                                                        );
+                                                      },
+                                                      itemCount:
+                                                          _medCondsProofimages
+                                                              .length,
+                                                    ),
+                                                  ),
+                                            Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.end,
+                                              children: [
+                                                clickPicForMedCondsBtn,
+                                                selectPicsForMedCondsBtn,
+                                              ],
+                                            ),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
+                                  ),
                                 ],
                               ),
-                            ),
-                            onPressed: () {
-                              print("FlushbarStatus-------");
-                              processSaveWithTimer();
-                            }),
-                      ),
-                    ],
+                            ],
+                          ),
+                        ),
+                        SizedBox(
+                          height: 7,
+                        ),
+                        // Container(
+                        //   decoration: BoxDecoration(
+                        //       border: Border.all(color: containerColor),
+                        //       color: Colors.grey[50],
+                        //       shape: BoxShape.rectangle,
+                        //       borderRadius:
+                        //           BorderRadius.all(Radius.circular(5.0))),
+                        //   //padding: EdgeInsets.all(5.0),
+                        //   child: Column(
+                        //     crossAxisAlignment: CrossAxisAlignment.start,
+                        //     children: <Widget>[
+                        //       Column(
+                        //         children: <Widget>[
+                        //           Container(
+                        //             //padding: EdgeInsets.only(left: 5),
+                        //             decoration: darkContainer,
+                        //             child: Theme(
+                        //               data: ThemeData(
+                        //                 unselectedWidgetColor: Colors.white,
+                        //                 accentColor: Colors.grey[50],
+                        //               ),
+                        //               child: CustomExpansionTile(
+                        //                 //key: PageStorageKey(this.widget.headerTitle),
+                        //                 initiallyExpanded: false,
+                        //                 title: Row(
+                        //                   children: <Widget>[
+                        //                     Text(
+                        //                       "Current Location Details",
+                        //                       style: TextStyle(
+                        //                           color: Colors.white,
+                        //                           fontSize: 15),
+                        //                     ),
+                        //                     SizedBox(width: 5),
+                        //                   ],
+                        //                 ),
+                        //                 backgroundColor: Colors.blueGrey[500],
+
+                        //                 children: <Widget>[
+                        //                   new Container(
+                        //                     width: MediaQuery.of(context)
+                        //                             .size
+                        //                             .width *
+                        //                         .94,
+                        //                     decoration: darkContainer,
+                        //                     padding: EdgeInsets.all(2.0),
+                        //                     child: Row(
+                        //                       children: <Widget>[
+                        //                         Expanded(
+                        //                           child: Text(locationInfoStr,
+                        //                               style: buttonXSmlTextStyle),
+                        //                         ),
+                        //                       ],
+                        //                     ),
+                        //                   ),
+                        //                 ],
+                        //               ),
+                        //             ),
+                        //           ),
+                        //         ],
+                        //       ),
+                        //       Container(
+                        //         padding: EdgeInsets.only(left: 5.0, right: 5),
+                        //         child: Column(
+                        //           children: <Widget>[
+                        //             Column(children: <Widget>[
+                        //               Container(
+                        //                 padding: EdgeInsets.all(4),
+                        //                 width: MediaQuery.of(context).size.width *
+                        //                     .95,
+                        //                 child: RichText(
+                        //                     text: TextSpan(
+                        //                         style: highlightSubTextStyle,
+                        //                         children: <TextSpan>[
+                        //                       TextSpan(
+                        //                           text: pressUseCurrentLocation),
+                        //                       TextSpan(
+                        //                           text: whyLocationIsRequired),
+                        //                     ])),
+                        //               ),
+                        //               Row(
+                        //                 mainAxisAlignment:
+                        //                     MainAxisAlignment.spaceAround,
+                        //                 children: <Widget>[
+                        //                   latField,
+                        //                   lonField,
+                        //                 ],
+                        //               ),
+                        //               verticalSpacer,
+                        //             ]),
+                        //             Row(
+                        //               mainAxisAlignment:
+                        //                   MainAxisAlignment.spaceAround,
+                        //               children: <Widget>[
+                        //                 clearBtn,
+                        //                 Container(
+                        //                   width:
+                        //                       MediaQuery.of(context).size.width *
+                        //                           .6,
+                        //                   child: RaisedButton(
+                        //                     elevation: 10,
+                        //                     color: btnColor,
+                        //                     splashColor: highlightColor,
+                        //                     textColor: Colors.white,
+                        //                     shape: RoundedRectangleBorder(
+                        //                         side:
+                        //                             BorderSide(color: btnColor)),
+                        //                     child: Text(
+                        //                       userCurrentLoc,
+                        //                       textAlign: TextAlign.center,
+                        //                     ),
+                        //                     onPressed: useCurrLocation,
+                        //                   ),
+                        //                 ),
+                        //               ],
+                        //             ),
+                        //           ],
+                        //         ),
+                        //       ),
+                        //     ],
+                        //   ),
+                        // ),
+                        // SizedBox(
+                        //   height: 7,
+                        // ),
+                        // Container(
+                        //   decoration: BoxDecoration(
+                        //       border: Border.all(color: containerColor),
+                        //       color: Colors.grey[50],
+                        //       shape: BoxShape.rectangle,
+                        //       borderRadius:
+                        //           BorderRadius.all(Radius.circular(5.0))),
+                        //   //padding: EdgeInsets.all(5.0),
+                        //   child: Column(
+                        //     crossAxisAlignment: CrossAxisAlignment.start,
+                        //     children: <Widget>[
+                        //       Column(
+                        //         children: <Widget>[
+                        //           Container(
+                        //             //padding: EdgeInsets.only(left: 5),
+                        //             decoration: darkContainer,
+                        //             child: Theme(
+                        //               data: ThemeData(
+                        //                 unselectedWidgetColor: Colors.white,
+                        //                 accentColor: Colors.grey[50],
+                        //               ),
+                        //               child: CustomExpansionTile(
+                        //                 //key: PageStorageKey(this.widget.headerTitle),
+                        //                 initiallyExpanded: false,
+                        //                 title: Row(
+                        //                   children: <Widget>[
+                        //                     Text(
+                        //                       "Address",
+                        //                       style: TextStyle(
+                        //                           color: Colors.white,
+                        //                           fontSize: 15),
+                        //                     ),
+                        //                     SizedBox(width: 5),
+                        //                   ],
+                        //                 ),
+                        //                 backgroundColor: Colors.blueGrey[500],
+
+                        //                 children: <Widget>[
+                        //                   new Container(
+                        //                     width: MediaQuery.of(context)
+                        //                             .size
+                        //                             .width *
+                        //                         .94,
+                        //                     decoration: darkContainer,
+                        //                     padding: EdgeInsets.all(2.0),
+                        //                     child: Row(
+                        //                       children: <Widget>[
+                        //                         Expanded(
+                        //                           child: Text(addressInfoStr,
+                        //                               style: buttonXSmlTextStyle),
+                        //                         ),
+                        //                       ],
+                        //                     ),
+                        //                   ),
+                        //                 ],
+                        //               ),
+                        //             ),
+                        //           ),
+                        //         ],
+                        //       ),
+                        //       Container(
+                        //         padding: EdgeInsets.only(left: 5.0, right: 5),
+                        //         child: Column(
+                        //           children: <Widget>[
+                        //             adrsField1,
+                        //             landmarkField2,
+                        //             localityField,
+                        //             cityField,
+                        //             stateField,
+                        //             pinField,
+                        //             countryField,
+                        //           ],
+                        //         ),
+                        //       ),
+                        //     ],
+                        //   ),
+                        // ),
+                        // SizedBox(
+                        //   height: 7,
+                        // ),
+                        // Container(
+                        //   padding: EdgeInsets.only(left: 5.0, right: 5),
+                        //   decoration: BoxDecoration(
+                        //       border: Border.all(color: containerColor),
+                        //       color: Colors.grey[50],
+                        //       shape: BoxShape.rectangle,
+                        //       borderRadius:
+                        //           BorderRadius.all(Radius.circular(5.0))),
+                        //   //padding: EdgeInsets.all(5.0),
+                        //   child: prefTimeSlotField,
+                        // ),
+                        SizedBox(
+                          height: 7,
+                        ),
+                        Container(
+                          padding: EdgeInsets.only(left: 5.0, right: 5),
+                          decoration: BoxDecoration(
+                              border: Border.all(color: containerColor),
+                              color: Colors.grey[50],
+                              shape: BoxShape.rectangle,
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(5.0))),
+                          //padding: EdgeInsets.all(5.0),
+                          child: descField,
+                        ),
+                        SizedBox(
+                          height: 7,
+                        ),
+                        (Utils.isNotNullOrEmpty(bookingForm.footerMsg)
+                            ? Container(
+                                padding: EdgeInsets.only(left: 5.0, right: 5),
+                                decoration: BoxDecoration(
+                                    border: Border.all(color: containerColor),
+                                    color: Colors.grey[50],
+                                    shape: BoxShape.rectangle,
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(5.0))),
+                                //padding: EdgeInsets.all(5.0),
+                                child: Text(
+                                  bookingForm.footerMsg,
+                                  // bookingForm.footerMsg,
+                                  style: TextStyle(
+                                      color: Colors.orangeAccent.shade700,
+                                      //fontWeight: FontWeight.w600,
+                                      fontFamily: 'Montserrat',
+
+                                      // decoration: TextDecoration.underline,
+                                      fontSize: 16.0),
+                                ),
+                              )
+                            : Container()),
+                        SizedBox(
+                          height: 7,
+                        ),
+                        Builder(
+                          builder: (context) => RaisedButton(
+                              color: btnColor,
+                              splashColor: highlightColor,
+                              child: Container(
+                                // width: MediaQuery.of(context).size.width * .35,
+                                child: Column(
+                                  children: <Widget>[
+                                    Text(
+                                      'Save Details & Request Token',
+                                      style: buttonMedTextStyle,
+                                    ),
+                                    // Text(
+                                    //   'Details of amenities/services',
+                                    //   style: buttonXSmlTextStyle,
+                                    // ),
+                                  ],
+                                ),
+                              ),
+                              onPressed: () {
+                                print("FlushbarStatus-------");
+                                processSaveWithTimer();
+                              }),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),
+              // bottomNavigationBar: CustomBottomBar(barIndex: 0),
             ),
-            // bottomNavigationBar: CustomBottomBar(barIndex: 0),
+            onWillPop: () async {
+              return true;
+            },
           ),
-          onWillPop: () async {
-            return true;
-          },
-        ),
-      );
+        );
+      }
     } else
       return MaterialApp(
         debugShowCheckedModeBanner: false,
