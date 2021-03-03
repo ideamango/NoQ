@@ -439,7 +439,7 @@ class DBTest {
             null,
             null,
             null,
-            null);
+            -1);
 
     for (Tuple<BookingApplication, DocumentSnapshot> ba
         in admissionApplications) {
@@ -460,7 +460,7 @@ class DBTest {
             null,
             null,
             null,
-            null);
+            -1);
 
     for (Tuple<BookingApplication, DocumentSnapshot> ba in tcApplications) {
       await _gs.getApplicationService().deleteApplication(ba.item1.id);
@@ -1723,7 +1723,7 @@ class DBTest {
     List<Tuple<BookingApplication, DocumentSnapshot>> applications = await _gs
         .getApplicationService()
         .getApplications(TEST_COVID_BOOKING_FORM_ID, Covid_Vacination_center,
-            null, null, null, null, null, null, null, null, null, null);
+            null, null, null, null, null, null, null, null, null, -1);
 
     Entity testingCenter =
         await _gs.getEntityService().getEntity(Covid_Vacination_center);
@@ -1821,9 +1821,8 @@ class DBTest {
           "GlobalApplicationOverview Daily stats after status change ------------------------------> Failure");
     }
 
-    List<Tuple<BookingApplication, DocumentSnapshot>> approvedApplications = await _gs
-        .getApplicationService()
-        .getApplications(
+    List<Tuple<BookingApplication, DocumentSnapshot>> approvedApplications =
+        await _gs.getApplicationService().getApplications(
             TEST_COVID_BOOKING_FORM_ID,
             Covid_Vacination_center,
             ApplicationStatus.APPROVED,
@@ -1835,7 +1834,7 @@ class DBTest {
             null,
             null,
             null,
-            null);
+            -1);
 
     if (approvedApplications.length == 2) {
       print("ApprovedApplicationCount stats --> SUCCESS");
@@ -1920,9 +1919,8 @@ class DBTest {
           "GlobalApplicationOverview Daily stats after cancellation ------------------------------> Failure");
     }
 
-    List<Tuple<BookingApplication, DocumentSnapshot>> approvedApplications = await _gs
-        .getApplicationService()
-        .getApplications(
+    List<Tuple<BookingApplication, DocumentSnapshot>> approvedApplications =
+        await _gs.getApplicationService().getApplications(
             TEST_COVID_BOOKING_FORM_ID,
             Covid_Vacination_center,
             ApplicationStatus.APPROVED,
@@ -1934,7 +1932,7 @@ class DBTest {
             null,
             null,
             null,
-            null);
+            -1);
 
     if (approvedApplications.length == 1) {
       print("ApprovedApplicationCount stats --> SUCCESS");

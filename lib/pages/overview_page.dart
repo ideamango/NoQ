@@ -630,7 +630,7 @@ class _OverviewPageState extends State<OverviewPage> {
                                     child: Icon(
                                       Icons.thumb_up,
                                       color: Colors.yellowAccent,
-                                      size: 50,
+                                      size: 55,
                                     )),
                                 Container(
                                   //  width: MediaQuery.of(context).size.width * .,

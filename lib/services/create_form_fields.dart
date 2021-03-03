@@ -42,12 +42,10 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
   BookingForm dummyForm;
   final itemSize = 100.0;
   List<String> dumList = new List<String>();
-  Map<String, List<Item>> mapOfOptionsFields = Map<String, List<Item>>();
-  List<Item> listf3 = new List<Item>();
-  List<Item> listf4 = new List<Item>();
+
   bool _initCompleted = false;
 
-  List<File> _medCondsProofimages = [];
+  //List<File> _medCondsProofimages = [];
   bool validateField = false;
   Map<String, Widget> listOfWidgets = new Map<String, Widget>();
   Map<String, List> listOfFieldTypes = new Map<String, List>();
@@ -120,6 +118,16 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
     return date;
   }
 
+  String validateText(String value) {
+    if (validateField) {
+      if (value == null || value == "") {
+        return 'Field is empty';
+      } else
+        return null;
+    } else
+      return null;
+  }
+
   Widget buildChildItem(Field field, int index, bool isInit) {
     if (isInit) {
       if (!listOfControllers.containsKey(field.label)) {
@@ -130,6 +138,7 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
     switch (field.type) {
       case FieldType.TEXT:
         {
+          FormInputFieldText textField = field;
           newField = Container(
             margin: EdgeInsets.fromLTRB(5, 5, 5, 5),
             decoration: BoxDecoration(
@@ -193,6 +202,7 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
                               obscureText: false,
                               maxLines: 1,
                               minLines: 1,
+                              validator: validateText,
                               style: textInputTextStyle,
                               keyboardType: TextInputType.text,
                               controller: listOfControllers[field.label],
@@ -201,9 +211,11 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
                                 // hintTextStr: field.infoMessage
                               ),
                               onChanged: (String value) {
+                                textField.response = value;
                                 print(value);
                               },
                               onSaved: (String value) {
+                                textField.response = value;
                                 print(value);
                               },
                             ),
@@ -283,6 +295,7 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
                               readOnly: true,
                               maxLines: 1,
                               minLines: 1,
+                              validator: validateText,
                               style: textInputTextStyle,
                               keyboardType: TextInputType.text,
                               controller: listOfControllers[newDateField.label],
@@ -388,6 +401,7 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
                               obscureText: false,
                               maxLines: 1,
                               minLines: 1,
+                              validator: validateText,
                               style: textInputTextStyle,
                               keyboardType: TextInputType.number,
                               controller: listOfControllers[field.label],
@@ -413,13 +427,7 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
       case FieldType.OPTIONS:
         {
           FormInputFieldOptions newOptionsField = field;
-          if (isInit) {
-            List<Item> newOptionsFieldTypesList = List<Item>();
-            for (Value val in newOptionsField.options) {
-              newOptionsFieldTypesList.add(Item(val, false));
-            }
-            listOfFieldTypes[field.label] = newOptionsFieldTypesList;
-          }
+
           newField = Container(
             margin: EdgeInsets.fromLTRB(5, 5, 5, 5),
             decoration: BoxDecoration(
@@ -479,44 +487,42 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
                         children: [
                           Expanded(
                             child: Wrap(
-                              children: listOfFieldTypes[field.label]
+                              children: newOptionsField.options
                                   .map((item) => GestureDetector(
                                       onTap: () {
-                                        bool newSelectionValue =
-                                            !(item.isSelected);
-                                        if (newOptionsField.isMultiSelect ==
-                                            false) {
-                                          listOfFieldTypes[field.label]
-                                              .forEach((element) {
-                                            element.isSelected = false;
-                                          });
+                                        if (newOptionsField.responseValues
+                                            .contains(item)) {
+                                          newOptionsField.responseValues
+                                              .remove(item);
+                                        } else {
+                                          if (newOptionsField.isMultiSelect ==
+                                              false) {
+                                            newOptionsField.responseValues
+                                                .clear();
+                                          }
+                                          newOptionsField.responseValues
+                                              .add(item);
                                         }
-                                        if (item.isSelected == true)
-                                          newOptionsField.responseValues
-                                              .remove(item.value);
-                                        else
-                                          newOptionsField.responseValues
-                                              .add(item.value);
 
-                                        setState(() {
-                                          item.isSelected = newSelectionValue;
-                                        });
+                                        setState(() {});
                                       },
                                       child: Container(
                                           decoration: new BoxDecoration(
                                               border: Border.all(
                                                   color: Colors.blueGrey[200]),
                                               shape: BoxShape.rectangle,
-                                              color: (!item.isSelected)
-                                                  ? Colors.cyan[50]
-                                                  : highlightColor,
+                                              color: (newOptionsField
+                                                      .responseValues
+                                                      .contains(item))
+                                                  ? highlightColor
+                                                  : Colors.cyan[50],
                                               borderRadius: BorderRadius.all(
                                                   Radius.circular(30.0))),
                                           padding:
                                               EdgeInsets.fromLTRB(8, 5, 8, 5),
                                           margin: EdgeInsets.all(8),
                                           // color: Colors.orange,
-                                          child: Text(item.value.value))))
+                                          child: Text(item.value))))
                                   .toList()
                                   .cast<Widget>(),
                             ),
@@ -620,11 +626,12 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
                                         padding: EdgeInsets.only(bottom: 5),
                                         child: showImageList(
                                             context,
-                                            _medCondsProofimages[index],
-                                            _medCondsProofimages),
+                                            attsField.responseFilePaths[index],
+                                            attsField.responseFilePaths),
                                       );
                                     },
-                                    itemCount: _medCondsProofimages.length,
+                                    itemCount:
+                                        attsField.responseFilePaths.length,
                                   ),
                                 ),
                           Row(
@@ -639,7 +646,7 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
                                   onPressed: () {
                                     captureImage(false).then((value) {
                                       if (value != null) {
-                                        _medCondsProofimages.add(value);
+                                        // _medCondsProofimages.add(value);
                                         attsField.responseFilePaths
                                             .add(value.path);
                                       }
@@ -655,7 +662,7 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
                                   onPressed: () {
                                     captureImage(true).then((value) {
                                       if (value != null) {
-                                        _medCondsProofimages.add(value);
+                                        // _medCondsProofimages.add(value);
                                         attsField.responseFilePaths
                                             .add(value.path);
                                       }
@@ -677,13 +684,6 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
       case FieldType.OPTIONS_ATTACHMENTS:
         {
           FormInputFieldOptionsWithAttachments optsAttsField = field;
-          if (isInit) {
-            List<Item> newfieldOptionsTypesList = List<Item>();
-            for (Value val in optsAttsField.options) {
-              newfieldOptionsTypesList.add(Item(val, false));
-            }
-            listOfFieldTypes[field.label] = newfieldOptionsTypesList;
-          }
 
           newField = Container(
             margin: EdgeInsets.fromLTRB(5, 5, 5, 5),
@@ -744,44 +744,42 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
                         children: [
                           Expanded(
                             child: Wrap(
-                              children: listOfFieldTypes[field.label]
+                              children: optsAttsField.options
                                   .map((item) => GestureDetector(
                                       onTap: () {
-                                        bool newSelectionValue =
-                                            !(item.isSelected);
-                                        if (optsAttsField.isMultiSelect ==
-                                            false) {
-                                          listOfFieldTypes[field.label]
-                                              .forEach((element) {
-                                            element.isSelected = false;
-                                          });
+                                        if (optsAttsField.responseValues
+                                            .contains(item)) {
+                                          optsAttsField.responseValues
+                                              .remove(item);
+                                        } else {
+                                          if (optsAttsField.isMultiSelect ==
+                                              false) {
+                                            optsAttsField.responseValues
+                                                .clear();
+                                          }
+                                          optsAttsField.responseValues
+                                              .add(item);
                                         }
-                                        if (item.isSelected == true)
-                                          optsAttsField.responseValues
-                                              .remove(item.value);
-                                        else
-                                          optsAttsField.responseValues
-                                              .add(item.value);
 
-                                        setState(() {
-                                          item.isSelected = newSelectionValue;
-                                        });
+                                        setState(() {});
                                       },
                                       child: Container(
                                           decoration: new BoxDecoration(
                                               border: Border.all(
                                                   color: Colors.blueGrey[200]),
                                               shape: BoxShape.rectangle,
-                                              color: (!item.isSelected)
-                                                  ? Colors.cyan[50]
-                                                  : highlightColor,
+                                              color: (optsAttsField
+                                                      .responseValues
+                                                      .contains(item))
+                                                  ? highlightColor
+                                                  : Colors.cyan[50],
                                               borderRadius: BorderRadius.all(
                                                   Radius.circular(30.0))),
                                           padding:
                                               EdgeInsets.fromLTRB(8, 5, 8, 5),
                                           margin: EdgeInsets.all(8),
                                           // color: Colors.orange,
-                                          child: Text(item.value.value))))
+                                          child: Text(item.value))))
                                   .toList()
                                   .cast<Widget>(),
                             ),
@@ -821,11 +819,13 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
                                         padding: EdgeInsets.only(bottom: 5),
                                         child: showImageList(
                                             context,
-                                            _medCondsProofimages[index],
-                                            _medCondsProofimages),
+                                            optsAttsField
+                                                .responseFilePaths[index],
+                                            optsAttsField.responseFilePaths),
                                       );
                                     },
-                                    itemCount: _medCondsProofimages.length,
+                                    itemCount:
+                                        optsAttsField.responseFilePaths.length,
                                   ),
                                 ),
                           Row(
@@ -840,7 +840,7 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
                                   onPressed: () {
                                     captureImage(false).then((value) {
                                       if (value != null) {
-                                        _medCondsProofimages.add(value);
+                                        //  _medCondsProofimages.add(value);
                                         optsAttsField.responseFilePaths
                                             .add(value.path);
                                       }
@@ -856,7 +856,7 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
                                   onPressed: () {
                                     captureImage(true).then((value) {
                                       if (value != null) {
-                                        _medCondsProofimages.add(value);
+                                        //  _medCondsProofimages.add(value);
                                         optsAttsField.responseFilePaths
                                             .add(value.path);
                                       }
@@ -938,6 +938,7 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
                             maxLines: 1,
                             minLines: 1,
                             style: textInputTextStyle,
+                            validator: validateText,
                             keyboardType: TextInputType.text,
                             controller: listOfControllers[field.label],
                             decoration: CommonStyle.textFieldStyle(
@@ -994,11 +995,12 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
   }
 
   Widget showImageList(
-      BuildContext context, File imageUrl, List<File> filesList) {
+      BuildContext context, String imageUrl, List<String> filesList) {
+    File image = File(imageUrl);
     return Stack(
       alignment: AlignmentDirectional.topEnd,
       children: [
-        Image.file(imageUrl),
+        Image.file(image),
         IconButton(
           alignment: Alignment.topRight,
           padding: EdgeInsets.zero,
@@ -1052,64 +1054,63 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
 
     validationErrMsg = "";
 
-    // if (validateMandatoryFields()) {
-    Utils.showMyFlushbar(
-        context,
-        Icons.info_outline,
-        Duration(
-          seconds: 4,
-        ),
-        "Saving details!! ",
-        "This would take just a moment.",
-        Colors.white,
-        true);
+    if (_bookingFormKey.currentState.validate()) {
+      Utils.showMyFlushbar(
+          context,
+          Icons.info_outline,
+          Duration(
+            seconds: 4,
+          ),
+          "Saving details!! ",
+          "This would take just a moment.",
+          Colors.white,
+          true);
+      _bookingFormKey.currentState.save();
 
-    _bookingFormKey.currentState.save();
+      //TODO : Smita - Upload all images to firebase storage.
 
-    //TODO : Smita - Upload all images to firebase storage.
+      //   List<String> frontLineTargetPaths = List<String>();
+      //   for (String path in frontlineWorkerField.responseFilePaths) {
+      //     String fileName = basename(path);
+      //     print(fileName);
 
-    //   List<String> frontLineTargetPaths = List<String>();
-    //   for (String path in frontlineWorkerField.responseFilePaths) {
-    //     String fileName = basename(path);
-    //     print(fileName);
+      //     String targetFileName =
+      //         '${bookingApplication.id}#${frontlineWorkerField.id}#${_gs.getCurrentUser().id}#$fileName';
 
-    //     String targetFileName =
-    //         '${bookingApplication.id}#${frontlineWorkerField.id}#${_gs.getCurrentUser().id}#$fileName';
+      //     String targetPath = await uploadFilesToServer(path, targetFileName);
+      //     print(targetPath);
+      //     frontLineTargetPaths.add(targetPath);
+      //   }
 
-    //     String targetPath = await uploadFilesToServer(path, targetFileName);
-    //     print(targetPath);
-    //     frontLineTargetPaths.add(targetPath);
-    //   }
+      //   frontlineWorkerField.responseFilePaths = frontLineTargetPaths;
 
-    //   frontlineWorkerField.responseFilePaths = frontLineTargetPaths;
-
-    _gs
-        .getApplicationService()
-        .submitApplication(bookingApplication, widget.metaEntity)
-        .then((value) {
-      if (value) {
-        Utils.showMyFlushbar(
-            context,
-            Icons.check,
-            Duration(
-              seconds: 5,
-            ),
-            "Request submitted successfully!",
-            'We will contact you as soon as slot opens up. Stay Safe!');
-      }
-    });
-    // } else {
-    //   print(validationErrMsg);
-    //   Utils.showMyFlushbar(
-    //       context,
-    //       Icons.error,
-    //       Duration(
-    //         seconds: 10,
-    //       ),
-    //       validationErrMsg,
-    //       "Please fill all mandatory fields and save again.",
-    //       Colors.red);
-    // }
+      _gs
+          .getApplicationService()
+          .submitApplication(bookingApplication, widget.metaEntity)
+          .then((value) {
+        if (value) {
+          Utils.showMyFlushbar(
+              context,
+              Icons.check,
+              Duration(
+                seconds: 5,
+              ),
+              "Request submitted successfully!",
+              'We will contact you as soon as slot opens up. Stay Safe!');
+        }
+      });
+    } else {
+      print(validationErrMsg);
+      Utils.showMyFlushbar(
+          context,
+          Icons.error,
+          Duration(
+            seconds: 10,
+          ),
+          validationErrMsg,
+          "Please fill all mandatory fields and save again.",
+          Colors.red);
+    }
   }
 
   processSaveWithTimer() async {
@@ -1154,10 +1155,7 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
                         child: ListView.builder(
                           padding: EdgeInsets.all(
                               MediaQuery.of(context).size.width * .026),
-                          // itemExtent: itemSize,
-                          // reverse: true,
                           shrinkWrap: true,
-                          //scrollDirection: Axis.vertical,
                           itemBuilder: (BuildContext context, int index) {
                             _controllers.add(new TextEditingController());
                             return Container(
@@ -1247,12 +1245,4 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
       );
     }
   }
-}
-
-class Item {
-  Value value;
-  bool isSelected;
-  String lastSelected;
-
-  Item(this.value, this.isSelected);
 }
