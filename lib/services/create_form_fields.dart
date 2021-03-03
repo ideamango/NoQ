@@ -1,10 +1,33 @@
+import 'dart:async';
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:noq/db/db_model/booking_application.dart';
 import 'package:noq/db/db_model/booking_form.dart';
+import 'package:noq/db/db_model/meta_entity.dart';
+import 'package:noq/enum/application_status.dart';
 import 'package:noq/enum/field_type.dart';
+import 'package:noq/global_state.dart';
+import 'package:noq/services/circular_progress.dart';
 
 import 'package:noq/style.dart';
+import 'package:noq/utils.dart';
+import 'package:noq/widget/custom_expansion_tile.dart';
 
 class CreateFormFields extends StatefulWidget {
+  final MetaEntity metaEntity;
+  final String bookingFormId;
+  final DateTime preferredSlotTime;
+  final dynamic backRoute;
+  CreateFormFields(
+      {Key key,
+      @required this.metaEntity,
+      @required this.bookingFormId,
+      @required this.preferredSlotTime,
+      @required this.backRoute})
+      : super(key: key);
+
   @override
   _CreateFormFieldsState createState() => _CreateFormFieldsState();
 }
@@ -19,208 +42,919 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
   BookingForm dummyForm;
   final itemSize = 100.0;
   List<String> dumList = new List<String>();
-  List<Item> selectedList = new List<Item>();
   Map<String, List<Item>> mapOfOptionsFields = Map<String, List<Item>>();
   List<Item> listf3 = new List<Item>();
   List<Item> listf4 = new List<Item>();
+  bool _initCompleted = false;
 
+  List<File> _medCondsProofimages = [];
+  bool validateField = false;
+  Map<String, Widget> listOfWidgets = new Map<String, Widget>();
+  Map<String, List> listOfFieldTypes = new Map<String, List>();
+  String dateString = "Start Date";
+  String validationErrMsg;
+  List<Field> listOfFields;
+
+  BookingApplication bookingApplication;
+  GlobalState _gs;
   @override
   void initState() {
     super.initState();
-    createDummyData();
-    selectedList = List();
-    // list.add(Item("Diabetes1", true));
-    // list.add(Item("Diabetes2", true));
-    // list.add(Item("Diabetes3", true));
-    // list.add(Item("Heart", true));
-    // list.add(Item("Lungs", false));
-    // list.add(Item("Kidney", false));
-    // list.add(Item("Asthma", true));
-    // list.add(Item("Blood Pressure", false));
-    // list.add(Item("Hyper Tension", false));
-    // list.add(Item("Thyroid", false));
-  }
+    getGlobalState().whenComplete(() {
+      _gs
+          .getApplicationService()
+          .getBookingForm(widget.bookingFormId)
+          .then((value) {
+        dummyForm = value;
+        bookingApplication = new BookingApplication();
+        //slot
+        bookingApplication.preferredSlotTiming = widget.preferredSlotTime;
 
-  // double _height = 0;
-  // double _width = 0;
-  // bool _isExpanded = false;
-  createDummyData() {
-    List<Field> listOfFields = new List<Field>();
-    FormInputFieldText f1 =
-        new FormInputFieldText("Name", true, "Enter name of person", 20);
-    FormInputFieldNumber f2 = new FormInputFieldNumber(
-        "Duration of visit", true, "Enter purpose of visit", 0, 1000);
-    FormInputFieldNumber f5 = new FormInputFieldNumber(
-        "Address", true, "Address for Communication", 0, 1000);
-    List<Value> list = new List<Value>();
-    list.add(Value("Diabetes"));
-    list.add(Value("Asthma"));
-    list.add(Value("Blood Pressure"));
-    list.add(Value("Allergy"));
-    list.add(Value("Hyper Tension"));
-    list.add(Value("Thyroid"));
-
-    FormInputFieldOptions f3 = new FormInputFieldOptions("Medical Conditions",
-        true, "Medical COnditions(Select any)", list, true);
-
-    list.forEach((element) {
-      listf3.add(Item(element.value, false));
+        //bookingFormId
+        bookingApplication.bookingFormId = widget.bookingFormId;
+        bookingApplication.entityId = widget.metaEntity.entityId;
+        bookingApplication.userId = _gs.getCurrentUser().id;
+        bookingApplication.status = ApplicationStatus.NEW;
+        bookingApplication.responseForm = dummyForm;
+        print("Booking application set");
+        initPage();
+        setState(() {
+          _initCompleted = true;
+        });
+      });
     });
-    mapOfOptionsFields[f3.label] = listf3;
-
-    List<Value> list2 = new List<Value>();
-    list2.add(Value("Diabetesiii"));
-    list2.add(Value("Asthmayyyyy"));
-    list2.add(Value("Blood Pressurebbbb"));
-    list2.add(Value("Allergyxxxx"));
-
-    FormInputFieldOptions f4 = new FormInputFieldOptions(
-        "Surgeries, if any", true, "Surgery(Select any)", list, false);
-    for (int i = 0; i < list2.length; i++) {
-      listf4.add(Item(list2[i].value, false));
-    }
-    mapOfOptionsFields[f4.label] = listf4;
-
-    listOfFields.add(f1);
-    listOfFields.add(f2);
-    listOfFields.add(f3);
-    listOfFields.add(f4);
-    listOfFields.add(f5);
-
-    dummyForm = new BookingForm(
-        formName: "Token Allocation form",
-        footerMsg: "Footer",
-        headerMsg: "header",
-        autoApproved: true);
   }
 
-  Widget buildChildItem(Field field, int index) {
-    if (!listOfControllers.containsKey(field.label)) {
-      listOfControllers[field.label] = new TextEditingController();
+  void initPage() {
+    listOfFields = dummyForm.getFormFields();
+    Widget newField;
+    for (int i = 0; i < listOfFields.length; i++) {
+      Field field = listOfFields[i];
+      newField = buildChildItem(field, i, true);
+      listOfWidgets[field.label] = newField;
+    }
+  }
+
+  Future<void> getGlobalState() async {
+    _gs = await GlobalState.getGlobalState();
+  }
+
+  Future<DateTime> pickDate(BuildContext context) async {
+    DateTime date = await showDatePicker(
+      context: context,
+      firstDate: DateTime.now().subtract(Duration(days: 365 * 100)),
+      lastDate: DateTime.now(),
+      initialDate: DateTime.now(),
+      builder: (BuildContext context, Widget child) {
+        return Theme(
+          data: ThemeData.dark().copyWith(
+            colorScheme: ColorScheme.light(
+              primary: Colors.cyan,
+            ),
+            dialogBackgroundColor: Colors.white,
+          ),
+          child: child,
+        );
+      },
+    );
+    return date;
+  }
+
+  Widget buildChildItem(Field field, int index, bool isInit) {
+    if (isInit) {
+      if (!listOfControllers.containsKey(field.label)) {
+        listOfControllers[field.label] = new TextEditingController();
+      }
     }
     Widget newField;
     switch (field.type) {
       case FieldType.TEXT:
         {
-          newField = TextFormField(
-            obscureText: false,
-            maxLines: 1,
-            minLines: 1,
-            style: textInputTextStyle,
-            keyboardType: TextInputType.text,
-            controller: listOfControllers[field.label],
-            decoration: CommonStyle.textFieldStyle(
-                labelTextStr: field.label, hintTextStr: field.label),
-            onChanged: (String value) {
-              print(value);
-            },
-            onSaved: (String value) {
-              print(value);
-            },
+          newField = Container(
+            margin: EdgeInsets.fromLTRB(5, 5, 5, 5),
+            decoration: BoxDecoration(
+                border: Border.all(color: containerColor),
+                color: Colors.grey[50],
+                shape: BoxShape.rectangle,
+                borderRadius: BorderRadius.all(Radius.circular(5.0))),
+            child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Column(children: <Widget>[
+                    Container(
+                      //padding: EdgeInsets.only(left: 5),
+                      decoration: darkContainer,
+                      child: Theme(
+                        data: ThemeData(
+                          unselectedWidgetColor: Colors.white,
+                          accentColor: Colors.grey[50],
+                        ),
+                        child: CustomExpansionTile(
+                          //key: PageStorageKey(this.widget.headerTitle),
+                          initiallyExpanded: false,
+                          title: Row(
+                            children: <Widget>[
+                              Text(
+                                field.label,
+                                style: TextStyle(
+                                    color: Colors.white, fontSize: 15),
+                              ),
+                              SizedBox(width: 5),
+                            ],
+                          ),
+                          backgroundColor: Colors.blueGrey[500],
+
+                          children: <Widget>[
+                            new Container(
+                              width: MediaQuery.of(context).size.width * .94,
+                              decoration: darkContainer,
+                              padding: EdgeInsets.all(2.0),
+                              child: Row(
+                                children: <Widget>[
+                                  Expanded(
+                                    child: Text(field.infoMessage,
+                                        style: buttonXSmlTextStyle),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    Container(
+                      padding: EdgeInsets.only(left: 5.0, right: 5),
+                      child: Column(
+                        children: [
+                          Container(
+                            //   margin: EdgeInsets.fromLTRB(10, 5, 10, 5),
+                            padding: EdgeInsets.all(10),
+                            child: TextFormField(
+                              obscureText: false,
+                              maxLines: 1,
+                              minLines: 1,
+                              style: textInputTextStyle,
+                              keyboardType: TextInputType.text,
+                              controller: listOfControllers[field.label],
+                              decoration: CommonStyle.textFieldStyle(
+                                labelTextStr: field.label,
+                                // hintTextStr: field.infoMessage
+                              ),
+                              onChanged: (String value) {
+                                print(value);
+                              },
+                              onSaved: (String value) {
+                                print(value);
+                              },
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ]),
+                ]),
+          );
+        }
+        break;
+      case FieldType.DATETIME:
+        {
+          FormInputFieldDateTime newDateField = field;
+          newField = Container(
+            margin: EdgeInsets.fromLTRB(5, 5, 5, 5),
+            decoration: BoxDecoration(
+                border: Border.all(color: containerColor),
+                color: Colors.grey[50],
+                shape: BoxShape.rectangle,
+                borderRadius: BorderRadius.all(Radius.circular(5.0))),
+            child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Column(children: <Widget>[
+                    Container(
+                      //padding: EdgeInsets.only(left: 5),
+                      decoration: darkContainer,
+                      child: Theme(
+                        data: ThemeData(
+                          unselectedWidgetColor: Colors.white,
+                          accentColor: Colors.grey[50],
+                        ),
+                        child: CustomExpansionTile(
+                          //key: PageStorageKey(this.widget.headerTitle),
+                          initiallyExpanded: false,
+                          title: Row(
+                            children: <Widget>[
+                              Text(
+                                field.label,
+                                style: TextStyle(
+                                    color: Colors.white, fontSize: 15),
+                              ),
+                              SizedBox(width: 5),
+                            ],
+                          ),
+                          backgroundColor: Colors.blueGrey[500],
+
+                          children: <Widget>[
+                            new Container(
+                              width: MediaQuery.of(context).size.width * .94,
+                              decoration: darkContainer,
+                              padding: EdgeInsets.all(2.0),
+                              child: Row(
+                                children: <Widget>[
+                                  Expanded(
+                                    child: Text(field.infoMessage,
+                                        style: buttonXSmlTextStyle),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    Container(
+                      padding: EdgeInsets.only(left: 5.0, right: 5),
+                      child: Column(
+                        children: [
+                          Container(
+                            //   margin: EdgeInsets.fromLTRB(10, 5, 10, 5),
+                            padding: EdgeInsets.all(10),
+                            child: TextFormField(
+                              obscureText: false,
+                              readOnly: true,
+                              maxLines: 1,
+                              minLines: 1,
+                              style: textInputTextStyle,
+                              keyboardType: TextInputType.text,
+                              controller: listOfControllers[newDateField.label],
+                              decoration: CommonStyle.textFieldStyle(
+                                  labelTextStr: newDateField.label,
+                                  hintTextStr: newDateField.label),
+                              onTap: () {
+                                setState(() {
+                                  pickDate(context).then((value) {
+                                    if (value != null) {
+                                      setState(() {
+                                        dateString = value.day.toString() +
+                                            " / " +
+                                            value.month.toString() +
+                                            " / " +
+                                            value.year.toString();
+                                        listOfControllers[newDateField.label]
+                                            .text = dateString;
+                                      });
+                                      newDateField.responseDateTime = value;
+                                    }
+                                  });
+                                });
+                              },
+                              maxLength: null,
+                              onChanged: (String value) {
+                                print(value);
+                              },
+                              onSaved: (String value) {
+                                print(value);
+                              },
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ]),
+                ]),
           );
         }
         break;
       case FieldType.NUMBER:
         {
-          newField = TextFormField(
-            obscureText: false,
-            maxLines: 1,
-            minLines: 1,
-            style: textInputTextStyle,
-            keyboardType: TextInputType.number,
-            controller: listOfControllers[field.label],
-            decoration: CommonStyle.textFieldStyle(
-                labelTextStr: field.label, hintTextStr: field.label),
-            onChanged: (String value) {
-              print(value);
-            },
-            onSaved: (String value) {
-              print(value);
-            },
+          newField = Container(
+            margin: EdgeInsets.fromLTRB(5, 5, 5, 5),
+            decoration: BoxDecoration(
+                border: Border.all(color: containerColor),
+                color: Colors.grey[50],
+                shape: BoxShape.rectangle,
+                borderRadius: BorderRadius.all(Radius.circular(5.0))),
+            child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Column(children: <Widget>[
+                    Container(
+                      //padding: EdgeInsets.only(left: 5),
+                      decoration: darkContainer,
+                      child: Theme(
+                        data: ThemeData(
+                          unselectedWidgetColor: Colors.white,
+                          accentColor: Colors.grey[50],
+                        ),
+                        child: CustomExpansionTile(
+                          //key: PageStorageKey(this.widget.headerTitle),
+                          initiallyExpanded: false,
+                          title: Row(
+                            children: <Widget>[
+                              Text(
+                                field.label,
+                                style: TextStyle(
+                                    color: Colors.white, fontSize: 15),
+                              ),
+                              SizedBox(width: 5),
+                            ],
+                          ),
+                          backgroundColor: Colors.blueGrey[500],
+
+                          children: <Widget>[
+                            new Container(
+                              width: MediaQuery.of(context).size.width * .94,
+                              decoration: darkContainer,
+                              padding: EdgeInsets.all(2.0),
+                              child: Row(
+                                children: <Widget>[
+                                  Expanded(
+                                    child: Text(field.infoMessage,
+                                        style: buttonXSmlTextStyle),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    Container(
+                      padding: EdgeInsets.only(left: 5.0, right: 5),
+                      child: Column(
+                        children: [
+                          Container(
+                            margin: EdgeInsets.fromLTRB(10, 5, 10, 5),
+                            child: TextFormField(
+                              obscureText: false,
+                              maxLines: 1,
+                              minLines: 1,
+                              style: textInputTextStyle,
+                              keyboardType: TextInputType.number,
+                              controller: listOfControllers[field.label],
+                              decoration: CommonStyle.textFieldStyle(
+                                  labelTextStr: field.label,
+                                  hintTextStr: field.label),
+                              onChanged: (String value) {
+                                print(value);
+                              },
+                              onSaved: (String value) {
+                                print(value);
+                              },
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ]),
+                ]),
           );
         }
         break;
       case FieldType.OPTIONS:
         {
-          // list.add("Diabetes");
-          // list.add("Asthma");
-          // list.add("Blood Pressure");
-          // list.add("Allergy");
-          // list.add("Hyper Tension");
-          // list.add("Thyroid");
-          //Implicit type cast of type Field to  type Options field
-          //  FormInputFieldOptions optionField = field;
+          FormInputFieldOptions newOptionsField = field;
+          if (isInit) {
+            List<Item> newOptionsFieldTypesList = List<Item>();
+            for (Value val in newOptionsField.options) {
+              newOptionsFieldTypesList.add(Item(val, false));
+            }
+            listOfFieldTypes[field.label] = newOptionsFieldTypesList;
+          }
+          newField = Container(
+            margin: EdgeInsets.fromLTRB(5, 5, 5, 5),
+            decoration: BoxDecoration(
+                border: Border.all(color: containerColor),
+                color: Colors.grey[50],
+                shape: BoxShape.rectangle,
+                borderRadius: BorderRadius.all(Radius.circular(5.0))),
+            child:
+                Column(crossAxisAlignment: CrossAxisAlignment.start, children: <
+                    Widget>[
+              Column(children: <Widget>[
+                Container(
+                  //padding: EdgeInsets.only(left: 5),
+                  decoration: darkContainer,
+                  child: Theme(
+                    data: ThemeData(
+                      unselectedWidgetColor: Colors.white,
+                      accentColor: Colors.grey[50],
+                    ),
+                    child: CustomExpansionTile(
+                      //key: PageStorageKey(this.widget.headerTitle),
+                      initiallyExpanded: false,
+                      title: Row(
+                        children: <Widget>[
+                          Text(
+                            newOptionsField.label,
+                            style: TextStyle(color: Colors.white, fontSize: 15),
+                          ),
+                          SizedBox(width: 5),
+                        ],
+                      ),
+                      backgroundColor: Colors.blueGrey[500],
 
-          newField = Column(
-            children: [
-              Row(
-                children: [
-                  Container(
-                      width: MediaQuery.of(context).size.width * .2,
-                      child: Text(
-                        field.label,
-                        style: textInputTextStyle,
-                      )),
-                  Expanded(
-                    child: Wrap(
-                      children: mapOfOptionsFields[field.label]
-                          .map((item) => GestureDetector(
-                              onTap: () {
-                                bool newSelectionValue = !(item.isSelected);
-
-                                mapOfOptionsFields[field.label]
-                                    .forEach((element) {
-                                  element.isSelected = false;
-                                });
-
-                                setState(() {
-                                  item.isSelected = newSelectionValue;
-                                });
-                              },
-                              child: Container(
-                                  decoration: new BoxDecoration(
-                                      border: Border.all(
-                                          color: Colors.blueGrey[200]),
-                                      shape: BoxShape.rectangle,
-                                      color: (!item.isSelected)
-                                          ? Colors.cyan[50]
-                                          : highlightColor,
-                                      borderRadius: BorderRadius.all(
-                                          Radius.circular(15.0))),
-                                  padding: EdgeInsets.all(8),
-                                  margin: EdgeInsets.all(8),
-                                  // color: Colors.orange,
-                                  child: Text(item.text))))
-                          .toList()
-                          .cast<Widget>(),
+                      children: <Widget>[
+                        new Container(
+                          width: MediaQuery.of(context).size.width * .94,
+                          decoration: darkContainer,
+                          padding: EdgeInsets.all(2.0),
+                          child: Row(
+                            children: <Widget>[
+                              Expanded(
+                                child: Text(newOptionsField.infoMessage,
+                                    style: buttonXSmlTextStyle),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                ],
-              ),
-              Divider(
-                thickness: 1.5,
-              )
-            ],
+                ),
+                Container(
+                  padding: EdgeInsets.only(left: 5.0, right: 5),
+                  child: Column(
+                    children: [
+                      Row(
+                        children: [
+                          Expanded(
+                            child: Wrap(
+                              children: listOfFieldTypes[field.label]
+                                  .map((item) => GestureDetector(
+                                      onTap: () {
+                                        bool newSelectionValue =
+                                            !(item.isSelected);
+                                        if (newOptionsField.isMultiSelect ==
+                                            false) {
+                                          listOfFieldTypes[field.label]
+                                              .forEach((element) {
+                                            element.isSelected = false;
+                                          });
+                                        }
+                                        if (item.isSelected == true)
+                                          newOptionsField.responseValues
+                                              .remove(item.value);
+                                        else
+                                          newOptionsField.responseValues
+                                              .add(item.value);
+
+                                        setState(() {
+                                          item.isSelected = newSelectionValue;
+                                        });
+                                      },
+                                      child: Container(
+                                          decoration: new BoxDecoration(
+                                              border: Border.all(
+                                                  color: Colors.blueGrey[200]),
+                                              shape: BoxShape.rectangle,
+                                              color: (!item.isSelected)
+                                                  ? Colors.cyan[50]
+                                                  : highlightColor,
+                                              borderRadius: BorderRadius.all(
+                                                  Radius.circular(30.0))),
+                                          padding:
+                                              EdgeInsets.fromLTRB(8, 5, 8, 5),
+                                          margin: EdgeInsets.all(8),
+                                          // color: Colors.orange,
+                                          child: Text(item.value.value))))
+                                  .toList()
+                                  .cast<Widget>(),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ]),
+            ]),
+          );
+        }
+        break;
+      case FieldType.ATTACHMENT:
+        {
+          FormInputFieldAttachment attsField = field;
+
+          newField = Container(
+            margin: EdgeInsets.fromLTRB(5, 5, 5, 5),
+            decoration: BoxDecoration(
+                border: Border.all(color: containerColor),
+                color: Colors.grey[50],
+                shape: BoxShape.rectangle,
+                borderRadius: BorderRadius.all(Radius.circular(5.0))),
+            child:
+                Column(crossAxisAlignment: CrossAxisAlignment.start, children: <
+                    Widget>[
+              Column(children: <Widget>[
+                Container(
+                  //padding: EdgeInsets.only(left: 5),
+                  decoration: darkContainer,
+                  child: Theme(
+                    data: ThemeData(
+                      unselectedWidgetColor: Colors.white,
+                      accentColor: Colors.grey[50],
+                    ),
+                    child: CustomExpansionTile(
+                      //key: PageStorageKey(this.widget.headerTitle),
+                      initiallyExpanded: false,
+                      title: Row(
+                        children: <Widget>[
+                          Text(
+                            attsField.label,
+                            style: TextStyle(color: Colors.white, fontSize: 15),
+                          ),
+                          SizedBox(width: 5),
+                        ],
+                      ),
+                      backgroundColor: Colors.blueGrey[500],
+
+                      children: <Widget>[
+                        new Container(
+                          width: MediaQuery.of(context).size.width * .94,
+                          decoration: darkContainer,
+                          padding: EdgeInsets.all(2.0),
+                          child: Row(
+                            children: <Widget>[
+                              Expanded(
+                                child: Text(attsField.infoMessage,
+                                    style: buttonXSmlTextStyle),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                Container(
+                  padding: EdgeInsets.only(left: 5.0, right: 5),
+                  child: Column(
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          (Utils.isNullOrEmpty(attsField.responseFilePaths))
+                              ? Container(
+                                  child: Text(
+                                  "No Image Selected",
+                                  style: TextStyle(
+                                      color: (validateField)
+                                          ? Colors.red
+                                          : Colors.black),
+                                ))
+                              : Container(
+                                  width: MediaQuery.of(context).size.width * .6,
+                                  child: ListView.builder(
+                                    padding: EdgeInsets.all(
+                                        MediaQuery.of(context).size.width *
+                                            .03),
+                                    //  controller: _childScrollController,
+                                    scrollDirection: Axis.vertical,
+
+                                    shrinkWrap: true,
+                                    //   itemExtent: itemSize,
+                                    //scrollDirection: Axis.vertical,
+                                    itemBuilder:
+                                        (BuildContext context, int index) {
+                                      return Container(
+                                        padding: EdgeInsets.only(bottom: 5),
+                                        child: showImageList(
+                                            context,
+                                            _medCondsProofimages[index],
+                                            _medCondsProofimages),
+                                      );
+                                    },
+                                    itemCount: _medCondsProofimages.length,
+                                  ),
+                                ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              IconButton(
+                                  padding: EdgeInsets.zero,
+                                  icon: Icon(
+                                    Icons.camera_alt_rounded,
+                                    color: primaryDarkColor,
+                                  ),
+                                  onPressed: () {
+                                    captureImage(false).then((value) {
+                                      if (value != null) {
+                                        _medCondsProofimages.add(value);
+                                        attsField.responseFilePaths
+                                            .add(value.path);
+                                      }
+                                      setState(() {});
+                                    });
+                                  }),
+                              IconButton(
+                                  padding: EdgeInsets.zero,
+                                  icon: Icon(
+                                    Icons.attach_file,
+                                    color: primaryDarkColor,
+                                  ),
+                                  onPressed: () {
+                                    captureImage(true).then((value) {
+                                      if (value != null) {
+                                        _medCondsProofimages.add(value);
+                                        attsField.responseFilePaths
+                                            .add(value.path);
+                                      }
+                                      setState(() {});
+                                    });
+                                  }),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ]),
+            ]),
+          );
+        }
+        break;
+      case FieldType.OPTIONS_ATTACHMENTS:
+        {
+          FormInputFieldOptionsWithAttachments optsAttsField = field;
+          if (isInit) {
+            List<Item> newfieldOptionsTypesList = List<Item>();
+            for (Value val in optsAttsField.options) {
+              newfieldOptionsTypesList.add(Item(val, false));
+            }
+            listOfFieldTypes[field.label] = newfieldOptionsTypesList;
+          }
+
+          newField = Container(
+            margin: EdgeInsets.fromLTRB(5, 5, 5, 5),
+            decoration: BoxDecoration(
+                border: Border.all(color: containerColor),
+                color: Colors.grey[50],
+                shape: BoxShape.rectangle,
+                borderRadius: BorderRadius.all(Radius.circular(5.0))),
+            child:
+                Column(crossAxisAlignment: CrossAxisAlignment.start, children: <
+                    Widget>[
+              Column(children: <Widget>[
+                Container(
+                  //padding: EdgeInsets.only(left: 5),
+                  decoration: darkContainer,
+                  child: Theme(
+                    data: ThemeData(
+                      unselectedWidgetColor: Colors.white,
+                      accentColor: Colors.grey[50],
+                    ),
+                    child: CustomExpansionTile(
+                      //key: PageStorageKey(this.widget.headerTitle),
+                      initiallyExpanded: false,
+                      title: Row(
+                        children: <Widget>[
+                          Text(
+                            optsAttsField.label,
+                            style: TextStyle(color: Colors.white, fontSize: 15),
+                          ),
+                          SizedBox(width: 5),
+                        ],
+                      ),
+                      backgroundColor: Colors.blueGrey[500],
+
+                      children: <Widget>[
+                        new Container(
+                          width: MediaQuery.of(context).size.width * .94,
+                          decoration: darkContainer,
+                          padding: EdgeInsets.all(2.0),
+                          child: Row(
+                            children: <Widget>[
+                              Expanded(
+                                child: Text(optsAttsField.infoMessage,
+                                    style: buttonXSmlTextStyle),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                Container(
+                  padding: EdgeInsets.only(left: 5.0, right: 5),
+                  child: Column(
+                    children: [
+                      Row(
+                        children: [
+                          Expanded(
+                            child: Wrap(
+                              children: listOfFieldTypes[field.label]
+                                  .map((item) => GestureDetector(
+                                      onTap: () {
+                                        bool newSelectionValue =
+                                            !(item.isSelected);
+                                        if (optsAttsField.isMultiSelect ==
+                                            false) {
+                                          listOfFieldTypes[field.label]
+                                              .forEach((element) {
+                                            element.isSelected = false;
+                                          });
+                                        }
+                                        if (item.isSelected == true)
+                                          optsAttsField.responseValues
+                                              .remove(item.value);
+                                        else
+                                          optsAttsField.responseValues
+                                              .add(item.value);
+
+                                        setState(() {
+                                          item.isSelected = newSelectionValue;
+                                        });
+                                      },
+                                      child: Container(
+                                          decoration: new BoxDecoration(
+                                              border: Border.all(
+                                                  color: Colors.blueGrey[200]),
+                                              shape: BoxShape.rectangle,
+                                              color: (!item.isSelected)
+                                                  ? Colors.cyan[50]
+                                                  : highlightColor,
+                                              borderRadius: BorderRadius.all(
+                                                  Radius.circular(30.0))),
+                                          padding:
+                                              EdgeInsets.fromLTRB(8, 5, 8, 5),
+                                          margin: EdgeInsets.all(8),
+                                          // color: Colors.orange,
+                                          child: Text(item.value.value))))
+                                  .toList()
+                                  .cast<Widget>(),
+                            ),
+                          ),
+                        ],
+                      ),
+                      Divider(
+                        thickness: 1.5,
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          (Utils.isNullOrEmpty(optsAttsField.responseFilePaths))
+                              ? Container(
+                                  child: Text(
+                                  "No Image Selected",
+                                  style: TextStyle(
+                                      color: (validateField)
+                                          ? Colors.red
+                                          : Colors.black),
+                                ))
+                              : Container(
+                                  width: MediaQuery.of(context).size.width * .6,
+                                  child: ListView.builder(
+                                    padding: EdgeInsets.all(
+                                        MediaQuery.of(context).size.width *
+                                            .03),
+                                    //  controller: _childScrollController,
+                                    scrollDirection: Axis.vertical,
+
+                                    shrinkWrap: true,
+                                    //   itemExtent: itemSize,
+                                    //scrollDirection: Axis.vertical,
+                                    itemBuilder:
+                                        (BuildContext context, int index) {
+                                      return Container(
+                                        padding: EdgeInsets.only(bottom: 5),
+                                        child: showImageList(
+                                            context,
+                                            _medCondsProofimages[index],
+                                            _medCondsProofimages),
+                                      );
+                                    },
+                                    itemCount: _medCondsProofimages.length,
+                                  ),
+                                ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              IconButton(
+                                  padding: EdgeInsets.zero,
+                                  icon: Icon(
+                                    Icons.camera_alt_rounded,
+                                    color: primaryDarkColor,
+                                  ),
+                                  onPressed: () {
+                                    captureImage(false).then((value) {
+                                      if (value != null) {
+                                        _medCondsProofimages.add(value);
+                                        optsAttsField.responseFilePaths
+                                            .add(value.path);
+                                      }
+                                      setState(() {});
+                                    });
+                                  }),
+                              IconButton(
+                                  padding: EdgeInsets.zero,
+                                  icon: Icon(
+                                    Icons.attach_file,
+                                    color: primaryDarkColor,
+                                  ),
+                                  onPressed: () {
+                                    captureImage(true).then((value) {
+                                      if (value != null) {
+                                        _medCondsProofimages.add(value);
+                                        optsAttsField.responseFilePaths
+                                            .add(value.path);
+                                      }
+                                      setState(() {});
+                                    });
+                                  }),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ]),
+            ]),
           );
         }
         break;
       default:
         {
-          newField = TextFormField(
-            obscureText: false,
-            maxLines: 1,
-            minLines: 1,
-            style: textInputTextStyle,
-            keyboardType: TextInputType.text,
-            controller: listOfControllers[field.label],
-            decoration: CommonStyle.textFieldStyle(
-                labelTextStr: field.label, hintTextStr: field.label),
-            onChanged: (String value) {
-              print(value);
-            },
-            onSaved: (String value) {
-              print(value);
-            },
+          newField = Container(
+            margin: EdgeInsets.fromLTRB(5, 5, 5, 5),
+            decoration: BoxDecoration(
+                border: Border.all(color: containerColor),
+                color: Colors.grey[50],
+                shape: BoxShape.rectangle,
+                borderRadius: BorderRadius.all(Radius.circular(5.0))),
+            child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Column(children: <Widget>[
+                    Container(
+                      //padding: EdgeInsets.only(left: 5),
+                      decoration: darkContainer,
+                      child: Theme(
+                        data: ThemeData(
+                          unselectedWidgetColor: Colors.white,
+                          accentColor: Colors.grey[50],
+                        ),
+                        child: CustomExpansionTile(
+                          //key: PageStorageKey(this.widget.headerTitle),
+                          initiallyExpanded: false,
+                          title: Row(
+                            children: <Widget>[
+                              Text(
+                                field.label,
+                                style: TextStyle(
+                                    color: Colors.white, fontSize: 15),
+                              ),
+                              SizedBox(width: 5),
+                            ],
+                          ),
+                          backgroundColor: Colors.blueGrey[500],
+
+                          children: <Widget>[
+                            new Container(
+                              width: MediaQuery.of(context).size.width * .94,
+                              decoration: darkContainer,
+                              padding: EdgeInsets.all(2.0),
+                              child: Row(
+                                children: <Widget>[
+                                  Expanded(
+                                    child: Text(field.infoMessage,
+                                        style: buttonXSmlTextStyle),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    Container(
+                      padding: EdgeInsets.only(left: 5.0, right: 5),
+                      child: Column(
+                        children: [
+                          TextFormField(
+                            obscureText: false,
+                            maxLines: 1,
+                            minLines: 1,
+                            style: textInputTextStyle,
+                            keyboardType: TextInputType.text,
+                            controller: listOfControllers[field.label],
+                            decoration: CommonStyle.textFieldStyle(
+                                labelTextStr: field.label,
+                                hintTextStr: field.label),
+                            onChanged: (String value) {
+                              print(value);
+                            },
+                            onSaved: (String value) {
+                              print(value);
+                            },
+                          ),
+                        ],
+                      ),
+                    ),
+                  ]),
+                ]),
           );
         }
         break;
@@ -232,90 +966,293 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
     );
   }
 
+  Future<File> captureImage(bool gallery) async {
+    ImagePicker picker = ImagePicker();
+    PickedFile pickedFile;
+    File newImageFile;
+
+    if (gallery) {
+      pickedFile = await picker.getImage(
+          source: ImageSource.gallery,
+          maxHeight: 600,
+          maxWidth: 600,
+          imageQuality: 50);
+    }
+    // Otherwise open camera to get new photo
+    else {
+      pickedFile = await picker.getImage(
+          source: ImageSource.camera,
+          maxHeight: 600,
+          maxWidth: 600,
+          imageQuality: 50);
+    }
+
+    if (pickedFile != null) {
+      newImageFile = File(pickedFile.path);
+    }
+    return newImageFile;
+  }
+
+  Widget showImageList(
+      BuildContext context, File imageUrl, List<File> filesList) {
+    return Stack(
+      alignment: AlignmentDirectional.topEnd,
+      children: [
+        Image.file(imageUrl),
+        IconButton(
+          alignment: Alignment.topRight,
+          padding: EdgeInsets.zero,
+          icon: Icon(
+            Icons.cancel_outlined,
+            size: 20,
+            color: Colors.red[700],
+          ),
+          onPressed: () {
+            setState(() {
+              Utils.showConfirmationDialog(
+                      context, "Are you sure you want to delete this image?")
+                  .then((value) {
+                if (value) {
+                  print('REMOVE path in responsePaths $imageUrl');
+                  setState(() {
+                    filesList.removeWhere((element) => element == imageUrl);
+
+                    // idProofField.responseFilePaths
+                    //     .removeWhere((element) => element == imageUrl.path);
+                  });
+                }
+              });
+            });
+          },
+        )
+      ],
+    );
+  }
+
+  bool validateMandatoryFields() {
+    for (int i = 0; i < listOfFields.length; i++) {
+      if (listOfFields[i].isMandatory) {
+        if (!Utils.isNotNullOrEmpty(
+            listOfControllers[listOfFields[i].label].text)) {
+          validationErrMsg =
+              validationErrMsg + "\n ${listOfFields[i].label} cannot be empty.";
+        }
+      }
+    }
+    if (Utils.isNotNullOrEmpty(validationErrMsg))
+      return false;
+    else
+      return true;
+  }
+
+  saveRoute() async {
+    setState(() {
+      validateField = true;
+    });
+
+    validationErrMsg = "";
+
+    // if (validateMandatoryFields()) {
+    Utils.showMyFlushbar(
+        context,
+        Icons.info_outline,
+        Duration(
+          seconds: 4,
+        ),
+        "Saving details!! ",
+        "This would take just a moment.",
+        Colors.white,
+        true);
+
+    _bookingFormKey.currentState.save();
+
+    //TODO : Smita - Upload all images to firebase storage.
+
+    //   List<String> frontLineTargetPaths = List<String>();
+    //   for (String path in frontlineWorkerField.responseFilePaths) {
+    //     String fileName = basename(path);
+    //     print(fileName);
+
+    //     String targetFileName =
+    //         '${bookingApplication.id}#${frontlineWorkerField.id}#${_gs.getCurrentUser().id}#$fileName';
+
+    //     String targetPath = await uploadFilesToServer(path, targetFileName);
+    //     print(targetPath);
+    //     frontLineTargetPaths.add(targetPath);
+    //   }
+
+    //   frontlineWorkerField.responseFilePaths = frontLineTargetPaths;
+
+    _gs
+        .getApplicationService()
+        .submitApplication(bookingApplication, widget.metaEntity)
+        .then((value) {
+      if (value) {
+        Utils.showMyFlushbar(
+            context,
+            Icons.check,
+            Duration(
+              seconds: 5,
+            ),
+            "Request submitted successfully!",
+            'We will contact you as soon as slot opens up. Stay Safe!');
+      }
+    });
+    // } else {
+    //   print(validationErrMsg);
+    //   Utils.showMyFlushbar(
+    //       context,
+    //       Icons.error,
+    //       Duration(
+    //         seconds: 10,
+    //       ),
+    //       validationErrMsg,
+    //       "Please fill all mandatory fields and save again.",
+    //       Colors.red);
+    // }
+  }
+
+  processSaveWithTimer() async {
+    var duration = new Duration(seconds: 0);
+    return new Timer(duration, saveRoute);
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: SafeArea(
-        child: Form(
-          key: _bookingFormKey,
-          child: Column(
-            children: [
-              Expanded(
-                child: ListView.builder(
-                  padding:
-                      EdgeInsets.all(MediaQuery.of(context).size.width * .026),
-                  // itemExtent: itemSize,
-                  // reverse: true,
-                  shrinkWrap: true,
-                  //scrollDirection: Axis.vertical,
-                  itemBuilder: (BuildContext context, int index) {
-                    _controllers.add(new TextEditingController());
-                    return Container(
-                      //color: Colors.grey,
-                      //   height: MediaQuery.of(context).size.height * .55,
-                      width: MediaQuery.of(context).size.width * .95,
-                      child: buildChildItem(
-                          dummyForm.getFormFields()[index], index),
-                    );
-                  },
-                  itemCount: dummyForm.getFormFields().length,
+    if (_initCompleted)
+      return MaterialApp(
+        debugShowCheckedModeBanner: false,
+        theme: ThemeData.light().copyWith(),
+        home: WillPopScope(
+          child: Scaffold(
+            appBar: AppBar(
+              actions: <Widget>[],
+              flexibleSpace: Container(
+                decoration: gradientBackground,
+              ),
+              leading: IconButton(
+                padding: EdgeInsets.all(0),
+                alignment: Alignment.center,
+                highlightColor: highlightColor,
+                icon: Icon(Icons.arrow_back),
+                color: Colors.white,
+                onPressed: () {
+                  print("going back");
+                  Navigator.of(context).pop();
+                },
+              ),
+              title: Text(dummyForm.formName,
+                  style: TextStyle(color: Colors.white, fontSize: 16)),
+            ),
+            body: Center(
+              child: SafeArea(
+                child: Form(
+                  key: _bookingFormKey,
+                  child: Column(
+                    children: [
+                      Expanded(
+                        child: ListView.builder(
+                          padding: EdgeInsets.all(
+                              MediaQuery.of(context).size.width * .026),
+                          // itemExtent: itemSize,
+                          // reverse: true,
+                          shrinkWrap: true,
+                          //scrollDirection: Axis.vertical,
+                          itemBuilder: (BuildContext context, int index) {
+                            _controllers.add(new TextEditingController());
+                            return Container(
+                              //color: Colors.grey,
+                              //   height: MediaQuery.of(context).size.height * .55,
+                              width: MediaQuery.of(context).size.width * .95,
+                              child: buildChildItem(
+                                  dummyForm.getFormFields()[index],
+                                  index,
+                                  false),
+                            );
+                          },
+                          itemCount: dummyForm.getFormFields().length,
+                        ),
+                      ),
+                      RaisedButton(
+                          color: btnColor,
+                          splashColor: highlightColor,
+                          child: Container(
+                            padding: EdgeInsets.all(10),
+                            // margin: EdgeInsets.all(10),
+                            width: MediaQuery.of(context).size.width * .84,
+                            child: Column(
+                              children: <Widget>[
+                                Text(
+                                  'Save Details & Request Token',
+                                  style: buttonMedTextStyle,
+                                ),
+                              ],
+                            ),
+                          ),
+                          onPressed: () {
+                            print("FlushbarStatus-------");
+                            processSaveWithTimer();
+                          }),
+                    ],
+                  ),
                 ),
               ),
-              Row(
+            ),
+          ),
+          onWillPop: () async {
+            return true;
+          },
+        ),
+      );
+    else {
+      return MaterialApp(
+        debugShowCheckedModeBanner: false,
+        theme: ThemeData.light().copyWith(),
+        home: WillPopScope(
+          child: Scaffold(
+            appBar: AppBar(
+              actions: <Widget>[],
+              flexibleSpace: Container(
+                decoration: gradientBackground,
+              ),
+              leading: IconButton(
+                padding: EdgeInsets.all(0),
+                alignment: Alignment.center,
+                highlightColor: highlightColor,
+                icon: Icon(Icons.arrow_back),
+                color: Colors.white,
+                onPressed: () {
+                  print("going back");
+                  Navigator.of(context).pop();
+                },
+              ),
+              title: Text("Booking Request Form",
+                  style: TextStyle(color: Colors.white, fontSize: 16)),
+            ),
+            body: Center(
+              child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
-                  SizedBox(
-                    width: MediaQuery.of(context).size.width * .8,
-                    height: MediaQuery.of(context).size.height * .06,
-                    child: RaisedButton(
-                      elevation: 10.0,
-                      color: highlightColor,
-                      splashColor: Colors.orangeAccent[700],
-                      textColor: Colors.white,
-                      child: Text(
-                        'Save Details & Book Slot',
-                        style: TextStyle(fontSize: 20),
-                      ),
-                      onPressed: () {
-                        print('Save please');
-                      },
-                    ),
-                  ),
+                  showCircularProgress(),
                 ],
               ),
-
-              // Text(dummyForm.formName),
-              //  Text(dummyForm.headerMsg),
-              // Container(
-              //   child: TextFormField(
-              //     obscureText: false,
-              //     maxLines: 1,
-              //     minLines: 1,
-              //     style: textInputTextStyle,
-              //     keyboardType: TextInputType.text,
-              //     controller: _fieldController,
-              //     decoration: CommonStyle.textFieldStyle(
-              //         labelTextStr: "you", hintTextStr: ""),
-              //     onChanged: (String value) {
-              //       print(value);
-              //     },
-              //     onSaved: (String value) {
-              //       print(value);
-              //     },
-              //   ),
-              // ),
-            ],
+            ),
+            //drawer: CustomDrawer(),
+            //bottomNavigationBar: CustomBottomBar(barIndex: 0),
           ),
+          onWillPop: () async {
+            return true;
+          },
         ),
-      ),
-    );
+      );
+    }
   }
 }
 
 class Item {
-  String text;
+  Value value;
   bool isSelected;
   String lastSelected;
 
-  Item(this.text, this.isSelected);
+  Item(this.value, this.isSelected);
 }
