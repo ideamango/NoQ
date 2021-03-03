@@ -1,4 +1,5 @@
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:enum_to_string/enum_to_string.dart';
 import 'package:flutter/material.dart';
 import 'package:noq/SlotSelectionPage.dart';
@@ -21,6 +22,8 @@ import 'package:noq/widget/appbar.dart';
 import 'package:noq/widget/page_animation.dart';
 import 'package:noq/widget/widgets.dart';
 
+import '../tuple.dart';
+
 class ApplicationsList extends StatefulWidget {
   final MetaEntity metaEntity;
   final String bookingFormId;
@@ -40,8 +43,10 @@ class ApplicationsList extends StatefulWidget {
 class _ApplicationsListState extends State<ApplicationsList> {
   bool initCompleted = false;
   GlobalState _gs;
+  DocumentSnapshot firstDocOfPage;
+  DocumentSnapshot lastDocOfPage;
 
-  List<BookingApplication> listOfBa;
+  List<Tuple<BookingApplication, QueryDocumentSnapshot>> listOfBa;
   Map<String, TextEditingController> listOfControllers =
       new Map<String, TextEditingController>();
 
@@ -54,10 +59,22 @@ class _ApplicationsListState extends State<ApplicationsList> {
 
       _gs
           .getApplicationService()
-          .getApplications(widget.bookingFormId, widget.metaEntity.entityId,
-              widget.status, null, null, null, null, null, null, null, null)
+          .getApplications(
+              widget.bookingFormId,
+              widget.metaEntity.entityId,
+              widget.status,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              null,
+              lastDocOfPage,
+              10)
           .then((value) {
         listOfBa = value;
+        lastDocOfPage = listOfBa.last.item2;
         if (this.mounted) {
           setState(() {
             initCompleted = true;
@@ -75,8 +92,19 @@ class _ApplicationsListState extends State<ApplicationsList> {
   getListOfData() async {
     _gs
         .getApplicationService()
-        .getApplications(widget.bookingFormId, widget.metaEntity.entityId,
-            widget.status, null, null, null, null, null, true, 1, 20)
+        .getApplications(
+            widget.bookingFormId,
+            widget.metaEntity.entityId,
+            widget.status,
+            null,
+            null,
+            null,
+            null,
+            null,
+            true,
+            null,
+            lastDocOfPage,
+            10)
         .then((value) {
       if (Utils.isNullOrEmpty(value)) listOfBa = value;
     });
@@ -1131,7 +1159,7 @@ class _ApplicationsListState extends State<ApplicationsList> {
                                 child: new Column(
                                   children: [
                                     //  Text('dfhgd'),
-                                    _buildItem(listOfBa[index])
+                                    _buildItem(listOfBa[index].item1)
                                   ],
                                 ),
                               );

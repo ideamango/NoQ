@@ -16,6 +16,8 @@ import 'package:noq/enum/entity_type.dart';
 import 'package:noq/global_state.dart';
 import 'package:noq/utils.dart';
 
+import '../../tuple.dart';
+
 //Applications can be submitted without or with Time Slot
 //Show all the Applications for a given timeslot
 //Show all the tokens for a given timeslot
@@ -69,7 +71,7 @@ class BookingApplicationService {
     return ba;
   }
 
-  Future<List<BookingApplication>> getApplications(
+  Future<List<Tuple<BookingApplication, DocumentSnapshot>>> getApplications(
       String bookingFormID,
       String entityId,
       ApplicationStatus status,
@@ -79,7 +81,8 @@ class BookingApplicationService {
       List<RangeQuery> rangeQueries,
       String orderByFieldName,
       bool isDescending,
-      int page,
+      DocumentSnapshot firstRecord, //for previous page
+      DocumentSnapshot lastRecord, //for next page
       int takeCount) async {
     //TODO: Security - only the Admin/Manager of the Entity should be able to access the applications OR Super admin of the Global BookingForm
 
@@ -133,13 +136,27 @@ class BookingApplicationService {
       query = query.orderBy(orderByFieldName, descending: isDescending);
     }
 
-    List<BookingApplication> applications = new List<BookingApplication>();
+    if (takeCount > 0) {
+      query = query.limit(takeCount);
+    }
+
+    if (lastRecord != null) {
+      query = query.startAfterDocument(lastRecord);
+    } else if (firstRecord != null) {
+      query = query.endBeforeDocument(firstRecord);
+    }
+
+    List<Tuple<BookingApplication, QueryDocumentSnapshot>> applications =
+        new List<Tuple<BookingApplication, QueryDocumentSnapshot>>();
 
     QuerySnapshot qs = await query.get();
     List<QueryDocumentSnapshot> qds = qs.docs;
     for (QueryDocumentSnapshot doc in qds) {
       if (doc.exists) {
-        applications.add(BookingApplication.fromJson(doc.data()));
+        Tuple<BookingApplication, QueryDocumentSnapshot> tup =
+            Tuple<BookingApplication, QueryDocumentSnapshot>(
+                item1: BookingApplication.fromJson(doc.data()), item2: doc);
+        applications.add(tup);
       }
     }
 

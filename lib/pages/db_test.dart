@@ -24,6 +24,7 @@ import 'package:noq/events/events.dart';
 import 'package:noq/events/local_notification_data.dart';
 import 'package:noq/constants.dart';
 import 'package:noq/global_state.dart';
+import 'package:noq/tuple.dart';
 import 'package:noq/utils.dart';
 
 class DBTest {
@@ -425,9 +426,8 @@ class DBTest {
 
     await _gs.getApplicationService().deleteCounter(localCounterTCId);
 
-    List<BookingApplication> admissionApplications = await _gs
-        .getApplicationService()
-        .getApplications(
+    List<Tuple<BookingApplication, DocumentSnapshot>> admissionApplications =
+        await _gs.getApplicationService().getApplications(
             SCHOOL_GENERAL_NEW_ADMISSION_BOOKING_FORM_ID,
             Multi_Forms_School_ID,
             null,
@@ -438,13 +438,15 @@ class DBTest {
             null,
             null,
             null,
+            null,
             null);
 
-    for (BookingApplication ba in admissionApplications) {
-      await _gs.getApplicationService().deleteApplication(ba.id);
+    for (Tuple<BookingApplication, DocumentSnapshot> ba
+        in admissionApplications) {
+      await _gs.getApplicationService().deleteApplication(ba.item1.id);
     }
 
-    List<BookingApplication> tcApplications = await _gs
+    List<Tuple<BookingApplication, DocumentSnapshot>> tcApplications = await _gs
         .getApplicationService()
         .getApplications(
             SCHOOL_GENERAL_NEW_ADMISSION_BOOKING_FORM_ID,
@@ -457,10 +459,11 @@ class DBTest {
             null,
             null,
             null,
+            null,
             null);
 
-    for (BookingApplication ba in tcApplications) {
-      await _gs.getApplicationService().deleteApplication(ba.id);
+    for (Tuple<BookingApplication, DocumentSnapshot> ba in tcApplications) {
+      await _gs.getApplicationService().deleteApplication(ba.item1.id);
     }
   }
 
@@ -1490,6 +1493,7 @@ class DBTest {
           true,
           "Please select the applicant's Date of Birth");
       dob.isMeta = true;
+      dob.isAge = true;
 
       bf.addField(dob);
 
@@ -1716,15 +1720,15 @@ class DBTest {
   }
 
   Future<BookingApplication> testBookingApplicationStatusChange() async {
-    List<BookingApplication> applications = await _gs
+    List<Tuple<BookingApplication, DocumentSnapshot>> applications = await _gs
         .getApplicationService()
         .getApplications(TEST_COVID_BOOKING_FORM_ID, Covid_Vacination_center,
-            null, null, null, null, null, null, null, null, null);
+            null, null, null, null, null, null, null, null, null, null);
 
     Entity testingCenter =
         await _gs.getEntityService().getEntity(Covid_Vacination_center);
 
-    BookingApplication bs1 = applications[0];
+    BookingApplication bs1 = applications[0].item1;
     await _gs.getApplicationService().updateApplicationStatus(
         bs1.id,
         ApplicationStatus.APPROVED,
@@ -1732,7 +1736,7 @@ class DBTest {
         testingCenter.getMetaEntity(),
         bs1.preferredSlotTiming);
 
-    BookingApplication bs2 = applications[1];
+    BookingApplication bs2 = applications[1].item1;
     await _gs.getApplicationService().updateApplicationStatus(
         bs2.id,
         ApplicationStatus.APPROVED,
@@ -1740,15 +1744,15 @@ class DBTest {
         testingCenter.getMetaEntity(),
         bs2.preferredSlotTiming);
 
-    BookingApplication bs3 = applications[2];
+    BookingApplication bs3 = applications[2].item1;
     await _gs.getApplicationService().updateApplicationStatus(
         bs3.id, ApplicationStatus.COMPLETED, "Notes on Completion", null, null);
 
-    BookingApplication bs7 = applications[6];
+    BookingApplication bs7 = applications[6].item1;
     await _gs.getApplicationService().updateApplicationStatus(bs7.id,
         ApplicationStatus.ONHOLD, "Notes on putting on Hold", null, null);
 
-    BookingApplication bs10 = applications[9];
+    BookingApplication bs10 = applications[9].item1;
     await _gs.getApplicationService().updateApplicationStatus(
         bs10.id,
         ApplicationStatus.REJECTED,
@@ -1817,12 +1821,13 @@ class DBTest {
           "GlobalApplicationOverview Daily stats after status change ------------------------------> Failure");
     }
 
-    List<BookingApplication> approvedApplications = await _gs
+    List<Tuple<BookingApplication, DocumentSnapshot>> approvedApplications = await _gs
         .getApplicationService()
         .getApplications(
             TEST_COVID_BOOKING_FORM_ID,
             Covid_Vacination_center,
             ApplicationStatus.APPROVED,
+            null,
             null,
             null,
             null,
@@ -1915,12 +1920,13 @@ class DBTest {
           "GlobalApplicationOverview Daily stats after cancellation ------------------------------> Failure");
     }
 
-    List<BookingApplication> approvedApplications = await _gs
+    List<Tuple<BookingApplication, DocumentSnapshot>> approvedApplications = await _gs
         .getApplicationService()
         .getApplications(
             TEST_COVID_BOOKING_FORM_ID,
             Covid_Vacination_center,
             ApplicationStatus.APPROVED,
+            null,
             null,
             null,
             null,
@@ -1970,7 +1976,7 @@ class DBTest {
 
     if (admissionForm == null) {
       admissionForm = new BookingForm(
-          formName: "Admission Form",
+          formName: "Admission Request Form",
           headerMsg:
               "You request will be approved based on the information provided by you, please enter the correct information.",
           footerMsg:
@@ -1995,6 +2001,7 @@ class DBTest {
           true,
           "Please select the student's Date of Birth");
       dob.isMeta = true;
+      dob.isAge = true;
 
       admissionForm.addField(dob);
 
@@ -2015,7 +2022,9 @@ class DBTest {
             Value('Class 7'),
             Value('Class 8'),
             Value('Class 9'),
-            Value('Class 10')
+            Value('Class 10'),
+            Value('Class 11'),
+            Value('Class 12')
           ],
           false);
 
@@ -2043,10 +2052,39 @@ class DBTest {
                 Value('Bank Passbook'),
                 Value('Any other government issued photo ID'),
               ],
-              true);
+              false);
 
       admissionForm.addField(idProof);
     }
+
+    FormInputFieldText fatherInput = FormInputFieldText(
+        "Name of the Father", true, "Please enter Student's father name", 50);
+    fatherInput.isMeta = false;
+
+    admissionForm.addField(fatherInput);
+
+    FormInputFieldText motherInput = FormInputFieldText(
+        "Name of mother", true, "Please enter Student's mother name", 50);
+    motherInput.isMeta = false;
+
+    admissionForm.addField(motherInput);
+
+    FormInputFieldText parentEmail = FormInputFieldText(
+        "Parent's email address",
+        true,
+        "Please enter Parent's email address",
+        50);
+    parentEmail.isMeta = false;
+
+    admissionForm.addField(parentEmail);
+
+    FormInputFieldPhone parentPhone = FormInputFieldPhone(
+        "Parent phone number",
+        true,
+        "Please enter Parent's primary phone number on which school can contact");
+    parentPhone.isMeta = false;
+
+    admissionForm.addField(parentPhone);
 
     //NOTE: If this is executed, every time the ID of the field is going to change
     await _gs.getApplicationService().saveBookingForm(admissionForm);
@@ -2107,7 +2145,9 @@ class DBTest {
             Value('Class 7'),
             Value('Class 8'),
             Value('Class 9'),
-            Value('Class 10')
+            Value('Class 10'),
+            Value('Class 11'),
+            Value('Class 12')
           ],
           false);
 

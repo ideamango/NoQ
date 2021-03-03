@@ -1,5 +1,6 @@
 //import 'package:barcode_scan/barcode_scan.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
@@ -16,6 +17,7 @@ import 'package:noq/services/circular_progress.dart';
 import 'package:noq/services/qr_code_user_application.dart';
 import 'package:noq/services/url_services.dart';
 import 'package:noq/style.dart';
+import 'package:noq/tuple.dart';
 import 'package:noq/userHomePage.dart';
 import 'package:noq/utils.dart';
 import 'package:noq/widget/appbar.dart';
@@ -42,7 +44,7 @@ class _UserAccountPageState extends State<UserAccountPage> {
   int i;
   List<UserToken> _pastBookingsList;
   List<UserToken> _newBookingsList;
-  List<BookingApplication> _listOfApplications;
+  List<Tuple<BookingApplication, DocumentSnapshot>> _listOfApplications;
   String _upcomingBkgStatus;
   String _pastBkgStatus;
   // UserAppData _userProfile;
@@ -81,7 +83,7 @@ class _UserAccountPageState extends State<UserAccountPage> {
         _gs
             .getApplicationService()
             .getApplications(null, null, null, _gs.getCurrentUser().ph, null,
-                null, null, null, null, null, null)
+                null, null, null, null, null, null, null)
             .then((value) {
           _listOfApplications = value;
           setState(() {
@@ -870,7 +872,8 @@ class _UserAccountPageState extends State<UserAccountPage> {
                                         return Container(
                                           margin: EdgeInsets.only(bottom: 5),
                                           child: UserApplicationsList(
-                                            ba: _listOfApplications[index],
+                                            ba: _listOfApplications[index]
+                                                .item1,
                                           ),
                                         );
                                       },

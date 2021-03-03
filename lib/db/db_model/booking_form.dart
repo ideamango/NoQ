@@ -332,6 +332,7 @@ class FormInputFieldAttachment extends Field {
 
 class FormInputFieldDateTime extends Field {
   DateTime responseDateTime;
+  bool isAge = false;
 
   FormInputFieldDateTime(
     String label,
@@ -354,7 +355,8 @@ class FormInputFieldDateTime extends Field {
         'type': EnumToString.convertToString(type),
         'responseDateTime': responseDateTime != null
             ? responseDateTime.millisecondsSinceEpoch
-            : null
+            : null,
+        'isAge': isAge
       };
 
   static FormInputFieldDateTime fromJson(Map<String, dynamic> json) {
@@ -367,6 +369,7 @@ class FormInputFieldDateTime extends Field {
         ? DateTime.fromMillisecondsSinceEpoch(json['responseDateTime'])
         : null;
     field.key = json["key"];
+    field.isAge = json['isAge'];
 
     return field;
   }
