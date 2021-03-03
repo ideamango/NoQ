@@ -191,7 +191,8 @@ class _OverviewPageState extends State<OverviewPage> {
                             elevation: 20,
                             color: Colors.blue[300],
                             child: Container(
-                                height: MediaQuery.of(context).size.height * .1,
+                                height:
+                                    MediaQuery.of(context).size.height * .11,
                                 width: MediaQuery.of(context).size.width * .34,
                                 child: Stack(
                                   alignment: Alignment.topRight,
@@ -407,7 +408,8 @@ class _OverviewPageState extends State<OverviewPage> {
                             color: Colors.pink[200],
                             child: Container(
                                 width: MediaQuery.of(context).size.width * .3,
-                                height: MediaQuery.of(context).size.height * .1,
+                                height:
+                                    MediaQuery.of(context).size.height * .11,
                                 child: Stack(
                                   alignment: Alignment.topRight,
                                   children: [
@@ -482,7 +484,8 @@ class _OverviewPageState extends State<OverviewPage> {
                             color: Colors.greenAccent,
                             child: Container(
                                 width: MediaQuery.of(context).size.width * .35,
-                                height: MediaQuery.of(context).size.height * .1,
+                                height:
+                                    MediaQuery.of(context).size.height * .11,
                                 child: Stack(
                                   alignment: Alignment.topRight,
                                   children: [

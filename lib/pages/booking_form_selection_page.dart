@@ -190,16 +190,17 @@ class _BookingFormSelectionState extends State<BookingFormSelection> {
                                           ),
                                         ),
                                       ]),
-                                      new Text(
-                                        forms[index].description != null
-                                            ? forms[index].description
-                                            : "- No Description found -",
-                                        style: TextStyle(
-                                            fontSize: 10,
-                                            color: (_selectedValue == index)
-                                                ? Colors.indigo
-                                                : Colors.blueGrey[600]),
-                                      ),
+                                      forms[index].description != null
+                                          ? new Text(
+                                              forms[index].description,
+                                              style: TextStyle(
+                                                  fontSize: 10,
+                                                  color: (_selectedValue ==
+                                                          index)
+                                                      ? Colors.indigo
+                                                      : Colors.blueGrey[600]),
+                                            )
+                                          : Container(),
                                     ],
                                   ),
                                 ],

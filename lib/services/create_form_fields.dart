@@ -3,8 +3,10 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:noq/db/db_model/booking_application.dart';
 import 'package:noq/db/db_model/booking_form.dart';
 import 'package:noq/db/db_model/meta_entity.dart';
+import 'package:noq/enum/application_status.dart';
 import 'package:noq/enum/field_type.dart';
 import 'package:noq/global_state.dart';
 import 'package:noq/services/circular_progress.dart';
@@ -49,7 +51,11 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
   bool validateField = false;
   Map<String, Widget> listOfWidgets = new Map<String, Widget>();
   Map<String, List> listOfFieldTypes = new Map<String, List>();
+  String dateString = "Start Date";
+  String validationErrMsg;
+  List<Field> listOfFields;
 
+  BookingApplication bookingApplication;
   GlobalState _gs;
   @override
   void initState() {
@@ -60,6 +66,17 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
           .getBookingForm(widget.bookingFormId)
           .then((value) {
         dummyForm = value;
+        bookingApplication = new BookingApplication();
+        //slot
+        bookingApplication.preferredSlotTiming = widget.preferredSlotTime;
+
+        //bookingFormId
+        bookingApplication.bookingFormId = widget.bookingFormId;
+        bookingApplication.entityId = widget.metaEntity.entityId;
+        bookingApplication.userId = _gs.getCurrentUser().id;
+        bookingApplication.status = ApplicationStatus.NEW;
+        bookingApplication.responseForm = dummyForm;
+        print("Booking application set");
         initPage();
         setState(() {
           _initCompleted = true;
@@ -69,7 +86,7 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
   }
 
   void initPage() {
-    List<Field> listOfFields = dummyForm.getFormFields();
+    listOfFields = dummyForm.getFormFields();
     Widget newField;
     for (int i = 0; i < listOfFields.length; i++) {
       Field field = listOfFields[i];
@@ -82,6 +99,27 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
     _gs = await GlobalState.getGlobalState();
   }
 
+  Future<DateTime> pickDate(BuildContext context) async {
+    DateTime date = await showDatePicker(
+      context: context,
+      firstDate: DateTime.now().subtract(Duration(days: 365 * 100)),
+      lastDate: DateTime.now(),
+      initialDate: DateTime.now(),
+      builder: (BuildContext context, Widget child) {
+        return Theme(
+          data: ThemeData.dark().copyWith(
+            colorScheme: ColorScheme.light(
+              primary: Colors.cyan,
+            ),
+            dialogBackgroundColor: Colors.white,
+          ),
+          child: child,
+        );
+      },
+    );
+    return date;
+  }
+
   Widget buildChildItem(Field field, int index, bool isInit) {
     if (isInit) {
       if (!listOfControllers.containsKey(field.label)) {
@@ -92,41 +130,283 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
     switch (field.type) {
       case FieldType.TEXT:
         {
-          newField = TextFormField(
-            obscureText: false,
-            maxLines: 1,
-            minLines: 1,
-            style: textInputTextStyle,
-            keyboardType: TextInputType.text,
-            controller: listOfControllers[field.label],
-            decoration: CommonStyle.textFieldStyle(
-                labelTextStr: field.label, hintTextStr: field.label),
-            onChanged: (String value) {
-              print(value);
-            },
-            onSaved: (String value) {
-              print(value);
-            },
+          newField = Container(
+            margin: EdgeInsets.fromLTRB(5, 5, 5, 5),
+            decoration: BoxDecoration(
+                border: Border.all(color: containerColor),
+                color: Colors.grey[50],
+                shape: BoxShape.rectangle,
+                borderRadius: BorderRadius.all(Radius.circular(5.0))),
+            child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Column(children: <Widget>[
+                    Container(
+                      //padding: EdgeInsets.only(left: 5),
+                      decoration: darkContainer,
+                      child: Theme(
+                        data: ThemeData(
+                          unselectedWidgetColor: Colors.white,
+                          accentColor: Colors.grey[50],
+                        ),
+                        child: CustomExpansionTile(
+                          //key: PageStorageKey(this.widget.headerTitle),
+                          initiallyExpanded: false,
+                          title: Row(
+                            children: <Widget>[
+                              Text(
+                                field.label,
+                                style: TextStyle(
+                                    color: Colors.white, fontSize: 15),
+                              ),
+                              SizedBox(width: 5),
+                            ],
+                          ),
+                          backgroundColor: Colors.blueGrey[500],
+
+                          children: <Widget>[
+                            new Container(
+                              width: MediaQuery.of(context).size.width * .94,
+                              decoration: darkContainer,
+                              padding: EdgeInsets.all(2.0),
+                              child: Row(
+                                children: <Widget>[
+                                  Expanded(
+                                    child: Text(field.infoMessage,
+                                        style: buttonXSmlTextStyle),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    Container(
+                      padding: EdgeInsets.only(left: 5.0, right: 5),
+                      child: Column(
+                        children: [
+                          Container(
+                            //   margin: EdgeInsets.fromLTRB(10, 5, 10, 5),
+                            padding: EdgeInsets.all(10),
+                            child: TextFormField(
+                              obscureText: false,
+                              maxLines: 1,
+                              minLines: 1,
+                              style: textInputTextStyle,
+                              keyboardType: TextInputType.text,
+                              controller: listOfControllers[field.label],
+                              decoration: CommonStyle.textFieldStyle(
+                                labelTextStr: field.label,
+                                // hintTextStr: field.infoMessage
+                              ),
+                              onChanged: (String value) {
+                                print(value);
+                              },
+                              onSaved: (String value) {
+                                print(value);
+                              },
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ]),
+                ]),
+          );
+        }
+        break;
+      case FieldType.DATETIME:
+        {
+          FormInputFieldDateTime newDateField = field;
+          newField = Container(
+            margin: EdgeInsets.fromLTRB(5, 5, 5, 5),
+            decoration: BoxDecoration(
+                border: Border.all(color: containerColor),
+                color: Colors.grey[50],
+                shape: BoxShape.rectangle,
+                borderRadius: BorderRadius.all(Radius.circular(5.0))),
+            child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Column(children: <Widget>[
+                    Container(
+                      //padding: EdgeInsets.only(left: 5),
+                      decoration: darkContainer,
+                      child: Theme(
+                        data: ThemeData(
+                          unselectedWidgetColor: Colors.white,
+                          accentColor: Colors.grey[50],
+                        ),
+                        child: CustomExpansionTile(
+                          //key: PageStorageKey(this.widget.headerTitle),
+                          initiallyExpanded: false,
+                          title: Row(
+                            children: <Widget>[
+                              Text(
+                                field.label,
+                                style: TextStyle(
+                                    color: Colors.white, fontSize: 15),
+                              ),
+                              SizedBox(width: 5),
+                            ],
+                          ),
+                          backgroundColor: Colors.blueGrey[500],
+
+                          children: <Widget>[
+                            new Container(
+                              width: MediaQuery.of(context).size.width * .94,
+                              decoration: darkContainer,
+                              padding: EdgeInsets.all(2.0),
+                              child: Row(
+                                children: <Widget>[
+                                  Expanded(
+                                    child: Text(field.infoMessage,
+                                        style: buttonXSmlTextStyle),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    Container(
+                      padding: EdgeInsets.only(left: 5.0, right: 5),
+                      child: Column(
+                        children: [
+                          Container(
+                            //   margin: EdgeInsets.fromLTRB(10, 5, 10, 5),
+                            padding: EdgeInsets.all(10),
+                            child: TextFormField(
+                              obscureText: false,
+                              readOnly: true,
+                              maxLines: 1,
+                              minLines: 1,
+                              style: textInputTextStyle,
+                              keyboardType: TextInputType.text,
+                              controller: listOfControllers[newDateField.label],
+                              decoration: CommonStyle.textFieldStyle(
+                                  labelTextStr: newDateField.label,
+                                  hintTextStr: newDateField.label),
+                              onTap: () {
+                                setState(() {
+                                  pickDate(context).then((value) {
+                                    if (value != null) {
+                                      setState(() {
+                                        dateString = value.day.toString() +
+                                            " / " +
+                                            value.month.toString() +
+                                            " / " +
+                                            value.year.toString();
+                                        listOfControllers[newDateField.label]
+                                            .text = dateString;
+                                      });
+                                      newDateField.responseDateTime = value;
+                                    }
+                                  });
+                                });
+                              },
+                              maxLength: null,
+                              onChanged: (String value) {
+                                print(value);
+                              },
+                              onSaved: (String value) {
+                                print(value);
+                              },
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ]),
+                ]),
           );
         }
         break;
       case FieldType.NUMBER:
         {
-          newField = TextFormField(
-            obscureText: false,
-            maxLines: 1,
-            minLines: 1,
-            style: textInputTextStyle,
-            keyboardType: TextInputType.number,
-            controller: listOfControllers[field.label],
-            decoration: CommonStyle.textFieldStyle(
-                labelTextStr: field.label, hintTextStr: field.label),
-            onChanged: (String value) {
-              print(value);
-            },
-            onSaved: (String value) {
-              print(value);
-            },
+          newField = Container(
+            margin: EdgeInsets.fromLTRB(5, 5, 5, 5),
+            decoration: BoxDecoration(
+                border: Border.all(color: containerColor),
+                color: Colors.grey[50],
+                shape: BoxShape.rectangle,
+                borderRadius: BorderRadius.all(Radius.circular(5.0))),
+            child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Column(children: <Widget>[
+                    Container(
+                      //padding: EdgeInsets.only(left: 5),
+                      decoration: darkContainer,
+                      child: Theme(
+                        data: ThemeData(
+                          unselectedWidgetColor: Colors.white,
+                          accentColor: Colors.grey[50],
+                        ),
+                        child: CustomExpansionTile(
+                          //key: PageStorageKey(this.widget.headerTitle),
+                          initiallyExpanded: false,
+                          title: Row(
+                            children: <Widget>[
+                              Text(
+                                field.label,
+                                style: TextStyle(
+                                    color: Colors.white, fontSize: 15),
+                              ),
+                              SizedBox(width: 5),
+                            ],
+                          ),
+                          backgroundColor: Colors.blueGrey[500],
+
+                          children: <Widget>[
+                            new Container(
+                              width: MediaQuery.of(context).size.width * .94,
+                              decoration: darkContainer,
+                              padding: EdgeInsets.all(2.0),
+                              child: Row(
+                                children: <Widget>[
+                                  Expanded(
+                                    child: Text(field.infoMessage,
+                                        style: buttonXSmlTextStyle),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    Container(
+                      padding: EdgeInsets.only(left: 5.0, right: 5),
+                      child: Column(
+                        children: [
+                          Container(
+                            margin: EdgeInsets.fromLTRB(10, 5, 10, 5),
+                            child: TextFormField(
+                              obscureText: false,
+                              maxLines: 1,
+                              minLines: 1,
+                              style: textInputTextStyle,
+                              keyboardType: TextInputType.number,
+                              controller: listOfControllers[field.label],
+                              decoration: CommonStyle.textFieldStyle(
+                                  labelTextStr: field.label,
+                                  hintTextStr: field.label),
+                              onChanged: (String value) {
+                                print(value);
+                              },
+                              onSaved: (String value) {
+                                print(value);
+                              },
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ]),
+                ]),
           );
         }
         break;
@@ -140,70 +420,262 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
             }
             listOfFieldTypes[field.label] = newOptionsFieldTypesList;
           }
-          newField = Column(
-            children: [
-              Row(
-                children: [
-                  Expanded(
-                    child: Wrap(
-                      children: listOfFieldTypes[field.label]
-                          .map((item) => GestureDetector(
-                              onTap: () {
-                                bool newSelectionValue = !(item.isSelected);
-                                if (newOptionsField.isMultiSelect == false) {
-                                  listOfFieldTypes[field.label]
-                                      .forEach((element) {
-                                    element.isSelected = false;
-                                  });
-                                }
-                                if (item.isSelected == true)
-                                  newOptionsField.responseValues
-                                      .remove(item.value);
-                                else
-                                  newOptionsField.responseValues
-                                      .add(item.value);
+          newField = Container(
+            margin: EdgeInsets.fromLTRB(5, 5, 5, 5),
+            decoration: BoxDecoration(
+                border: Border.all(color: containerColor),
+                color: Colors.grey[50],
+                shape: BoxShape.rectangle,
+                borderRadius: BorderRadius.all(Radius.circular(5.0))),
+            child:
+                Column(crossAxisAlignment: CrossAxisAlignment.start, children: <
+                    Widget>[
+              Column(children: <Widget>[
+                Container(
+                  //padding: EdgeInsets.only(left: 5),
+                  decoration: darkContainer,
+                  child: Theme(
+                    data: ThemeData(
+                      unselectedWidgetColor: Colors.white,
+                      accentColor: Colors.grey[50],
+                    ),
+                    child: CustomExpansionTile(
+                      //key: PageStorageKey(this.widget.headerTitle),
+                      initiallyExpanded: false,
+                      title: Row(
+                        children: <Widget>[
+                          Text(
+                            newOptionsField.label,
+                            style: TextStyle(color: Colors.white, fontSize: 15),
+                          ),
+                          SizedBox(width: 5),
+                        ],
+                      ),
+                      backgroundColor: Colors.blueGrey[500],
 
-                                setState(() {
-                                  item.isSelected = newSelectionValue;
-                                });
-                              },
-                              child: Container(
-                                  decoration: new BoxDecoration(
-                                      border: Border.all(
-                                          color: Colors.blueGrey[200]),
-                                      shape: BoxShape.rectangle,
-                                      color: (!item.isSelected)
-                                          ? Colors.cyan[50]
-                                          : highlightColor,
-                                      borderRadius: BorderRadius.all(
-                                          Radius.circular(30.0))),
-                                  padding: EdgeInsets.fromLTRB(8, 5, 8, 5),
-                                  margin: EdgeInsets.all(8),
-                                  // color: Colors.orange,
-                                  child: Text(item.value.value))))
-                          .toList()
-                          .cast<Widget>(),
+                      children: <Widget>[
+                        new Container(
+                          width: MediaQuery.of(context).size.width * .94,
+                          decoration: darkContainer,
+                          padding: EdgeInsets.all(2.0),
+                          child: Row(
+                            children: <Widget>[
+                              Expanded(
+                                child: Text(newOptionsField.infoMessage,
+                                    style: buttonXSmlTextStyle),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                ],
-              ),
-              Divider(
-                thickness: 1.5,
-              )
-            ],
+                ),
+                Container(
+                  padding: EdgeInsets.only(left: 5.0, right: 5),
+                  child: Column(
+                    children: [
+                      Row(
+                        children: [
+                          Expanded(
+                            child: Wrap(
+                              children: listOfFieldTypes[field.label]
+                                  .map((item) => GestureDetector(
+                                      onTap: () {
+                                        bool newSelectionValue =
+                                            !(item.isSelected);
+                                        if (newOptionsField.isMultiSelect ==
+                                            false) {
+                                          listOfFieldTypes[field.label]
+                                              .forEach((element) {
+                                            element.isSelected = false;
+                                          });
+                                        }
+                                        if (item.isSelected == true)
+                                          newOptionsField.responseValues
+                                              .remove(item.value);
+                                        else
+                                          newOptionsField.responseValues
+                                              .add(item.value);
+
+                                        setState(() {
+                                          item.isSelected = newSelectionValue;
+                                        });
+                                      },
+                                      child: Container(
+                                          decoration: new BoxDecoration(
+                                              border: Border.all(
+                                                  color: Colors.blueGrey[200]),
+                                              shape: BoxShape.rectangle,
+                                              color: (!item.isSelected)
+                                                  ? Colors.cyan[50]
+                                                  : highlightColor,
+                                              borderRadius: BorderRadius.all(
+                                                  Radius.circular(30.0))),
+                                          padding:
+                                              EdgeInsets.fromLTRB(8, 5, 8, 5),
+                                          margin: EdgeInsets.all(8),
+                                          // color: Colors.orange,
+                                          child: Text(item.value.value))))
+                                  .toList()
+                                  .cast<Widget>(),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ]),
+            ]),
+          );
+        }
+        break;
+      case FieldType.ATTACHMENT:
+        {
+          FormInputFieldAttachment attsField = field;
+
+          newField = Container(
+            margin: EdgeInsets.fromLTRB(5, 5, 5, 5),
+            decoration: BoxDecoration(
+                border: Border.all(color: containerColor),
+                color: Colors.grey[50],
+                shape: BoxShape.rectangle,
+                borderRadius: BorderRadius.all(Radius.circular(5.0))),
+            child:
+                Column(crossAxisAlignment: CrossAxisAlignment.start, children: <
+                    Widget>[
+              Column(children: <Widget>[
+                Container(
+                  //padding: EdgeInsets.only(left: 5),
+                  decoration: darkContainer,
+                  child: Theme(
+                    data: ThemeData(
+                      unselectedWidgetColor: Colors.white,
+                      accentColor: Colors.grey[50],
+                    ),
+                    child: CustomExpansionTile(
+                      //key: PageStorageKey(this.widget.headerTitle),
+                      initiallyExpanded: false,
+                      title: Row(
+                        children: <Widget>[
+                          Text(
+                            attsField.label,
+                            style: TextStyle(color: Colors.white, fontSize: 15),
+                          ),
+                          SizedBox(width: 5),
+                        ],
+                      ),
+                      backgroundColor: Colors.blueGrey[500],
+
+                      children: <Widget>[
+                        new Container(
+                          width: MediaQuery.of(context).size.width * .94,
+                          decoration: darkContainer,
+                          padding: EdgeInsets.all(2.0),
+                          child: Row(
+                            children: <Widget>[
+                              Expanded(
+                                child: Text(attsField.infoMessage,
+                                    style: buttonXSmlTextStyle),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                Container(
+                  padding: EdgeInsets.only(left: 5.0, right: 5),
+                  child: Column(
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          (Utils.isNullOrEmpty(attsField.responseFilePaths))
+                              ? Container(
+                                  child: Text(
+                                  "No Image Selected",
+                                  style: TextStyle(
+                                      color: (validateField)
+                                          ? Colors.red
+                                          : Colors.black),
+                                ))
+                              : Container(
+                                  width: MediaQuery.of(context).size.width * .6,
+                                  child: ListView.builder(
+                                    padding: EdgeInsets.all(
+                                        MediaQuery.of(context).size.width *
+                                            .03),
+                                    //  controller: _childScrollController,
+                                    scrollDirection: Axis.vertical,
+
+                                    shrinkWrap: true,
+                                    //   itemExtent: itemSize,
+                                    //scrollDirection: Axis.vertical,
+                                    itemBuilder:
+                                        (BuildContext context, int index) {
+                                      return Container(
+                                        padding: EdgeInsets.only(bottom: 5),
+                                        child: showImageList(
+                                            context,
+                                            _medCondsProofimages[index],
+                                            _medCondsProofimages),
+                                      );
+                                    },
+                                    itemCount: _medCondsProofimages.length,
+                                  ),
+                                ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              IconButton(
+                                  padding: EdgeInsets.zero,
+                                  icon: Icon(
+                                    Icons.camera_alt_rounded,
+                                    color: primaryDarkColor,
+                                  ),
+                                  onPressed: () {
+                                    captureImage(false).then((value) {
+                                      if (value != null) {
+                                        _medCondsProofimages.add(value);
+                                        attsField.responseFilePaths
+                                            .add(value.path);
+                                      }
+                                      setState(() {});
+                                    });
+                                  }),
+                              IconButton(
+                                  padding: EdgeInsets.zero,
+                                  icon: Icon(
+                                    Icons.attach_file,
+                                    color: primaryDarkColor,
+                                  ),
+                                  onPressed: () {
+                                    captureImage(true).then((value) {
+                                      if (value != null) {
+                                        _medCondsProofimages.add(value);
+                                        attsField.responseFilePaths
+                                            .add(value.path);
+                                      }
+                                      setState(() {});
+                                    });
+                                  }),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ]),
+            ]),
           );
         }
         break;
       case FieldType.OPTIONS_ATTACHMENTS:
         {
-          // list.add("Diabetes");
-          // list.add("Asthma");
-          // list.add("Blood Pressure");
-          // list.add("Allergy");
-          // list.add("Hyper Tension");
-          // list.add("Thyroid");
-          //Implicit type cast of type Field to  type Options field
-          //  FormInputFieldOptions optionField = field;
           FormInputFieldOptionsWithAttachments optsAttsField = field;
           if (isInit) {
             List<Item> newfieldOptionsTypesList = List<Item>();
@@ -214,6 +686,7 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
           }
 
           newField = Container(
+            margin: EdgeInsets.fromLTRB(5, 5, 5, 5),
             decoration: BoxDecoration(
                 border: Border.all(color: containerColor),
                 color: Colors.grey[50],
@@ -404,21 +877,84 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
         break;
       default:
         {
-          newField = TextFormField(
-            obscureText: false,
-            maxLines: 1,
-            minLines: 1,
-            style: textInputTextStyle,
-            keyboardType: TextInputType.text,
-            controller: listOfControllers[field.label],
-            decoration: CommonStyle.textFieldStyle(
-                labelTextStr: field.label, hintTextStr: field.label),
-            onChanged: (String value) {
-              print(value);
-            },
-            onSaved: (String value) {
-              print(value);
-            },
+          newField = Container(
+            margin: EdgeInsets.fromLTRB(5, 5, 5, 5),
+            decoration: BoxDecoration(
+                border: Border.all(color: containerColor),
+                color: Colors.grey[50],
+                shape: BoxShape.rectangle,
+                borderRadius: BorderRadius.all(Radius.circular(5.0))),
+            child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Column(children: <Widget>[
+                    Container(
+                      //padding: EdgeInsets.only(left: 5),
+                      decoration: darkContainer,
+                      child: Theme(
+                        data: ThemeData(
+                          unselectedWidgetColor: Colors.white,
+                          accentColor: Colors.grey[50],
+                        ),
+                        child: CustomExpansionTile(
+                          //key: PageStorageKey(this.widget.headerTitle),
+                          initiallyExpanded: false,
+                          title: Row(
+                            children: <Widget>[
+                              Text(
+                                field.label,
+                                style: TextStyle(
+                                    color: Colors.white, fontSize: 15),
+                              ),
+                              SizedBox(width: 5),
+                            ],
+                          ),
+                          backgroundColor: Colors.blueGrey[500],
+
+                          children: <Widget>[
+                            new Container(
+                              width: MediaQuery.of(context).size.width * .94,
+                              decoration: darkContainer,
+                              padding: EdgeInsets.all(2.0),
+                              child: Row(
+                                children: <Widget>[
+                                  Expanded(
+                                    child: Text(field.infoMessage,
+                                        style: buttonXSmlTextStyle),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    Container(
+                      padding: EdgeInsets.only(left: 5.0, right: 5),
+                      child: Column(
+                        children: [
+                          TextFormField(
+                            obscureText: false,
+                            maxLines: 1,
+                            minLines: 1,
+                            style: textInputTextStyle,
+                            keyboardType: TextInputType.text,
+                            controller: listOfControllers[field.label],
+                            decoration: CommonStyle.textFieldStyle(
+                                labelTextStr: field.label,
+                                hintTextStr: field.label),
+                            onChanged: (String value) {
+                              print(value);
+                            },
+                            onSaved: (String value) {
+                              print(value);
+                            },
+                          ),
+                        ],
+                      ),
+                    ),
+                  ]),
+                ]),
           );
         }
         break;
@@ -493,57 +1029,44 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
     );
   }
 
+  bool validateMandatoryFields() {
+    for (int i = 0; i < listOfFields.length; i++) {
+      if (listOfFields[i].isMandatory) {
+        if (!Utils.isNotNullOrEmpty(
+            listOfControllers[listOfFields[i].label].text)) {
+          validationErrMsg =
+              validationErrMsg + "\n ${listOfFields[i].label} cannot be empty.";
+        }
+      }
+    }
+    if (Utils.isNotNullOrEmpty(validationErrMsg))
+      return false;
+    else
+      return true;
+  }
+
   saveRoute() async {
     setState(() {
       validateField = true;
     });
 
-    // validationErrMsg = "";
+    validationErrMsg = "";
 
-    // if (validateAllFields()) {
-    //   Utils.showMyFlushbar(
-    //       context,
-    //       Icons.info_outline,
-    //       Duration(
-    //         seconds: 4,
-    //       ),
-    //       "Saving details!! ",
-    //       "This would take just a moment.",
-    //       Colors.white,
-    //       true);
+    // if (validateMandatoryFields()) {
+    Utils.showMyFlushbar(
+        context,
+        Icons.info_outline,
+        Duration(
+          seconds: 4,
+        ),
+        "Saving details!! ",
+        "This would take just a moment.",
+        Colors.white,
+        true);
 
-    //   _tokenBookingDetailsFormKey.currentState.save();
+    _bookingFormKey.currentState.save();
 
-    //   // bookingApplication.preferredSlotTiming =
-    //   //TODO:Save Files and then submit application with the updated file path
-    //   List<String> idProofTargetPaths = List<String>();
-    //   for (String path in idProofField.responseFilePaths) {
-    //     String fileName = basename(path);
-    //     print(fileName);
-
-    //     String targetFileName =
-    //         '${bookingApplication.id}#${idProofField.id}#${_gs.getCurrentUser().id}#$fileName';
-
-    //     String targetPath = await uploadFilesToServer(path, targetFileName);
-    //     print(targetPath);
-    //     idProofTargetPaths.add(targetPath);
-    //   }
-
-    //   idProofField.responseFilePaths = idProofTargetPaths;
-
-    //   List<String> medCondsTargetPaths = List<String>();
-    //   for (String path in medConditionsField.responseFilePaths) {
-    //     String fileName = basename(path);
-    //     print(fileName);
-
-    //     String targetFileName =
-    //         '${bookingApplication.id}#${medConditionsField.id}#${_gs.getCurrentUser().id}#$fileName';
-
-    //     String targetPath = await uploadFilesToServer(path, targetFileName);
-    //     print(targetPath);
-    //     medCondsTargetPaths.add(targetPath);
-    //   }
-    //   medConditionsField.responseFilePaths = medCondsTargetPaths;
+    //TODO : Smita - Upload all images to firebase storage.
 
     //   List<String> frontLineTargetPaths = List<String>();
     //   for (String path in frontlineWorkerField.responseFilePaths) {
@@ -560,21 +1083,21 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
 
     //   frontlineWorkerField.responseFilePaths = frontLineTargetPaths;
 
-    //   _gs
-    //       .getApplicationService()
-    //       .submitApplication(bookingApplication, metaEntity)
-    //       .then((value) {
-    //     if (value) {
-    //       Utils.showMyFlushbar(
-    //           context,
-    //           Icons.check,
-    //           Duration(
-    //             seconds: 5,
-    //           ),
-    //           "Request submitted successfully!",
-    //           'We will contact you as soon as slot opens up. Stay Safe!');
-    //     }
-    //   });
+    _gs
+        .getApplicationService()
+        .submitApplication(bookingApplication, widget.metaEntity)
+        .then((value) {
+      if (value) {
+        Utils.showMyFlushbar(
+            context,
+            Icons.check,
+            Duration(
+              seconds: 5,
+            ),
+            "Request submitted successfully!",
+            'We will contact you as soon as slot opens up. Stay Safe!');
+      }
+    });
     // } else {
     //   print(validationErrMsg);
     //   Utils.showMyFlushbar(
@@ -618,7 +1141,7 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
                   Navigator.of(context).pop();
                 },
               ),
-              title: Text("Booking Request Form",
+              title: Text(dummyForm.formName,
                   style: TextStyle(color: Colors.white, fontSize: 16)),
             ),
             body: Center(
@@ -650,49 +1173,26 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
                           itemCount: dummyForm.getFormFields().length,
                         ),
                       ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          SizedBox(
-                            width: MediaQuery.of(context).size.width * .8,
-                            height: MediaQuery.of(context).size.height * .06,
-                            child: RaisedButton(
-                              elevation: 10.0,
-                              color: highlightColor,
-                              splashColor: Colors.orangeAccent[700],
-                              textColor: Colors.white,
-                              child: Text(
-                                'Save Details & Book Slot',
-                                style: TextStyle(fontSize: 20),
-                              ),
-                              onPressed: () {
-                                print('Save please');
-                              },
+                      RaisedButton(
+                          color: btnColor,
+                          splashColor: highlightColor,
+                          child: Container(
+                            padding: EdgeInsets.all(10),
+                            // margin: EdgeInsets.all(10),
+                            width: MediaQuery.of(context).size.width * .84,
+                            child: Column(
+                              children: <Widget>[
+                                Text(
+                                  'Save Details & Request Token',
+                                  style: buttonMedTextStyle,
+                                ),
+                              ],
                             ),
                           ),
-                        ],
-                      ),
-
-                      // Text(dummyForm.formName),
-                      //  Text(dummyForm.headerMsg),
-                      // Container(
-                      //   child: TextFormField(
-                      //     obscureText: false,
-                      //     maxLines: 1,
-                      //     minLines: 1,
-                      //     style: textInputTextStyle,
-                      //     keyboardType: TextInputType.text,
-                      //     controller: _fieldController,
-                      //     decoration: CommonStyle.textFieldStyle(
-                      //         labelTextStr: "you", hintTextStr: ""),
-                      //     onChanged: (String value) {
-                      //       print(value);
-                      //     },
-                      //     onSaved: (String value) {
-                      //       print(value);
-                      //     },
-                      //   ),
-                      // ),
+                          onPressed: () {
+                            print("FlushbarStatus-------");
+                            processSaveWithTimer();
+                          }),
                     ],
                   ),
                 ),
