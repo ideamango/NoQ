@@ -2056,13 +2056,13 @@ class DBTest {
     }
 
     FormInputFieldText fatherInput = FormInputFieldText(
-        "Name of the Father", true, "Please enter Student's father name", 50);
+        "Name of the Father", true, "Please enter student's father name", 50);
     fatherInput.isMeta = false;
 
     admissionForm.addField(fatherInput);
 
     FormInputFieldText motherInput = FormInputFieldText(
-        "Name of mother", true, "Please enter Student's mother name", 50);
+        "Name of mother", true, "Please enter student's mother name", 50);
     motherInput.isMeta = false;
 
     admissionForm.addField(motherInput);
@@ -2073,6 +2073,7 @@ class DBTest {
         "Please enter Parent's email address",
         50);
     parentEmail.isMeta = false;
+    parentEmail.isEmail = true;
 
     admissionForm.addField(parentEmail);
 

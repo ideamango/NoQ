@@ -138,7 +138,6 @@ class FormInputFieldText extends Field {
     this.infoMessage = infoMessage;
     this.maxLength = maxLength;
     this.type = FieldType.TEXT;
-    this.isEmail = false;
   }
 
   Map<String, dynamic> toJson() => {
