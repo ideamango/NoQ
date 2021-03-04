@@ -990,6 +990,8 @@ class DBTest {
 
     await testMultipleBookingFormsWithSchoolEntity();
 
+    await testPaginationInFetchingApplication();
+
     print(
         "<==========================================TESTING DONE=========================================>");
 
@@ -2216,6 +2218,78 @@ class DBTest {
     } catch (e) {
       print("Exception occured while creating a school with multiple form " +
           e.toString());
+    }
+  }
+
+  void testPaginationInFetchingApplication() async {
+    List<Tuple<BookingApplication, DocumentSnapshot>> top5Applications =
+        await _gs.getApplicationService().getApplications(
+            TEST_COVID_BOOKING_FORM_ID,
+            Covid_Vacination_center,
+            null,
+            null,
+            null,
+            null,
+            null,
+            "timeOfSubmission",
+            true,
+            null,
+            null,
+            5);
+
+    if (top5Applications.length == 5) {
+      print("Top 5 applications fetched --> SUCCESS");
+    } else {
+      print(
+          "Top 5 applications fetched ------------------------------> Failure");
+    }
+
+    DocumentSnapshot lastDoc = top5Applications[4].item2;
+
+    List<Tuple<BookingApplication, DocumentSnapshot>> next5Applications =
+        await _gs.getApplicationService().getApplications(
+            TEST_COVID_BOOKING_FORM_ID,
+            Covid_Vacination_center,
+            null,
+            null,
+            null,
+            null,
+            null,
+            "timeOfSubmission",
+            true,
+            null,
+            lastDoc,
+            5);
+
+    if (next5Applications.length == 5) {
+      print("Next 5 applications fetched --> SUCCESS");
+    } else {
+      print(
+          "Next 5 applications fetched ------------------------------> Failure");
+    }
+
+    List<Tuple<BookingApplication, DocumentSnapshot>>
+        previousApplicationsFrom6thTo9th = await _gs
+            .getApplicationService()
+            .getApplications(
+                TEST_COVID_BOOKING_FORM_ID,
+                Covid_Vacination_center,
+                null,
+                null,
+                null,
+                null,
+                null,
+                "timeOfSubmission",
+                false,
+                null,
+                lastDoc,
+                5);
+
+    if (previousApplicationsFrom6thTo9th.length == 4) {
+      print("From 6th to 9th applications fetched --> SUCCESS");
+    } else {
+      print(
+          "From 6th to 9th applications fetched ------------------------------> Failure");
     }
   }
 }
