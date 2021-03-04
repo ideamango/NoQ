@@ -14,6 +14,7 @@ import 'package:noq/services/circular_progress.dart';
 import 'package:noq/style.dart';
 import 'package:noq/utils.dart';
 import 'package:noq/widget/custom_expansion_tile.dart';
+import 'package:email_validator/email_validator.dart';
 
 class CreateFormFields extends StatefulWidget {
   final MetaEntity metaEntity;
@@ -52,6 +53,7 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
   String dateString = "Start Date";
   String validationErrMsg;
   List<Field> listOfFields;
+  String _phCountryCode;
 
   BookingApplication bookingApplication;
   GlobalState _gs;
@@ -95,6 +97,7 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
 
   Future<void> getGlobalState() async {
     _gs = await GlobalState.getGlobalState();
+    _phCountryCode = _gs.getConfigurations().phCountryCode;
   }
 
   Future<DateTime> pickDate(BuildContext context) async {
@@ -202,7 +205,16 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
                               obscureText: false,
                               maxLines: 1,
                               minLines: 1,
-                              validator: validateText,
+                              autovalidateMode: AutovalidateMode.always,
+                              validator: (value) {
+                                if (textField.isEmail) {
+                                  return EmailValidator.validate(value)
+                                      ? null
+                                      : "Please enter a valid email";
+                                } else
+                                  return validateText(value);
+                              },
+                              //validator: validateText,
                               style: textInputTextStyle,
                               keyboardType: TextInputType.text,
                               controller: listOfControllers[field.label],
@@ -334,6 +346,200 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
                     ),
                   ]),
                 ]),
+          );
+        }
+        break;
+
+      // case FieldType.EMAIL:
+      //   {
+      //     FormInputFieldPhone emailField = field;
+      //     newField = Container(
+      //       margin: EdgeInsets.fromLTRB(5, 5, 5, 5),
+      //       decoration: BoxDecoration(
+      //           border: Border.all(color: containerColor),
+      //           color: Colors.grey[50],
+      //           shape: BoxShape.rectangle,
+      //           borderRadius: BorderRadius.all(Radius.circular(5.0))),
+      //       child:
+      //           Column(crossAxisAlignment: CrossAxisAlignment.start, children: <
+      //               Widget>[
+      //         Column(children: <Widget>[
+      //           Container(
+      //             //padding: EdgeInsets.only(left: 5),
+      //             decoration: darkContainer,
+      //             child: Theme(
+      //               data: ThemeData(
+      //                 unselectedWidgetColor: Colors.white,
+      //                 accentColor: Colors.grey[50],
+      //               ),
+      //               child: CustomExpansionTile(
+      //                 //key: PageStorageKey(this.widget.headerTitle),
+      //                 initiallyExpanded: false,
+      //                 title: Row(
+      //                   children: <Widget>[
+      //                     Text(
+      //                       emailField.label,
+      //                       style: TextStyle(color: Colors.white, fontSize: 15),
+      //                     ),
+      //                     SizedBox(width: 5),
+      //                   ],
+      //                 ),
+      //                 backgroundColor: Colors.blueGrey[500],
+
+      //                 children: <Widget>[
+      //                   new Container(
+      //                     width: MediaQuery.of(context).size.width * .94,
+      //                     decoration: darkContainer,
+      //                     padding: EdgeInsets.all(2.0),
+      //                     child: Row(
+      //                       children: <Widget>[
+      //                         Expanded(
+      //                           child: Text(emailField.infoMessage,
+      //                               style: buttonXSmlTextStyle),
+      //                         ),
+      //                       ],
+      //                     ),
+      //                   ),
+      //                 ],
+      //               ),
+      //             ),
+      //           ),
+      //           Container(
+      //             padding: EdgeInsets.only(left: 5.0, right: 5),
+      //             child: Column(
+      //               children: [
+      //                 Container(
+      //                     margin: EdgeInsets.fromLTRB(10, 5, 10, 5),
+      //                     child: TextFormField(
+      //                       obscureText: false,
+      //                       maxLines: 1,
+      //                       autovalidateMode: AutovalidateMode.always,
+      //                       minLines: 1,
+      //                       style: textInputTextStyle,
+      //                       keyboardType: TextInputType.emailAddress,
+      //                       controller: listOfControllers[emailField.label],
+      //                       decoration: InputDecoration(
+      //                         prefixText: '+91',
+      //                         labelText: emailField.label,
+      //                         enabledBorder: UnderlineInputBorder(
+      //                             borderSide: BorderSide(color: Colors.grey)),
+      //                         focusedBorder: UnderlineInputBorder(
+      //                             borderSide: BorderSide(color: Colors.orange)),
+      //                       ),
+      //                       validator: (value) => EmailValidator.validate(value)
+      //                           ? null
+      //                           : "Please enter a valid email",
+      //                       onChanged: (value) {
+      //                         if (value != "") emailField.response = (value);
+      //                       },
+      //                       onSaved: (String value) {
+      //                         if (value != "") emailField.response = (value);
+      //                       },
+      //                     )),
+      //               ],
+      //             ),
+      //           ),
+      //         ]),
+      //       ]),
+      //     );
+      //   }
+      //   break;
+      case FieldType.PHONE:
+        {
+          FormInputFieldPhone phone = field;
+          newField = Container(
+            margin: EdgeInsets.fromLTRB(5, 5, 5, 5),
+            decoration: BoxDecoration(
+                border: Border.all(color: containerColor),
+                color: Colors.grey[50],
+                shape: BoxShape.rectangle,
+                borderRadius: BorderRadius.all(Radius.circular(5.0))),
+            child:
+                Column(crossAxisAlignment: CrossAxisAlignment.start, children: <
+                    Widget>[
+              Column(children: <Widget>[
+                Container(
+                  //padding: EdgeInsets.only(left: 5),
+                  decoration: darkContainer,
+                  child: Theme(
+                    data: ThemeData(
+                      unselectedWidgetColor: Colors.white,
+                      accentColor: Colors.grey[50],
+                    ),
+                    child: CustomExpansionTile(
+                      //key: PageStorageKey(this.widget.headerTitle),
+                      initiallyExpanded: false,
+                      title: Row(
+                        children: <Widget>[
+                          Text(
+                            phone.label,
+                            style: TextStyle(color: Colors.white, fontSize: 15),
+                          ),
+                          SizedBox(width: 5),
+                        ],
+                      ),
+                      backgroundColor: Colors.blueGrey[500],
+
+                      children: <Widget>[
+                        new Container(
+                          width: MediaQuery.of(context).size.width * .94,
+                          decoration: darkContainer,
+                          padding: EdgeInsets.all(2.0),
+                          child: Row(
+                            children: <Widget>[
+                              Expanded(
+                                child: Text(phone.infoMessage,
+                                    style: buttonXSmlTextStyle),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                Container(
+                  padding: EdgeInsets.only(left: 5.0, right: 5),
+                  child: Column(
+                    children: [
+                      Container(
+                          margin: EdgeInsets.fromLTRB(10, 5, 10, 5),
+                          child: TextFormField(
+                            obscureText: false,
+                            maxLines: 1,
+                            autovalidateMode: AutovalidateMode.always,
+                            minLines: 1,
+                            style: textInputTextStyle,
+                            keyboardType: TextInputType.phone,
+                            controller: listOfControllers[phone.label],
+                            decoration: InputDecoration(
+                              prefixText: '+91',
+                              labelText: phone.label,
+                              enabledBorder: UnderlineInputBorder(
+                                  borderSide: BorderSide(color: Colors.grey)),
+                              focusedBorder: UnderlineInputBorder(
+                                  borderSide: BorderSide(color: Colors.orange)),
+                            ),
+                            validator: (value) {
+                              if (validateText(value) == null) {
+                                return Utils.validateMobileField(value);
+                              } else
+                                return null;
+                            },
+                            onChanged: (value) {
+                              if (value != "")
+                                phone.responsePhone = _phCountryCode + (value);
+                            },
+                            onSaved: (String value) {
+                              if (value != "")
+                                phone.responsePhone = _phCountryCode + (value);
+                            },
+                          )),
+                    ],
+                  ),
+                ),
+              ]),
+            ]),
           );
         }
         break;

@@ -129,6 +129,7 @@ class Field {
 class FormInputFieldText extends Field {
   int maxLength;
   String response;
+  bool isEmail = false;
 
   FormInputFieldText(
       String label, bool isMandatory, String infoMessage, int maxLength) {
@@ -137,6 +138,7 @@ class FormInputFieldText extends Field {
     this.infoMessage = infoMessage;
     this.maxLength = maxLength;
     this.type = FieldType.TEXT;
+    this.isEmail = false;
   }
 
   Map<String, dynamic> toJson() => {
@@ -148,7 +150,8 @@ class FormInputFieldText extends Field {
         'isMandatory': isMandatory,
         "infoMessage": infoMessage,
         "type": EnumToString.convertToString(type),
-        'response': response
+        'response': response,
+        'isEmail': isEmail
       };
 
   static FormInputFieldText fromJson(Map<String, dynamic> json) {
@@ -161,6 +164,7 @@ class FormInputFieldText extends Field {
     field.id = json["id"];
     field.isMeta = json["isMeta"];
     field.response = json['response'];
+    field.isEmail = json['isEmail'];
 
     return field;
   }
