@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'dart:io';
-
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:noq/db/db_model/booking_application.dart';
@@ -15,6 +15,7 @@ import 'package:noq/style.dart';
 import 'package:noq/utils.dart';
 import 'package:noq/widget/custom_expansion_tile.dart';
 import 'package:email_validator/email_validator.dart';
+import 'package:path/path.dart' as pathfile;
 
 class CreateFormFields extends StatefulWidget {
   final MetaEntity metaEntity;
@@ -205,14 +206,19 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
                               obscureText: false,
                               maxLines: 1,
                               minLines: 1,
-                              autovalidateMode: AutovalidateMode.always,
+                              autovalidateMode: validateField
+                                  ? AutovalidateMode.always
+                                  : AutovalidateMode.disabled,
                               validator: (value) {
+                                String valText = validateText(value);
                                 if (textField.isEmail) {
-                                  return EmailValidator.validate(value)
-                                      ? null
-                                      : "Please enter a valid email";
+                                  return (valText == null)
+                                      ? (EmailValidator.validate(value)
+                                          ? null
+                                          : "Please enter a valid email")
+                                      : valText;
                                 } else
-                                  return validateText(value);
+                                  return valText;
                               },
                               //validator: validateText,
                               style: textInputTextStyle,
@@ -1237,6 +1243,17 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
     );
   }
 
+  Future<String> uploadFilesToServer(
+      String localPath, String targetFileName) async {
+    File localImage = File(localPath);
+
+    Reference ref = _gs.firebaseStorage.ref().child('$targetFileName');
+
+    await ref.putFile(localImage);
+
+    return await ref.getDownloadURL();
+  }
+
   bool validateMandatoryFields() {
     for (int i = 0; i < listOfFields.length; i++) {
       if (listOfFields[i].isMandatory) {
@@ -1274,6 +1291,56 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
       _bookingFormKey.currentState.save();
 
       //TODO : Smita - Upload all images to firebase storage.
+      List<Field> listOfFields =
+          bookingApplication.responseForm.getFormFields();
+
+      for (int i = 0; i < listOfFields.length; i++) {
+        switch (listOfFields[i].type) {
+          case FieldType.ATTACHMENT:
+            List<String> targetPaths = List<String>();
+            for (String path in (listOfFields[i] as FormInputFieldAttachment)
+                .responseFilePaths) {
+              String fileName = pathfile.basename(path);
+              print(fileName);
+
+              String targetFileName =
+                  '${bookingApplication.id}#${(listOfFields[i] as FormInputFieldAttachment).id}#${_gs.getCurrentUser().id}#$fileName';
+
+              String targetPath =
+                  await uploadFilesToServer(path, targetFileName);
+              print(targetPath);
+              targetPaths.add(targetPath);
+              (bookingApplication.responseForm.getFormFields()[i]
+                      as FormInputFieldAttachment)
+                  .responseFilePaths = targetPaths;
+            }
+
+            break;
+          case FieldType.OPTIONS_ATTACHMENTS:
+            print("df");
+            List<String> targetPaths = List<String>();
+            for (String path
+                in (listOfFields[i] as FormInputFieldOptionsWithAttachments)
+                    .responseFilePaths) {
+              String fileName = pathfile.basename(path);
+              print(fileName);
+
+              String targetFileName =
+                  '${bookingApplication.id}#${(listOfFields[i] as FormInputFieldOptionsWithAttachments).id}#${_gs.getCurrentUser().id}#$fileName';
+
+              String targetPath =
+                  await uploadFilesToServer(path, targetFileName);
+              print(targetPath);
+              targetPaths.add(targetPath);
+              (bookingApplication.responseForm.getFormFields()[i]
+                      as FormInputFieldOptionsWithAttachments)
+                  .responseFilePaths = targetPaths;
+            }
+            break;
+          default:
+            break;
+        }
+      }
 
       //   List<String> frontLineTargetPaths = List<String>();
       //   for (String path in frontlineWorkerField.responseFilePaths) {
@@ -1313,8 +1380,8 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
           Duration(
             seconds: 10,
           ),
-          validationErrMsg,
-          "Please fill all mandatory fields and save again.",
+          "Please fill all mandatory fields and Save again.",
+          "",
           Colors.red);
     }
   }
