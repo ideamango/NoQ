@@ -4,6 +4,7 @@ import 'package:noq/db/db_model/booking_application.dart';
 import 'package:noq/db/db_model/meta_entity.dart';
 import 'package:noq/enum/application_status.dart';
 import 'package:noq/global_state.dart';
+import 'package:noq/pages/application_list_covid.dart';
 import 'package:noq/pages/manage_entity_list_page.dart';
 import 'package:noq/pages/show_application_details.dart';
 import 'package:noq/pages/applications_list.dart';
@@ -55,12 +56,13 @@ class _OverviewPageState extends State<OverviewPage> {
           });
         } else
           initCompleted = true;
-      });
-    });
-    Future.delayed(Duration(seconds: 1)).then((value) {
-      setState(() {
-        _completedCount = _bookingApplicationsOverview.numberOfCompleted;
-        _totalReceivedCount = _bookingApplicationsOverview.totalApplications;
+        Future.delayed(Duration(seconds: 1)).then((value) {
+          setState(() {
+            _completedCount = _bookingApplicationsOverview.numberOfCompleted;
+            _totalReceivedCount =
+                _bookingApplicationsOverview.totalApplications;
+          });
+        });
       });
     });
   }
@@ -179,6 +181,7 @@ class _OverviewPageState extends State<OverviewPage> {
                           onTap: () {
                             //User clicked on show how, lets show them.
                             print("Showing how to book time-slot");
+
                             Navigator.of(context).push(
                                 PageAnimation.createRoute(ApplicationsList(
                               metaEntity: widget.metaEntity,

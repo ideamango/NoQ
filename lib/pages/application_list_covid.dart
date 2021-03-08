@@ -24,12 +24,12 @@ import 'package:noq/widget/widgets.dart';
 
 import '../tuple.dart';
 
-class ApplicationsList extends StatefulWidget {
+class ApplicationsListCovid extends StatefulWidget {
   final MetaEntity metaEntity;
   final String bookingFormId;
   final ApplicationStatus status;
   final String titleText;
-  ApplicationsList(
+  ApplicationsListCovid(
       {Key key,
       @required this.metaEntity,
       @required this.bookingFormId,
@@ -37,10 +37,10 @@ class ApplicationsList extends StatefulWidget {
       @required this.titleText})
       : super(key: key);
   @override
-  _ApplicationsListState createState() => _ApplicationsListState();
+  _ApplicationsListCovidState createState() => _ApplicationsListCovidState();
 }
 
-class _ApplicationsListState extends State<ApplicationsList> {
+class _ApplicationsListCovidState extends State<ApplicationsListCovid> {
   bool initCompleted = false;
   GlobalState _gs;
   DocumentSnapshot firstDocOfPage;
@@ -493,14 +493,66 @@ class _ApplicationsListState extends State<ApplicationsList> {
       listOfControllers[ba.id] = new TextEditingController();
     }
 
+    String name;
+    String age;
+    bool isFrontlineWorker = false;
+    String fwImg1;
+
+    bool isMedicalMorbidities = false;
+    String mbImg1;
+    String mbImg2;
+    String medConds;
+    TextEditingController notesController = new TextEditingController();
+
     listOfMeta.addAll(ba.responseForm
         .getFormFields()
         .where((element) => element.isMeta == true));
+
+    for (var element in listOfMeta) {
+      switch (element.label) {
+        case "Name of the Applicant":
+          name = (element as FormInputFieldText).response;
+          break;
+        case "Date of Birth of the Applicant":
+          FormInputFieldDateTime newfield = element;
+          age = ((DateTime.now().difference(newfield.responseDateTime).inDays) /
+                  365)
+              .toStringAsFixed(0);
+          break;
+        case "Only for Frontline workers":
+          FormInputFieldOptionsWithAttachments newfield = element;
+          isFrontlineWorker = !Utils.isNullOrEmpty(newfield.responseValues);
+          if (isFrontlineWorker) {
+            fwImg1 = newfield.responseValues[0].value;
+          }
+          break;
+        case "Pre-existing Medical Conditions":
+          FormInputFieldOptionsWithAttachments newfield = element;
+          isMedicalMorbidities = !Utils.isNullOrEmpty(newfield.responseValues);
+          if (isMedicalMorbidities) {
+            for (Value val in newfield.responseValues) {
+              if (!Utils.isNotNullOrEmpty(medConds)) medConds = "";
+              medConds = medConds + val.value.toString();
+            }
+            // mbImg1 = newfield.responseValues[0].value;
+            // if (newfield.responseValues.length > 1)
+            //   mbImg2 = newfield.responseValues[1].value;
+          }
+          break;
+        default:
+          break;
+      }
+    }
 
     double cardHeight = MediaQuery.of(context).size.height * .4;
     double cardWidth = MediaQuery.of(context).size.width * .95;
     var medCondGroup = AutoSizeGroup();
     var labelGroup = AutoSizeGroup();
+    Iterable<String> autoHints = [
+      "Documents Incomplete",
+      "Not priority now",
+      "No Slots available"
+    ];
 
     // String medConds =
     //    Utils.isNotNullOrEmpty(mbImg1)? mbImg1 + (Utils.isNotNullOrEmpty(mbImg2) ? " & $mbImg2" : "");
@@ -528,7 +580,87 @@ class _ApplicationsListState extends State<ApplicationsList> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Row(
+                          children: [
+                            SizedBox(
+                              width: cardWidth * .12,
+                              child: AutoSizeText(
+                                "Name : ",
+                                group: labelGroup,
+                                minFontSize: 12,
+                                maxFontSize: 13,
+                                maxLines: 1,
+                                overflow: TextOverflow.clip,
+                                style: TextStyle(
+                                    color: Colors.blueGrey[900],
+                                    fontFamily: 'Roboto'),
+                              ),
+                            ),
+                            SizedBox(
+                              width: cardWidth * .4,
+                              //height: cardHeight * .1,
+                              child: AutoSizeText(
+                                name,
+                                minFontSize: 12,
+                                maxFontSize: 14,
+                                maxLines: 1,
+                                overflow: TextOverflow.clip,
+                                style: TextStyle(
+                                    fontSize: 14,
+                                    color: Colors.indigo[900],
+                                    fontWeight: FontWeight.bold,
+                                    fontFamily: 'RalewayRegular'),
+                              ),
+                            ),
+                          ],
+                        ),
+                        Row(children: [
+                          SizedBox(
+                            width: cardWidth * .083,
+                            child: AutoSizeText(
+                              "Age : ",
+                              group: labelGroup,
+                              minFontSize: 12,
+                              maxFontSize: 13,
+                              maxLines: 1,
+                              overflow: TextOverflow.clip,
+                              style: TextStyle(
+                                  color: Colors.blueGrey[700],
+                                  fontFamily: 'Roboto'),
+                            ),
+                          ),
+                          SizedBox(
+                            width: cardWidth * .08,
+                            child: Text(
+                              age,
+                              style: TextStyle(
+                                  fontSize: 13,
+                                  color: Colors.indigo[900],
+                                  fontWeight: FontWeight.bold,
+                                  fontFamily: 'RalewayRegular'),
+                            ),
+                          ),
+                        ]),
+                      ],
+                    ),
                     Row(children: [
+                      // SizedBox(
+                      //   width: cardWidth * .12,
+                      //   child: AutoSizeText(
+                      //     "Status : ",
+                      //     group: labelGroup,
+                      //     minFontSize: 10,
+                      //     maxFontSize: 12,
+                      //     maxLines: 1,
+                      //     overflow: TextOverflow.clip,
+                      //     style: TextStyle(
+                      //         color: Colors.blueGrey[700],
+                      //         fontFamily: 'RalewayRegular'),
+                      //   ),
+                      // ),
                       Container(
                         padding: EdgeInsets.all(2),
                         margin: EdgeInsets.all(0),
@@ -571,10 +703,157 @@ class _ApplicationsListState extends State<ApplicationsList> {
                   ],
                 ),
               ),
-              SizedBox(
-                width: cardWidth * .9,
-                height: cardHeight * .4,
+              Padding(
+                padding: const EdgeInsets.fromLTRB(8, 10, 8, 4),
+                child: Row(
+                  children: [
+                    AutoSizeText(
+                      "Is a FrontLine Worker",
+                      group: labelGroup,
+                      minFontSize: 12,
+                      maxFontSize: 13,
+                      maxLines: 1,
+                      overflow: TextOverflow.clip,
+                      style: TextStyle(
+                          color: Colors.blueGrey[900], fontFamily: 'Roboto'),
+                    ),
+                    horizontalSpacer,
+                    (isFrontlineWorker)
+                        ? Text(fwImg1,
+                            style: TextStyle(
+                                fontSize: 14,
+                                color: Colors.indigo[900],
+                                fontWeight: FontWeight.bold,
+                                fontFamily: 'RalewayRegular'))
+                        : Text("Not Applicable"),
+                  ],
+                ),
               ),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(8, 10, 8, 4),
+                child: Row(
+                  children: [
+                    SizedBox(
+                        width: cardWidth * .25,
+                        child: Wrap(
+                          children: [
+                            AutoSizeText(
+                              "Medical Issues",
+                              group: labelGroup,
+                              minFontSize: 12,
+                              maxFontSize: 13,
+                              maxLines: 1,
+                              overflow: TextOverflow.clip,
+                              style: TextStyle(
+                                  color: Colors.blueGrey[900],
+                                  fontFamily: 'Roboto'),
+                            ),
+                          ],
+                        )),
+                    Wrap(children: [
+                      SizedBox(
+                        width: cardWidth * .63,
+                        child: AutoSizeText(
+                            (Utils.isNotNullOrEmpty(medConds)
+                                ? medConds
+                                : "None"),
+                            group: medCondGroup,
+                            minFontSize: 12,
+                            maxFontSize: 14,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                                color: Colors.indigo[900],
+                                fontWeight: FontWeight.bold,
+                                fontFamily: 'RalewayRegular')),
+                      ),
+                    ]),
+                  ],
+                ),
+              ),
+              Padding(
+                  padding: const EdgeInsets.fromLTRB(8, 10, 8, 4),
+                  child: Column(
+                    children: [
+                      Row(
+                        children: [
+                          SizedBox(
+                              width: cardWidth * .45,
+                              child: Wrap(
+                                children: [
+                                  AutoSizeText(
+                                    "Preferred time-slot by User :",
+                                    group: labelGroup,
+                                    minFontSize: 12,
+                                    maxFontSize: 13,
+                                    maxLines: 1,
+                                    overflow: TextOverflow.clip,
+                                    style: TextStyle(
+                                        color: Colors.blueGrey[900],
+                                        fontFamily: 'Roboto'),
+                                  ),
+                                ],
+                              )),
+                          Wrap(children: [
+                            SizedBox(
+                              width: cardWidth * .25,
+                              child: AutoSizeText(
+                                  ((ba.preferredSlotTiming != null)
+                                      ? ba.preferredSlotTiming.toString()
+                                      : "None"),
+                                  group: medCondGroup,
+                                  minFontSize: 12,
+                                  maxFontSize: 14,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: TextStyle(
+                                      color: Colors.indigo[900],
+                                      fontWeight: FontWeight.bold,
+                                      fontFamily: 'RalewayRegular')),
+                            ),
+                          ]),
+                        ],
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          AutoSizeText(
+                            "Click to choose another Time-Slot",
+                            group: labelGroup,
+                            minFontSize: 12,
+                            maxFontSize: 13,
+                            maxLines: 1,
+                            overflow: TextOverflow.clip,
+                            style: TextStyle(
+                                color: Colors.blueGrey[900],
+                                fontFamily: 'Roboto'),
+                          ),
+                          IconButton(
+                              icon: Icon(Icons.date_range),
+                              onPressed: () {
+                                print("Show time- slots");
+                                // print(_fromPage);
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => SlotSelectionPage(
+                                              metaEntity: widget.metaEntity,
+                                              dateTime: ba.preferredSlotTiming,
+                                              forPage: "ApplicationList",
+                                            )));
+
+                                print('After showDialog:');
+                                // pickDate(context).then((value) {
+                                //   if (value != null) {
+                                // showAvailableSlotsPopUp(context,
+                                //     widget.metaEntity, ba.preferredSlotTiming);
+                                //   }
+                                // });
+                              })
+                        ],
+                      ),
+                    ],
+                  )),
               Row(
                 //  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -605,7 +884,7 @@ class _ApplicationsListState extends State<ApplicationsList> {
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   Container(
-                    width: cardWidth * .6,
+                    width: cardWidth * .5,
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -768,6 +1047,69 @@ class _ApplicationsListState extends State<ApplicationsList> {
             ],
           ),
         ),
+
+//       Column(
+//         children: <Widget>[
+//           Expanded(
+//             child: Container(
+//               height: 200,
+//               padding: EdgeInsets.all(5),
+//               child: Card(
+//                 child: Row(
+//                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+//                     children: [
+// //Container that holds fields from response form where isMeta is true.
+
+//                       Container(
+//                         child: ListView.builder(
+//                           itemBuilder: (BuildContext context, int index) {
+//                             return Container(
+//                               margin: EdgeInsets.fromLTRB(10, 0, 10, 50),
+//                               child: new Column(
+//                                 children: [
+//                                   Text(listOfMeta[index].label),
+//                                 ],
+//                               ),
+//                             );
+//                           },
+//                           itemCount: listOfMeta.length,
+//                         ),
+//                       ),
+
+//                       Row(
+//                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+//                         children: [
+//                           IconButton(
+//                               color: Colors.green[400],
+//                               onPressed: () {
+//                                 ba.notesOnApproval = notesController.text;
+//                                 ba.status = ApplicationStatus.APPROVED;
+//                               },
+//                               icon: Icon(Icons.check_circle)),
+//                           IconButton(
+//                             color: Colors.yellow[700],
+//                             onPressed: () {
+//                               ba.notesOnPuttingOnHold = notesController.text;
+//                               ba.status = ApplicationStatus.ONHOLD;
+//                             },
+//                             icon: Icon(Icons.pan_tool_rounded),
+//                           ),
+//                           IconButton(
+//                             color: Colors.red,
+//                             onPressed: () {
+//                               ba.notesOnRejection = notesController.text;
+//                               ba.status = ApplicationStatus.REJECTED;
+//                             },
+//                             icon: Icon(Icons.cancel),
+//                           ),
+//                         ],
+//                       )
+//                     ]),
+//               ),
+//             ),
+//           )
+//         ],
+//       ),
       ),
     );
   }
@@ -825,6 +1167,24 @@ class _ApplicationsListState extends State<ApplicationsList> {
                           ),
                         )
                       : _emptyPage(),
+                  // Container(
+                  //     margin: EdgeInsets.fromLTRB(10, 10, 10, 10),
+                  //     child: TextField(
+                  //       readOnly: true,
+                  //       controller: notesController,
+                  //       decoration: InputDecoration(
+                  //         labelText: 'Remarks',
+                  //         enabledBorder: OutlineInputBorder(
+                  //             borderSide: BorderSide(color: Colors.grey)),
+                  //         focusedBorder: OutlineInputBorder(
+                  //             borderSide: BorderSide(color: Colors.orange)),
+                  //         // errorText:
+                  //         //     _validate ? 'Please enter your message' : null,
+                  //       ),
+                  //       keyboardType: TextInputType.multiline,
+                  //       maxLength: null,
+                  //       maxLines: 2,
+                  //     )),
                 ],
               ),
             ),
