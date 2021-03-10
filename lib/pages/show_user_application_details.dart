@@ -551,32 +551,35 @@ class _ShowUserApplicationDetailsState
                           children: newfield.responseFilePaths
                               .map((item) => GestureDetector(
                                     onTap: () {
-                                      Utils.showImagePopUp(
-                                          context,
-                                          Image.network(
-                                            item,
-                                            loadingBuilder:
-                                                (BuildContext context,
-                                                    Widget child,
-                                                    ImageChunkEvent
-                                                        loadingProgress) {
-                                              if (loadingProgress == null)
-                                                return child;
-                                              return Center(
-                                                child:
-                                                    CircularProgressIndicator(
-                                                  value: loadingProgress
-                                                              .expectedTotalBytes !=
-                                                          null
-                                                      ? loadingProgress
-                                                              .cumulativeBytesLoaded /
-                                                          loadingProgress
-                                                              .expectedTotalBytes
-                                                      : null,
-                                                ),
-                                              );
-                                            },
-                                          ));
+                                      Image image;
+                                      try {
+                                        image = Image.network(
+                                          item,
+                                          loadingBuilder: (BuildContext context,
+                                              Widget child,
+                                              ImageChunkEvent loadingProgress) {
+                                            if (loadingProgress == null)
+                                              return child;
+                                            return Center(
+                                              child: CircularProgressIndicator(
+                                                value: loadingProgress
+                                                            .expectedTotalBytes !=
+                                                        null
+                                                    ? loadingProgress
+                                                            .cumulativeBytesLoaded /
+                                                        loadingProgress
+                                                            .expectedTotalBytes
+                                                    : null,
+                                              ),
+                                            );
+                                          },
+                                        );
+                                        print(image);
+                                      } catch (e, s) {
+                                        print(
+                                            "ERROR caught in Image from network");
+                                      }
+                                      Utils.showImagePopUp(context, image);
                                     },
                                     child: Container(
                                         padding: EdgeInsets.all(2),
@@ -826,55 +829,57 @@ class _ShowUserApplicationDetailsState
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       if (!widget.isAdmin)
-                        SizedBox(
-                          width: MediaQuery.of(context).size.width * .9,
-                          child: RaisedButton(
-                              elevation: 8,
-                              color: Colors.yellow[800],
-                              onPressed: () {
-                                //update status on server
-                                //TODO:GOV - Not working right now
-                                // _gs
-                                //     .getTokenApplicationService()
-                                //     .updateApplicationStatus(
-                                //         widget.bookingApplication.id,
-                                //         widget.bookingApplication.status,
-                                //         notesController.text)
-                                //     .then((value) {
-                                widget.bookingApplication.notesOnCancellation =
-                                    notesController.text;
-                                setState(() {
-                                  widget.bookingApplication.status =
-                                      ApplicationStatus.CANCELLED;
-                                  // });
+                        if (widget.bookingApplication.status !=
+                            ApplicationStatus.CANCELLED)
+                          SizedBox(
+                            width: MediaQuery.of(context).size.width * .9,
+                            child: RaisedButton(
+                                elevation: 8,
+                                color: Colors.yellow[800],
+                                onPressed: () {
+                                  //update status on server
+                                  //TODO:GOV - Not working right now
+                                  _gs
+                                      .getApplicationService()
+                                      .withDrawApplication(
+                                          widget.bookingApplication.id,
+                                          notesController.text)
+                                      .then((value) {
+                                    widget.bookingApplication
+                                            .notesOnCancellation =
+                                        notesController.text;
+                                    setState(() {
+                                      widget.bookingApplication.status =
+                                          ApplicationStatus.CANCELLED;
+                                    });
 
-                                  Utils.showMyFlushbar(
-                                      context,
-                                      Icons.check,
-                                      Duration(seconds: 4),
-                                      "Application Cancelled!!",
-                                      "");
-                                });
-                              },
-                              child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Text(
-                                      "Cancel",
-                                      style: TextStyle(
-                                        fontSize: 15,
-                                        color: Colors.white,
+                                    Utils.showMyFlushbar(
+                                        context,
+                                        Icons.check,
+                                        Duration(seconds: 4),
+                                        "Application Cancelled!!",
+                                        "");
+                                  });
+                                },
+                                child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Text(
+                                        "Cancel",
+                                        style: TextStyle(
+                                          fontSize: 15,
+                                          color: Colors.white,
+                                        ),
                                       ),
-                                    ),
-                                    SizedBox(
-                                      width: 2,
-                                    ),
-                                    Icon(
-                                      Icons.block,
-                                      color: Colors.white,
-                                    )
-                                  ])),
-                        ),
+                                      SizedBox(
+                                        width: 2,
+                                      ),
+                                      Icon(
+                                        Icons.block,
+                                        color: Colors.white,
+                                      )
+                                    ])),
+                          ),
                       if (widget.isAdmin && metaEntity != null)
                         Container(
                           padding: EdgeInsets.all(0),
