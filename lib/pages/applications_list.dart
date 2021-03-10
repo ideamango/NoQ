@@ -2,6 +2,7 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:enum_to_string/enum_to_string.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:noq/SlotSelectionPage.dart';
 import 'package:noq/constants.dart';
 import 'package:noq/db/db_model/booking_application.dart';
@@ -368,89 +369,295 @@ class _ApplicationsListState extends State<ApplicationsList> {
     );
   }
 
+  var labelGroup = AutoSizeGroup();
   Widget buildChildItem(Field field) {
-    Widget fieldWidget;
-    Widget fieldsContainer = Container();
+    Widget fieldWidget = SizedBox();
+
+    //Widget fieldsContainer = Container();
     if (field != null) {
-      if (field.isMandatory) {
-        switch (field.type) {
-          case FieldType.TEXT:
-            {
-              FormInputFieldText newfield = field;
-              fieldWidget = Text(newfield.response);
-            }
-            break;
-          case FieldType.NUMBER:
-            {
-              FormInputFieldNumber newfield = field;
-              fieldWidget = Text(newfield.response.toString());
-            }
-            break;
-          case FieldType.PHONE:
-            {
-              FormInputFieldNumber newfield = field;
-              fieldWidget = Text("+91 ${newfield.response.toString()}");
-            }
-            break;
-
-          case FieldType.DATETIME:
-            {
-              FormInputFieldDateTime newfield = field;
-              fieldWidget = Text(newfield.responseDateTime.toString());
-            }
-            break;
-          case FieldType.OPTIONS:
-            {
-              FormInputFieldOptions newfield = field;
-              fieldWidget = Text(newfield.responseValues.toString());
-            }
-            break;
-          case FieldType.OPTIONS_ATTACHMENTS:
-            {
-              FormInputFieldOptionsWithAttachments newfield = field;
-              fieldWidget = Column(
-                children: [
-                  Text(newfield.responseValues.toString()),
-                  Text("Show attachments please"),
-                  //TODO : show images from response file path
-                ],
-              );
-            }
-            break;
-          default:
-            {
-              fieldWidget = Text("Could not fetch data");
-            }
-            break;
-        }
-
-        fieldsContainer = Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Wrap(children: [
-              Container(
-                width: MediaQuery.of(context).size.width * .3,
-                child: Text(
-                  field.label,
-                ),
-              )
-            ]),
-            Wrap(children: [
-              Container(
-                  width: MediaQuery.of(context).size.width * .4,
-                  padding: EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                    border: Border.all(color: Colors.teal[200]),
-                    shape: BoxShape.rectangle,
-                    color: Colors.cyan[50],
+      switch (field.type) {
+        case FieldType.TEXT:
+          {
+            FormInputFieldText newfield = field;
+            //TODO Smita - Add case if field is isEmail
+            fieldWidget = Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SizedBox(
+                  //width: cardWidth * .12,
+                  child: AutoSizeText(
+                    newfield.label,
+                    group: labelGroup,
+                    minFontSize: 9,
+                    maxFontSize: 11,
+                    maxLines: 1,
+                    overflow: TextOverflow.clip,
+                    style: TextStyle(
+                        color: Colors.blueGrey[700],
+                        fontFamily: 'RalewayRegular'),
                   ),
-                  child: fieldWidget),
-            ]),
-          ],
-        );
+                ),
+                horizontalSpacer,
+                SizedBox(
+                  //  width: cardWidth * .4,
+                  //height: cardHeight * .1,
+                  child: AutoSizeText(
+                    newfield.response,
+                    minFontSize: 12,
+                    maxFontSize: 14,
+                    maxLines: 1,
+                    overflow: TextOverflow.clip,
+                    style: TextStyle(
+                        fontSize: 14,
+                        color: Colors.indigo[900],
+                        //  fontWeight: FontWeight.bold,
+                        fontFamily: 'Roboto'),
+                  ),
+                ),
+              ],
+            );
+          }
+          break;
+        case FieldType.NUMBER:
+          {
+            FormInputFieldNumber newfield = field;
+            fieldWidget = Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SizedBox(
+                  //width: cardWidth * .12,
+                  child: AutoSizeText(
+                    newfield.label,
+                    group: labelGroup,
+                    minFontSize: 9,
+                    maxFontSize: 11,
+                    maxLines: 1,
+                    overflow: TextOverflow.clip,
+                    style: TextStyle(
+                        color: Colors.blueGrey[700],
+                        fontFamily: 'RalewayRegular'),
+                  ),
+                ),
+                horizontalSpacer,
+                SizedBox(
+                  //  width: cardWidth * .4,
+                  //height: cardHeight * .1,
+                  child: AutoSizeText(
+                    newfield.response.toString(),
+                    minFontSize: 12,
+                    maxFontSize: 14,
+                    maxLines: 1,
+                    overflow: TextOverflow.clip,
+                    style: TextStyle(
+                        fontSize: 14,
+                        color: Colors.indigo[900],
+                        // fontWeight: FontWeight.bold,
+                        fontFamily: 'Roboto'),
+                  ),
+                ),
+              ],
+            );
+          }
+          break;
+        case FieldType.PHONE:
+          {
+            FormInputFieldPhone newfield = field;
+            fieldWidget = Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SizedBox(
+                  //width: cardWidth * .12,
+                  child: AutoSizeText(
+                    newfield.label,
+                    group: labelGroup,
+                    minFontSize: 9,
+                    maxFontSize: 11,
+                    maxLines: 1,
+                    overflow: TextOverflow.clip,
+                    style: TextStyle(
+                        color: Colors.blueGrey[700],
+                        fontFamily: 'RalewayRegular'),
+                  ),
+                ),
+                horizontalSpacer,
+                SizedBox(
+                  //  width: cardWidth * .4,
+                  //height: cardHeight * .1,
+                  child: AutoSizeText(
+                    "+91 ${newfield.responsePhone.toString()}",
+                    minFontSize: 12,
+                    maxFontSize: 14,
+                    maxLines: 1,
+                    overflow: TextOverflow.clip,
+                    style: TextStyle(
+                        color: Colors.indigo[900],
+                        //fontWeight: FontWeight.bold,
+                        fontFamily: 'Roboto'),
+                  ),
+                ),
+              ],
+            );
+          }
+          break;
+
+        case FieldType.DATETIME:
+          {
+            FormInputFieldDateTime newfield = field;
+            //TODO Smita - Add case if field is Age
+            fieldWidget = Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SizedBox(
+                  //width: cardWidth * .12,
+                  child: AutoSizeText(
+                    newfield.label,
+                    group: labelGroup,
+                    minFontSize: 9,
+                    maxFontSize: 11,
+                    maxLines: 1,
+                    overflow: TextOverflow.clip,
+                    style: TextStyle(
+                        color: Colors.blueGrey[700],
+                        fontFamily: 'RalewayRegular'),
+                  ),
+                ),
+                // horizontalSpacer,
+                SizedBox(
+                  //  width: cardWidth * .4,
+                  //height: cardHeight * .1,
+                  child: AutoSizeText(
+                    DateFormat('dd-MM-yyyy')
+                        .format(newfield.responseDateTime)
+                        .toString(),
+                    minFontSize: 12,
+                    maxFontSize: 14,
+                    maxLines: 1,
+                    overflow: TextOverflow.clip,
+                    style: TextStyle(
+                        color: Colors.indigo[900], fontFamily: 'Roboto'),
+                  ),
+                ),
+              ],
+            );
+          }
+          break;
+        case FieldType.OPTIONS:
+          {
+            FormInputFieldOptions newfield = field;
+            //If field is multi-select then concatenate responses and show.
+
+            String responseVals;
+            for (Value val in newfield.responseValues) {
+              if (!Utils.isNotNullOrEmpty(responseVals)) responseVals = "";
+              responseVals = responseVals + val.value.toString();
+            }
+
+            fieldWidget = Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SizedBox(
+                  //width: cardWidth * .12,
+                  child: AutoSizeText(
+                    newfield.label,
+                    group: labelGroup,
+                    minFontSize: 9,
+                    maxFontSize: 11,
+                    maxLines: 1,
+                    overflow: TextOverflow.clip,
+                    style: TextStyle(
+                        color: Colors.blueGrey[700],
+                        fontFamily: 'RalewayRegular'),
+                  ),
+                ),
+                // horizontalSpacer,
+                SizedBox(
+                  //  width: cardWidth * .4,
+                  //height: cardHeight * .1,
+                  child: AutoSizeText(
+                    responseVals,
+                    minFontSize: 12,
+                    maxFontSize: 14,
+                    maxLines: 1,
+                    overflow: TextOverflow.clip,
+                    style: TextStyle(
+                        fontSize: 14,
+                        color: Colors.indigo[900],
+                        fontFamily: 'Roboto'),
+                  ),
+                ),
+              ],
+            );
+          }
+          break;
+        case FieldType.OPTIONS_ATTACHMENTS:
+          {
+            FormInputFieldOptionsWithAttachments newfield = field;
+            String responseVals;
+            for (Value val in newfield.responseValues) {
+              if (!Utils.isNotNullOrEmpty(responseVals)) responseVals = "";
+              responseVals = responseVals + val.value.toString();
+            }
+
+            //  responseVals = newfield.responseValues.toString();
+
+            fieldWidget = Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                SizedBox(
+                  //width: cardWidth * .12,
+                  child: AutoSizeText(
+                    newfield.label,
+                    group: labelGroup,
+                    minFontSize: 9,
+                    maxFontSize: 11,
+                    maxLines: 1,
+                    overflow: TextOverflow.clip,
+                    style: TextStyle(
+                        color: Colors.blueGrey[900],
+                        fontFamily: 'RalewayRegular'),
+                  ),
+                ),
+                //horizontalSpacer,
+                Row(
+                  children: [
+                    SizedBox(
+                      //  width: cardWidth * .4,
+                      //height: cardHeight * .1,
+                      child: AutoSizeText(
+                        responseVals,
+                        minFontSize: 12,
+                        maxFontSize: 14,
+                        maxLines: 1,
+                        overflow: TextOverflow.clip,
+                        style: TextStyle(
+                            color: Colors.indigo[900], fontFamily: 'Roboto'),
+                      ),
+                    ),
+                    //horizontalSpacer,
+                    // IconButton(
+                    //   icon: Icon(
+                    //     Icons.attach_file,
+                    //     size: 14,
+                    //   ),
+                    //   onPressed: () {
+                    //     print("Pressed");
+                    //   },
+                    // )
+                  ],
+                ),
+              ],
+            );
+          }
+          break;
+        default:
+          {
+            // fieldWidget = Text("Could not fetch data");
+          }
+          break;
       }
     }
-    return fieldsContainer;
+    return fieldWidget;
   }
 
   Future<DateTime> showAvailableSlotsPopUp(
@@ -497,7 +704,7 @@ class _ApplicationsListState extends State<ApplicationsList> {
         .getFormFields()
         .where((element) => element.isMeta == true));
 
-    double cardHeight = MediaQuery.of(context).size.height * .4;
+    double cardHeight = MediaQuery.of(context).size.height * .38;
     double cardWidth = MediaQuery.of(context).size.width * .95;
     var medCondGroup = AutoSizeGroup();
     var labelGroup = AutoSizeGroup();
@@ -513,9 +720,10 @@ class _ApplicationsListState extends State<ApplicationsList> {
         )));
       },
       child: Card(
-        elevation: 8,
+        elevation: 5,
         child: Container(
-          decoration: BoxDecoration(border: Border.all(color: Colors.blueGrey)),
+          decoration:
+              BoxDecoration(border: Border.all(color: Colors.grey[300])),
           // color: Colors.orange,
           width: cardWidth,
           height: cardHeight,
@@ -525,56 +733,70 @@ class _ApplicationsListState extends State<ApplicationsList> {
             children: [
               Padding(
                 padding: const EdgeInsets.fromLTRB(8, 10, 8, 4),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Row(children: [
-                      Container(
-                        padding: EdgeInsets.all(2),
-                        margin: EdgeInsets.all(0),
-                        decoration: BoxDecoration(
-                            color: (ba.status == ApplicationStatus.NEW)
-                                ? Colors.blue
-                                : (ba.status == ApplicationStatus.ONHOLD
-                                    ? Colors.yellow[700]
-                                    : (ba.status == ApplicationStatus.REJECTED
-                                        ? Colors.red
+                child: Row(mainAxisAlignment: MainAxisAlignment.end, children: [
+                  Container(
+                    padding: EdgeInsets.all(2),
+                    margin: EdgeInsets.all(0),
+                    decoration: BoxDecoration(
+                        color: (ba.status == ApplicationStatus.NEW)
+                            ? Colors.blue
+                            : (ba.status == ApplicationStatus.ONHOLD
+                                ? Colors.yellow[700]
+                                : (ba.status == ApplicationStatus.REJECTED
+                                    ? Colors.red
+                                    : (ba.status == ApplicationStatus.APPROVED
+                                        ? Colors.green[400]
                                         : (ba.status ==
-                                                ApplicationStatus.APPROVED
-                                            ? Colors.green[400]
-                                            : (ba.status ==
-                                                    ApplicationStatus.COMPLETED
-                                                ? Colors.purple
-                                                : Colors.blueGrey)))),
-                            shape: BoxShape.rectangle,
-                            borderRadius:
-                                BorderRadius.all(Radius.circular(5.0))),
-                        child: SizedBox(
-                          width: cardWidth * .2,
-                          height: cardHeight * .11,
-                          child: Center(
-                            child: AutoSizeText(
-                                EnumToString.convertToString(ba.status),
-                                textAlign: TextAlign.center,
-                                minFontSize: 7,
-                                maxFontSize: 9,
-                                style: TextStyle(
-                                    fontSize: 9,
-                                    fontWeight: FontWeight.bold,
-                                    letterSpacing: 1,
-                                    color: Colors.white,
-                                    fontFamily: 'RalewayRegular')),
-                          ),
-                        ),
+                                                ApplicationStatus.COMPLETED
+                                            ? Colors.purple
+                                            : Colors.blueGrey)))),
+                        shape: BoxShape.rectangle,
+                        borderRadius: BorderRadius.all(Radius.circular(5.0))),
+                    child: SizedBox(
+                      width: cardWidth * .2,
+                      height: cardHeight * .11,
+                      child: Center(
+                        child: AutoSizeText(
+                            EnumToString.convertToString(ba.status),
+                            textAlign: TextAlign.center,
+                            minFontSize: 7,
+                            maxFontSize: 9,
+                            style: TextStyle(
+                                fontSize: 9,
+                                fontWeight: FontWeight.bold,
+                                letterSpacing: 1,
+                                color: Colors.white,
+                                fontFamily: 'RalewayRegular')),
                       ),
-                    ]),
-                  ],
+                    ),
+                  ),
+                ]),
+              ),
+
+              Expanded(
+                child: ListView.builder(
+                  itemCount: listOfMeta.length,
+                  // reverse: true,
+                  itemBuilder: (BuildContext context, int index) {
+                    return Container(
+                      padding: EdgeInsets.fromLTRB(10, 5, 10, 5),
+                      margin: EdgeInsets.zero,
+                      // margin: EdgeInsets.fromLTRB(10, 10, 10, 0),
+                      child: new Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          //  Text('dfhgd'),
+                          buildChildItem(listOfMeta[index])
+                        ],
+                      ),
+                    );
+                  },
                 ),
               ),
-              SizedBox(
-                width: cardWidth * .9,
-                height: cardHeight * .4,
-              ),
+              // SizedBox(
+              //   width: cardWidth * .9,
+              //   height: cardHeight * .4,
+              // ),
               Row(
                 //  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [

@@ -80,9 +80,10 @@ class _BookingFormSelectionState extends State<BookingFormSelection> {
       } else {
         //If admin then show overview page as per selected form id
         fwdRoute = OverviewPage(
-          bookingFormId: widget.metaEntity.forms[0].id,
+          bookingFormId: forms[_selectedValue].id,
           entityId: widget.metaEntity.entityId,
           metaEntity: widget.metaEntity,
+          bookingFormName: forms[_selectedValue].name,
         );
       }
     });

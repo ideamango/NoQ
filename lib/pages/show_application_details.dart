@@ -257,8 +257,9 @@ class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
     if (!listOfControllers.containsKey(field.label)) {
       listOfControllers[field.label] = new TextEditingController();
     }
-    Widget fieldWidget;
-    Widget fieldsContainer = Container();
+    print(field.label);
+    Widget fieldWidget = SizedBox();
+    Widget fieldsContainer = SizedBox();
     if (field != null) {
       switch (field.type) {
         case FieldType.TEXT:
@@ -266,7 +267,7 @@ class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
             FormInputFieldText newfield = field;
             fieldWidget = SizedBox(
               width: MediaQuery.of(context).size.width * .3,
-              height: MediaQuery.of(context).size.height * .08,
+              height: MediaQuery.of(context).size.height * .07,
               child: TextField(
                 controller: listOfControllers[field.label],
                 readOnly: true,
@@ -282,9 +283,9 @@ class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
                       fontWeight: FontWeight.bold,
                       fontFamily: 'RalewayRegular'),
                   enabledBorder: UnderlineInputBorder(
-                      borderSide: BorderSide(color: Colors.grey)),
+                      borderSide: BorderSide(color: Colors.grey[300])),
                   focusedBorder: UnderlineInputBorder(
-                      borderSide: BorderSide(color: Colors.orange)),
+                      borderSide: BorderSide(color: Colors.orange[300])),
                   // enabledBorder: OutlineInputBorder(
                   //     borderSide: BorderSide(color: Colors.grey)),
                   // focusedBorder: OutlineInputBorder(
@@ -319,9 +320,9 @@ class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
                       fontWeight: FontWeight.bold,
                       fontFamily: 'RalewayRegular'),
                   enabledBorder: UnderlineInputBorder(
-                      borderSide: BorderSide(color: Colors.grey)),
+                      borderSide: BorderSide(color: Colors.grey[300])),
                   focusedBorder: UnderlineInputBorder(
-                      borderSide: BorderSide(color: Colors.orange)),
+                      borderSide: BorderSide(color: Colors.orange[300])),
                   // enabledBorder: OutlineInputBorder(
                   //     borderSide: BorderSide(color: Colors.grey)),
                   // focusedBorder: OutlineInputBorder(
@@ -357,9 +358,9 @@ class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
                       fontWeight: FontWeight.bold,
                       fontFamily: 'RalewayRegular'),
                   enabledBorder: UnderlineInputBorder(
-                      borderSide: BorderSide(color: Colors.grey)),
+                      borderSide: BorderSide(color: Colors.grey[300])),
                   focusedBorder: UnderlineInputBorder(
-                      borderSide: BorderSide(color: Colors.orange)),
+                      borderSide: BorderSide(color: Colors.orange[300])),
                   // enabledBorder: OutlineInputBorder(
                   //     borderSide: BorderSide(color: Colors.grey)),
                   // focusedBorder: OutlineInputBorder(
@@ -399,9 +400,9 @@ class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
                       fontWeight: FontWeight.bold,
                       fontFamily: 'RalewayRegular'),
                   enabledBorder: UnderlineInputBorder(
-                      borderSide: BorderSide(color: Colors.grey)),
+                      borderSide: BorderSide(color: Colors.grey[300])),
                   focusedBorder: UnderlineInputBorder(
-                      borderSide: BorderSide(color: Colors.orange)),
+                      borderSide: BorderSide(color: Colors.orange[300])),
                   // enabledBorder: OutlineInputBorder(
                   //     borderSide: BorderSide(color: Colors.grey)),
                   // focusedBorder: OutlineInputBorder(
@@ -444,9 +445,9 @@ class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
                       fontWeight: FontWeight.bold,
                       fontFamily: 'RalewayRegular'),
                   enabledBorder: UnderlineInputBorder(
-                      borderSide: BorderSide(color: Colors.grey)),
+                      borderSide: BorderSide(color: Colors.grey[300])),
                   focusedBorder: UnderlineInputBorder(
-                      borderSide: BorderSide(color: Colors.orange)),
+                      borderSide: BorderSide(color: Colors.orange[300])),
                   // enabledBorder: OutlineInputBorder(
                   //     borderSide: BorderSide(color: Colors.grey)),
                   // focusedBorder: OutlineInputBorder(
@@ -469,31 +470,22 @@ class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
                 else
                   conds = conds + newfield.responseValues[i].toString();
               }
+            } else {
+              conds = Utils.isNullOrEmpty(newfield.responseValues)
+                  ? "None"
+                  : newfield.responseValues[0].value;
             }
-
+            print(conds);
             listOfControllers[field.label].text = conds;
           }
           break;
-        case FieldType.OPTIONS_ATTACHMENTS:
+        case FieldType.ATTACHMENT:
           {
-            FormInputFieldOptionsWithAttachments newfield = field;
-            // Widget attachmentList = Container(
-            //     child: ListView.builder(
-            //   itemBuilder: (BuildContext context, int index) {
-            //     return Container(
-            //       margin: EdgeInsets.fromLTRB(10, 10, 10, 10),
-            //       child: Container(
-
-            //         child: Image.network(newfield.responseFilePaths[index])),
-            //     );
-            //   },
-            //   itemCount: newfield.responseFilePaths.length,
-            // ));
-
+            FormInputFieldAttachment newfield = field;
             fieldWidget = Container(
               padding: EdgeInsets.fromLTRB(5, 0, 0, 5),
               decoration: BoxDecoration(
-                  border: Border.all(color: Colors.indigo[800], width: 1.5)),
+                  border: Border.all(color: Colors.grey[300], width: 1.5)),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -516,9 +508,151 @@ class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
                             fontWeight: FontWeight.bold,
                             fontFamily: 'RalewayRegular'),
                         enabledBorder: UnderlineInputBorder(
-                            borderSide: BorderSide(color: Colors.grey)),
+                            borderSide: BorderSide(color: Colors.grey[300])),
                         focusedBorder: UnderlineInputBorder(
-                            borderSide: BorderSide(color: Colors.orange)),
+                            borderSide: BorderSide(color: Colors.orange[300])),
+                      ),
+                      //  keyboardType: TextInputType.multiline,
+                    ),
+                  ),
+                  (newfield.responseFilePaths.length > 0)
+                      ? Wrap(
+                          children: newfield.responseFilePaths
+                              .map((item) => GestureDetector(
+                                    onTap: () {
+                                      Utils.showImagePopUp(
+                                          context,
+                                          Image.network(
+                                            item,
+                                            loadingBuilder:
+                                                (BuildContext context,
+                                                    Widget child,
+                                                    ImageChunkEvent
+                                                        loadingProgress) {
+                                              if (loadingProgress == null)
+                                                return child;
+                                              return Center(
+                                                child:
+                                                    CircularProgressIndicator(
+                                                  value: loadingProgress
+                                                              .expectedTotalBytes !=
+                                                          null
+                                                      ? loadingProgress
+                                                              .cumulativeBytesLoaded /
+                                                          loadingProgress
+                                                              .expectedTotalBytes
+                                                      : null,
+                                                ),
+                                              );
+                                            },
+                                          ));
+                                    },
+                                    child: Container(
+                                        padding: EdgeInsets.all(2),
+                                        margin: EdgeInsets.all(2),
+                                        width:
+                                            MediaQuery.of(context).size.width *
+                                                .37,
+                                        height:
+                                            MediaQuery.of(context).size.width *
+                                                .4,
+                                        child: Image.network(
+                                          item,
+                                          loadingBuilder: (BuildContext context,
+                                              Widget child,
+                                              ImageChunkEvent loadingProgress) {
+                                            if (loadingProgress == null) {
+                                              return child;
+                                            }
+                                            return Center(
+                                              child: CircularProgressIndicator(
+                                                value: loadingProgress
+                                                            .expectedTotalBytes !=
+                                                        null
+                                                    ? loadingProgress
+                                                            .cumulativeBytesLoaded /
+                                                        loadingProgress
+                                                            .expectedTotalBytes
+                                                    : null,
+                                              ),
+                                            );
+                                          },
+                                        )),
+                                  ))
+                              .toList()
+                              .cast<Widget>(),
+                        )
+                      : SizedBox(),
+                ],
+              ),
+            );
+            // String conds = "";
+
+            // if (newfield.isMultiSelect) {
+            //   if (Utils.isNullOrEmpty(newfield.responseValues)) {
+            //     conds = "None";
+            //   } else {
+            //     for (int i = 0; i < newfield.responseValues.length; i++) {
+            //       if (conds != "")
+            //         conds = conds + "  &  " + newfield.responseValues[i].value;
+            //       else
+            //         conds = conds + newfield.responseValues[i].value;
+            //     }
+            //   }
+            // } else {
+            //   conds = Utils.isNullOrEmpty(newfield.responseValues)
+            //       ? "None"
+            //       : newfield.responseValues[0].value;
+            // }
+            // listOfControllers[field.label].text = conds;
+            listOfControllers[field.label].text = " ";
+            break;
+          }
+        case FieldType.OPTIONS_ATTACHMENTS:
+          {
+            FormInputFieldOptionsWithAttachments newfield = field;
+            // Widget attachmentList = Container(
+            //     child: ListView.builder(
+            //   itemBuilder: (BuildContext context, int index) {
+            //     return Container(
+            //       margin: EdgeInsets.fromLTRB(10, 10, 10, 10),
+            //       child: Container(
+
+            //         child: Image.network(newfield.responseFilePaths[index])),
+            //     );
+            //   },
+            //   itemCount: newfield.responseFilePaths.length,
+            // ));
+
+            fieldWidget = Container(
+              padding: EdgeInsets.fromLTRB(5, 0, 0, 5),
+              decoration: BoxDecoration(
+                  border: Border.all(color: Colors.grey[200], width: 1.5)),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  SizedBox(
+                    width: MediaQuery.of(context).size.width * .9,
+                    height: MediaQuery.of(context).size.height * .08,
+                    child: TextField(
+                      controller: listOfControllers[field.label],
+                      readOnly: true,
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: Colors.indigo[900],
+                      ),
+                      textAlign: TextAlign.start,
+                      decoration: InputDecoration(
+                        labelText: newfield.label,
+                        labelStyle: TextStyle(
+                            fontSize: 13,
+                            color: Colors.blueGrey[500],
+                            fontWeight: FontWeight.bold,
+                            fontFamily: 'RalewayRegular'),
+                        enabledBorder: UnderlineInputBorder(
+                            borderSide: BorderSide(color: Colors.grey[300])),
+                        focusedBorder: UnderlineInputBorder(
+                            borderSide: BorderSide(color: Colors.orange[300])),
                         // enabledBorder: OutlineInputBorder(
                         //     borderSide: BorderSide(color: Colors.grey)),
                         // focusedBorder: OutlineInputBorder(
@@ -642,82 +776,15 @@ class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
     return fieldsContainer;
   }
 
-  Widget _buildItem(BookingApplication ba) {
-    return Container(
-      padding: EdgeInsets.fromLTRB(8, 8, 8, 0),
-      margin: EdgeInsets.all(8),
-      child: Card(
-        elevation: 8,
-        child: Container(
-          width: MediaQuery.of(context).size.width,
-          //height: MediaQuery.of(context).size.height * .82,
-          child: Column(
-            children: <Widget>[
-              Container(
-                padding: EdgeInsets.all(8),
-                child: Row(mainAxisAlignment: MainAxisAlignment.end, children: [
-                  AutoSizeText(
-                    "Status : ",
-                    minFontSize: 10,
-                    maxFontSize: 12,
-                    maxLines: 1,
-                    overflow: TextOverflow.clip,
-                    style: TextStyle(
-                        color: Colors.blueGrey[700],
-                        fontFamily: 'RalewayRegular'),
-                  ),
-                  Container(
-                    padding: EdgeInsets.all(4),
-                    decoration: BoxDecoration(
-                        color: (ba.status == ApplicationStatus.NEW)
-                            ? Colors.blue
-                            : (ba.status == ApplicationStatus.ONHOLD
-                                ? Colors.yellow[700]
-                                : (ba.status == ApplicationStatus.REJECTED
-                                    ? Colors.red
-                                    : (ba.status == ApplicationStatus.APPROVED
-                                        ? Colors.green[400]
-                                        : Colors.blueGrey))),
-                        shape: BoxShape.rectangle,
-                        borderRadius: BorderRadius.all(Radius.circular(5.0))),
-                    child: Text(
-                      EnumToString.convertToString(ba.status),
-                      style: TextStyle(
-                          fontSize: 10,
-                          letterSpacing: 1,
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                          fontFamily: 'RalewayRegular'),
-                    ),
-                  ),
-                ]),
-              ),
-              Expanded(
-                child: ListView.builder(
-                  padding: EdgeInsets.fromLTRB(
-                      MediaQuery.of(context).size.width * .026,
-                      0,
-                      MediaQuery.of(context).size.width * .026,
-                      MediaQuery.of(context).size.width * .026),
-                  shrinkWrap: true,
-                  //scrollDirection: Axis.vertical,
-                  itemBuilder: (BuildContext context, int index) {
-                    return Container(
-                      padding: EdgeInsets.fromLTRB(5, 5, 5, 0),
-                      //  height: MediaQuery.of(context).size.height * .3,
-                      child: buildChildItem(
-                          ba.responseForm.getFormFields()[index]),
-                    );
-                  },
-                  itemCount: ba.responseForm.getFormFields().length,
-                ),
-              )
-            ],
-          ),
-        ),
-      ),
-    );
-  }
+  // Widget _buildItem(BookingApplication ba) {
+  //   return Column(
+  //     children: <Widget>[
+  //       Expanded(
+  //         child:
+  //       ),
+  //     ],
+  //   );
+  // }
 
   @override
   void dispose() {
@@ -752,47 +819,239 @@ class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
                   }),
             ),
             body: Center(
-              child: Column(
-                children: <Widget>[
-                  Expanded(child: _buildItem(widget.bookingApplication)),
-                  Container(
-                      padding: EdgeInsets.fromLTRB(8, 0, 8, 8),
-                      margin: EdgeInsets.all(8),
-                      child: Card(
-                        elevation: 8,
-                        child: TextField(
-                          controller: notesController,
-                          decoration: InputDecoration(
-                            labelText: 'Remarks',
-                            enabledBorder: OutlineInputBorder(
-                                borderSide: BorderSide(color: Colors.grey)),
-                            focusedBorder: OutlineInputBorder(
-                                borderSide: BorderSide(color: Colors.orange)),
-                            // errorText:
-                            //     _validate ? 'Please enter your message' : null,
+              child: SingleChildScrollView(
+                physics: ScrollPhysics(),
+                child: Column(
+                  children: <Widget>[
+                    Container(
+                      padding: EdgeInsets.all(8),
+                      child: Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            // AutoSizeText(
+                            //   "Status : ",
+                            //   minFontSize: 10,
+                            //   maxFontSize: 12,
+                            //   maxLines: 1,
+                            //   overflow: TextOverflow.clip,
+                            //   style: TextStyle(
+                            //       color: Colors.grey[300],
+                            //       fontFamily: 'RalewayRegular'),
+                            // ),
+                            Container(
+                              padding: EdgeInsets.all(4),
+                              decoration: BoxDecoration(
+                                  color: (widget.bookingApplication.status ==
+                                          ApplicationStatus.NEW)
+                                      ? Colors.blue
+                                      : (widget.bookingApplication.status ==
+                                              ApplicationStatus.ONHOLD
+                                          ? Colors.yellow[700]
+                                          : (widget.bookingApplication.status ==
+                                                  ApplicationStatus.REJECTED
+                                              ? Colors.red
+                                              : (widget.bookingApplication
+                                                          .status ==
+                                                      ApplicationStatus.APPROVED
+                                                  ? Colors.green[400]
+                                                  : Colors.blueGrey))),
+                                  shape: BoxShape.rectangle,
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(5.0))),
+                              child: Text(
+                                EnumToString.convertToString(
+                                    widget.bookingApplication.status),
+                                style: TextStyle(
+                                    fontSize: 10,
+                                    letterSpacing: 1,
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
+                                    fontFamily: 'RalewayRegular'),
+                              ),
+                            ),
+                          ]),
+                    ),
+                    // Expanded(
+                    //   child:
+                    ListView.builder(
+                      padding: EdgeInsets.fromLTRB(15, 0, 15, 8),
+                      shrinkWrap: true,
+                      //scrollDirection: Axis.vertical,
+                      physics: new NeverScrollableScrollPhysics(),
+                      itemBuilder: (BuildContext context, int index) {
+                        return Container(
+                          padding: EdgeInsets.fromLTRB(5, 5, 5, 0),
+                          //  height: MediaQuery.of(context).size.height * .3,
+                          child: buildChildItem(widget
+                              .bookingApplication.responseForm
+                              .getFormFields()[index]),
+                        );
+                      },
+                      itemCount: widget.bookingApplication.responseForm
+                          .getFormFields()
+                          .length,
+                    ),
+                    // ),
+                    Container(
+                        width: MediaQuery.of(context).size.width * .97,
+                        padding: EdgeInsets.fromLTRB(8, 0, 8, 0),
+                        margin: EdgeInsets.all(10),
+                        child: Card(
+                          margin: EdgeInsets.all(0),
+                          elevation: 5,
+                          child: TextField(
+                            controller: notesController,
+                            decoration: InputDecoration(
+                              labelText: 'Remarks',
+                              enabledBorder: OutlineInputBorder(
+                                  borderSide: BorderSide(color: Colors.grey)),
+                              focusedBorder: OutlineInputBorder(
+                                  borderSide: BorderSide(color: Colors.orange)),
+                              // errorText:
+                              //     _validate ? 'Please enter your message' : null,
+                            ),
+                            keyboardType: TextInputType.multiline,
+                            maxLength: null,
+                            maxLines: 2,
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: Colors.indigo[900],
+                            ),
                           ),
-                          keyboardType: TextInputType.multiline,
-                          maxLength: null,
-                          maxLines: 2,
-                        ),
-                      )),
-                  Container(
-                    padding: EdgeInsets.fromLTRB(12, 12, 12, 20),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        RaisedButton(
-                            elevation: 8,
-                            color: Colors.purple,
-                            onPressed: () {
-                              widget.bookingApplication.notesOnApproval =
-                                  notesController.text;
-                              if (metaEntity != null) {
+                        )),
+                    Container(
+                      width: MediaQuery.of(context).size.width * .97,
+                      padding: EdgeInsets.fromLTRB(8, 0, 8, 15),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          SizedBox(
+                            width: MediaQuery.of(context).size.width * .21,
+                            child: RaisedButton(
+                                elevation: 8,
+                                color: Colors.purple,
+                                onPressed: () {
+                                  widget.bookingApplication.notesOnApproval =
+                                      notesController.text;
+                                  if (metaEntity != null) {
+                                    _gs
+                                        .getApplicationService()
+                                        .updateApplicationStatus(
+                                            widget.bookingApplication.id,
+                                            ApplicationStatus.COMPLETED,
+                                            listOfControllers[widget
+                                                    .bookingApplication.id]
+                                                .text,
+                                            metaEntity,
+                                            widget.bookingApplication
+                                                .preferredSlotTiming)
+                                        .then((value) {
+                                      if (value) {
+                                        setState(() {
+                                          widget.bookingApplication.status =
+                                              ApplicationStatus.COMPLETED;
+                                        });
+                                        Utils.showMyFlushbar(
+                                            context,
+                                            Icons.check,
+                                            Duration(seconds: 4),
+                                            "Application Saved!!",
+                                            "");
+                                      } else {
+                                        print(
+                                            "Could not update application status");
+                                        Utils.showMyFlushbar(
+                                            context,
+                                            Icons.check,
+                                            Duration(seconds: 4),
+                                            "Oops! Application could not be saved!!",
+                                            "");
+                                      }
+                                    });
+                                  } else {
+                                    print(
+                                        "Could not update application status");
+                                    Utils.showMyFlushbar(
+                                        context,
+                                        Icons.check,
+                                        Duration(seconds: 4),
+                                        "Oops! Application could not be saved!!",
+                                        "");
+                                  }
+
+                                  print("Complete");
+                                },
+                                child: Icon(
+                                  Icons.thumb_up,
+                                  color: Colors.white,
+                                )),
+                          ),
+                          SizedBox(
+                            width: MediaQuery.of(context).size.width * .21,
+                            child: RaisedButton(
+                                elevation: 8,
+                                color: Colors.green[400],
+                                onPressed: () {
+                                  widget.bookingApplication.notesOnApproval =
+                                      notesController.text;
+                                  _gs
+                                      .getApplicationService()
+                                      .updateApplicationStatus(
+                                          widget.bookingApplication.id,
+                                          ApplicationStatus.APPROVED,
+                                          widget.bookingApplication
+                                              .notesOnApproval,
+                                          metaEntity,
+                                          widget.bookingApplication
+                                              .preferredSlotTiming)
+                                      .then((value) {
+                                    if (value) {
+                                      //Show available time slota, allot one slot, then approve.
+                                      // Utils.showAvailableSlotsPopUp(
+                                      //   context, metaEntity, DateTime.now());
+                                      setState(() {
+                                        widget.bookingApplication.status =
+                                            ApplicationStatus.APPROVED;
+                                      });
+                                      Utils.showMyFlushbar(
+                                          context,
+                                          Icons.check,
+                                          Duration(seconds: 4),
+                                          "Application Saved!!",
+                                          "");
+                                    } else {
+                                      print(
+                                          "Could not update application status");
+                                      Utils.showMyFlushbar(
+                                          context,
+                                          Icons.check,
+                                          Duration(seconds: 4),
+                                          "Oops! Application could not be saved!!",
+                                          "");
+                                    }
+                                  });
+
+                                  print("Approved");
+                                },
+                                child: Icon(
+                                  Icons.check_circle,
+                                  color: Colors.white,
+                                )),
+                          ),
+                          SizedBox(
+                            width: MediaQuery.of(context).size.width * .21,
+                            child: RaisedButton(
+                              color: Colors.yellow[700],
+                              onPressed: () {
+                                widget.bookingApplication.notesOnPuttingOnHold =
+                                    notesController.text;
+
                                 _gs
                                     .getApplicationService()
                                     .updateApplicationStatus(
                                         widget.bookingApplication.id,
-                                        ApplicationStatus.COMPLETED,
+                                        ApplicationStatus.ONHOLD,
                                         listOfControllers[
                                                 widget.bookingApplication.id]
                                             .text,
@@ -803,8 +1062,9 @@ class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
                                   if (value) {
                                     setState(() {
                                       widget.bookingApplication.status =
-                                          ApplicationStatus.COMPLETED;
+                                          ApplicationStatus.ONHOLD;
                                     });
+
                                     Utils.showMyFlushbar(
                                         context,
                                         Icons.check,
@@ -822,212 +1082,70 @@ class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
                                         "");
                                   }
                                 });
-                              } else {
-                                print("Could not update application status");
-                                Utils.showMyFlushbar(
-                                    context,
-                                    Icons.check,
-                                    Duration(seconds: 4),
-                                    "Oops! Application could not be saved!!",
-                                    "");
-                              }
-
-                              print("Complete");
-                            },
-                            child: Row(children: [
-                              // Text(
-                              //   "Complete",
-                              //   style: TextStyle(
-                              //     color: Colors.white,
-                              //   ),
-                              // ),
-                              // SizedBox(
-                              //   width: 2,
-                              // ),
-                              Icon(
-                                Icons.thumb_up,
+                                print("On-Hold done");
+                              },
+                              child: Icon(
+                                Icons.pan_tool_rounded,
                                 color: Colors.white,
-                              )
-                            ])),
-                        RaisedButton(
-                            elevation: 8,
-                            color: Colors.green[400],
-                            onPressed: () {
-                              widget.bookingApplication.notesOnApproval =
-                                  notesController.text;
-                              _gs
-                                  .getApplicationService()
-                                  .updateApplicationStatus(
-                                      widget.bookingApplication.id,
-                                      ApplicationStatus.APPROVED,
-                                      widget.bookingApplication.notesOnApproval,
-                                      metaEntity,
-                                      widget.bookingApplication
-                                          .preferredSlotTiming)
-                                  .then((value) {
-                                if (value) {
-                                  //Show available time slota, allot one slot, then approve.
-                                  // Utils.showAvailableSlotsPopUp(
-                                  //   context, metaEntity, DateTime.now());
-                                  setState(() {
-                                    widget.bookingApplication.status =
-                                        ApplicationStatus.APPROVED;
-                                  });
-                                  Utils.showMyFlushbar(
-                                      context,
-                                      Icons.check,
-                                      Duration(seconds: 4),
-                                      "Application Saved!!",
-                                      "");
-                                } else {
-                                  print("Could not update application status");
-                                  Utils.showMyFlushbar(
-                                      context,
-                                      Icons.check,
-                                      Duration(seconds: 4),
-                                      "Oops! Application could not be saved!!",
-                                      "");
-                                }
-                              });
+                              ),
+                            ),
+                          ),
+                          SizedBox(
+                            width: MediaQuery.of(context).size.width * .21,
+                            child: RaisedButton(
+                              color: Colors.red,
+                              onPressed: () {
+                                widget.bookingApplication.notesOnRejection =
+                                    notesController.text;
 
-                              print("Approved");
-                            },
-                            child: Row(children: [
-                              // Text(
-                              //   "Approve",
-                              //   style: TextStyle(
-                              //     color: Colors.white,
-                              //   ),
-                              // ),
-                              // SizedBox(
-                              //   width: 2,
-                              // ),
-                              Icon(
-                                Icons.check_circle,
+                                _gs
+                                    .getApplicationService()
+                                    .updateApplicationStatus(
+                                        widget.bookingApplication.id,
+                                        ApplicationStatus.REJECTED,
+                                        listOfControllers[
+                                                widget.bookingApplication.id]
+                                            .text,
+                                        metaEntity,
+                                        widget.bookingApplication
+                                            .preferredSlotTiming)
+                                    .then((value) {
+                                  if (value) {
+                                    setState(() {
+                                      widget.bookingApplication.status =
+                                          ApplicationStatus.REJECTED;
+                                    });
+
+                                    Utils.showMyFlushbar(
+                                        context,
+                                        Icons.check,
+                                        Duration(seconds: 4),
+                                        "Application Saved!!",
+                                        "");
+                                  } else {
+                                    print(
+                                        "Could not update application status");
+                                    Utils.showMyFlushbar(
+                                        context,
+                                        Icons.check,
+                                        Duration(seconds: 4),
+                                        "Oops! Application could not be saved!!",
+                                        "");
+                                  }
+                                });
+                                print("On-Hold done");
+                              },
+                              child: Icon(
+                                Icons.cancel_rounded,
                                 color: Colors.white,
-                              )
-                            ])),
-                        RaisedButton(
-                          color: Colors.yellow[700],
-                          onPressed: () {
-                            widget.bookingApplication.notesOnPuttingOnHold =
-                                notesController.text;
-
-                            _gs
-                                .getApplicationService()
-                                .updateApplicationStatus(
-                                    widget.bookingApplication.id,
-                                    ApplicationStatus.ONHOLD,
-                                    listOfControllers[
-                                            widget.bookingApplication.id]
-                                        .text,
-                                    metaEntity,
-                                    widget
-                                        .bookingApplication.preferredSlotTiming)
-                                .then((value) {
-                              if (value) {
-                                setState(() {
-                                  widget.bookingApplication.status =
-                                      ApplicationStatus.ONHOLD;
-                                });
-
-                                Utils.showMyFlushbar(
-                                    context,
-                                    Icons.check,
-                                    Duration(seconds: 4),
-                                    "Application Saved!!",
-                                    "");
-                              } else {
-                                print("Could not update application status");
-                                Utils.showMyFlushbar(
-                                    context,
-                                    Icons.check,
-                                    Duration(seconds: 4),
-                                    "Oops! Application could not be saved!!",
-                                    "");
-                              }
-                            });
-                            print("On-Hold done");
-                          },
-                          child: Row(children: [
-                            // Text(
-                            //   "On-Hold",
-                            //   style: TextStyle(
-                            //     color: Colors.white,
-                            //   ),
-                            //   // style: buttonTextStyle,
-                            // ),
-                            // SizedBox(
-                            //   width: 2,
-                            // ),
-                            Icon(
-                              Icons.pan_tool_rounded,
-                              color: Colors.white,
-                            )
-                          ]),
-                        ),
-                        RaisedButton(
-                          color: Colors.red,
-                          onPressed: () {
-                            widget.bookingApplication.notesOnRejection =
-                                notesController.text;
-
-                            _gs
-                                .getApplicationService()
-                                .updateApplicationStatus(
-                                    widget.bookingApplication.id,
-                                    ApplicationStatus.REJECTED,
-                                    listOfControllers[
-                                            widget.bookingApplication.id]
-                                        .text,
-                                    metaEntity,
-                                    widget
-                                        .bookingApplication.preferredSlotTiming)
-                                .then((value) {
-                              if (value) {
-                                setState(() {
-                                  widget.bookingApplication.status =
-                                      ApplicationStatus.REJECTED;
-                                });
-
-                                Utils.showMyFlushbar(
-                                    context,
-                                    Icons.check,
-                                    Duration(seconds: 4),
-                                    "Application Saved!!",
-                                    "");
-                              } else {
-                                print("Could not update application status");
-                                Utils.showMyFlushbar(
-                                    context,
-                                    Icons.check,
-                                    Duration(seconds: 4),
-                                    "Oops! Application could not be saved!!",
-                                    "");
-                              }
-                            });
-                            print("On-Hold done");
-                          },
-                          child: Row(children: [
-                            // Text(
-                            //   "Reject",
-                            //   style: TextStyle(
-                            //     color: Colors.white,
-                            //   ),
-                            // ),
-                            // SizedBox(
-                            //   width: 2,
-                            // ),
-                            Icon(
-                              Icons.cancel_rounded,
-                              color: Colors.white,
-                            )
-                          ]),
-                        ),
-                      ],
-                    ),
-                  )
-                ],
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    )
+                  ],
+                ),
               ),
             ),
           ),

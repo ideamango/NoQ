@@ -83,7 +83,7 @@ class _UserAccountPageState extends State<UserAccountPage> {
         _gs
             .getApplicationService()
             .getApplications(null, null, null, _gs.getCurrentUser().ph, null,
-                null, null, null, null, null, null, null)
+                null, null, null, null, null, null, 10)
             .then((value) {
           _listOfApplications = value;
           setState(() {
