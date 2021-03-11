@@ -372,6 +372,7 @@ class _ApplicationsListState extends State<ApplicationsList> {
   }
 
   var labelGroup = AutoSizeGroup();
+  var responseGroup = AutoSizeGroup();
   Widget buildChildItem(Field field, BookingApplication ba) {
     Widget fieldWidget = SizedBox();
     print(field.label);
@@ -404,6 +405,7 @@ class _ApplicationsListState extends State<ApplicationsList> {
                   //height: cardHeight * .1,
                   child: AutoSizeText(
                     newfield.response,
+                    group: responseGroup,
                     minFontSize: 12,
                     maxFontSize: 14,
                     maxLines: 2,
@@ -445,6 +447,7 @@ class _ApplicationsListState extends State<ApplicationsList> {
                   //height: cardHeight * .1,
                   child: AutoSizeText(
                     newfield.response.toString(),
+                    group: responseGroup,
                     minFontSize: 12,
                     maxFontSize: 14,
                     maxLines: 1,
@@ -486,6 +489,7 @@ class _ApplicationsListState extends State<ApplicationsList> {
                   //height: cardHeight * .1,
                   child: AutoSizeText(
                     "+91 ${newfield.responsePhone.toString()}",
+                    group: responseGroup,
                     minFontSize: 12,
                     maxFontSize: 14,
                     maxLines: 1,
@@ -529,6 +533,7 @@ class _ApplicationsListState extends State<ApplicationsList> {
                     DateFormat('dd-MM-yyyy')
                         .format(newfield.responseDateTime)
                         .toString(),
+                    group: responseGroup,
                     minFontSize: 12,
                     maxFontSize: 14,
                     maxLines: 1,
@@ -575,6 +580,7 @@ class _ApplicationsListState extends State<ApplicationsList> {
                   //height: cardHeight * .1,
                   child: AutoSizeText(
                     responseVals,
+                    group: responseGroup,
                     minFontSize: 12,
                     maxFontSize: 14,
                     maxLines: 1,
@@ -629,6 +635,7 @@ class _ApplicationsListState extends State<ApplicationsList> {
                           //height: cardHeight * .1,
                           child: AutoSizeText(
                             (responseVals != null) ? responseVals : "None",
+                            group: responseGroup,
                             minFontSize: 12,
                             maxFontSize: 14,
                             maxLines: 3,
