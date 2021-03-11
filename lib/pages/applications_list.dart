@@ -46,6 +46,8 @@ class _ApplicationsListState extends State<ApplicationsList> {
   GlobalState _gs;
   DocumentSnapshot firstDocOfPage;
   DocumentSnapshot lastDocOfPage;
+  DateTime selectedTimeSlot;
+  bool errorInapplicationApproval = false;
 
   List<Tuple<BookingApplication, QueryDocumentSnapshot>> listOfBa;
   Map<String, TextEditingController> listOfControllers =
@@ -372,7 +374,7 @@ class _ApplicationsListState extends State<ApplicationsList> {
   var labelGroup = AutoSizeGroup();
   Widget buildChildItem(Field field, BookingApplication ba) {
     Widget fieldWidget = SizedBox();
-
+    print(field.label);
     //Widget fieldsContainer = Container();
     if (field != null) {
       switch (field.type) {
@@ -398,13 +400,13 @@ class _ApplicationsListState extends State<ApplicationsList> {
                 ),
                 horizontalSpacer,
                 SizedBox(
-                  //  width: cardWidth * .4,
+                  width: MediaQuery.of(context).size.width * .8,
                   //height: cardHeight * .1,
                   child: AutoSizeText(
                     newfield.response,
                     minFontSize: 12,
                     maxFontSize: 14,
-                    maxLines: 1,
+                    maxLines: 2,
                     overflow: TextOverflow.clip,
                     style: TextStyle(
                         fontSize: 14,
@@ -619,16 +621,17 @@ class _ApplicationsListState extends State<ApplicationsList> {
                       ),
                     ),
                     //horizontalSpacer,
+
                     Row(
                       children: [
                         SizedBox(
-                          //  width: cardWidth * .4,
+                          width: MediaQuery.of(context).size.width * .8,
                           //height: cardHeight * .1,
                           child: AutoSizeText(
-                            responseVals,
+                            (responseVals != null) ? responseVals : "None",
                             minFontSize: 12,
                             maxFontSize: 14,
-                            maxLines: 1,
+                            maxLines: 3,
                             overflow: TextOverflow.clip,
                             style: TextStyle(
                                 color: Colors.indigo[900],
@@ -649,22 +652,23 @@ class _ApplicationsListState extends State<ApplicationsList> {
                     ),
                   ],
                 ),
-                IconButton(
-                    padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
-                    constraints: BoxConstraints(
-                      maxHeight: 15,
-                      maxWidth: 15,
-                    ),
-                    icon: Icon(
-                      Icons.attach_file,
-                      color: Colors.blueGrey[600],
-                    ),
-                    onPressed: () {
-                      Navigator.of(context).push(
-                          PageAnimation.createRoute(ShowApplicationDetails(
-                        bookingApplication: ba,
-                      )));
-                    })
+                if (responseVals != null)
+                  IconButton(
+                      padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
+                      constraints: BoxConstraints(
+                        maxHeight: 15,
+                        maxWidth: 15,
+                      ),
+                      icon: Icon(
+                        Icons.attach_file,
+                        color: Colors.blueGrey[600],
+                      ),
+                      onPressed: () {
+                        Navigator.of(context).push(
+                            PageAnimation.createRoute(ShowApplicationDetails(
+                          bookingApplication: ba,
+                        )));
+                      })
               ],
             );
           }
@@ -879,20 +883,34 @@ class _ApplicationsListState extends State<ApplicationsList> {
                             color: Colors.indigo[900],
                           ),
                           onPressed: () async {
-                            final result = await Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => SlotSelectionPage(
-                                          metaEntity: widget.metaEntity,
-                                          dateTime: ba.preferredSlotTiming,
-                                          forPage: "ApplicationList",
-                                        )));
+                            if (ba.status == ApplicationStatus.APPROVED) {
+                              //DO nothing as application already approved
+                              return;
+                            }
 
-                            print(result);
-                            setState(() {
-                              if (result != null)
-                                ba.preferredSlotTiming = result;
-                            });
+                            if (errorInapplicationApproval) {
+                              final result = await Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => SlotSelectionPage(
+                                            metaEntity: widget.metaEntity,
+                                            dateTime: ba.preferredSlotTiming,
+                                            forPage: "ApplicationList",
+                                          )));
+
+                              print(result);
+                              setState(() {
+                                if (result != null)
+                                  ba.preferredSlotTiming = result;
+                              });
+                            } else {
+                              Utils.showMyFlushbar(
+                                  context,
+                                  Icons.info_outline,
+                                  Duration(seconds: 6),
+                                  "Slot can be changed if the preferred slot by the user is not available",
+                                  "");
+                            }
                           })
                     ],
                   ),
@@ -910,6 +928,9 @@ class _ApplicationsListState extends State<ApplicationsList> {
                     height: cardHeight * .2,
                     child: TextFormField(
                       controller: listOfControllers[ba.id],
+                      readOnly: (ba.status == ApplicationStatus.APPROVED)
+                          ? true
+                          : false,
                       style: TextStyle(
                           fontSize: 15,
                           color: Colors.black,
@@ -999,6 +1020,12 @@ class _ApplicationsListState extends State<ApplicationsList> {
                                     "Oops! Application status could not be updated to Approved!!",
                                     "");
                               }
+                            }).catchError((error) {
+                              print(error.toString());
+
+                              setState(() {
+                                errorInapplicationApproval = true;
+                              });
                             });
 //Update application status change on server.
                           },
