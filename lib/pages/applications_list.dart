@@ -393,8 +393,7 @@ class _ApplicationsListState extends State<ApplicationsList> {
                     maxLines: 1,
                     overflow: TextOverflow.clip,
                     style: TextStyle(
-                        color: Colors.blueGrey[700],
-                        fontFamily: 'RalewayRegular'),
+                        color: Colors.black, fontFamily: 'RalewayRegular'),
                   ),
                 ),
                 horizontalSpacer,
@@ -517,8 +516,7 @@ class _ApplicationsListState extends State<ApplicationsList> {
                     maxLines: 1,
                     overflow: TextOverflow.clip,
                     style: TextStyle(
-                        color: Colors.blueGrey[700],
-                        fontFamily: 'RalewayRegular'),
+                        color: Colors.black, fontFamily: 'RalewayRegular'),
                   ),
                 ),
                 // horizontalSpacer,
@@ -614,8 +612,7 @@ class _ApplicationsListState extends State<ApplicationsList> {
                     maxLines: 1,
                     overflow: TextOverflow.clip,
                     style: TextStyle(
-                        color: Colors.blueGrey[900],
-                        fontFamily: 'RalewayRegular'),
+                        color: Colors.black, fontFamily: 'RalewayRegular'),
                   ),
                 ),
                 //horizontalSpacer,
@@ -721,13 +718,8 @@ class _ApplicationsListState extends State<ApplicationsList> {
       },
       child: Card(
         elevation: 5,
-        child: Container(
-          decoration:
-              BoxDecoration(border: Border.all(color: Colors.grey[300])),
-          // color: Colors.orange,
-          width: cardWidth,
-          height: cardHeight,
-
+        child: SingleChildScrollView(
+          physics: ScrollPhysics(),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
@@ -773,30 +765,127 @@ class _ApplicationsListState extends State<ApplicationsList> {
                 ]),
               ),
 
-              Expanded(
-                child: ListView.builder(
-                  itemCount: listOfMeta.length,
-                  // reverse: true,
-                  itemBuilder: (BuildContext context, int index) {
-                    return Container(
-                      padding: EdgeInsets.fromLTRB(10, 5, 10, 5),
-                      margin: EdgeInsets.zero,
-                      // margin: EdgeInsets.fromLTRB(10, 10, 10, 0),
-                      child: new Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          //  Text('dfhgd'),
-                          buildChildItem(listOfMeta[index])
-                        ],
-                      ),
-                    );
-                  },
-                ),
+              ListView.builder(
+                itemCount: listOfMeta.length,
+                physics: NeverScrollableScrollPhysics(),
+                shrinkWrap: true,
+                // reverse: true,
+                itemBuilder: (BuildContext context, int index) {
+                  return Container(
+                    padding: EdgeInsets.fromLTRB(10, 5, 10, 5),
+                    margin: EdgeInsets.zero,
+                    // margin: EdgeInsets.fromLTRB(10, 10, 10, 0),
+                    child: new Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        //  Text('dfhgd'),
+                        buildChildItem(listOfMeta[index])
+                      ],
+                    ),
+                  );
+                },
               ),
               // SizedBox(
               //   width: cardWidth * .9,
               //   height: cardHeight * .4,
               // ),
+              Container(
+                padding: EdgeInsets.fromLTRB(10, 5, 10, 5),
+                margin: EdgeInsets.zero,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        SizedBox(
+                            // width: cardWidth * .45,
+                            child: Wrap(
+                          children: [
+                            AutoSizeText(
+                              "Current time-slot",
+                              group: labelGroup,
+                              minFontSize: 9,
+                              maxFontSize: 11,
+                              maxLines: 1,
+                              overflow: TextOverflow.clip,
+                              style: TextStyle(
+                                  color: Colors.black,
+                                  fontFamily: 'RalewayRegular'),
+                            ),
+                          ],
+                        )),
+                        Wrap(children: [
+                          Container(
+                            padding: EdgeInsets.all(0),
+                            child: AutoSizeText(
+                              ((ba.preferredSlotTiming != null)
+                                  ? DateFormat('yyyy-MM-dd – kk:mm')
+                                      .format(ba.preferredSlotTiming)
+                                  : "None"),
+                              // group: medCondGroup,
+                              minFontSize: 12,
+                              maxFontSize: 14,
+                              maxLines: 1,
+                              overflow: TextOverflow.clip,
+                              style: TextStyle(
+                                  fontSize: 14,
+                                  color: Colors.indigo[900],
+                                  //  fontWeight: FontWeight.bold,
+                                  fontFamily: 'Roboto'),
+                            ),
+                          ),
+                        ]),
+                      ],
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        AutoSizeText(
+                          "Click to choose another Time-Slot",
+                          group: labelGroup,
+                          minFontSize: 9,
+                          maxFontSize: 11,
+                          maxLines: 1,
+                          overflow: TextOverflow.clip,
+                          style: TextStyle(
+                              color: Colors.black,
+                              fontFamily: 'RalewayRegular'),
+                        ),
+                        IconButton(
+                            padding: EdgeInsets.all(4),
+                            constraints: BoxConstraints(
+                              maxHeight: 30,
+                              maxWidth: 30,
+                            ),
+                            icon: Icon(
+                              Icons.date_range,
+                              color: Colors.indigo[900],
+                            ),
+                            onPressed: () async {
+                              final result = await Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => SlotSelectionPage(
+                                            metaEntity: widget.metaEntity,
+                                            dateTime: ba.preferredSlotTiming,
+                                            forPage: "ApplicationList",
+                                          )));
+
+                              print(result);
+                              setState(() {
+                                if (result != null)
+                                  ba.preferredSlotTiming = result;
+                              });
+                            })
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+
               Row(
                 //  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -809,7 +898,7 @@ class _ApplicationsListState extends State<ApplicationsList> {
                         controller: listOfControllers[ba.id],
                         style: TextStyle(
                             fontSize: 15,
-                            color: Colors.blueGrey[900],
+                            color: Colors.black,
                             fontFamily: 'RalewayRegular'),
                         decoration: InputDecoration(
                           labelText: 'Remarks',
