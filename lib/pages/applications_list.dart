@@ -370,7 +370,7 @@ class _ApplicationsListState extends State<ApplicationsList> {
   }
 
   var labelGroup = AutoSizeGroup();
-  Widget buildChildItem(Field field) {
+  Widget buildChildItem(Field field, BookingApplication ba) {
     Widget fieldWidget = SizedBox();
 
     //Widget fieldsContainer = Container();
@@ -598,51 +598,73 @@ class _ApplicationsListState extends State<ApplicationsList> {
 
             //  responseVals = newfield.responseValues.toString();
 
-            fieldWidget = Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.start,
+            fieldWidget = Row(
+              //mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                SizedBox(
-                  //width: cardWidth * .12,
-                  child: AutoSizeText(
-                    newfield.label,
-                    group: labelGroup,
-                    minFontSize: 9,
-                    maxFontSize: 11,
-                    maxLines: 1,
-                    overflow: TextOverflow.clip,
-                    style: TextStyle(
-                        color: Colors.black, fontFamily: 'RalewayRegular'),
-                  ),
-                ),
-                //horizontalSpacer,
-                Row(
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.start,
                   children: [
                     SizedBox(
-                      //  width: cardWidth * .4,
-                      //height: cardHeight * .1,
+                      //width: cardWidth * .12,
                       child: AutoSizeText(
-                        responseVals,
-                        minFontSize: 12,
-                        maxFontSize: 14,
+                        newfield.label,
+                        group: labelGroup,
+                        minFontSize: 9,
+                        maxFontSize: 11,
                         maxLines: 1,
                         overflow: TextOverflow.clip,
                         style: TextStyle(
-                            color: Colors.indigo[900], fontFamily: 'Roboto'),
+                            color: Colors.black, fontFamily: 'RalewayRegular'),
                       ),
                     ),
                     //horizontalSpacer,
-                    // IconButton(
-                    //   icon: Icon(
-                    //     Icons.attach_file,
-                    //     size: 14,
-                    //   ),
-                    //   onPressed: () {
-                    //     print("Pressed");
-                    //   },
-                    // )
+                    Row(
+                      children: [
+                        SizedBox(
+                          //  width: cardWidth * .4,
+                          //height: cardHeight * .1,
+                          child: AutoSizeText(
+                            responseVals,
+                            minFontSize: 12,
+                            maxFontSize: 14,
+                            maxLines: 1,
+                            overflow: TextOverflow.clip,
+                            style: TextStyle(
+                                color: Colors.indigo[900],
+                                fontFamily: 'Roboto'),
+                          ),
+                        ),
+                        //horizontalSpacer,
+                        // IconButton(
+                        //   icon: Icon(
+                        //     Icons.attach_file,
+                        //     size: 14,
+                        //   ),
+                        //   onPressed: () {
+                        //     print("Pressed");
+                        //   },
+                        // )
+                      ],
+                    ),
                   ],
                 ),
+                IconButton(
+                    padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
+                    constraints: BoxConstraints(
+                      maxHeight: 15,
+                      maxWidth: 15,
+                    ),
+                    icon: Icon(
+                      Icons.attach_file,
+                      color: Colors.blueGrey[600],
+                    ),
+                    onPressed: () {
+                      Navigator.of(context).push(
+                          PageAnimation.createRoute(ShowApplicationDetails(
+                        bookingApplication: ba,
+                      )));
+                    })
               ],
             );
           }
@@ -709,375 +731,364 @@ class _ApplicationsListState extends State<ApplicationsList> {
     // String medConds =
     //    Utils.isNotNullOrEmpty(mbImg1)? mbImg1 + (Utils.isNotNullOrEmpty(mbImg2) ? " & $mbImg2" : "");
 
-    return GestureDetector(
-      onTap: () {
-        Navigator.of(context)
-            .push(PageAnimation.createRoute(ShowApplicationDetails(
-          bookingApplication: ba,
-        )));
-      },
-      child: Card(
-        elevation: 5,
-        child: SingleChildScrollView(
-          physics: ScrollPhysics(),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              Padding(
-                padding: const EdgeInsets.fromLTRB(8, 10, 8, 4),
-                child: Row(mainAxisAlignment: MainAxisAlignment.end, children: [
-                  Container(
-                    padding: EdgeInsets.all(2),
-                    margin: EdgeInsets.all(0),
-                    decoration: BoxDecoration(
-                        color: (ba.status == ApplicationStatus.NEW)
-                            ? Colors.blue
-                            : (ba.status == ApplicationStatus.ONHOLD
-                                ? Colors.yellow[700]
-                                : (ba.status == ApplicationStatus.REJECTED
-                                    ? Colors.red
-                                    : (ba.status == ApplicationStatus.APPROVED
-                                        ? Colors.green[400]
-                                        : (ba.status ==
-                                                ApplicationStatus.COMPLETED
-                                            ? Colors.purple
-                                            : Colors.blueGrey)))),
-                        shape: BoxShape.rectangle,
-                        borderRadius: BorderRadius.all(Radius.circular(5.0))),
-                    child: SizedBox(
-                      width: cardWidth * .2,
-                      height: cardHeight * .11,
-                      child: Center(
-                        child: AutoSizeText(
-                            EnumToString.convertToString(ba.status),
-                            textAlign: TextAlign.center,
-                            minFontSize: 7,
-                            maxFontSize: 9,
-                            style: TextStyle(
-                                fontSize: 9,
-                                fontWeight: FontWeight.bold,
-                                letterSpacing: 1,
-                                color: Colors.white,
-                                fontFamily: 'RalewayRegular')),
-                      ),
-                    ),
-                  ),
-                ]),
-              ),
-
-              ListView.builder(
-                itemCount: listOfMeta.length,
-                physics: NeverScrollableScrollPhysics(),
-                shrinkWrap: true,
-                // reverse: true,
-                itemBuilder: (BuildContext context, int index) {
-                  return Container(
-                    padding: EdgeInsets.fromLTRB(10, 5, 10, 5),
-                    margin: EdgeInsets.zero,
-                    // margin: EdgeInsets.fromLTRB(10, 10, 10, 0),
-                    child: new Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        //  Text('dfhgd'),
-                        buildChildItem(listOfMeta[index])
-                      ],
-                    ),
-                  );
-                },
-              ),
-              // SizedBox(
-              //   width: cardWidth * .9,
-              //   height: cardHeight * .4,
-              // ),
-              Container(
-                padding: EdgeInsets.fromLTRB(10, 5, 10, 5),
-                margin: EdgeInsets.zero,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        SizedBox(
-                            // width: cardWidth * .45,
-                            child: Wrap(
-                          children: [
-                            AutoSizeText(
-                              "Current time-slot",
-                              group: labelGroup,
-                              minFontSize: 9,
-                              maxFontSize: 11,
-                              maxLines: 1,
-                              overflow: TextOverflow.clip,
-                              style: TextStyle(
-                                  color: Colors.black,
-                                  fontFamily: 'RalewayRegular'),
-                            ),
-                          ],
-                        )),
-                        Wrap(children: [
-                          Container(
-                            padding: EdgeInsets.all(0),
-                            child: AutoSizeText(
-                              ((ba.preferredSlotTiming != null)
-                                  ? DateFormat('yyyy-MM-dd – kk:mm')
-                                      .format(ba.preferredSlotTiming)
-                                  : "None"),
-                              // group: medCondGroup,
-                              minFontSize: 12,
-                              maxFontSize: 14,
-                              maxLines: 1,
-                              overflow: TextOverflow.clip,
-                              style: TextStyle(
-                                  fontSize: 14,
-                                  color: Colors.indigo[900],
-                                  //  fontWeight: FontWeight.bold,
-                                  fontFamily: 'Roboto'),
-                            ),
-                          ),
-                        ]),
-                      ],
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        AutoSizeText(
-                          "Click to choose another Time-Slot",
-                          group: labelGroup,
-                          minFontSize: 9,
-                          maxFontSize: 11,
-                          maxLines: 1,
-                          overflow: TextOverflow.clip,
+    return Card(
+      elevation: 5,
+      child: SingleChildScrollView(
+        physics: ScrollPhysics(),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            Padding(
+              padding: const EdgeInsets.fromLTRB(8, 10, 8, 4),
+              child: Row(mainAxisAlignment: MainAxisAlignment.end, children: [
+                Container(
+                  padding: EdgeInsets.all(2),
+                  margin: EdgeInsets.all(0),
+                  decoration: BoxDecoration(
+                      color: (ba.status == ApplicationStatus.NEW)
+                          ? Colors.blue
+                          : (ba.status == ApplicationStatus.ONHOLD
+                              ? Colors.yellow[700]
+                              : (ba.status == ApplicationStatus.REJECTED
+                                  ? Colors.red
+                                  : (ba.status == ApplicationStatus.APPROVED
+                                      ? Colors.green[400]
+                                      : (ba.status ==
+                                              ApplicationStatus.COMPLETED
+                                          ? Colors.purple
+                                          : Colors.blueGrey)))),
+                      shape: BoxShape.rectangle,
+                      borderRadius: BorderRadius.all(Radius.circular(5.0))),
+                  child: SizedBox(
+                    width: cardWidth * .2,
+                    height: cardHeight * .11,
+                    child: Center(
+                      child: AutoSizeText(
+                          EnumToString.convertToString(ba.status),
+                          textAlign: TextAlign.center,
+                          minFontSize: 7,
+                          maxFontSize: 9,
                           style: TextStyle(
-                              color: Colors.black,
-                              fontFamily: 'RalewayRegular'),
-                        ),
-                        IconButton(
-                            padding: EdgeInsets.all(4),
-                            constraints: BoxConstraints(
-                              maxHeight: 30,
-                              maxWidth: 30,
-                            ),
-                            icon: Icon(
-                              Icons.date_range,
-                              color: Colors.indigo[900],
-                            ),
-                            onPressed: () async {
-                              final result = await Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => SlotSelectionPage(
-                                            metaEntity: widget.metaEntity,
-                                            dateTime: ba.preferredSlotTiming,
-                                            forPage: "ApplicationList",
-                                          )));
-
-                              print(result);
-                              setState(() {
-                                if (result != null)
-                                  ba.preferredSlotTiming = result;
-                              });
-                            })
-                      ],
+                              fontSize: 9,
+                              fontWeight: FontWeight.bold,
+                              letterSpacing: 1,
+                              color: Colors.white,
+                              fontFamily: 'RalewayRegular')),
                     ),
-                  ],
+                  ),
                 ),
-              ),
+              ]),
+            ),
 
-              Row(
-                //  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            ListView.builder(
+              itemCount: listOfMeta.length,
+              physics: NeverScrollableScrollPhysics(),
+              shrinkWrap: true,
+              // reverse: true,
+              itemBuilder: (BuildContext context, int index) {
+                return Container(
+                  padding: EdgeInsets.fromLTRB(10, 5, 10, 5),
+                  margin: EdgeInsets.zero,
+                  // margin: EdgeInsets.fromLTRB(10, 10, 10, 0),
+                  child: new Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      //  Text('dfhgd'),
+                      buildChildItem(listOfMeta[index], ba)
+                    ],
+                  ),
+                );
+              },
+            ),
+            // SizedBox(
+            //   width: cardWidth * .9,
+            //   height: cardHeight * .4,
+            // ),
+            Container(
+              padding: EdgeInsets.fromLTRB(10, 5, 10, 5),
+              margin: EdgeInsets.zero,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.start,
                 children: [
-                  Container(
-                      margin: EdgeInsets.zero,
-                      padding: EdgeInsets.fromLTRB(8, 0, 0, 0),
-                      width: cardWidth * .9,
-                      height: cardHeight * .2,
-                      child: TextFormField(
-                        controller: listOfControllers[ba.id],
-                        style: TextStyle(
-                            fontSize: 15,
-                            color: Colors.black,
-                            fontFamily: 'RalewayRegular'),
-                        decoration: InputDecoration(
-                          labelText: 'Remarks',
-                          enabledBorder: UnderlineInputBorder(
-                              borderSide: BorderSide(color: Colors.grey)),
-                          focusedBorder: UnderlineInputBorder(
-                              borderSide: BorderSide(color: Colors.orange)),
-                        ),
-                        maxLines: 1,
-                        keyboardType: TextInputType.text,
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      SizedBox(
+                          // width: cardWidth * .45,
+                          child: Wrap(
+                        children: [
+                          AutoSizeText(
+                            "Current time-slot",
+                            group: labelGroup,
+                            minFontSize: 9,
+                            maxFontSize: 11,
+                            maxLines: 1,
+                            overflow: TextOverflow.clip,
+                            style: TextStyle(
+                                color: Colors.black,
+                                fontFamily: 'RalewayRegular'),
+                          ),
+                        ],
                       )),
-                ],
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  Container(
-                    width: cardWidth * .6,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        IconButton(
-                            alignment: Alignment.center,
-                            //    visualDensity: VisualDensity.compact,
-                            padding: const EdgeInsets.fromLTRB(8, 2, 8, 0),
-                            color: Colors.purple[400],
-                            onPressed: () {
-                              ba.notesOnApproval =
-                                  listOfControllers[ba.id].text;
-                              _gs
-                                  .getApplicationService()
-                                  .updateApplicationStatus(
-                                      ba.id,
-                                      ApplicationStatus.COMPLETED,
-                                      listOfControllers[ba.id].text,
-                                      widget.metaEntity,
-                                      ba.preferredSlotTiming)
-                                  .then((value) {
-                                if (value) {
-                                  setState(() {
-                                    ba.status = ApplicationStatus.COMPLETED;
-                                  });
-                                } else {
-                                  print("Could not update application");
-                                  Utils.showMyFlushbar(
-                                      context,
-                                      Icons.error,
-                                      Duration(seconds: 4),
-                                      "Oops! Application could not be marked Completed!!",
-                                      "Try again later.");
-                                }
-                              });
-//Update application status change on server.
-                            },
-                            icon: Icon(
-                              Icons.thumb_up,
-                              size: 30,
-                            )),
-                        IconButton(
-                            alignment: Alignment.center,
-                            //    visualDensity: VisualDensity.compact,
-                            padding: const EdgeInsets.fromLTRB(8, 2, 8, 0),
-                            color: Colors.green[400],
-                            onPressed: () {
-                              ba.notesOnApproval =
-                                  listOfControllers[ba.id].text;
-                              _gs
-                                  .getApplicationService()
-                                  .updateApplicationStatus(
-                                      ba.id,
-                                      ApplicationStatus.APPROVED,
-                                      listOfControllers[ba.id].text,
-                                      widget.metaEntity,
-                                      ba.preferredSlotTiming)
-                                  .then((value) {
-                                if (value) {
-                                  setState(() {
-                                    ba.status = ApplicationStatus.APPROVED;
-                                  });
-                                } else {
-                                  print("Could not update application status");
-                                  Utils.showMyFlushbar(
-                                      context,
-                                      Icons.thumb_up,
-                                      Duration(seconds: 4),
-                                      "Oops! Application status could not be updated to Approved!!",
-                                      "");
-                                }
-                              });
-//Update application status change on server.
-                            },
-                            icon: Icon(
-                              Icons.check_circle,
-                              size: 30,
-                            )),
-                        IconButton(
-                          alignment: Alignment.center,
-                          //    visualDensity: VisualDensity.compact,
-                          padding: const EdgeInsets.fromLTRB(8, 2, 8, 0),
-                          visualDensity: VisualDensity.compact,
-
-                          color: Colors.yellow[700],
-                          onPressed: () {
-                            ba.notesOnPuttingOnHold =
-                                listOfControllers[ba.id].text;
-
-                            _gs
-                                .getApplicationService()
-                                .updateApplicationStatus(
-                                    ba.id,
-                                    ApplicationStatus.ONHOLD,
-                                    listOfControllers[ba.id].text,
-                                    widget.metaEntity,
-                                    ba.preferredSlotTiming)
-                                .then((value) {
-                              if (value) {
-                                setState(() {
-                                  ba.status = ApplicationStatus.ONHOLD;
-                                });
-                              } else {
-                                print("Could not update application status");
-                                Utils.showMyFlushbar(
-                                    context,
-                                    Icons.check,
-                                    Duration(seconds: 4),
-                                    "Oops! Application could not be put On-Hold!!",
-                                    "");
-                              }
-                            });
-                          },
-                          icon: Icon(
-                            Icons.pan_tool_rounded,
-                            size: 28,
+                      Wrap(children: [
+                        Container(
+                          padding: EdgeInsets.all(0),
+                          child: AutoSizeText(
+                            ((ba.preferredSlotTiming != null)
+                                ? DateFormat('yyyy-MM-dd – kk:mm')
+                                    .format(ba.preferredSlotTiming)
+                                : "None"),
+                            // group: medCondGroup,
+                            minFontSize: 12,
+                            maxFontSize: 14,
+                            maxLines: 1,
+                            overflow: TextOverflow.clip,
+                            style: TextStyle(
+                                fontSize: 14,
+                                color: Colors.indigo[900],
+                                //  fontWeight: FontWeight.bold,
+                                fontFamily: 'Roboto'),
                           ),
                         ),
-                        IconButton(
-                          // visualDensity: VisualDensity.compact,
-                          alignment: Alignment.center,
-                          //    visualDensity: VisualDensity.compact,
-                          padding: const EdgeInsets.fromLTRB(8, 2, 8, 0),
-                          color: Colors.red,
-                          onPressed: () {
-                            ba.notesOnRejection = listOfControllers[ba.id].text;
-                            _gs
-                                .getApplicationService()
-                                .updateApplicationStatus(
-                                    ba.id,
-                                    ApplicationStatus.REJECTED,
-                                    listOfControllers[ba.id].text,
-                                    widget.metaEntity,
-                                    ba.preferredSlotTiming)
-                                .then((value) {
-                              if (value) {
-                                setState(() {
-                                  ba.status = ApplicationStatus.REJECTED;
-                                });
-                              } else {
-                                print("Could not update application status");
-                                Utils.showMyFlushbar(
-                                    context,
-                                    Icons.check,
-                                    Duration(seconds: 4),
-                                    "Oops! Application could not be Rejected!!",
-                                    "");
-                              }
-                            });
-                          },
-                          icon: Icon(
-                            Icons.cancel,
-                            size: 30,
+                      ]),
+                    ],
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      AutoSizeText(
+                        "Click to choose another Time-Slot",
+                        group: labelGroup,
+                        minFontSize: 9,
+                        maxFontSize: 11,
+                        maxLines: 1,
+                        overflow: TextOverflow.clip,
+                        style: TextStyle(
+                            color: Colors.black, fontFamily: 'RalewayRegular'),
+                      ),
+                      IconButton(
+                          padding: EdgeInsets.all(4),
+                          constraints: BoxConstraints(
+                            maxHeight: 30,
+                            maxWidth: 30,
                           ),
-                        ),
-                      ],
-                    ),
+                          icon: Icon(
+                            Icons.date_range,
+                            color: Colors.indigo[900],
+                          ),
+                          onPressed: () async {
+                            final result = await Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => SlotSelectionPage(
+                                          metaEntity: widget.metaEntity,
+                                          dateTime: ba.preferredSlotTiming,
+                                          forPage: "ApplicationList",
+                                        )));
+
+                            print(result);
+                            setState(() {
+                              if (result != null)
+                                ba.preferredSlotTiming = result;
+                            });
+                          })
+                    ],
                   ),
                 ],
               ),
-            ],
-          ),
+            ),
+
+            Row(
+              //  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Container(
+                    margin: EdgeInsets.zero,
+                    padding: EdgeInsets.fromLTRB(8, 0, 0, 0),
+                    width: cardWidth * .9,
+                    height: cardHeight * .2,
+                    child: TextFormField(
+                      controller: listOfControllers[ba.id],
+                      style: TextStyle(
+                          fontSize: 15,
+                          color: Colors.black,
+                          fontFamily: 'RalewayRegular'),
+                      decoration: InputDecoration(
+                        labelText: 'Remarks',
+                        enabledBorder: UnderlineInputBorder(
+                            borderSide: BorderSide(color: Colors.grey)),
+                        focusedBorder: UnderlineInputBorder(
+                            borderSide: BorderSide(color: Colors.orange)),
+                      ),
+                      maxLines: 1,
+                      keyboardType: TextInputType.text,
+                    )),
+              ],
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                Container(
+                  width: cardWidth * .6,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      IconButton(
+                          alignment: Alignment.center,
+                          //    visualDensity: VisualDensity.compact,
+                          padding: const EdgeInsets.fromLTRB(8, 2, 8, 0),
+                          color: Colors.purple[400],
+                          onPressed: () {
+                            ba.notesOnApproval = listOfControllers[ba.id].text;
+                            _gs
+                                .getApplicationService()
+                                .updateApplicationStatus(
+                                    ba.id,
+                                    ApplicationStatus.COMPLETED,
+                                    listOfControllers[ba.id].text,
+                                    widget.metaEntity,
+                                    ba.preferredSlotTiming)
+                                .then((value) {
+                              if (value) {
+                                setState(() {
+                                  ba.status = ApplicationStatus.COMPLETED;
+                                });
+                              } else {
+                                print("Could not update application");
+                                Utils.showMyFlushbar(
+                                    context,
+                                    Icons.error,
+                                    Duration(seconds: 4),
+                                    "Oops! Application could not be marked Completed!!",
+                                    "Try again later.");
+                              }
+                            });
+//Update application status change on server.
+                          },
+                          icon: Icon(
+                            Icons.thumb_up,
+                            size: 30,
+                          )),
+                      IconButton(
+                          alignment: Alignment.center,
+                          //    visualDensity: VisualDensity.compact,
+                          padding: const EdgeInsets.fromLTRB(8, 2, 8, 0),
+                          color: Colors.green[400],
+                          onPressed: () {
+                            ba.notesOnApproval = listOfControllers[ba.id].text;
+                            _gs
+                                .getApplicationService()
+                                .updateApplicationStatus(
+                                    ba.id,
+                                    ApplicationStatus.APPROVED,
+                                    listOfControllers[ba.id].text,
+                                    widget.metaEntity,
+                                    ba.preferredSlotTiming)
+                                .then((value) {
+                              if (value) {
+                                setState(() {
+                                  ba.status = ApplicationStatus.APPROVED;
+                                });
+                              } else {
+                                print("Could not update application status");
+                                Utils.showMyFlushbar(
+                                    context,
+                                    Icons.thumb_up,
+                                    Duration(seconds: 4),
+                                    "Oops! Application status could not be updated to Approved!!",
+                                    "");
+                              }
+                            });
+//Update application status change on server.
+                          },
+                          icon: Icon(
+                            Icons.check_circle,
+                            size: 30,
+                          )),
+                      IconButton(
+                        alignment: Alignment.center,
+                        //    visualDensity: VisualDensity.compact,
+                        padding: const EdgeInsets.fromLTRB(8, 2, 8, 0),
+                        visualDensity: VisualDensity.compact,
+
+                        color: Colors.yellow[700],
+                        onPressed: () {
+                          ba.notesOnPuttingOnHold =
+                              listOfControllers[ba.id].text;
+
+                          _gs
+                              .getApplicationService()
+                              .updateApplicationStatus(
+                                  ba.id,
+                                  ApplicationStatus.ONHOLD,
+                                  listOfControllers[ba.id].text,
+                                  widget.metaEntity,
+                                  ba.preferredSlotTiming)
+                              .then((value) {
+                            if (value) {
+                              setState(() {
+                                ba.status = ApplicationStatus.ONHOLD;
+                              });
+                            } else {
+                              print("Could not update application status");
+                              Utils.showMyFlushbar(
+                                  context,
+                                  Icons.check,
+                                  Duration(seconds: 4),
+                                  "Oops! Application could not be put On-Hold!!",
+                                  "");
+                            }
+                          });
+                        },
+                        icon: Icon(
+                          Icons.pan_tool_rounded,
+                          size: 28,
+                        ),
+                      ),
+                      IconButton(
+                        // visualDensity: VisualDensity.compact,
+                        alignment: Alignment.center,
+                        //    visualDensity: VisualDensity.compact,
+                        padding: const EdgeInsets.fromLTRB(8, 2, 8, 0),
+                        color: Colors.red,
+                        onPressed: () {
+                          ba.notesOnRejection = listOfControllers[ba.id].text;
+                          _gs
+                              .getApplicationService()
+                              .updateApplicationStatus(
+                                  ba.id,
+                                  ApplicationStatus.REJECTED,
+                                  listOfControllers[ba.id].text,
+                                  widget.metaEntity,
+                                  ba.preferredSlotTiming)
+                              .then((value) {
+                            if (value) {
+                              setState(() {
+                                ba.status = ApplicationStatus.REJECTED;
+                              });
+                            } else {
+                              print("Could not update application status");
+                              Utils.showMyFlushbar(
+                                  context,
+                                  Icons.check,
+                                  Duration(seconds: 4),
+                                  "Oops! Application could not be Rejected!!",
+                                  "");
+                            }
+                          });
+                        },
+                        icon: Icon(
+                          Icons.cancel,
+                          size: 30,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ],
         ),
       ),
     );
