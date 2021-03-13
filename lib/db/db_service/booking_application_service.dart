@@ -319,7 +319,9 @@ class BookingApplicationService {
         localCounter.totalApplications++;
 
         //if auto approved, then generate the token
-        if (bf.autoApproved && bf.generateTokenOnApproval) {
+        if (bf.appointmentRequired &&
+            bf.autoApproved &&
+            bf.generateTokenOnApproval) {
           //generate the token
           UserTokens toks = await _gs
               .getTokenService()
@@ -674,7 +676,7 @@ class BookingApplicationService {
           //TODO: generate the token and send the notification to the applicant
           //generate the token
           //send notification
-          if (bf.generateTokenOnApproval) {
+          if (bf.generateTokenOnApproval && bf.appointmentRequired) {
             UserTokens toks = await _gs
                 .getTokenService()
                 .generateTokenInTransaction(
