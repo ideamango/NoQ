@@ -8,6 +8,7 @@ import 'package:noq/constants.dart';
 import 'package:noq/db/db_model/booking_application.dart';
 import 'package:noq/db/db_model/booking_form.dart';
 import 'package:noq/db/db_model/meta_entity.dart';
+import 'package:noq/db/exceptions/slot_full_exception.dart';
 import 'package:noq/enum/application_status.dart';
 import 'package:noq/enum/field_type.dart';
 import 'package:noq/global_state.dart';
@@ -1013,6 +1014,17 @@ class _ApplicationsListState extends State<ApplicationsList> {
                                       "Oops! Application could not be marked Completed!!",
                                       "Try again later.");
                                 }
+                              }).catchError((error) {
+                                print(error.toString());
+                                print("Error in token booking" +
+                                    error.toString());
+
+                                Utils.showMyFlushbar(
+                                    context,
+                                    Icons.error,
+                                    Duration(seconds: 5),
+                                    "Oops! Application could not be marked Completed!!",
+                                    tryAgainLater);
                               });
                             }
 //Update application status change on server.
@@ -1049,17 +1061,31 @@ class _ApplicationsListState extends State<ApplicationsList> {
                                   print("Could not update application status");
                                   Utils.showMyFlushbar(
                                       context,
-                                      Icons.thumb_up,
+                                      Icons.error,
                                       Duration(seconds: 4),
                                       "Oops! Application status could not be updated to Approved!!",
-                                      "");
+                                      tryAgainToBook);
                                 }
                               }).catchError((error) {
                                 print(error.toString());
+                                print("Error in token booking" +
+                                    error.toString());
 
-                                setState(() {
-                                  errorInapplicationApproval = true;
-                                });
+                                if (error is SlotFullException) {
+                                  Utils.showMyFlushbar(
+                                      context,
+                                      Icons.error,
+                                      Duration(seconds: 5),
+                                      slotsAlreadyBooked,
+                                      tryAgainToBook);
+                                } else {
+                                  Utils.showMyFlushbar(
+                                      context,
+                                      Icons.error,
+                                      Duration(seconds: 5),
+                                      error.toString(),
+                                      tryAgainToBook);
+                                }
                               });
                             }
 //Update application status change on server.
@@ -1102,8 +1128,19 @@ class _ApplicationsListState extends State<ApplicationsList> {
                                     Icons.check,
                                     Duration(seconds: 4),
                                     "Oops! Application could not be put On-Hold!!",
-                                    "");
+                                    tryAgainLater);
                               }
+                            }).catchError((error) {
+                              print(error.toString());
+                              print(
+                                  "Error in token booking" + error.toString());
+
+                              Utils.showMyFlushbar(
+                                  context,
+                                  Icons.error,
+                                  Duration(seconds: 5),
+                                  "Oops! Application could not be put On-Hold!!",
+                                  tryAgainLater);
                             });
                           }
                         },
@@ -1142,9 +1179,20 @@ class _ApplicationsListState extends State<ApplicationsList> {
                                     context,
                                     Icons.check,
                                     Duration(seconds: 4),
-                                    "Oops! Application could not be Rejected!!",
+                                    "Oops! Application could not be rejected!!",
                                     "");
                               }
+                            }).catchError((error) {
+                              print(error.toString());
+                              print(
+                                  "Error in token booking" + error.toString());
+
+                              Utils.showMyFlushbar(
+                                  context,
+                                  Icons.error,
+                                  Duration(seconds: 5),
+                                  "Oops! Application could not be rejected!!",
+                                  tryAgainLater);
                             });
                           }
                         },
