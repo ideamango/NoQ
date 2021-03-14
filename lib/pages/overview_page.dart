@@ -620,6 +620,13 @@ class _OverviewPageState extends State<OverviewPage> {
                         onTap: () {
                           //User clicked on show how, lets show them.
                           print("Showing how to book time-slot");
+                          Navigator.of(context)
+                              .push(PageAnimation.createRoute(ApplicationsList(
+                            metaEntity: widget.metaEntity,
+                            bookingFormId: widget.bookingFormId,
+                            status: ApplicationStatus.COMPLETED,
+                            titleText: "Completed Applications",
+                          )));
                         },
                         child: Container(
                             width: MediaQuery.of(context).size.width * .9,

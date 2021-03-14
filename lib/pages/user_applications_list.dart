@@ -244,8 +244,13 @@ class _UserApplicationsListState extends State<UserApplicationsList> {
           isMedicalMorbidities = !Utils.isNullOrEmpty(newfield.responseValues);
           if (isMedicalMorbidities) {
             for (Value val in newfield.responseValues) {
-              if (!Utils.isNotNullOrEmpty(medConds)) medConds = "";
-              medConds = medConds + val.value.toString();
+              if (!Utils.isNotNullOrEmpty(medConds)) {
+                medConds = "";
+              }
+              if (medConds == "")
+                medConds = medConds + val.value.toString();
+              else
+                medConds = medConds + " | " + val.value.toString();
             }
             // mbImg1 = newfield.responseValues[0].value;
             // if (newfield.responseValues.length > 1)
