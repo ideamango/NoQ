@@ -235,6 +235,8 @@ String wantToBookAnotherSlot =
 String allSlotsBookedForDate = 'All slots are booked for this date!!';
 
 String couldNotBookToken = "Oops! Couldn't book the token.";
+String couldNotSubmitApplication =
+    "Oops! Couldn't submit the application request.";
 
 String slotsAlreadyBooked =
     "All the slots are full at this time. Please choose a different time or date.";

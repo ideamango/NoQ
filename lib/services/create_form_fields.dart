@@ -1393,6 +1393,8 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
               'We will contact you as soon as slot opens up. Stay Safe!');
         } else {
           print("Error in generating SLot for user");
+          Utils.showMyFlushbar(context, Icons.error, Duration(seconds: 5),
+              couldNotSubmitApplication, tryAgainToBook);
         }
       }).catchError((error) {
         print("Error in generating SLot for user");
@@ -1402,10 +1404,12 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
         if (error is SlotFullException) {
           Utils.showMyFlushbar(context, Icons.error, Duration(seconds: 5),
               couldNotBookToken, slotsAlreadyBooked);
-        } else if (error is TokenAlreadyExistsException) {
-          Utils.showMyFlushbar(context, Icons.error, Duration(seconds: 5),
-              couldNotBookToken, tokenAlreadyExists);
-        } else {
+        }
+        // else if (error is TokenAlreadyExistsException) {
+        //   Utils.showMyFlushbar(context, Icons.error, Duration(seconds: 5),
+        //       couldNotBookToken, tokenAlreadyExists);
+        //}
+        else {
           Utils.showMyFlushbar(context, Icons.error, Duration(seconds: 5),
               couldNotBookToken, tryAgainToBook);
         }
