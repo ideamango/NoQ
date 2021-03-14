@@ -6,9 +6,12 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:noq/SlotSelectionPage.dart';
+import 'package:noq/constants.dart';
 import 'package:noq/db/db_model/booking_application.dart';
 import 'package:noq/db/db_model/booking_form.dart';
 import 'package:noq/db/db_model/meta_entity.dart';
+import 'package:noq/db/exceptions/slot_full_exception.dart';
+import 'package:noq/db/exceptions/token_already_exists_exception.dart';
 import 'package:noq/enum/application_status.dart';
 import 'package:noq/enum/field_type.dart';
 import 'package:noq/global_state.dart';
@@ -1388,6 +1391,23 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
               ),
               "Request submitted successfully!",
               'We will contact you as soon as slot opens up. Stay Safe!');
+        } else {
+          print("Error in generating SLot for user");
+        }
+      }).catchError((error) {
+        print("Error in generating SLot for user");
+        print("Error in token booking" + error.toString());
+
+        //TODO Smita - Not going in any of if bcoz exception is wrapped in type platform exception.
+        if (error is SlotFullException) {
+          Utils.showMyFlushbar(context, Icons.error, Duration(seconds: 5),
+              couldNotBookToken, slotsAlreadyBooked);
+        } else if (error is TokenAlreadyExistsException) {
+          Utils.showMyFlushbar(context, Icons.error, Duration(seconds: 5),
+              couldNotBookToken, tokenAlreadyExists);
+        } else {
+          Utils.showMyFlushbar(context, Icons.error, Duration(seconds: 5),
+              couldNotBookToken, tryAgainToBook);
         }
       });
     } else {
