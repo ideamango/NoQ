@@ -158,56 +158,62 @@ class _BookingFormSelectionState extends State<BookingFormSelection> {
                         child: ListView.builder(
                             itemCount: forms.length,
                             itemBuilder: (BuildContext context, int index) {
-                              return Container(
-                                color: (_selectedValue == index)
-                                    ? Colors.cyan[100]
-                                    : Colors.transparent,
-                                //  child: Text("$index"),
-                                child: Row(
-                                  children: [
-                                    new Radio(
-                                      activeColor: (_selectedValue == index)
-                                          ? Colors.indigo
-                                          : Colors.blueGrey[600],
-                                      hoverColor: highlightColor,
-                                      focusColor: highlightColor,
-                                      value: index,
-                                      groupValue: _selectedValue,
-                                      onChanged: _handleRadioValueChange1,
-                                    ),
-                                    Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        Wrap(children: [
-                                          new Text(
-                                            forms[index].name,
-                                            style: TextStyle(
-                                              color: (_selectedValue == index)
-                                                  ? Colors.indigo
-                                                  : Colors.blueGrey[600],
-                                              fontWeight: FontWeight.w800,
-                                              fontFamily: 'RalewayRegular',
-                                              letterSpacing: 0.5,
-                                              fontSize: 14.0,
-                                              //height: 2,
+                              return GestureDetector(
+                                onTap: () {
+                                  _handleRadioValueChange1(index);
+                                },
+                                child: Container(
+                                  color: (_selectedValue == index)
+                                      ? Colors.cyan[100]
+                                      : Colors.transparent,
+                                  //  child: Text("$index"),
+                                  child: Row(
+                                    children: [
+                                      new Radio(
+                                        activeColor: (_selectedValue == index)
+                                            ? Colors.blueGrey[900]
+                                            : Colors.blueGrey[600],
+                                        hoverColor: highlightColor,
+                                        focusColor: highlightColor,
+                                        value: index,
+                                        groupValue: _selectedValue,
+                                        onChanged: _handleRadioValueChange1,
+                                      ),
+                                      Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          Wrap(children: [
+                                            new Text(
+                                              forms[index].name,
+                                              style: TextStyle(
+                                                color: (_selectedValue == index)
+                                                    ? Colors.blueGrey[900]
+                                                    : Colors.blueGrey[600],
+                                                fontWeight: FontWeight.w800,
+                                                fontFamily: 'RalewayRegular',
+                                                letterSpacing: 0.5,
+                                                fontSize: 14.0,
+                                                //height: 2,
+                                              ),
                                             ),
-                                          ),
-                                        ]),
-                                        forms[index].description != null
-                                            ? new Text(
-                                                forms[index].description,
-                                                style: TextStyle(
-                                                    fontSize: 10,
-                                                    color: (_selectedValue ==
-                                                            index)
-                                                        ? Colors.indigo
-                                                        : Colors.blueGrey[600]),
-                                              )
-                                            : Container(),
-                                      ],
-                                    ),
-                                  ],
+                                          ]),
+                                          forms[index].description != null
+                                              ? new Text(
+                                                  forms[index].description,
+                                                  style: TextStyle(
+                                                      fontSize: 10,
+                                                      color: (_selectedValue ==
+                                                              index)
+                                                          ? Colors.indigo
+                                                          : Colors
+                                                              .blueGrey[600]),
+                                                )
+                                              : Container(),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
                                 ),
                               );
                             }),
