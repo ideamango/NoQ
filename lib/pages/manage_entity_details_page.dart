@@ -1970,6 +1970,7 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
               ),
               "Saving details!! ",
               "This would take just a moment.",
+              null,
               Colors.white,
               true);
 

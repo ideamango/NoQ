@@ -224,7 +224,10 @@ class Utils {
 
   static void showMyFlushbar(BuildContext context, IconData icon,
       Duration duration, String title, String msg,
-      [Color color = Colors.white, bool showFlushBar = false]) {
+      [Color barcolor = Colors.orangeAccent,
+      Color fontcolor = Colors.white,
+      bool showFlushBar = false]) {
+    if (barcolor == null) barcolor = Colors.orangeAccent;
     Animation<Color> animationColor =
         AlwaysStoppedAnimation<Color>(Color(0xFF00ACC1));
     Flushbar(
@@ -234,7 +237,7 @@ class Utils {
       flushbarStyle: FlushbarStyle.FLOATING,
       reverseAnimationCurve: Curves.decelerate,
       forwardAnimationCurve: Curves.easeInToLinear,
-      backgroundColor: highlightColor,
+      backgroundColor: barcolor,
       boxShadows: [
         BoxShadow(
             color: primaryAccentColor,
@@ -245,11 +248,11 @@ class Utils {
       duration: duration,
       icon: Icon(
         icon,
-        color: color,
+        color: fontcolor,
         size: 35,
       ),
       showProgressIndicator: showFlushBar,
-      progressIndicatorBackgroundColor: highlightColor,
+      progressIndicatorBackgroundColor: barcolor,
       progressIndicatorValueColor: animationColor,
       routeBlur: 1.0,
       titleText: Column(

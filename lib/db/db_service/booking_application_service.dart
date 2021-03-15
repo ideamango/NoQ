@@ -574,7 +574,7 @@ class BookingApplicationService {
           "Entity and Time are required for the Token generation on Approval");
     }
     //For testing
-    if (applicationId != null) return false;
+    //if (applicationId != null) return false;
     //For testing
     Exception e;
     DateTime now = DateTime.now();

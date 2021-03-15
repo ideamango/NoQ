@@ -1006,12 +1006,16 @@ class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
                             child: RaisedButton(
                                 elevation: 8,
                                 color: (widget.bookingApplication.status !=
-                                        ApplicationStatus.COMPLETED)
+                                            ApplicationStatus.COMPLETED &&
+                                        widget.bookingApplication.status !=
+                                            ApplicationStatus.CANCELLED)
                                     ? Colors.green[400]
                                     : disabledColor,
                                 onPressed: () {
                                   if (widget.bookingApplication.status !=
-                                      ApplicationStatus.COMPLETED) {
+                                          ApplicationStatus.COMPLETED &&
+                                      widget.bookingApplication.status !=
+                                          ApplicationStatus.CANCELLED) {
                                     widget.bookingApplication.notesOnApproval =
                                         notesController.text;
                                     _gs
@@ -1063,12 +1067,16 @@ class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
                             width: MediaQuery.of(context).size.width * .21,
                             child: RaisedButton(
                               color: (widget.bookingApplication.status !=
-                                      ApplicationStatus.COMPLETED)
+                                          ApplicationStatus.COMPLETED &&
+                                      widget.bookingApplication.status !=
+                                          ApplicationStatus.CANCELLED)
                                   ? Colors.yellow[700]
                                   : disabledColor,
                               onPressed: () {
                                 if (widget.bookingApplication.status !=
-                                    ApplicationStatus.COMPLETED) {
+                                        ApplicationStatus.COMPLETED &&
+                                    widget.bookingApplication.status !=
+                                        ApplicationStatus.CANCELLED) {
                                   widget.bookingApplication
                                           .notesOnPuttingOnHold =
                                       notesController.text;
@@ -1121,12 +1129,16 @@ class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
                             width: MediaQuery.of(context).size.width * .21,
                             child: RaisedButton(
                               color: (widget.bookingApplication.status !=
-                                      ApplicationStatus.COMPLETED)
+                                          ApplicationStatus.COMPLETED &&
+                                      widget.bookingApplication.status !=
+                                          ApplicationStatus.CANCELLED)
                                   ? Colors.red
                                   : disabledColor,
                               onPressed: () {
                                 if (widget.bookingApplication.status !=
-                                    ApplicationStatus.COMPLETED) {
+                                        ApplicationStatus.COMPLETED &&
+                                    widget.bookingApplication.status !=
+                                        ApplicationStatus.CANCELLED) {
                                   widget.bookingApplication.notesOnRejection =
                                       notesController.text;
 

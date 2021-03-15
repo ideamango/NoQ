@@ -1140,6 +1140,7 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage>
               ),
               "Saving details!! ",
               "This would take just a moment.",
+              null,
               Colors.white,
               true);
 

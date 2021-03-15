@@ -905,12 +905,14 @@ class _ApplicationsListState extends State<ApplicationsList> {
                           ),
                           icon: Icon(
                             Icons.date_range,
-                            color: (ba.status != ApplicationStatus.COMPLETED)
+                            color: (ba.status != ApplicationStatus.COMPLETED &&
+                                    ba.status != ApplicationStatus.CANCELLED)
                                 ? Colors.indigo[900]
                                 : disabledColor,
                           ),
                           onPressed: () async {
-                            if (ba.status != ApplicationStatus.COMPLETED) {
+                            if (ba.status != ApplicationStatus.COMPLETED &&
+                                ba.status != ApplicationStatus.CANCELLED) {
                               if (ba.status == ApplicationStatus.APPROVED) {
                                 Utils.showMyFlushbar(
                                     context,
@@ -953,8 +955,7 @@ class _ApplicationsListState extends State<ApplicationsList> {
                     height: cardHeight * .2,
                     child: TextFormField(
                       controller: listOfControllers[ba.id],
-                      readOnly: (ba.status == ApplicationStatus.APPROVED ||
-                              (ba.status == ApplicationStatus.COMPLETED))
+                      readOnly: (ba.status == ApplicationStatus.COMPLETED)
                           ? true
                           : false,
                       style: TextStyle(
@@ -1005,6 +1006,14 @@ class _ApplicationsListState extends State<ApplicationsList> {
                                   setState(() {
                                     ba.status = ApplicationStatus.COMPLETED;
                                   });
+                                  Utils.showMyFlushbar(
+                                      context,
+                                      Icons.check,
+                                      Duration(seconds: 2),
+                                      "Application is marked completed!!",
+                                      "",
+                                      Colors.purple[400],
+                                      Colors.white);
                                 } else {
                                   print("Could not update application");
                                   Utils.showMyFlushbar(
@@ -1037,11 +1046,13 @@ class _ApplicationsListState extends State<ApplicationsList> {
                           alignment: Alignment.center,
                           //    visualDensity: VisualDensity.compact,
                           padding: const EdgeInsets.fromLTRB(8, 2, 8, 0),
-                          color: (ba.status != ApplicationStatus.COMPLETED)
+                          color: (ba.status != ApplicationStatus.COMPLETED &&
+                                  ba.status != ApplicationStatus.CANCELLED)
                               ? Colors.green[400]
                               : disabledColor,
                           onPressed: () {
-                            if (ba.status != ApplicationStatus.COMPLETED) {
+                            if (ba.status != ApplicationStatus.COMPLETED &&
+                                ba.status != ApplicationStatus.CANCELLED) {
                               ba.notesOnApproval =
                                   listOfControllers[ba.id].text;
                               _gs
@@ -1057,13 +1068,21 @@ class _ApplicationsListState extends State<ApplicationsList> {
                                   setState(() {
                                     ba.status = ApplicationStatus.APPROVED;
                                   });
+                                  Utils.showMyFlushbar(
+                                      context,
+                                      Icons.check,
+                                      Duration(seconds: 2),
+                                      "Application is Approved!!",
+                                      "",
+                                      Colors.green,
+                                      Colors.white);
                                 } else {
                                   print("Could not update application status");
                                   Utils.showMyFlushbar(
                                       context,
                                       Icons.error,
                                       Duration(seconds: 4),
-                                      "Oops! Application status could not be updated to Approved!!",
+                                      "Oops! Application could not be Approved!!",
                                       tryAgainToBook);
                                 }
                               }).catchError((error) {
@@ -1100,11 +1119,13 @@ class _ApplicationsListState extends State<ApplicationsList> {
                         padding: const EdgeInsets.fromLTRB(8, 2, 8, 0),
                         visualDensity: VisualDensity.compact,
 
-                        color: (ba.status != ApplicationStatus.COMPLETED)
+                        color: (ba.status != ApplicationStatus.COMPLETED &&
+                                ba.status != ApplicationStatus.CANCELLED)
                             ? Colors.yellow[700]
                             : disabledColor,
                         onPressed: () {
-                          if (ba.status != ApplicationStatus.COMPLETED) {
+                          if (ba.status != ApplicationStatus.COMPLETED &&
+                              ba.status != ApplicationStatus.CANCELLED) {
                             ba.notesOnPuttingOnHold =
                                 listOfControllers[ba.id].text;
 
@@ -1121,11 +1142,19 @@ class _ApplicationsListState extends State<ApplicationsList> {
                                 setState(() {
                                   ba.status = ApplicationStatus.ONHOLD;
                                 });
+                                Utils.showMyFlushbar(
+                                    context,
+                                    Icons.check,
+                                    Duration(seconds: 2),
+                                    "Application is put on-hold!!",
+                                    "",
+                                    Colors.yellow[700],
+                                    Colors.white);
                               } else {
                                 print("Could not update application status");
                                 Utils.showMyFlushbar(
                                     context,
-                                    Icons.check,
+                                    Icons.error,
                                     Duration(seconds: 4),
                                     "Oops! Application could not be put On-Hold!!",
                                     tryAgainLater);
@@ -1154,11 +1183,13 @@ class _ApplicationsListState extends State<ApplicationsList> {
                         alignment: Alignment.center,
                         //    visualDensity: VisualDensity.compact,
                         padding: const EdgeInsets.fromLTRB(8, 2, 8, 0),
-                        color: (ba.status != ApplicationStatus.COMPLETED)
+                        color: (ba.status != ApplicationStatus.COMPLETED &&
+                                ba.status != ApplicationStatus.CANCELLED)
                             ? Colors.red
                             : disabledColor,
                         onPressed: () {
-                          if (ba.status != ApplicationStatus.COMPLETED) {
+                          if (ba.status != ApplicationStatus.COMPLETED &&
+                              ba.status != ApplicationStatus.CANCELLED) {
                             ba.notesOnRejection = listOfControllers[ba.id].text;
                             _gs
                                 .getApplicationService()
@@ -1173,11 +1204,19 @@ class _ApplicationsListState extends State<ApplicationsList> {
                                 setState(() {
                                   ba.status = ApplicationStatus.REJECTED;
                                 });
+                                Utils.showMyFlushbar(
+                                    context,
+                                    Icons.check,
+                                    Duration(seconds: 2),
+                                    "Application is rejected!!",
+                                    "",
+                                    Colors.red,
+                                    Colors.white);
                               } else {
                                 print("Could not update application status");
                                 Utils.showMyFlushbar(
                                     context,
-                                    Icons.check,
+                                    Icons.error,
                                     Duration(seconds: 4),
                                     "Oops! Application could not be rejected!!",
                                     "");
