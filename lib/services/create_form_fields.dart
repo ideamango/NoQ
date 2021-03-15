@@ -1298,18 +1298,6 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
 
 //TODO SMITA - Check AGAIN if selected slot is stil available else prompt user to select another one.
 
-//
-//bookingApplication.preferredSlotTiming
-
-      // _gs
-      //     .getTokenService()
-      //     .generateToken(
-      //         widget.metaEntity, bookingApplication.preferredSlotTiming)
-      //     .then((value) {})
-      //     .catchError((error){
-      //       if(error)
-      //     });
-
       _bookingFormKey.currentState.save();
 
       //TODO : Smita - Upload all images to firebase storage.

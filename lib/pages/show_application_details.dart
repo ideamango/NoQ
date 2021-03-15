@@ -906,7 +906,9 @@ class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
                             readOnly: (widget.bookingApplication.status ==
                                         ApplicationStatus.APPROVED ||
                                     widget.bookingApplication.status ==
-                                        ApplicationStatus.COMPLETED)
+                                        ApplicationStatus.COMPLETED ||
+                                    widget.bookingApplication.status ==
+                                        ApplicationStatus.CANCELLED)
                                 ? true
                                 : false,
                             decoration: InputDecoration(
@@ -939,12 +941,16 @@ class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
                             child: RaisedButton(
                                 elevation: 8,
                                 color: (widget.bookingApplication.status !=
-                                        ApplicationStatus.COMPLETED)
+                                            ApplicationStatus.COMPLETED &&
+                                        widget.bookingApplication.status !=
+                                            ApplicationStatus.CANCELLED)
                                     ? Colors.purple
                                     : disabledColor,
                                 onPressed: () {
                                   if (widget.bookingApplication.status !=
-                                      ApplicationStatus.COMPLETED) {
+                                          ApplicationStatus.COMPLETED &&
+                                      widget.bookingApplication.status !=
+                                          ApplicationStatus.CANCELLED) {
                                     widget.bookingApplication.notesOnApproval =
                                         notesController.text;
                                     if (metaEntity != null) {

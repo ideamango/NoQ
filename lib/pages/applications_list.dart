@@ -955,7 +955,8 @@ class _ApplicationsListState extends State<ApplicationsList> {
                     height: cardHeight * .2,
                     child: TextFormField(
                       controller: listOfControllers[ba.id],
-                      readOnly: (ba.status == ApplicationStatus.COMPLETED)
+                      readOnly: (ba.status == ApplicationStatus.COMPLETED ||
+                              ba.status == ApplicationStatus.CANCELLED)
                           ? true
                           : false,
                       style: TextStyle(
@@ -986,11 +987,13 @@ class _ApplicationsListState extends State<ApplicationsList> {
                           alignment: Alignment.center,
                           //    visualDensity: VisualDensity.compact,
                           padding: const EdgeInsets.fromLTRB(8, 2, 8, 0),
-                          color: (ba.status != ApplicationStatus.COMPLETED)
+                          color: (ba.status != ApplicationStatus.COMPLETED &&
+                                  ba.status != ApplicationStatus.CANCELLED)
                               ? Colors.purple[400]
                               : disabledColor,
                           onPressed: () {
-                            if (ba.status != ApplicationStatus.COMPLETED) {
+                            if (ba.status != ApplicationStatus.COMPLETED &&
+                                ba.status != ApplicationStatus.CANCELLED) {
                               ba.notesOnApproval =
                                   listOfControllers[ba.id].text;
                               _gs
