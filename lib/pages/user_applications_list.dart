@@ -1,7 +1,6 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:enum_to_string/enum_to_string.dart';
 import 'package:flutter/material.dart';
-import 'package:noq/constants.dart';
 import 'package:noq/db/db_model/booking_application.dart';
 import 'package:noq/db/db_model/booking_form.dart';
 import 'package:noq/db/db_model/entity.dart';
@@ -9,17 +8,10 @@ import 'package:noq/db/db_model/meta_entity.dart';
 import 'package:noq/enum/application_status.dart';
 import 'package:noq/enum/field_type.dart';
 import 'package:noq/global_state.dart';
-import 'package:noq/pages/covid_token_booking_form.dart';
-import 'package:noq/pages/overview_page.dart';
-import 'package:noq/pages/show_application_details.dart';
 import 'package:noq/pages/show_user_application_details.dart';
-import 'package:noq/services/circular_progress.dart';
-import 'package:noq/services/qr_code_generate.dart';
 import 'package:noq/services/qr_code_user_application.dart';
 import 'package:noq/style.dart';
-import 'package:noq/userHomePage.dart';
 import 'package:noq/utils.dart';
-import 'package:noq/widget/appbar.dart';
 import 'package:noq/widget/page_animation.dart';
 import 'package:noq/widget/widgets.dart';
 
@@ -300,25 +292,11 @@ class _UserApplicationsListState extends State<UserApplicationsList> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // SizedBox(
-                      //   width: cardWidth * .15,
-                      //   child: AutoSizeText(
-                      //     "Status : ",
-                      //     group: labelGroup,
-                      //     minFontSize: 10,
-                      //     maxFontSize: 12,
-                      //     maxLines: 1,
-                      //     overflow: TextOverflow.clip,
-                      //     style: TextStyle(
-                      //         color: Colors.blueGrey[700],
-                      //         fontFamily: 'RalewayRegular'),
-                      //   ),
-                      // ),
                       Container(
                         padding: EdgeInsets.all(0),
                         margin: EdgeInsets.all(0),
-                        height: 28.0,
-                        width: 28.0,
+                        height: cardWidth * .1,
+                        width: cardWidth * .1,
                         child: IconButton(
                             padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
                             alignment: Alignment.topLeft,
@@ -338,6 +316,21 @@ class _UserApplicationsListState extends State<UserApplicationsList> {
                                 applicationId: widget.ba.id,
                               )));
                             }),
+                      ),
+                      SizedBox(
+                        width: cardWidth * .55,
+                        child: AutoSizeText(
+                          "Entity Name \n ${ba.responseForm.formName}",
+                          group: labelGroup,
+                          textAlign: TextAlign.center,
+                          minFontSize: 9,
+                          maxFontSize: 12,
+                          maxLines: 2,
+                          overflow: TextOverflow.clip,
+                          style: TextStyle(
+                            color: Colors.blueGrey[900],
+                          ),
+                        ),
                       ),
                       Container(
                         padding: EdgeInsets.all(2),
@@ -363,14 +356,13 @@ class _UserApplicationsListState extends State<UserApplicationsList> {
                             child: AutoSizeText(
                                 EnumToString.convertToString(ba.status),
                                 textAlign: TextAlign.center,
-                                minFontSize: 7,
-                                maxFontSize: 9,
+                                minFontSize: 6,
+                                maxFontSize: 8,
                                 style: TextStyle(
-                                    fontSize: 9,
                                     fontWeight: FontWeight.bold,
                                     letterSpacing: 1,
                                     color: Colors.white,
-                                    fontFamily: 'RalewayRegular')),
+                                    fontFamily: 'Monsterrat')),
                           ),
                         ),
                       ),

@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
@@ -61,6 +62,10 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
   String validationErrMsg;
   List<Field> listOfFields;
   String _phCountryCode;
+
+  String flushStatus = "Empty";
+  Flushbar flush;
+  bool _wasButtonClicked;
 
   BookingApplication bookingApplication;
   GlobalState _gs;
@@ -1443,7 +1448,92 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
                 color: Colors.white,
                 onPressed: () {
                   print("going back");
-                  Navigator.of(context).pop();
+
+                  //Show flush bar to notify user
+                  if (flushStatus != "Showing") {
+                    flush = Flushbar<bool>(
+                      //padding: EdgeInsets.zero,
+                      margin: EdgeInsets.zero,
+                      flushbarPosition: FlushbarPosition.BOTTOM,
+                      flushbarStyle: FlushbarStyle.GROUNDED,
+                      reverseAnimationCurve: Curves.decelerate,
+                      forwardAnimationCurve: Curves.easeInToLinear,
+                      backgroundColor: headerBarColor,
+                      boxShadows: [
+                        BoxShadow(
+                            color: primaryAccentColor,
+                            offset: Offset(0.0, 2.0),
+                            blurRadius: 3.0)
+                      ],
+                      isDismissible: false,
+                      //duration: Duration(seconds: 4),
+                      icon: Icon(
+                        Icons.cancel,
+                        color: Colors.blueGrey[50],
+                      ),
+                      showProgressIndicator: true,
+                      progressIndicatorBackgroundColor: Colors.blueGrey[800],
+                      routeBlur: 10.0,
+                      titleText: Text(
+                        "Are you sure you want to leave this page?",
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16.0,
+                            color: primaryAccentColor,
+                            fontFamily: "ShadowsIntoLightTwo"),
+                      ),
+                      messageText: Text(
+                        "The changes you made might be lost, if not saved.",
+                        style: TextStyle(
+                            fontSize: 10.0,
+                            color: Colors.blueGrey[50],
+                            fontFamily: "ShadowsIntoLightTwo"),
+                      ),
+
+                      mainButton: Column(
+                        children: <Widget>[
+                          FlatButton(
+                            padding: EdgeInsets.all(0),
+                            onPressed: () {
+                              flushStatus = "Empty";
+                              flush.dismiss(true); // result = true
+                            },
+                            child: Text(
+                              "Yes",
+                              style: TextStyle(color: highlightColor),
+                            ),
+                          ),
+                          FlatButton(
+                            padding: EdgeInsets.all(0),
+                            onPressed: () {
+                              flushStatus = "Empty";
+                              flush.dismiss(false); // result = true
+                            },
+                            child: Text(
+                              "No",
+                              style: TextStyle(color: highlightColor),
+                            ),
+                          ),
+                        ],
+                      ),
+                    )..onStatusChanged = (FlushbarStatus status) {
+                        print("FlushbarStatus-------$status");
+                        if (status == FlushbarStatus.IS_APPEARING)
+                          flushStatus = "Showing";
+                        if (status == FlushbarStatus.DISMISSED)
+                          flushStatus = "Empty";
+                        print("gfdfgdfg");
+                      };
+
+                    flush
+                      ..show(context).then((result) {
+                        _wasButtonClicked = result;
+                        flushStatus = "Empty";
+                        if (_wasButtonClicked) Navigator.of(context).pop();
+                      });
+                  }
+
+                  print("flush already running");
                 },
               ),
               title: Text(dummyForm.formName,
