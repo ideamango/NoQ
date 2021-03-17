@@ -297,7 +297,7 @@ final BoxDecoration soildLightContainer = new BoxDecoration(
     borderRadius: BorderRadius.only(
         topLeft: Radius.circular(4.0), topRight: Radius.circular(4.0)));
 final BoxDecoration lightCyanContainer = new BoxDecoration(
-    border: Border.all(color: Colors.cyan[100]),
+    border: Border.all(color: Colors.cyan[50]),
     shape: BoxShape.rectangle,
     color: Colors.cyan[100],
     borderRadius: BorderRadius.only(
