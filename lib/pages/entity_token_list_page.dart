@@ -5,6 +5,7 @@ import 'package:noq/db/db_model/meta_entity.dart';
 import 'package:noq/db/db_model/slot.dart';
 import 'package:noq/db/db_model/user_token.dart';
 import 'package:noq/global_state.dart';
+import 'package:noq/pages/bar_chart.dart';
 import 'package:noq/pages/manage_entity_list_page.dart';
 import 'package:noq/pages/overview_page.dart';
 import 'package:noq/repository/slotRepository.dart';
@@ -27,6 +28,7 @@ class _EntityTokenListPageState extends State<EntityTokenListPage> {
   List<Slot> list;
   DateTime dateForShowingList;
   Map<String, List<UserToken>> _tokensMap = new Map<String, List<UserToken>>();
+  Map<String, int> dataMap = new Map<String, int>();
 
   @override
   void initState() {
@@ -55,6 +57,10 @@ class _EntityTokenListPageState extends State<EntityTokenListPage> {
             await _gs.getTokenService().getAllTokensForSlot(list[i].slotId);
         if (!Utils.isNullOrEmpty(tokensForThisSlot))
           _tokensMap[list[i].slotId] = tokensForThisSlot;
+        dataMap[Utils.formatTime(list[i].dateTime.hour.toString()) +
+                ":" +
+                Utils.formatTime(list[i].dateTime.minute.toString())] =
+            tokensForThisSlot.length;
       }
       setState(() {
         initCompleted = true;
@@ -101,8 +107,27 @@ class _EntityTokenListPageState extends State<EntityTokenListPage> {
     return Container(
       padding: EdgeInsets.all(0),
       child: Card(
-          child: Container(
-              padding: EdgeInsets.all(10), child: Text(token.parent.userId))),
+          child: Row(
+        children: [
+          Container(
+              width: MediaQuery.of(context).size.width * .4,
+              padding: EdgeInsets.all(8),
+              child: Text(token.parent.userId,
+                  style: TextStyle(
+                      //fontFamily: "RalewayRegular",
+                      color: Colors.blueGrey[800],
+                      fontSize: 13))),
+          if (token.bookingFormName != null)
+            Container(
+                width: MediaQuery.of(context).size.width * .4,
+                padding: EdgeInsets.all(8),
+                child: Text(token.bookingFormName,
+                    style: TextStyle(
+                        //fontFamily: "RalewayRegular",
+                        color: Colors.blueGrey[800],
+                        fontSize: 13))),
+        ],
+      )),
     );
   }
 
@@ -137,7 +162,7 @@ class _EntityTokenListPageState extends State<EntityTokenListPage> {
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
                     Text(fromTime + " - " + toTime),
-                    Text(slot.currentNumber.toString() + " bookings"),
+                    Text(slot.currentNumber.toString() + " tokens"),
                   ],
                 ),
                 backgroundColor: Colors.grey[300],
@@ -178,7 +203,7 @@ class _EntityTokenListPageState extends State<EntityTokenListPage> {
                         )
                       : Container(
                           padding: EdgeInsets.all(12),
-                          child: Text("No bookings")),
+                          child: Text("No tokens")),
                 ],
               ),
             ],
@@ -294,6 +319,20 @@ class _EntityTokenListPageState extends State<EntityTokenListPage> {
                       ],
                     ),
                   ),
+                  Container(
+                      child: Row(
+                    children: [
+                      IconButton(
+                        icon: Icon(Icons.bar_chart),
+                        onPressed: () {
+                          Navigator.of(context).push(MaterialPageRoute(
+                            builder: (context) =>
+                                BarChartDemo(dataMap: dataMap),
+                          ));
+                        },
+                      ),
+                    ],
+                  )),
                   (!Utils.isNullOrEmpty(list))
                       ? Expanded(
                           child: ListView.builder(

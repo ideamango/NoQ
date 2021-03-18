@@ -155,7 +155,7 @@ class EntityRowState extends State<EntityRow> {
 
     if (_initCompleted)
       return Card(
-        elevation: 10,
+        elevation: 8,
         child: Container(
           //height: MediaQuery.of(context).size.height * .3,
           // margin: EdgeInsets.all(5),
