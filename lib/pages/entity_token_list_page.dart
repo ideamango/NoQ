@@ -14,6 +14,7 @@ import 'package:noq/style.dart';
 import 'package:noq/userHomePage.dart';
 import 'package:noq/utils.dart';
 import 'package:noq/widget/appbar.dart';
+import 'package:noq/widget/page_animation.dart';
 
 class EntityTokenListPage extends StatefulWidget {
   final MetaEntity metaEntity;
@@ -134,14 +135,14 @@ class _EntityTokenListPageState extends State<EntityTokenListPage> {
   Widget buildItem(Slot slot) {
     List<UserToken> tokens = _tokensMap[slot.slotId];
     String fromTime = Utils.formatTime(slot.dateTime.hour.toString()) +
-        " : " +
+        ":" +
         Utils.formatTime(slot.dateTime.minute.toString());
 
     String toTime = Utils.formatTime(slot.dateTime
             .add(new Duration(minutes: slot.slotDuration))
             .hour
             .toString()) +
-        " : " +
+        ":" +
         Utils.formatTime(slot.dateTime
             .add(new Duration(minutes: slot.slotDuration))
             .minute
@@ -159,10 +160,16 @@ class _EntityTokenListPageState extends State<EntityTokenListPage> {
               ExpansionTile(
                 initiallyExpanded: false,
                 title: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(fromTime + " - " + toTime),
-                    Text(slot.currentNumber.toString() + " tokens"),
+                    Text(
+                      fromTime + "  -  " + toTime,
+                      style: TextStyle(fontSize: 13),
+                    ),
+                    Text(
+                      slot.currentNumber.toString() + " tokens",
+                      style: TextStyle(fontSize: 13),
+                    ),
                   ],
                 ),
                 backgroundColor: Colors.grey[300],
@@ -252,55 +259,49 @@ class _EntityTokenListPageState extends State<EntityTokenListPage> {
           ),
           body: Center(
             child: Container(
-              margin: EdgeInsets.fromLTRB(10, 0, 10, 5),
-              color: Colors.grey[50],
+              decoration: verticalBackground,
+              //margin: EdgeInsets.fromLTRB(10, 0, 10, 5),
+              //color: Colors.grey[50],
               child: Column(
                 children: <Widget>[
                   Container(
-                    padding: EdgeInsets.all(5),
-                    // decoration: lightCyanContainer,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        RichText(
-                          text: TextSpan(
-                              text: 'Showing tokens for ',
-                              style: TextStyle(
-                                  color: Colors.blueGrey[700], fontSize: 13),
-                              children: <TextSpan>[
-                                TextSpan(
-                                  text:
-                                      "${DateFormat(dateDisplayFormat).format(dateForShowingList)}",
-                                  style:
-                                      TextStyle(color: btnColor, fontSize: 14),
-                                  // recognizer: TapGestureRecognizer()
-                                  //   ..onTap = () {
-                                  //     // navigate to desired screen
-                                  //   }
-                                )
-                              ]),
-                        ),
-
-                        // Text.rich(
-                        //   TextSpan(
-                        //     text:
-                        //         "Showing tokens for ${DateFormat(dateDisplayFormat).format(DateTime.now())}",
-                        //     style: TextStyle(fontSize: 16, color: Colors.black),
-                        //   ),
-                        //   maxLines: 2,
-                        // ),
-                        RaisedButton(
+                      child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      SizedBox(
+                        width: MediaQuery.of(context).size.width * .38,
+                        child: RaisedButton(
+                          //padding: EdgeInsets.zero,
                           elevation: 0.0,
                           color: Colors.white,
-                          shape: RoundedRectangleBorder(
-                              side: BorderSide(color: Colors.blueGrey[500]),
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(5.0))),
+                          // shape: RoundedRectangleBorder(
+                          //     side: BorderSide(color: Colors.blueGrey[500]),
+                          //     borderRadius:
+                          //         BorderRadius.all(Radius.circular(5.0))),
                           splashColor: highlightColor,
                           child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Text('Select date'),
                               Icon(Icons.date_range),
+                              RichText(
+                                text: TextSpan(
+                                    // text: 'Showing tokens for ',
+                                    style: TextStyle(
+                                        color: Colors.blueGrey[700],
+                                        fontSize: 13),
+                                    children: <TextSpan>[
+                                      TextSpan(
+                                        text:
+                                            "${DateFormat(dateDisplayFormat).format(dateForShowingList)}",
+                                        style: TextStyle(
+                                            color: btnColor, fontSize: 14),
+                                        // recognizer: TapGestureRecognizer()
+                                        //   ..onTap = () {
+                                        //     // navigate to desired screen
+                                        //   }
+                                      )
+                                    ]),
+                              ),
                             ],
                           ),
                           onPressed: () {
@@ -316,30 +317,154 @@ class _EntityTokenListPageState extends State<EntityTokenListPage> {
                             });
                           },
                         ),
-                      ],
-                    ),
-                  ),
-                  Container(
-                      child: Row(
-                    children: [
-                      IconButton(
-                        icon: Icon(Icons.bar_chart),
-                        onPressed: () {
-                          Navigator.of(context).push(MaterialPageRoute(
-                            builder: (context) =>
-                                BarChartDemo(dataMap: dataMap),
-                          ));
-                        },
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          IconButton(
+                            icon: Icon(Icons.bar_chart),
+                            onPressed: () {
+                              Navigator.of(context)
+                                  .push(PageAnimation.createRoute(
+                                BarChart(
+                                  dataMap: dataMap,
+                                  metaEn: widget.metaEntity,
+                                ),
+                              ));
+                            },
+                          ),
+                          IconButton(
+                            icon: Icon(Icons.list),
+                            onPressed: () {
+                              Navigator.of(context)
+                                  .push(PageAnimation.createRoute(
+                                BarChart(
+                                  dataMap: dataMap,
+                                  metaEn: widget.metaEntity,
+                                ),
+                              ));
+                            },
+                          ),
+                        ],
                       ),
                     ],
                   )),
+                  Container(
+                      child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      SizedBox(
+                        width: MediaQuery.of(context).size.width * .18,
+                        height: MediaQuery.of(context).size.width * .08,
+                        child: FlatButton(
+                          color: Colors.transparent,
+                          textColor: btnColor,
+                          shape: RoundedRectangleBorder(
+                              side: BorderSide(color: btnColor),
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(100.0))),
+                          child: Text(
+                            'Day',
+                            style: TextStyle(fontSize: 11),
+                          ),
+                          onPressed: () {
+                            Navigator.of(context)
+                                .push(PageAnimation.createRoute(
+                              BarChart(
+                                dataMap: dataMap,
+                                metaEn: widget.metaEntity,
+                              ),
+                            ));
+                          },
+                        ),
+                      ),
+                      SizedBox(
+                        width: MediaQuery.of(context).size.width * .18,
+                        height: MediaQuery.of(context).size.width * .08,
+                        child: FlatButton(
+                          color: Colors.transparent,
+                          textColor: btnColor,
+                          shape: RoundedRectangleBorder(
+                              side: BorderSide(color: btnColor),
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(100.0))),
+                          child: Text(
+                            'Week',
+                            style: TextStyle(fontSize: 11),
+                          ),
+                          onPressed: () {
+                            Navigator.of(context)
+                                .push(PageAnimation.createRoute(
+                              BarChart(
+                                dataMap: dataMap,
+                                metaEn: widget.metaEntity,
+                              ),
+                            ));
+                          },
+                        ),
+                      ),
+                      SizedBox(
+                        width: MediaQuery.of(context).size.width * .18,
+                        height: MediaQuery.of(context).size.width * .08,
+                        child: FlatButton(
+                          color: Colors.transparent,
+                          textColor: btnColor,
+                          shape: RoundedRectangleBorder(
+                              side: BorderSide(color: btnColor),
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(100.0))),
+                          child: Text(
+                            'Month',
+                            style: TextStyle(fontSize: 11),
+                          ),
+                          onPressed: () {
+                            Navigator.of(context)
+                                .push(PageAnimation.createRoute(
+                              BarChart(
+                                dataMap: dataMap,
+                                metaEn: widget.metaEntity,
+                              ),
+                            ));
+                          },
+                        ),
+                      ),
+                      SizedBox(
+                        width: MediaQuery.of(context).size.width * .18,
+                        height: MediaQuery.of(context).size.width * .08,
+                        child: FlatButton(
+                          color: Colors.transparent,
+                          textColor: btnColor,
+                          shape: RoundedRectangleBorder(
+                              side: BorderSide(color: btnColor),
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(100.0))),
+                          child: Text(
+                            'Year',
+                            style: TextStyle(fontSize: 11),
+                          ),
+                          onPressed: () {
+                            Navigator.of(context)
+                                .push(PageAnimation.createRoute(
+                              BarChart(
+                                dataMap: dataMap,
+                                metaEn: widget.metaEntity,
+                              ),
+                            ));
+                          },
+                        ),
+                      ),
+                    ],
+                  )),
+                  SizedBox(
+                    height: 10,
+                  ),
                   (!Utils.isNullOrEmpty(list))
                       ? Expanded(
                           child: ListView.builder(
                               itemCount: 1,
                               itemBuilder: (BuildContext context, int index) {
                                 return Container(
-                                  margin: EdgeInsets.fromLTRB(0, 0, 0, 50),
+                                  margin: EdgeInsets.fromLTRB(10, 0, 10, 50),
                                   child: new Column(
                                     children: showListOfData(),
                                   ),

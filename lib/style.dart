@@ -331,6 +331,17 @@ final gradientBackground = new BoxDecoration(
       stops: [0.0, 1.0],
       tileMode: TileMode.clamp),
 );
+final verticalBackground = new BoxDecoration(
+  gradient: new LinearGradient(
+      colors: [
+        Colors.white,
+        Colors.cyanAccent.shade400,
+      ],
+      begin: const FractionalOffset(0.0, 0.0),
+      end: const FractionalOffset(1.0, 1.0),
+      stops: [0.2, 1.0],
+      tileMode: TileMode.clamp),
+);
 
 class CommonStyle {
   static InputDecoration textFieldStyle(

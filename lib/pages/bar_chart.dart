@@ -1,20 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:charts_flutter/flutter.dart' as charts;
 import 'package:noq/bar_chart_model.dart';
+import 'package:noq/db/db_model/meta_entity.dart';
 import 'package:noq/db/db_model/user_token.dart';
 import 'package:noq/pages/bar_chart_graph.dart';
+import 'package:noq/pages/entity_token_list_page.dart';
 import 'package:noq/pages/manage_entity_list_page.dart';
 import 'package:noq/utils.dart';
 import 'package:noq/widget/appbar.dart';
 
-class BarChartDemo extends StatefulWidget {
+class BarChart extends StatefulWidget {
   final Map<String, int> dataMap;
-  BarChartDemo({Key key, @required this.dataMap}) : super(key: key);
+  final MetaEntity metaEn;
+  BarChart({Key key, @required this.dataMap, @required this.metaEn})
+      : super(key: key);
   @override
-  _BarChartDemoState createState() => _BarChartDemoState();
+  _BarChartState createState() => _BarChartState();
 }
 
-class _BarChartDemoState extends State<BarChartDemo> {
+class _BarChartState extends State<BarChart> {
   Map<String, int> _dataMap;
   List<dynamic> colors = [
     charts.ColorUtil.fromDartColor(Colors.pink),
@@ -86,7 +90,7 @@ class _BarChartDemoState extends State<BarChartDemo> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: CustomAppBarWithBackButton(
-        backRoute: ManageEntityListPage(),
+        backRoute: EntityTokenListPage(metaEntity: widget.metaEn),
         titleTxt: "Approved Requests",
       ),
       body: Center(

@@ -41,7 +41,7 @@ class _BarChartGraphState extends State<BarChartGraph> {
   Widget build(BuildContext context) {
     List<charts.Series<BarChartModel, String>> series = [
       charts.Series(
-        id: "Tokens booked in a Day",
+        id: "Booked Tokens",
         data: widget.data,
         domainFn: (BarChartModel series, _) => series.timeSlot,
         measureFn: (BarChartModel series, _) => series.numOfTokens,
@@ -66,7 +66,7 @@ class _BarChartGraphState extends State<BarChartGraph> {
             itemCount: _barChartList.length,
             itemBuilder: (BuildContext context, int index) {
               return Container(
-                height: MediaQuery.of(context).size.height / 2.3,
+                height: MediaQuery.of(context).size.height * .8,
                 padding: EdgeInsets.all(10),
                 child: Column(
                   children: [
@@ -84,18 +84,62 @@ class _BarChartGraphState extends State<BarChartGraph> {
                       child: charts.BarChart(
                         series,
                         animate: true,
+                        vertical: false,
                         // domainAxis: charts.OrdinalAxisSpec(
                         //   renderSpec:
                         //       charts.SmallTickRendererSpec(labelRotation: 60),
                         // )
+
+                        // domainAxis: new charts.OrdinalAxisSpec(
+                        //     renderSpec: new charts.SmallTickRendererSpec(
+                        //         labelRotation: 60,
+                        //         // Tick and Label styling here.
+                        //         labelStyle: new charts.TextStyleSpec(
+                        //             fontSize: 8, // size in Pts.
+                        //             color: charts.MaterialPalette.black),
+
+                        //         // Change the line colors to match text color.
+                        //         lineStyle: new charts.LineStyleSpec(
+                        //             color: charts.MaterialPalette.black))),
+
+                        /// Assign a custom style for the measure axis.
+                        // primaryMeasureAxis: new charts.NumericAxisSpec(
+                        //     renderSpec: new charts.GridlineRendererSpec(
+
+                        //         // Tick and Label styling here.
+                        //         labelStyle: new charts.TextStyleSpec(
+                        //             fontSize: 10, // size in Pts.
+                        //             color: charts.MaterialPalette.black),
+
+                        //         // Change the line colors to match text color.
+                        //         lineStyle: new charts.LineStyleSpec(
+                        //             color: charts.MaterialPalette.black))),
+
                         domainAxis: new charts.OrdinalAxisSpec(
-                          viewport: new charts.OrdinalViewport('AePS', 8),
-                        ),
+                            //  viewport: new charts.OrdinalViewport('AePS', 10),
+                            renderSpec: new charts.SmallTickRendererSpec(
+                                //labelRotation: 60,
+                                // Tick and Label styling here.
+                                labelStyle: new charts.TextStyleSpec(
+                                    fontSize: 8, // size in Pts.
+                                    color: charts.MaterialPalette.black),
+
+                                // Change the line colors to match text color.
+                                lineStyle: new charts.LineStyleSpec(
+                                    color: charts.MaterialPalette.black))),
                         behaviors: [
                           new charts.SeriesLegend(),
                           new charts.SlidingViewport(),
                           new charts.PanAndZoomBehavior(),
                         ],
+                        primaryMeasureAxis: new charts.NumericAxisSpec(
+                            tickProviderSpec:
+                                new charts.BasicNumericTickProviderSpec(
+                                    desiredTickCount: 1)),
+                        // secondaryMeasureAxis: new charts.NumericAxisSpec(
+                        //     tickProviderSpec:
+                        //         new charts.BasicNumericTickProviderSpec(
+                        //             desiredTickCount: 3)),
                       ),
                     ),
                   ],
