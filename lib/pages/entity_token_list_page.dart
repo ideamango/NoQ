@@ -15,6 +15,9 @@ import 'package:noq/userHomePage.dart';
 import 'package:noq/utils.dart';
 import 'package:noq/widget/appbar.dart';
 import 'package:noq/widget/page_animation.dart';
+import 'package:noq/widget/widgets.dart';
+
+enum selected_view { list, bar, pie, line }
 
 class EntityTokenListPage extends StatefulWidget {
   final MetaEntity metaEntity;
@@ -30,19 +33,21 @@ class _EntityTokenListPageState extends State<EntityTokenListPage> {
   DateTime dateForShowingList;
   Map<String, List<UserToken>> _tokensMap = new Map<String, List<UserToken>>();
   Map<String, int> dataMap = new Map<String, int>();
+  selected_view selectedView = selected_view.list;
 
   @override
   void initState() {
     super.initState();
     getGlobalState().whenComplete(() {
       dateForShowingList = DateTime.now();
-      getListOfData(dateForShowingList);
-      if (this.mounted) {
-        setState(() {
+      getListOfData(dateForShowingList).whenComplete(() {
+        if (this.mounted) {
+          setState(() {
+            initCompleted = true;
+          });
+        } else
           initCompleted = true;
-        });
-      } else
-        initCompleted = true;
+      });
     });
   }
 
@@ -50,23 +55,22 @@ class _EntityTokenListPageState extends State<EntityTokenListPage> {
     _gs = await GlobalState.getGlobalState();
   }
 
-  getListOfData(DateTime date) {
-    getSlotsListForEntity(widget.metaEntity, date).then((slotList) async {
-      list = slotList;
-      for (int i = 0; i <= list.length - 1; i++) {
-        List<UserToken> tokensForThisSlot =
-            await _gs.getTokenService().getAllTokensForSlot(list[i].slotId);
-        if (!Utils.isNullOrEmpty(tokensForThisSlot))
-          _tokensMap[list[i].slotId] = tokensForThisSlot;
-        dataMap[Utils.formatTime(list[i].dateTime.hour.toString()) +
-                ":" +
-                Utils.formatTime(list[i].dateTime.minute.toString())] =
-            tokensForThisSlot.length;
-      }
-      setState(() {
-        initCompleted = true;
-      });
+  Future<void> getListOfData(DateTime date) async {
+    list = await getSlotsListForEntity(widget.metaEntity, date);
+    for (int i = 0; i <= list.length - 1; i++) {
+      List<UserToken> tokensForThisSlot =
+          await _gs.getTokenService().getAllTokensForSlot(list[i].slotId);
+      if (!Utils.isNullOrEmpty(tokensForThisSlot))
+        _tokensMap[list[i].slotId] = tokensForThisSlot;
+      dataMap[Utils.formatTime(list[i].dateTime.hour.toString()) +
+              ":" +
+              Utils.formatTime(list[i].dateTime.minute.toString())] =
+          tokensForThisSlot.length;
+    }
+    setState(() {
+      initCompleted = true;
     });
+
     return list;
   }
 
@@ -98,11 +102,42 @@ class _EntityTokenListPageState extends State<EntityTokenListPage> {
   }
 
   List<Widget> showListOfData() {
+    // if (selectedView == selected_view.list)
+    //   return Expanded(
+    //     child: ListView.builder(
+    //         itemCount: 1,
+    //         itemBuilder: (BuildContext context, int index) {
+    //           return Container(
+    //             margin: EdgeInsets.fromLTRB(10, 0, 10, 50),
+    //             child: new Column(
+    //               children: list.map(buildItem).toList(),
+    //             ),
+    //           );
+    //         }),
+    //   );
+
+    // if (selectedView == selected_view.bar)
+    //   return BarChart(
+    //     dataMap: dataMap,
+    //     metaEn: widget.metaEntity,
+    //   );
+    // return Expanded(
+    //   child: ListView.builder(
+    //       itemCount: 1,
+    //       itemBuilder: (BuildContext context, int index) {
+    //         return Container(
+    //           margin: EdgeInsets.fromLTRB(10, 0, 10, 50),
+    //           child: new Column(
+    //             children: list.map(buildItem).toList(),
+    //           ),
+    //         );
+    //       }),
+    // );
+
     return list.map(buildItem).toList();
-    // return _stores.map((contact) => new ChildItem(contact.name)).toList();
   }
 
-  refreshListOfData() {}
+  refreshDataView() {}
 
   buildChildItem(UserToken token) {
     return Container(
@@ -164,15 +199,15 @@ class _EntityTokenListPageState extends State<EntityTokenListPage> {
                   children: [
                     Text(
                       fromTime + "  -  " + toTime,
-                      style: TextStyle(fontSize: 13),
+                      style: TextStyle(fontSize: 13, color: Colors.grey[600]),
                     ),
                     Text(
                       slot.currentNumber.toString() + " tokens",
-                      style: TextStyle(fontSize: 13),
+                      style: TextStyle(fontSize: 13, color: Colors.grey[600]),
                     ),
                   ],
                 ),
-                backgroundColor: Colors.grey[300],
+                // backgroundColor: Colors.grey[300],
                 children: <Widget>[
                   (!Utils.isNullOrEmpty(tokens))
                       ? new Container(
@@ -210,7 +245,9 @@ class _EntityTokenListPageState extends State<EntityTokenListPage> {
                         )
                       : Container(
                           padding: EdgeInsets.all(12),
-                          child: Text("No tokens")),
+                          child: Text("No tokens",
+                              style: TextStyle(
+                                  fontSize: 13, color: Colors.grey[600]))),
                 ],
               ),
             ],
@@ -255,11 +292,11 @@ class _EntityTokenListPageState extends State<EntityTokenListPage> {
         home: Scaffold(
           appBar: CustomAppBarWithBackButton(
             backRoute: ManageEntityListPage(),
-            titleTxt: "Approved Requests",
+            titleTxt: "Booking Tokens Overview ",
           ),
           body: Center(
             child: Container(
-              decoration: verticalBackground,
+              // decoration: verticalBackground,
               //margin: EdgeInsets.fromLTRB(10, 0, 10, 5),
               //color: Colors.grey[50],
               child: Column(
@@ -268,21 +305,27 @@ class _EntityTokenListPageState extends State<EntityTokenListPage> {
                       child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      SizedBox(
-                        width: MediaQuery.of(context).size.width * .38,
-                        child: RaisedButton(
-                          //padding: EdgeInsets.zero,
-                          elevation: 0.0,
-                          color: Colors.white,
-                          // shape: RoundedRectangleBorder(
-                          //     side: BorderSide(color: Colors.blueGrey[500]),
-                          //     borderRadius:
-                          //         BorderRadius.all(Radius.circular(5.0))),
-                          splashColor: highlightColor,
+                      GestureDetector(
+                        onTap: () {
+                          pickAnyDate(context).then((value) {
+                            if (value != null) {
+                              print(value);
+                              dateForShowingList = value;
+                              setState(() {
+                                initCompleted = false;
+                              });
+                              getListOfData(value);
+                            }
+                          });
+                        },
+                        child: Container(
+                          padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
+                          width: MediaQuery.of(context).size.width * .38,
                           child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            mainAxisAlignment: MainAxisAlignment.start,
                             children: [
                               Icon(Icons.date_range),
+                              SizedBox(width: 5),
                               RichText(
                                 text: TextSpan(
                                     // text: 'Showing tokens for ',
@@ -304,18 +347,6 @@ class _EntityTokenListPageState extends State<EntityTokenListPage> {
                               ),
                             ],
                           ),
-                          onPressed: () {
-                            pickAnyDate(context).then((value) {
-                              if (value != null) {
-                                print(value);
-                                dateForShowingList = value;
-                                setState(() {
-                                  initCompleted = false;
-                                });
-                                getListOfData(value);
-                              }
-                            });
-                          },
                         ),
                       ),
                       Row(
@@ -324,25 +355,24 @@ class _EntityTokenListPageState extends State<EntityTokenListPage> {
                           IconButton(
                             icon: Icon(Icons.bar_chart),
                             onPressed: () {
-                              Navigator.of(context)
-                                  .push(PageAnimation.createRoute(
-                                BarChart(
-                                  dataMap: dataMap,
-                                  metaEn: widget.metaEntity,
-                                ),
-                              ));
+                              setState(() {
+                                selectedView = selected_view.bar;
+                              });
+                              // Navigator.of(context)
+                              //     .push(PageAnimation.createRoute(
+                              //   BarChart(
+                              //     dataMap: dataMap,
+                              //     metaEn: widget.metaEntity,
+                              //   ),
+                              // ));
                             },
                           ),
                           IconButton(
                             icon: Icon(Icons.list),
                             onPressed: () {
-                              Navigator.of(context)
-                                  .push(PageAnimation.createRoute(
-                                BarChart(
-                                  dataMap: dataMap,
-                                  metaEn: widget.metaEntity,
-                                ),
-                              ));
+                              setState(() {
+                                selectedView = selected_view.list;
+                              });
                             },
                           ),
                         ],
@@ -350,127 +380,146 @@ class _EntityTokenListPageState extends State<EntityTokenListPage> {
                     ],
                   )),
                   Container(
+                      padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
                       child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      SizedBox(
-                        width: MediaQuery.of(context).size.width * .18,
-                        height: MediaQuery.of(context).size.width * .08,
-                        child: FlatButton(
-                          color: Colors.transparent,
-                          textColor: btnColor,
-                          shape: RoundedRectangleBorder(
-                              side: BorderSide(color: btnColor),
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(100.0))),
-                          child: Text(
-                            'Day',
-                            style: TextStyle(fontSize: 11),
-                          ),
-                          onPressed: () {
-                            Navigator.of(context)
-                                .push(PageAnimation.createRoute(
-                              BarChart(
-                                dataMap: dataMap,
-                                metaEn: widget.metaEntity,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          SizedBox(
+                            //width: MediaQuery.of(context).size.width * .18,
+                            height: MediaQuery.of(context).size.width * .08,
+                            child: FlatButton(
+                              visualDensity: VisualDensity.compact,
+                              color: Colors.transparent,
+                              textColor: btnColor,
+                              shape: RoundedRectangleBorder(
+                                  side: BorderSide(color: btnColor),
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(100.0))),
+                              child: Text(
+                                'Day',
+                                style: TextStyle(fontSize: 11),
                               ),
-                            ));
-                          },
-                        ),
-                      ),
-                      SizedBox(
-                        width: MediaQuery.of(context).size.width * .18,
-                        height: MediaQuery.of(context).size.width * .08,
-                        child: FlatButton(
-                          color: Colors.transparent,
-                          textColor: btnColor,
-                          shape: RoundedRectangleBorder(
-                              side: BorderSide(color: btnColor),
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(100.0))),
-                          child: Text(
-                            'Week',
-                            style: TextStyle(fontSize: 11),
+                              onPressed: () {
+                                Navigator.of(context)
+                                    .push(PageAnimation.createRoute(
+                                  BarChart(
+                                    dataMap: dataMap,
+                                    metaEn: widget.metaEntity,
+                                  ),
+                                ));
+                              },
+                            ),
                           ),
-                          onPressed: () {
-                            Navigator.of(context)
-                                .push(PageAnimation.createRoute(
-                              BarChart(
-                                dataMap: dataMap,
-                                metaEn: widget.metaEntity,
+                          SizedBox(
+                            // width: MediaQuery.of(context).size.width * .18,
+                            height: MediaQuery.of(context).size.width * .08,
+                            child: FlatButton(
+                              visualDensity: VisualDensity.compact,
+                              color: Colors.transparent,
+                              textColor: btnColor,
+                              shape: RoundedRectangleBorder(
+                                  side: BorderSide(color: btnColor),
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(100.0))),
+                              child: Text(
+                                'Week',
+                                style: TextStyle(fontSize: 11),
                               ),
-                            ));
-                          },
-                        ),
-                      ),
-                      SizedBox(
-                        width: MediaQuery.of(context).size.width * .18,
-                        height: MediaQuery.of(context).size.width * .08,
-                        child: FlatButton(
-                          color: Colors.transparent,
-                          textColor: btnColor,
-                          shape: RoundedRectangleBorder(
-                              side: BorderSide(color: btnColor),
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(100.0))),
-                          child: Text(
-                            'Month',
-                            style: TextStyle(fontSize: 11),
+                              onPressed: () {
+                                Navigator.of(context)
+                                    .push(PageAnimation.createRoute(
+                                  BarChart(
+                                    dataMap: dataMap,
+                                    metaEn: widget.metaEntity,
+                                  ),
+                                ));
+                              },
+                            ),
                           ),
-                          onPressed: () {
-                            Navigator.of(context)
-                                .push(PageAnimation.createRoute(
-                              BarChart(
-                                dataMap: dataMap,
-                                metaEn: widget.metaEntity,
+                          SizedBox(
+                            // width: MediaQuery.of(context).size.width * .18,
+                            height: MediaQuery.of(context).size.width * .08,
+                            child: FlatButton(
+                              visualDensity: VisualDensity.compact,
+                              color: Colors.transparent,
+                              textColor: btnColor,
+                              shape: RoundedRectangleBorder(
+                                  side: BorderSide(color: btnColor),
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(100.0))),
+                              child: Text(
+                                'Month',
+                                style: TextStyle(fontSize: 11),
                               ),
-                            ));
-                          },
-                        ),
-                      ),
-                      SizedBox(
-                        width: MediaQuery.of(context).size.width * .18,
-                        height: MediaQuery.of(context).size.width * .08,
-                        child: FlatButton(
-                          color: Colors.transparent,
-                          textColor: btnColor,
-                          shape: RoundedRectangleBorder(
-                              side: BorderSide(color: btnColor),
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(100.0))),
-                          child: Text(
-                            'Year',
-                            style: TextStyle(fontSize: 11),
+                              onPressed: () {
+                                Navigator.of(context)
+                                    .push(PageAnimation.createRoute(
+                                  BarChart(
+                                    dataMap: dataMap,
+                                    metaEn: widget.metaEntity,
+                                  ),
+                                ));
+                              },
+                            ),
                           ),
-                          onPressed: () {
-                            Navigator.of(context)
-                                .push(PageAnimation.createRoute(
-                              BarChart(
-                                dataMap: dataMap,
-                                metaEn: widget.metaEntity,
+                          SizedBox(
+                            // width: MediaQuery.of(context).size.width * .18,
+                            height: MediaQuery.of(context).size.width * .08,
+                            child: FlatButton(
+                              visualDensity: VisualDensity.compact,
+                              padding: EdgeInsets.zero,
+                              color: Colors.transparent,
+                              textColor: btnColor,
+                              shape: RoundedRectangleBorder(
+                                  side: BorderSide(color: btnColor),
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(100.0))),
+                              child: Text(
+                                'Year',
+                                style: TextStyle(fontSize: 11),
                               ),
-                            ));
-                          },
-                        ),
-                      ),
-                    ],
-                  )),
+                              onPressed: () {
+                                Navigator.of(context)
+                                    .push(PageAnimation.createRoute(
+                                  BarChart(
+                                    dataMap: dataMap,
+                                    metaEn: widget.metaEntity,
+                                  ),
+                                ));
+                              },
+                            ),
+                          ),
+                        ],
+                      )),
                   SizedBox(
                     height: 10,
                   ),
+                  //(!Utils.isNullOrEmpty(list)) ? showListOfData : _emptyPage(),
                   (!Utils.isNullOrEmpty(list))
-                      ? Expanded(
-                          child: ListView.builder(
-                              itemCount: 1,
-                              itemBuilder: (BuildContext context, int index) {
-                                return Container(
-                                  margin: EdgeInsets.fromLTRB(10, 0, 10, 50),
-                                  child: new Column(
-                                    children: showListOfData(),
-                                  ),
-                                );
-                              }),
-                        )
+                      ? ((selectedView == selected_view.list)
+                          ? Expanded(
+                              child: ListView.builder(
+                                  itemCount: 1,
+                                  itemBuilder:
+                                      (BuildContext context, int index) {
+                                    return Container(
+                                      margin:
+                                          EdgeInsets.fromLTRB(10, 0, 10, 50),
+                                      child: new Column(
+                                        children: list.map(buildItem).toList(),
+                                      ),
+                                    );
+                                  }),
+                            )
+                          : Container(
+                              height: MediaQuery.of(context).size.height * .7,
+                              child: ListView(children: <Widget>[
+                                BarChart(
+                                  dataMap: dataMap,
+                                  metaEn: widget.metaEntity,
+                                ),
+                              ]),
+                            ))
                       : _emptyPage(),
                 ],
               ),

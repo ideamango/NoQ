@@ -88,24 +88,10 @@ class _BarChartState extends State<BarChart> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: CustomAppBarWithBackButton(
-        backRoute: EntityTokenListPage(metaEntity: widget.metaEn),
-        titleTxt: "Approved Requests",
-      ),
-      body: Center(
-        child: Container(
-          child: ListView(
-            scrollDirection: Axis.vertical,
-            shrinkWrap: true,
-            children: [
-              BarChartGraph(
-                chartLength: "today",
-                data: data,
-              ),
-            ],
-          ),
-        ),
+    return Container(
+      child: BarChartGraph(
+        chartLength: "today",
+        data: data,
       ),
     );
   }

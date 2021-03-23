@@ -41,7 +41,7 @@ class _BarChartGraphState extends State<BarChartGraph> {
   Widget build(BuildContext context) {
     List<charts.Series<BarChartModel, String>> series = [
       charts.Series(
-        id: "Booked Tokens",
+        id: "Booked Tokens for a day",
         data: widget.data,
         domainFn: (BarChartModel series, _) => series.timeSlot,
         measureFn: (BarChartModel series, _) => series.numOfTokens,
@@ -70,16 +70,16 @@ class _BarChartGraphState extends State<BarChartGraph> {
                 padding: EdgeInsets.all(10),
                 child: Column(
                   children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(_barChartList[index].date,
-                            style: TextStyle(
-                                color: Colors.black,
-                                fontSize: 22,
-                                fontWeight: FontWeight.bold)),
-                      ],
-                    ),
+                    // Row(
+                    //   mainAxisAlignment: MainAxisAlignment.center,
+                    //   children: [
+                    //     Text(_barChartList[index].date,
+                    //         style: TextStyle(
+                    //             color: Colors.black,
+                    //             fontSize: 22,
+                    //             fontWeight: FontWeight.bold)),
+                    //   ],
+                    // ),
                     Expanded(
                       child: charts.BarChart(
                         series,
