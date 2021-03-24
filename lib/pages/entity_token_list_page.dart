@@ -530,16 +530,16 @@ class _EntityTokenListPageState extends State<EntityTokenListPage> {
                     children: [
                       GestureDetector(
                         onTap: () {
-                          pickAnyDate(context).then((value) {
-                            if (value != null) {
-                              print(value);
-                              dateForShowingList = value;
-                              setState(() {
-                                loadingData = true;
-                              });
-                              getListOfData(value);
-                            }
-                          });
+                          // pickAnyDate(context).then((value) {
+                          //   if (value != null) {
+                          //     print(value);
+                          //     dateForShowingList = value;
+                          //     setState(() {
+                          //       loadingData = true;
+                          //     });
+                          //     getListOfData(value);
+                          //   }
+                          // });
                         },
                         child: Container(
                           padding: EdgeInsets.fromLTRB(10, 0, 10, 0),

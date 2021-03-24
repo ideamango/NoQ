@@ -21,13 +21,13 @@ class BarChart extends StatefulWidget {
 class _BarChartState extends State<BarChart> {
   Map<String, int> _dataMap;
   List<dynamic> colors = [
-    charts.ColorUtil.fromDartColor(Colors.pink[100]),
-    charts.ColorUtil.fromDartColor(Colors.green[100]),
-    charts.ColorUtil.fromDartColor(Colors.yellow[100]),
-    charts.ColorUtil.fromDartColor(Colors.red[100]),
-    charts.ColorUtil.fromDartColor(Colors.lightBlueAccent[100]),
-    charts.ColorUtil.fromDartColor(Colors.purple[100]),
-    charts.ColorUtil.fromDartColor(Colors.indigoAccent[100])
+    charts.ColorUtil.fromDartColor(Colors.pink[200]),
+    charts.ColorUtil.fromDartColor(Colors.green[200]),
+    charts.ColorUtil.fromDartColor(Colors.yellow[200]),
+    charts.ColorUtil.fromDartColor(Colors.red[200]),
+    charts.ColorUtil.fromDartColor(Colors.lightBlueAccent[200]),
+    charts.ColorUtil.fromDartColor(Colors.purple[200]),
+    charts.ColorUtil.fromDartColor(Colors.indigoAccent[200])
   ];
 
   final List<BarChartModel> data = [
