@@ -10,6 +10,7 @@ import 'package:noq/pages/manage_entity_list_page.dart';
 import 'package:noq/pages/overview_page.dart';
 import 'package:noq/repository/slotRepository.dart';
 import 'package:noq/services/circular_progress.dart';
+import 'package:noq/services/month_picker_dialog.dart';
 import 'package:noq/style.dart';
 import 'package:noq/userHomePage.dart';
 import 'package:noq/utils.dart';
@@ -17,7 +18,8 @@ import 'package:noq/widget/appbar.dart';
 import 'package:noq/widget/page_animation.dart';
 import 'package:noq/widget/widgets.dart';
 
-enum selected_view { list, bar, pie, line }
+enum SelectedView { list, bar, pie, line }
+enum DateDisplayFormat { date, month, year }
 
 class EntityTokenListPage extends StatefulWidget {
   final MetaEntity metaEntity;
@@ -28,18 +30,24 @@ class EntityTokenListPage extends StatefulWidget {
 
 class _EntityTokenListPageState extends State<EntityTokenListPage> {
   bool initCompleted = false;
+  bool loadingData = false;
   GlobalState _gs;
   List<Slot> list;
+  String formattedDateStr;
   DateTime dateForShowingList;
+  DateTime yearForShowingList;
+  DateTime monthForShowingList;
+  String weekForShowingList;
   Map<String, List<UserToken>> _tokensMap = new Map<String, List<UserToken>>();
   Map<String, int> dataMap = new Map<String, int>();
-  selected_view selectedView = selected_view.list;
+  SelectedView selectedView = SelectedView.list;
 
   @override
   void initState() {
     super.initState();
     getGlobalState().whenComplete(() {
       dateForShowingList = DateTime.now();
+      setShowDate(DateTime.now(), DateDisplayFormat.date);
       getListOfData(dateForShowingList).whenComplete(() {
         if (this.mounted) {
           setState(() {
@@ -68,10 +76,79 @@ class _EntityTokenListPageState extends State<EntityTokenListPage> {
           tokensForThisSlot.length;
     }
     setState(() {
-      initCompleted = true;
+      loadingData = false;
     });
 
     return list;
+  }
+
+  Future<void> getListOfDataForMonth(DateTime date) async {
+    list = await getSlotsListForEntity(widget.metaEntity, date);
+    for (int i = 0; i <= list.length - 1; i++) {
+      List<UserToken> tokensForThisSlot =
+          await _gs.getTokenService().getAllTokensForSlot(list[i].slotId);
+      if (!Utils.isNullOrEmpty(tokensForThisSlot))
+        _tokensMap[list[i].slotId] = tokensForThisSlot;
+      dataMap[Utils.formatTime(list[i].dateTime.hour.toString()) +
+              ":" +
+              Utils.formatTime(list[i].dateTime.minute.toString())] =
+          tokensForThisSlot.length;
+    }
+    setState(() {
+      loadingData = false;
+    });
+
+    return list;
+  }
+
+  Future<void> getListOfDataForYear(DateTime year) async {
+    //TODO Smita: Get time-slots vs booked tokens for the entire year.
+
+    //Dummy data for testing- start
+
+    list = await getSlotsListForEntity(widget.metaEntity, dateForShowingList);
+    for (int i = 0; i <= list.length - 1; i++) {
+      List<UserToken> tokensForThisSlot =
+          await _gs.getTokenService().getAllTokensForSlot(list[i].slotId);
+      if (!Utils.isNullOrEmpty(tokensForThisSlot))
+        _tokensMap[list[i].slotId] = tokensForThisSlot;
+      dataMap[Utils.formatTime(list[i].dateTime.hour.toString()) +
+              ":" +
+              Utils.formatTime(list[i].dateTime.minute.toString())] =
+          tokensForThisSlot.length;
+    }
+
+    // dataMap[Utils.formatTime() + ":" + Utils.formatTime()] =
+    //     tokensForThisSlot.length;
+    //Dummy data for testing- end
+
+    setState(() {
+      loadingData = false;
+    });
+
+    //return list;
+  }
+
+  void setShowDate(DateTime date, DateDisplayFormat format) {
+    String formattedDate;
+    switch (format) {
+      case DateDisplayFormat.date:
+        formattedDate = DateFormat(dateDisplayFormat).format(date);
+        break;
+      case DateDisplayFormat.month:
+        formattedDate = DateFormat.MMMM().format(date).substring(0, 3) +
+            ", " +
+            date.year.toString();
+        break;
+      case DateDisplayFormat.year:
+        formattedDate = date.year.toString();
+        break;
+      default:
+        break;
+    }
+    setState(() {
+      formattedDateStr = formattedDate;
+    });
   }
 
   Widget _emptyPage() {
@@ -283,9 +360,155 @@ class _EntityTokenListPageState extends State<EntityTokenListPage> {
     return date;
   }
 
+  Future<DateTime> pickAnyYear(BuildContext context, DateTime date) async {
+    DateTime returnVal = await showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          DateTime selectedYear = date;
+          String yearStr;
+          return StatefulBuilder(builder: (context, setState) {
+            return AlertDialog(
+              titlePadding: EdgeInsets.zero,
+              contentPadding: EdgeInsets.fromLTRB(5, 30, 5, 30),
+              title: Container(
+                height: MediaQuery.of(context).size.height * .06,
+                padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
+                color: Colors.cyan,
+                child: Text("Year ${selectedYear.year.toString()}",
+                    style: TextStyle(color: Colors.white)),
+              ),
+              content: Container(
+                  child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  SizedBox(
+                    height: 40,
+                    child: FlatButton(
+                      visualDensity: VisualDensity.compact,
+                      padding: EdgeInsets.zero,
+                      color: (selectedYear.year == date.year - 1)
+                          ? Colors.cyan
+                          : Colors.transparent,
+                      textColor: (selectedYear.year == date.year - 1)
+                          ? Colors.white
+                          : Colors.cyan,
+                      shape: CircleBorder(
+                        side: BorderSide(color: btnColor),
+                      ),
+                      child: Text(
+                        (date.year - 1).toString(),
+                        style: TextStyle(fontSize: 11),
+                      ),
+                      onPressed: () {
+                        setState(() {
+                          yearStr = (date.year - 1).toString();
+                          selectedYear =
+                              DateTime(date.year - 1, date.month, date.day);
+                        });
+                      },
+                    ),
+                  ),
+                  SizedBox(
+                    height: 40,
+                    child: FlatButton(
+                      visualDensity: VisualDensity.compact,
+                      padding: EdgeInsets.zero,
+                      color: (selectedYear.year == date.year)
+                          ? Colors.cyan
+                          : Colors.transparent,
+                      textColor: (selectedYear.year == date.year)
+                          ? Colors.white
+                          : Colors.cyan,
+                      shape: CircleBorder(
+                        side: BorderSide(color: btnColor),
+                      ),
+                      child: Text(
+                        (date.year).toString(),
+                        style: TextStyle(fontSize: 11),
+                      ),
+                      onPressed: () {
+                        setState(() {
+                          yearStr = (date.year).toString();
+                          selectedYear = date;
+                        });
+                      },
+                    ),
+                  ),
+                  SizedBox(
+                    height: 40,
+                    child: FlatButton(
+                      visualDensity: VisualDensity.compact,
+                      padding: EdgeInsets.zero,
+                      color: (selectedYear.year == date.year + 1)
+                          ? Colors.cyan
+                          : Colors.transparent,
+                      textColor: (selectedYear.year == date.year + 1)
+                          ? Colors.white
+                          : Colors.cyan,
+                      shape: CircleBorder(
+                        side: BorderSide(color: btnColor),
+                      ),
+                      child: Text(
+                        (date.year + 1).toString(),
+                        style: TextStyle(fontSize: 11),
+                      ),
+                      onPressed: () {
+                        setState(() {
+                          yearStr = (date.year + 1).toString();
+                          selectedYear =
+                              DateTime(date.year + 1, date.month, date.day);
+                        });
+                      },
+                    ),
+                  ),
+                ],
+              )),
+              actions: <Widget>[
+                SizedBox(
+                  height: 30,
+                  child: FlatButton(
+                    color: Colors.transparent,
+                    textColor: btnColor,
+                    // shape: RoundedRectangleBorder(
+                    //     side: BorderSide(color: btnColor),
+                    //     borderRadius: BorderRadius.all(Radius.circular(3.0))),
+                    child: Text(
+                      'CANCEL',
+                      style: TextStyle(fontSize: 14),
+                    ),
+                    onPressed: () {
+                      Navigator.of(context).pop(date);
+                    },
+                  ),
+                ),
+                SizedBox(
+                  height: 30,
+                  child: FlatButton(
+                    color: Colors.transparent,
+                    textColor: btnColor,
+                    // shape: RoundedRectangleBorder(
+                    //     side: BorderSide(color: btnColor),
+                    //     borderRadius: BorderRadius.all(Radius.circular(3.0))),
+                    child: Text(
+                      'OK',
+                      style: TextStyle(fontSize: 14),
+                    ),
+                    onPressed: () {
+                      Navigator.of(context).pop(selectedYear);
+                    },
+                  ),
+                ),
+              ],
+            );
+          });
+        });
+
+    return returnVal;
+  }
+
   @override
   Widget build(BuildContext context) {
-    if (initCompleted) {
+    if (initCompleted && !loadingData) {
       return MaterialApp(
         debugShowCheckedModeBanner: false,
         theme: ThemeData.light().copyWith(),
@@ -312,7 +535,7 @@ class _EntityTokenListPageState extends State<EntityTokenListPage> {
                               print(value);
                               dateForShowingList = value;
                               setState(() {
-                                initCompleted = false;
+                                loadingData = true;
                               });
                               getListOfData(value);
                             }
@@ -334,8 +557,7 @@ class _EntityTokenListPageState extends State<EntityTokenListPage> {
                                         fontSize: 13),
                                     children: <TextSpan>[
                                       TextSpan(
-                                        text:
-                                            "${DateFormat(dateDisplayFormat).format(dateForShowingList)}",
+                                        text: formattedDateStr,
                                         style: TextStyle(
                                             color: btnColor, fontSize: 14),
                                         // recognizer: TapGestureRecognizer()
@@ -356,7 +578,7 @@ class _EntityTokenListPageState extends State<EntityTokenListPage> {
                             icon: Icon(Icons.bar_chart),
                             onPressed: () {
                               setState(() {
-                                selectedView = selected_view.bar;
+                                selectedView = SelectedView.bar;
                               });
                               // Navigator.of(context)
                               //     .push(PageAnimation.createRoute(
@@ -371,7 +593,7 @@ class _EntityTokenListPageState extends State<EntityTokenListPage> {
                             icon: Icon(Icons.list),
                             onPressed: () {
                               setState(() {
-                                selectedView = selected_view.list;
+                                selectedView = SelectedView.list;
                               });
                             },
                           ),
@@ -382,7 +604,7 @@ class _EntityTokenListPageState extends State<EntityTokenListPage> {
                   Container(
                       padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
                       child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
                           SizedBox(
                             //width: MediaQuery.of(context).size.width * .18,
@@ -400,39 +622,17 @@ class _EntityTokenListPageState extends State<EntityTokenListPage> {
                                 style: TextStyle(fontSize: 11),
                               ),
                               onPressed: () {
-                                Navigator.of(context)
-                                    .push(PageAnimation.createRoute(
-                                  BarChart(
-                                    dataMap: dataMap,
-                                    metaEn: widget.metaEntity,
-                                  ),
-                                ));
-                              },
-                            ),
-                          ),
-                          SizedBox(
-                            // width: MediaQuery.of(context).size.width * .18,
-                            height: MediaQuery.of(context).size.width * .08,
-                            child: FlatButton(
-                              visualDensity: VisualDensity.compact,
-                              color: Colors.transparent,
-                              textColor: btnColor,
-                              shape: RoundedRectangleBorder(
-                                  side: BorderSide(color: btnColor),
-                                  borderRadius:
-                                      BorderRadius.all(Radius.circular(100.0))),
-                              child: Text(
-                                'Week',
-                                style: TextStyle(fontSize: 11),
-                              ),
-                              onPressed: () {
-                                Navigator.of(context)
-                                    .push(PageAnimation.createRoute(
-                                  BarChart(
-                                    dataMap: dataMap,
-                                    metaEn: widget.metaEntity,
-                                  ),
-                                ));
+                                //TODO SMITA - fetch data for showdatafordate
+                                pickAnyDate(context).then((value) {
+                                  if (value != null) {
+                                    print(value);
+                                    setShowDate(value, DateDisplayFormat.date);
+                                    setState(() {
+                                      loadingData = true;
+                                    });
+                                    getListOfData(value);
+                                  }
+                                });
                               },
                             ),
                           ),
@@ -452,13 +652,22 @@ class _EntityTokenListPageState extends State<EntityTokenListPage> {
                                 style: TextStyle(fontSize: 11),
                               ),
                               onPressed: () {
-                                Navigator.of(context)
-                                    .push(PageAnimation.createRoute(
-                                  BarChart(
-                                    dataMap: dataMap,
-                                    metaEn: widget.metaEntity,
-                                  ),
-                                ));
+                                showMonthPicker(
+                                        context: context,
+                                        firstDate: DateTime(
+                                            DateTime.now().year - 2, 12),
+                                        lastDate: DateTime(
+                                            DateTime.now().year + 1, 12),
+                                        initialDate: dateForShowingList)
+                                    .then((date) => setState(() {
+                                          print(date);
+                                          if (date != null) {
+                                            setShowDate(
+                                                date, DateDisplayFormat.month);
+                                            //fetch data for the month (check getListOfData)
+                                          }
+                                          // selectedDate = date;
+                                        }));
                               },
                             ),
                           ),
@@ -479,13 +688,14 @@ class _EntityTokenListPageState extends State<EntityTokenListPage> {
                                 style: TextStyle(fontSize: 11),
                               ),
                               onPressed: () {
-                                Navigator.of(context)
-                                    .push(PageAnimation.createRoute(
-                                  BarChart(
-                                    dataMap: dataMap,
-                                    metaEn: widget.metaEntity,
-                                  ),
-                                ));
+                                //TODO SMITA - fetch data for year showdatafordate
+                                pickAnyYear(context, dateForShowingList)
+                                    .then((value) {
+                                  if (value != null) {
+                                    print(value);
+                                    setShowDate(value, DateDisplayFormat.year);
+                                  }
+                                });
                               },
                             ),
                           ),
@@ -496,7 +706,7 @@ class _EntityTokenListPageState extends State<EntityTokenListPage> {
                   ),
                   //(!Utils.isNullOrEmpty(list)) ? showListOfData : _emptyPage(),
                   (!Utils.isNullOrEmpty(list))
-                      ? ((selectedView == selected_view.list)
+                      ? ((selectedView == SelectedView.list)
                           ? Expanded(
                               child: ListView.builder(
                                   itemCount: 1,
@@ -513,6 +723,7 @@ class _EntityTokenListPageState extends State<EntityTokenListPage> {
                             )
                           : Container(
                               height: MediaQuery.of(context).size.height * .7,
+                              width: MediaQuery.of(context).size.width * .95,
                               child: ListView(children: <Widget>[
                                 BarChart(
                                   dataMap: dataMap,
@@ -527,7 +738,7 @@ class _EntityTokenListPageState extends State<EntityTokenListPage> {
           ),
         ),
       );
-    } else {
+    } else if (!initCompleted || loadingData) {
       return MaterialApp(
         debugShowCheckedModeBanner: false,
         theme: ThemeData.light().copyWith(),
@@ -535,7 +746,7 @@ class _EntityTokenListPageState extends State<EntityTokenListPage> {
           child: Scaffold(
             appBar: CustomAppBarWithBackButton(
               backRoute: UserHomePage(),
-              titleTxt: "Approved Requests",
+              titleTxt: "Booking Tokens Overview ",
             ),
             body: Center(
               child: Column(

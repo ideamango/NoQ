@@ -28,7 +28,8 @@ class _BarChartGraphState extends State<BarChartGraph> {
     if (this.widget.chartLength == "today")
       _barChartList = [
         BarChartModel(
-            date: DateFormat(dateDisplayFormat).format(DateTime.now())),
+            date: DateFormat(dateDisplayFormat).format(DateTime.now()),
+            color: null),
       ];
     if (this.widget.chartLength == "month")
       _barChartList = [
@@ -114,8 +115,9 @@ class _BarChartGraphState extends State<BarChartGraph> {
                         //         // Change the line colors to match text color.
                         //         lineStyle: new charts.LineStyleSpec(
                         //             color: charts.MaterialPalette.black))),
-
+                        defaultInteractions: false,
                         domainAxis: new charts.OrdinalAxisSpec(
+                            showAxisLine: true,
                             //  viewport: new charts.OrdinalViewport('AePS', 10),
                             renderSpec: new charts.SmallTickRendererSpec(
                                 //labelRotation: 60,
@@ -132,10 +134,17 @@ class _BarChartGraphState extends State<BarChartGraph> {
                           new charts.SlidingViewport(),
                           new charts.PanAndZoomBehavior(),
                         ],
+                        barRendererDecorator:
+                            new charts.BarLabelDecorator<String>(
+                          labelPosition: charts.BarLabelPosition.inside,
+                          labelAnchor: charts.BarLabelAnchor.end,
+                        ),
                         primaryMeasureAxis: new charts.NumericAxisSpec(
-                            tickProviderSpec:
-                                new charts.BasicNumericTickProviderSpec(
-                                    desiredTickCount: 1)),
+                            renderSpec: new charts.NoneRenderSpec()),
+                        // primaryMeasureAxis: new charts.NumericAxisSpec(
+                        //     tickProviderSpec:
+                        //         new charts.BasicNumericTickProviderSpec(
+                        //             desiredTickCount: 1)),
                         // secondaryMeasureAxis: new charts.NumericAxisSpec(
                         //     tickProviderSpec:
                         //         new charts.BasicNumericTickProviderSpec(
