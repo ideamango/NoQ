@@ -289,6 +289,13 @@ final BoxDecoration darkContainer = new BoxDecoration(
     color: Colors.blueGrey[500],
     borderRadius: BorderRadius.only(
         topLeft: Radius.circular(4.0), topRight: Radius.circular(4.0)));
+
+final BoxDecoration whiteContainer = new BoxDecoration(
+    border: Border.all(color: Colors.black),
+    shape: BoxShape.rectangle,
+    color: Colors.grey[100],
+    borderRadius: BorderRadius.only(
+        topLeft: Radius.circular(4.0), topRight: Radius.circular(4.0)));
 final Color containerColor = Colors.blueGrey[500];
 final BoxDecoration soildLightContainer = new BoxDecoration(
     border: Border.all(color: Colors.teal[200]),
@@ -297,7 +304,7 @@ final BoxDecoration soildLightContainer = new BoxDecoration(
     borderRadius: BorderRadius.only(
         topLeft: Radius.circular(4.0), topRight: Radius.circular(4.0)));
 final BoxDecoration lightCyanContainer = new BoxDecoration(
-    border: Border.all(color: Colors.cyan[100]),
+    border: Border.all(color: Colors.cyan[50]),
     shape: BoxShape.rectangle,
     color: Colors.cyan[100],
     borderRadius: BorderRadius.only(
@@ -322,14 +329,23 @@ final BoxDecoration rectLightContainer = new BoxDecoration(
 );
 final gradientBackground = new BoxDecoration(
   gradient: new LinearGradient(
-      colors: [
-        Colors.cyanAccent,
-        btnColor,
-      ],
+      colors: [Colors.blueGrey[800], Colors.blueGrey[800]],
       begin: const FractionalOffset(0.0, 0.0),
       end: const FractionalOffset(1.0, 0.0),
       stops: [0.0, 1.0],
       tileMode: TileMode.clamp),
+);
+final verticalBackground = new BoxDecoration(
+  gradient: new LinearGradient(
+    colors: [
+      Colors.white,
+      Colors.black87,
+    ],
+    begin: const FractionalOffset(0.0, 0.0),
+    end: const FractionalOffset(0.0, 1.0),
+    stops: [0.5, 1.0],
+    //  tileMode: TileMode.clamp
+  ),
 );
 
 class CommonStyle {

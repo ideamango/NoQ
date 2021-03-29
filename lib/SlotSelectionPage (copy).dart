@@ -7,12 +7,19 @@ import 'package:noq/db/db_model/slot.dart';
 import 'package:noq/db/exceptions/slot_full_exception.dart';
 import 'package:noq/db/exceptions/token_already_exists_exception.dart';
 import 'package:noq/global_state.dart';
+import 'package:noq/pages/applications_list.dart';
+import 'package:noq/pages/covid_token_booking_form.dart';
+import 'package:noq/pages/search_child_entity_page.dart';
+import 'package:noq/pages/search_entity_page.dart';
+import 'package:noq/pages/favs_list_page.dart';
+
 import 'package:noq/pages/token_alert.dart';
 import 'package:noq/repository/slotRepository.dart';
 import 'package:noq/style.dart';
 import 'package:noq/utils.dart';
 import 'package:noq/widget/appbar.dart';
 import 'package:noq/widget/header.dart';
+import 'package:noq/widget/weekday_selector.dart';
 import 'package:noq/widget/widgets.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:intl/intl.dart';
@@ -76,7 +83,6 @@ class _SlotSelectionPageState extends State<SlotSelectionPage> {
       } else {
         print("preferred slot has expired ");
         _date = currDateTime;
-        slotSelectionDate = currDateTime;
       }
     }
 
@@ -94,11 +100,12 @@ class _SlotSelectionPageState extends State<SlotSelectionPage> {
 
     //Fetch details from server
     getSlotsListForEntity(entity, datetime).then((slotList) {
-      for (Slot s in slotList) {
-        if (s.dateTime.compareTo(slotSelectionDate) == 0) {
-          selectedSlot = s;
+      if (slotSelectionDate != null)
+        for (Slot s in slotList) {
+          if (s.dateTime.compareTo(slotSelectionDate) == 0) {
+            selectedSlot = s;
+          }
         }
-      }
       setState(() {
         _slotList = slotList;
         _initCompleted = true;
@@ -223,37 +230,43 @@ class _SlotSelectionPageState extends State<SlotSelectionPage> {
                                     Icon(
                                       Icons.arrow_back_ios,
                                       size: 20,
-                                      color: (slotSelectionDate
-                                                  .compareTo(currDateTime) >=
-                                              0)
-                                          ? Colors.white
-                                          : Colors.blueGrey[300],
+                                      color: (slotSelectionDate != null
+                                          ? (slotSelectionDate.compareTo(
+                                                      currDateTime) >=
+                                                  0
+                                              ? Colors.white
+                                              : Colors.blueGrey[300])
+                                          : Colors.white),
                                     ),
                                     Text("Prev",
                                         style: TextStyle(
-                                            color: (slotSelectionDate.compareTo(
-                                                        currDateTime) >=
-                                                    0)
-                                                ? Colors.white
-                                                : Colors.blueGrey[300])),
+                                            color: (slotSelectionDate != null
+                                                ? (slotSelectionDate.compareTo(
+                                                            currDateTime) >=
+                                                        0
+                                                    ? Colors.white
+                                                    : Colors.blueGrey[300])
+                                                : Colors.white))),
                                   ],
                                 ),
                                 onPressed: () {
                                   print(slotSelectionDate
                                       .compareTo(currDateTime));
-                                  if (slotSelectionDate
-                                          .compareTo(currDateTime) >
-                                      0) {
-                                    slotSelectionDate = slotSelectionDate
-                                        .subtract(Duration(days: 1));
-                                    _loadSlots(slotSelectionDate);
-                                  } else {
-                                    Utils.showMyFlushbar(
-                                        context,
-                                        Icons.info,
-                                        Duration(seconds: 4),
-                                        "You cannot book for past date!",
-                                        "");
+                                  if (slotSelectionDate != null) {
+                                    if (slotSelectionDate
+                                            .compareTo(currDateTime) >=
+                                        0) {
+                                      slotSelectionDate = slotSelectionDate
+                                          .subtract(Duration(days: 1));
+                                      _loadSlots(slotSelectionDate);
+                                    } else {
+                                      Utils.showMyFlushbar(
+                                          context,
+                                          Icons.info,
+                                          Duration(seconds: 4),
+                                          "You cannot book for past date!",
+                                          "");
+                                    }
                                   }
 
                                   //Navigator.pop(context);
@@ -307,27 +320,32 @@ class _SlotSelectionPageState extends State<SlotSelectionPage> {
                                   children: [
                                     Text("Next",
                                         style: TextStyle(
-                                          color: (slotSelectionDate
-                                                      .add(Duration(days: 1))
-                                                      .compareTo(currDateTime
-                                                          .add(Duration(
-                                                              days: entity
-                                                                  .advanceDays))) >=
-                                                  0)
-                                              ? Colors.blueGrey[300]
+                                          color: slotSelectionDate != null
+                                              ? (slotSelectionDate
+                                                          .add(
+                                                              Duration(days: 1))
+                                                          .compareTo(currDateTime
+                                                              .add(Duration(
+                                                                  days: entity
+                                                                      .advanceDays))) >=
+                                                      0
+                                                  ? Colors.blueGrey[300]
+                                                  : Colors.white)
                                               : Colors.white,
                                         )),
                                     Icon(
                                       Icons.arrow_forward_ios,
                                       size: 20,
-                                      color: (slotSelectionDate
-                                                  .add(Duration(days: 1))
-                                                  .compareTo(currDateTime.add(
-                                                      Duration(
-                                                          days: entity
-                                                              .advanceDays))) >=
-                                              0)
-                                          ? Colors.blueGrey[300]
+                                      color: slotSelectionDate != null
+                                          ? (slotSelectionDate
+                                                      .add(Duration(days: 1))
+                                                      .compareTo(currDateTime
+                                                          .add(Duration(
+                                                              days: entity
+                                                                  .advanceDays))) >=
+                                                  0
+                                              ? Colors.blueGrey[300]
+                                              : Colors.white)
                                           : Colors.white,
                                     ),
                                   ],

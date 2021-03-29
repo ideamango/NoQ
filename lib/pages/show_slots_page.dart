@@ -17,6 +17,7 @@ import 'package:noq/pages/favs_list_page.dart';
 
 import 'package:noq/pages/token_alert.dart';
 import 'package:noq/repository/slotRepository.dart';
+import 'package:noq/services/circular_progress.dart';
 import 'package:noq/style.dart';
 import 'package:noq/utils.dart';
 import 'package:noq/widget/appbar.dart';
@@ -469,16 +470,7 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
                   // Padding(padding: EdgeInsets.only(top: 20.0)),
-                  Text(
-                    "Loading..",
-                    style: TextStyle(fontSize: 20.0, color: borderColor),
-                  ),
-                  Padding(padding: EdgeInsets.only(top: 20.0)),
-                  CircularProgressIndicator(
-                    backgroundColor: primaryAccentColor,
-                    valueColor: AlwaysStoppedAnimation<Color>(highlightColor),
-                    strokeWidth: 3,
-                  )
+                  showCircularProgress()
                 ],
               ),
             ),

@@ -1762,6 +1762,7 @@ class _ManageChildEntityDetailsPageState
             ),
             "Saving details!! ",
             "This would take just a moment.",
+            null,
             Colors.white,
             true);
 

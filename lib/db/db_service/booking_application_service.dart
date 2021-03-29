@@ -573,7 +573,9 @@ class BookingApplicationService {
       throw new Exception(
           "Entity and Time are required for the Token generation on Approval");
     }
-
+    //For testing
+    //if (applicationId != null) return false;
+    //For testing
     Exception e;
     DateTime now = DateTime.now();
 
@@ -608,9 +610,10 @@ class BookingApplicationService {
           existingStatus = application.status;
           bf = application.responseForm;
           if (application.timeOfSubmission == null ||
-              application.status == ApplicationStatus.CANCELLED) {
+              application.status == ApplicationStatus.CANCELLED ||
+              application.status == status) {
             throw new Exception(
-                "Application is not submitted yet or it's in the cancelled state");
+                "Application is not submitted yet or it's in the cancelled state or same status is sent again");
           }
         } else {
           throw new Exception("Application does not exist");

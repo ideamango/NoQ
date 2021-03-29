@@ -12,15 +12,15 @@ Widget showCircularProgress() {
         children: <Widget>[
           //Padding(padding: EdgeInsets.only(top: 20.0)),
           Text(
-            "Loading..",
-            style: TextStyle(fontSize: 15.0, color: Colors.teal),
+            "Fetching data, please wait..",
+            style: TextStyle(fontSize: 15.0, color: Colors.blueGrey[700]),
           ),
           verticalSpacer,
           //Padding(padding: EdgeInsets.only(top: 20.0)),
           CircularProgressIndicator(
-            backgroundColor: primaryAccentColor,
-            valueColor: AlwaysStoppedAnimation<Color>(highlightColor),
-            strokeWidth: 3,
+            backgroundColor: Colors.blueGrey[600],
+            valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+            strokeWidth: 2,
           )
         ],
       ),

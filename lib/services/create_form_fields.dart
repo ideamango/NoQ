@@ -2,13 +2,17 @@ import 'dart:async';
 import 'dart:io';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:noq/SlotSelectionPage.dart';
+import 'package:noq/constants.dart';
 import 'package:noq/db/db_model/booking_application.dart';
 import 'package:noq/db/db_model/booking_form.dart';
 import 'package:noq/db/db_model/meta_entity.dart';
+import 'package:noq/db/exceptions/slot_full_exception.dart';
+import 'package:noq/db/exceptions/token_already_exists_exception.dart';
 import 'package:noq/enum/application_status.dart';
 import 'package:noq/enum/field_type.dart';
 import 'package:noq/global_state.dart';
@@ -58,6 +62,10 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
   String validationErrMsg;
   List<Field> listOfFields;
   String _phCountryCode;
+
+  String flushStatus = "Empty";
+  Flushbar flush;
+  bool _wasButtonClicked;
 
   BookingApplication bookingApplication;
   GlobalState _gs;
@@ -114,8 +122,9 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
         return Theme(
           data: ThemeData.dark().copyWith(
             colorScheme: ColorScheme.light(
-              primary: Colors.cyan,
-            ),
+                primary: Colors.black,
+                primaryVariant: Colors.amber,
+                onSecondary: Colors.cyan),
             dialogBackgroundColor: Colors.white,
           ),
           child: child,
@@ -149,7 +158,7 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
           newField = Container(
             margin: EdgeInsets.fromLTRB(5, 5, 5, 5),
             decoration: BoxDecoration(
-                border: Border.all(color: containerColor),
+                border: Border.all(color: Colors.black),
                 color: Colors.grey[50],
                 shape: BoxShape.rectangle,
                 borderRadius: BorderRadius.all(Radius.circular(5.0))),
@@ -158,12 +167,11 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
                 children: <Widget>[
                   Column(children: <Widget>[
                     Container(
-                      //padding: EdgeInsets.only(left: 5),
-                      decoration: darkContainer,
+                      decoration: whiteContainer,
                       child: Theme(
                         data: ThemeData(
-                          unselectedWidgetColor: Colors.white,
-                          accentColor: Colors.grey[50],
+                          unselectedWidgetColor: Colors.grey[400],
+                          accentColor: Colors.black,
                         ),
                         child: CustomExpansionTile(
                           //key: PageStorageKey(this.widget.headerTitle),
@@ -173,12 +181,12 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
                               Text(
                                 field.label,
                                 style: TextStyle(
-                                    color: Colors.white, fontSize: 15),
+                                    color: Colors.black, fontSize: 15),
                               ),
                               SizedBox(width: 5),
                             ],
                           ),
-                          backgroundColor: Colors.blueGrey[500],
+                          backgroundColor: Colors.grey[300],
 
                           children: <Widget>[
                             new Container(
@@ -1289,22 +1297,11 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
           ),
           "Saving details!! ",
           "This would take just a moment.",
+          null,
           Colors.white,
           true);
 
 //TODO SMITA - Check AGAIN if selected slot is stil available else prompt user to select another one.
-
-//
-//bookingApplication.preferredSlotTiming
-
-      // _gs
-      //     .getTokenService()
-      //     .generateToken(
-      //         widget.metaEntity, bookingApplication.preferredSlotTiming)
-      //     .then((value) {})
-      //     .catchError((error){
-      //       if(error)
-      //     });
 
       _bookingFormKey.currentState.save();
 
@@ -1388,6 +1385,27 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
               ),
               "Request submitted successfully!",
               'We will contact you as soon as slot opens up. Stay Safe!');
+        } else {
+          print("Error in generating SLot for user");
+          Utils.showMyFlushbar(context, Icons.error, Duration(seconds: 5),
+              couldNotSubmitApplication, tryAgainToBook);
+        }
+      }).catchError((error) {
+        print("Error in generating SLot for user");
+        print("Error in token booking" + error.toString());
+
+        //TODO Smita - Not going in any of if bcoz exception is wrapped in type platform exception.
+        if (error is SlotFullException) {
+          Utils.showMyFlushbar(context, Icons.error, Duration(seconds: 5),
+              couldNotBookToken, slotsAlreadyBooked);
+        }
+        // else if (error is TokenAlreadyExistsException) {
+        //   Utils.showMyFlushbar(context, Icons.error, Duration(seconds: 5),
+        //       couldNotBookToken, tokenAlreadyExists);
+        //}
+        else {
+          Utils.showMyFlushbar(context, Icons.error, Duration(seconds: 5),
+              couldNotBookToken, tryAgainToBook);
         }
       });
     } else {
@@ -1430,7 +1448,96 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
                 color: Colors.white,
                 onPressed: () {
                   print("going back");
-                  Navigator.of(context).pop();
+
+                  //Show flush bar to notify user
+                  if (flushStatus != "Showing") {
+                    flush = Flushbar<bool>(
+                      //padding: EdgeInsets.zero,
+                      margin: EdgeInsets.zero,
+                      flushbarPosition: FlushbarPosition.BOTTOM,
+                      flushbarStyle: FlushbarStyle.GROUNDED,
+                      reverseAnimationCurve: Curves.decelerate,
+                      forwardAnimationCurve: Curves.easeInToLinear,
+                      backgroundColor: Colors.cyan[200],
+                      boxShadows: [
+                        BoxShadow(
+                            color: Colors.cyan,
+                            offset: Offset(0.0, 2.0),
+                            blurRadius: 3.0)
+                      ],
+                      isDismissible: true,
+                      //duration: Duration(seconds: 4),
+                      icon: Icon(
+                        Icons.cancel,
+                        color: Colors.blueGrey[90],
+                      ),
+                      showProgressIndicator: true,
+                      progressIndicatorBackgroundColor: Colors.blueGrey[900],
+                      progressIndicatorValueColor:
+                          new AlwaysStoppedAnimation<Color>(Colors.cyan[500]),
+                      routeBlur: 10.0,
+                      titleText: Text(
+                        "Are you sure you want to leave this page?",
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16.0,
+                            color: Colors.blueGrey[700],
+                            fontFamily: "ShadowsIntoLightTwo"),
+                      ),
+                      messageText: Text(
+                        "The changes you made might be lost, if not saved.",
+                        style: TextStyle(
+                            fontSize: 12.0,
+                            color: Colors.blueGrey[800],
+                            fontFamily: "ShadowsIntoLightTwo"),
+                      ),
+
+                      mainButton: Column(
+                        children: <Widget>[
+                          FlatButton(
+                            padding: EdgeInsets.all(0),
+                            onPressed: () {
+                              flushStatus = "Empty";
+                              flush.dismiss(false); // result = true
+                            },
+                            child: Text(
+                              "No",
+                              style: TextStyle(
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                          FlatButton(
+                            padding: EdgeInsets.all(0),
+                            onPressed: () {
+                              flushStatus = "Empty";
+                              flush.dismiss(true); // result = true
+                            },
+                            child: Text(
+                              "Yes",
+                              style: TextStyle(color: Colors.blueGrey[700]),
+                            ),
+                          ),
+                        ],
+                      ),
+                    )..onStatusChanged = (FlushbarStatus status) {
+                        print("FlushbarStatus-------$status");
+                        if (status == FlushbarStatus.IS_APPEARING)
+                          flushStatus = "Showing";
+                        if (status == FlushbarStatus.DISMISSED)
+                          flushStatus = "Empty";
+                        print("gfdfgdfg");
+                      };
+
+                    flush
+                      ..show(context).then((result) {
+                        _wasButtonClicked = result;
+                        flushStatus = "Empty";
+                        if (_wasButtonClicked) Navigator.of(context).pop();
+                      });
+                  }
+
+                  print("flush already running");
                 },
               ),
               title: Text(dummyForm.formName,

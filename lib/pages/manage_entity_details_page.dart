@@ -1970,6 +1970,7 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
               ),
               "Saving details!! ",
               "This would take just a moment.",
+              null,
               Colors.white,
               true);
 
@@ -3260,7 +3261,7 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
                                                         .size
                                                         .width *
                                                     .9;
-                                                _text = AutoSizeText(activeDef,
+                                                _text = AutoSizeText(publicInfo,
                                                     minFontSize: 8,
                                                     maxFontSize: 14,
                                                     style:
@@ -3291,7 +3292,7 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
                                                               .width *
                                                           .9;
                                                   _text = AutoSizeText(
-                                                      activeDef,
+                                                      publicInfo,
                                                       minFontSize: 8,
                                                       maxFontSize: 14,
                                                       style:
@@ -3376,7 +3377,8 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
                                                         .size
                                                         .width *
                                                     .9;
-                                                _text = AutoSizeText(activeDef,
+                                                _text = AutoSizeText(
+                                                    bookableInfo,
                                                     minFontSize: 8,
                                                     maxFontSize: 14,
                                                     style:
@@ -3406,7 +3408,7 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
                                                               .width *
                                                           .9;
                                                   _text = AutoSizeText(
-                                                      activeDef,
+                                                      bookableInfo,
                                                       minFontSize: 8,
                                                       maxFontSize: 14,
                                                       style:

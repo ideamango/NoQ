@@ -223,7 +223,7 @@ class _ManageEntityListPageState extends State<ManageEntityListPage> {
               child: Column(
                 children: <Widget>[
                   Card(
-                    elevation: 20,
+                    elevation: 8,
                     margin:
                         EdgeInsets.all(MediaQuery.of(context).size.width * .03),
                     child: Container(

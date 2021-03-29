@@ -236,9 +236,11 @@ String wantToBookAnotherSlot =
 String allSlotsBookedForDate = 'All slots are booked for this date!!';
 
 String couldNotBookToken = "Oops! Couldn't book the token.";
+String couldNotSubmitApplication =
+    "Oops! Couldn't submit the application request.";
 
 String slotsAlreadyBooked =
-    "All the slots are full at this time. Please choose a different time or date.";
+    "Selected time-slot is not available. Please choose a different time or date.";
 
 String tokenAlreadyExists =
     "You already have an active booking for the same time.";
@@ -246,6 +248,7 @@ String tokenAlreadyExists =
 String bookingExpired = "This booking token has already expired!!";
 
 String tryAgainToBook = "Please try again or choose a different time or date.";
+String tryAgainLater = "Please try again later.";
 
 String appShareHeading =
     "Are you worried about your Safety while stepping out or fed up with waiting in long queues?";
