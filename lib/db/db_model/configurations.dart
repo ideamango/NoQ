@@ -1,3 +1,4 @@
+import 'package:noq/db/db_model/meta_form.dart';
 import 'package:noq/utils.dart';
 
 class Configurations {
@@ -14,7 +15,8 @@ class Configurations {
       this.searchRadius,
       this.bookingDataFromDays,
       this.bookingDataToDays,
-      this.formToEntityTypeMapping});
+      this.formToEntityTypeMapping,
+      this.formMetaData});
 
   List<String> entityTypes;
   List<String> messages;
@@ -29,6 +31,7 @@ class Configurations {
   int bookingDataFromDays;
   int bookingDataToDays;
   Map<String, String> formToEntityTypeMapping;
+  List<MetaForm> formMetaData;
 
   Map<String, dynamic> toJson() => {
         'entityTypes': entityTypes,
@@ -43,7 +46,8 @@ class Configurations {
         'searchRadius': searchRadius,
         'bookingDataFromDays': bookingDataFromDays,
         'bookingDataToDays': bookingDataToDays,
-        'formToEntityTypeMapping': convertFromMap(formToEntityTypeMapping)
+        'formToEntityTypeMapping': convertFromMap(formToEntityTypeMapping),
+        'formMetaData': metaFormsToJson(formMetaData)
       };
 
   Map<String, dynamic> convertFromMap(Map<String, String> dailyStats) {
@@ -54,6 +58,15 @@ class Configurations {
     Map<String, dynamic> map = Map<String, dynamic>();
     dailyStats.forEach((k, v) => map[k] = v);
     return map;
+  }
+
+  List<dynamic> metaFormsToJson(List<MetaForm> metaForms) {
+    List<dynamic> metaFormsJson = new List<dynamic>();
+    if (metaForms == null) return metaFormsJson;
+    for (MetaForm metaForm in metaForms) {
+      metaFormsJson.add(metaForm.toJson());
+    }
+    return metaFormsJson;
   }
 
   static Map<String, String> convertToMapFromJSON(Map<dynamic, dynamic> map) {
@@ -80,7 +93,19 @@ class Configurations {
         bookingDataFromDays: json['bookingDataFromDays'],
         bookingDataToDays: json['bookingDataToDays'],
         formToEntityTypeMapping:
-            convertToMapFromJSON(json['formToEntityTypeMapping']));
+            convertToMapFromJSON(json['formToEntityTypeMapping']),
+        formMetaData: convertToFormMetaData(json['formMetaData']));
+  }
+
+  static List<MetaForm> convertToFormMetaData(List<dynamic> json) {
+    List<MetaForm> metaForms = new List<MetaForm>();
+    if (json == null) return metaForms;
+
+    for (Map<String, dynamic> metaFormJson in json) {
+      MetaForm sl = MetaForm.fromJson(metaFormJson);
+      metaForms.add(sl);
+    }
+    return metaForms;
   }
 
   static List<String> convertToStringsArrayFromJson(List<dynamic> json) {
