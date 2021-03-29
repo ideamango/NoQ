@@ -122,8 +122,9 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
         return Theme(
           data: ThemeData.dark().copyWith(
             colorScheme: ColorScheme.light(
-              primary: Colors.cyan,
-            ),
+                primary: Colors.black,
+                primaryVariant: Colors.amber,
+                onSecondary: Colors.cyan),
             dialogBackgroundColor: Colors.white,
           ),
           child: child,
@@ -157,7 +158,7 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
           newField = Container(
             margin: EdgeInsets.fromLTRB(5, 5, 5, 5),
             decoration: BoxDecoration(
-                border: Border.all(color: containerColor),
+                border: Border.all(color: Colors.black),
                 color: Colors.grey[50],
                 shape: BoxShape.rectangle,
                 borderRadius: BorderRadius.all(Radius.circular(5.0))),
@@ -166,12 +167,11 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
                 children: <Widget>[
                   Column(children: <Widget>[
                     Container(
-                      //padding: EdgeInsets.only(left: 5),
-                      decoration: darkContainer,
+                      decoration: whiteContainer,
                       child: Theme(
                         data: ThemeData(
-                          unselectedWidgetColor: Colors.white,
-                          accentColor: Colors.grey[50],
+                          unselectedWidgetColor: Colors.grey[400],
+                          accentColor: Colors.black,
                         ),
                         child: CustomExpansionTile(
                           //key: PageStorageKey(this.widget.headerTitle),
@@ -181,12 +181,12 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
                               Text(
                                 field.label,
                                 style: TextStyle(
-                                    color: Colors.white, fontSize: 15),
+                                    color: Colors.black, fontSize: 15),
                               ),
                               SizedBox(width: 5),
                             ],
                           ),
-                          backgroundColor: Colors.blueGrey[500],
+                          backgroundColor: Colors.grey[300],
 
                           children: <Widget>[
                             new Container(
@@ -1458,35 +1458,37 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
                       flushbarStyle: FlushbarStyle.GROUNDED,
                       reverseAnimationCurve: Curves.decelerate,
                       forwardAnimationCurve: Curves.easeInToLinear,
-                      backgroundColor: headerBarColor,
+                      backgroundColor: Colors.cyan[200],
                       boxShadows: [
                         BoxShadow(
-                            color: primaryAccentColor,
+                            color: Colors.cyan,
                             offset: Offset(0.0, 2.0),
                             blurRadius: 3.0)
                       ],
-                      isDismissible: false,
+                      isDismissible: true,
                       //duration: Duration(seconds: 4),
                       icon: Icon(
                         Icons.cancel,
-                        color: Colors.blueGrey[50],
+                        color: Colors.blueGrey[90],
                       ),
                       showProgressIndicator: true,
-                      progressIndicatorBackgroundColor: Colors.blueGrey[800],
+                      progressIndicatorBackgroundColor: Colors.blueGrey[900],
+                      progressIndicatorValueColor:
+                          new AlwaysStoppedAnimation<Color>(Colors.cyan[500]),
                       routeBlur: 10.0,
                       titleText: Text(
                         "Are you sure you want to leave this page?",
                         style: TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 16.0,
-                            color: primaryAccentColor,
+                            color: Colors.blueGrey[700],
                             fontFamily: "ShadowsIntoLightTwo"),
                       ),
                       messageText: Text(
                         "The changes you made might be lost, if not saved.",
                         style: TextStyle(
-                            fontSize: 10.0,
-                            color: Colors.blueGrey[50],
+                            fontSize: 12.0,
+                            color: Colors.blueGrey[800],
                             fontFamily: "ShadowsIntoLightTwo"),
                       ),
 
@@ -1496,22 +1498,24 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
                             padding: EdgeInsets.all(0),
                             onPressed: () {
                               flushStatus = "Empty";
-                              flush.dismiss(true); // result = true
+                              flush.dismiss(false); // result = true
                             },
                             child: Text(
-                              "Yes",
-                              style: TextStyle(color: highlightColor),
+                              "No",
+                              style: TextStyle(
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.bold),
                             ),
                           ),
                           FlatButton(
                             padding: EdgeInsets.all(0),
                             onPressed: () {
                               flushStatus = "Empty";
-                              flush.dismiss(false); // result = true
+                              flush.dismiss(true); // result = true
                             },
                             child: Text(
-                              "No",
-                              style: TextStyle(color: highlightColor),
+                              "Yes",
+                              style: TextStyle(color: Colors.blueGrey[700]),
                             ),
                           ),
                         ],

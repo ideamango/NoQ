@@ -4,6 +4,7 @@ import 'package:noq/db/db_model/meta_form.dart';
 import 'package:noq/global_state.dart';
 import 'package:noq/pages/booking_application_form.dart';
 import 'package:noq/pages/covid_token_booking_form.dart';
+import 'package:noq/pages/entity_applications_list_page.dart';
 import 'package:noq/pages/manage_entity_list_page.dart';
 import 'package:noq/pages/overview_page.dart';
 import 'package:noq/pages/search_entity_page.dart';
@@ -42,7 +43,8 @@ class _BookingFormSelectionState extends State<BookingFormSelection> {
   int _radioValue1 = -1;
   int _selectedValue = -1;
   int index = 0;
-  dynamic fwdRoute;
+  dynamic dashBoardRoute;
+  dynamic reportsRoute;
   @override
   void initState() {
     super.initState();
@@ -63,7 +65,7 @@ class _BookingFormSelectionState extends State<BookingFormSelection> {
     setState(() {
       _selectedValue = value;
       if (!widget.isAdmin) {
-        fwdRoute = CreateFormFields(
+        dashBoardRoute = CreateFormFields(
           bookingFormId: forms[_selectedValue].id,
           metaEntity: widget.metaEntity,
           preferredSlotTime: widget.preferredSlotTime,
@@ -78,8 +80,14 @@ class _BookingFormSelectionState extends State<BookingFormSelection> {
         //   backRoute: SearchEntityPage(),
         // );
       } else {
+        reportsRoute = EntityApplicationListPage(
+          bookingFormId: forms[_selectedValue].id,
+          entityId: widget.metaEntity.entityId,
+          metaEntity: widget.metaEntity,
+          bookingFormName: forms[_selectedValue].name,
+        );
         //If admin then show overview page as per selected form id
-        fwdRoute = OverviewPage(
+        dashBoardRoute = OverviewPage(
           bookingFormId: forms[_selectedValue].id,
           entityId: widget.metaEntity.entityId,
           metaEntity: widget.metaEntity,
@@ -220,14 +228,45 @@ class _BookingFormSelectionState extends State<BookingFormSelection> {
                       ),
                     ),
                     Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
-                        FlatButton(
-                            child: Icon(
-                              Icons.arrow_forward,
+                        if (widget.isAdmin)
+                          FlatButton(
+                              minWidth: MediaQuery.of(context).size.width * .35,
+                              child: Text("Reports"),
                               color: Colors.white,
-                            ),
-                            color: btnColor,
+                              splashColor: highlightColor.withOpacity(.8),
+                              shape: RoundedRectangleBorder(
+                                  side: BorderSide(color: Colors.blueGrey[500]),
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(5.0))),
+                              onPressed: () {
+                                if (_selectedValue == -1) {
+                                  print("Nothing selected");
+                                  Utils.showMyFlushbar(
+                                      context,
+                                      Icons.error,
+                                      Duration(seconds: 5),
+                                      "No Form Selected!!",
+                                      "Please select something..");
+                                } else {
+                                  if (reportsRoute != null)
+                                    Navigator.of(context).push(
+                                        PageAnimation.createRoute(
+                                            reportsRoute));
+                                }
+                              }),
+                        FlatButton(
+                            minWidth: MediaQuery.of(context).size.width * .35,
+                            child: (widget.isAdmin)
+                                ? Text("Dashboard")
+                                : Icon(Icons.arrow_forward_ios),
+                            color: Colors.transparent,
+                            splashColor: Colors.blueGrey[300],
+                            shape: RoundedRectangleBorder(
+                                side: BorderSide(color: Colors.blueGrey[500]),
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(5.0))),
                             onPressed: () {
                               if (_selectedValue == -1) {
                                 print("Nothing selected");
@@ -238,9 +277,10 @@ class _BookingFormSelectionState extends State<BookingFormSelection> {
                                     "No Form Selected!!",
                                     "Please select something..");
                               } else {
-                                if (fwdRoute != null)
+                                if (dashBoardRoute != null)
                                   Navigator.of(context).push(
-                                      PageAnimation.createRoute(fwdRoute));
+                                      PageAnimation.createRoute(
+                                          dashBoardRoute));
                               }
                             }),
                       ],

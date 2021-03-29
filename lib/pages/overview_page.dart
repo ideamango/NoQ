@@ -5,6 +5,7 @@ import 'package:noq/db/db_model/meta_entity.dart';
 import 'package:noq/enum/application_status.dart';
 import 'package:noq/global_state.dart';
 import 'package:noq/pages/application_list_covid.dart';
+import 'package:noq/pages/booking_form_selection_page.dart';
 import 'package:noq/pages/manage_entity_list_page.dart';
 import 'package:noq/pages/show_application_details.dart';
 import 'package:noq/pages/applications_list.dart';
@@ -112,7 +113,13 @@ class _OverviewPageState extends State<OverviewPage> {
         theme: ThemeData.light().copyWith(),
         home: Scaffold(
           appBar: CustomAppBarWithBackButton(
-            backRoute: ManageEntityListPage(),
+            backRoute: BookingFormSelection(
+              forms: widget.metaEntity.forms,
+              metaEntity: widget.metaEntity,
+              preferredSlotTime: null,
+              isAdmin: true,
+              backRoute: ManageEntityListPage(),
+            ),
             titleTxt: pageTitle,
           ),
           body: Center(
