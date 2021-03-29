@@ -58,7 +58,9 @@ class Configurations {
 
   static Map<String, String> convertToMapFromJSON(Map<dynamic, dynamic> map) {
     Map<String, String> roles = new Map<String, String>();
-    map.forEach((k, v) => roles[k] = v);
+    if (map != null) {
+      map.forEach((k, v) => roles[k] = v);
+    }
     return roles;
   }
 
@@ -78,7 +80,7 @@ class Configurations {
         bookingDataFromDays: json['bookingDataFromDays'],
         bookingDataToDays: json['bookingDataToDays'],
         formToEntityTypeMapping:
-            convertToMapFromJSON(json['bookingDataToDays']));
+            convertToMapFromJSON(json['formToEntityTypeMapping']));
   }
 
   static List<String> convertToStringsArrayFromJson(List<dynamic> json) {
