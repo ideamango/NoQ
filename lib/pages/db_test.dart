@@ -28,7 +28,7 @@ import 'package:noq/tuple.dart';
 import 'package:noq/utils.dart';
 
 class DBTest {
-  String TEST_COVID_BOOKING_FORM_ID = COVID_BOOKING_FORM_ID;
+  String TEST_COVID_BOOKING_FORM_ID = COVID_VACCINATION_BOOKING_FORM_ID;
 
   String Covid_Vacination_center = "Selenium-Covid-Vacination-Center";
   String Multi_Forms_School_ID = "Selenium-School_Multiple_Forms";

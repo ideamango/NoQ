@@ -13,7 +13,8 @@ class Configurations {
       this.phCountryCode,
       this.searchRadius,
       this.bookingDataFromDays,
-      this.bookingDataToDays});
+      this.bookingDataToDays,
+      this.formToEntityTypeMapping});
 
   List<String> entityTypes;
   List<String> messages;
@@ -27,6 +28,7 @@ class Configurations {
   int searchRadius;
   int bookingDataFromDays;
   int bookingDataToDays;
+  Map<String, String> formToEntityTypeMapping;
 
   Map<String, dynamic> toJson() => {
         'entityTypes': entityTypes,
@@ -40,25 +42,43 @@ class Configurations {
         'phCountryCode': phCountryCode,
         'searchRadius': searchRadius,
         'bookingDataFromDays': bookingDataFromDays,
-        'bookingDataToDays': bookingDataToDays
+        'bookingDataToDays': bookingDataToDays,
+        'formToEntityTypeMapping': convertFromMap(formToEntityTypeMapping)
       };
+
+  Map<String, dynamic> convertFromMap(Map<String, String> dailyStats) {
+    if (dailyStats == null) {
+      return null;
+    }
+
+    Map<String, dynamic> map = Map<String, dynamic>();
+    dailyStats.forEach((k, v) => map[k] = v);
+    return map;
+  }
+
+  static Map<String, String> convertToMapFromJSON(Map<dynamic, dynamic> map) {
+    Map<String, String> roles = new Map<String, String>();
+    map.forEach((k, v) => roles[k] = v);
+    return roles;
+  }
 
   static Configurations fromJson(Map<String, dynamic> json) {
     if (json == null) return null;
     return new Configurations(
-      entityTypes: convertToStringsArrayFromJson(json['entityTypes']),
-      messages: convertToStringsArrayFromJson(json['messages']),
-      keyMessage: json['keyMessage'],
-      contactEmail: json['contactEmail'],
-      contactPhone: json['contactPhone'],
-      whatsappPhone: json['whatsappPhone'],
-      supportReasons: convertToStringsArrayFromJson(json['supportReasons']),
-      enableDonation: json['enableDonation'],
-      phCountryCode: json['phCountryCode'],
-      searchRadius: json['searchRadius'],
-      bookingDataFromDays: json['bookingDataFromDays'],
-      bookingDataToDays: json['bookingDataToDays']
-    );
+        entityTypes: convertToStringsArrayFromJson(json['entityTypes']),
+        messages: convertToStringsArrayFromJson(json['messages']),
+        keyMessage: json['keyMessage'],
+        contactEmail: json['contactEmail'],
+        contactPhone: json['contactPhone'],
+        whatsappPhone: json['whatsappPhone'],
+        supportReasons: convertToStringsArrayFromJson(json['supportReasons']),
+        enableDonation: json['enableDonation'],
+        phCountryCode: json['phCountryCode'],
+        searchRadius: json['searchRadius'],
+        bookingDataFromDays: json['bookingDataFromDays'],
+        bookingDataToDays: json['bookingDataToDays'],
+        formToEntityTypeMapping:
+            convertToMapFromJSON(json['bookingDataToDays']));
   }
 
   static List<String> convertToStringsArrayFromJson(List<dynamic> json) {
