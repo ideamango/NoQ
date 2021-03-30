@@ -55,12 +55,18 @@ class _EntityApplicationListPageState extends State<EntityApplicationListPage> {
   SelectedView selectedView = SelectedView.list;
   BookingApplicationsOverview _bookingApplicationsOverview;
   Map<String, double> pieChartDataMap = new Map<String, double>();
+  String dailyStatsKey;
   @override
   void initState() {
     super.initState();
     getGlobalState().whenComplete(() {
       dateForShowingList = DateTime.now();
       setShowDate(DateTime.now(), DateDisplayFormat.date);
+      dailyStatsKey = DateTime.now().year.toString() +
+          "~" +
+          DateTime.now().month.toString() +
+          "~" +
+          DateTime.now().day.toString();
 
       _gs
           .getApplicationService()
@@ -69,19 +75,30 @@ class _EntityApplicationListPageState extends State<EntityApplicationListPage> {
           .then((value) {
         _bookingApplicationsOverview = value;
 
-        pieChartDataMap["New"] =
-            _bookingApplicationsOverview.numberOfNew.toDouble();
+        //Before accessing check if there are any request for today.
+        if (_bookingApplicationsOverview.dailyStats
+            .containsKey(dailyStatsKey)) {
+          pieChartDataMap["New"] = _bookingApplicationsOverview
+              .dailyStats[dailyStatsKey].numberOfNew
+              .toDouble();
 
-        pieChartDataMap["On-Hold"] =
-            _bookingApplicationsOverview.numberOfPutOnHold.toDouble();
-        pieChartDataMap["Rejected"] =
-            _bookingApplicationsOverview.numberOfRejected.toDouble();
+          pieChartDataMap["On-Hold"] = _bookingApplicationsOverview
+              .dailyStats[dailyStatsKey].numberOfPutOnHold
+              .toDouble();
+          pieChartDataMap["Rejected"] = _bookingApplicationsOverview
+              .dailyStats[dailyStatsKey].numberOfRejected
+              .toDouble();
 
-        pieChartDataMap["Approved"] =
-            _bookingApplicationsOverview.numberOfApproved.toDouble();
+          pieChartDataMap["Approved"] = _bookingApplicationsOverview
+              .dailyStats[dailyStatsKey].numberOfApproved
+              .toDouble();
 
-        pieChartDataMap["Completed"] =
-            _bookingApplicationsOverview.numberOfCompleted.toDouble();
+          pieChartDataMap["Completed"] = _bookingApplicationsOverview
+              .dailyStats[dailyStatsKey].numberOfCompleted
+              .toDouble();
+        } else {
+          print("No Data");
+        }
 
         if (this.mounted) {
           setState(() {
@@ -248,7 +265,43 @@ class _EntityApplicationListPageState extends State<EntityApplicationListPage> {
     return list.map(buildItem).toList();
   }
 
-  refreshDataView() {}
+  refreshDataView(DateTime date, DateDisplayFormat format) {
+    // String formattedDate;
+    // switch (format) {
+    //   case DateDisplayFormat.date:
+    //     formattedDate = DateFormat(dateDisplayFormat).format(date);
+    //     break;
+    //   case DateDisplayFormat.month:
+    //     formattedDate = DateFormat.MMMM().format(date).substring(0, 3) +
+    //         ", " +
+    //         date.year.toString();
+    //     break;
+    //   case DateDisplayFormat.year:
+    //     formattedDate = date.year.toString();
+    //     break;
+    //   default:
+    //     break;
+    // }
+    _gs
+        .getApplicationService()
+        .getApplicationsOverview(
+            widget.bookingFormId, widget.entityId, date.year)
+        .then((value) {
+      _bookingApplicationsOverview = value;
+
+      pieChartDataMap["New"] =
+          _bookingApplicationsOverview.numberOfNew.toDouble();
+      pieChartDataMap["On-Hold"] =
+          _bookingApplicationsOverview.numberOfPutOnHold.toDouble();
+      pieChartDataMap["Rejected"] =
+          _bookingApplicationsOverview.numberOfRejected.toDouble();
+      pieChartDataMap["Approved"] =
+          _bookingApplicationsOverview.numberOfApproved.toDouble();
+      pieChartDataMap["Completed"] =
+          _bookingApplicationsOverview.numberOfCompleted.toDouble();
+      setState(() {});
+    });
+  }
 
   buildChildItem(UserToken token) {
     return Container(
@@ -727,6 +780,8 @@ class _EntityApplicationListPageState extends State<EntityApplicationListPage> {
                                   if (value != null) {
                                     print(value);
                                     setShowDate(value, DateDisplayFormat.year);
+                                    refreshDataView(
+                                        value, DateDisplayFormat.year);
                                   }
                                 });
                               },
@@ -740,7 +795,16 @@ class _EntityApplicationListPageState extends State<EntityApplicationListPage> {
                   Container(
                     height: MediaQuery.of(context).size.height * .7,
                     width: MediaQuery.of(context).size.width * .95,
-                    child: EntityPieChart(pieChartDataMap: pieChartDataMap),
+                    child: pieChartDataMap != null
+                        ? ((pieChartDataMap.length == 0)
+                            ? Text("No Data")
+                            : EntityPieChart(pieChartDataMap: pieChartDataMap))
+                        : Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text("No Data"),
+                            ],
+                          ),
                   ),
                   //(!Utils.isNullOrEmpty(list)) ? showListOfData : _emptyPage(),
                   // (!Utils.isNullOrEmpty(list))

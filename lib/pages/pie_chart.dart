@@ -2,8 +2,6 @@ import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:noq/global_state.dart';
-import 'package:noq/services/circular_progress.dart';
 import 'package:pie_chart/pie_chart.dart';
 
 // Sets a platform override for desktop to avoid exceptions. See
@@ -49,43 +47,6 @@ class _EntityPieChartState extends State<EntityPieChart> {
   LegendShape _legendShape = LegendShape.Rectangle;
   LegendPosition _legendPosition = LegendPosition.bottom;
   int key = 0;
-  GlobalState _gs;
-  bool _initCompleted = false;
-
-  void initState() {
-    super.initState();
-    getGlobalState().whenComplete(() {
-      _initCompleted = false;
-    });
-  }
-
-  Future<void> getGlobalState() async {
-    _gs = await GlobalState.getGlobalState();
-  }
-
-  refreshData() {
-    // _gs
-    //     .getApplicationService()
-    //     .getApplicationsOverview(
-    //         widget.bookingFormId, widget.entityId, DateTime.now().year)
-    //     .then((value) {
-    //   _bookingApplicationsOverview = value;
-
-    //   pieChartDataMap["New"] =
-    //       _bookingApplicationsOverview.numberOfNew.toDouble();
-
-    //   pieChartDataMap["On-Hold"] =
-    //       _bookingApplicationsOverview.numberOfPutOnHold.toDouble();
-    //   pieChartDataMap["Rejected"] =
-    //       _bookingApplicationsOverview.numberOfRejected.toDouble();
-
-    //   pieChartDataMap["Approved"] =
-    //       _bookingApplicationsOverview.numberOfApproved.toDouble();
-
-    //   pieChartDataMap["Completed"] =
-    //       _bookingApplicationsOverview.numberOfCompleted.toDouble();
-    // });
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -375,42 +336,40 @@ class _EntityPieChartState extends State<EntityPieChart> {
       //     ),
       //   ],
       // ),
-      body: _initCompleted == true
-          ? LayoutBuilder(
-              builder: (_, constraints) {
-                if (constraints.maxWidth >= 600) {
-                  return Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Flexible(
-                        flex: 2,
-                        fit: FlexFit.tight,
-                        child: chart,
-                      ),
-                      Flexible(
-                        flex: 1,
-                        child: settings,
-                      )
-                    ],
-                  );
-                } else {
-                  return SingleChildScrollView(
-                    child: Column(
-                      children: [
-                        Container(
-                          child: chart,
-                          margin: EdgeInsets.symmetric(
-                            vertical: 32,
-                          ),
-                        ),
-                        // settings,
-                      ],
+      body: LayoutBuilder(
+        builder: (_, constraints) {
+          if (constraints.maxWidth >= 600) {
+            return Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Flexible(
+                  flex: 2,
+                  fit: FlexFit.tight,
+                  child: chart,
+                ),
+                Flexible(
+                  flex: 1,
+                  child: settings,
+                )
+              ],
+            );
+          } else {
+            return SingleChildScrollView(
+              child: Column(
+                children: [
+                  Container(
+                    child: chart,
+                    margin: EdgeInsets.symmetric(
+                      vertical: 32,
                     ),
-                  );
-                }
-              },
-            )
-          : showCircularProgress,
+                  ),
+                  // settings,
+                ],
+              ),
+            );
+          }
+        },
+      ),
     );
   }
 }
