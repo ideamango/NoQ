@@ -545,7 +545,8 @@ class _EntityApplicationListPageState extends State<EntityApplicationListPage> {
                 padding: EdgeInsets.fromLTRB(15, 15, 15, 15),
                 color: Colors.cyan,
                 child: Text("Year ${selectedYear.year.toString()}",
-                    style: TextStyle(color: Colors.white)),
+                    style: TextStyle(
+                        color: Colors.white, fontWeight: FontWeight.normal)),
               ),
               content: Container(
                   child: Row(
