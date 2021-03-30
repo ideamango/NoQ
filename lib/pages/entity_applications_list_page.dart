@@ -684,6 +684,7 @@ class _EntityApplicationListPageState extends State<EntityApplicationListPage> {
                                 style: TextStyle(fontSize: 11),
                               ),
                               onPressed: () {
+                                //Show data for a month
                                 showMonthPicker(
                                         context: context,
                                         firstDate: DateTime(

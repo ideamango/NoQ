@@ -192,8 +192,7 @@ class EntityRowState extends State<EntityRow> {
                                 ? _metaEntity.name
                                 : "Untitled",
                             overflow: TextOverflow.ellipsis,
-                            style: TextStyle(
-                                color: Colors.blueGrey[700], fontSize: 17),
+                            style: TextStyle(color: Colors.black, fontSize: 17),
                           ),
                           Text(
                             Utils.getEntityTypeDisplayName(_metaEntity.type),
@@ -240,7 +239,7 @@ class EntityRowState extends State<EntityRow> {
                                 alignment: Alignment.center,
                                 highlightColor: Colors.orange[300],
                                 icon: Icon(Icons.share),
-                                color: primaryDarkColor,
+                                color: Colors.black,
                                 iconSize: 25,
                                 onPressed: () {
                                   share();
@@ -263,12 +262,12 @@ class EntityRowState extends State<EntityRow> {
                     color: Colors.white,
                     textColor: Colors.white,
                     shape: RoundedRectangleBorder(
-                        side: BorderSide(color: Colors.blueGrey[500]),
+                        side: BorderSide(color: Colors.blueGrey[300]),
                         borderRadius: BorderRadius.all(Radius.circular(5.0))),
                     splashColor: highlightColor,
                     child: Text(
                       'Manage Details',
-                      style: TextStyle(color: primaryDarkColor, fontSize: 13),
+                      style: TextStyle(color: whiteBtnTextColor, fontSize: 13),
                     ),
                     // Text(
                     //   (_metaEntity.name != null)
@@ -293,11 +292,11 @@ class EntityRowState extends State<EntityRow> {
                     color: Colors.white,
                     splashColor: highlightColor.withOpacity(.8),
                     shape: RoundedRectangleBorder(
-                        side: BorderSide(color: Colors.blueGrey[500]),
+                        side: BorderSide(color: Colors.blueGrey[300]),
                         borderRadius: BorderRadius.all(Radius.circular(5.0))),
                     child: Text(
                       'Child Places',
-                      style: TextStyle(color: primaryDarkColor, fontSize: 13),
+                      style: TextStyle(color: whiteBtnTextColor, fontSize: 13),
                     ),
                     onPressed: () {
                       print("To child list page");
@@ -318,7 +317,7 @@ class EntityRowState extends State<EntityRow> {
                       color: Colors.white,
                       splashColor: highlightColor.withOpacity(.8),
                       shape: RoundedRectangleBorder(
-                          side: BorderSide(color: Colors.blueGrey[500]),
+                          side: BorderSide(color: Colors.blueGrey[300]),
                           borderRadius: BorderRadius.all(Radius.circular(5.0))),
                       child: Align(
                         alignment: Alignment.center,
@@ -326,7 +325,7 @@ class EntityRowState extends State<EntityRow> {
                           'Booking Applications',
                           textAlign: TextAlign.center,
                           style:
-                              TextStyle(color: primaryDarkColor, fontSize: 13),
+                              TextStyle(color: whiteBtnTextColor, fontSize: 13),
                         ),
                       ),
                       onPressed: () {
@@ -392,11 +391,12 @@ class EntityRowState extends State<EntityRow> {
                       color: Colors.white,
                       splashColor: highlightColor.withOpacity(.8),
                       shape: RoundedRectangleBorder(
-                          side: BorderSide(color: Colors.blueGrey[500]),
+                          side: BorderSide(color: Colors.blueGrey[300]),
                           borderRadius: BorderRadius.all(Radius.circular(5.0))),
                       child: Text(
                         'Booking Tokens',
-                        style: TextStyle(color: primaryDarkColor, fontSize: 13),
+                        style:
+                            TextStyle(color: whiteBtnTextColor, fontSize: 13),
                       ),
                       onPressed: () {
                         print("To child list page");
@@ -420,12 +420,12 @@ class EntityRowState extends State<EntityRow> {
                     color: Colors.white,
                     textColor: Colors.white,
                     shape: RoundedRectangleBorder(
-                        side: BorderSide(color: Colors.blueGrey[500]),
+                        side: BorderSide(color: Colors.blueGrey[300]),
                         borderRadius: BorderRadius.all(Radius.circular(5.0))),
                     splashColor: highlightColor,
                     child: Text(
                       'Manage Forms',
-                      style: TextStyle(color: primaryDarkColor, fontSize: 13),
+                      style: TextStyle(color: whiteBtnTextColor, fontSize: 13),
                     ),
                     // Text(
                     //   (_metaEntity.name != null)

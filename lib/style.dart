@@ -224,6 +224,7 @@ final Color borderColor = Colors.blueGrey[800];
 final Color primaryAccentColor = Colors.cyanAccent;
 final Color primaryDoneColor = Colors.green[300];
 final Color primaryDarkColor = Colors.cyan[800];
+final Color whiteBtnTextColor = Colors.blueGrey[700];
 
 final Color gradientDarkColor = Colors.blueGrey[600];
 
