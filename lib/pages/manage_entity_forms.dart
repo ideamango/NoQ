@@ -12,6 +12,7 @@ import 'package:noq/pages/overview_page.dart';
 import 'package:noq/pages/search_entity_page.dart';
 import 'package:noq/services/circular_progress.dart';
 import 'package:noq/services/create_form_fields.dart';
+import 'package:noq/services/show_form.dart';
 import 'package:noq/style.dart';
 import 'package:noq/utils.dart';
 import 'package:noq/widget/appbar.dart';
@@ -40,6 +41,7 @@ class ManageEntityForms extends StatefulWidget {
 class _ManageEntityFormsState extends State<ManageEntityForms> {
   MetaEntity metaEntity;
   List<MetaForm> forms = List<MetaForm>();
+  List<MetaForm> selectedForms = List<MetaForm>();
   GlobalState _gs;
   bool initCompleted = false;
   int _radioValue1 = -1;
@@ -175,126 +177,268 @@ class _ManageEntityFormsState extends State<ManageEntityForms> {
                   mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
-                    Text(
-                      "Select the purpose for submitting application request",
-                      style: TextStyle(
-                        color: Colors.blueGrey[700],
-                        fontFamily: 'RalewayRegular',
-                        letterSpacing: 0.5,
-                        fontSize: 12.0,
-                        //height: 2,
+                    RichText(
+                      text: TextSpan(
+                        style: TextStyle(
+                          color: Colors.blueGrey[700],
+                          fontFamily: 'RalewayRegular',
+                          letterSpacing: 0.5,
+                          fontSize: 12.0,
+                        ),
+                        children: <TextSpan>[
+                          TextSpan(text: "Add from these "),
+                          TextSpan(
+                            text: 'Sample Application Forms',
+                            style: new TextStyle(
+                                color: Colors.blueGrey[900],
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                                decorationColor: primaryDarkColor),
+                          ),
+                          TextSpan(
+                              text:
+                                  " which are required to request booking of token and submitting applications by the user."),
+                        ],
                       ),
                     ),
                     Expanded(
-                      child: Container(
-                        padding: EdgeInsets.only(top: 10),
-                        child: ListView.builder(
-                            itemCount: checkBoxListTileModel.length,
-                            itemBuilder: (BuildContext context, int index) {
-                              return new Card(
-                                child: new Container(
-                                  padding: new EdgeInsets.all(10.0),
-                                  child: Column(
-                                    children: <Widget>[
-                                      new CheckboxListTile(
-                                          controlAffinity:
-                                              ListTileControlAffinity.leading,
-                                          activeColor: primaryIcon,
-                                          checkColor: primaryAccentColor,
-                                          dense: true,
-                                          //font change
-                                          title: new Text(
+                      child: ListView.builder(
+                          // scrollDirection: Axis.horizontal,
+                          itemCount: checkBoxListTileModel.length,
+                          itemBuilder: (BuildContext context, int index) {
+                            return new Card(
+                              elevation: 2,
+                              color: Colors.cyan[100],
+                              margin: new EdgeInsets.fromLTRB(0, 5, 0, 5),
+                              child: Column(
+                                children: <Widget>[
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Row(
+                                        children: [
+                                          IconButton(
+                                            icon: Icon(
+                                              Icons.add_circle,
+                                              color: Colors.cyan[700],
+                                              size: 30,
+                                            ),
+                                            onPressed: () {
+                                              checkBoxListTileModel[index]
+                                                  .isCheck = true;
+
+                                              selectedForms.add(
+                                                  checkBoxListTileModel[index]
+                                                      .form);
+
+                                              setState(() {});
+                                            },
+                                          ),
+                                          Text(
                                             checkBoxListTileModel[index]
-                                                .formName,
+                                                .form
+                                                .name,
                                             style: TextStyle(
-                                                fontSize: 12,
+                                                fontSize: 13,
                                                 fontWeight: FontWeight.w400,
                                                 letterSpacing: 0.5),
                                           ),
-                                          value: checkBoxListTileModel[index]
-                                              .isCheck,
-                                          secondary: (Utils.isNotNullOrEmpty(
-                                                  checkBoxListTileModel[index]
-                                                      .formDesc)
-                                              ? Container(
-                                                  height: 50,
-                                                  width: 50,
-                                                  child: Text(
-                                                    checkBoxListTileModel[index]
-                                                        .formDesc,
-                                                  ),
-                                                )
-                                              : SizedBox()),
-                                          onChanged: (bool val) {
-                                            setState(() {
-                                              checkBoxListTileModel[index]
-                                                  .isCheck = val;
-                                            });
-                                          })
+                                        ],
+                                      ),
+                                      IconButton(
+                                        icon: Icon(
+                                          Icons.preview,
+                                          color: primaryIcon,
+                                        ),
+                                        onPressed: () {
+                                          Navigator.of(context).push(
+                                              PageAnimation.createRoute(
+                                                  EntityForm(
+                                            bookingFormId:
+                                                checkBoxListTileModel[index]
+                                                    .form
+                                                    .id,
+                                            metaEntity: widget.metaEntity,
+                                            preferredSlotTime:
+                                                widget.preferredSlotTime,
+                                            backRoute: ManageEntityForms(
+                                              isAdmin: widget.isAdmin,
+                                              metaEntity: widget.metaEntity,
+                                              preferredSlotTime:
+                                                  widget.preferredSlotTime,
+                                              backRoute: widget.backRoute,
+                                            ),
+                                          )));
+                                        },
+                                      ),
                                     ],
                                   ),
-                                ),
-                              );
-                            }),
+                                ],
+                              ),
+                            );
+                          }),
+                    ),
+                    Container(
+                      // color: Colors.blue,
+                      decoration: BoxDecoration(
+                          color: Colors.cyan[100],
+                          border: Border.all(color: Colors.grey[400]),
+                          // border: Border(
+                          //   top: BorderSide(width: 3.0, color: Colors.amber),
+                          //   bottom:
+                          //       BorderSide(width: 16.0, color: Colors.amber),
+                          // ),
+                          borderRadius: BorderRadius.only(
+                              topLeft: Radius.circular(4.0),
+                              topRight: Radius.circular(4.0))),
+                      width: MediaQuery.of(context).size.width * .92,
+                      padding: EdgeInsets.all(8),
+                      child: RichText(
+                        text: TextSpan(
+                          style: TextStyle(
+                            color: Colors.blueGrey[700],
+                            fontFamily: 'RalewayRegular',
+                            letterSpacing: 0.5,
+                            fontSize: 12.0,
+                          ),
+                          children: <TextSpan>[
+                            TextSpan(
+                              text: 'Application forms added',
+                              style: new TextStyle(
+                                  color: Colors.blueGrey[900],
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.bold,
+                                  decorationColor: primaryDarkColor),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        if (widget.isAdmin)
-                          FlatButton(
-                              minWidth: MediaQuery.of(context).size.width * .35,
-                              child: Text("Reports"),
-                              color: Colors.white,
-                              splashColor: highlightColor.withOpacity(.8),
-                              shape: RoundedRectangleBorder(
-                                  side: BorderSide(color: Colors.blueGrey[500]),
-                                  borderRadius:
-                                      BorderRadius.all(Radius.circular(5.0))),
-                              onPressed: () {
-                                if (_selectedValue == -1) {
-                                  print("Nothing selected");
-                                  Utils.showMyFlushbar(
-                                      context,
-                                      Icons.error,
-                                      Duration(seconds: 5),
-                                      "No Form Selected!!",
-                                      "Please select something..");
-                                } else {
-                                  if (reportsRoute != null)
-                                    Navigator.of(context).push(
-                                        PageAnimation.createRoute(
-                                            reportsRoute));
-                                }
-                              }),
-                        FlatButton(
-                            minWidth: MediaQuery.of(context).size.width * .35,
-                            child: (widget.isAdmin)
-                                ? Text("Dashboard")
-                                : Icon(Icons.arrow_forward_ios),
-                            color: Colors.transparent,
-                            splashColor: Colors.blueGrey[300],
-                            shape: RoundedRectangleBorder(
-                                side: BorderSide(color: Colors.blueGrey[500]),
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(5.0))),
-                            onPressed: () {
-                              if (_selectedValue == -1) {
-                                print("Nothing selected");
-                                Utils.showMyFlushbar(
-                                    context,
-                                    Icons.error,
-                                    Duration(seconds: 5),
-                                    "No Form Selected!!",
-                                    "Please select something..");
-                              } else {
-                                if (dashBoardRoute != null)
-                                  Navigator.of(context).push(
-                                      PageAnimation.createRoute(
-                                          dashBoardRoute));
-                              }
-                            }),
-                      ],
+                    Expanded(
+                        child: Container(
+                      width: MediaQuery.of(context).size.width * .92,
+                      decoration: BoxDecoration(
+                          border: Border.all(color: Colors.grey[400]),
+                          color: Colors.white,
+                          shape: BoxShape.rectangle,
+                          borderRadius: BorderRadius.all(Radius.circular(2.0))),
+                      child: (!Utils.isNullOrEmpty(selectedForms))
+                          ? ListView.builder(
+
+                              // scrollDirection: Axis.horizontal,
+                              itemCount: selectedForms.length,
+                              itemBuilder: (BuildContext context, int index) {
+                                return new Container(
+                                  padding: EdgeInsets.zero,
+                                  margin: EdgeInsets.zero,
+                                  child: Column(
+                                    children: <Widget>[
+                                      Container(
+                                        padding:
+                                            EdgeInsets.fromLTRB(0, 0, 0, 0),
+                                        margin: EdgeInsets.zero,
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Row(
+                                              children: [
+                                                IconButton(
+                                                  icon: Icon(
+                                                    Icons.remove_circle,
+                                                    color: Colors.cyan[700],
+                                                    size: 30,
+                                                  ),
+                                                  onPressed: () {
+                                                    selectedForms
+                                                        .removeAt(index);
+                                                    print(selectedForms.length);
+                                                    setState(() {});
+                                                  },
+                                                ),
+                                                Text(
+                                                  selectedForms[index].name,
+                                                  style: TextStyle(
+                                                      fontSize: 13,
+                                                      fontWeight:
+                                                          FontWeight.w400,
+                                                      letterSpacing: 0.5),
+                                                ),
+                                              ],
+                                            ),
+                                            IconButton(
+                                              icon: Icon(
+                                                Icons.preview,
+                                                color: primaryIcon,
+                                              ),
+                                              onPressed: () {
+//Open the form in edit mode
+
+                                                Navigator.of(context).push(
+                                                    PageAnimation.createRoute(
+                                                        EntityForm(
+                                                  bookingFormId:
+                                                      selectedForms[index].id,
+                                                  metaEntity: widget.metaEntity,
+                                                  preferredSlotTime:
+                                                      widget.preferredSlotTime,
+                                                  backRoute: ManageEntityForms(
+                                                    isAdmin: widget.isAdmin,
+                                                    metaEntity:
+                                                        widget.metaEntity,
+                                                    preferredSlotTime: widget
+                                                        .preferredSlotTime,
+                                                    backRoute: widget.backRoute,
+                                                  ),
+                                                )));
+                                              },
+                                            ),
+                                          ],
+                                        ),
+                                      )
+                                    ],
+                                  ),
+                                );
+                              })
+                          : Container(
+                              width: MediaQuery.of(context).size.width * .9,
+                              alignment: Alignment.center,
+                              child: Text(
+                                "No forms selected yet!!",
+                                style: TextStyle(
+                                    color: Colors.black,
+                                    fontSize: 14,
+                                    fontFamily: 'RalewayRegular',
+                                    fontWeight: FontWeight.bold),
+                              )),
+                    )),
+                    Container(
+                      width: MediaQuery.of(context).size.width * .92,
+                      child: RaisedButton(
+                          color: btnColor,
+                          elevation: 5,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                "Save Changes ",
+                                style: TextStyle(fontSize: 17),
+                              ),
+                              SizedBox(
+                                width: 5,
+                              ),
+                              Icon(Icons.save)
+                            ],
+                          ),
+                          splashColor: highlightColor,
+                          shape: RoundedRectangleBorder(
+                              side: BorderSide(color: Colors.blueGrey[500]),
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(5.0))),
+                          onPressed: () {
+                            //Save Entity with updated changes.
+                          }),
                     )
                   ],
                 ),
@@ -352,17 +496,16 @@ class _ManageEntityFormsState extends State<ManageEntityForms> {
 }
 
 class CheckBoxListTileModel {
-  String formName;
-  String formDesc;
+  MetaForm form;
+
   bool isCheck;
 
-  CheckBoxListTileModel({this.formName, this.formDesc, this.isCheck});
+  CheckBoxListTileModel({this.form, this.isCheck});
 
   static List<CheckBoxListTileModel> getForms(List<MetaForm> forms) {
     List<CheckBoxListTileModel> list = List<CheckBoxListTileModel>();
     for (var form in forms) {
-      list.add(CheckBoxListTileModel(
-          formName: form.name, formDesc: form.description, isCheck: false));
+      list.add(CheckBoxListTileModel(form: form, isCheck: false));
     }
     return list;
   }

@@ -198,7 +198,7 @@ class _BookingFormSelectionState extends State<BookingFormSelection> {
                                                 color: (_selectedValue == index)
                                                     ? Colors.blueGrey[900]
                                                     : Colors.blueGrey[600],
-                                                fontWeight: FontWeight.w800,
+                                                fontWeight: FontWeight.w600,
                                                 fontFamily: 'RalewayRegular',
                                                 letterSpacing: 0.5,
                                                 fontSize: 14.0,
