@@ -235,8 +235,9 @@ class _ContactUsPageState extends State<ContactUsPage> {
                         MediaQuery.of(context).size.width * .04,
                         MediaQuery.of(context).size.width * .05,
                         MediaQuery.of(context).size.width * .04),
-                    child: ListView(
-                      padding: EdgeInsets.zero,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      //  padding: EdgeInsets.zero,
                       children: <Widget>[
                         Text(
                           'Your Feedback is Appreciated',
@@ -341,6 +342,8 @@ class _ContactUsPageState extends State<ContactUsPage> {
                             ],
                           ),
                         ),
+                        verticalSpacer,
+                        verticalSpacer,
                         verticalSpacer,
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,

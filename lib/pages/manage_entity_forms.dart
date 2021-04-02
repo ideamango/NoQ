@@ -1,6 +1,7 @@
 import 'package:enum_to_string/enum_to_string.dart';
 import 'package:flutter/material.dart';
 import 'package:noq/db/db_model/configurations.dart';
+import 'package:noq/db/db_model/entity.dart';
 import 'package:noq/db/db_model/meta_entity.dart';
 import 'package:noq/db/db_model/meta_form.dart';
 import 'package:noq/global_state.dart';
@@ -10,6 +11,7 @@ import 'package:noq/pages/entity_applications_list_page.dart';
 import 'package:noq/pages/manage_entity_list_page.dart';
 import 'package:noq/pages/overview_page.dart';
 import 'package:noq/pages/search_entity_page.dart';
+import 'package:noq/repository/StoreRepository.dart';
 import 'package:noq/services/circular_progress.dart';
 import 'package:noq/services/create_form_fields.dart';
 import 'package:noq/services/show_form.dart';
@@ -50,7 +52,7 @@ class _ManageEntityFormsState extends State<ManageEntityForms> {
   dynamic dashBoardRoute;
   dynamic reportsRoute;
   List<String> listOfVals = new List<String>();
-
+  Entity entity;
   List<CheckBoxListTileModel> checkBoxListTileModel;
   @override
   void initState() {
@@ -78,8 +80,13 @@ class _ManageEntityFormsState extends State<ManageEntityForms> {
       checkBoxListTileModel = CheckBoxListTileModel.getForms(forms);
       print(forms.length);
       print(listOfVals.length);
-      setState(() {
-        initCompleted = true;
+
+      _gs.getEntity(widget.metaEntity.entityId).then((value) {
+        entity = value.item1;
+        selectedForms.addAll(entity.forms);
+        setState(() {
+          initCompleted = true;
+        });
       });
     });
   }
@@ -438,6 +445,10 @@ class _ManageEntityFormsState extends State<ManageEntityForms> {
                                   BorderRadius.all(Radius.circular(5.0))),
                           onPressed: () {
                             //Save Entity with updated changes.
+
+                            entity.forms.clear();
+                            entity.forms.addAll(selectedForms);
+                            _gs.putEntity(entity, true);
                           }),
                     )
                   ],
