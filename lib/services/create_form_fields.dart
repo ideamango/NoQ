@@ -167,11 +167,11 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
                 children: <Widget>[
                   Column(children: <Widget>[
                     Container(
-                      decoration: whiteContainer,
+                      decoration: darkContainer,
                       child: Theme(
                         data: ThemeData(
-                          unselectedWidgetColor: Colors.grey[400],
-                          accentColor: Colors.black,
+                          unselectedWidgetColor: Colors.white,
+                          accentColor: Colors.grey[50],
                         ),
                         child: CustomExpansionTile(
                           //key: PageStorageKey(this.widget.headerTitle),
@@ -181,18 +181,19 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
                               Text(
                                 field.label,
                                 style: TextStyle(
-                                    color: Colors.black, fontSize: 15),
+                                    color: Colors.white, fontSize: 15),
                               ),
                               SizedBox(width: 5),
                             ],
                           ),
-                          backgroundColor: Colors.grey[500],
+                          backgroundColor: Colors.blueGrey[500],
 
                           children: <Widget>[
                             new Container(
                               width: MediaQuery.of(context).size.width * .94,
-                              decoration: darkContainer,
-                              padding: EdgeInsets.all(2.0),
+                              //decoration: darkContainer,
+                              color: containerColor,
+                              padding: EdgeInsets.only(left: 7),
                               child: Row(
                                 children: <Widget>[
                                   Expanded(
@@ -296,9 +297,11 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
 
                           children: <Widget>[
                             new Container(
+                              padding: EdgeInsets.only(left: 7),
                               width: MediaQuery.of(context).size.width * .94,
-                              decoration: darkContainer,
-                              padding: EdgeInsets.all(2.0),
+                              //decoration: darkContainer,
+                              color: containerColor,
+                              //padding: EdgeInsets.all(2.0),
                               child: Row(
                                 children: <Widget>[
                                   Expanded(
@@ -500,8 +503,8 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
                       children: <Widget>[
                         new Container(
                           width: MediaQuery.of(context).size.width * .94,
-                          decoration: darkContainer,
-                          padding: EdgeInsets.all(2.0),
+                          color: containerColor,
+                          padding: EdgeInsets.only(left: 7),
                           child: Row(
                             children: <Widget>[
                               Expanded(
@@ -599,8 +602,8 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
                           children: <Widget>[
                             new Container(
                               width: MediaQuery.of(context).size.width * .94,
-                              decoration: darkContainer,
-                              padding: EdgeInsets.all(2.0),
+                              color: containerColor,
+                              padding: EdgeInsets.only(left: 7),
                               child: Row(
                                 children: <Widget>[
                                   Expanded(
@@ -687,8 +690,8 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
                       children: <Widget>[
                         new Container(
                           width: MediaQuery.of(context).size.width * .94,
-                          decoration: darkContainer,
-                          padding: EdgeInsets.all(2.0),
+                          color: containerColor,
+                          padding: EdgeInsets.only(left: 7),
                           child: Row(
                             children: <Widget>[
                               Expanded(
@@ -800,8 +803,8 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
                       children: <Widget>[
                         new Container(
                           width: MediaQuery.of(context).size.width * .94,
-                          decoration: darkContainer,
-                          padding: EdgeInsets.all(2.0),
+                          color: containerColor,
+                          padding: EdgeInsets.only(left: 7),
                           child: Row(
                             children: <Widget>[
                               Expanded(
@@ -944,8 +947,8 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
                       children: <Widget>[
                         new Container(
                           width: MediaQuery.of(context).size.width * .94,
-                          decoration: darkContainer,
-                          padding: EdgeInsets.all(2.0),
+                          color: containerColor,
+                          padding: EdgeInsets.only(left: 7),
                           child: Row(
                             children: <Widget>[
                               Expanded(
@@ -1137,8 +1140,8 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
                           children: <Widget>[
                             new Container(
                               width: MediaQuery.of(context).size.width * .94,
-                              decoration: darkContainer,
-                              padding: EdgeInsets.all(2.0),
+                              color: containerColor,
+                              padding: EdgeInsets.only(left: 7),
                               child: Row(
                                 children: <Widget>[
                                   Expanded(
@@ -1593,8 +1596,8 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
                                                   .size
                                                   .width *
                                               .94,
-                                          decoration: darkContainer,
-                                          padding: EdgeInsets.all(2.0),
+                                          color: containerColor,
+                                          padding: EdgeInsets.only(left: 7),
                                           child: Row(
                                             children: <Widget>[
                                               Expanded(

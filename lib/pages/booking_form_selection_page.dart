@@ -257,10 +257,16 @@ class _BookingFormSelectionState extends State<BookingFormSelection> {
                                 }
                               }),
                         FlatButton(
-                            minWidth: MediaQuery.of(context).size.width * .35,
+                            minWidth: MediaQuery.of(context).size.width * .3,
                             child: (widget.isAdmin)
                                 ? Text("Dashboard")
-                                : Icon(Icons.arrow_forward_ios),
+                                : Row(
+                                    children: [
+                                      Text("Next ",
+                                          style: TextStyle(fontSize: 18)),
+                                      Icon(Icons.arrow_forward_ios),
+                                    ],
+                                  ),
                             color: Colors.transparent,
                             splashColor: Colors.blueGrey[300],
                             shape: RoundedRectangleBorder(
