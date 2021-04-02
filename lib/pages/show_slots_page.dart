@@ -364,12 +364,12 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
                                       MediaQuery.of(context).size.height * .06,
                                   child: RaisedButton(
                                     elevation: 10.0,
-                                    color: highlightColor,
+                                    color: btnColor,
                                     splashColor: Colors.orangeAccent[700],
                                     textColor: Colors.white,
                                     child: Text(
                                       'Book Slot',
-                                      style: TextStyle(fontSize: 20),
+                                      style: buttonMedTextStyle,
                                     ),
                                     onPressed: () {
                                       if (selectedSlot != null)
@@ -526,7 +526,7 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
           child: RaisedButton(
             elevation: (isDisabled(sl.dateTime))
                 ? 0
-                : ((isSelected(sl.dateTime) == true) ? 0.0 : 10.0),
+                : ((isSelected(sl.dateTime) == true) ? 0.0 : 3.0),
             padding: EdgeInsets.all(2),
             child: Text(
               hrs + ':' + mnts,

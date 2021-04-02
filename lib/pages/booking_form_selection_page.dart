@@ -228,11 +228,11 @@ class _BookingFormSelectionState extends State<BookingFormSelection> {
                       ),
                     ),
                     Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      mainAxisAlignment: MainAxisAlignment.end,
                       children: [
                         if (widget.isAdmin)
                           FlatButton(
-                              minWidth: MediaQuery.of(context).size.width * .35,
+                              minWidth: MediaQuery.of(context).size.width * .4,
                               child: Text("Reports"),
                               color: Colors.white,
                               splashColor: highlightColor.withOpacity(.8),
@@ -280,8 +280,8 @@ class _BookingFormSelectionState extends State<BookingFormSelection> {
                                     context,
                                     Icons.error,
                                     Duration(seconds: 5),
-                                    "No Form Selected!!",
-                                    "Please select something..");
+                                    "Please select purpose of request!!",
+                                    "");
                               } else {
                                 if (dashBoardRoute != null)
                                   Navigator.of(context).push(
