@@ -474,6 +474,7 @@ class GlobalState {
       _gs.lastSearchResults != null ? _gs.lastSearchResults.clear() : null;
       // ignore: unnecessary_statements
       _gs.bookings != null ? _gs.bookings.clear() : null;
+      _gs.bookings = null;
 
       _gs._tokenService = null;
       _gs._userService = null;
