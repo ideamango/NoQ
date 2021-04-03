@@ -786,7 +786,7 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
             seconds: 6,
           ),
           "CURRENT LOCATION is must if entity is ACTIVE.",
-          "If you really want to clear location, deselect ACTIVE on top of the page.");
+          "If you really want to clear location, deselect ACTIVE at bottom of the page.");
     } else {
       _latController.text = "";
       _lonController.text = "";

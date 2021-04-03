@@ -85,6 +85,7 @@ class _ManageChildEntityDetailsPageState
   String dateString = "Start Date";
   Offer insertOffer = new Offer();
   bool offerFieldStatus = false;
+  BorderRadiusGeometry _borderRadius = BorderRadius.circular(5);
 
   bool validateField = false;
   TextEditingController _nameController = TextEditingController();
@@ -550,7 +551,7 @@ class _ManageChildEntityDetailsPageState
             seconds: 6,
           ),
           "CURRENT LOCATION is must if entity is ACTIVE.",
-          "If you really want to clear location, deselect ACTIVE on top of the page.");
+          "If you really want to clear location, deselect ACTIVE at bottom of the page.");
     } else {
       _latController.text = "";
       _lonController.text = "";
@@ -2128,401 +2129,401 @@ class _ManageChildEntityDetailsPageState
                     padding: const EdgeInsets.all(5.0),
                     // crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
-                      Container(
-                        padding: EdgeInsets.symmetric(horizontal: 8),
-                        decoration: BoxDecoration(
-                            border: Border.all(color: containerColor),
-                            color: Colors.grey[50],
-                            shape: BoxShape.rectangle,
-                            borderRadius:
-                                BorderRadius.all(Radius.circular(5.0))),
-                        child: Column(
-                          mainAxisSize: MainAxisSize.max,
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: <Widget>[
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              mainAxisSize: MainAxisSize.max,
-                              children: <Widget>[
-                                Container(
-                                  width:
-                                      MediaQuery.of(context).size.width * .15,
-                                  child: FlatButton(
-                                      visualDensity: VisualDensity.compact,
-                                      padding: EdgeInsets.all(0),
-                                      child: Row(
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: <Widget>[
-                                          Text('Public',
-                                              style: TextStyle(fontSize: 12)),
-                                          SizedBox(
-                                            width: MediaQuery.of(context)
-                                                    .size
-                                                    .width *
-                                                .05,
-                                            height: MediaQuery.of(context)
-                                                    .size
-                                                    .height *
-                                                .02,
-                                            child: Icon(
-                                              Icons.info,
-                                              color: Colors.blueGrey[600],
-                                              size: 15,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                      onPressed: () {
-                                        if (!_isExpanded) {
-                                          setState(() {
-                                            _publicExpandClick = true;
-                                            _isExpanded = true;
-                                            _margin =
-                                                EdgeInsets.fromLTRB(0, 0, 0, 8);
-                                            _width = MediaQuery.of(context)
-                                                    .size
-                                                    .width *
-                                                .9;
-                                            _text = Text(
-                                              publicInfo,
-                                              style: whiteBoldTextStyle1,
-                                              textAlign: TextAlign.center,
-                                            );
+                      // Container(
+                      //   padding: EdgeInsets.symmetric(horizontal: 8),
+                      //   decoration: BoxDecoration(
+                      //       border: Border.all(color: containerColor),
+                      //       color: Colors.grey[50],
+                      //       shape: BoxShape.rectangle,
+                      //       borderRadius:
+                      //           BorderRadius.all(Radius.circular(5.0))),
+                      //   child: Column(
+                      //     mainAxisSize: MainAxisSize.max,
+                      //     mainAxisAlignment: MainAxisAlignment.center,
+                      //     children: <Widget>[
+                      //       Row(
+                      //         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      //         mainAxisSize: MainAxisSize.max,
+                      //         children: <Widget>[
+                      //           Container(
+                      //             width:
+                      //                 MediaQuery.of(context).size.width * .15,
+                      //             child: FlatButton(
+                      //                 visualDensity: VisualDensity.compact,
+                      //                 padding: EdgeInsets.all(0),
+                      //                 child: Row(
+                      //                   mainAxisSize: MainAxisSize.min,
+                      //                   children: <Widget>[
+                      //                     Text('Public',
+                      //                         style: TextStyle(fontSize: 12)),
+                      //                     SizedBox(
+                      //                       width: MediaQuery.of(context)
+                      //                               .size
+                      //                               .width *
+                      //                           .05,
+                      //                       height: MediaQuery.of(context)
+                      //                               .size
+                      //                               .height *
+                      //                           .02,
+                      //                       child: Icon(
+                      //                         Icons.info,
+                      //                         color: Colors.blueGrey[600],
+                      //                         size: 15,
+                      //                       ),
+                      //                     ),
+                      //                   ],
+                      //                 ),
+                      //                 onPressed: () {
+                      //                   if (!_isExpanded) {
+                      //                     setState(() {
+                      //                       _publicExpandClick = true;
+                      //                       _isExpanded = true;
+                      //                       _margin =
+                      //                           EdgeInsets.fromLTRB(0, 0, 0, 8);
+                      //                       _width = MediaQuery.of(context)
+                      //                               .size
+                      //                               .width *
+                      //                           .9;
+                      //                       _text = Text(
+                      //                         publicInfo,
+                      //                         style: whiteBoldTextStyle1,
+                      //                         textAlign: TextAlign.center,
+                      //                       );
 
-                                            _height = 30;
-                                          });
-                                        } else {
-                                          //if bookable info is being shown
-                                          if (_publicExpandClick) {
-                                            setState(() {
-                                              _width = 0;
-                                              _height = 0;
-                                              _isExpanded = false;
-                                              _publicExpandClick = false;
-                                            });
-                                          } else {
-                                            setState(() {
-                                              _publicExpandClick = true;
-                                              _activeExpandClick = false;
-                                              _bookExpandClick = false;
-                                              _isExpanded = true;
-                                              _margin = EdgeInsets.fromLTRB(
-                                                  0, 0, 0, 8);
-                                              _width = MediaQuery.of(context)
-                                                      .size
-                                                      .width *
-                                                  .9;
-                                              _text = Text(
-                                                publicInfo,
-                                                style: whiteBoldTextStyle1,
-                                                textAlign: TextAlign.center,
-                                              );
+                      //                       _height = 30;
+                      //                     });
+                      //                   } else {
+                      //                     //if bookable info is being shown
+                      //                     if (_publicExpandClick) {
+                      //                       setState(() {
+                      //                         _width = 0;
+                      //                         _height = 0;
+                      //                         _isExpanded = false;
+                      //                         _publicExpandClick = false;
+                      //                       });
+                      //                     } else {
+                      //                       setState(() {
+                      //                         _publicExpandClick = true;
+                      //                         _activeExpandClick = false;
+                      //                         _bookExpandClick = false;
+                      //                         _isExpanded = true;
+                      //                         _margin = EdgeInsets.fromLTRB(
+                      //                             0, 0, 0, 8);
+                      //                         _width = MediaQuery.of(context)
+                      //                                 .size
+                      //                                 .width *
+                      //                             .9;
+                      //                         _text = Text(
+                      //                           publicInfo,
+                      //                           style: whiteBoldTextStyle1,
+                      //                           textAlign: TextAlign.center,
+                      //                         );
 
-                                              _height = 30;
-                                            });
-                                          }
-                                        }
-                                      }),
-                                ),
-                                SizedBox(
-                                  height:
-                                      MediaQuery.of(context).size.height * .08,
-                                  width:
-                                      MediaQuery.of(context).size.width * .14,
-                                  child: Transform.scale(
-                                    scale: 0.6,
-                                    alignment: Alignment.centerLeft,
-                                    child: Switch(
-                                      materialTapTargetSize:
-                                          MaterialTapTargetSize.shrinkWrap,
-                                      value: isPublic,
-                                      onChanged: (value) {
-                                        setState(() {
-                                          isPublic = value;
-                                          serviceEntity.isPublic = value;
-                                          print(isPublic);
-                                        });
-                                      },
-                                      // activeTrackColor: Colors.green,
-                                      activeColor: highlightColor,
-                                      inactiveThumbColor: Colors.grey[300],
-                                    ),
-                                  ),
-                                ),
-                                Container(
-                                  width: MediaQuery.of(context).size.width * .2,
-                                  child: FlatButton(
-                                      visualDensity: VisualDensity.compact,
-                                      padding: EdgeInsets.all(0),
-                                      child: Row(
-                                          mainAxisSize: MainAxisSize.min,
-                                          children: <Widget>[
-                                            Text('Bookable',
-                                                style: TextStyle(fontSize: 12)),
-                                            SizedBox(
-                                              width: MediaQuery.of(context)
-                                                      .size
-                                                      .width *
-                                                  .05,
-                                              height: MediaQuery.of(context)
-                                                      .size
-                                                      .height *
-                                                  .02,
-                                              child: Icon(Icons.info,
-                                                  color: Colors.blueGrey[600],
-                                                  size: 14),
-                                            ),
-                                          ]),
-                                      onPressed: () {
-                                        if (!_isExpanded) {
-                                          setState(() {
-                                            _bookExpandClick = true;
-                                            _isExpanded = true;
-                                            _margin =
-                                                EdgeInsets.fromLTRB(0, 0, 0, 8);
-                                            _width = MediaQuery.of(context)
-                                                    .size
-                                                    .width *
-                                                .9;
-                                            _text = Text(
-                                              bookableInfo,
-                                              style: whiteBoldTextStyle1,
-                                              textAlign: TextAlign.center,
-                                            );
+                      //                         _height = 30;
+                      //                       });
+                      //                     }
+                      //                   }
+                      //                 }),
+                      //           ),
+                      //           SizedBox(
+                      //             height:
+                      //                 MediaQuery.of(context).size.height * .08,
+                      //             width:
+                      //                 MediaQuery.of(context).size.width * .14,
+                      //             child: Transform.scale(
+                      //               scale: 0.6,
+                      //               alignment: Alignment.centerLeft,
+                      //               child: Switch(
+                      //                 materialTapTargetSize:
+                      //                     MaterialTapTargetSize.shrinkWrap,
+                      //                 value: isPublic,
+                      //                 onChanged: (value) {
+                      //                   setState(() {
+                      //                     isPublic = value;
+                      //                     serviceEntity.isPublic = value;
+                      //                     print(isPublic);
+                      //                   });
+                      //                 },
+                      //                 // activeTrackColor: Colors.green,
+                      //                 activeColor: highlightColor,
+                      //                 inactiveThumbColor: Colors.grey[300],
+                      //               ),
+                      //             ),
+                      //           ),
+                      //           Container(
+                      //             width: MediaQuery.of(context).size.width * .2,
+                      //             child: FlatButton(
+                      //                 visualDensity: VisualDensity.compact,
+                      //                 padding: EdgeInsets.all(0),
+                      //                 child: Row(
+                      //                     mainAxisSize: MainAxisSize.min,
+                      //                     children: <Widget>[
+                      //                       Text('Bookable',
+                      //                           style: TextStyle(fontSize: 12)),
+                      //                       SizedBox(
+                      //                         width: MediaQuery.of(context)
+                      //                                 .size
+                      //                                 .width *
+                      //                             .05,
+                      //                         height: MediaQuery.of(context)
+                      //                                 .size
+                      //                                 .height *
+                      //                             .02,
+                      //                         child: Icon(Icons.info,
+                      //                             color: Colors.blueGrey[600],
+                      //                             size: 14),
+                      //                       ),
+                      //                     ]),
+                      //                 onPressed: () {
+                      //                   if (!_isExpanded) {
+                      //                     setState(() {
+                      //                       _bookExpandClick = true;
+                      //                       _isExpanded = true;
+                      //                       _margin =
+                      //                           EdgeInsets.fromLTRB(0, 0, 0, 8);
+                      //                       _width = MediaQuery.of(context)
+                      //                               .size
+                      //                               .width *
+                      //                           .9;
+                      //                       _text = Text(
+                      //                         bookableInfo,
+                      //                         style: whiteBoldTextStyle1,
+                      //                         textAlign: TextAlign.center,
+                      //                       );
 
-                                            _height = 30;
-                                          });
-                                        } else {
-                                          //if bookable info is being shown
-                                          if (_bookExpandClick) {
-                                            setState(() {
-                                              _width = 0;
-                                              _height = 0;
-                                              _isExpanded = false;
-                                              _bookExpandClick = false;
-                                            });
-                                          } else {
-                                            setState(() {
-                                              _publicExpandClick = false;
-                                              _activeExpandClick = false;
-                                              _bookExpandClick = true;
-                                              _isExpanded = true;
-                                              _margin = EdgeInsets.fromLTRB(
-                                                  0, 0, 0, 8);
-                                              _width = MediaQuery.of(context)
-                                                      .size
-                                                      .width *
-                                                  .9;
-                                              _text = Text(
-                                                bookableInfo,
-                                                style: whiteBoldTextStyle1,
-                                                textAlign: TextAlign.center,
-                                              );
+                      //                       _height = 30;
+                      //                     });
+                      //                   } else {
+                      //                     //if bookable info is being shown
+                      //                     if (_bookExpandClick) {
+                      //                       setState(() {
+                      //                         _width = 0;
+                      //                         _height = 0;
+                      //                         _isExpanded = false;
+                      //                         _bookExpandClick = false;
+                      //                       });
+                      //                     } else {
+                      //                       setState(() {
+                      //                         _publicExpandClick = false;
+                      //                         _activeExpandClick = false;
+                      //                         _bookExpandClick = true;
+                      //                         _isExpanded = true;
+                      //                         _margin = EdgeInsets.fromLTRB(
+                      //                             0, 0, 0, 8);
+                      //                         _width = MediaQuery.of(context)
+                      //                                 .size
+                      //                                 .width *
+                      //                             .9;
+                      //                         _text = Text(
+                      //                           bookableInfo,
+                      //                           style: whiteBoldTextStyle1,
+                      //                           textAlign: TextAlign.center,
+                      //                         );
 
-                                              _height = 30;
-                                            });
-                                          }
-                                        }
-                                      }),
-                                ),
-                                SizedBox(
-                                  height:
-                                      MediaQuery.of(context).size.height * .08,
-                                  width:
-                                      MediaQuery.of(context).size.width * .14,
-                                  child: Transform.scale(
-                                    scale: 0.6,
-                                    alignment: Alignment.centerLeft,
-                                    child: Switch(
-                                      materialTapTargetSize:
-                                          MaterialTapTargetSize.shrinkWrap,
-                                      value: isBookable,
-                                      onChanged: (value) {
-                                        setState(() {
-                                          isBookable = value;
-                                          serviceEntity.isBookable = value;
+                      //                         _height = 30;
+                      //                       });
+                      //                     }
+                      //                   }
+                      //                 }),
+                      //           ),
+                      //           SizedBox(
+                      //             height:
+                      //                 MediaQuery.of(context).size.height * .08,
+                      //             width:
+                      //                 MediaQuery.of(context).size.width * .14,
+                      //             child: Transform.scale(
+                      //               scale: 0.6,
+                      //               alignment: Alignment.centerLeft,
+                      //               child: Switch(
+                      //                 materialTapTargetSize:
+                      //                     MaterialTapTargetSize.shrinkWrap,
+                      //                 value: isBookable,
+                      //                 onChanged: (value) {
+                      //                   setState(() {
+                      //                     isBookable = value;
+                      //                     serviceEntity.isBookable = value;
 
-                                          if (value) {
-                                            showConfirmationDialog();
-                                            //TODO: SMita - show msg with info, yes/no
-                                          }
-                                          print(isBookable);
-                                        });
-                                      },
-                                      // activeTrackColor: Colors.green,
-                                      activeColor: highlightColor,
-                                      inactiveThumbColor: Colors.grey[300],
-                                    ),
-                                  ),
-                                ),
-                                Container(
-                                  width:
-                                      MediaQuery.of(context).size.width * .15,
-                                  child: FlatButton(
-                                    visualDensity: VisualDensity.compact,
-                                    padding: EdgeInsets.all(0),
-                                    child: Row(
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: <Widget>[
-                                          Text('Active',
-                                              style: TextStyle(fontSize: 12)),
-                                          SizedBox(
-                                            width: MediaQuery.of(context)
-                                                    .size
-                                                    .width *
-                                                .05,
-                                            height: MediaQuery.of(context)
-                                                    .size
-                                                    .height *
-                                                .02,
-                                            child: Icon(Icons.info,
-                                                color: Colors.blueGrey[600],
-                                                size: 14),
-                                          ),
-                                        ]),
-                                    onPressed: () {
-                                      if (!_isExpanded) {
-                                        setState(() {
-                                          _activeExpandClick = true;
-                                          _isExpanded = true;
-                                          _margin =
-                                              EdgeInsets.fromLTRB(0, 0, 0, 8);
-                                          _width = MediaQuery.of(context)
-                                                  .size
-                                                  .width *
-                                              .9;
-                                          _text = Text(
-                                            activeInfo,
-                                            style: whiteBoldTextStyle1,
-                                            textAlign: TextAlign.center,
-                                          );
+                      //                     if (value) {
+                      //                       showConfirmationDialog();
+                      //                       //TODO: SMita - show msg with info, yes/no
+                      //                     }
+                      //                     print(isBookable);
+                      //                   });
+                      //                 },
+                      //                 // activeTrackColor: Colors.green,
+                      //                 activeColor: highlightColor,
+                      //                 inactiveThumbColor: Colors.grey[300],
+                      //               ),
+                      //             ),
+                      //           ),
+                      //           Container(
+                      //             width:
+                      //                 MediaQuery.of(context).size.width * .15,
+                      //             child: FlatButton(
+                      //               visualDensity: VisualDensity.compact,
+                      //               padding: EdgeInsets.all(0),
+                      //               child: Row(
+                      //                   mainAxisSize: MainAxisSize.min,
+                      //                   children: <Widget>[
+                      //                     Text('Active',
+                      //                         style: TextStyle(fontSize: 12)),
+                      //                     SizedBox(
+                      //                       width: MediaQuery.of(context)
+                      //                               .size
+                      //                               .width *
+                      //                           .05,
+                      //                       height: MediaQuery.of(context)
+                      //                               .size
+                      //                               .height *
+                      //                           .02,
+                      //                       child: Icon(Icons.info,
+                      //                           color: Colors.blueGrey[600],
+                      //                           size: 14),
+                      //                     ),
+                      //                   ]),
+                      //               onPressed: () {
+                      //                 if (!_isExpanded) {
+                      //                   setState(() {
+                      //                     _activeExpandClick = true;
+                      //                     _isExpanded = true;
+                      //                     _margin =
+                      //                         EdgeInsets.fromLTRB(0, 0, 0, 8);
+                      //                     _width = MediaQuery.of(context)
+                      //                             .size
+                      //                             .width *
+                      //                         .9;
+                      //                     _text = Text(
+                      //                       activeInfo,
+                      //                       style: whiteBoldTextStyle1,
+                      //                       textAlign: TextAlign.center,
+                      //                     );
 
-                                          _height = 30;
-                                        });
-                                      } else {
-                                        //if bookable info is being shown
-                                        if (_activeExpandClick) {
-                                          setState(() {
-                                            _width = 0;
-                                            _height = 0;
-                                            _isExpanded = false;
-                                            _activeExpandClick = false;
-                                          });
-                                        } else {
-                                          setState(() {
-                                            _publicExpandClick = false;
-                                            _activeExpandClick = true;
-                                            _bookExpandClick = false;
-                                            _isExpanded = true;
-                                            _margin =
-                                                EdgeInsets.fromLTRB(0, 0, 0, 8);
-                                            _width = MediaQuery.of(context)
-                                                    .size
-                                                    .width *
-                                                .9;
-                                            _text = Text(
-                                              activeInfo,
-                                              style: whiteBoldTextStyle1,
-                                              textAlign: TextAlign.center,
-                                            );
+                      //                     _height = 30;
+                      //                   });
+                      //                 } else {
+                      //                   //if bookable info is being shown
+                      //                   if (_activeExpandClick) {
+                      //                     setState(() {
+                      //                       _width = 0;
+                      //                       _height = 0;
+                      //                       _isExpanded = false;
+                      //                       _activeExpandClick = false;
+                      //                     });
+                      //                   } else {
+                      //                     setState(() {
+                      //                       _publicExpandClick = false;
+                      //                       _activeExpandClick = true;
+                      //                       _bookExpandClick = false;
+                      //                       _isExpanded = true;
+                      //                       _margin =
+                      //                           EdgeInsets.fromLTRB(0, 0, 0, 8);
+                      //                       _width = MediaQuery.of(context)
+                      //                               .size
+                      //                               .width *
+                      //                           .9;
+                      //                       _text = Text(
+                      //                         activeInfo,
+                      //                         style: whiteBoldTextStyle1,
+                      //                         textAlign: TextAlign.center,
+                      //                       );
 
-                                            _height = 30;
-                                          });
-                                        }
-                                      }
-                                    },
-                                  ),
-                                ),
-                                SizedBox(
-                                  height:
-                                      MediaQuery.of(context).size.height * .08,
-                                  width:
-                                      MediaQuery.of(context).size.width * .14,
-                                  child: Transform.scale(
-                                    scale: 0.6,
-                                    alignment: Alignment.centerLeft,
-                                    child: Switch(
-                                      materialTapTargetSize:
-                                          MaterialTapTargetSize.shrinkWrap,
-                                      value: isActive,
-                                      onChanged: (value) {
-                                        setState(() {
-                                          if (value) {
-                                            validateField = true;
-                                            _autoValidate = true;
-                                            bool retVal = false;
-                                            bool locValid = false;
-                                            if (validateAllFields())
-                                              retVal = true;
-                                            if (validateLatLon())
-                                              locValid = true;
+                      //                       _height = 30;
+                      //                     });
+                      //                   }
+                      //                 }
+                      //               },
+                      //             ),
+                      //           ),
+                      //           SizedBox(
+                      //             height:
+                      //                 MediaQuery.of(context).size.height * .08,
+                      //             width:
+                      //                 MediaQuery.of(context).size.width * .14,
+                      //             child: Transform.scale(
+                      //               scale: 0.6,
+                      //               alignment: Alignment.centerLeft,
+                      //               child: Switch(
+                      //                 materialTapTargetSize:
+                      //                     MaterialTapTargetSize.shrinkWrap,
+                      //                 value: isActive,
+                      //                 onChanged: (value) {
+                      //                   setState(() {
+                      //                     if (value) {
+                      //                       validateField = true;
+                      //                       _autoValidate = true;
+                      //                       bool retVal = false;
+                      //                       bool locValid = false;
+                      //                       if (validateAllFields())
+                      //                         retVal = true;
+                      //                       if (validateLatLon())
+                      //                         locValid = true;
 
-                                            if (!locValid || !retVal) {
-                                              if (!locValid) {
-                                                Utils.showMyFlushbar(
-                                                    context,
-                                                    Icons.info_outline,
-                                                    Duration(
-                                                      seconds: 6,
-                                                    ),
-                                                    "Location is Required for your Place to be Found by the users!",
-                                                    pressUseCurrentLocation);
-                                              } else if (!retVal) {
-                                                //Show flushbar with info that fields has invalid data
-                                                Utils.showMyFlushbar(
-                                                    context,
-                                                    Icons.info_outline,
-                                                    Duration(
-                                                      seconds: 6,
-                                                    ),
-                                                    "Missing Required Information!",
-                                                    activeInfo);
-                                              }
-                                            } else {
-                                              validateField = false;
-                                              _autoValidate = false;
-                                              isActive = value;
-                                              serviceEntity.isActive = value;
-                                              print(isActive);
-                                            }
-                                          } else {
-                                            isActive = value;
-                                            serviceEntity.isActive = value;
-                                            print(isActive);
-                                          }
-                                        });
-                                      },
-                                      // activeTrackColor: Colors.green,
-                                      activeColor: highlightColor,
-                                      inactiveThumbColor: Colors.grey[300],
-                                    ),
-                                  ),
-                                )
-                              ],
-                            ),
-                            AnimatedContainer(
-                              margin: _margin,
-                              // Use the properties stored in the State class.
-                              width: _width,
-                              height: _height,
-                              alignment: Alignment.center,
-                              decoration: BoxDecoration(
-                                color: Colors.blueGrey[500],
-                                border: Border.all(color: primaryAccentColor),
-                                borderRadius: BorderRadius.circular(5),
-                              ),
-                              // Define how long the animation should take.
-                              duration: Duration(seconds: 1),
-                              // Provide an optional curve to make the animation feel smoother.
-                              curve: Curves.easeInOutCirc,
-                              child: Center(child: _text),
-                            ),
-                          ],
-                        ),
-                      ),
-                      SizedBox(
-                        height: 7,
-                      ),
+                      //                       if (!locValid || !retVal) {
+                      //                         if (!locValid) {
+                      //                           Utils.showMyFlushbar(
+                      //                               context,
+                      //                               Icons.info_outline,
+                      //                               Duration(
+                      //                                 seconds: 6,
+                      //                               ),
+                      //                               "Location is Required for your Place to be Found by the users!",
+                      //                               pressUseCurrentLocation);
+                      //                         } else if (!retVal) {
+                      //                           //Show flushbar with info that fields has invalid data
+                      //                           Utils.showMyFlushbar(
+                      //                               context,
+                      //                               Icons.info_outline,
+                      //                               Duration(
+                      //                                 seconds: 6,
+                      //                               ),
+                      //                               "Missing Required Information!",
+                      //                               activeInfo);
+                      //                         }
+                      //                       } else {
+                      //                         validateField = false;
+                      //                         _autoValidate = false;
+                      //                         isActive = value;
+                      //                         serviceEntity.isActive = value;
+                      //                         print(isActive);
+                      //                       }
+                      //                     } else {
+                      //                       isActive = value;
+                      //                       serviceEntity.isActive = value;
+                      //                       print(isActive);
+                      //                     }
+                      //                   });
+                      //                 },
+                      //                 // activeTrackColor: Colors.green,
+                      //                 activeColor: highlightColor,
+                      //                 inactiveThumbColor: Colors.grey[300],
+                      //               ),
+                      //             ),
+                      //           )
+                      //         ],
+                      //       ),
+                      //       AnimatedContainer(
+                      //         margin: _margin,
+                      //         // Use the properties stored in the State class.
+                      //         width: _width,
+                      //         height: _height,
+                      //         alignment: Alignment.center,
+                      //         decoration: BoxDecoration(
+                      //           color: Colors.blueGrey[500],
+                      //           border: Border.all(color: primaryAccentColor),
+                      //           borderRadius: BorderRadius.circular(5),
+                      //         ),
+                      //         // Define how long the animation should take.
+                      //         duration: Duration(seconds: 1),
+                      //         // Provide an optional curve to make the animation feel smoother.
+                      //         curve: Curves.easeInOutCirc,
+                      //         child: Center(child: _text),
+                      //       ),
+                      //     ],
+                      //   ),
+                      // ),
+                      // SizedBox(
+                      //   height: 7,
+                      // ),
 
                       Container(
                         decoration: BoxDecoration(
