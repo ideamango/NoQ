@@ -208,3 +208,121 @@ class UserToken {
     return parent.getDisplayNamePrefix() + number.toString();
   }
 }
+
+class TokenStats {
+  int numberOfTokensCreated = 0;
+  int numberOfTokensCancelled = 0;
+
+  Map<String, dynamic> toJson() => {
+        'numberOfTokensCreated': numberOfTokensCreated,
+        'numberOfTokensCancelled': numberOfTokensCancelled,
+      };
+
+  static TokenStats fromJson(Map<String, dynamic> json) {
+    if (json == null) return null;
+
+    TokenStats overview = TokenStats();
+    overview.numberOfTokensCreated = json['numberOfTokensCreated'];
+    overview.numberOfTokensCancelled = json['numberOfTokensCancelled'];
+
+    return overview;
+  }
+}
+
+class TokenCounter {
+  TokenCounter({this.entityId, this.year});
+
+  String entityId;
+  String year;
+
+  Map<String, TokenStats>
+      slotWiseStats; //key should be year~month~day#slot-time
+
+  Map<String, dynamic> toJson() => {
+        'id': entityId + "#" + year,
+        'entityId': entityId,
+        'year': year,
+        'slotWiseStats': convertFromMap(slotWiseStats)
+      };
+
+  static TokenCounter fromJson(Map<String, dynamic> json) {
+    if (json == null) return null;
+
+    TokenCounter overview =
+        TokenCounter(entityId: json['entityId'], year: json['year']);
+
+    overview.slotWiseStats = convertToMapFromJSON(json['slotWiseStats']);
+    return overview;
+  }
+
+  Map<String, dynamic> convertFromMap(Map<String, TokenStats> dailyStats) {
+    if (dailyStats == null) {
+      return null;
+    }
+
+    Map<String, dynamic> map = Map<String, dynamic>();
+
+    dailyStats.forEach((k, v) => map[k] = v.toJson());
+
+    return map;
+  }
+
+  TokenStats getTokenStatsForMonth(int month) {
+    TokenStats ts = new TokenStats();
+    slotWiseStats.forEach((key, value) {
+      int tokenMonth = int.parse(key.split('#')[1]);
+      if (tokenMonth == month) {
+        ts.numberOfTokensCreated += value.numberOfTokensCreated;
+        ts.numberOfTokensCancelled += value.numberOfTokensCancelled;
+      }
+    });
+
+    return ts;
+  }
+
+  TokenStats getTokenStatsForYearTillDate() {
+    TokenStats ts = new TokenStats();
+    slotWiseStats.forEach((key, value) {
+      ts.numberOfTokensCreated += value.numberOfTokensCreated;
+      ts.numberOfTokensCancelled += value.numberOfTokensCancelled;
+    });
+
+    return ts;
+  }
+
+  Map<String, TokenStats> getTokenStatsTimeSlotWise(
+      DateTime to, DateTime from) {
+    Map<String, TokenStats> slotWiseStats = new Map<String, TokenStats>();
+
+    slotWiseStats.forEach((key, value) {
+      int tokenYear = int.parse(key.split('#')[0]);
+      int tokenMonth = int.parse(key.split('#')[1]);
+      int tokenDay = int.parse(key.split('#')[2]);
+      String timeSlot = key.split('#')[3];
+
+      DateTime dt = new DateTime(tokenYear, tokenMonth, tokenDay);
+
+      if (dt.isAfter(to) && dt.isBefore(from)) {
+        if (slotWiseStats.containsKey(timeSlot)) {
+          TokenStats ts = slotWiseStats[timeSlot];
+          ts.numberOfTokensCreated += value.numberOfTokensCreated;
+          ts.numberOfTokensCancelled += value.numberOfTokensCancelled;
+        } else {
+          TokenStats ts = new TokenStats();
+          ts.numberOfTokensCreated += value.numberOfTokensCreated;
+          ts.numberOfTokensCancelled += value.numberOfTokensCancelled;
+          slotWiseStats[timeSlot] = ts;
+        }
+      }
+    });
+
+    return slotWiseStats;
+  }
+
+  static Map<String, TokenStats> convertToMapFromJSON(
+      Map<dynamic, dynamic> map) {
+    Map<String, TokenStats> roles = new Map<String, TokenStats>();
+    map.forEach((k, v) => roles[k] = TokenStats.fromJson(v));
+    return roles;
+  }
+}

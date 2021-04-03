@@ -1688,12 +1688,12 @@ class DBTest {
       await tas.submitApplication(ba, vacinationCenter.getMetaEntity());
     }
 
-    BookingApplicationsOverview globalOverView = await _gs
+    BookingApplicationCounter globalOverView = await _gs
         .getApplicationService()
         .getApplicationsOverview(
             TEST_COVID_BOOKING_FORM_ID, null, DateTime.now().year);
 
-    BookingApplicationsOverview localOverView = await _gs
+    BookingApplicationCounter localOverView = await _gs
         .getApplicationService()
         .getApplicationsOverview(TEST_COVID_BOOKING_FORM_ID,
             Covid_Vacination_center, DateTime.now().year);
@@ -1763,12 +1763,12 @@ class DBTest {
         null);
 
     //now get the ApplicationOver object to check the count
-    BookingApplicationsOverview globalOverView = await _gs
+    BookingApplicationCounter globalOverView = await _gs
         .getApplicationService()
         .getApplicationsOverview(
             TEST_COVID_BOOKING_FORM_ID, null, DateTime.now().year);
 
-    BookingApplicationsOverview localOverView = await _gs
+    BookingApplicationCounter localOverView = await _gs
         .getApplicationService()
         .getApplicationsOverview(TEST_COVID_BOOKING_FORM_ID,
             Covid_Vacination_center, DateTime.now().year);
@@ -1803,7 +1803,7 @@ class DBTest {
         "~" +
         DateTime.now().day.toString();
 
-    Stats localStats = localOverView.dailyStats[dailyStatsKey];
+    ApplicationStats localStats = localOverView.dailyStats[dailyStatsKey];
 
     if (localStats.numberOfApproved == 2 && localStats.numberOfNew == 10) {
       print(
@@ -1813,7 +1813,7 @@ class DBTest {
           "LocalApplicationOverview Daily stats after status change ------------------------------> Failure");
     }
 
-    Stats globalStats = globalOverView.dailyStats[dailyStatsKey];
+    ApplicationStats globalStats = globalOverView.dailyStats[dailyStatsKey];
 
     if (globalStats.numberOfApproved == 2 && globalStats.numberOfNew == 10) {
       print(
@@ -1855,12 +1855,12 @@ class DBTest {
         "Cancelled the application and as a result the token should also get cancelled");
 
     //now get the ApplicationOver object to check the count
-    BookingApplicationsOverview globalOverView = await _gs
+    BookingApplicationCounter globalOverView = await _gs
         .getApplicationService()
         .getApplicationsOverview(
             TEST_COVID_BOOKING_FORM_ID, null, DateTime.now().year);
 
-    BookingApplicationsOverview localOverView = await _gs
+    BookingApplicationCounter localOverView = await _gs
         .getApplicationService()
         .getApplicationsOverview(TEST_COVID_BOOKING_FORM_ID,
             Covid_Vacination_center, DateTime.now().year);
@@ -1897,7 +1897,7 @@ class DBTest {
         "~" +
         DateTime.now().day.toString();
 
-    Stats localStats = localOverView.dailyStats[dailyStatsKey];
+    ApplicationStats localStats = localOverView.dailyStats[dailyStatsKey];
 
     if (localStats.numberOfCancelled == 1 &&
         localStats.numberOfApproved == 2 &&
@@ -1909,7 +1909,7 @@ class DBTest {
           "LocalApplicationOverview Daily stats after cancellation ------------------------------> Failure");
     }
 
-    Stats globalStats = globalOverView.dailyStats[dailyStatsKey];
+    ApplicationStats globalStats = globalOverView.dailyStats[dailyStatsKey];
 
     if (globalStats.numberOfCancelled == 1 &&
         globalStats.numberOfApproved == 2 &&

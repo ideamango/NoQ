@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:noq/db/db_model/booking_application.dart';
 import 'package:noq/db/db_model/entity_slots.dart';
 import 'package:noq/db/db_model/meta_entity.dart';
 
@@ -14,6 +15,7 @@ import 'package:noq/db/exceptions/no_token_found_exception.dart';
 import 'package:noq/db/exceptions/slot_full_exception.dart';
 import 'package:noq/db/exceptions/token_already_exists_exception.dart';
 
+import '../../constants.dart';
 import '../../utils.dart';
 
 class TokenService {
@@ -181,19 +183,25 @@ class TokenService {
     Exception e;
 
     UserTokens tokens;
-    String entitySlotsDocId = metaEntity.entityId +
-        "#" +
-        dateTime.year.toString() +
+    TokenCounter tokenCounter;
+    String yearMonthDay = dateTime.year.toString() +
         "~" +
         dateTime.month.toString() +
         "~" +
         dateTime.day.toString();
 
-    String slotId = entitySlotsDocId +
+    String hourMinute =
+        dateTime.hour.toString() + "~" + dateTime.minute.toString();
+
+    String entitySlotsDocId = metaEntity.entityId + "#" + yearMonthDay;
+
+    String slotId = entitySlotsDocId + "#" + hourMinute;
+
+    String tokenCounterId = TOKEN_COUNTER_PREFIX +
         "#" +
-        dateTime.hour.toString() +
-        "~" +
-        dateTime.minute.toString();
+        metaEntity.entityId +
+        "#" +
+        dateTime.year.toString();
 
     FirebaseFirestore fStore = getFirestore();
     final DocumentReference entitySlotsRef =
@@ -201,6 +209,19 @@ class TokenService {
 
     final DocumentReference tokRef =
         fStore.doc('tokens/' + slotId + "#" + userId);
+
+    final DocumentReference tokenCounterRef =
+        fStore.doc('counter/' + tokenCounterId);
+
+    DocumentSnapshot tokenCounterSnapshot = await tx.get(tokenCounterRef);
+
+    if (tokenCounterSnapshot.exists) {
+      Map<String, dynamic> map = tokenCounterSnapshot.data();
+      tokenCounter = TokenCounter.fromJson(map);
+    } else {
+      tokenCounter = new TokenCounter(
+          entityId: metaEntity.entityId, year: dateTime.year.toString());
+    }
 
     try {
       DocumentSnapshot entitySlotsSnapshot = await tx.get(entitySlotsRef);
@@ -371,6 +392,17 @@ class TokenService {
 
         //create Token
         tx.set(tokRef, tokens.toJson());
+
+        //update the TokenCounter, check the key year~month~day#slot-time
+        String key = yearMonthDay + "#" + hourMinute;
+        if (!tokenCounter.slotWiseStats.containsKey(key)) {
+          tokenCounter.slotWiseStats[key] = TokenStats();
+        }
+        tokenCounter.slotWiseStats[key].numberOfTokensCreated =
+            tokenCounter.slotWiseStats[key].numberOfTokensCreated + 1;
+
+        //create/update the TokenCounter
+        tx.set(tokenCounterRef, tokenCounter.toJson());
       }
     } catch (ex) {
       print(
@@ -443,6 +475,8 @@ class TokenService {
 
     bool isCancelled = false;
 
+    TokenCounter tokenCounter;
+
     final DocumentReference tokRef = fStore.doc('tokens/' + tokenId);
     try {
       DocumentSnapshot tokenSnapshot = await tx.get(tokRef);
@@ -480,8 +514,15 @@ class TokenService {
 
         String slotId = tokens.slotId;
         List<String> parts = slotId.split("#");
+        String entityId = parts[0];
+        String yearMonthDay = parts[1];
+        String hourMinute = parts[2];
+        List<String> dateParts = yearMonthDay.split("~");
+        String year = dateParts[0];
 
-        String entitySlotsDocId = parts[0] + "#" + parts[1];
+        DateTime tokenDateTime;
+
+        String entitySlotsDocId = entityId + "#" + parts[1];
 
         final DocumentReference entitySlotsRef =
             fStore.doc('slots/' + entitySlotsDocId);
@@ -498,6 +539,32 @@ class TokenService {
             break;
           }
         }
+
+        String tokenCounterId =
+            TOKEN_COUNTER_PREFIX + "#" + entityId + "#" + year;
+
+        final DocumentReference tokenCounterRef =
+            fStore.doc('counter/' + tokenCounterId);
+
+        DocumentSnapshot tokenCounterSnapshot = await tx.get(tokenCounterRef);
+
+        if (tokenCounterSnapshot.exists) {
+          Map<String, dynamic> map = tokenCounterSnapshot.data();
+          tokenCounter = TokenCounter.fromJson(map);
+        } else {
+          tokenCounter = new TokenCounter(entityId: entityId, year: year);
+        }
+
+        //update the TokenCounter, check the key year~month~day#slot-time
+        String key = yearMonthDay + "#" + hourMinute;
+        if (!tokenCounter.slotWiseStats.containsKey(key)) {
+          tokenCounter.slotWiseStats[key] = TokenStats();
+        }
+        tokenCounter.slotWiseStats[key].numberOfTokensCancelled =
+            tokenCounter.slotWiseStats[key].numberOfTokensCancelled + 1;
+
+        //create/update the TokenCounter
+        tx.set(tokenCounterRef, tokenCounter.toJson());
 
         //update the token with number as -1
         tx.set(tokRef, tokens.toJson());

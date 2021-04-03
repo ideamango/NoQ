@@ -38,7 +38,7 @@ class _OverviewPageState extends State<OverviewPage> {
   GlobalState _gs;
   int _completedCount = 0;
   int _totalReceivedCount = 0;
-  BookingApplicationsOverview _bookingApplicationsOverview;
+  BookingApplicationCounter _bookingApplicationsOverview;
 
   @override
   void initState() {
