@@ -10,6 +10,8 @@ const COVID_BOOKING_FORM_NAME = "Covid-19 Vacination Applicant Form";
 const AUTO_APPROVED = "Auto Approved";
 const SYSTEM = "SYSTEM";
 
+const TOKEN_COUNTER_PREFIX = "TOKENCOUNTER";
+
 const ADMIN = "admin";
 const VERIFICATION_PENDING = "Verification Pending";
 const VERIFICATION_VERIFIED = "Verified";

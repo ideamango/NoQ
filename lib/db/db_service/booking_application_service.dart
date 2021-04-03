@@ -196,8 +196,8 @@ class BookingApplicationService {
     String userPhone = user.phoneNumber;
     BookingForm bf;
     BookingApplication baDraft;
-    BookingApplicationsOverview localCounter;
-    BookingApplicationsOverview globalCounter;
+    BookingApplicationCounter localCounter;
+    BookingApplicationCounter globalCounter;
 
     String bookingApplicationId = ba.id;
     String bookingFormId = ba.bookingFormId;
@@ -259,18 +259,18 @@ class BookingApplicationService {
           //global counters have to be update or created
           if (globalCounterSnapshot.exists) {
             Map<String, dynamic> map = globalCounterSnapshot.data();
-            globalCounter = BookingApplicationsOverview.fromJson(map);
+            globalCounter = BookingApplicationCounter.fromJson(map);
           } else {
-            globalCounter = new BookingApplicationsOverview(
+            globalCounter = new BookingApplicationCounter(
                 bookingFormId: bookingFormId, entityId: null);
           }
 
           if (globalCounter.dailyStats == null) {
-            globalCounter.dailyStats = Map<String, Stats>();
+            globalCounter.dailyStats = Map<String, ApplicationStats>();
           }
 
           if (!globalCounter.dailyStats.containsKey(dailyStatsKey)) {
-            Stats todayStats = new Stats();
+            ApplicationStats todayStats = new ApplicationStats();
             globalCounter.dailyStats[dailyStatsKey] = todayStats;
           }
         }
@@ -278,18 +278,18 @@ class BookingApplicationService {
         //local Counter to be updated or created
         if (localCounterSnapshot.exists) {
           Map<String, dynamic> map = localCounterSnapshot.data();
-          localCounter = BookingApplicationsOverview.fromJson(map);
+          localCounter = BookingApplicationCounter.fromJson(map);
         } else {
-          localCounter = new BookingApplicationsOverview(
+          localCounter = new BookingApplicationCounter(
               bookingFormId: bookingFormId, entityId: metaEntity.entityId);
         }
 
         if (localCounter.dailyStats == null) {
-          localCounter.dailyStats = Map<String, Stats>();
+          localCounter.dailyStats = Map<String, ApplicationStats>();
         }
 
         if (!localCounter.dailyStats.containsKey(dailyStatsKey)) {
-          Stats todayStats = new Stats();
+          ApplicationStats todayStats = new ApplicationStats();
           localCounter.dailyStats[dailyStatsKey] = todayStats;
         }
 
@@ -378,8 +378,8 @@ class BookingApplicationService {
 
     BookingApplication ba;
 
-    BookingApplicationsOverview localCounter;
-    BookingApplicationsOverview globalCounter;
+    BookingApplicationCounter localCounter;
+    BookingApplicationCounter globalCounter;
 
     String bookingApplicationId = applicationId;
 
@@ -432,18 +432,18 @@ class BookingApplicationService {
           //global counters have to be update or created
           if (globalCounterSnapshot.exists) {
             Map<String, dynamic> map = globalCounterSnapshot.data();
-            globalCounter = BookingApplicationsOverview.fromJson(map);
+            globalCounter = BookingApplicationCounter.fromJson(map);
           } else {
-            globalCounter = new BookingApplicationsOverview(
+            globalCounter = new BookingApplicationCounter(
                 bookingFormId: bookingFormId, entityId: null);
           }
 
           if (globalCounter.dailyStats == null) {
-            globalCounter.dailyStats = Map<String, Stats>();
+            globalCounter.dailyStats = Map<String, ApplicationStats>();
           }
 
           if (!globalCounter.dailyStats.containsKey(dailyStatsKey)) {
-            Stats todayStats = new Stats();
+            ApplicationStats todayStats = new ApplicationStats();
             globalCounter.dailyStats[dailyStatsKey] = todayStats;
           }
         }
@@ -451,18 +451,18 @@ class BookingApplicationService {
         //local Counter to be updated or created
         if (localCounterSnapshot.exists) {
           Map<String, dynamic> map = localCounterSnapshot.data();
-          localCounter = BookingApplicationsOverview.fromJson(map);
+          localCounter = BookingApplicationCounter.fromJson(map);
         } else {
-          localCounter = new BookingApplicationsOverview(
+          localCounter = new BookingApplicationCounter(
               bookingFormId: bookingFormId, entityId: ba.entityId);
         }
 
         if (localCounter.dailyStats == null) {
-          localCounter.dailyStats = Map<String, Stats>();
+          localCounter.dailyStats = Map<String, ApplicationStats>();
         }
 
         if (!localCounter.dailyStats.containsKey(dailyStatsKey)) {
-          Stats todayStats = new Stats();
+          ApplicationStats todayStats = new ApplicationStats();
           localCounter.dailyStats[dailyStatsKey] = todayStats;
         }
 
@@ -584,8 +584,8 @@ class BookingApplicationService {
     String userPhone = user.phoneNumber;
     BookingForm bf;
     BookingApplication application;
-    BookingApplicationsOverview localCounter;
-    BookingApplicationsOverview globalCounter;
+    BookingApplicationCounter localCounter;
+    BookingApplicationCounter globalCounter;
     ApplicationStatus existingStatus;
 
     String localCounterId;
@@ -640,14 +640,14 @@ class BookingApplicationService {
           //global counters have to be update or created
           if (globalCounterSnapshot.exists) {
             Map<String, dynamic> map = globalCounterSnapshot.data();
-            globalCounter = BookingApplicationsOverview.fromJson(map);
+            globalCounter = BookingApplicationCounter.fromJson(map);
           }
         }
 
         //local Counter to be updated or created
         if (localCounterSnapshot.exists) {
           Map<String, dynamic> map = localCounterSnapshot.data();
-          localCounter = BookingApplicationsOverview.fromJson(map);
+          localCounter = BookingApplicationCounter.fromJson(map);
         }
 
         //setting up the mandatory fields on the Application object
@@ -660,7 +660,7 @@ class BookingApplicationService {
             if (globalCounter.dailyStats.containsKey(dailyStatsKey)) {
               globalCounter.dailyStats[dailyStatsKey].numberOfApproved++;
             } else {
-              Stats todayStats = new Stats();
+              ApplicationStats todayStats = new ApplicationStats();
               globalCounter.dailyStats[dailyStatsKey] = todayStats;
               globalCounter.dailyStats[dailyStatsKey].numberOfApproved++;
             }
@@ -670,7 +670,7 @@ class BookingApplicationService {
             if (localCounter.dailyStats.containsKey(dailyStatsKey)) {
               localCounter.dailyStats[dailyStatsKey].numberOfApproved++;
             } else {
-              Stats todayStats = new Stats();
+              ApplicationStats todayStats = new ApplicationStats();
               localCounter.dailyStats[dailyStatsKey] = todayStats;
               localCounter.dailyStats[dailyStatsKey].numberOfApproved++;
             }
@@ -704,7 +704,7 @@ class BookingApplicationService {
             if (globalCounter.dailyStats.containsKey(dailyStatsKey)) {
               globalCounter.dailyStats[dailyStatsKey].numberOfCompleted++;
             } else {
-              Stats todayStats = new Stats();
+              ApplicationStats todayStats = new ApplicationStats();
               globalCounter.dailyStats[dailyStatsKey] = todayStats;
               globalCounter.dailyStats[dailyStatsKey].numberOfCompleted++;
             }
@@ -714,7 +714,7 @@ class BookingApplicationService {
             if (localCounter.dailyStats.containsKey(dailyStatsKey)) {
               localCounter.dailyStats[dailyStatsKey].numberOfCompleted++;
             } else {
-              Stats todayStats = new Stats();
+              ApplicationStats todayStats = new ApplicationStats();
               localCounter.dailyStats[dailyStatsKey] = todayStats;
               localCounter.dailyStats[dailyStatsKey].numberOfCompleted++;
             }
@@ -728,7 +728,7 @@ class BookingApplicationService {
             if (globalCounter.dailyStats.containsKey(dailyStatsKey)) {
               globalCounter.dailyStats[dailyStatsKey].numberOfInProcess++;
             } else {
-              Stats todayStats = new Stats();
+              ApplicationStats todayStats = new ApplicationStats();
               globalCounter.dailyStats[dailyStatsKey] = todayStats;
               globalCounter.dailyStats[dailyStatsKey].numberOfInProcess++;
             }
@@ -738,7 +738,7 @@ class BookingApplicationService {
             if (localCounter.dailyStats.containsKey(dailyStatsKey)) {
               localCounter.dailyStats[dailyStatsKey].numberOfInProcess++;
             } else {
-              Stats todayStats = new Stats();
+              ApplicationStats todayStats = new ApplicationStats();
               localCounter.dailyStats[dailyStatsKey] = todayStats;
               localCounter.dailyStats[dailyStatsKey].numberOfInProcess++;
             }
@@ -752,7 +752,7 @@ class BookingApplicationService {
             if (globalCounter.dailyStats.containsKey(dailyStatsKey)) {
               globalCounter.dailyStats[dailyStatsKey].numberOfPutOnHold++;
             } else {
-              Stats todayStats = new Stats();
+              ApplicationStats todayStats = new ApplicationStats();
               globalCounter.dailyStats[dailyStatsKey] = todayStats;
               globalCounter.dailyStats[dailyStatsKey].numberOfPutOnHold++;
             }
@@ -762,7 +762,7 @@ class BookingApplicationService {
             if (localCounter.dailyStats.containsKey(dailyStatsKey)) {
               localCounter.dailyStats[dailyStatsKey].numberOfPutOnHold++;
             } else {
-              Stats todayStats = new Stats();
+              ApplicationStats todayStats = new ApplicationStats();
               localCounter.dailyStats[dailyStatsKey] = todayStats;
               localCounter.dailyStats[dailyStatsKey].numberOfPutOnHold++;
             }
@@ -776,7 +776,7 @@ class BookingApplicationService {
             if (globalCounter.dailyStats.containsKey(dailyStatsKey)) {
               globalCounter.dailyStats[dailyStatsKey].numberOfRejected++;
             } else {
-              Stats todayStats = new Stats();
+              ApplicationStats todayStats = new ApplicationStats();
               globalCounter.dailyStats[dailyStatsKey] = todayStats;
               globalCounter.dailyStats[dailyStatsKey].numberOfRejected++;
             }
@@ -786,7 +786,7 @@ class BookingApplicationService {
             if (localCounter.dailyStats.containsKey(dailyStatsKey)) {
               localCounter.dailyStats[dailyStatsKey].numberOfRejected++;
             } else {
-              Stats todayStats = new Stats();
+              ApplicationStats todayStats = new ApplicationStats();
               localCounter.dailyStats[dailyStatsKey] = todayStats;
               localCounter.dailyStats[dailyStatsKey].numberOfRejected++;
             }
@@ -860,7 +860,7 @@ class BookingApplicationService {
     return requestProcessed;
   }
 
-  Future<BookingApplicationsOverview> getApplicationsOverview(
+  Future<BookingApplicationCounter> getApplicationsOverview(
       String bookingFormId, String entityId, int year) async {
     //entityId is optional param, assuming that bookingForm is Global Form/System form
     //if entityId is present, that means the counter is local to the Entity
@@ -874,7 +874,7 @@ class BookingApplicationService {
     }
 
     FirebaseFirestore fStore = getFirestore();
-    BookingApplicationsOverview counter;
+    BookingApplicationCounter counter;
 
     final DocumentReference counterRef = fStore.doc('counter/' +
         (Utils.isNotNullOrEmpty(entityId)
@@ -885,9 +885,9 @@ class BookingApplicationService {
 
     if (doc.exists) {
       Map<String, dynamic> map = doc.data();
-      counter = BookingApplicationsOverview.fromJson(map);
+      counter = BookingApplicationCounter.fromJson(map);
     } else {
-      counter = BookingApplicationsOverview(
+      counter = BookingApplicationCounter(
           bookingFormId: bookingFormId, entityId: entityId);
       counter.id = null;
     }
