@@ -144,6 +144,28 @@ class TokenService {
     return dayWiseSlots;
   }
 
+  Future<TokenCounter> getTokenCounterForEntity(
+      String entityId, String year) async {
+    FirebaseFirestore fStore = getFirestore();
+
+    TokenCounter tokenCounter;
+
+    String tokenCounterId = TOKEN_COUNTER_PREFIX + "#" + entityId + "#" + year;
+
+    final DocumentReference tokenCounterRef =
+        fStore.doc('counter/' + tokenCounterId);
+
+    DocumentSnapshot doc = await tokenCounterRef.get();
+
+    if (doc.exists) {
+      Map<String, dynamic> map = doc.data();
+
+      tokenCounter = TokenCounter.fromJson(map);
+    }
+
+    return tokenCounter;
+  }
+
   Future<EntitySlots> getEntitySlots(String entityId, DateTime date) async {
     FirebaseFirestore fStore = getFirestore();
 
@@ -221,6 +243,7 @@ class TokenService {
     } else {
       tokenCounter = new TokenCounter(
           entityId: metaEntity.entityId, year: dateTime.year.toString());
+      tokenCounter.slotWiseStats = new Map<String, TokenStats>();
     }
 
     try {
@@ -553,6 +576,7 @@ class TokenService {
           tokenCounter = TokenCounter.fromJson(map);
         } else {
           tokenCounter = new TokenCounter(entityId: entityId, year: year);
+          tokenCounter.slotWiseStats = new Map<String, TokenStats>();
         }
 
         //update the TokenCounter, check the key year~month~day#slot-time
