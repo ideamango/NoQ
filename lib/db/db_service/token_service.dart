@@ -689,6 +689,7 @@ class TokenService {
       }
     } catch (e) {
       print("Error while fetching tokens: " + e.toString());
+      throw e;
     }
 
     return tokens;

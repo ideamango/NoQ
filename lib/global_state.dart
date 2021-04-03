@@ -243,19 +243,24 @@ class GlobalState {
       }
     }
 
-    if (_gs.bookings == null) {
+    if (_gs._currentUser != null && _gs.bookings == null) {
       DateTime fromDate = DateTime.now().subtract(new Duration(days: 60));
       DateTime toDate = DateTime.now().add(new Duration(days: 30));
-      _gs.bookings = new List<UserToken>();
 
-      List<UserTokens> listTokens =
-          await _gs._tokenService.getAllTokensForCurrentUser(fromDate, toDate);
-      if (listTokens != null && listTokens.length > 0) {
-        for (UserTokens tokens in listTokens) {
-          for (UserToken token in tokens.tokens) {
-            _gs.bookings.add(token);
+      try {
+        List<UserTokens> listTokens = await _gs._tokenService
+            .getAllTokensForCurrentUser(fromDate, toDate);
+        _gs.bookings = new List<UserToken>();
+
+        if (listTokens != null && listTokens.length > 0) {
+          for (UserTokens tokens in listTokens) {
+            for (UserToken token in tokens.tokens) {
+              _gs.bookings.add(token);
+            }
           }
         }
+      } catch (e) {
+        print("In exception");
       }
     }
 

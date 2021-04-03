@@ -23,7 +23,10 @@ enum DateDisplayFormat { date, month, year }
 
 class EntityTokenListPage extends StatefulWidget {
   final MetaEntity metaEntity;
-  EntityTokenListPage({Key key, @required this.metaEntity}) : super(key: key);
+  final dynamic backRoute;
+  EntityTokenListPage(
+      {Key key, @required this.metaEntity, @required this.backRoute})
+      : super(key: key);
   @override
   _EntityTokenListPageState createState() => _EntityTokenListPageState();
 }
@@ -527,7 +530,7 @@ class _EntityTokenListPageState extends State<EntityTokenListPage> {
         theme: ThemeData.light().copyWith(),
         home: Scaffold(
           appBar: CustomAppBarWithBackButton(
-            backRoute: ManageEntityListPage(),
+            backRoute: widget.backRoute,
             titleTxt: "Booking Tokens Overview ",
           ),
           body: Center(
