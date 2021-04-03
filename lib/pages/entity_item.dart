@@ -81,7 +81,7 @@ class EntityRowState extends State<EntityRow> {
     }
 
     showChildListPage() {
-      _state.getEntity(_metaEntity.entityId).then((value) {
+      _state.getEntity(_metaEntity.entityId, true).then((value) {
         bool isSavedOnServer = false;
         Entity ent;
         if (value != null) {
@@ -156,7 +156,7 @@ class EntityRowState extends State<EntityRow> {
 
     if (_initCompleted)
       return Card(
-        elevation: 8,
+        elevation: 5,
         child: Container(
           //height: MediaQuery.of(context).size.height * .3,
           // margin: EdgeInsets.all(5),
@@ -401,8 +401,11 @@ class EntityRowState extends State<EntityRow> {
                       ),
                       onPressed: () {
                         print("To child list page");
-                        Navigator.of(context).push(PageAnimation.createRoute(
-                            EntityTokenListPage(metaEntity: _metaEntity)));
+                        Navigator.of(context)
+                            .push(PageAnimation.createRoute(EntityTokenListPage(
+                          metaEntity: _metaEntity,
+                          backRoute: ManageEntityListPage(),
+                        )));
                       },
                     ),
                   ),

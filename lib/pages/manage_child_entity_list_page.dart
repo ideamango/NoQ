@@ -38,7 +38,7 @@ class _ManageChildEntityListPageState extends State<ManageChildEntityListPage> {
   final GlobalKey<FormState> _servicesListFormKey = new GlobalKey<FormState>();
   List<MetaEntity> servicesList = new List<MetaEntity>();
   ScrollController _childScrollController;
-  final itemSize = 100.0;
+
   final String title = "Child Amenities Details Form";
   // Map<String, Entity> _entityMap = Map<String, Entity>();
 
@@ -47,6 +47,7 @@ class _ManageChildEntityListPageState extends State<ManageChildEntityListPage> {
   bool _initCompleted = false;
   List<String> subEntityTypes;
   GlobalState _state;
+  double itemSize;
 
 //Add service Row
 
@@ -94,30 +95,9 @@ class _ManageChildEntityListPageState extends State<ManageChildEntityListPage> {
         ));
   }
 
-  // void registerCategorySelectEvent() {
-  //  // _eventListener =
-  //       EventBus.registerEvent(SEARCH_CATEGORY_SELECTED, null, (event, arg) {
-  //     if (event == null) {
-  //       return;
-  //     }
-  //     String categoryType = event.eventData;
-  //     setState(() {
-  //       _subEntityType = categoryType;
-  //     });
-  //     //If user has selected any type then add a row else show msg to user
-  //     if (_subEntityType != null) {
-  //       _addNewServiceRow();
-  //     } else {
-  //       //Utils.showMyFlushbar(context, icon, duration, title, msg)
-  //       print("Select sth ");
-  //     }
-  //   });
-  // }
-
   @override
   void dispose() {
     super.dispose();
-    //EventBus.unregisterEvent(_eventListener);
   }
 
   Future<Entity> getEntityById(String id) async {
@@ -149,8 +129,6 @@ class _ManageChildEntityListPageState extends State<ManageChildEntityListPage> {
         _initCompleted = true;
       });
     });
-    // registerCategorySelectEvent();
-    // subEntityTypes = new List<String>();
   }
 
   Future<void> getGlobalState() async {
@@ -166,18 +144,19 @@ class _ManageChildEntityListPageState extends State<ManageChildEntityListPage> {
     Entity en = Utils.createEntity(_subEntityType, parentEntity.entityId);
     _state.putEntity(en, false, parentEntity.entityId);
     MetaEntity meta;
-    setState(() {
-      // _entityMap[en.entityId] = en;
-      meta = en.getMetaEntity();
-      servicesList.add(meta);
-      _count = _count + 1;
-    });
 
     if (_childScrollController.hasClients)
       _childScrollController.animateTo(
           _childScrollController.position.maxScrollExtent + itemSize,
           curve: Curves.easeInToLinear,
           duration: Duration(milliseconds: 200));
+
+    setState(() {
+      // _entityMap[en.entityId] = en;
+      meta = en.getMetaEntity();
+      servicesList.add(meta);
+      _count = _count + 1;
+    });
   }
 
   // Widget _buildServiceItem(MetaEntity childEntity) {
@@ -289,8 +268,9 @@ class _ManageChildEntityListPageState extends State<ManageChildEntityListPage> {
                           itemExtent: itemSize,
                           //scrollDirection: Axis.vertical,
                           itemBuilder: (BuildContext context, int index) {
+                            // itemSize = MediaQuery.of(context).size.height * .21;
                             return Container(
-                              //  height: MediaQuery.of(context).size.height * .3,
+                              margin: EdgeInsets.only(bottom: 5),
                               child: ChildEntityRow(
                                   childEntity: servicesList[index]),
                             );

@@ -30,7 +30,7 @@ class _ManageEntityListPageState extends State<ManageEntityListPage> {
   Entity entity;
   EntityType _entityType;
   ScrollController _scrollController;
-  double itemSize = 100.00;
+  double itemSize;
   List<String> entityTypes;
   GlobalState _gs;
   bool stateInitFinished = false;

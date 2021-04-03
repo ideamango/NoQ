@@ -209,82 +209,94 @@ class _ManageEntityFormsState extends State<ManageEntityForms> {
                       ),
                     ),
                     Expanded(
-                      child: ListView.builder(
-                          // scrollDirection: Axis.horizontal,
-                          itemCount: checkBoxListTileModel.length,
-                          itemBuilder: (BuildContext context, int index) {
-                            return new Card(
-                              elevation: 2,
-                              color: Colors.cyan[100],
-                              margin: new EdgeInsets.fromLTRB(0, 5, 0, 5),
-                              child: Column(
-                                children: <Widget>[
-                                  Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
+                      child: (!Utils.isNullOrEmpty(checkBoxListTileModel))
+                          ? ListView.builder(
+                              // scrollDirection: Axis.horizontal,
+                              itemCount: checkBoxListTileModel.length,
+                              itemBuilder: (BuildContext context, int index) {
+                                return new Card(
+                                  elevation: 2,
+                                  color: Colors.cyan[100],
+                                  margin: new EdgeInsets.fromLTRB(0, 5, 0, 5),
+                                  child: Column(
+                                    children: <Widget>[
                                       Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
                                         children: [
+                                          Row(
+                                            children: [
+                                              IconButton(
+                                                icon: Icon(
+                                                  Icons.add_circle,
+                                                  color: Colors.cyan[700],
+                                                  size: 30,
+                                                ),
+                                                onPressed: () {
+                                                  checkBoxListTileModel[index]
+                                                      .isCheck = true;
+
+                                                  selectedForms.add(
+                                                      checkBoxListTileModel[
+                                                              index]
+                                                          .form);
+
+                                                  setState(() {});
+                                                },
+                                              ),
+                                              Text(
+                                                checkBoxListTileModel[index]
+                                                    .form
+                                                    .name,
+                                                style: TextStyle(
+                                                    fontSize: 13,
+                                                    fontWeight: FontWeight.w400,
+                                                    letterSpacing: 0.5),
+                                              ),
+                                            ],
+                                          ),
                                           IconButton(
                                             icon: Icon(
-                                              Icons.add_circle,
-                                              color: Colors.cyan[700],
-                                              size: 30,
+                                              Icons.preview,
+                                              color: primaryIcon,
                                             ),
                                             onPressed: () {
-                                              checkBoxListTileModel[index]
-                                                  .isCheck = true;
-
-                                              selectedForms.add(
-                                                  checkBoxListTileModel[index]
-                                                      .form);
-
-                                              setState(() {});
+                                              Navigator.of(context).push(
+                                                  PageAnimation.createRoute(
+                                                      EntityForm(
+                                                bookingFormId:
+                                                    checkBoxListTileModel[index]
+                                                        .form
+                                                        .id,
+                                                metaEntity: widget.metaEntity,
+                                                preferredSlotTime:
+                                                    widget.preferredSlotTime,
+                                                backRoute: ManageEntityForms(
+                                                  isAdmin: widget.isAdmin,
+                                                  metaEntity: widget.metaEntity,
+                                                  preferredSlotTime:
+                                                      widget.preferredSlotTime,
+                                                  backRoute: widget.backRoute,
+                                                ),
+                                              )));
                                             },
-                                          ),
-                                          Text(
-                                            checkBoxListTileModel[index]
-                                                .form
-                                                .name,
-                                            style: TextStyle(
-                                                fontSize: 13,
-                                                fontWeight: FontWeight.w400,
-                                                letterSpacing: 0.5),
                                           ),
                                         ],
                                       ),
-                                      IconButton(
-                                        icon: Icon(
-                                          Icons.preview,
-                                          color: primaryIcon,
-                                        ),
-                                        onPressed: () {
-                                          Navigator.of(context).push(
-                                              PageAnimation.createRoute(
-                                                  EntityForm(
-                                            bookingFormId:
-                                                checkBoxListTileModel[index]
-                                                    .form
-                                                    .id,
-                                            metaEntity: widget.metaEntity,
-                                            preferredSlotTime:
-                                                widget.preferredSlotTime,
-                                            backRoute: ManageEntityForms(
-                                              isAdmin: widget.isAdmin,
-                                              metaEntity: widget.metaEntity,
-                                              preferredSlotTime:
-                                                  widget.preferredSlotTime,
-                                              backRoute: widget.backRoute,
-                                            ),
-                                          )));
-                                        },
-                                      ),
                                     ],
                                   ),
-                                ],
-                              ),
-                            );
-                          }),
+                                );
+                              })
+                          : Container(
+                              alignment: Alignment.center,
+                              child: Text(
+                                "No Application Templates.!!",
+                                style: TextStyle(
+                                    color: Colors.black,
+                                    fontSize: 14,
+                                    fontFamily: 'RalewayRegular',
+                                    fontWeight: FontWeight.bold),
+                              )),
                     ),
                     Container(
                       // color: Colors.blue,
