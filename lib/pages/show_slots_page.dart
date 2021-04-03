@@ -206,8 +206,9 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
           home: WillPopScope(
             child: Scaffold(
               drawer: CustomDrawer(
-                phone: _gs.getCurrentUser().ph,
-              ),
+                  phone: _gs.getCurrentUser() != null
+                      ? _gs.getCurrentUser().ph
+                      : ""),
               appBar: CustomAppBarWithBackButton(
                   titleTxt: _storeName, backRoute: backRoute),
               body: Padding(

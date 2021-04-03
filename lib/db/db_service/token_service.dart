@@ -415,18 +415,18 @@ class TokenService {
 
         //create Token
         tx.set(tokRef, tokens.toJson());
-
-        //update the TokenCounter, check the key year~month~day#slot-time
-        String key = yearMonthDay + "#" + hourMinute;
-        if (!tokenCounter.slotWiseStats.containsKey(key)) {
-          tokenCounter.slotWiseStats[key] = TokenStats();
-        }
-        tokenCounter.slotWiseStats[key].numberOfTokensCreated =
-            tokenCounter.slotWiseStats[key].numberOfTokensCreated + 1;
-
-        //create/update the TokenCounter
-        tx.set(tokenCounterRef, tokenCounter.toJson());
       }
+
+      //update the TokenCounter, check the key year~month~day#slot-time
+      String key = yearMonthDay + "#" + hourMinute;
+      if (!tokenCounter.slotWiseStats.containsKey(key)) {
+        tokenCounter.slotWiseStats[key] = TokenStats();
+      }
+      tokenCounter.slotWiseStats[key].numberOfTokensCreated =
+          tokenCounter.slotWiseStats[key].numberOfTokensCreated + 1;
+
+      //create/update the TokenCounter
+      tx.set(tokenCounterRef, tokenCounter.toJson());
     } catch (ex) {
       print(
           "Error while generting token -> Transaction Error: " + e.toString());
