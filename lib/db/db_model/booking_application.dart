@@ -203,8 +203,8 @@ class BookingApplication {
   }
 }
 
-class BookingApplicationsOverview {
-  BookingApplicationsOverview({this.bookingFormId, this.entityId});
+class BookingApplicationCounter {
+  BookingApplicationCounter({this.bookingFormId, this.entityId});
 
   String id = Uuid().v1();
   String bookingFormId;
@@ -220,7 +220,7 @@ class BookingApplicationsOverview {
   int numberOfCompleted = 0;
   int numberOfCancelled = 0;
 
-  Map<String, Stats> dailyStats; //key should be year#month#day
+  Map<String, ApplicationStats> dailyStats; //key should be year#month#day
 
   Map<String, dynamic> toJson() => {
         'id': id,
@@ -237,10 +237,10 @@ class BookingApplicationsOverview {
         'dailyStats': convertFromMap(dailyStats)
       };
 
-  static BookingApplicationsOverview fromJson(Map<String, dynamic> json) {
+  static BookingApplicationCounter fromJson(Map<String, dynamic> json) {
     if (json == null) return null;
 
-    BookingApplicationsOverview overview = BookingApplicationsOverview(
+    BookingApplicationCounter overview = BookingApplicationCounter(
         bookingFormId: json['bookingFormId'], entityId: json['entityId']);
 
     overview.id = json['id'];
@@ -256,7 +256,8 @@ class BookingApplicationsOverview {
     return overview;
   }
 
-  Map<String, dynamic> convertFromMap(Map<String, Stats> dailyStats) {
+  Map<String, dynamic> convertFromMap(
+      Map<String, ApplicationStats> dailyStats) {
     if (dailyStats == null) {
       return null;
     }
@@ -268,14 +269,15 @@ class BookingApplicationsOverview {
     return map;
   }
 
-  static Map<String, Stats> convertToMapFromJSON(Map<dynamic, dynamic> map) {
-    Map<String, Stats> roles = new Map<String, Stats>();
-    map.forEach((k, v) => roles[k] = Stats.fromJson(v));
+  static Map<String, ApplicationStats> convertToMapFromJSON(
+      Map<dynamic, dynamic> map) {
+    Map<String, ApplicationStats> roles = new Map<String, ApplicationStats>();
+    map.forEach((k, v) => roles[k] = ApplicationStats.fromJson(v));
     return roles;
   }
 }
 
-class Stats {
+class ApplicationStats {
   int numberOfNew = 0;
   int numberOfApproved = 0;
   int numberOfRejected = 0;
@@ -294,10 +296,10 @@ class Stats {
         'numberOfCancelled': numberOfCancelled
       };
 
-  static Stats fromJson(Map<String, dynamic> json) {
+  static ApplicationStats fromJson(Map<String, dynamic> json) {
     if (json == null) return null;
 
-    Stats overview = Stats();
+    ApplicationStats overview = ApplicationStats();
     overview.numberOfNew = json['numberOfNew'];
     overview.numberOfInProcess = json['numberOfInProcess'];
     overview.numberOfApproved = json['numberOfApproved'];
