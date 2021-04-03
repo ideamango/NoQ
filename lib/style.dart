@@ -224,6 +224,7 @@ final Color borderColor = Colors.blueGrey[800];
 final Color primaryAccentColor = Colors.cyanAccent;
 final Color primaryDoneColor = Colors.green[300];
 final Color primaryDarkColor = Colors.cyan[800];
+final Color whiteBtnTextColor = Colors.blueGrey[700];
 
 final Color gradientDarkColor = Colors.blueGrey[600];
 
@@ -284,7 +285,7 @@ final highlightTextStyle = TextStyle(
     color: Colors.blueGrey[800], fontFamily: 'Montserrat', fontSize: 19.0);
 
 final BoxDecoration darkContainer = new BoxDecoration(
-    border: Border.all(color: Colors.blueGrey[500]),
+    border: Border.all(color: Colors.blueGrey[300]),
     shape: BoxShape.rectangle,
     color: Colors.blueGrey[500],
     borderRadius: BorderRadius.only(

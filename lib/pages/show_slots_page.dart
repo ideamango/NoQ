@@ -78,10 +78,13 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
     _storeName = entity.name;
 
     super.initState();
-    if (entity.parentId != null) {
-      getEntityDetails(entity.parentId).then((value) => parentEntity = value);
-    }
-    getGlobalState().whenComplete(() => _loadSlots());
+
+    getGlobalState().whenComplete(() {
+      _loadSlots();
+      if (entity.parentId != null) {
+        getEntityDetails(entity.parentId).then((value) => parentEntity = value);
+      }
+    });
   }
 
   Future<void> _loadSlots() async {
@@ -361,12 +364,12 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
                                       MediaQuery.of(context).size.height * .06,
                                   child: RaisedButton(
                                     elevation: 10.0,
-                                    color: highlightColor,
+                                    color: btnColor,
                                     splashColor: Colors.orangeAccent[700],
                                     textColor: Colors.white,
                                     child: Text(
                                       'Book Slot',
-                                      style: TextStyle(fontSize: 20),
+                                      style: buttonMedTextStyle,
                                     ),
                                     onPressed: () {
                                       if (selectedSlot != null)
@@ -523,7 +526,7 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
           child: RaisedButton(
             elevation: (isDisabled(sl.dateTime))
                 ? 0
-                : ((isSelected(sl.dateTime) == true) ? 0.0 : 10.0),
+                : ((isSelected(sl.dateTime) == true) ? 0.0 : 3.0),
             padding: EdgeInsets.all(2),
             child: Text(
               hrs + ':' + mnts,
@@ -564,25 +567,6 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
                   ),
             onPressed: () {
               if (!isDisabled(sl.dateTime)) {
-//Check if booking form is required then take request else show form.
-// //TODO: Testing code Dummy remove later - Start
-//                 MetaForm m1 = new MetaForm(
-//                     description: "Dummy formgfh",
-//                     id: "StrGuid1",
-//                     name: "Dummy Frgghm name");
-//                 MetaForm m2 = new MetaForm(
-//                     description: "Dummy fordfgm",
-//                     id: "StrGuid2",
-//                     name: "Dummy Frhgyutym name");
-//                 MetaForm m3 = new MetaForm(
-//                     description: "Dummy formdfg",
-//                     id: "StrGuid3",
-//                     name: "Dummy Frm dfgname");
-//                 entity.forms.add(m1);
-//                 entity.forms.add(m2);
-//                 entity.forms.add(m3);
-//                 //TODO: Testing code Dummy remove later - End
-
                 if (!Utils.isNullOrEmpty(entity.forms)) {
                   if (entity.forms.length > 1) {
                     //Show Booking request form SELECTION page

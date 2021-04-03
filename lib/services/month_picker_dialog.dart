@@ -271,6 +271,12 @@ class _MonthPickerDialogState extends State<_MonthPickerDialog> {
                   : null,
       child: Text(
         DateFormat.MMM(locale).format(date),
+        style: TextStyle(
+            color: date.month == selectedDate.month &&
+                    date.year == selectedDate.year
+                ? Colors.white
+                : Colors.blueGrey[600],
+            fontWeight: FontWeight.normal),
       ),
     );
   }

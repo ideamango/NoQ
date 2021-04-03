@@ -36,6 +36,10 @@ class EntityService {
     return FirebaseAuth.instanceFor(app: _fb);
   }
 
+  Future<bool> updateEntityForms(String entityId) async {
+    return false;
+  }
+
   Future<bool> upsertEntity(Entity entity) async {
     if (entity.type == EntityType.PLACE_TYPE_COVID19_VACCINATION_CENTER &&
         Utils.isNullOrEmpty(entity.forms)) {

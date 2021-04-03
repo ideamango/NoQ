@@ -198,7 +198,7 @@ class _BookingFormSelectionState extends State<BookingFormSelection> {
                                                 color: (_selectedValue == index)
                                                     ? Colors.blueGrey[900]
                                                     : Colors.blueGrey[600],
-                                                fontWeight: FontWeight.w800,
+                                                fontWeight: FontWeight.w600,
                                                 fontFamily: 'RalewayRegular',
                                                 letterSpacing: 0.5,
                                                 fontSize: 14.0,
@@ -228,11 +228,11 @@ class _BookingFormSelectionState extends State<BookingFormSelection> {
                       ),
                     ),
                     Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      mainAxisAlignment: MainAxisAlignment.end,
                       children: [
                         if (widget.isAdmin)
                           FlatButton(
-                              minWidth: MediaQuery.of(context).size.width * .35,
+                              minWidth: MediaQuery.of(context).size.width * .4,
                               child: Text("Reports"),
                               color: Colors.white,
                               splashColor: highlightColor.withOpacity(.8),
@@ -257,10 +257,16 @@ class _BookingFormSelectionState extends State<BookingFormSelection> {
                                 }
                               }),
                         FlatButton(
-                            minWidth: MediaQuery.of(context).size.width * .35,
+                            minWidth: MediaQuery.of(context).size.width * .3,
                             child: (widget.isAdmin)
                                 ? Text("Dashboard")
-                                : Icon(Icons.arrow_forward_ios),
+                                : Row(
+                                    children: [
+                                      Text("Next ",
+                                          style: TextStyle(fontSize: 18)),
+                                      Icon(Icons.arrow_forward_ios),
+                                    ],
+                                  ),
                             color: Colors.transparent,
                             splashColor: Colors.blueGrey[300],
                             shape: RoundedRectangleBorder(
@@ -274,8 +280,8 @@ class _BookingFormSelectionState extends State<BookingFormSelection> {
                                     context,
                                     Icons.error,
                                     Duration(seconds: 5),
-                                    "No Form Selected!!",
-                                    "Please select something..");
+                                    "Please select purpose of request!!",
+                                    "");
                               } else {
                                 if (dashBoardRoute != null)
                                   Navigator.of(context).push(

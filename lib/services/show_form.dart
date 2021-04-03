@@ -24,12 +24,12 @@ import 'package:noq/widget/custom_expansion_tile.dart';
 import 'package:email_validator/email_validator.dart';
 import 'package:path/path.dart' as pathfile;
 
-class CreateFormFields extends StatefulWidget {
+class EntityForm extends StatefulWidget {
   final MetaEntity metaEntity;
   final String bookingFormId;
   final DateTime preferredSlotTime;
   final dynamic backRoute;
-  CreateFormFields(
+  EntityForm(
       {Key key,
       @required this.metaEntity,
       @required this.bookingFormId,
@@ -38,10 +38,10 @@ class CreateFormFields extends StatefulWidget {
       : super(key: key);
 
   @override
-  _CreateFormFieldsState createState() => _CreateFormFieldsState();
+  _EntityFormState createState() => _EntityFormState();
 }
 
-class _CreateFormFieldsState extends State<CreateFormFields> {
+class _EntityFormState extends State<EntityForm> {
   TextEditingController _fieldController = new TextEditingController();
   Map<String, TextEditingController> listOfControllers =
       new Map<String, TextEditingController>();
@@ -122,9 +122,8 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
         return Theme(
           data: ThemeData.dark().copyWith(
             colorScheme: ColorScheme.light(
-                primary: Colors.black,
-                primaryVariant: Colors.amber,
-                onSecondary: Colors.cyan),
+              primary: Colors.cyan,
+            ),
             dialogBackgroundColor: Colors.white,
           ),
           child: child,
@@ -158,7 +157,7 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
           newField = Container(
             margin: EdgeInsets.fromLTRB(5, 5, 5, 5),
             decoration: BoxDecoration(
-                border: Border.all(color: Colors.black),
+                border: Border.all(color: containerColor),
                 color: Colors.grey[50],
                 shape: BoxShape.rectangle,
                 borderRadius: BorderRadius.all(Radius.circular(5.0))),
@@ -170,8 +169,8 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
                       decoration: darkContainer,
                       child: Theme(
                         data: ThemeData(
-                          unselectedWidgetColor: Colors.white,
-                          accentColor: Colors.grey[50],
+                          unselectedWidgetColor: Colors.grey[400],
+                          accentColor: Colors.black,
                         ),
                         child: CustomExpansionTile(
                           //key: PageStorageKey(this.widget.headerTitle),
@@ -191,9 +190,8 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
                           children: <Widget>[
                             new Container(
                               width: MediaQuery.of(context).size.width * .94,
-                              //decoration: darkContainer,
-                              color: containerColor,
-                              padding: EdgeInsets.only(left: 7),
+                              decoration: darkContainer,
+                              padding: EdgeInsets.all(2.0),
                               child: Row(
                                 children: <Widget>[
                                   Expanded(
@@ -241,13 +239,9 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
                                 // hintTextStr: field.infoMessage
                               ),
                               onChanged: (String value) {
-                                textField.response = value;
-                                print(value);
+                                return;
                               },
-                              onSaved: (String value) {
-                                textField.response = value;
-                                print(value);
-                              },
+                              onSaved: (String value) {},
                             ),
                           ),
                         ],
@@ -297,11 +291,9 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
 
                           children: <Widget>[
                             new Container(
-                              padding: EdgeInsets.only(left: 7),
                               width: MediaQuery.of(context).size.width * .94,
-                              //decoration: darkContainer,
-                              color: containerColor,
-                              //padding: EdgeInsets.all(2.0),
+                              decoration: darkContainer,
+                              padding: EdgeInsets.all(2.0),
                               child: Row(
                                 children: <Widget>[
                                   Expanded(
@@ -503,8 +495,8 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
                       children: <Widget>[
                         new Container(
                           width: MediaQuery.of(context).size.width * .94,
-                          color: containerColor,
-                          padding: EdgeInsets.only(left: 7),
+                          decoration: darkContainer,
+                          padding: EdgeInsets.all(2.0),
                           child: Row(
                             children: <Widget>[
                               Expanded(
@@ -602,8 +594,8 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
                           children: <Widget>[
                             new Container(
                               width: MediaQuery.of(context).size.width * .94,
-                              color: containerColor,
-                              padding: EdgeInsets.only(left: 7),
+                              decoration: darkContainer,
+                              padding: EdgeInsets.all(2.0),
                               child: Row(
                                 children: <Widget>[
                                   Expanded(
@@ -690,8 +682,8 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
                       children: <Widget>[
                         new Container(
                           width: MediaQuery.of(context).size.width * .94,
-                          color: containerColor,
-                          padding: EdgeInsets.only(left: 7),
+                          decoration: darkContainer,
+                          padding: EdgeInsets.all(2.0),
                           child: Row(
                             children: <Widget>[
                               Expanded(
@@ -803,8 +795,8 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
                       children: <Widget>[
                         new Container(
                           width: MediaQuery.of(context).size.width * .94,
-                          color: containerColor,
-                          padding: EdgeInsets.only(left: 7),
+                          decoration: darkContainer,
+                          padding: EdgeInsets.all(2.0),
                           child: Row(
                             children: <Widget>[
                               Expanded(
@@ -947,8 +939,8 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
                       children: <Widget>[
                         new Container(
                           width: MediaQuery.of(context).size.width * .94,
-                          color: containerColor,
-                          padding: EdgeInsets.only(left: 7),
+                          decoration: darkContainer,
+                          padding: EdgeInsets.all(2.0),
                           child: Row(
                             children: <Widget>[
                               Expanded(
@@ -1140,8 +1132,8 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
                           children: <Widget>[
                             new Container(
                               width: MediaQuery.of(context).size.width * .94,
-                              color: containerColor,
-                              padding: EdgeInsets.only(left: 7),
+                              decoration: darkContainer,
+                              padding: EdgeInsets.all(2.0),
                               child: Row(
                                 children: <Widget>[
                                   Expanded(
@@ -1453,93 +1445,93 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
                   print("going back");
 
                   //Show flush bar to notify user
-                  if (flushStatus != "Showing") {
-                    flush = Flushbar<bool>(
-                      //padding: EdgeInsets.zero,
-                      margin: EdgeInsets.zero,
-                      flushbarPosition: FlushbarPosition.BOTTOM,
-                      flushbarStyle: FlushbarStyle.GROUNDED,
-                      reverseAnimationCurve: Curves.decelerate,
-                      forwardAnimationCurve: Curves.easeInToLinear,
-                      backgroundColor: Colors.cyan[200],
-                      boxShadows: [
-                        BoxShadow(
-                            color: Colors.cyan,
-                            offset: Offset(0.0, 2.0),
-                            blurRadius: 3.0)
-                      ],
-                      isDismissible: true,
-                      //duration: Duration(seconds: 4),
-                      icon: Icon(
-                        Icons.cancel,
-                        color: Colors.blueGrey[90],
-                      ),
-                      showProgressIndicator: true,
-                      progressIndicatorBackgroundColor: Colors.blueGrey[900],
-                      progressIndicatorValueColor:
-                          new AlwaysStoppedAnimation<Color>(Colors.cyan[500]),
-                      routeBlur: 10.0,
-                      titleText: Text(
-                        "Are you sure you want to leave this page?",
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 16.0,
-                            color: Colors.blueGrey[700],
-                            fontFamily: "ShadowsIntoLightTwo"),
-                      ),
-                      messageText: Text(
-                        "The changes you made might be lost, if not saved.",
-                        style: TextStyle(
-                            fontSize: 12.0,
-                            color: Colors.blueGrey[800],
-                            fontFamily: "ShadowsIntoLightTwo"),
-                      ),
+                  // if (flushStatus != "Showing") {
+                  //   flush = Flushbar<bool>(
+                  //     //padding: EdgeInsets.zero,
+                  //     margin: EdgeInsets.zero,
+                  //     flushbarPosition: FlushbarPosition.BOTTOM,
+                  //     flushbarStyle: FlushbarStyle.GROUNDED,
+                  //     reverseAnimationCurve: Curves.decelerate,
+                  //     forwardAnimationCurve: Curves.easeInToLinear,
+                  //     backgroundColor: Colors.cyan[200],
+                  //     boxShadows: [
+                  //       BoxShadow(
+                  //           color: Colors.cyan,
+                  //           offset: Offset(0.0, 2.0),
+                  //           blurRadius: 3.0)
+                  //     ],
+                  //     isDismissible: true,
+                  //     //duration: Duration(seconds: 4),
+                  //     icon: Icon(
+                  //       Icons.cancel,
+                  //       color: Colors.blueGrey[90],
+                  //     ),
+                  //     showProgressIndicator: true,
+                  //     progressIndicatorBackgroundColor: Colors.blueGrey[900],
+                  //     progressIndicatorValueColor:
+                  //         new AlwaysStoppedAnimation<Color>(Colors.cyan[500]),
+                  //     routeBlur: 10.0,
+                  //     titleText: Text(
+                  //       "Are you sure you want to leave this page?",
+                  //       style: TextStyle(
+                  //           fontWeight: FontWeight.bold,
+                  //           fontSize: 16.0,
+                  //           color: Colors.blueGrey[700],
+                  //           fontFamily: "ShadowsIntoLightTwo"),
+                  //     ),
+                  //     messageText: Text(
+                  //       "The changes you made might be lost, if not saved.",
+                  //       style: TextStyle(
+                  //           fontSize: 12.0,
+                  //           color: Colors.blueGrey[800],
+                  //           fontFamily: "ShadowsIntoLightTwo"),
+                  //     ),
 
-                      mainButton: Column(
-                        children: <Widget>[
-                          FlatButton(
-                            padding: EdgeInsets.all(0),
-                            onPressed: () {
-                              flushStatus = "Empty";
-                              flush.dismiss(false); // result = true
-                            },
-                            child: Text(
-                              "No",
-                              style: TextStyle(
-                                  color: Colors.black,
-                                  fontWeight: FontWeight.bold),
-                            ),
-                          ),
-                          FlatButton(
-                            padding: EdgeInsets.all(0),
-                            onPressed: () {
-                              flushStatus = "Empty";
-                              flush.dismiss(true); // result = true
-                            },
-                            child: Text(
-                              "Yes",
-                              style: TextStyle(color: Colors.blueGrey[700]),
-                            ),
-                          ),
-                        ],
-                      ),
-                    )..onStatusChanged = (FlushbarStatus status) {
-                        print("FlushbarStatus-------$status");
-                        if (status == FlushbarStatus.IS_APPEARING)
-                          flushStatus = "Showing";
-                        if (status == FlushbarStatus.DISMISSED)
-                          flushStatus = "Empty";
-                        print("gfdfgdfg");
-                      };
+                  //     mainButton: Column(
+                  //       children: <Widget>[
+                  //         FlatButton(
+                  //           padding: EdgeInsets.all(0),
+                  //           onPressed: () {
+                  //             flushStatus = "Empty";
+                  //             flush.dismiss(false); // result = true
+                  //           },
+                  //           child: Text(
+                  //             "No",
+                  //             style: TextStyle(
+                  //                 color: Colors.black,
+                  //                 fontWeight: FontWeight.bold),
+                  //           ),
+                  //         ),
+                  //         FlatButton(
+                  //           padding: EdgeInsets.all(0),
+                  //           onPressed: () {
+                  //             flushStatus = "Empty";
+                  //             flush.dismiss(true); // result = true
+                  //           },
+                  //           child: Text(
+                  //             "Yes",
+                  //             style: TextStyle(color: Colors.blueGrey[700]),
+                  //           ),
+                  //         ),
+                  //       ],
+                  //     ),
+                  //   )..onStatusChanged = (FlushbarStatus status) {
+                  //       print("FlushbarStatus-------$status");
+                  //       if (status == FlushbarStatus.IS_APPEARING)
+                  //         flushStatus = "Showing";
+                  //       if (status == FlushbarStatus.DISMISSED)
+                  //         flushStatus = "Empty";
+                  //       print("gfdfgdfg");
+                  //     };
 
-                    flush
-                      ..show(context).then((result) {
-                        _wasButtonClicked = result;
-                        flushStatus = "Empty";
-                        if (_wasButtonClicked) Navigator.of(context).pop();
-                      });
-                  }
-
+                  //   flush
+                  //     ..show(context).then((result) {
+                  //       _wasButtonClicked = result;
+                  //       flushStatus = "Empty";
+                  //       if (_wasButtonClicked) Navigator.of(context).pop();
+                  //     });
+                  // }
+                  Navigator.of(context).pop();
                   print("flush already running");
                 },
               ),
@@ -1552,173 +1544,173 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
                   key: _bookingFormKey,
                   child: Column(
                     children: [
-                      Container(
-                        margin: EdgeInsets.fromLTRB(0, 12, 0, 0),
-                        width: MediaQuery.of(context).size.width * .913,
-                        decoration: BoxDecoration(
-                            border: Border.all(color: containerColor),
-                            color: Colors.grey[50],
-                            shape: BoxShape.rectangle,
-                            borderRadius:
-                                BorderRadius.all(Radius.circular(5.0))),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            Column(
-                              children: <Widget>[
-                                Container(
-                                  //padding: EdgeInsets.only(left: 5),
-                                  decoration: darkContainer,
-                                  child: Theme(
-                                    data: ThemeData(
-                                      unselectedWidgetColor: Colors.white,
-                                      accentColor: Colors.grey[50],
-                                    ),
-                                    child: CustomExpansionTile(
-                                      //key: PageStorageKey(this.widget.headerTitle),
-                                      initiallyExpanded: false,
-                                      title: Row(
-                                        children: <Widget>[
-                                          Text(
-                                            "Selected Time Slot",
-                                            style: TextStyle(
-                                                color: Colors.white,
-                                                fontSize: 15),
-                                          ),
-                                          SizedBox(width: 5),
-                                        ],
-                                      ),
-                                      backgroundColor: Colors.blueGrey[500],
+                      // Container(
+                      //   margin: EdgeInsets.fromLTRB(0, 12, 0, 0),
+                      //   width: MediaQuery.of(context).size.width * .913,
+                      //   decoration: BoxDecoration(
+                      //       border: Border.all(color: containerColor),
+                      //       color: Colors.grey[50],
+                      //       shape: BoxShape.rectangle,
+                      //       borderRadius:
+                      //           BorderRadius.all(Radius.circular(5.0))),
+                      //   child: Column(
+                      //     crossAxisAlignment: CrossAxisAlignment.start,
+                      //     children: <Widget>[
+                      //       Column(
+                      //         children: <Widget>[
+                      //           Container(
+                      //             //padding: EdgeInsets.only(left: 5),
+                      //             decoration: darkContainer,
+                      //             child: Theme(
+                      //               data: ThemeData(
+                      //                 unselectedWidgetColor: Colors.white,
+                      //                 accentColor: Colors.grey[50],
+                      //               ),
+                      //               child: CustomExpansionTile(
+                      //                 //key: PageStorageKey(this.widget.headerTitle),
+                      //                 initiallyExpanded: false,
+                      //                 title: Row(
+                      //                   children: <Widget>[
+                      //                     Text(
+                      //                       "Selected Time Slot",
+                      //                       style: TextStyle(
+                      //                           color: Colors.white,
+                      //                           fontSize: 15),
+                      //                     ),
+                      //                     SizedBox(width: 5),
+                      //                   ],
+                      //                 ),
+                      //                 backgroundColor: Colors.blueGrey[500],
 
-                                      children: <Widget>[
-                                        new Container(
-                                          width: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
-                                              .94,
-                                          color: containerColor,
-                                          padding: EdgeInsets.only(left: 7),
-                                          child: Row(
-                                            children: <Widget>[
-                                              Expanded(
-                                                child: Text(
-                                                    "Time of your appointment for this place",
-                                                    style: buttonXSmlTextStyle),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                                Container(
-                                  padding: EdgeInsets.fromLTRB(5, 8, 5, 5),
-                                  child: Column(
-                                    children: <Widget>[
-                                      Column(
-                                        children: [
-                                          Row(
-                                            children: [
-                                              SizedBox(
-                                                  // width: cardWidth * .45,
-                                                  child: Wrap(
-                                                children: [
-                                                  AutoSizeText(
-                                                    "Current time-slot :",
-                                                    //group: labelGroup,
-                                                    minFontSize: 15,
-                                                    maxFontSize: 15,
-                                                    maxLines: 2,
-                                                    overflow: TextOverflow.clip,
-                                                    style: fieldLabelTextStyle,
-                                                  ),
-                                                ],
-                                              )),
-                                              Wrap(children: [
-                                                Container(
-                                                  padding:
-                                                      EdgeInsets.only(left: 5),
-                                                  child: AutoSizeText(
-                                                      ((bookingApplication
-                                                                  .preferredSlotTiming !=
-                                                              null)
-                                                          ? DateFormat(
-                                                                  'yyyy-MM-dd – kk:mm')
-                                                              .format(bookingApplication
-                                                                  .preferredSlotTiming)
-                                                          : "None"),
-                                                      // group: medCondGroup,
-                                                      minFontSize: 12,
-                                                      maxFontSize: 14,
-                                                      maxLines: 1,
-                                                      overflow:
-                                                          TextOverflow.ellipsis,
-                                                      style: TextStyle(
-                                                        color: btnColor,
-                                                        fontWeight:
-                                                            FontWeight.bold,
-                                                      )),
-                                                ),
-                                              ]),
-                                            ],
-                                          ),
-                                          Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.start,
-                                            children: [
-                                              AutoSizeText(
-                                                "Click to choose another Time-Slot",
-                                                // group: labelGroup,
-                                                minFontSize: 15,
-                                                maxFontSize: 15,
-                                                maxLines: 2,
-                                                overflow: TextOverflow.clip,
-                                                style: fieldLabelTextStyle,
-                                              ),
-                                              IconButton(
-                                                  icon: Icon(
-                                                    Icons.date_range,
-                                                    color: btnColor,
-                                                  ),
-                                                  onPressed: () async {
-                                                    final result =
-                                                        await Navigator.push(
-                                                            context,
-                                                            MaterialPageRoute(
-                                                                builder:
-                                                                    (context) =>
-                                                                        SlotSelectionPage(
-                                                                          metaEntity:
-                                                                              widget.metaEntity,
-                                                                          dateTime:
-                                                                              bookingApplication.preferredSlotTiming,
-                                                                          forPage:
-                                                                              "ApplicationList",
-                                                                        )));
+                      //                 children: <Widget>[
+                      //                   new Container(
+                      //                     width: MediaQuery.of(context)
+                      //                             .size
+                      //                             .width *
+                      //                         .94,
+                      //                     decoration: darkContainer,
+                      //                     padding: EdgeInsets.all(2.0),
+                      //                     child: Row(
+                      //                       children: <Widget>[
+                      //                         Expanded(
+                      //                           child: Text(
+                      //                               "Time of your appointment for this place",
+                      //                               style: buttonXSmlTextStyle),
+                      //                         ),
+                      //                       ],
+                      //                     ),
+                      //                   ),
+                      //                 ],
+                      //               ),
+                      //             ),
+                      //           ),
+                      //           Container(
+                      //             padding: EdgeInsets.fromLTRB(5, 8, 5, 5),
+                      //             child: Column(
+                      //               children: <Widget>[
+                      //                 Column(
+                      //                   children: [
+                      //                     Row(
+                      //                       children: [
+                      //                         SizedBox(
+                      //                             // width: cardWidth * .45,
+                      //                             child: Wrap(
+                      //                           children: [
+                      //                             AutoSizeText(
+                      //                               "Current time-slot :",
+                      //                               //group: labelGroup,
+                      //                               minFontSize: 15,
+                      //                               maxFontSize: 15,
+                      //                               maxLines: 2,
+                      //                               overflow: TextOverflow.clip,
+                      //                               style: fieldLabelTextStyle,
+                      //                             ),
+                      //                           ],
+                      //                         )),
+                      //                         Wrap(children: [
+                      //                           Container(
+                      //                             padding:
+                      //                                 EdgeInsets.only(left: 5),
+                      //                             child: AutoSizeText(
+                      //                                 ((bookingApplication
+                      //                                             .preferredSlotTiming !=
+                      //                                         null)
+                      //                                     ? DateFormat(
+                      //                                             'yyyy-MM-dd – kk:mm')
+                      //                                         .format(bookingApplication
+                      //                                             .preferredSlotTiming)
+                      //                                     : "None"),
+                      //                                 // group: medCondGroup,
+                      //                                 minFontSize: 12,
+                      //                                 maxFontSize: 14,
+                      //                                 maxLines: 1,
+                      //                                 overflow:
+                      //                                     TextOverflow.ellipsis,
+                      //                                 style: TextStyle(
+                      //                                   color: btnColor,
+                      //                                   fontWeight:
+                      //                                       FontWeight.bold,
+                      //                                 )),
+                      //                           ),
+                      //                         ]),
+                      //                       ],
+                      //                     ),
+                      //                     Row(
+                      //                       mainAxisAlignment:
+                      //                           MainAxisAlignment.start,
+                      //                       children: [
+                      //                         AutoSizeText(
+                      //                           "Click to choose another Time-Slot",
+                      //                           // group: labelGroup,
+                      //                           minFontSize: 15,
+                      //                           maxFontSize: 15,
+                      //                           maxLines: 2,
+                      //                           overflow: TextOverflow.clip,
+                      //                           style: fieldLabelTextStyle,
+                      //                         ),
+                      //                         IconButton(
+                      //                             icon: Icon(
+                      //                               Icons.date_range,
+                      //                               color: btnColor,
+                      //                             ),
+                      //                             onPressed: () async {
+                      //                               final result =
+                      //                                   await Navigator.push(
+                      //                                       context,
+                      //                                       MaterialPageRoute(
+                      //                                           builder:
+                      //                                               (context) =>
+                      //                                                   SlotSelectionPage(
+                      //                                                     metaEntity:
+                      //                                                         widget.metaEntity,
+                      //                                                     dateTime:
+                      //                                                         bookingApplication.preferredSlotTiming,
+                      //                                                     forPage:
+                      //                                                         "ApplicationList",
+                      //                                                   )));
 
-                                                    print(result);
-                                                    setState(() {
-                                                      if (result != null)
-                                                        bookingApplication
-                                                                .preferredSlotTiming =
-                                                            result;
-                                                    });
-                                                  })
-                                            ],
-                                          ),
-                                        ],
-                                      ),
+                      //                               print(result);
+                      //                               setState(() {
+                      //                                 if (result != null)
+                      //                                   bookingApplication
+                      //                                           .preferredSlotTiming =
+                      //                                       result;
+                      //                               });
+                      //                             })
+                      //                       ],
+                      //                     ),
+                      //                   ],
+                      //                 ),
 
-                                      // alternatePhoneField,
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ),
+                      //                 // alternatePhoneField,
+                      //               ],
+                      //             ),
+                      //           ),
+                      //         ],
+                      //       ),
+                      //     ],
+                      //   ),
+                      // ),
                       Expanded(
                         child: ListView.builder(
                           padding: EdgeInsets.all(
@@ -1757,7 +1749,8 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
                           ),
                           onPressed: () {
                             print("FlushbarStatus-------");
-                            processSaveWithTimer();
+                            // processSaveWithTimer();
+                            return;
                           }),
                     ],
                   ),

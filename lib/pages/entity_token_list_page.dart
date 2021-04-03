@@ -371,18 +371,19 @@ class _EntityTokenListPageState extends State<EntityTokenListPage> {
               titlePadding: EdgeInsets.zero,
               contentPadding: EdgeInsets.fromLTRB(5, 30, 5, 30),
               title: Container(
-                height: MediaQuery.of(context).size.height * .06,
-                padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
+                height: MediaQuery.of(context).size.height * .08,
+                padding: EdgeInsets.fromLTRB(15, 15, 15, 10),
                 color: Colors.cyan,
                 child: Text("Year ${selectedYear.year.toString()}",
-                    style: TextStyle(color: Colors.white)),
+                    style: TextStyle(
+                        color: Colors.white, fontWeight: FontWeight.normal)),
               ),
               content: Container(
                   child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   SizedBox(
-                    height: 40,
+                    height: 47,
                     child: FlatButton(
                       visualDensity: VisualDensity.compact,
                       padding: EdgeInsets.zero,
@@ -391,13 +392,17 @@ class _EntityTokenListPageState extends State<EntityTokenListPage> {
                           : Colors.transparent,
                       textColor: (selectedYear.year == date.year - 1)
                           ? Colors.white
-                          : Colors.cyan,
+                          : Colors.blueGrey[600],
                       shape: CircleBorder(
-                        side: BorderSide(color: btnColor),
+                        side: BorderSide(
+                            color: (selectedYear.year == date.year - 1)
+                                ? Colors.white
+                                : Colors.transparent),
                       ),
                       child: Text(
                         (date.year - 1).toString(),
-                        style: TextStyle(fontSize: 11),
+                        style: TextStyle(
+                            fontSize: 15, fontWeight: FontWeight.normal),
                       ),
                       onPressed: () {
                         setState(() {
@@ -409,7 +414,7 @@ class _EntityTokenListPageState extends State<EntityTokenListPage> {
                     ),
                   ),
                   SizedBox(
-                    height: 40,
+                    height: 47,
                     child: FlatButton(
                       visualDensity: VisualDensity.compact,
                       padding: EdgeInsets.zero,
@@ -418,13 +423,17 @@ class _EntityTokenListPageState extends State<EntityTokenListPage> {
                           : Colors.transparent,
                       textColor: (selectedYear.year == date.year)
                           ? Colors.white
-                          : Colors.cyan,
+                          : Colors.blueGrey[600],
                       shape: CircleBorder(
-                        side: BorderSide(color: btnColor),
+                        side: BorderSide(
+                            color: (selectedYear.year == date.year - 1)
+                                ? Colors.white
+                                : Colors.transparent),
                       ),
                       child: Text(
                         (date.year).toString(),
-                        style: TextStyle(fontSize: 11),
+                        style: TextStyle(
+                            fontSize: 15, fontWeight: FontWeight.normal),
                       ),
                       onPressed: () {
                         setState(() {
@@ -435,7 +444,7 @@ class _EntityTokenListPageState extends State<EntityTokenListPage> {
                     ),
                   ),
                   SizedBox(
-                    height: 40,
+                    height: 47,
                     child: FlatButton(
                       visualDensity: VisualDensity.compact,
                       padding: EdgeInsets.zero,
@@ -444,13 +453,17 @@ class _EntityTokenListPageState extends State<EntityTokenListPage> {
                           : Colors.transparent,
                       textColor: (selectedYear.year == date.year + 1)
                           ? Colors.white
-                          : Colors.cyan,
+                          : Colors.blueGrey[600],
                       shape: CircleBorder(
-                        side: BorderSide(color: btnColor),
+                        side: BorderSide(
+                            color: (selectedYear.year == date.year - 1)
+                                ? Colors.white
+                                : Colors.transparent),
                       ),
                       child: Text(
                         (date.year + 1).toString(),
-                        style: TextStyle(fontSize: 11),
+                        style: TextStyle(
+                            fontSize: 15, fontWeight: FontWeight.normal),
                       ),
                       onPressed: () {
                         setState(() {

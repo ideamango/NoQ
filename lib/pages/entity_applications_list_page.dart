@@ -55,12 +55,18 @@ class _EntityApplicationListPageState extends State<EntityApplicationListPage> {
   SelectedView selectedView = SelectedView.list;
   BookingApplicationCounter _bookingApplicationsOverview;
   Map<String, double> pieChartDataMap = new Map<String, double>();
+  String dailyStatsKey;
   @override
   void initState() {
     super.initState();
     getGlobalState().whenComplete(() {
       dateForShowingList = DateTime.now();
       setShowDate(DateTime.now(), DateDisplayFormat.date);
+      dailyStatsKey = DateTime.now().year.toString() +
+          "~" +
+          DateTime.now().month.toString() +
+          "~" +
+          DateTime.now().day.toString();
 
       _gs
           .getApplicationService()
@@ -69,19 +75,30 @@ class _EntityApplicationListPageState extends State<EntityApplicationListPage> {
           .then((value) {
         _bookingApplicationsOverview = value;
 
-        pieChartDataMap["New"] =
-            _bookingApplicationsOverview.numberOfNew.toDouble();
+        //Before accessing check if there are any request for today.
+        if (_bookingApplicationsOverview.dailyStats
+            .containsKey(dailyStatsKey)) {
+          pieChartDataMap["New"] = _bookingApplicationsOverview
+              .dailyStats[dailyStatsKey].numberOfNew
+              .toDouble();
 
-        pieChartDataMap["On-Hold"] =
-            _bookingApplicationsOverview.numberOfPutOnHold.toDouble();
-        pieChartDataMap["Rejected"] =
-            _bookingApplicationsOverview.numberOfRejected.toDouble();
+          pieChartDataMap["On-Hold"] = _bookingApplicationsOverview
+              .dailyStats[dailyStatsKey].numberOfPutOnHold
+              .toDouble();
+          pieChartDataMap["Rejected"] = _bookingApplicationsOverview
+              .dailyStats[dailyStatsKey].numberOfRejected
+              .toDouble();
 
-        pieChartDataMap["Approved"] =
-            _bookingApplicationsOverview.numberOfApproved.toDouble();
+          pieChartDataMap["Approved"] = _bookingApplicationsOverview
+              .dailyStats[dailyStatsKey].numberOfApproved
+              .toDouble();
 
-        pieChartDataMap["Completed"] =
-            _bookingApplicationsOverview.numberOfCompleted.toDouble();
+          pieChartDataMap["Completed"] = _bookingApplicationsOverview
+              .dailyStats[dailyStatsKey].numberOfCompleted
+              .toDouble();
+        } else {
+          print("No Data");
+        }
 
         if (this.mounted) {
           setState(() {
@@ -248,7 +265,126 @@ class _EntityApplicationListPageState extends State<EntityApplicationListPage> {
     return list.map(buildItem).toList();
   }
 
-  refreshDataView() {}
+  refreshDataView(DateTime date, DateDisplayFormat format) {
+    // String formattedDate;
+    bool statsPresent = false;
+    switch (format) {
+      case DateDisplayFormat.date:
+        _gs
+            .getApplicationService()
+            .getApplicationsOverview(
+                widget.bookingFormId, widget.entityId, date.year)
+            .then((value) {
+          _bookingApplicationsOverview = value;
+          dailyStatsKey = date.year.toString() +
+              "~" +
+              date.month.toString() +
+              "~" +
+              date.day.toString();
+          statsPresent = (_bookingApplicationsOverview.dailyStats
+                  .containsKey(dailyStatsKey))
+              ? true
+              : false;
+
+          pieChartDataMap["New"] = statsPresent
+              ? _bookingApplicationsOverview
+                  .dailyStats[dailyStatsKey].numberOfNew
+                  .toDouble()
+              : 0;
+          pieChartDataMap["On-Hold"] = statsPresent
+              ? _bookingApplicationsOverview
+                  .dailyStats[dailyStatsKey].numberOfPutOnHold
+                  .toDouble()
+              : 0;
+          pieChartDataMap["Rejected"] = statsPresent
+              ? _bookingApplicationsOverview
+                  .dailyStats[dailyStatsKey].numberOfRejected
+                  .toDouble()
+              : 0;
+          pieChartDataMap["Approved"] = statsPresent
+              ? _bookingApplicationsOverview
+                  .dailyStats[dailyStatsKey].numberOfApproved
+                  .toDouble()
+              : 0;
+          pieChartDataMap["Completed"] = statsPresent
+              ? _bookingApplicationsOverview
+                  .dailyStats[dailyStatsKey].numberOfCompleted
+                  .toDouble()
+              : 0;
+          setState(() {});
+        });
+        break;
+      case DateDisplayFormat.month:
+        _gs
+            .getApplicationService()
+            .getApplicationsOverview(
+                widget.bookingFormId, widget.entityId, date.year)
+            .then((value) {
+          _bookingApplicationsOverview = value;
+          dailyStatsKey = date.year.toString() + "~" + date.month.toString();
+
+          int numberOfNew = 0;
+          int numberOfPutOnHold = 0;
+          int numberOfRejected = 0;
+          int numberOfApproved = 0;
+          int numberOfCompleted = 0;
+
+          for (var key in _bookingApplicationsOverview.dailyStats.keys) {
+            if (key.contains(dailyStatsKey)) {
+              numberOfNew = numberOfNew +
+                  _bookingApplicationsOverview.dailyStats[key].numberOfNew;
+              numberOfPutOnHold = numberOfPutOnHold +
+                  _bookingApplicationsOverview
+                      .dailyStats[key].numberOfPutOnHold;
+              numberOfRejected = numberOfRejected +
+                  _bookingApplicationsOverview.dailyStats[key].numberOfRejected;
+              numberOfApproved = numberOfApproved +
+                  _bookingApplicationsOverview.dailyStats[key].numberOfApproved;
+              numberOfCompleted = numberOfCompleted +
+                  _bookingApplicationsOverview
+                      .dailyStats[key].numberOfCompleted;
+            }
+          }
+
+          pieChartDataMap["New"] = numberOfNew.toDouble();
+          pieChartDataMap["On-Hold"] = numberOfPutOnHold.toDouble();
+          pieChartDataMap["Rejected"] = numberOfRejected.toDouble();
+          pieChartDataMap["Approved"] = numberOfApproved.toDouble();
+          pieChartDataMap["Completed"] = numberOfCompleted.toDouble();
+          setState(() {});
+        });
+        break;
+      case DateDisplayFormat.year:
+        _gs
+            .getApplicationService()
+            .getApplicationsOverview(
+                widget.bookingFormId, widget.entityId, date.year)
+            .then((value) {
+          _bookingApplicationsOverview = value;
+          statsPresent = _bookingApplicationsOverview != null ? true : false;
+          pieChartDataMap["New"] = statsPresent
+              ? _bookingApplicationsOverview.numberOfNew.toDouble()
+              : 0;
+          pieChartDataMap["On-Hold"] = statsPresent
+              ? _bookingApplicationsOverview.numberOfPutOnHold.toDouble()
+              : 0;
+          pieChartDataMap["Rejected"] = statsPresent
+              ? _bookingApplicationsOverview.numberOfRejected.toDouble()
+              : 0;
+          pieChartDataMap["Approved"] = statsPresent
+              ? _bookingApplicationsOverview.numberOfApproved.toDouble()
+              : 0;
+          pieChartDataMap["Completed"] = statsPresent
+              ? _bookingApplicationsOverview.numberOfCompleted.toDouble()
+              : 0;
+          setState(() {});
+        });
+        //formattedDate = date.year.toString();
+        break;
+      default:
+        break;
+    }
+  }
 
   buildChildItem(UserToken token) {
     return Container(
@@ -405,18 +541,19 @@ class _EntityApplicationListPageState extends State<EntityApplicationListPage> {
               titlePadding: EdgeInsets.zero,
               contentPadding: EdgeInsets.fromLTRB(5, 30, 5, 30),
               title: Container(
-                height: MediaQuery.of(context).size.height * .06,
-                padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
+                height: MediaQuery.of(context).size.height * .08,
+                padding: EdgeInsets.fromLTRB(15, 15, 15, 15),
                 color: Colors.cyan,
                 child: Text("Year ${selectedYear.year.toString()}",
-                    style: TextStyle(color: Colors.white)),
+                    style: TextStyle(
+                        color: Colors.white, fontWeight: FontWeight.normal)),
               ),
               content: Container(
                   child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   SizedBox(
-                    height: 40,
+                    height: 45,
                     child: FlatButton(
                       visualDensity: VisualDensity.compact,
                       padding: EdgeInsets.zero,
@@ -427,11 +564,19 @@ class _EntityApplicationListPageState extends State<EntityApplicationListPage> {
                           ? Colors.white
                           : Colors.cyan,
                       shape: CircleBorder(
-                        side: BorderSide(color: btnColor),
+                        side: BorderSide(
+                            color: (selectedYear.year == date.year - 1)
+                                ? btnColor
+                                : Colors.transparent),
                       ),
                       child: Text(
                         (date.year - 1).toString(),
-                        style: TextStyle(fontSize: 11),
+                        style: TextStyle(
+                            fontSize: 15,
+                            color: (selectedYear.year == date.year - 1)
+                                ? Colors.white
+                                : Colors.blueGrey[600],
+                            fontWeight: FontWeight.normal),
                       ),
                       onPressed: () {
                         setState(() {
@@ -443,7 +588,7 @@ class _EntityApplicationListPageState extends State<EntityApplicationListPage> {
                     ),
                   ),
                   SizedBox(
-                    height: 40,
+                    height: 45,
                     child: FlatButton(
                       visualDensity: VisualDensity.compact,
                       padding: EdgeInsets.zero,
@@ -452,13 +597,21 @@ class _EntityApplicationListPageState extends State<EntityApplicationListPage> {
                           : Colors.transparent,
                       textColor: (selectedYear.year == date.year)
                           ? Colors.white
-                          : Colors.cyan,
+                          : Colors.blueGrey[700],
                       shape: CircleBorder(
-                        side: BorderSide(color: btnColor),
+                        side: BorderSide(
+                            color: (selectedYear.year == date.year)
+                                ? btnColor
+                                : Colors.transparent),
                       ),
                       child: Text(
                         (date.year).toString(),
-                        style: TextStyle(fontSize: 11),
+                        style: TextStyle(
+                            fontSize: 15,
+                            color: (selectedYear.year == date.year)
+                                ? Colors.white
+                                : Colors.blueGrey[600],
+                            fontWeight: FontWeight.normal),
                       ),
                       onPressed: () {
                         setState(() {
@@ -469,7 +622,7 @@ class _EntityApplicationListPageState extends State<EntityApplicationListPage> {
                     ),
                   ),
                   SizedBox(
-                    height: 40,
+                    height: 45,
                     child: FlatButton(
                       visualDensity: VisualDensity.compact,
                       padding: EdgeInsets.zero,
@@ -480,11 +633,19 @@ class _EntityApplicationListPageState extends State<EntityApplicationListPage> {
                           ? Colors.white
                           : Colors.cyan,
                       shape: CircleBorder(
-                        side: BorderSide(color: btnColor),
+                        side: BorderSide(
+                            color: (selectedYear.year == date.year + 1)
+                                ? btnColor
+                                : Colors.transparent),
                       ),
                       child: Text(
                         (date.year + 1).toString(),
-                        style: TextStyle(fontSize: 11),
+                        style: TextStyle(
+                            fontSize: 15,
+                            color: (selectedYear.year == date.year + 1)
+                                ? Colors.white
+                                : Colors.blueGrey[600],
+                            fontWeight: FontWeight.normal),
                       ),
                       onPressed: () {
                         setState(() {
@@ -540,6 +701,8 @@ class _EntityApplicationListPageState extends State<EntityApplicationListPage> {
     return returnVal;
   }
 
+  Widget noDataContainer() {}
+
   @override
   Widget build(BuildContext context) {
     if (initCompleted && !loadingData) {
@@ -549,7 +712,7 @@ class _EntityApplicationListPageState extends State<EntityApplicationListPage> {
         home: Scaffold(
           appBar: CustomAppBarWithBackButton(
             backRoute: ManageEntityListPage(),
-            titleTxt: "Booking Tokens Overview ",
+            titleTxt: "Application Requests Overview ",
           ),
           body: Center(
             child: Container(
@@ -663,6 +826,9 @@ class _EntityApplicationListPageState extends State<EntityApplicationListPage> {
                                       loadingData = true;
                                     });
                                     getListOfData(value);
+//Update pie chart
+                                    refreshDataView(
+                                        value, DateDisplayFormat.date);
                                   }
                                 });
                               },
@@ -684,6 +850,7 @@ class _EntityApplicationListPageState extends State<EntityApplicationListPage> {
                                 style: TextStyle(fontSize: 11),
                               ),
                               onPressed: () {
+                                //Show data for a month
                                 showMonthPicker(
                                         context: context,
                                         firstDate: DateTime(
@@ -695,6 +862,8 @@ class _EntityApplicationListPageState extends State<EntityApplicationListPage> {
                                           print(date);
                                           if (date != null) {
                                             setShowDate(
+                                                date, DateDisplayFormat.month);
+                                            refreshDataView(
                                                 date, DateDisplayFormat.month);
                                             //fetch data for the month (check getListOfData)
                                           }
@@ -726,6 +895,8 @@ class _EntityApplicationListPageState extends State<EntityApplicationListPage> {
                                   if (value != null) {
                                     print(value);
                                     setShowDate(value, DateDisplayFormat.year);
+                                    refreshDataView(
+                                        value, DateDisplayFormat.year);
                                   }
                                 });
                               },
@@ -736,11 +907,40 @@ class _EntityApplicationListPageState extends State<EntityApplicationListPage> {
                   SizedBox(
                     height: 10,
                   ),
-                  Container(
-                    height: MediaQuery.of(context).size.height * .7,
-                    width: MediaQuery.of(context).size.width * .95,
-                    child: EntityPieChart(pieChartDataMap: pieChartDataMap),
-                  ),
+                  pieChartDataMap != null
+                      ? ((pieChartDataMap.length == 0)
+                          ? Container(
+                              height: MediaQuery.of(context).size.height * .7,
+                              width: MediaQuery.of(context).size.width * .95,
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text("No Applications for chosen date!"),
+                                  SizedBox(
+                                    height: 3,
+                                  ),
+                                  Text(
+                                    "Try another Day, Month or Year",
+                                    style: lightSubTextStyle,
+                                  ),
+                                ],
+                              ),
+                            )
+                          : Container(
+                              height: MediaQuery.of(context).size.height * .7,
+                              width: MediaQuery.of(context).size.width * .95,
+                              child: EntityPieChart(
+                                  pieChartDataMap: pieChartDataMap)))
+                      : Container(
+                          height: MediaQuery.of(context).size.height * .7,
+                          width: MediaQuery.of(context).size.width * .95,
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text("No Data"),
+                            ],
+                          ),
+                        ),
                   //(!Utils.isNullOrEmpty(list)) ? showListOfData : _emptyPage(),
                   // (!Utils.isNullOrEmpty(list))
                   //     ? ((selectedView == SelectedView.list)
