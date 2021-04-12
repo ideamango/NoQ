@@ -9,17 +9,17 @@ import 'package:noq/pages/manage_entity_list_page.dart';
 import 'package:noq/utils.dart';
 import 'package:noq/widget/appbar.dart';
 
-class BarChart extends StatefulWidget {
-  final Map<String, int> dataMap;
+class BarChartTokens extends StatefulWidget {
+  final Map<String, TokenStats> dataMap;
   final MetaEntity metaEn;
-  BarChart({Key key, @required this.dataMap, @required this.metaEn})
+  BarChartTokens({Key key, @required this.dataMap, @required this.metaEn})
       : super(key: key);
   @override
-  _BarChartState createState() => _BarChartState();
+  _BarChartTokensState createState() => _BarChartTokensState();
 }
 
-class _BarChartState extends State<BarChart> {
-  Map<String, int> _dataMap;
+class _BarChartTokensState extends State<BarChartTokens> {
+  Map<String, TokenStats> _dataMap;
   List<dynamic> colors = [
     charts.ColorUtil.fromDartColor(Colors.pink[200]),
     charts.ColorUtil.fromDartColor(Colors.green[200]),
@@ -77,7 +77,7 @@ class _BarChartState extends State<BarChart> {
       if (colorCount == colors.length) colorCount = 0;
       data.add(BarChartModel(
         timeSlot: key,
-        numOfTokens: value,
+        numOfTokens: value.numberOfTokensCreated,
         color: colors[colorCount],
       ));
       colorCount++;

@@ -6,7 +6,7 @@ import 'package:noq/db/db_model/meta_entity.dart';
 import 'package:noq/db/db_model/slot.dart';
 import 'package:noq/db/db_model/user_token.dart';
 import 'package:noq/global_state.dart';
-import 'package:noq/pages/bar_chart.dart';
+import 'package:noq/pages/bar_chart_applications.dart';
 import 'package:noq/pages/manage_entity_list_page.dart';
 import 'package:noq/pages/overview_page.dart';
 import 'package:noq/pages/pie_chart.dart';
@@ -56,6 +56,7 @@ class _EntityApplicationListPageState extends State<EntityApplicationListPage> {
   BookingApplicationCounter _bookingApplicationsOverview;
   Map<String, double> pieChartDataMap = new Map<String, double>();
   String dailyStatsKey;
+  bool dataMapZeroValues = true;
   @override
   void initState() {
     super.initState();
@@ -115,6 +116,7 @@ class _EntityApplicationListPageState extends State<EntityApplicationListPage> {
   }
 
   Future<void> getListOfData(DateTime date) async {
+    dataMapZeroValues = true;
     list = await getSlotsListForEntity(widget.metaEntity, date);
     for (int i = 0; i <= list.length - 1; i++) {
       List<UserToken> tokensForThisSlot =
@@ -125,6 +127,7 @@ class _EntityApplicationListPageState extends State<EntityApplicationListPage> {
               ":" +
               Utils.formatTime(list[i].dateTime.minute.toString())] =
           tokensForThisSlot.length;
+      if (tokensForThisSlot.length != 0) dataMapZeroValues = false;
     }
     setState(() {
       loadingData = false;
@@ -134,6 +137,7 @@ class _EntityApplicationListPageState extends State<EntityApplicationListPage> {
   }
 
   Future<void> getListOfDataForMonth(DateTime date) async {
+    dataMapZeroValues = true;
     list = await getSlotsListForEntity(widget.metaEntity, date);
     for (int i = 0; i <= list.length - 1; i++) {
       List<UserToken> tokensForThisSlot =
@@ -144,6 +148,7 @@ class _EntityApplicationListPageState extends State<EntityApplicationListPage> {
               ":" +
               Utils.formatTime(list[i].dateTime.minute.toString())] =
           tokensForThisSlot.length;
+      if (tokensForThisSlot.length != 0) dataMapZeroValues = false;
     }
     setState(() {
       loadingData = false;
@@ -153,6 +158,7 @@ class _EntityApplicationListPageState extends State<EntityApplicationListPage> {
   }
 
   Future<void> getListOfDataForYear(DateTime year) async {
+    dataMapZeroValues = true;
     //TODO Smita: Get time-slots vs booked tokens for the entire year.
 
     //Dummy data for testing- start
@@ -167,6 +173,7 @@ class _EntityApplicationListPageState extends State<EntityApplicationListPage> {
               ":" +
               Utils.formatTime(list[i].dateTime.minute.toString())] =
           tokensForThisSlot.length;
+      if (tokensForThisSlot.length != 0) dataMapZeroValues = false;
     }
 
     // dataMap[Utils.formatTime() + ":" + Utils.formatTime()] =
@@ -216,7 +223,28 @@ class _EntityApplicationListPageState extends State<EntityApplicationListPage> {
                 SizedBox(height: MediaQuery.of(context).size.height * .02),
                 Container(
                   color: Colors.transparent,
-                  child: Text("No Tokens. Try with another date!"),
+                  child: Column(
+                    children: [
+                      Text("No Applications Found.",
+                          style: TextStyle(
+                            color: Colors.blueGrey[900],
+                            // fontWeight: FontWeight.w800,
+                            fontFamily: 'RalewayRegular',
+                            letterSpacing: 0.8,
+                            fontSize: 18.0,
+                            //height: 2,
+                          )),
+                      Text("Try with another date!",
+                          style: TextStyle(
+                            color: Colors.blueGrey[900],
+                            // fontWeight: FontWeight.w800,
+                            fontFamily: 'RalewayRegular',
+                            letterSpacing: 0.8,
+                            fontSize: 14.0,
+                            height: 1.5,
+                          )),
+                    ],
+                  ),
                   // child: Image(
                   //image: AssetImage('assets/search_home.png'),
                   // )
@@ -701,8 +729,6 @@ class _EntityApplicationListPageState extends State<EntityApplicationListPage> {
     return returnVal;
   }
 
-  Widget noDataContainer() {}
-
   @override
   Widget build(BuildContext context) {
     if (initCompleted && !loadingData) {
@@ -863,6 +889,10 @@ class _EntityApplicationListPageState extends State<EntityApplicationListPage> {
                                           if (date != null) {
                                             setShowDate(
                                                 date, DateDisplayFormat.month);
+                                            setState(() {
+                                              loadingData = true;
+                                            });
+                                            getListOfDataForMonth(date);
                                             refreshDataView(
                                                 date, DateDisplayFormat.month);
                                             //fetch data for the month (check getListOfData)
@@ -907,68 +937,83 @@ class _EntityApplicationListPageState extends State<EntityApplicationListPage> {
                   SizedBox(
                     height: 10,
                   ),
-                  pieChartDataMap != null
-                      ? ((pieChartDataMap.length == 0)
-                          ? Container(
+                  (selectedView == SelectedView.pie)
+                      ? pieChartDataMap != null
+                          ? ((pieChartDataMap.length == 0)
+                              ? Container(
+                                  height:
+                                      MediaQuery.of(context).size.height * .7,
+                                  width:
+                                      MediaQuery.of(context).size.width * .95,
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Text("No Applications for chosen date!"),
+                                      SizedBox(
+                                        height: 3,
+                                      ),
+                                      Text(
+                                        "Try another Day, Month or Year",
+                                        style: lightSubTextStyle,
+                                      ),
+                                    ],
+                                  ),
+                                )
+                              : Container(
+                                  height:
+                                      MediaQuery.of(context).size.height * .7,
+                                  width:
+                                      MediaQuery.of(context).size.width * .95,
+                                  child: EntityPieChart(
+                                      pieChartDataMap: pieChartDataMap)))
+                          : Container(
                               height: MediaQuery.of(context).size.height * .7,
                               width: MediaQuery.of(context).size.width * .95,
                               child: Column(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  Text("No Applications for chosen date!"),
-                                  SizedBox(
-                                    height: 3,
-                                  ),
-                                  Text(
-                                    "Try another Day, Month or Year",
-                                    style: lightSubTextStyle,
-                                  ),
+                                  Text("No Data"),
                                 ],
                               ),
                             )
-                          : Container(
-                              height: MediaQuery.of(context).size.height * .7,
-                              width: MediaQuery.of(context).size.width * .95,
-                              child: EntityPieChart(
-                                  pieChartDataMap: pieChartDataMap)))
-                      : Container(
-                          height: MediaQuery.of(context).size.height * .7,
-                          width: MediaQuery.of(context).size.width * .95,
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Text("No Data"),
-                            ],
-                          ),
-                        ),
-                  //(!Utils.isNullOrEmpty(list)) ? showListOfData : _emptyPage(),
-                  // (!Utils.isNullOrEmpty(list))
-                  //     ? ((selectedView == SelectedView.list)
-                  //         ? Expanded(
-                  //             child: ListView.builder(
-                  //                 itemCount: 1,
-                  //                 itemBuilder:
-                  //                     (BuildContext context, int index) {
-                  //                   return Container(
-                  //                     margin:
-                  //                         EdgeInsets.fromLTRB(10, 0, 10, 50),
-                  //                     child: new Column(
-                  //                       children: list.map(buildItem).toList(),
-                  //                     ),
-                  //                   );
-                  //                 }),
-                  //           )
-                  //         : Container(
-                  //             height: MediaQuery.of(context).size.height * .7,
-                  //             width: MediaQuery.of(context).size.width * .95,
-                  //             child: ListView(children: <Widget>[
-                  //               BarChart(
-                  //                 dataMap: dataMap,
-                  //                 metaEn: widget.metaEntity,
-                  //               ),
-                  //             ]),
-                  //           ))
-                  //     : _emptyPage(),
+                      :
+                      //(!Utils.isNullOrEmpty(list)) ? showListOfData : _emptyPage(),
+                      ((selectedView == SelectedView.bar)
+                          ?
+
+                          //If selected view is Bar chart
+                          //if datamap has some tokens then show bar chart else empty page
+                          (dataMapZeroValues == false
+                              ? Container(
+                                  height:
+                                      MediaQuery.of(context).size.height * .7,
+                                  width:
+                                      MediaQuery.of(context).size.width * .95,
+                                  child: ListView(children: <Widget>[
+                                    BarChartApplications(
+                                      dataMap: dataMap,
+                                      metaEn: widget.metaEntity,
+                                    ),
+                                  ]),
+                                )
+                              : _emptyPage())
+                          : (!Utils.isNullOrEmpty(list)
+                              ? Expanded(
+                                  child: ListView.builder(
+                                      itemCount: 1,
+                                      itemBuilder:
+                                          (BuildContext context, int index) {
+                                        return Container(
+                                          margin: EdgeInsets.fromLTRB(
+                                              10, 0, 10, 50),
+                                          child: new Column(
+                                            children:
+                                                list.map(buildItem).toList(),
+                                          ),
+                                        );
+                                      }),
+                                )
+                              : _emptyPage())),
                 ],
               ),
             ),

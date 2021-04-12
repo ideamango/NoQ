@@ -270,7 +270,7 @@ class TokenCounter {
   TokenStats getTokenStatsForMonth(int month) {
     TokenStats ts = new TokenStats();
     slotWiseStats.forEach((key, value) {
-      int tokenMonth = int.parse(key.split('#')[1]);
+      int tokenMonth = int.parse(key.split('~')[1]);
       if (tokenMonth == month) {
         ts.numberOfTokensCreated += value.numberOfTokensCreated;
         ts.numberOfTokensCancelled += value.numberOfTokensCancelled;
@@ -280,7 +280,65 @@ class TokenCounter {
     return ts;
   }
 
-  TokenStats getTokenStatsForYearTillDate() {
+  TokenStats getTokenStatsForDay(DateTime date) {
+    TokenStats ts = new TokenStats();
+    slotWiseStats.forEach((key, value) {
+      String tokenDate = (key.split('#')[0]);
+      List<String> dateList = tokenDate.split('~');
+
+      if (int.parse(dateList[0]) == date.year &&
+          int.parse(dateList[1]) == date.month &&
+          int.parse(dateList[2]) == date.day) {
+        ts.numberOfTokensCreated += value.numberOfTokensCreated;
+        ts.numberOfTokensCancelled += value.numberOfTokensCancelled;
+      }
+    });
+
+    return ts;
+  }
+
+  Map<int, TokenStats> getTokenStatsDayWiseForMonth(int month) {
+    Map<int, TokenStats> dayWiseStats = Map<int, TokenStats>();
+    slotWiseStats.forEach((key, value) {
+      String tokenDate = (key.split('#')[0]);
+      String slot = (key.split('#')[1]);
+      List<String> dateList = tokenDate.split('~');
+      int day = int.parse(dateList[2]);
+      if (int.parse(dateList[1]) == month) {
+        if (dayWiseStats.containsKey(day)) {
+          dayWiseStats[day].numberOfTokensCreated =
+              dayWiseStats[day].numberOfTokensCreated +
+                  value.numberOfTokensCreated;
+          dayWiseStats[day].numberOfTokensCancelled =
+              dayWiseStats[day].numberOfTokensCancelled +
+                  value.numberOfTokensCancelled;
+        } else {
+          dayWiseStats[day] = value;
+        }
+      }
+    });
+
+    return dayWiseStats;
+  }
+
+  Map<String, TokenStats> getTokenStatsSlotWiseForDay(DateTime date) {
+    Map<String, TokenStats> slotWiseStatsForDay = Map<String, TokenStats>();
+    slotWiseStats.forEach((key, value) {
+      String tokenDate = (key.split('#')[0]);
+      String slot = (key.split('#')[1]);
+      List<String> dateList = tokenDate.split('~');
+
+      if (int.parse(dateList[0]) == date.year &&
+          int.parse(dateList[1]) == date.month &&
+          int.parse(dateList[2]) == date.day) {
+        slotWiseStatsForDay[slot] = value;
+      }
+    });
+
+    return slotWiseStatsForDay;
+  }
+
+  TokenStats getTokenStatsForYear() {
     TokenStats ts = new TokenStats();
     slotWiseStats.forEach((key, value) {
       ts.numberOfTokensCreated += value.numberOfTokensCreated;
@@ -292,7 +350,8 @@ class TokenCounter {
 
   Map<String, TokenStats> getTokenStatsTimeSlotWise(
       DateTime to, DateTime from) {
-    Map<String, TokenStats> slotWiseStats = new Map<String, TokenStats>();
+    Map<String, TokenStats> slotWiseStatsForRange =
+        new Map<String, TokenStats>();
 
     slotWiseStats.forEach((key, value) {
       int tokenYear = int.parse(key.split('#')[0]);
@@ -303,20 +362,20 @@ class TokenCounter {
       DateTime dt = new DateTime(tokenYear, tokenMonth, tokenDay);
 
       if (dt.isAfter(to) && dt.isBefore(from)) {
-        if (slotWiseStats.containsKey(timeSlot)) {
-          TokenStats ts = slotWiseStats[timeSlot];
+        if (slotWiseStatsForRange.containsKey(timeSlot)) {
+          TokenStats ts = slotWiseStatsForRange[timeSlot];
           ts.numberOfTokensCreated += value.numberOfTokensCreated;
           ts.numberOfTokensCancelled += value.numberOfTokensCancelled;
         } else {
           TokenStats ts = new TokenStats();
           ts.numberOfTokensCreated += value.numberOfTokensCreated;
           ts.numberOfTokensCancelled += value.numberOfTokensCancelled;
-          slotWiseStats[timeSlot] = ts;
+          slotWiseStatsForRange[timeSlot] = ts;
         }
       }
     });
 
-    return slotWiseStats;
+    return slotWiseStatsForRange;
   }
 
   static Map<String, TokenStats> convertToMapFromJSON(

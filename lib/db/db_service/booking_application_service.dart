@@ -304,6 +304,7 @@ class BookingApplicationService {
           localCounter.dailyStats[dailyStatsKey].numberOfApproved++;
           ba.approvedBy = SYSTEM;
           ba.notesOnApproval = AUTO_APPROVED;
+          ba.status = ApplicationStatus.APPROVED;
           ba.timeOfApproval = now;
         } else {
           if (globalCounter != null) {

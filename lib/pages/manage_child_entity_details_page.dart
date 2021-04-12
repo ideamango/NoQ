@@ -138,7 +138,6 @@ class _ManageChildEntityDetailsPageState
   TextEditingController _ctAvlTillTimeController = TextEditingController();
 
   List<days> _daysOff = List<days>();
-  BorderRadiusGeometry _borderRadius = BorderRadius.circular(5);
   Entity serviceEntity;
 
   //bool _autoPopulate = false;

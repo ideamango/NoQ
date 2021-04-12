@@ -4,7 +4,6 @@ import 'package:charts_flutter/flutter.dart' as charts;
 import 'package:intl/intl.dart';
 import 'package:noq/bar_chart_model.dart';
 import 'package:noq/constants.dart';
-import 'package:noq/pages/bar_chart.dart';
 
 class BarChartGraph extends StatefulWidget {
   final String chartLength;
@@ -41,6 +40,14 @@ class _BarChartGraphState extends State<BarChartGraph> {
   @override
   Widget build(BuildContext context) {
     List<charts.Series<BarChartModel, String>> series = [
+      charts.Series(
+        id: "Booked Tokens for a day",
+        data: widget.data,
+        domainFn: (BarChartModel series, _) => series.timeSlot,
+        measureFn: (BarChartModel series, _) => series.numOfTokens,
+        colorFn: (BarChartModel series, _) => series.color,
+        labelAccessorFn: (BarChartModel series, _) => '${series.numOfTokens}',
+      ),
       charts.Series(
         id: "Booked Tokens for a day",
         data: widget.data,
