@@ -297,13 +297,13 @@ class TokenCounter {
     return ts;
   }
 
-  Map<int, TokenStats> getTokenStatsDayWiseForMonth(int month) {
-    Map<int, TokenStats> dayWiseStats = Map<int, TokenStats>();
+  Map<String, TokenStats> getTokenStatsDayWiseForMonth(int month) {
+    Map<String, TokenStats> dayWiseStats = Map<String, TokenStats>();
     slotWiseStats.forEach((key, value) {
       String tokenDate = (key.split('#')[0]);
       String slot = (key.split('#')[1]);
       List<String> dateList = tokenDate.split('~');
-      int day = int.parse(dateList[2]);
+      String day = (dateList[2]);
       if (int.parse(dateList[1]) == month) {
         if (dayWiseStats.containsKey(day)) {
           dayWiseStats[day].numberOfTokensCreated =
@@ -313,7 +313,7 @@ class TokenCounter {
               dayWiseStats[day].numberOfTokensCancelled +
                   value.numberOfTokensCancelled;
         } else {
-          dayWiseStats[day] = value;
+          dayWiseStats[day.toString()] = value;
         }
       }
     });

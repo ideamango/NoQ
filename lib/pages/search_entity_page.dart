@@ -1020,7 +1020,7 @@ class _SearchEntityPageState extends State<SearchEntityPage>
                                 padding: EdgeInsets.all(0),
                                 scrollDirection: Axis.vertical,
                                 shrinkWrap: true,
-                                itemCount: EntityType.values.length,
+                                itemCount: _state.getActiveEntityTypes().length,
                                 gridDelegate:
                                     SliverGridDelegateWithFixedCrossAxisCount(
                                         crossAxisCount: 4,
@@ -1037,7 +1037,9 @@ class _SearchEntityPageState extends State<SearchEntityPage>
                                       //     BoxDecoration(border: Border.all(color: Colors.black, width: 0.5)),
                                       child: Center(
                                         child: _buildCategoryItem(
-                                            context, EntityType.values[index]),
+                                            context,
+                                            _state
+                                                .getActiveEntityTypes()[index]),
                                       ),
                                     ),
                                   );

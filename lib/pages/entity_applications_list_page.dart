@@ -52,7 +52,7 @@ class _EntityApplicationListPageState extends State<EntityApplicationListPage> {
   String weekForShowingList;
   Map<String, List<UserToken>> _tokensMap = new Map<String, List<UserToken>>();
   Map<String, int> dataMap = new Map<String, int>();
-  SelectedView selectedView = SelectedView.list;
+  SelectedView selectedView = SelectedView.bar;
   BookingApplicationCounter _bookingApplicationsOverview;
   Map<String, double> pieChartDataMap = new Map<String, double>();
   String dailyStatsKey;

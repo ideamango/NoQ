@@ -38,7 +38,7 @@ class _EntityTokenListPageState extends State<EntityTokenListPage> {
   GlobalState _gs;
   List<Slot> list;
   Map<String, TokenStats> dataForDay;
-  Map<int, TokenStats> dataForMonth;
+  Map<String, TokenStats> dataForMonth;
   Map<String, List<String>> dataForYear;
   String formattedDateStr;
   DateTime dateForShowingList;
@@ -47,7 +47,7 @@ class _EntityTokenListPageState extends State<EntityTokenListPage> {
   String weekForShowingList;
   Map<String, List<UserToken>> _tokensMap = new Map<String, List<UserToken>>();
   Map<String, TokenStats> dataMap = new Map<String, TokenStats>();
-  SelectedView selectedView = SelectedView.list;
+  SelectedView selectedView = SelectedView.bar;
   Widget listWidget;
   Widget barChartWidget;
   DateTime defaultDate;
@@ -170,7 +170,7 @@ class _EntityTokenListPageState extends State<EntityTokenListPage> {
       case DateDisplayFormat.date:
         //Set display Date
         formattedDate = DateFormat(dateDisplayFormat).format(date);
-//Fetch data of a day - which will be sorted based on time-slots
+        //Fetch data of a day - which will be sorted based on time-slots
         if (tokenCounterForYear != null) {
           if (tokenCounterForYear.year != date.year.toString()) {
             _gs
@@ -179,13 +179,10 @@ class _EntityTokenListPageState extends State<EntityTokenListPage> {
                     widget.metaEntity.entityId, date.year.toString())
                 .then((value) {
               tokenCounterForYear = value;
-
               dataForDay =
                   tokenCounterForYear.getTokenStatsSlotWiseForDay(date);
-
               //DataMap for BarCharts
               dataMap = dataForDay;
-
               listWidget = Expanded(
                 child: ListView.builder(
                     itemCount: 1,
@@ -198,7 +195,6 @@ class _EntityTokenListPageState extends State<EntityTokenListPage> {
                       );
                     }),
               );
-
               barChartWidget = Container(
                 height: MediaQuery.of(context).size.height * .7,
                 width: MediaQuery.of(context).size.width * .95,
@@ -209,19 +205,48 @@ class _EntityTokenListPageState extends State<EntityTokenListPage> {
                   ),
                 ]),
               );
-
 // //Format data in widget
             });
           } else {
             dataForDay = tokenCounterForYear.getTokenStatsSlotWiseForDay(date);
-            //Dummy
-            // TokenStats ts = new TokenStats();
-            // ts.numberOfTokensCreated = 2;
-            // ts.numberOfTokensCancelled = 0;
-            // dataForDay["10:30"] = ts;
-            // dataForDay["11:30"] = ts;
-
-            //Dummy
+            dataMap = dataForDay;
+            if (dataForDay.length != 0) {
+              listWidget = Expanded(
+                child: ListView.builder(
+                    itemCount: 1,
+                    itemBuilder: (BuildContext context, int index) {
+                      String key = dataForDay.keys.elementAt(index);
+                      return Container(
+                        margin: EdgeInsets.fromLTRB(10, 0, 10, 50),
+                        child: new Column(
+                            children: [buildItem(key, dataForDay[key])]),
+                      );
+                    }),
+              );
+              barChartWidget = Container(
+                height: MediaQuery.of(context).size.height * .7,
+                width: MediaQuery.of(context).size.width * .95,
+                child: ListView(children: <Widget>[
+                  BarChartTokens(
+                    dataMap: dataMap,
+                    metaEn: widget.metaEntity,
+                  ),
+                ]),
+              );
+            } else {
+              listWidget = _emptyPage();
+              barChartWidget = _emptyPage();
+            }
+          }
+        } else {
+          _gs
+              .getTokenService()
+              .getTokenCounterForEntity(
+                  widget.metaEntity.entityId, date.year.toString())
+              .then((value) {
+            tokenCounterForYear = value;
+            dataForDay = tokenCounterForYear.getTokenStatsSlotWiseForDay(date);
+            dataMap = dataForDay;
 // //Format data in widget
             if (dataForDay.length != 0) {
               listWidget = Expanded(
@@ -246,38 +271,11 @@ class _EntityTokenListPageState extends State<EntityTokenListPage> {
                   ),
                 ]),
               );
-            } else
+            } else {
               listWidget = _emptyPage();
-          }
-        } else {
-          dataForDay = tokenCounterForYear.getTokenStatsSlotWiseForDay(date);
-
-// //Format data in widget
-          if (dataForDay.length != 0) {
-            listWidget = Expanded(
-              child: ListView.builder(
-                  itemCount: 1,
-                  itemBuilder: (BuildContext context, int index) {
-                    String key = dataForDay.keys.elementAt(index);
-                    return Container(
-                      margin: EdgeInsets.fromLTRB(10, 0, 10, 50),
-                      child: new Column(
-                          children: [buildItem(key, dataForDay[key])]),
-                    );
-                  }),
-            );
-            barChartWidget = Container(
-              height: MediaQuery.of(context).size.height * .7,
-              width: MediaQuery.of(context).size.width * .95,
-              child: ListView(children: <Widget>[
-                BarChartTokens(
-                  dataMap: dataMap,
-                  metaEn: widget.metaEntity,
-                ),
-              ]),
-            );
-          } else
-            listWidget = _emptyPage();
+              barChartWidget = _emptyPage();
+            }
+          });
         }
         break;
       case DateDisplayFormat.month:
@@ -287,11 +285,116 @@ class _EntityTokenListPageState extends State<EntityTokenListPage> {
             date.year.toString();
         //Fetch data of month - which will be sorted based on days
         if (tokenCounterForYear != null) {
-          tokenCounterForYear.getTokenStatsDayWiseForMonth(date.month);
-          print(dataForMonth.length);
-          //Format data in widget
-          //
-          //
+          if (tokenCounterForYear.year != date.year.toString()) {
+            _gs
+                .getTokenService()
+                .getTokenCounterForEntity(
+                    widget.metaEntity.entityId, date.year.toString())
+                .then((value) {
+              tokenCounterForYear = value;
+              dataForMonth =
+                  tokenCounterForYear.getTokenStatsDayWiseForMonth(date.month);
+              dataMap = dataForMonth;
+
+              listWidget = Expanded(
+                child: ListView.builder(
+                    itemCount: 1,
+                    itemBuilder: (BuildContext context, int index) {
+                      String key = dataForMonth.keys.elementAt(index);
+                      return Container(
+                        margin: EdgeInsets.fromLTRB(10, 0, 10, 50),
+                        child: new Column(
+                            children: [buildItem(key, dataForMonth[key])]),
+                      );
+                    }),
+              );
+
+              barChartWidget = Container(
+                height: MediaQuery.of(context).size.height * .7,
+                width: MediaQuery.of(context).size.width * .95,
+                child: ListView(children: <Widget>[
+                  BarChartTokens(
+                    dataMap: dataMap,
+                    metaEn: widget.metaEntity,
+                  ),
+                ]),
+              );
+            });
+          } else {
+            dataForMonth =
+                tokenCounterForYear.getTokenStatsDayWiseForMonth(date.month);
+            print(dataForMonth.length);
+            //Format data in widget
+            dataMap = dataForMonth;
+            if (dataForMonth.length != 0) {
+              dataMap = dataForMonth;
+              listWidget = Expanded(
+                child: ListView.builder(
+                    itemCount: 1,
+                    itemBuilder: (BuildContext context, int index) {
+                      String key = dataForMonth.keys.elementAt(index);
+                      return Container(
+                        margin: EdgeInsets.fromLTRB(10, 0, 10, 50),
+                        child: new Column(
+                            children: [buildItem(key, dataForMonth[key])]),
+                      );
+                    }),
+              );
+
+              barChartWidget = Container(
+                height: MediaQuery.of(context).size.height * .7,
+                width: MediaQuery.of(context).size.width * .95,
+                child: ListView(children: <Widget>[
+                  BarChartTokens(
+                    dataMap: dataMap,
+                    metaEn: widget.metaEntity,
+                  ),
+                ]),
+              );
+            } else {
+              listWidget = _emptyPage();
+              barChartWidget = _emptyPage();
+            }
+          }
+        } else {
+          _gs
+              .getTokenService()
+              .getTokenCounterForEntity(
+                  widget.metaEntity.entityId, date.year.toString())
+              .then((value) {
+            tokenCounterForYear = value;
+            dataForMonth =
+                tokenCounterForYear.getTokenStatsDayWiseForMonth(date.month);
+            dataMap = dataForMonth;
+            if (dataForMonth.length != 0) {
+              listWidget = Expanded(
+                child: ListView.builder(
+                    itemCount: 1,
+                    itemBuilder: (BuildContext context, int index) {
+                      String key = dataForMonth.keys.elementAt(index);
+                      return Container(
+                        margin: EdgeInsets.fromLTRB(10, 0, 10, 50),
+                        child: new Column(
+                            children: [buildItem(key, dataForMonth[key])]),
+                      );
+                    }),
+              );
+
+              barChartWidget = Container(
+                height: MediaQuery.of(context).size.height * .7,
+                width: MediaQuery.of(context).size.width * .95,
+                child: ListView(children: <Widget>[
+                  BarChartTokens(
+                    dataMap: dataMap,
+                    metaEn: widget.metaEntity,
+                  ),
+                ]),
+              );
+            } else {
+              listWidget = _emptyPage();
+              barChartWidget = _emptyPage();
+            }
+          });
         }
         break;
       case DateDisplayFormat.year:
@@ -835,6 +938,7 @@ class _EntityTokenListPageState extends State<EntityTokenListPage> {
                     height: 10,
                   ),
                   //(!Utils.isNullOrEmpty(list)) ? showListOfData : _emptyPage(),
+
                   (selectedView == SelectedView.list)
                       ? listWidget
                       : barChartWidget,

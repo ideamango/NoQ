@@ -398,7 +398,7 @@ class GlobalState {
   }
 
   List<EntityType> getActiveEntityTypes() {
-    List<EntityType> types;
+    List<EntityType> types = new List<EntityType>();
     for (String type in _conf.entityTypes) {
       types.add(EnumToString.fromString(EntityType.values, type));
     }

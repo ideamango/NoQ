@@ -376,7 +376,7 @@ class _ManageEntityListPageState extends State<ManageEntityListPage> {
                   padding: EdgeInsets.all(0),
                   scrollDirection: Axis.vertical,
                   shrinkWrap: true,
-                  itemCount: EntityType.values.length,
+                  itemCount: _gs.getActiveEntityTypes().length,
                   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: 4,
                       crossAxisSpacing: 10.0,
@@ -390,7 +390,7 @@ class _ManageEntityListPageState extends State<ManageEntityListPage> {
                         //     BoxDecoration(border: Border.all(color: Colors.black, width: 0.5)),
                         child: Center(
                           child: _buildCategoryItem(
-                              context, EntityType.values[index]),
+                              context, _gs.getActiveEntityTypes()[index]),
                         ),
                       ),
                     );
