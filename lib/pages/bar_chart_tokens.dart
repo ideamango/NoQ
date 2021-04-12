@@ -20,52 +20,91 @@ class BarChartTokens extends StatefulWidget {
 
 class _BarChartTokensState extends State<BarChartTokens> {
   Map<String, TokenStats> _dataMap;
-  List<dynamic> colors = [
-    charts.ColorUtil.fromDartColor(Colors.pink[200]),
-    charts.ColorUtil.fromDartColor(Colors.green[200]),
-    charts.ColorUtil.fromDartColor(Colors.yellow[200]),
-    charts.ColorUtil.fromDartColor(Colors.red[200]),
-    charts.ColorUtil.fromDartColor(Colors.lightBlueAccent[200]),
-    charts.ColorUtil.fromDartColor(Colors.purple[200]),
-    charts.ColorUtil.fromDartColor(Colors.indigoAccent[200])
+  List<dynamic> createdColors = [
+    // charts.ColorUtil.fromDartColor(Colors.pink[200]),
+    // charts.ColorUtil.fromDartColor(Colors.green[200]),
+    // charts.ColorUtil.fromDartColor(Colors.yellow[200]),
+    // charts.ColorUtil.fromDartColor(Colors.red[200]),
+    charts.ColorUtil.fromDartColor(Colors.lightBlue),
+    // charts.ColorUtil.fromDartColor(Colors.purple[200]),
+    // charts.ColorUtil.fromDartColor(Colors.indigoAccent[200])
   ];
-
-  final List<BarChartModel> data = [
-    // BarChartModel(
-    //   timeSlot: "10:15",
-    //   numOfTokens: 20,
-    //   color: charts.ColorUtil.fromDartColor(Color(0xFF47505F)),
-    // ),
-    // BarChartModel(
-    //   timeSlot: "11:15",
-    //   numOfTokens: 30,
-    //   color: charts.ColorUtil.fromDartColor(Colors.red),
-    // ),
-    // BarChartModel(
-    //   timeSlot: "12:15",
-    //   numOfTokens: 20,
-    //   color: charts.ColorUtil.fromDartColor(Colors.green),
-    // ),
-    // BarChartModel(
-    //   timeSlot: "1:15",
-    //   numOfTokens: 45,
-    //   color: charts.ColorUtil.fromDartColor(Colors.yellow),
-    // ),
-    // BarChartModel(
-    //   timeSlot: "2:15",
-    //   numOfTokens: 63,
-    //   color: charts.ColorUtil.fromDartColor(Colors.lightBlueAccent),
-    // ),
-    // BarChartModel(
-    //   timeSlot: "3:15",
-    //   numOfTokens: 100,
-    //   color: charts.ColorUtil.fromDartColor(Colors.pink),
-    // ),
-    // BarChartModel(
-    //   timeSlot: "4:15",
-    //   numOfTokens: 40,
-    //   color: charts.ColorUtil.fromDartColor(Colors.purple),
-    // ),
+  List<dynamic> cancelledColors = [
+    charts.ColorUtil.fromDartColor(Colors.orange[200]),
+  ];
+  final List<BarChartModel> tokenCancelledData = [
+    BarChartModel(
+      timeSlot: "10:15",
+      numOfTokens: 10,
+      color: charts.ColorUtil.fromDartColor(Colors.lightBlueAccent[200]),
+    ),
+    BarChartModel(
+      timeSlot: "11:15",
+      numOfTokens: 0,
+      color: charts.ColorUtil.fromDartColor(Colors.lightBlueAccent[200]),
+    ),
+    BarChartModel(
+      timeSlot: "12:15",
+      numOfTokens: 5,
+      color: charts.ColorUtil.fromDartColor(Colors.lightBlueAccent[200]),
+    ),
+    BarChartModel(
+      timeSlot: "1:15",
+      numOfTokens: 4,
+      color: charts.ColorUtil.fromDartColor(Colors.lightBlueAccent[200]),
+    ),
+    BarChartModel(
+      timeSlot: "2:15",
+      numOfTokens: 70,
+      color: charts.ColorUtil.fromDartColor(Colors.lightBlueAccent[200]),
+    ),
+    BarChartModel(
+      timeSlot: "3:15",
+      numOfTokens: 10,
+      color: charts.ColorUtil.fromDartColor(Colors.lightBlueAccent[200]),
+    ),
+    BarChartModel(
+      timeSlot: "4:15",
+      numOfTokens: 4,
+      color: charts.ColorUtil.fromDartColor(Colors.lightBlueAccent[200]),
+    ),
+  ];
+  final List<BarChartModel> tokenCreatedData = [
+    BarChartModel(
+      timeSlot: "10:15",
+      numOfTokens: 20,
+      color: charts.ColorUtil.fromDartColor(Colors.orange[200]),
+    ),
+    BarChartModel(
+      timeSlot: "11:15",
+      numOfTokens: 30,
+      color: charts.ColorUtil.fromDartColor(Colors.orange[200]),
+    ),
+    BarChartModel(
+      timeSlot: "12:15",
+      numOfTokens: 20,
+      color: charts.ColorUtil.fromDartColor(Colors.orange[200]),
+    ),
+    BarChartModel(
+      timeSlot: "1:15",
+      numOfTokens: 45,
+      color: charts.ColorUtil.fromDartColor(Colors.orange[200]),
+    ),
+    BarChartModel(
+      timeSlot: "2:15",
+      numOfTokens: 63,
+      color: charts.ColorUtil.fromDartColor(Colors.orange[200]),
+    ),
+    BarChartModel(
+      timeSlot: "3:15",
+      numOfTokens: 100,
+      color: charts.ColorUtil.fromDartColor(Colors.orange[200]),
+    ),
+    BarChartModel(
+      timeSlot: "4:15",
+      numOfTokens: 40,
+      color: charts.ColorUtil.fromDartColor(Colors.orange[200]),
+    ),
   ];
 
   @override
@@ -74,11 +113,16 @@ class _BarChartTokensState extends State<BarChartTokens> {
     _dataMap = widget.dataMap;
     int colorCount = 0;
     _dataMap.forEach((key, value) {
-      if (colorCount == colors.length) colorCount = 0;
-      data.add(BarChartModel(
+      if (colorCount == createdColors.length) colorCount = 0;
+      tokenCreatedData.add(BarChartModel(
         timeSlot: key,
         numOfTokens: value.numberOfTokensCreated,
-        color: colors[colorCount],
+        color: createdColors[colorCount],
+      ));
+      tokenCancelledData.add(BarChartModel(
+        timeSlot: key,
+        numOfTokens: value.numberOfTokensCancelled,
+        color: createdColors[colorCount],
       ));
       colorCount++;
     });
@@ -91,7 +135,8 @@ class _BarChartTokensState extends State<BarChartTokens> {
     return Container(
       child: BarChartGraph(
         chartLength: "today",
-        data: data,
+        tokenCreatedData: tokenCreatedData,
+        tokenCancelledData: tokenCancelledData,
       ),
     );
   }

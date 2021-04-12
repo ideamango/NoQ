@@ -19,6 +19,7 @@ import 'package:noq/enum/entity_type.dart';
 import 'package:noq/events/event_bus.dart';
 import 'package:noq/events/events.dart';
 import 'package:noq/global_state.dart';
+import 'package:noq/location.dart';
 import 'package:noq/pages/contact_item.dart';
 import 'package:noq/pages/manage_entity_list_page.dart';
 import 'package:noq/repository/StoreRepository.dart';
@@ -728,8 +729,18 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
         _regNumController.text = entityPrivateList.registrationNumber;
       }
     }
+    Location lc = _gs.getLocation();
+    Address defaultAdrs = new Address();
+    defaultAdrs.state = lc.region;
+    defaultAdrs.zipcode = lc.zip;
+    defaultAdrs.city = lc.city;
+    defaultAdrs.country = lc.country;
+    entity.address = (entity.address) ?? defaultAdrs;
 
-    entity.address = (entity.address) ?? new Address();
+    _cityController.text = entity.address.city;
+    _stateController.text = entity.address.state;
+    _countryController.text = entity.address.country;
+    _pinController.text = entity.address.zipcode;
     contactList = contactList ?? new List<Employee>();
 
     //  _ctNameController.text = entity.contactPersons[0].perName;

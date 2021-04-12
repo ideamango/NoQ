@@ -7,11 +7,15 @@ import 'package:noq/constants.dart';
 
 class BarChartGraph extends StatefulWidget {
   final String chartLength;
-  final List<BarChartModel> data;
+  final List<BarChartModel> tokenCreatedData;
+  final List<BarChartModel> tokenCancelledData;
 
-  const BarChartGraph(
-      {Key key, @required this.chartLength, @required this.data})
-      : super(key: key);
+  const BarChartGraph({
+    Key key,
+    @required this.chartLength,
+    @required this.tokenCreatedData,
+    @required this.tokenCancelledData,
+  }) : super(key: key);
 
   @override
   _BarChartGraphState createState() => _BarChartGraphState();
@@ -41,16 +45,16 @@ class _BarChartGraphState extends State<BarChartGraph> {
   Widget build(BuildContext context) {
     List<charts.Series<BarChartModel, String>> series = [
       charts.Series(
-        id: "Booked Tokens for a day",
-        data: widget.data,
+        id: "Booked",
+        data: widget.tokenCancelledData,
         domainFn: (BarChartModel series, _) => series.timeSlot,
         measureFn: (BarChartModel series, _) => series.numOfTokens,
         colorFn: (BarChartModel series, _) => series.color,
         labelAccessorFn: (BarChartModel series, _) => '${series.numOfTokens}',
       ),
       charts.Series(
-        id: "Booked Tokens for a day",
-        data: widget.data,
+        id: "Cancelled",
+        data: widget.tokenCreatedData,
         domainFn: (BarChartModel series, _) => series.timeSlot,
         measureFn: (BarChartModel series, _) => series.numOfTokens,
         colorFn: (BarChartModel series, _) => series.color,
@@ -59,6 +63,17 @@ class _BarChartGraphState extends State<BarChartGraph> {
     ];
 
     return _buildFinancialList(series);
+  }
+
+  _onSelectionChanged(charts.SelectionModel model) {
+    final selectedDatum = model.selectedDatum;
+    print("afdfgsdf" + selectedDatum.length.toString());
+
+    if (selectedDatum.isNotEmpty) {
+      setState(() {
+        print(selectedDatum.first.datum.sales);
+      });
+    }
   }
 
   Widget _buildFinancialList(series) {
@@ -140,6 +155,25 @@ class _BarChartGraphState extends State<BarChartGraph> {
                           new charts.SeriesLegend(),
                           new charts.SlidingViewport(),
                           new charts.PanAndZoomBehavior(),
+                        ],
+                        // selectionModels: [
+                        //   new charts.SelectionModelConfig(
+                        //     type: charts.SelectionModelType.info,
+                        //     changedListener: _onSelectionChanged,
+                        //   )
+                        // ],
+
+                        selectionModels: [
+                          new charts.SelectionModelConfig(
+                            type: charts.SelectionModelType.info,
+                            changedListener: (model) {
+                              print(
+                                  'Change in ${model.selectedDatum.first.datum}');
+                            },
+                            updatedListener: (model) {
+                              print('updatedListener in $model');
+                            },
+                          ),
                         ],
                         barRendererDecorator:
                             new charts.BarLabelDecorator<String>(

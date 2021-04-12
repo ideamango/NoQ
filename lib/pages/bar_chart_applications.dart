@@ -91,7 +91,7 @@ class _BarChartApplicationsState extends State<BarChartApplications> {
     return Container(
       child: BarChartGraph(
         chartLength: "today",
-        data: data,
+        tokenCreatedData: data,
       ),
     );
   }
