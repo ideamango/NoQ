@@ -107,6 +107,10 @@ class _FavsListPageState extends State<FavsListPage> {
   }
 
   bool isFavourite(MetaEntity en) {
+    if (_state.getCurrentUser() == null) {
+      return false;
+    }
+
     List<MetaEntity> favs = _state.getCurrentUser().favourites;
     for (int i = 0; i < favs.length; i++) {
       if (favs[i].entityId == en.entityId) {

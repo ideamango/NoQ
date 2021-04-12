@@ -20,6 +20,7 @@ import 'package:noq/enum/entity_type.dart';
 import 'package:noq/events/local_notification_data.dart';
 import 'package:noq/location.dart';
 import 'package:noq/services/auth_service.dart';
+import 'package:noq/services/location_util.dart';
 import 'package:noq/tuple.dart';
 
 import 'package:noq/utils.dart';
@@ -168,11 +169,11 @@ class GlobalState {
 
   static Future<GlobalState> getGlobalState() async {
     //automatically detect country
-    //Location loc = await LocationUtil.getLocation();
+    Location loc = await LocationUtil.getLocation();
     //loc.countryCode = "Test";
     //return await GlobalState.getGlobalStateForCountry(loc);
 
-    return await GlobalState.getGlobalStateForCountry(null);
+    return await GlobalState.getGlobalStateForCountry(loc);
   }
 
   static Future<GlobalState> getGlobalStateForCountry(Location location) async {
@@ -296,7 +297,7 @@ class GlobalState {
   }
 
   static Future<String> getCountry() async {
-    return "IN";
+    return _gs._locData.country;
   }
 
   Future<Tuple<Entity, bool>> getEntity(String id,

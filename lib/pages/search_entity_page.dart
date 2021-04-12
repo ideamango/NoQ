@@ -229,7 +229,9 @@ class _SearchEntityPageState extends State<SearchEntityPage>
   }
 
   bool isFavourite(MetaEntity en) {
-    List<MetaEntity> favs = _state.getCurrentUser().favourites;
+    List<MetaEntity> favs = _state.getCurrentUser() != null
+        ? _state.getCurrentUser().favourites
+        : null;
     if (Utils.isNullOrEmpty(favs)) return false;
 
     for (int i = 0; i < favs.length; i++) {
