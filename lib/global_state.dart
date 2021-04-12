@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:enum_to_string/enum_to_string.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -394,6 +395,14 @@ class GlobalState {
         ? 1
         : -1);
     return newBookings;
+  }
+
+  List<EntityType> getActiveEntityTypes() {
+    List<EntityType> types;
+    for (String type in _conf.entityTypes) {
+      types.add(EnumToString.fromString(EntityType.values, type));
+    }
+    return types;
   }
 
   Future<bool> addFavourite(MetaEntity newMe) async {

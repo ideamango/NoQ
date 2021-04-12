@@ -726,7 +726,7 @@ class Utils {
       case EntityType.PLACE_TYPE_APARTMENT:
         icon = Icons.location_city;
         break;
-      case EntityType.PLACE_TYPE_MEDICAL:
+      case EntityType.PLACE_TYPE_MEDICAL_CLINIC:
         icon = Icons.local_pharmacy;
         break;
       case EntityType.PLACE_TYPE_RESTAURANT:
@@ -803,7 +803,7 @@ class Utils {
       case EntityType.PLACE_TYPE_APARTMENT:
         displayName = PLACE_TYPE_APARTMENT;
         break;
-      case EntityType.PLACE_TYPE_MEDICAL:
+      case EntityType.PLACE_TYPE_MEDICAL_CLINIC:
         displayName = PLACE_TYPE_MEDICAL;
         break;
       case EntityType.PLACE_TYPE_RESTAURANT:
