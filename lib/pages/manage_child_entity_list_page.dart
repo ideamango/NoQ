@@ -112,6 +112,7 @@ class _ManageChildEntityListPageState extends State<ManageChildEntityListPage> {
   void initState() {
     super.initState();
     _childScrollController = ScrollController();
+
     parentEntity = widget.entity;
     if (parentEntity == null)
       servicesList = List<MetaEntity>();
@@ -144,6 +145,7 @@ class _ManageChildEntityListPageState extends State<ManageChildEntityListPage> {
     Entity en = Utils.createEntity(_subEntityType, parentEntity.entityId);
     _state.putEntity(en, false, parentEntity.entityId);
     MetaEntity meta;
+    itemSize = MediaQuery.of(context).size.height * .3;
 
     if (_childScrollController.hasClients)
       _childScrollController.animateTo(

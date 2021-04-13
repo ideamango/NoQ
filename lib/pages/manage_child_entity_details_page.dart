@@ -22,6 +22,7 @@ import 'package:noq/events/event_bus.dart';
 import 'package:noq/events/events.dart';
 
 import 'package:noq/global_state.dart';
+import 'package:noq/location.dart';
 
 import 'package:noq/pages/contact_item.dart';
 import 'package:noq/pages/manage_child_entity_list_page.dart';
@@ -406,7 +407,21 @@ class _ManageChildEntityDetailsPageState
         'entityId': serviceEntity.entityId
       };
       serviceEntity = Entity.fromJson(entityJSON);
-      serviceEntity.address = (serviceEntity.address) ?? new Address();
+
+      Location lc = _gs.getLocation();
+      Address defaultAdrs = new Address();
+      defaultAdrs.state = lc.region;
+      defaultAdrs.zipcode = lc.zip;
+      defaultAdrs.city = lc.city;
+      defaultAdrs.country = lc.country;
+      serviceEntity.address = (serviceEntity.address) ?? defaultAdrs;
+
+      _cityController.text = serviceEntity.address.city;
+      _stateController.text = serviceEntity.address.state;
+      _countryController.text = serviceEntity.address.country;
+      _pinController.text = serviceEntity.address.zipcode;
+
+      //serviceEntity.address = (serviceEntity.address) ?? new Address();
       contactList = contactList ?? new List<Employee>();
     }
   }
