@@ -63,21 +63,23 @@ class _ManageEntityListPageState extends State<ManageEntityListPage> {
           }
           // EventBus.fireEvent(SEARCH_CATEGORY_SELECTED, null, categoryType);
         },
-        child: Column(
-          children: <Widget>[
-            Container(
-                padding: EdgeInsets.all(8),
-                margin: EdgeInsets.all(0),
-                width: MediaQuery.of(context).size.width * .15,
-                height: MediaQuery.of(context).size.width * .12,
-                child: image),
-            Text(
-              name,
-              textAlign: TextAlign.center,
-              style: textBotSheetTextStyle,
-            ),
-          ],
-        ));
+        child: Container(
+            width: MediaQuery.of(context).size.width * .2,
+            child: Column(
+              children: <Widget>[
+                Container(
+                    padding: EdgeInsets.all(8),
+                    margin: EdgeInsets.all(0),
+                    width: MediaQuery.of(context).size.width * .15,
+                    height: MediaQuery.of(context).size.width * .12,
+                    child: image),
+                Text(
+                  name,
+                  textAlign: TextAlign.center,
+                  style: textBotSheetTextStyle,
+                ),
+              ],
+            )));
   }
 
   // void registerCategorySelectEvent() {
@@ -108,13 +110,22 @@ class _ManageEntityListPageState extends State<ManageEntityListPage> {
 
   @override
   void initState() {
-    _scrollController = ScrollController();
-
     super.initState();
+    _scrollController = ScrollController();
     initialize().whenComplete(() {
       setState(() {
         _initCompleted = true;
+        itemSize = MediaQuery.of(context).size.height * .28;
+        // itemSize = MediaQuery.of(context).size.height * .3 + 200;
+
+        // _scrollController.animateTo(0.0,
+        //     curve: Curves.easeInToLinear,
+        //     duration: Duration(milliseconds: 200));
       });
+
+      // _scrollController.animateTo(500,
+      //     curve: Curves.easeInToLinear, duration: Duration(milliseconds: 200));
+      // setState(() {});
     });
     entityTypes = new List<String>();
     // registerCategorySelectEvent();
@@ -156,6 +167,7 @@ class _ManageEntityListPageState extends State<ManageEntityListPage> {
     Entity entity = Utils.createEntity(_entityType);
     _gs.putEntity(entity, false);
     MetaEntity metaEn = entity.getMetaEntity();
+    //itemSize = MediaQuery.of(context).size.height * .29;
 
     setState(() {
       metaEntitiesList.add(metaEn);
@@ -166,6 +178,10 @@ class _ManageEntityListPageState extends State<ManageEntityListPage> {
           _scrollController.position.maxScrollExtent + itemSize,
           curve: Curves.easeInToLinear,
           duration: Duration(milliseconds: 200));
+
+    setState(() {
+      metaEntitiesList.add(metaEn);
+    });
   }
 
   @override
@@ -262,9 +278,8 @@ class _ManageEntityListPageState extends State<ManageEntityListPage> {
                           controller: _scrollController,
                           reverse: true,
                           shrinkWrap: true,
-                          //itemExtent: itemSize,
+                          itemExtent: itemSize,
                           itemBuilder: (BuildContext context, int index) {
-                            itemSize = MediaQuery.of(context).size.height * .21;
                             return Container(
                               margin: EdgeInsets.only(bottom: 5),
                               child: EntityRow(

@@ -170,7 +170,7 @@ class EntityRowState extends State<EntityRow> {
 
           child: Column(
             //  mainAxisSize: MainAxisSize.max,
-            // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: <Widget>[
               // Icon(
               //   Icons.business,
@@ -184,6 +184,7 @@ class EntityRowState extends State<EntityRow> {
                       showServiceForm();
                     },
                     child: Container(
+                      height: MediaQuery.of(context).size.height * .058,
                       width: MediaQuery.of(context).size.width * .5,
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -207,7 +208,7 @@ class EntityRowState extends State<EntityRow> {
                       padding: EdgeInsets.zero,
                       margin: EdgeInsets.zero,
                       width: MediaQuery.of(context).size.width * .36,
-                      // height: MediaQuery.of(context).size.width * .08,
+                      height: MediaQuery.of(context).size.height * .058,
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: <Widget>[
@@ -250,7 +251,9 @@ class EntityRowState extends State<EntityRow> {
                       )),
                 ],
               ),
-              verticalSpacer,
+              SizedBox(
+                height: MediaQuery.of(context).size.height * .008,
+              ),
               Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: <
                   Widget>[
                 Container(
@@ -306,7 +309,9 @@ class EntityRowState extends State<EntityRow> {
                   ),
                 ),
               ]),
-              SizedBox(height: 5),
+              SizedBox(
+                height: MediaQuery.of(context).size.height * .008,
+              ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
@@ -411,7 +416,9 @@ class EntityRowState extends State<EntityRow> {
                   ),
                 ],
               ),
-              SizedBox(height: 5),
+              SizedBox(
+                height: MediaQuery.of(context).size.height * .008,
+              ),
               Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[

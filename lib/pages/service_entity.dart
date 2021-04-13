@@ -141,7 +141,7 @@ class ChildEntityRowState extends State<ChildEntityRow> {
             borderRadius: BorderRadius.all(Radius.circular(5.0))),
         child: Column(
           //   mainAxisSize: MainAxisSize.max,
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: <Widget>[
             Row(
               //mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -219,7 +219,9 @@ class ChildEntityRowState extends State<ChildEntityRow> {
                     )),
               ],
             ),
-            verticalSpacer,
+            SizedBox(
+              height: MediaQuery.of(context).size.height * .007,
+            ),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
@@ -299,7 +301,9 @@ class ChildEntityRowState extends State<ChildEntityRow> {
                 ),
               ],
             ),
-            SizedBox(height: 5),
+            SizedBox(
+              height: MediaQuery.of(context).size.height * .007,
+            ),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[

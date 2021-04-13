@@ -79,19 +79,22 @@ class _ManageChildEntityListPageState extends State<ManageChildEntityListPage> {
           }
           EventBus.fireEvent(SEARCH_CATEGORY_SELECTED, null, categoryType);
         },
-        child: Column(
-          children: <Widget>[
-            Container(
-                padding: EdgeInsets.all(0),
-                width: MediaQuery.of(context).size.width * .15,
-                height: MediaQuery.of(context).size.width * .15,
-                child: image),
-            Text(
-              name,
-              textAlign: TextAlign.center,
-              style: textBotSheetTextStyle,
-            ),
-          ],
+        child: Container(
+          width: MediaQuery.of(context).size.width * .2,
+          child: Column(
+            children: <Widget>[
+              Container(
+                  padding: EdgeInsets.all(0),
+                  width: MediaQuery.of(context).size.width * .15,
+                  height: MediaQuery.of(context).size.width * .15,
+                  child: image),
+              Text(
+                name,
+                textAlign: TextAlign.center,
+                style: textBotSheetTextStyle,
+              ),
+            ],
+          ),
         ));
   }
 
@@ -112,6 +115,7 @@ class _ManageChildEntityListPageState extends State<ManageChildEntityListPage> {
   void initState() {
     super.initState();
     _childScrollController = ScrollController();
+
     parentEntity = widget.entity;
     if (parentEntity == null)
       servicesList = List<MetaEntity>();
@@ -127,6 +131,7 @@ class _ManageChildEntityListPageState extends State<ManageChildEntityListPage> {
     initialize().whenComplete(() {
       setState(() {
         _initCompleted = true;
+        itemSize = MediaQuery.of(context).size.height * .23;
       });
     });
   }
@@ -144,6 +149,7 @@ class _ManageChildEntityListPageState extends State<ManageChildEntityListPage> {
     Entity en = Utils.createEntity(_subEntityType, parentEntity.entityId);
     _state.putEntity(en, false, parentEntity.entityId);
     MetaEntity meta;
+    //itemSize = MediaQuery.of(context).size.height * .23;
 
     if (_childScrollController.hasClients)
       _childScrollController.animateTo(
