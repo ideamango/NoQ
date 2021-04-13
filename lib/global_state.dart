@@ -25,6 +25,7 @@ import 'package:noq/services/location_util.dart';
 import 'package:noq/tuple.dart';
 
 import 'package:noq/utils.dart';
+import 'package:package_info/package_info.dart';
 import 'db/db_service/user_service.dart';
 import 'events/event_bus.dart';
 import 'events/events.dart';
@@ -51,12 +52,25 @@ class GlobalState {
   AuthService _authService;
   static Future<Null> isWorking;
   Location _locData;
+  PackageInfo packageInfo;
+
+  String appName;
+  String packageName;
+  String version;
+  String buildNumber;
 
   static GlobalState _gs;
 
   GlobalState._();
 
   Future<FirebaseApp> initSecondaryFirebaseApp() async {
+    packageInfo = await PackageInfo.fromPlatform();
+
+    appName = packageInfo.appName;
+    packageName = packageInfo.packageName;
+    version = packageInfo.version;
+    buildNumber = packageInfo.buildNumber;
+
     //comment following line to continue to work with secondary Firebase
     _gs._secondaryFirebaseApp = Firebase.apps[0];
 
@@ -401,6 +415,23 @@ class GlobalState {
     List<EntityType> types;
     for (String type in _conf.entityTypes) {
       types.add(EnumToString.fromString(EntityType.values, type));
+    }
+    return types;
+  }
+
+  List<EntityType> getActiveChildTypes(EntityType parentType) {
+    List<EntityType> types = new List<EntityType>();
+
+    if (!_conf.typeToChildType
+        .containsKey(EnumToString.convertToString(parentType))) {
+      return types;
+    }
+
+    List<String> childTypes =
+        _conf.typeToChildType[EnumToString.convertToString(parentType)];
+
+    for (String childType in childTypes) {
+      types.add(EnumToString.fromString(EntityType.values, childType));
     }
     return types;
   }

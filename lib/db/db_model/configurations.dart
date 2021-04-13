@@ -10,13 +10,17 @@ class Configurations {
       this.contactPhone,
       this.whatsappPhone,
       this.supportReasons,
-      this.enableDonation,
       this.phCountryCode,
       this.searchRadius,
       this.bookingDataFromDays,
       this.bookingDataToDays,
+      this.donation,
       this.formToEntityTypeMapping,
-      this.formMetaData});
+      this.formMetaData,
+      this.latestVersion,
+      this.typeToChildType,
+      this.androidAppVersionToEntityTypes,
+      this.iosAppVersionToEntityTypes});
 
   List<String> entityTypes;
   List<String> messages;
@@ -25,13 +29,18 @@ class Configurations {
   String contactPhone;
   String whatsappPhone;
   List<String> supportReasons;
-  bool enableDonation;
   String phCountryCode;
   int searchRadius;
   int bookingDataFromDays;
   int bookingDataToDays;
+  Map<String, String> donation;
+
   Map<String, String> formToEntityTypeMapping;
   List<MetaForm> formMetaData;
+  Map<String, String> latestVersion;
+  Map<String, List<String>> typeToChildType;
+  Map<String, List<String>> androidAppVersionToEntityTypes;
+  Map<String, List<String>> iosAppVersionToEntityTypes;
 
   Map<String, dynamic> toJson() => {
         'entityTypes': entityTypes,
@@ -41,16 +50,33 @@ class Configurations {
         'contactPhone': contactPhone,
         'whatsappPhone': whatsappPhone,
         'supportReasons': supportReasons,
-        'enableDonation': enableDonation,
         'phCountryCode': phCountryCode,
         'searchRadius': searchRadius,
         'bookingDataFromDays': bookingDataFromDays,
         'bookingDataToDays': bookingDataToDays,
+        'donation': convertFromMap(donation),
         'formToEntityTypeMapping': convertFromMap(formToEntityTypeMapping),
-        'formMetaData': metaFormsToJson(formMetaData)
+        'formMetaData': metaFormsToJson(formMetaData),
+        'latestVersion': convertFromMap(latestVersion),
+        'typeToChildType': convertFromMapOfList(typeToChildType),
+        'androidAppVersionToEntityTypes':
+            convertFromMapOfList(androidAppVersionToEntityTypes),
+        'iosAppVersionToEntityTypes':
+            convertFromMapOfList(iosAppVersionToEntityTypes)
       };
 
   Map<String, dynamic> convertFromMap(Map<String, String> dailyStats) {
+    if (dailyStats == null) {
+      return null;
+    }
+
+    Map<String, dynamic> map = Map<String, dynamic>();
+    dailyStats.forEach((k, v) => map[k] = v);
+    return map;
+  }
+
+  Map<String, dynamic> convertFromMapOfList(
+      Map<String, List<String>> dailyStats) {
     if (dailyStats == null) {
       return null;
     }
@@ -87,14 +113,20 @@ class Configurations {
         contactPhone: json['contactPhone'],
         whatsappPhone: json['whatsappPhone'],
         supportReasons: convertToStringsArrayFromJson(json['supportReasons']),
-        enableDonation: json['enableDonation'],
         phCountryCode: json['phCountryCode'],
         searchRadius: json['searchRadius'],
         bookingDataFromDays: json['bookingDataFromDays'],
         bookingDataToDays: json['bookingDataToDays'],
+        donation: convertToMapFromJSON(json['donation']),
         formToEntityTypeMapping:
             convertToMapFromJSON(json['formToEntityTypeMapping']),
-        formMetaData: convertToFormMetaData(json['formMetaData']));
+        formMetaData: convertToFormMetaData(json['formMetaData']),
+        latestVersion: convertToMapFromJSON(json['latestVersion']),
+        typeToChildType: convertToMapOfList(json['typeToChildType']),
+        androidAppVersionToEntityTypes:
+            convertToMapOfList(json['androidAppVersionToEntityTypes']),
+        iosAppVersionToEntityTypes:
+            convertToMapOfList(json['iosAppVersionToEntityTypes']));
   }
 
   static List<MetaForm> convertToFormMetaData(List<dynamic> json) {
@@ -106,6 +138,20 @@ class Configurations {
       metaForms.add(sl);
     }
     return metaForms;
+  }
+
+  static Map<String, List<String>> convertToMapOfList(
+      Map<String, dynamic> json) {
+    if (json == null) {
+      return null;
+    }
+    Map<String, List<String>> map = new Map<String, List<String>>();
+
+    json.forEach((k, v) {
+      map[k] = convertToStringsArrayFromJson(v);
+    });
+
+    return map;
   }
 
   static List<String> convertToStringsArrayFromJson(List<dynamic> json) {

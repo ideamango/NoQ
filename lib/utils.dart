@@ -804,7 +804,7 @@ class Utils {
         displayName = PLACE_TYPE_APARTMENT;
         break;
       case EntityType.PLACE_TYPE_MEDICAL_CLINIC:
-        displayName = PLACE_TYPE_MEDICAL;
+        displayName = PLACE_TYPE_MEDICAL_CLINIC;
         break;
       case EntityType.PLACE_TYPE_RESTAURANT:
         displayName = PLACE_TYPE_RESTAURANT;
