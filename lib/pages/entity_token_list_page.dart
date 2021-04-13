@@ -39,7 +39,7 @@ class _EntityTokenListPageState extends State<EntityTokenListPage> {
   List<Slot> list;
   Map<String, TokenStats> dataForDay;
   Map<String, TokenStats> dataForMonth;
-  Map<String, List<String>> dataForYear;
+  Map<String, TokenStats> dataForYear;
   String formattedDateStr;
   DateTime dateForShowingList;
   DateTime yearForShowingList;
@@ -47,6 +47,7 @@ class _EntityTokenListPageState extends State<EntityTokenListPage> {
   String weekForShowingList;
   Map<String, List<UserToken>> _tokensMap = new Map<String, List<UserToken>>();
   Map<String, TokenStats> dataMap = new Map<String, TokenStats>();
+  DateDisplayFormat selectedDateFormat = DateDisplayFormat.date;
   SelectedView selectedView = SelectedView.bar;
   Widget listWidget;
   Widget barChartWidget;
@@ -399,13 +400,23 @@ class _EntityTokenListPageState extends State<EntityTokenListPage> {
         break;
       case DateDisplayFormat.year:
         formattedDate = date.year.toString();
-        //Set display Date
-        ////
         if (tokenCounterForYear != null) {
-          /// //Fetch data of year - which will be sorted based on months
-          /// ///
-
-          //Format data in widget
+          if (tokenCounterForYear.year == date.year.toString()) {
+            dataForYear =
+                tokenCounterForYear.getTokenStatsMonthWiseForYear(date.year);
+            dataMap = dataForYear;
+          } else {
+            //fetch data
+            _gs
+                .getTokenService()
+                .getTokenCounterForEntity(
+                    widget.metaEntity.entityId, date.year.toString())
+                .then((value) {
+              tokenCounterForYear = value;
+              if (tokenCounterForYear == null) {
+              } else {}
+            });
+          }
         }
         break;
       default:
@@ -434,7 +445,7 @@ class _EntityTokenListPageState extends State<EntityTokenListPage> {
                 SizedBox(height: MediaQuery.of(context).size.height * .02),
                 Container(
                   color: Colors.transparent,
-                  child: Text("No Tokens. Try with another date!"),
+                  child: Text("No Tokens Booked for selected Date(s)."),
                   // child: Image(
                   //image: AssetImage('assets/search_home.png'),
                   // )
@@ -841,8 +852,14 @@ class _EntityTokenListPageState extends State<EntityTokenListPage> {
                             height: MediaQuery.of(context).size.width * .08,
                             child: FlatButton(
                               visualDensity: VisualDensity.compact,
-                              color: Colors.transparent,
-                              textColor: btnColor,
+                              color:
+                                  (selectedDateFormat == DateDisplayFormat.date)
+                                      ? btnColor
+                                      : Colors.transparent,
+                              textColor:
+                                  (selectedDateFormat == DateDisplayFormat.date)
+                                      ? Colors.white
+                                      : btnColor,
                               shape: RoundedRectangleBorder(
                                   side: BorderSide(color: btnColor),
                                   borderRadius:
@@ -859,7 +876,8 @@ class _EntityTokenListPageState extends State<EntityTokenListPage> {
                                     setState(() {
                                       loadingData = true;
                                     });
-                                    prepareData(value, DateDisplayFormat.date);
+                                    selectedDateFormat = DateDisplayFormat.date;
+                                    prepareData(value, selectedDateFormat);
                                   }
                                 });
                               },
@@ -870,8 +888,14 @@ class _EntityTokenListPageState extends State<EntityTokenListPage> {
                             height: MediaQuery.of(context).size.width * .08,
                             child: FlatButton(
                               visualDensity: VisualDensity.compact,
-                              color: Colors.transparent,
-                              textColor: btnColor,
+                              color: (selectedDateFormat ==
+                                      DateDisplayFormat.month)
+                                  ? btnColor
+                                  : Colors.transparent,
+                              textColor: (selectedDateFormat ==
+                                      DateDisplayFormat.month)
+                                  ? Colors.white
+                                  : btnColor,
                               shape: RoundedRectangleBorder(
                                   side: BorderSide(color: btnColor),
                                   borderRadius:
@@ -894,8 +918,10 @@ class _EntityTokenListPageState extends State<EntityTokenListPage> {
                                             setState(() {
                                               loadingData = true;
                                             });
+                                            selectedDateFormat =
+                                                DateDisplayFormat.month;
                                             prepareData(
-                                                value, DateDisplayFormat.month);
+                                                value, selectedDateFormat);
 
                                             //fetch data for the month (check getListOfData)
                                           }
@@ -910,8 +936,14 @@ class _EntityTokenListPageState extends State<EntityTokenListPage> {
                             child: FlatButton(
                               visualDensity: VisualDensity.compact,
                               padding: EdgeInsets.zero,
-                              color: Colors.transparent,
-                              textColor: btnColor,
+                              color:
+                                  (selectedDateFormat == DateDisplayFormat.year)
+                                      ? btnColor
+                                      : Colors.transparent,
+                              textColor:
+                                  (selectedDateFormat == DateDisplayFormat.year)
+                                      ? Colors.white
+                                      : btnColor,
                               shape: RoundedRectangleBorder(
                                   side: BorderSide(color: btnColor),
                                   borderRadius:
@@ -926,7 +958,8 @@ class _EntityTokenListPageState extends State<EntityTokenListPage> {
                                     .then((value) {
                                   if (value != null) {
                                     print(value);
-                                    prepareData(value, DateDisplayFormat.year);
+                                    selectedDateFormat = DateDisplayFormat.year;
+                                    prepareData(value, selectedDateFormat);
                                   }
                                 });
                               },
