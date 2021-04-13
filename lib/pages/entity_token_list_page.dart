@@ -402,8 +402,7 @@ class _EntityTokenListPageState extends State<EntityTokenListPage> {
         formattedDate = date.year.toString();
         if (tokenCounterForYear != null) {
           if (tokenCounterForYear.year == date.year.toString()) {
-            dataForYear =
-                tokenCounterForYear.getTokenStatsMonthWiseForYear(date.year);
+            dataForYear = tokenCounterForYear.getTokenStatsMonthWiseForYear();
             dataMap = dataForYear;
           } else {
             //fetch data
@@ -414,6 +413,8 @@ class _EntityTokenListPageState extends State<EntityTokenListPage> {
                 .then((value) {
               tokenCounterForYear = value;
               if (tokenCounterForYear == null) {
+//show empty page
+
               } else {}
             });
           }
