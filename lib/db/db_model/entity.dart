@@ -47,7 +47,8 @@ class Entity {
       this.phone,
       this.forms,
       this.maxTokensPerSlotByUser,
-      this.maxPeoplePerToken});
+      this.maxPeoplePerToken,
+      this.parentGroupId});
 
   //SlotDocumentId is entityID#20~06~01 it is not auto-generated, will help in not duplicating the record
   String entityId;
@@ -92,6 +93,8 @@ class Entity {
   List<MetaForm> forms;
   int maxTokensPerSlotByUser = 1;
   int maxPeoplePerToken = 1;
+  String
+      parentGroupId; //this value will be present and common for different branches of same company
 
   Map<String, dynamic> toJson() => {
         'entityId': entityId,
@@ -133,7 +136,8 @@ class Entity {
         'phone': phone,
         'forms': metaFormsToJson(forms),
         'maxTokensPerSlotByUser': maxTokensPerSlotByUser,
-        'maxPeoplePerToken': maxPeoplePerToken
+        'maxPeoplePerToken': maxPeoplePerToken,
+        'parentGroupId': parentGroupId
       };
 
   List<dynamic> usersToJson(List<MetaUser> users) {
@@ -213,7 +217,8 @@ class Entity {
         phone: json['phone'],
         forms: convertToMetaFormsFromJson(json['forms']),
         maxTokensPerSlotByUser: json['maxTokensPerSlotByUser'],
-        maxPeoplePerToken: json['maxPeoplePerToken']);
+        maxPeoplePerToken: json['maxPeoplePerToken'],
+        parentGroupId: json['parentGroupId']);
   }
 
   static Address convertToAddressFromJson(Map<String, dynamic> json) {
@@ -311,7 +316,8 @@ class Entity {
               ? true
               : false,
           isBookable: isBookable,
-          forms: forms);
+          forms: forms,
+          parentGroupId: parentGroupId);
     } else {
       _meta.name = name;
       _meta.type = type;
@@ -346,6 +352,7 @@ class Entity {
           (childEntities != null && childEntities.length > 0) ? true : false;
       _meta.isBookable = isBookable;
       _meta.forms = forms;
+      _meta.parentGroupId = parentGroupId;
     }
     return _meta;
   }

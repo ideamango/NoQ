@@ -32,6 +32,7 @@ class BookingForm {
     numberOfFields = ++numberOfFields * 10;
     String key = "KEY" + numberOfFields.toString();
     field.key = key;
+    field.id = this.id + "#" + key;
     _formFields.add(field);
     return key;
   }
@@ -118,7 +119,7 @@ class BookingForm {
 
 class Field {
   String key;
-  String id = Uuid().v1();
+  String id;
   String label;
   bool isMeta = false;
   bool isMandatory;
