@@ -128,6 +128,7 @@ class _ManageChildEntityListPageState extends State<ManageChildEntityListPage> {
     initialize().whenComplete(() {
       setState(() {
         _initCompleted = true;
+        itemSize = MediaQuery.of(context).size.height * .23;
       });
     });
   }
@@ -145,7 +146,7 @@ class _ManageChildEntityListPageState extends State<ManageChildEntityListPage> {
     Entity en = Utils.createEntity(_subEntityType, parentEntity.entityId);
     _state.putEntity(en, false, parentEntity.entityId);
     MetaEntity meta;
-    itemSize = MediaQuery.of(context).size.height * .3;
+    //itemSize = MediaQuery.of(context).size.height * .23;
 
     if (_childScrollController.hasClients)
       _childScrollController.animateTo(
