@@ -79,19 +79,22 @@ class _ManageChildEntityListPageState extends State<ManageChildEntityListPage> {
           }
           EventBus.fireEvent(SEARCH_CATEGORY_SELECTED, null, categoryType);
         },
-        child: Column(
-          children: <Widget>[
-            Container(
-                padding: EdgeInsets.all(0),
-                width: MediaQuery.of(context).size.width * .15,
-                height: MediaQuery.of(context).size.width * .15,
-                child: image),
-            Text(
-              name,
-              textAlign: TextAlign.center,
-              style: textBotSheetTextStyle,
-            ),
-          ],
+        child: Container(
+          width: MediaQuery.of(context).size.width * .2,
+          child: Column(
+            children: <Widget>[
+              Container(
+                  padding: EdgeInsets.all(0),
+                  width: MediaQuery.of(context).size.width * .15,
+                  height: MediaQuery.of(context).size.width * .15,
+                  child: image),
+              Text(
+                name,
+                textAlign: TextAlign.center,
+                style: textBotSheetTextStyle,
+              ),
+            ],
+          ),
         ));
   }
 
