@@ -294,15 +294,31 @@ class EntityRowState extends State<EntityRow> {
                   child: FlatButton(
                     // elevation: 7,
                     color: Colors.white,
-                    splashColor: highlightColor.withOpacity(.8),
+                    splashColor: Utils.isNullOrEmpty(
+                            _state.getActiveChildEntityTypes(_metaEntity.type))
+                        ? Colors.transparent
+                        : highlightColor.withOpacity(.8),
                     shape: RoundedRectangleBorder(
-                        side: BorderSide(color: Colors.blueGrey[300]),
+                        side: BorderSide(
+                            color: Utils.isNullOrEmpty(
+                                    _state.getActiveChildEntityTypes(
+                                        _metaEntity.type))
+                                ? Colors.blueGrey[100]
+                                : Colors.blueGrey[300]),
                         borderRadius: BorderRadius.all(Radius.circular(5.0))),
                     child: Text(
                       'Child Places',
-                      style: TextStyle(color: whiteBtnTextColor, fontSize: 13),
+                      style: TextStyle(
+                          color: Utils.isNullOrEmpty(_state
+                                  .getActiveChildEntityTypes(_metaEntity.type))
+                              ? disabledColor
+                              : whiteBtnTextColor,
+                          fontSize: 13),
                     ),
                     onPressed: () {
+                      if (Utils.isNullOrEmpty(
+                          _state.getActiveChildEntityTypes(_metaEntity.type)))
+                        return;
                       print("To child list page");
                       showChildListPage();
                     },
