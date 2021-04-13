@@ -280,6 +280,25 @@ class TokenCounter {
     return ts;
   }
 
+  Map<String, TokenStats> getTokenStatsMonthWise() {
+    Map<String, TokenStats> map = new Map<String, TokenStats>();
+    slotWiseStats.forEach((key, value) {
+      String tokenMonth = key.split('#')[1];
+      if (map.containsKey(tokenMonth)) {
+        TokenStats ts = map[tokenMonth];
+        ts.numberOfTokensCreated += value.numberOfTokensCreated;
+        ts.numberOfTokensCancelled += value.numberOfTokensCancelled;
+      } else {
+        TokenStats ts = new TokenStats();
+        map[tokenMonth] = ts;
+        ts.numberOfTokensCreated += value.numberOfTokensCreated;
+        ts.numberOfTokensCancelled += value.numberOfTokensCancelled;
+      }
+    });
+
+    return map;
+  }
+
   TokenStats getTokenStatsForYearTillDate() {
     TokenStats ts = new TokenStats();
     slotWiseStats.forEach((key, value) {
