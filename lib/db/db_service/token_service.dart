@@ -760,6 +760,24 @@ class TokenService {
     return true;
   }
 
+  Future<bool> deleteTokenCounter(String entityId, String year) async {
+    //this should be restricted on Server, only to be used for testcases
+    FirebaseFirestore fStore = getFirestore();
+
+    String tokenCounterId = TOKEN_COUNTER_PREFIX + "#" + entityId + "#" + year;
+
+    DocumentReference tokRef = fStore.doc('counter/' + tokenCounterId);
+
+    try {
+      await tokRef.delete();
+    } catch (e) {
+      print("Error deleting tokenCounter: " + e.toString());
+      return false;
+    }
+
+    return true;
+  }
+
   Future<bool> updateToken(UserTokens tokens) async {
     //this should be restricted on Server, only to be used for testcases
     final User user = getFirebaseAuth().currentUser;

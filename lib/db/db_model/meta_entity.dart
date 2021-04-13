@@ -41,7 +41,8 @@ class MetaEntity {
       this.isBookable,
       this.forms,
       this.maxTokensPerSlotByUser,
-      this.maxPeoplePerToken});
+      this.maxPeoplePerToken,
+      this.parentGroupId});
   MetaEntity.withValues({this.entityId, this.type});
 
   //SlotDocumentId is entityID#20~06~01 it is not auto-generated, will help in not duplicating the record
@@ -78,6 +79,7 @@ class MetaEntity {
   List<MetaForm> forms;
   int maxTokensPerSlotByUser;
   int maxPeoplePerToken;
+  String parentGroupId;
 
   static MetaEntity fromJson(Map<String, dynamic> json) {
     if (json == null) return null;
@@ -110,7 +112,8 @@ class MetaEntity {
         isBookable: json['isBookable'],
         forms: convertToMetaFormsFromJson(json['forms']),
         maxTokensPerSlotByUser: json['maxTokensPerSlotByUser'],
-        maxPeoplePerToken: json['maxPeoplePerToken']);
+        maxPeoplePerToken: json['maxPeoplePerToken'],
+        parentGroupId: json['parentGroupId']);
   }
 
   static List<String> convertToClosedOnArrayFromJson(List<dynamic> daysJson) {
@@ -170,7 +173,8 @@ class MetaEntity {
         'isBookable': isBookable,
         'forms': metaFormsToJson(forms),
         'maxTokensPerSlotByUser': maxTokensPerSlotByUser,
-        'maxPeoplePerToken': maxPeoplePerToken
+        'maxPeoplePerToken': maxPeoplePerToken,
+        'parentGroupId': parentGroupId
       };
 
   bool isEqual(MetaEntity metaEnt) {

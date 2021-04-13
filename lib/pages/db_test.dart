@@ -28,8 +28,6 @@ import 'package:noq/tuple.dart';
 import 'package:noq/utils.dart';
 
 class DBTest {
-  String TEST_COVID_BOOKING_FORM_ID = COVID_VACCINATION_BOOKING_FORM_ID;
-
   String Covid_Vacination_center = "Selenium-Covid-Vacination-Center";
   String Multi_Forms_School_ID = "Selenium-School_Multiple_Forms";
 
@@ -39,248 +37,62 @@ class DBTest {
     GlobalState.getGlobalState().then((value) => _gs = value);
   }
 
-  Future<void> createEntity() async {
-    Address adrs = new Address(
-        city: "Hyderbad",
-        state: "Telangana",
-        country: "India",
-        address: "Shop 10, Gachibowli");
+  void dbCall() async {
+    // FirebaseCrashlytics.instance.crash();
+    // GlobalState gs = await GlobalState.getGlobalState();
+    // gs.initializeNotification();
+    _gs = await GlobalState.getGlobalState();
+    fireLocalNotificationEvent();
 
-    MyGeoFirePoint geoPoint = new MyGeoFirePoint(17.444317, 78.355321);
-    Entity entity = new Entity(
-        entityId: "Entity101",
-        name: "Inorbit",
-        address: adrs,
-        advanceDays: 3,
-        isPublic: true,
-        //geo: geoPoint,
-        maxAllowed: 60,
-        slotDuration: 60,
-        closedOn: [WEEK_DAY_SATURDAY, WEEK_DAY_SUNDAY],
-        breakStartHour: 13,
-        breakStartMinute: 30,
-        breakEndHour: 14,
-        breakEndMinute: 30,
-        startTimeHour: 10,
-        startTimeMinute: 30,
-        endTimeHour: 21,
-        endTimeMinute: 0,
-        parentId: null,
-        type: EntityType.PLACE_TYPE_MALL,
-        isBookable: false,
-        isActive: true,
-        coordinates: geoPoint);
+    //this should be carefully called
+    await systemSetUp();
 
-    try {
-      entity.regNum = "testReg";
-      await _gs.getEntityService().upsertEntity(entity);
-    } catch (e) {
-      print("Exception occured " + e.toString());
-    }
+    await clearAll();
+    await tests();
+    await createDummyPlaces();
+    await securityPermissionTests();
   }
 
-  Future<void> updateChildEntityBataWithOfferAndManager() async {
-    Entity ent = await _gs.getEntityService().getEntity("Child101-1");
-
-    Address adrs = new Address(
-        city: "Hyderbad",
-        state: "Telangana",
-        country: "India",
-        address: "Shop 10, Gachibowli");
-
-    //update the offer and manager
-
-    Offer offer = new Offer(
-        message: "Get 10% off on branded items",
-        startDateTime: new DateTime(2020, 8, 13, 10, 30, 0, 0),
-        endDateTime: new DateTime(2020, 8, 20, 10, 30, 0, 0),
-        coupon: "Coup10");
-
-    Employee manager1 = new Employee(
-        name: "Manager1 LName",
-        ph: "+91999999999",
-        employeeId: "Emp410",
-        shiftStartHour: 9,
-        shiftStartMinute: 30,
-        shiftEndHour: 8,
-        shiftEndMinute: 30);
-
-    ent.address = adrs;
-    ent.offer = offer;
-    if (ent.managers == null) {
-      ent.managers = new List<Employee>();
-    }
-    ent.managers.add(manager1);
-
-    try {
-      ent.regNum = "BataRegNumber";
-      await _gs.getEntityService().upsertEntity(ent);
-    } catch (e) {
-      print("Exception occured " + e.toString());
-    }
+  Future<void> systemSetUp() async {
+    await createConf();
+    await deleteBookingForms();
+    await createBookingForms();
   }
 
-  Future<void> updateEntity(String name) async {
-    Entity ent = await _gs.getEntityService().getEntity("Entity101");
-    ent.name = name;
+  Future<void> createConf() async {}
 
-    Address adrs = new Address(
-        city: "Hyderbad",
-        state: "Telangana",
-        country: "India",
-        address: "Shop 10, Gachibowli");
+  Future<void> deleteBookingForms() async {
+    await _gs
+        .getApplicationService()
+        .deleteBookingForm(COVID_VACCINATION_BOOKING_FORM_ID);
 
-    try {
-      await _gs.getEntityService().upsertEntity(ent);
-    } catch (e) {
-      print("Exception occured " + e.toString());
-    }
+    await _gs
+        .getApplicationService()
+        .deleteBookingForm(SCHOOL_GENERAL_NEW_ADMISSION_BOOKING_FORM_ID);
+
+    await _gs
+        .getApplicationService()
+        .deleteBookingForm(SCHOOL_GENERAL_TC_REQUEST_FORM_ID);
+
+    await _gs
+        .getApplicationService()
+        .deleteBookingForm(SCHOOL_GENERAL_GRIEVANCE_FORM_ID);
+
+    await _gs
+        .getApplicationService()
+        .deleteBookingForm(SCHOOL_GENERAL_INQUIRY_FORM_ID);
   }
 
-  Future<void> createChildEntityAndAddToParent(
-      String id, String name, bool isActive) async {
-    Address adrs = new Address(
-        city: "Hyderbad",
-        state: "Telangana",
-        country: "India",
-        address: "Shop 10, Gachibowli");
-
-    MyGeoFirePoint geoPoint = new MyGeoFirePoint(17.444317, 78.355321);
-
-    Entity child1 = new Entity(
-        entityId: id,
-        name: name, //just some random number,
-        address: adrs,
-        advanceDays: 5,
-        isPublic: true,
-        maxAllowed: 50,
-        slotDuration: 30,
-        closedOn: [WEEK_DAY_SATURDAY, WEEK_DAY_SUNDAY],
-        breakStartHour: 13,
-        breakStartMinute: 15,
-        breakEndHour: 14,
-        breakEndMinute: 30,
-        startTimeHour: 10,
-        startTimeMinute: 30,
-        endTimeHour: 21,
-        endTimeMinute: 0,
-        parentId: null,
-        type: EntityType.PLACE_TYPE_SHOP,
-        isBookable: true,
-        isActive: isActive,
-        coordinates: geoPoint);
-    try {
-      child1.regNum = "testregnum";
-      bool added = await _gs
-          .getEntityService()
-          .upsertChildEntityToParent(child1, 'Entity101');
-    } catch (e) {
-      print("Exception while creating Child101: " + e.toString());
-      throw e;
-    }
-    print("Child1 created....");
-  }
-
-  void updateChildEntity(String id, String name) {
-    Address adrs = new Address(
-        city: "Hyderbad",
-        state: "Telangana",
-        country: "India",
-        address: "Shop 10, Gachibowli");
-
-    MyGeoFirePoint geoPoint = new MyGeoFirePoint(17.444317, 78.355321);
-
-    Entity child1 = new Entity(
-        entityId: id,
-        name: "Bata",
-        address: adrs,
-        advanceDays: 5,
-        isPublic: true,
-        //geo: geoPoint,
-        maxAllowed: 50,
-        slotDuration: 30,
-        closedOn: [WEEK_DAY_SATURDAY, WEEK_DAY_SUNDAY],
-        breakStartHour: 13,
-        breakStartMinute: 15,
-        breakEndHour: 14,
-        breakEndMinute: 30,
-        startTimeHour: 10,
-        startTimeMinute: 30,
-        endTimeHour: 21,
-        endTimeMinute: 0,
-        parentId: null,
-        type: EntityType.PLACE_TYPE_SHOP,
-        isBookable: true,
-        isActive: true,
-        coordinates: geoPoint);
-  }
-
-  Future<void> createEntity2() async {
-    Address adrs = new Address(
-        city: "Hyderbad",
-        state: "Telangana",
-        country: "India",
-        address: "Shop 10, Gachibowli");
-
-    MyGeoFirePoint geoPoint =
-        new MyGeoFirePoint(17.430290, 78.324762); //yum yum tree
-    Entity entity = new Entity(
-        entityId: "Entity102",
-        name: "Habinaro",
-        address: adrs,
-        advanceDays: 3,
-        isPublic: false,
-        //geo: geoPoint,
-        maxAllowed: 3,
-        slotDuration: 60,
-        closedOn: [WEEK_DAY_SATURDAY, WEEK_DAY_SUNDAY],
-        breakStartHour: 13,
-        breakStartMinute: 30,
-        breakEndHour: 14,
-        breakEndMinute: 30,
-        startTimeHour: 10,
-        startTimeMinute: 30,
-        endTimeHour: 21,
-        endTimeMinute: 0,
-        parentId: null,
-        type: EntityType.PLACE_TYPE_RESTAURANT,
-        isBookable: false,
-        isActive: true,
-        coordinates: geoPoint);
-
-    // Employee manager1 = new Employee(name: "Rakesh", ph: "+91888888888", employeeId: "empyId", shiftStartHour: );
-
-    try {
-      await _gs.getEntityService().upsertEntity(entity);
-    } catch (e) {
-      print("Exception occured " + e.toString());
-    }
-  }
-
-  void fireLocalNotificationEvent() {
-    LocalNotificationData dataFor10Sec = new LocalNotificationData(
-        dateTime: DateTime.now().add(new Duration(seconds: 10)),
-        id: 1,
-        title: "Appointment",
-        message: "Token ");
-    EventBus.fireEvent(LOCAL_NOTIFICATION_CREATED_EVENT, null, dataFor10Sec);
-
-    LocalNotificationData dataFor20Sec = new LocalNotificationData(
-        dateTime: DateTime.now().add(new Duration(seconds: 20)),
-        id: 2,
-        title: "Appointment in 15 minutes at " + "Habinaro",
-        message: "Gentle reminder for your token number " +
-            "HAB-201012-0530-1" +
-            " at " +
-            "Habinaro" +
-            ". Please be on time and follow social distancing norms.");
-    EventBus.fireEvent(LOCAL_NOTIFICATION_CREATED_EVENT, null, dataFor20Sec);
+  Future<void> createBookingForms() async {
+    createBookingGlobalSchoolNewAdmission(
+        SCHOOL_GENERAL_NEW_ADMISSION_BOOKING_FORM_ID);
+    createBookingFormGlobalSchoolTC(SCHOOL_GENERAL_TC_REQUEST_FORM_ID);
+    createBookingFormGlobalCovidVaccination(COVID_VACCINATION_BOOKING_FORM_ID);
   }
 
   Future<void> clearAll() async {
     DateTime now = DateTime.now();
     try {
-      _gs = await GlobalState.getGlobalState();
       await _gs.getEntityService().deleteEntity('SportsEntity103');
       await _gs.getEntityService().deleteEntity('SportsEntity104');
       await _gs.getEntityService().deleteEntity('SportsEntity105');
@@ -317,17 +129,14 @@ class DBTest {
       //delete booking form, NOTE: should not be done for the TEST_COVID_BOOKING_FORM_ID else Ids of the field are
       //going to change and queries would fail
       //commenting it for now, delete the BookingForm only when required
-      await _gs
-          .getApplicationService()
-          .deleteBookingForm(TEST_COVID_BOOKING_FORM_ID);
 
       //delete globalCounter
       String globalCounterId =
-          TEST_COVID_BOOKING_FORM_ID + "#" + now.year.toString();
+          COVID_VACCINATION_BOOKING_FORM_ID + "#" + now.year.toString();
       await _gs.getApplicationService().deleteCounter(globalCounterId);
 
       //delete local counter
-      String localCounterId = TEST_COVID_BOOKING_FORM_ID +
+      String localCounterId = COVID_VACCINATION_BOOKING_FORM_ID +
           "#" +
           Covid_Vacination_center +
           "#" +
@@ -337,7 +146,7 @@ class DBTest {
 
       //delete application
       for (int i = 0; i < 10; i++) {
-        String applicationId = TEST_COVID_BOOKING_FORM_ID +
+        String applicationId = COVID_VACCINATION_BOOKING_FORM_ID +
             "#" +
             "TestApplicationID" +
             i.toString();
@@ -372,22 +181,6 @@ class DBTest {
     } catch (e) {
       print("Error occurred in cleaning.. may be DB is already cleaned.");
     }
-
-    await _gs
-        .getApplicationService()
-        .deleteBookingForm(SCHOOL_GENERAL_NEW_ADMISSION_BOOKING_FORM_ID);
-
-    await _gs
-        .getApplicationService()
-        .deleteBookingForm(SCHOOL_GENERAL_TC_REQUEST_FORM_ID);
-
-    await _gs
-        .getApplicationService()
-        .deleteBookingForm(SCHOOL_GENERAL_GRIEVANCE_FORM_ID);
-
-    await _gs
-        .getApplicationService()
-        .deleteBookingForm(SCHOOL_GENERAL_INQUIRY_FORM_ID);
 
     await _gs.getEntityService().deleteEntity(Multi_Forms_School_ID);
 
@@ -465,30 +258,40 @@ class DBTest {
     for (Tuple<BookingApplication, DocumentSnapshot> ba in tcApplications) {
       await _gs.getApplicationService().deleteApplication(ba.item1.id);
     }
-  }
 
-  void dbCall() async {
-    // FirebaseCrashlytics.instance.crash();
-    // GlobalState gs = await GlobalState.getGlobalState();
-    // gs.initializeNotification();
-    fireLocalNotificationEvent();
+    _gs.getTokenService().deleteTokenCounter("Child101-1", "2020");
+    _gs.getTokenService().deleteTokenCounter("Child101-1", "2021");
+    _gs
+        .getTokenService()
+        .deleteTokenCounter("Selenium-Covid-Vacination-Center", "2021");
+    _gs
+        .getTokenService()
+        .deleteToken("Child101-1#2021~4~13#10~30#+919999999999");
 
-    await clearAll();
-    await tests();
-    await createDummyPlaces();
-    await securityPermissionTests();
-  }
+    _gs
+        .getTokenService()
+        .deleteToken("Child101-1#2021~4~13#11~30#+919999999999");
 
-  Future<void> securityPermissionTests() async {
-    print("Security permission test started.. ");
+    _gs
+        .getTokenService()
+        .deleteToken("Child101-1#2021~4~13#15~30#+919999999999");
 
-    updateEntity("Inorbit_AdminCheck");
-    await _gs.getEntityService().assignAdmin('Child101-1', "+913611009823");
-    await _gs.getEntityService().assignAdmin('Entity102', "+913611009823");
-    await _gs.getEntityService().removeAdmin('Entity102', "+913611009823");
-    await _gs.getEntityService().assignAdmin('Entity102', "+913611009823");
+    _gs
+        .getTokenService()
+        .deleteToken("Child101-1#2021~4~14#11~30#+919999999999");
+    _gs
+        .getTokenService()
+        .deleteToken("Child101-1#2021~5~1#10~30#+919999999999");
+    _gs
+        .getTokenService()
+        .deleteToken("Child101-1#2021~5~1#11~30#+919999999999");
+    _gs
+        .getTokenService()
+        .deleteToken("Child101-1#2021~5~1#12~30#+919999999999");
 
-    print("Security permission test completed.");
+    _gs.getTokenService().deleteSlot("Child101-1#2021~4~13");
+    _gs.getTokenService().deleteSlot("Child101-1#2021~4~14");
+    _gs.getTokenService().deleteSlot("Child101-1#2021~5~1");
   }
 
   Future<void> tests() async {
@@ -992,10 +795,378 @@ class DBTest {
 
     await testPaginationInFetchingApplication();
 
+    await testTokenCounter(bata);
+
     print(
         "<==========================================TESTING DONE=========================================>");
 
     int i = 0;
+  }
+
+  Future<void> securityPermissionTests() async {
+    print("Security permission test started.. ");
+
+    updateEntity("Inorbit_AdminCheck");
+    await _gs.getEntityService().assignAdmin('Child101-1', "+913611009823");
+    await _gs.getEntityService().assignAdmin('Entity102', "+913611009823");
+    await _gs.getEntityService().removeAdmin('Entity102', "+913611009823");
+    await _gs.getEntityService().assignAdmin('Entity102', "+913611009823");
+
+    print("Security permission test completed.");
+  }
+
+  Future<void> createEntity() async {
+    Address adrs = new Address(
+        city: "Hyderbad",
+        state: "Telangana",
+        country: "India",
+        address: "Shop 10, Gachibowli");
+
+    MyGeoFirePoint geoPoint = new MyGeoFirePoint(17.444317, 78.355321);
+    Entity entity = new Entity(
+        entityId: "Entity101",
+        name: "Inorbit",
+        address: adrs,
+        advanceDays: 3,
+        isPublic: true,
+        //geo: geoPoint,
+        maxAllowed: 60,
+        slotDuration: 60,
+        closedOn: [WEEK_DAY_SATURDAY, WEEK_DAY_SUNDAY],
+        breakStartHour: 13,
+        breakStartMinute: 30,
+        breakEndHour: 14,
+        breakEndMinute: 30,
+        startTimeHour: 10,
+        startTimeMinute: 30,
+        endTimeHour: 21,
+        endTimeMinute: 0,
+        parentId: null,
+        type: EntityType.PLACE_TYPE_MALL,
+        isBookable: false,
+        isActive: true,
+        coordinates: geoPoint);
+
+    try {
+      entity.regNum = "testReg";
+      await _gs.getEntityService().upsertEntity(entity);
+    } catch (e) {
+      print("Exception occured " + e.toString());
+    }
+  }
+
+  Future<void> updateChildEntityBataWithOfferAndManager() async {
+    Entity ent = await _gs.getEntityService().getEntity("Child101-1");
+
+    Address adrs = new Address(
+        city: "Hyderbad",
+        state: "Telangana",
+        country: "India",
+        address: "Shop 10, Gachibowli");
+
+    //update the offer and manager
+
+    Offer offer = new Offer(
+        message: "Get 10% off on branded items",
+        startDateTime: new DateTime(2020, 8, 13, 10, 30, 0, 0),
+        endDateTime: new DateTime(2020, 8, 20, 10, 30, 0, 0),
+        coupon: "Coup10");
+
+    Employee manager1 = new Employee(
+        name: "Manager1 LName",
+        ph: "+91999999999",
+        employeeId: "Emp410",
+        shiftStartHour: 9,
+        shiftStartMinute: 30,
+        shiftEndHour: 8,
+        shiftEndMinute: 30);
+
+    ent.address = adrs;
+    ent.offer = offer;
+    if (ent.managers == null) {
+      ent.managers = new List<Employee>();
+    }
+    ent.managers.add(manager1);
+
+    try {
+      ent.regNum = "BataRegNumber";
+      await _gs.getEntityService().upsertEntity(ent);
+    } catch (e) {
+      print("Exception occured " + e.toString());
+    }
+  }
+
+  Future<void> updateEntity(String name) async {
+    Entity ent = await _gs.getEntityService().getEntity("Entity101");
+    ent.name = name;
+
+    Address adrs = new Address(
+        city: "Hyderbad",
+        state: "Telangana",
+        country: "India",
+        address: "Shop 10, Gachibowli");
+
+    try {
+      await _gs.getEntityService().upsertEntity(ent);
+    } catch (e) {
+      print("Exception occured " + e.toString());
+    }
+  }
+
+  Future<void> createChildEntityAndAddToParent(
+      String id, String name, bool isActive) async {
+    Address adrs = new Address(
+        city: "Hyderbad",
+        state: "Telangana",
+        country: "India",
+        address: "Shop 10, Gachibowli");
+
+    MyGeoFirePoint geoPoint = new MyGeoFirePoint(17.444317, 78.355321);
+
+    Entity child1 = new Entity(
+        entityId: id,
+        name: name, //just some random number,
+        address: adrs,
+        advanceDays: 5,
+        isPublic: true,
+        maxAllowed: 50,
+        slotDuration: 30,
+        closedOn: [WEEK_DAY_SATURDAY, WEEK_DAY_SUNDAY],
+        breakStartHour: 13,
+        breakStartMinute: 15,
+        breakEndHour: 14,
+        breakEndMinute: 30,
+        startTimeHour: 10,
+        startTimeMinute: 30,
+        endTimeHour: 21,
+        endTimeMinute: 0,
+        parentId: null,
+        type: EntityType.PLACE_TYPE_SHOP,
+        isBookable: true,
+        isActive: isActive,
+        coordinates: geoPoint);
+    try {
+      child1.regNum = "testregnum";
+      bool added = await _gs
+          .getEntityService()
+          .upsertChildEntityToParent(child1, 'Entity101');
+    } catch (e) {
+      print("Exception while creating Child101: " + e.toString());
+      throw e;
+    }
+    print("Child1 created....");
+  }
+
+  void updateChildEntity(String id, String name) {
+    Address adrs = new Address(
+        city: "Hyderbad",
+        state: "Telangana",
+        country: "India",
+        address: "Shop 10, Gachibowli");
+
+    MyGeoFirePoint geoPoint = new MyGeoFirePoint(17.444317, 78.355321);
+
+    Entity child1 = new Entity(
+        entityId: id,
+        name: "Bata",
+        address: adrs,
+        advanceDays: 5,
+        isPublic: true,
+        //geo: geoPoint,
+        maxAllowed: 50,
+        slotDuration: 30,
+        closedOn: [WEEK_DAY_SATURDAY, WEEK_DAY_SUNDAY],
+        breakStartHour: 13,
+        breakStartMinute: 15,
+        breakEndHour: 14,
+        breakEndMinute: 30,
+        startTimeHour: 10,
+        startTimeMinute: 30,
+        endTimeHour: 21,
+        endTimeMinute: 0,
+        parentId: null,
+        type: EntityType.PLACE_TYPE_SHOP,
+        isBookable: true,
+        isActive: true,
+        coordinates: geoPoint);
+  }
+
+  Future<void> createEntity2() async {
+    Address adrs = new Address(
+        city: "Hyderbad",
+        state: "Telangana",
+        country: "India",
+        address: "Shop 10, Gachibowli");
+
+    MyGeoFirePoint geoPoint =
+        new MyGeoFirePoint(17.430290, 78.324762); //yum yum tree
+    Entity entity = new Entity(
+        entityId: "Entity102",
+        name: "Habinaro",
+        address: adrs,
+        advanceDays: 3,
+        isPublic: false,
+        //geo: geoPoint,
+        maxAllowed: 3,
+        slotDuration: 60,
+        closedOn: [WEEK_DAY_SATURDAY, WEEK_DAY_SUNDAY],
+        breakStartHour: 13,
+        breakStartMinute: 30,
+        breakEndHour: 14,
+        breakEndMinute: 30,
+        startTimeHour: 10,
+        startTimeMinute: 30,
+        endTimeHour: 21,
+        endTimeMinute: 0,
+        parentId: null,
+        type: EntityType.PLACE_TYPE_RESTAURANT,
+        isBookable: false,
+        isActive: true,
+        coordinates: geoPoint);
+
+    // Employee manager1 = new Employee(name: "Rakesh", ph: "+91888888888", employeeId: "empyId", shiftStartHour: );
+
+    try {
+      await _gs.getEntityService().upsertEntity(entity);
+    } catch (e) {
+      print("Exception occured " + e.toString());
+    }
+  }
+
+  void fireLocalNotificationEvent() {
+    LocalNotificationData dataFor10Sec = new LocalNotificationData(
+        dateTime: DateTime.now().add(new Duration(seconds: 10)),
+        id: 1,
+        title: "Appointment",
+        message: "Token ");
+    EventBus.fireEvent(LOCAL_NOTIFICATION_CREATED_EVENT, null, dataFor10Sec);
+
+    LocalNotificationData dataFor20Sec = new LocalNotificationData(
+        dateTime: DateTime.now().add(new Duration(seconds: 20)),
+        id: 2,
+        title: "Appointment in 15 minutes at " + "Habinaro",
+        message: "Gentle reminder for your token number " +
+            "HAB-201012-0530-1" +
+            " at " +
+            "Habinaro" +
+            ". Please be on time and follow social distancing norms.");
+    EventBus.fireEvent(LOCAL_NOTIFICATION_CREATED_EVENT, null, dataFor20Sec);
+  }
+
+  Future<void> testTokenCounter(Entity bata) async {
+    //set the max token booked by a user in a slot to 3
+    bata.maxTokensPerSlotByUser = 4;
+    await _gs.getEntityService().upsertEntity(bata);
+    MetaEntity me = bata.getMetaEntity();
+
+    //book tokens for April 13th (10:30 - 3, 11:30 - 2, 3:30 - 3), April 14th (11:30 - 3) = Total: 11
+
+    await _gs
+        .getTokenService()
+        .generateToken(me, new DateTime(2021, 4, 13, 10, 30));
+    await _gs
+        .getTokenService()
+        .generateToken(me, new DateTime(2021, 4, 13, 10, 30));
+    await _gs
+        .getTokenService()
+        .generateToken(me, new DateTime(2021, 4, 13, 10, 30));
+
+    UserTokens ut1 = await _gs
+        .getTokenService()
+        .generateToken(me, new DateTime(2021, 4, 13, 11, 30));
+    await _gs
+        .getTokenService()
+        .generateToken(me, new DateTime(2021, 4, 13, 11, 30));
+
+    await _gs
+        .getTokenService()
+        .generateToken(me, new DateTime(2021, 4, 13, 15, 30));
+    await _gs
+        .getTokenService()
+        .generateToken(me, new DateTime(2021, 4, 13, 15, 30));
+    await _gs
+        .getTokenService()
+        .generateToken(me, new DateTime(2021, 4, 13, 15, 30));
+
+    await _gs
+        .getTokenService()
+        .generateToken(me, new DateTime(2021, 4, 14, 11, 30));
+    await _gs
+        .getTokenService()
+        .generateToken(me, new DateTime(2021, 4, 14, 11, 30));
+    await _gs
+        .getTokenService()
+        .generateToken(me, new DateTime(2021, 4, 14, 11, 30));
+
+    //book tokens for May 1st (10:30 - 2, 11:30 - 1, 12:30 - 1) = Total: 4
+    UserTokens ut2 = await _gs
+        .getTokenService()
+        .generateToken(me, new DateTime(2021, 5, 1, 10, 30));
+    await _gs
+        .getTokenService()
+        .generateToken(me, new DateTime(2021, 5, 1, 10, 30));
+    await _gs
+        .getTokenService()
+        .generateToken(me, new DateTime(2021, 5, 1, 11, 30));
+    await _gs
+        .getTokenService()
+        .generateToken(me, new DateTime(2021, 5, 1, 12, 30));
+
+    //cancel 3 tokens - 1 from April and 2 from May
+
+    await _gs.getTokenService().cancelToken(ut1.getTokenId(), 1);
+
+    await _gs.getTokenService().cancelToken(ut2.getTokenId(), 1);
+
+    await _gs.getTokenService().cancelToken(ut2.getTokenId(), 2);
+
+    TokenCounter tc = await _gs
+        .getTokenService()
+        .getTokenCounterForEntity(bata.entityId, "2021");
+
+    if (tc.getTokenStatsForDay(DateTime(2021, 4, 14)).numberOfTokensCreated ==
+            3 &&
+        tc.getTokenStatsForDay(DateTime(2021, 4, 14)).numberOfTokensCancelled ==
+            0 &&
+        tc.getTokenStatsForDay(DateTime(2021, 5, 1)).numberOfTokensCancelled ==
+            2 &&
+        tc.getTokenStatsForDay(DateTime(2021, 5, 1)).numberOfTokensCreated ==
+            4) {
+      print("TokenCounter.getTokenStatsForDay() --> SUCCESS");
+    } else {
+      print(
+          "TokenCounter.getTokenStatsForDay() ---------------------------> FAILURE");
+    }
+
+    if (tc.getTokenStatsForMonth(4).numberOfTokensCreated == 11 &&
+        tc.getTokenStatsForMonth(4).numberOfTokensCancelled == 1 &&
+        tc.getTokenStatsForMonth(5).numberOfTokensCreated == 4) {
+      print("TokenCounter.getTokenStatsForMonth() --> SUCCESS");
+    } else {
+      print(
+          "TokenCounter.getTokenStatsForMonth() ---------------------------> FAILURE");
+    }
+
+    if (tc.getTokenStatsForYear().numberOfTokensCreated == 15 &&
+        tc.getTokenStatsForYear().numberOfTokensCancelled == 3) {
+      print("TokenCounter.getTokenStatsForYear() --> SUCCESS");
+    } else {
+      print(
+          "TokenCounter.getTokenStatsForYear() ---------------------------> FAILURE");
+    }
+
+    String slot13April1130 = "11~30";
+
+    Map<String, TokenStats> slotWiseStats =
+        tc.getTokenStatsSlotWiseForDay(DateTime(2021, 4, 13));
+
+    TokenStats ts = slotWiseStats[slot13April1130];
+    if (ts.numberOfTokensCreated == 2 && ts.numberOfTokensCancelled == 1) {
+      print("TokenCounter.getTokenStatsSlotWiseForDay() --> SUCCESS");
+    } else {
+      print(
+          "TokenCounter.getTokenStatsSlotWiseForDay() ---------------------------> FAILURE");
+    }
   }
 
   Future<void> updateChild101() async {
@@ -1469,106 +1640,7 @@ class DBTest {
 
     BookingForm bf = await _gs
         .getApplicationService()
-        .getBookingForm(TEST_COVID_BOOKING_FORM_ID);
-
-    if (bf == null) {
-      bf = new BookingForm(
-          formName: "Covid-19 Vacination Applicant Details",
-          headerMsg:
-              "You request will be approved based on the information provided by you, please enter the correct information.",
-          footerMsg:
-              "Applicant must carry the same ID proof documents to the vacination center. Also mark your presence 15 minutes prior to your alloted time. Failing to do so will result in cancellation of your application.",
-          autoApproved: true);
-
-      bf.isSystemTemplate = true;
-      bf.id = TEST_COVID_BOOKING_FORM_ID;
-      bf.autoApproved = false;
-
-      FormInputFieldText nameInput = FormInputFieldText("Name of the Applicant",
-          true, "Please enter your name as per Government ID proof", 50);
-      nameInput.isMeta = true;
-
-      bf.addField(nameInput);
-
-      FormInputFieldDateTime dob = FormInputFieldDateTime(
-          "Date of Birth of the Applicant",
-          true,
-          "Please select the applicant's Date of Birth");
-      dob.isMeta = true;
-      dob.isAge = true;
-
-      bf.addField(dob);
-
-      FormInputFieldOptionsWithAttachments healthDetailsInput =
-          FormInputFieldOptionsWithAttachments(
-              "Pre-existing Medical Conditions",
-              false,
-              "Please select all known medical conditions the applicant have",
-              [
-                Value('None'),
-                Value('Chronic kidney disease'),
-                Value('Chronic lung disease'),
-                Value('Diabetes'),
-                Value('Heart Conditions'),
-                Value('Other Cardiovascular and Cerebrovascular Diseases'),
-                Value("Hemoglobin disorders"),
-                Value("HIV or weakened Immune System"),
-                Value("Liver disease"),
-                Value("Neurologic conditions such as dementia"),
-                Value("Overweight and Severe Obesity"),
-                Value("Pregnancy")
-              ],
-              true);
-
-      healthDetailsInput.isMeta = true;
-      healthDetailsInput.defaultValueIndex = 0;
-
-      bf.addField(healthDetailsInput);
-
-      FormInputFieldOptionsWithAttachments frontLineWorkerProof =
-          FormInputFieldOptionsWithAttachments(
-              "Only for Frontline workers",
-              false,
-              "Please select the category by Applicant's profession and upload a supporting ID proof/documents. Applicant must carry these documents along with him/her to the Vaccination Center.",
-              [
-                Value('None'),
-                Value('Medical Professional'),
-                Value('Government Official'),
-                Value('MP/MLA'),
-                Value('Others'),
-              ],
-              false);
-      frontLineWorkerProof.isMeta = true;
-      frontLineWorkerProof.defaultValueIndex = 0;
-      bf.addField(frontLineWorkerProof);
-
-      FormInputFieldOptionsWithAttachments idProof =
-          FormInputFieldOptionsWithAttachments(
-              "Government Issued ID Proof",
-              true,
-              "Select valid government issued ID Proof and upload its images. The applicant must carry these documents along with him/her to the Vaccination Center.",
-              [
-                Value('PAN'),
-                Value('Passport'),
-                Value('Driving License'),
-                Value('Aadhaar Card'),
-                Value('Bank Passbook'),
-                Value('Any other government issued photo ID'),
-              ],
-              false);
-
-      bf.addField(idProof);
-
-      FormInputFieldPhone phoneField = FormInputFieldPhone(
-          "Applicant's phone number",
-          true,
-          "Please enter the applicant's phone number");
-
-      bf.addField(phoneField);
-    }
-
-    //NOTE: If this is executed, every time the ID of the field is going to change
-    await _gs.getApplicationService().saveBookingForm(bf);
+        .getBookingForm(COVID_VACCINATION_BOOKING_FORM_ID);
 
     List<MetaForm> forms = List<MetaForm>();
     forms.add(MetaForm(id: bf.id, name: bf.formName));
@@ -1671,8 +1743,10 @@ class DBTest {
       BookingApplication ba = new BookingApplication();
       ba.responseForm = bf;
       ba.bookingFormId = bf.id;
-      ba.id =
-          TEST_COVID_BOOKING_FORM_ID + "#" + "TestApplicationID" + i.toString();
+      ba.id = COVID_VACCINATION_BOOKING_FORM_ID +
+          "#" +
+          "TestApplicationID" +
+          i.toString();
       DateTime now = DateTime.now();
       ba.preferredSlotTiming = DateTime(now.year, now.month, now.day,
               vacinationCenter.startTimeHour, vacinationCenter.startTimeMinute)
@@ -1691,11 +1765,11 @@ class DBTest {
     BookingApplicationCounter globalOverView = await _gs
         .getApplicationService()
         .getApplicationsOverview(
-            TEST_COVID_BOOKING_FORM_ID, null, DateTime.now().year);
+            COVID_VACCINATION_BOOKING_FORM_ID, null, DateTime.now().year);
 
     BookingApplicationCounter localOverView = await _gs
         .getApplicationService()
-        .getApplicationsOverview(TEST_COVID_BOOKING_FORM_ID,
+        .getApplicationsOverview(COVID_VACCINATION_BOOKING_FORM_ID,
             Covid_Vacination_center, DateTime.now().year);
 
     if (globalOverView.numberOfApproved == 0 &&
@@ -1724,8 +1798,19 @@ class DBTest {
   Future<BookingApplication> testBookingApplicationStatusChange() async {
     List<Tuple<BookingApplication, DocumentSnapshot>> applications = await _gs
         .getApplicationService()
-        .getApplications(TEST_COVID_BOOKING_FORM_ID, Covid_Vacination_center,
-            null, null, null, null, null, null, null, null, null, -1);
+        .getApplications(
+            COVID_VACCINATION_BOOKING_FORM_ID,
+            Covid_Vacination_center,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            -1);
 
     Entity testingCenter =
         await _gs.getEntityService().getEntity(Covid_Vacination_center);
@@ -1766,11 +1851,11 @@ class DBTest {
     BookingApplicationCounter globalOverView = await _gs
         .getApplicationService()
         .getApplicationsOverview(
-            TEST_COVID_BOOKING_FORM_ID, null, DateTime.now().year);
+            COVID_VACCINATION_BOOKING_FORM_ID, null, DateTime.now().year);
 
     BookingApplicationCounter localOverView = await _gs
         .getApplicationService()
-        .getApplicationsOverview(TEST_COVID_BOOKING_FORM_ID,
+        .getApplicationsOverview(COVID_VACCINATION_BOOKING_FORM_ID,
             Covid_Vacination_center, DateTime.now().year);
 
     if (globalOverView.numberOfApproved == 2 &&
@@ -1825,7 +1910,7 @@ class DBTest {
 
     List<Tuple<BookingApplication, DocumentSnapshot>> approvedApplications =
         await _gs.getApplicationService().getApplications(
-            TEST_COVID_BOOKING_FORM_ID,
+            COVID_VACCINATION_BOOKING_FORM_ID,
             Covid_Vacination_center,
             ApplicationStatus.APPROVED,
             null,
@@ -1858,11 +1943,11 @@ class DBTest {
     BookingApplicationCounter globalOverView = await _gs
         .getApplicationService()
         .getApplicationsOverview(
-            TEST_COVID_BOOKING_FORM_ID, null, DateTime.now().year);
+            COVID_VACCINATION_BOOKING_FORM_ID, null, DateTime.now().year);
 
     BookingApplicationCounter localOverView = await _gs
         .getApplicationService()
-        .getApplicationsOverview(TEST_COVID_BOOKING_FORM_ID,
+        .getApplicationsOverview(COVID_VACCINATION_BOOKING_FORM_ID,
             Covid_Vacination_center, DateTime.now().year);
 
     if (globalOverView.numberOfApproved == 1 &&
@@ -1923,7 +2008,7 @@ class DBTest {
 
     List<Tuple<BookingApplication, DocumentSnapshot>> approvedApplications =
         await _gs.getApplicationService().getApplications(
-            TEST_COVID_BOOKING_FORM_ID,
+            COVID_VACCINATION_BOOKING_FORM_ID,
             Covid_Vacination_center,
             ApplicationStatus.APPROVED,
             null,
@@ -1974,204 +2059,12 @@ class DBTest {
         .getApplicationService()
         .getBookingForm(SCHOOL_GENERAL_NEW_ADMISSION_BOOKING_FORM_ID);
 
-    if (admissionForm == null) {
-      admissionForm = new BookingForm(
-          formName: "Admission Request Form",
-          headerMsg:
-              "You request will be approved based on the information provided by you, please enter the correct information.",
-          footerMsg:
-              "Please carry Transfer Certificate, Birth Certificate, Photo ID of the Student, 3 passport photo of student, 1 photo of parent. Please mark your presence 5 minutes prior to your appointment time.",
-          autoApproved: true);
-
-      admissionForm.isSystemTemplate = true;
-      admissionForm.id = SCHOOL_GENERAL_NEW_ADMISSION_BOOKING_FORM_ID;
-      admissionForm.autoApproved = false;
-
-      FormInputFieldText nameInput = FormInputFieldText(
-          "Name of the Student",
-          true,
-          "Please enter your name as per Government ID proof or Birth Certificate",
-          50);
-      nameInput.isMeta = true;
-
-      admissionForm.addField(nameInput);
-
-      FormInputFieldDateTime dob = FormInputFieldDateTime(
-          "Date of Birth of the Student",
-          true,
-          "Please select the student's Date of Birth");
-      dob.isMeta = true;
-      dob.isAge = true;
-
-      admissionForm.addField(dob);
-
-      FormInputFieldOptions classDetailsInput = FormInputFieldOptions(
-          "Admission seeking for ",
-          false,
-          "Please select the class you are seeking admission for ",
-          [
-            Value('Nursery'),
-            Value('LKG'),
-            Value('UKG'),
-            Value('Class 1'),
-            Value('Class 2'),
-            Value('Class 3'),
-            Value('Class 4'),
-            Value('Class 5'),
-            Value('Class 6'),
-            Value('Class 7'),
-            Value('Class 8'),
-            Value('Class 9'),
-            Value('Class 10'),
-            Value('Class 11'),
-            Value('Class 12')
-          ],
-          false);
-
-      classDetailsInput.isMeta = true;
-      classDetailsInput.defaultValueIndex = 0;
-
-      admissionForm.addField(classDetailsInput);
-
-      FormInputFieldAttachment tcImage = FormInputFieldAttachment(
-          "Upload Transfer certificate",
-          false,
-          "If the student is moving from another school, you need to submit the original Transfer Certificate");
-
-      admissionForm.addField(tcImage);
-
-      FormInputFieldOptionsWithAttachments idProof =
-          FormInputFieldOptionsWithAttachments(
-              "Government Issued ID Proof",
-              true,
-              "Select valid government issued ID Proof and upload its images.",
-              [
-                Value('Birth Certificate'),
-                Value('Passport'),
-                Value('Aadhaar Card'),
-                Value('Bank Passbook'),
-                Value('Any other government issued photo ID'),
-              ],
-              false);
-
-      admissionForm.addField(idProof);
-    }
-
-    FormInputFieldText fatherInput = FormInputFieldText(
-        "Name of the Father", true, "Please enter student's father name", 50);
-    fatherInput.isMeta = false;
-
-    admissionForm.addField(fatherInput);
-
-    FormInputFieldText motherInput = FormInputFieldText(
-        "Name of mother", true, "Please enter student's mother name", 50);
-    motherInput.isMeta = false;
-
-    admissionForm.addField(motherInput);
-
-    FormInputFieldText parentEmail = FormInputFieldText(
-        "Parent's email address",
-        true,
-        "Please enter Parent's email address",
-        50);
-    parentEmail.isMeta = false;
-    parentEmail.isEmail = true;
-
-    admissionForm.addField(parentEmail);
-
-    FormInputFieldPhone parentPhone = FormInputFieldPhone(
-        "Parent phone number",
-        true,
-        "Please enter Parent's primary phone number on which school can contact");
-    parentPhone.isMeta = false;
-
-    admissionForm.addField(parentPhone);
-
-    //NOTE: If this is executed, every time the ID of the field is going to change
-    await _gs.getApplicationService().saveBookingForm(admissionForm);
-
     print("AdmissionForm for a school with is created");
 
     //TC request
     BookingForm tcForm = await _gs
         .getApplicationService()
         .getBookingForm(SCHOOL_GENERAL_TC_REQUEST_FORM_ID);
-
-    if (tcForm == null) {
-      tcForm = new BookingForm(
-          formName: "Transfer Certificate Request Form",
-          headerMsg:
-              "Please ensure that all dues are cleared before making this request.",
-          footerMsg: "",
-          autoApproved: true);
-
-      tcForm.isSystemTemplate = true;
-      tcForm.id = SCHOOL_GENERAL_TC_REQUEST_FORM_ID;
-      tcForm.autoApproved = true;
-
-      FormInputFieldText nameInput = FormInputFieldText(
-          "Name of the Student",
-          true,
-          "Please enter your name of the student as per school record",
-          50);
-      nameInput.isMeta = true;
-      nameInput.isMandatory = true;
-
-      tcForm.addField(nameInput);
-
-      FormInputFieldText rollNumberInput = FormInputFieldText(
-          "Student's roll number",
-          true,
-          "Please enter student's roll number",
-          50);
-      rollNumberInput.isMeta = true;
-      rollNumberInput.isMandatory = true;
-
-      tcForm.addField(rollNumberInput);
-
-      FormInputFieldOptions classDetailsInput = FormInputFieldOptions(
-          "Student's class",
-          false,
-          "Please select the current class of the student",
-          [
-            Value('Nursery'),
-            Value('LKG'),
-            Value('UKG'),
-            Value('Class 1'),
-            Value('Class 2'),
-            Value('Class 3'),
-            Value('Class 4'),
-            Value('Class 5'),
-            Value('Class 6'),
-            Value('Class 7'),
-            Value('Class 8'),
-            Value('Class 9'),
-            Value('Class 10'),
-            Value('Class 11'),
-            Value('Class 12')
-          ],
-          false);
-
-      classDetailsInput.isMeta = true;
-      classDetailsInput.defaultValueIndex = -1;
-      classDetailsInput.isMandatory = true;
-
-      tcForm.addField(classDetailsInput);
-
-      FormInputFieldOptions relationWithStudent = FormInputFieldOptions(
-          "Your relation",
-          false,
-          "Please select the current class of the student",
-          [Value('Self'), Value('Father'), Value('Mother'), Value('Gaurdian')],
-          false);
-
-      relationWithStudent.isMeta = false;
-      relationWithStudent.defaultValueIndex = -1;
-      relationWithStudent.isMandatory = true;
-    }
-
-    //NOTE: If this is executed, every time the ID of the field is going to change
-    await _gs.getApplicationService().saveBookingForm(tcForm);
 
     print("TCForm for a school with is created");
 
@@ -2224,7 +2117,7 @@ class DBTest {
   void testPaginationInFetchingApplication() async {
     List<Tuple<BookingApplication, DocumentSnapshot>> top5Applications =
         await _gs.getApplicationService().getApplications(
-            TEST_COVID_BOOKING_FORM_ID,
+            COVID_VACCINATION_BOOKING_FORM_ID,
             Covid_Vacination_center,
             null,
             null,
@@ -2248,7 +2141,7 @@ class DBTest {
 
     List<Tuple<BookingApplication, DocumentSnapshot>> next5Applications =
         await _gs.getApplicationService().getApplications(
-            TEST_COVID_BOOKING_FORM_ID,
+            COVID_VACCINATION_BOOKING_FORM_ID,
             Covid_Vacination_center,
             null,
             null,
@@ -2272,7 +2165,7 @@ class DBTest {
         previousApplicationsFrom6thTo9th = await _gs
             .getApplicationService()
             .getApplications(
-                TEST_COVID_BOOKING_FORM_ID,
+                COVID_VACCINATION_BOOKING_FORM_ID,
                 Covid_Vacination_center,
                 null,
                 null,
@@ -2291,5 +2184,299 @@ class DBTest {
       print(
           "From 6th to 9th applications fetched ------------------------------> Failure");
     }
+  }
+
+  Future<BookingForm> createBookingGlobalSchoolNewAdmission(
+      String formId) async {
+    BookingForm admissionForm = new BookingForm(
+        formName: "Admission Request Form",
+        headerMsg:
+            "You request will be approved based on the information provided by you, please enter the correct information.",
+        footerMsg:
+            "Please carry Transfer Certificate, Birth Certificate, Photo ID of the Student, 3 passport photo of student, 1 photo of parent. Please mark your presence 5 minutes prior to your appointment time.",
+        autoApproved: true);
+
+    admissionForm.isSystemTemplate = true;
+    admissionForm.id = formId;
+    admissionForm.autoApproved = false;
+
+    FormInputFieldText nameInput = FormInputFieldText(
+        "Name of the Student",
+        true,
+        "Please enter your name as per Government ID proof or Birth Certificate",
+        50);
+    nameInput.isMeta = true;
+
+    admissionForm.addField(nameInput);
+
+    FormInputFieldDateTime dob = FormInputFieldDateTime(
+        "Date of Birth of the Student",
+        true,
+        "Please select the student's Date of Birth");
+    dob.isMeta = true;
+    dob.isAge = true;
+
+    admissionForm.addField(dob);
+
+    FormInputFieldOptions classDetailsInput = FormInputFieldOptions(
+        "Admission seeking for ",
+        false,
+        "Please select the class you are seeking admission for ",
+        [
+          Value('Nursery'),
+          Value('LKG'),
+          Value('UKG'),
+          Value('Class 1'),
+          Value('Class 2'),
+          Value('Class 3'),
+          Value('Class 4'),
+          Value('Class 5'),
+          Value('Class 6'),
+          Value('Class 7'),
+          Value('Class 8'),
+          Value('Class 9'),
+          Value('Class 10'),
+          Value('Class 11'),
+          Value('Class 12')
+        ],
+        false);
+
+    classDetailsInput.isMeta = true;
+    classDetailsInput.defaultValueIndex = 0;
+
+    admissionForm.addField(classDetailsInput);
+
+    FormInputFieldAttachment tcImage = FormInputFieldAttachment(
+        "Upload Transfer certificate",
+        false,
+        "If the student is moving from another school, you need to submit the original Transfer Certificate");
+
+    admissionForm.addField(tcImage);
+
+    FormInputFieldOptionsWithAttachments idProof =
+        FormInputFieldOptionsWithAttachments(
+            "Government Issued ID Proof",
+            true,
+            "Select valid government issued ID Proof and upload its images.",
+            [
+              Value('Birth Certificate'),
+              Value('Passport'),
+              Value('Aadhaar Card'),
+              Value('Bank Passbook'),
+              Value('Any other government issued photo ID'),
+            ],
+            false);
+
+    admissionForm.addField(idProof);
+
+    FormInputFieldText fatherInput = FormInputFieldText(
+        "Name of the Father", true, "Please enter student's father name", 50);
+    fatherInput.isMeta = false;
+
+    admissionForm.addField(fatherInput);
+
+    FormInputFieldText motherInput = FormInputFieldText(
+        "Name of mother", true, "Please enter student's mother name", 50);
+    motherInput.isMeta = false;
+
+    admissionForm.addField(motherInput);
+
+    FormInputFieldText parentEmail = FormInputFieldText(
+        "Parent's email address",
+        true,
+        "Please enter Parent's email address",
+        50);
+    parentEmail.isMeta = false;
+    parentEmail.isEmail = true;
+
+    admissionForm.addField(parentEmail);
+
+    FormInputFieldPhone parentPhone = FormInputFieldPhone(
+        "Parent phone number",
+        true,
+        "Please enter Parent's primary phone number on which school can contact");
+    parentPhone.isMeta = false;
+
+    admissionForm.addField(parentPhone);
+
+    //NOTE: If this is executed, every time the ID of the field is going to change
+    await _gs.getApplicationService().saveBookingForm(admissionForm);
+
+    return admissionForm;
+  }
+
+  Future<BookingForm> createBookingFormGlobalSchoolTC(String formId) async {
+    BookingForm tcForm = new BookingForm(
+        formName: "Transfer Certificate Request Form",
+        headerMsg:
+            "Please ensure that all dues are cleared before making this request.",
+        footerMsg: "",
+        autoApproved: true);
+
+    tcForm.isSystemTemplate = true;
+    tcForm.id = formId;
+    tcForm.autoApproved = true;
+
+    FormInputFieldText nameInput = FormInputFieldText("Name of the Student",
+        true, "Please enter your name of the student as per school record", 50);
+    nameInput.isMeta = true;
+    nameInput.isMandatory = true;
+
+    tcForm.addField(nameInput);
+
+    FormInputFieldText rollNumberInput = FormInputFieldText(
+        "Student's roll number",
+        true,
+        "Please enter student's roll number",
+        50);
+    rollNumberInput.isMeta = true;
+    rollNumberInput.isMandatory = true;
+
+    tcForm.addField(rollNumberInput);
+
+    FormInputFieldOptions classDetailsInput = FormInputFieldOptions(
+        "Student's class",
+        false,
+        "Please select the current class of the student",
+        [
+          Value('Nursery'),
+          Value('LKG'),
+          Value('UKG'),
+          Value('Class 1'),
+          Value('Class 2'),
+          Value('Class 3'),
+          Value('Class 4'),
+          Value('Class 5'),
+          Value('Class 6'),
+          Value('Class 7'),
+          Value('Class 8'),
+          Value('Class 9'),
+          Value('Class 10'),
+          Value('Class 11'),
+          Value('Class 12')
+        ],
+        false);
+
+    classDetailsInput.isMeta = true;
+    classDetailsInput.defaultValueIndex = -1;
+    classDetailsInput.isMandatory = true;
+
+    tcForm.addField(classDetailsInput);
+
+    FormInputFieldOptions relationWithStudent = FormInputFieldOptions(
+        "Your relation",
+        false,
+        "Please select the current class of the student",
+        [Value('Self'), Value('Father'), Value('Mother'), Value('Gaurdian')],
+        false);
+
+    relationWithStudent.isMeta = false;
+    relationWithStudent.defaultValueIndex = -1;
+    relationWithStudent.isMandatory = true;
+
+    //NOTE: If this is executed, every time the ID of the field is going to change
+    await _gs.getApplicationService().saveBookingForm(tcForm);
+
+    return tcForm;
+  }
+
+  Future<BookingForm> createBookingFormGlobalCovidVaccination(
+      String formId) async {
+    BookingForm bf = new BookingForm(
+        formName: "Covid-19 Vacination Applicant Details",
+        headerMsg:
+            "You request will be approved based on the information provided by you, please enter the correct information.",
+        footerMsg:
+            "Applicant must carry the same ID proof documents to the vacination center. Also mark your presence 15 minutes prior to your alloted time. Failing to do so will result in cancellation of your application.",
+        autoApproved: true);
+
+    bf.isSystemTemplate = true;
+    bf.id = formId;
+    bf.autoApproved = false;
+
+    FormInputFieldText nameInput = FormInputFieldText("Name of the Applicant",
+        true, "Please enter your name as per Government ID proof", 50);
+    nameInput.isMeta = true;
+
+    bf.addField(nameInput);
+
+    FormInputFieldDateTime dob = FormInputFieldDateTime(
+        "Date of Birth of the Applicant",
+        true,
+        "Please select the applicant's Date of Birth");
+    dob.isMeta = true;
+    dob.isAge = true;
+
+    bf.addField(dob);
+
+    FormInputFieldOptionsWithAttachments healthDetailsInput =
+        FormInputFieldOptionsWithAttachments(
+            "Pre-existing Medical Conditions",
+            false,
+            "Please select all known medical conditions the applicant have",
+            [
+              Value('None'),
+              Value('Chronic kidney disease'),
+              Value('Chronic lung disease'),
+              Value('Diabetes'),
+              Value('Heart Conditions'),
+              Value('Other Cardiovascular and Cerebrovascular Diseases'),
+              Value("Hemoglobin disorders"),
+              Value("HIV or weakened Immune System"),
+              Value("Liver disease"),
+              Value("Neurologic conditions such as dementia"),
+              Value("Overweight and Severe Obesity"),
+              Value("Pregnancy")
+            ],
+            true);
+
+    healthDetailsInput.isMeta = true;
+    healthDetailsInput.defaultValueIndex = 0;
+
+    bf.addField(healthDetailsInput);
+
+    FormInputFieldOptionsWithAttachments frontLineWorkerProof =
+        FormInputFieldOptionsWithAttachments(
+            "Only for Frontline workers",
+            false,
+            "Please select the category by Applicant's profession and upload a supporting ID proof/documents. Applicant must carry these documents along with him/her to the Vaccination Center.",
+            [
+              Value('None'),
+              Value('Medical Professional'),
+              Value('Government Official'),
+              Value('MP/MLA'),
+              Value('Others'),
+            ],
+            false);
+    frontLineWorkerProof.isMeta = true;
+    frontLineWorkerProof.defaultValueIndex = 0;
+    bf.addField(frontLineWorkerProof);
+
+    FormInputFieldOptionsWithAttachments idProof =
+        FormInputFieldOptionsWithAttachments(
+            "Government Issued ID Proof",
+            true,
+            "Select valid government issued ID Proof and upload its images. The applicant must carry these documents along with him/her to the Vaccination Center.",
+            [
+              Value('PAN'),
+              Value('Passport'),
+              Value('Driving License'),
+              Value('Aadhaar Card'),
+              Value('Bank Passbook'),
+              Value('Any other government issued photo ID'),
+            ],
+            false);
+
+    bf.addField(idProof);
+
+    FormInputFieldPhone phoneField = FormInputFieldPhone(
+        "Applicant's phone number",
+        true,
+        "Please enter the applicant's phone number");
+
+    bf.addField(phoneField);
+    //NOTE: If this is executed, every time the ID of the field is going to change
+    await _gs.getApplicationService().saveBookingForm(bf);
+    return bf;
   }
 }

@@ -419,7 +419,7 @@ class GlobalState {
     return types;
   }
 
-  List<EntityType> getActiveChildTypes(EntityType parentType) {
+  List<EntityType> getActiveChildEntityTypes(EntityType parentType) {
     List<EntityType> types = new List<EntityType>();
 
     if (!_conf.typeToChildType
