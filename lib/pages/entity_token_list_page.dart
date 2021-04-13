@@ -404,6 +404,29 @@ class _EntityTokenListPageState extends State<EntityTokenListPage> {
           if (tokenCounterForYear.year == date.year.toString()) {
             dataForYear = tokenCounterForYear.getTokenStatsMonthWiseForYear();
             dataMap = dataForYear;
+            listWidget = Expanded(
+              child: ListView.builder(
+                  itemCount: 1,
+                  itemBuilder: (BuildContext context, int index) {
+                    String key = dataForYear.keys.elementAt(index);
+                    return Container(
+                      margin: EdgeInsets.fromLTRB(10, 0, 10, 50),
+                      child: new Column(
+                          children: [buildItem(key, dataForYear[key])]),
+                    );
+                  }),
+            );
+
+            barChartWidget = Container(
+              height: MediaQuery.of(context).size.height * .7,
+              width: MediaQuery.of(context).size.width * .95,
+              child: ListView(children: <Widget>[
+                BarChartTokens(
+                  dataMap: dataMap,
+                  metaEn: widget.metaEntity,
+                ),
+              ]),
+            );
           } else {
             //fetch data
             _gs
@@ -413,11 +436,80 @@ class _EntityTokenListPageState extends State<EntityTokenListPage> {
                 .then((value) {
               tokenCounterForYear = value;
               if (tokenCounterForYear == null) {
-//show empty page
+                //show empty page
+                listWidget = _emptyPage();
+                barChartWidget = _emptyPage();
+              } else {
+                dataForYear =
+                    tokenCounterForYear.getTokenStatsMonthWiseForYear();
+                dataMap = dataForYear;
 
-              } else {}
+                listWidget = Expanded(
+                  child: ListView.builder(
+                      itemCount: 1,
+                      itemBuilder: (BuildContext context, int index) {
+                        String key = dataForYear.keys.elementAt(index);
+                        return Container(
+                          margin: EdgeInsets.fromLTRB(10, 0, 10, 50),
+                          child: new Column(
+                              children: [buildItem(key, dataForYear[key])]),
+                        );
+                      }),
+                );
+
+                barChartWidget = Container(
+                  height: MediaQuery.of(context).size.height * .7,
+                  width: MediaQuery.of(context).size.width * .95,
+                  child: ListView(children: <Widget>[
+                    BarChartTokens(
+                      dataMap: dataMap,
+                      metaEn: widget.metaEntity,
+                    ),
+                  ]),
+                );
+              }
             });
           }
+        } else {
+          _gs
+              .getTokenService()
+              .getTokenCounterForEntity(
+                  widget.metaEntity.entityId, date.year.toString())
+              .then((value) {
+            tokenCounterForYear = value;
+            if (tokenCounterForYear == null) {
+              //show empty page
+              listWidget = _emptyPage();
+              barChartWidget = _emptyPage();
+            } else {
+              dataForYear = tokenCounterForYear.getTokenStatsMonthWiseForYear();
+              dataMap = dataForYear;
+
+              listWidget = Expanded(
+                child: ListView.builder(
+                    itemCount: 1,
+                    itemBuilder: (BuildContext context, int index) {
+                      String key = dataForYear.keys.elementAt(index);
+                      return Container(
+                        margin: EdgeInsets.fromLTRB(10, 0, 10, 50),
+                        child: new Column(
+                            children: [buildItem(key, dataForYear[key])]),
+                      );
+                    }),
+              );
+
+              barChartWidget = Container(
+                height: MediaQuery.of(context).size.height * .7,
+                width: MediaQuery.of(context).size.width * .95,
+                child: ListView(children: <Widget>[
+                  BarChartTokens(
+                    dataMap: dataMap,
+                    metaEn: widget.metaEntity,
+                  ),
+                ]),
+              );
+            }
+          });
         }
         break;
       default:
