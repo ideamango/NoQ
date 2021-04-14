@@ -341,7 +341,9 @@ class _ManageChildEntityListPageState extends State<ManageChildEntityListPage> {
         manageChildEntityListPagekey.currentState.showBottomSheet<Null>(
       (context) => Container(
         color: Colors.cyan[50],
-        height: MediaQuery.of(context).size.height * .7,
+        height: MediaQuery.of(context).size.height * .45,
+        //TODO PHASE2 - change height after adding more entitytypes
+        //   height: MediaQuery.of(context).size.height * .7,
         child: Column(
           children: <Widget>[
             Row(

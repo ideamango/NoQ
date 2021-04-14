@@ -333,6 +333,11 @@ class _EntityTokenListPageState extends State<EntityTokenListPage> {
                 //show empty page
                 listWidget = _emptyPage();
                 barChartWidget = _emptyPage();
+                setState(() {
+                  formattedDateStr = formattedDate;
+                  loadingData = false;
+                });
+                return;
               } else {
                 dataForYear =
                     tokenCounterForYear.getTokenStatsMonthWiseForYear();
@@ -358,6 +363,11 @@ class _EntityTokenListPageState extends State<EntityTokenListPage> {
               //show empty page
               listWidget = _emptyPage();
               barChartWidget = _emptyPage();
+              setState(() {
+                formattedDateStr = formattedDate;
+                loadingData = false;
+              });
+              return;
             } else {
               dataForYear = tokenCounterForYear.getTokenStatsMonthWiseForYear();
               dataForYear.forEach((k, v) {
