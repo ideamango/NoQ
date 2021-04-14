@@ -58,6 +58,8 @@ class GlobalState {
   String packageName;
   String version;
   String buildNumber;
+  bool isAndroid;
+  bool isIOS;
 
   static GlobalState _gs;
 
@@ -70,6 +72,8 @@ class GlobalState {
     packageName = packageInfo.packageName;
     version = packageInfo.version;
     buildNumber = packageInfo.buildNumber;
+    isAndroid = Platform.isAndroid;
+    isIOS = Platform.isIOS;
 
     //comment following line to continue to work with secondary Firebase
     _gs._secondaryFirebaseApp = Firebase.apps[0];
@@ -413,9 +417,22 @@ class GlobalState {
 
   List<EntityType> getActiveEntityTypes() {
     List<EntityType> types = new List<EntityType>();
-    for (String type in _conf.entityTypes) {
-      types.add(EnumToString.fromString(EntityType.values, type));
+    List<String> stringTypes;
+
+    if (isAndroid) {
+      stringTypes = _conf.androidAppVersionToEntityTypes[version];
     }
+
+    if (isIOS) {
+      stringTypes = _conf.iosAppVersionToEntityTypes[version];
+    }
+
+    if (stringTypes != null) {
+      for (String type in stringTypes) {
+        types.add(EnumToString.fromString(EntityType.values, type));
+      }
+    }
+
     return types;
   }
 
@@ -430,8 +447,16 @@ class GlobalState {
     List<String> childTypes =
         _conf.typeToChildType[EnumToString.convertToString(parentType)];
 
+    List<EntityType> activeTypeForThisAppVerison = getActiveEntityTypes();
+
     for (String childType in childTypes) {
-      types.add(EnumToString.fromString(EntityType.values, childType));
+      EntityType type = EnumToString.fromString(EntityType.values, childType);
+      for (EntityType activeType in activeTypeForThisAppVerison) {
+        if (type == activeType) {
+          types.add(type);
+          break;
+        }
+      }
     }
     return types;
   }
