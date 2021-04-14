@@ -403,7 +403,7 @@ class ChildEntityRowState extends State<ChildEntityRow> {
                           .push(PageAnimation.createRoute(EntityTokenListPage(
                         metaEntity: _metaEntity,
                         backRoute: ManageChildEntityListPage(
-                          entity: entity,
+                          entity: _metaEntity.parentId,
                         ),
                       )));
                     },

@@ -337,17 +337,25 @@ class EntityRowState extends State<EntityRow> {
                     child: FlatButton(
                       // elevation: 7,
                       color: Colors.white,
-                      splashColor: highlightColor.withOpacity(.8),
+                      splashColor: _metaEntity.isBookable
+                          ? highlightColor.withOpacity(.8)
+                          : Colors.transparent,
                       shape: RoundedRectangleBorder(
-                          side: BorderSide(color: Colors.blueGrey[300]),
+                          side: BorderSide(
+                              color: _metaEntity.isBookable
+                                  ? Colors.blueGrey[300]
+                                  : Colors.blueGrey[100]),
                           borderRadius: BorderRadius.all(Radius.circular(5.0))),
                       child: Align(
                         alignment: Alignment.center,
                         child: Text(
                           'Booking Applications',
                           textAlign: TextAlign.center,
-                          style:
-                              TextStyle(color: whiteBtnTextColor, fontSize: 13),
+                          style: TextStyle(
+                              color: _metaEntity.isBookable
+                                  ? whiteBtnTextColor
+                                  : disabledColor,
+                              fontSize: 13),
                         ),
                       ),
                       onPressed: () {
@@ -411,22 +419,33 @@ class EntityRowState extends State<EntityRow> {
                     child: FlatButton(
                       // elevation: 7,
                       color: Colors.white,
-                      splashColor: highlightColor.withOpacity(.8),
+                      splashColor: _metaEntity.isBookable
+                          ? highlightColor.withOpacity(.8)
+                          : Colors.transparent,
                       shape: RoundedRectangleBorder(
-                          side: BorderSide(color: Colors.blueGrey[300]),
+                          side: BorderSide(
+                              color: _metaEntity.isBookable
+                                  ? Colors.blueGrey[300]
+                                  : Colors.blueGrey[100]),
                           borderRadius: BorderRadius.all(Radius.circular(5.0))),
                       child: Text(
                         'Booking Tokens',
-                        style:
-                            TextStyle(color: whiteBtnTextColor, fontSize: 13),
+                        style: TextStyle(
+                            color: _metaEntity.isBookable
+                                ? whiteBtnTextColor
+                                : disabledColor,
+                            fontSize: 13),
                       ),
                       onPressed: () {
-                        print("To child list page");
-                        Navigator.of(context)
-                            .push(PageAnimation.createRoute(EntityTokenListPage(
-                          metaEntity: _metaEntity,
-                          backRoute: ManageEntityListPage(),
-                        )));
+                        if (_metaEntity.isBookable) {
+                          print("To child list page");
+                          Navigator.of(context).push(
+                              PageAnimation.createRoute(EntityTokenListPage(
+                            metaEntity: _metaEntity,
+                            backRoute: ManageEntityListPage(),
+                          )));
+                        } else
+                          return;
                       },
                     ),
                   ),
@@ -448,14 +467,22 @@ class EntityRowState extends State<EntityRow> {
                         color: Colors.white,
                         textColor: Colors.white,
                         shape: RoundedRectangleBorder(
-                            side: BorderSide(color: Colors.blueGrey[300]),
+                            side: BorderSide(
+                                color: _metaEntity.isBookable
+                                    ? Colors.blueGrey[300]
+                                    : Colors.blueGrey[100]),
                             borderRadius:
                                 BorderRadius.all(Radius.circular(5.0))),
-                        splashColor: highlightColor,
+                        splashColor: _metaEntity.isBookable
+                            ? highlightColor.withOpacity(.8)
+                            : Colors.transparent,
                         child: Text(
                           'Manage Forms',
-                          style:
-                              TextStyle(color: whiteBtnTextColor, fontSize: 13),
+                          style: TextStyle(
+                              color: _metaEntity.isBookable
+                                  ? whiteBtnTextColor
+                                  : disabledColor,
+                              fontSize: 13),
                         ),
                         // Text(
                         //   (_metaEntity.name != null)
