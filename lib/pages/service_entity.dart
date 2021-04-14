@@ -40,7 +40,7 @@ class ChildEntityRowState extends State<ChildEntityRow> {
     // _entityMap = widget.entityMap;
     GlobalState.getGlobalState().then((value) {
       _gs = value;
-      _gs.getEntity(_metaEntity.entityId).then((value) {
+      _gs.getEntity(_metaEntity.parentId).then((value) {
         entity = value.item1;
         if (this.mounted) {
           setState(() {

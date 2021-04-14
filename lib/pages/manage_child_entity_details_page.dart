@@ -3445,7 +3445,7 @@ class _ManageChildEntityDetailsPageState
                                                 child: Icon(
                                                   Icons.info,
                                                   color: Colors.blueGrey[600],
-                                                  size: 22,
+                                                  size: 17,
                                                 ),
                                               ),
                                             ],
@@ -3509,9 +3509,9 @@ class _ManageChildEntityDetailsPageState
                                           MediaQuery.of(context).size.height *
                                               .08,
                                       width: MediaQuery.of(context).size.width *
-                                          .15,
+                                          .2,
                                       child: Transform.scale(
-                                        scale: 1,
+                                        scale: .7,
                                         alignment: Alignment.centerRight,
                                         child: Switch(
                                           materialTapTargetSize:
@@ -3563,7 +3563,7 @@ class _ManageChildEntityDetailsPageState
                                                   child: Icon(Icons.info,
                                                       color:
                                                           Colors.blueGrey[600],
-                                                      size: 22),
+                                                      size: 17),
                                                 ),
                                               ]),
                                           onPressed: () {
@@ -3625,9 +3625,9 @@ class _ManageChildEntityDetailsPageState
                                           MediaQuery.of(context).size.height *
                                               .08,
                                       width: MediaQuery.of(context).size.width *
-                                          .15,
+                                          .2,
                                       child: Transform.scale(
-                                        scale: 1,
+                                        scale: .7,
                                         alignment: Alignment.centerRight,
                                         child: Switch(
                                           materialTapTargetSize:
@@ -3682,7 +3682,7 @@ class _ManageChildEntityDetailsPageState
                                                 //     .02,
                                                 child: Icon(Icons.info,
                                                     color: Colors.blueGrey[600],
-                                                    size: 22),
+                                                    size: 17),
                                               ),
                                             ]),
                                         onPressed: () {
@@ -3742,9 +3742,9 @@ class _ManageChildEntityDetailsPageState
                                           MediaQuery.of(context).size.height *
                                               .08,
                                       width: MediaQuery.of(context).size.width *
-                                          .15,
+                                          .2,
                                       child: Transform.scale(
-                                        scale: 1,
+                                        scale: .7,
                                         alignment: Alignment.centerRight,
                                         child: Switch(
                                           materialTapTargetSize:

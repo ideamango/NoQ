@@ -1788,7 +1788,7 @@ class _SearchEntityPageState extends State<SearchEntityPage>
     entityTypeForSearch = (_entityType == _searchInAll) ? null : _entityType;
 
     List<Entity> searchEntityList = await _state.getEntityService().search(
-        _searchText.toLowerCase(),
+        _searchText,
         entityTypeForSearch,
         lat,
         lon,
@@ -1874,12 +1874,14 @@ class _SearchEntityPageState extends State<SearchEntityPage>
       }
       //Write Gstate to file
       _state.updateSearchResults(_stores);
-      setState(() {
-        //searchDone = true;
-        _isSearching = "done";
-      });
+      if (this.mounted) {
+        setState(() {
+          //searchDone = true;
+          _isSearching = "done";
+        });
+      }
     }).catchError((ex) {
-      if (ex.message.toString().contains("UserLocationOff")) {
+      if (ex.toString().contains("UserLocationOff")) {
         _stores.clear();
         setState(() {
           _isSearching = "done";
