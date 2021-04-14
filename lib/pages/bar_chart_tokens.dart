@@ -117,12 +117,12 @@ class _BarChartTokensState extends State<BarChartTokens> {
       tokenCreatedData.add(BarChartModel(
         timeSlot: key,
         numOfTokens: value.numberOfTokensCreated,
-        color: createdColors[colorCount],
+        color: charts.ColorUtil.fromDartColor(Colors.blue[300]),
       ));
       tokenCancelledData.add(BarChartModel(
         timeSlot: key,
         numOfTokens: value.numberOfTokensCancelled,
-        color: createdColors[colorCount],
+        color: charts.ColorUtil.fromDartColor(Colors.orange[200]),
       ));
       colorCount++;
     });
