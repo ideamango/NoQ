@@ -46,7 +46,7 @@ class _BarChartGraphState extends State<BarChartGraph> {
     List<charts.Series<BarChartModel, String>> series = [
       charts.Series(
         id: "Booked",
-        data: widget.tokenCancelledData,
+        data: widget.tokenCreatedData,
         domainFn: (BarChartModel series, _) => series.timeSlot,
         measureFn: (BarChartModel series, _) => series.numOfTokens,
         colorFn: (BarChartModel series, _) => series.color,
@@ -54,7 +54,7 @@ class _BarChartGraphState extends State<BarChartGraph> {
       ),
       charts.Series(
         id: "Cancelled",
-        data: widget.tokenCreatedData,
+        data: widget.tokenCancelledData,
         domainFn: (BarChartModel series, _) => series.timeSlot,
         measureFn: (BarChartModel series, _) => series.numOfTokens,
         colorFn: (BarChartModel series, _) => series.color,
