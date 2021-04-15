@@ -1,3 +1,5 @@
+import 'dart:collection';
+
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:noq/constants.dart';
@@ -6,6 +8,7 @@ import 'package:noq/db/db_model/slot.dart';
 import 'package:noq/db/db_model/user_token.dart';
 import 'package:noq/db/db_service/token_service.dart';
 import 'package:noq/global_state.dart';
+import 'package:noq/pages/bar_chart_graph.dart';
 import 'package:noq/pages/bar_chart_tokens.dart';
 import 'package:noq/pages/manage_entity_list_page.dart';
 import 'package:noq/pages/overview_page.dart';
@@ -18,6 +21,14 @@ import 'package:noq/utils.dart';
 import 'package:noq/widget/appbar.dart';
 import 'package:noq/widget/page_animation.dart';
 import 'package:noq/widget/widgets.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:charts_flutter/flutter.dart' as charts;
+import 'package:intl/intl.dart';
+import 'package:noq/bar_chart_model.dart';
+import 'package:noq/constants.dart';
+import 'package:noq/db/db_model/meta_entity.dart';
+import 'package:noq/db/db_model/user_token.dart';
 
 enum SelectedView { list, bar, pie, line }
 enum DateDisplayFormat { date, month, year }
@@ -37,9 +48,9 @@ class _EntityTokenListPageState extends State<EntityTokenListPage> {
   bool loadingData = true;
   GlobalState _gs;
   List<Slot> list;
-  Map<String, TokenStats> dataForDay;
-  Map<String, TokenStats> dataForMonth;
-  Map<String, TokenStats> dataForYear;
+  Map<String, TokenStats> dataForDay = new Map<String, TokenStats>();
+  Map<String, TokenStats> dataForMonth = Map<String, TokenStats>();
+  Map<String, TokenStats> dataForYear = new Map<String, TokenStats>();
   String formattedDateStr;
   DateTime dateForShowingList;
   DateTime yearForShowingList;
@@ -48,10 +59,11 @@ class _EntityTokenListPageState extends State<EntityTokenListPage> {
   Map<String, List<UserToken>> _tokensMap = new Map<String, List<UserToken>>();
   Map<String, TokenStats> dataMap = new Map<String, TokenStats>();
   DateDisplayFormat selectedDateFormat = DateDisplayFormat.date;
-  SelectedView selectedView = SelectedView.bar;
+  SelectedView selectedView = SelectedView.list;
   Widget listWidget;
   Widget barChartWidget;
   DateTime defaultDate;
+  final GlobalKey<BarChartGraphState> _key = GlobalKey();
 
   TokenCounter tokenCounterForYear;
   @override
@@ -166,6 +178,12 @@ class _EntityTokenListPageState extends State<EntityTokenListPage> {
 
   void prepareData(DateTime date, DateDisplayFormat format) {
     String formattedDate;
+    dataMap.clear();
+    dataForDay.clear();
+    dataForMonth.clear();
+    dataForYear.clear();
+    barChartWidget = _emptyPage();
+    setState(() {});
 
     switch (format) {
       case DateDisplayFormat.date:
@@ -196,6 +214,15 @@ class _EntityTokenListPageState extends State<EntityTokenListPage> {
                 dataForDay.forEach((k, v) {
                   dataMap[k.replaceAll('~', ':')] = v;
                 });
+
+                // SplayTreeMap<String, dynamic> sortedMap =
+                //     new SplayTreeMap<String, dynamic>.from(
+                //         dataMap,
+                //         (a, b) => DateTime.parse(a).millisecondsSinceEpoch >
+                //                 DateTime.parse(b).millisecondsSinceEpoch
+                //             ? -1
+                //             : 1);
+                // print(sortedMap);
               }
             });
           } else {
@@ -223,34 +250,47 @@ class _EntityTokenListPageState extends State<EntityTokenListPage> {
             } else {
               dataForDay =
                   tokenCounterForYear.getTokenStatsSlotWiseForDay(date);
+
               dataForDay.forEach((k, v) {
                 dataMap[k.replaceAll('~', ':')] = v;
               });
             }
           });
         }
-        listWidget = (dataForDay != null)
-            ? ((dataForDay.length != 0)
+        // SplayTreeMap<String, dynamic> sortedMap =
+        //     new SplayTreeMap<String, dynamic>.from(
+        //         dataMap,
+        //         (a, b) => DateTime.parse(a).millisecondsSinceEpoch >
+        //                 DateTime.parse(b).millisecondsSinceEpoch
+        //             ? -1
+        //             : 1);
+        // print(sortedMap);
+
+        listWidget = (dataMap != null)
+            ? ((dataMap.length != 0)
                 ? Expanded(
                     child: ListView.builder(
-                        itemCount: 1,
+                        itemCount: dataMap.length,
                         itemBuilder: (BuildContext context, int index) {
-                          String key = dataForDay.keys.elementAt(index);
+                          String key = dataMap.keys.elementAt(index);
                           return Container(
-                            margin: EdgeInsets.fromLTRB(10, 0, 10, 50),
-                            child: new Column(
-                                children: [buildItem(key, dataForDay[key])]),
+                            margin: EdgeInsets.fromLTRB(10, 0, 10, 10),
+                            child: new Column(children: [
+                              buildExpansionTile(key, dataMap[key])
+                            ]),
                           );
                         }),
                   )
                 : _emptyPage())
             : _emptyPage();
+
         barChartWidget = (dataMap.length != 0)
             ? Container(
                 height: MediaQuery.of(context).size.height * .7,
                 width: MediaQuery.of(context).size.width * .95,
                 child: ListView(children: <Widget>[
-                  BarChartTokens(
+                  BarChartGraph(
+                    key: _key,
                     dataMap: dataMap,
                     metaEn: widget.metaEntity,
                   ),
@@ -331,8 +371,9 @@ class _EntityTokenListPageState extends State<EntityTokenListPage> {
                           String key = dataForMonth.keys.elementAt(index);
                           return Container(
                             margin: EdgeInsets.fromLTRB(10, 0, 10, 50),
-                            child: new Column(
-                                children: [buildItem(key, dataForMonth[key])]),
+                            child: new Column(children: [
+                              buildExpansionTile(key, dataForMonth[key])
+                            ]),
                           );
                         }),
                   )
@@ -343,7 +384,8 @@ class _EntityTokenListPageState extends State<EntityTokenListPage> {
                 height: MediaQuery.of(context).size.height * .7,
                 width: MediaQuery.of(context).size.width * .95,
                 child: ListView(children: <Widget>[
-                  BarChartTokens(
+                  BarChartGraph(
+                    key: _key,
                     dataMap: dataMap,
                     metaEn: widget.metaEntity,
                   ),
@@ -418,8 +460,9 @@ class _EntityTokenListPageState extends State<EntityTokenListPage> {
                           String key = dataForYear.keys.elementAt(index);
                           return Container(
                             margin: EdgeInsets.fromLTRB(10, 0, 10, 50),
-                            child: new Column(
-                                children: [buildItem(key, dataForYear[key])]),
+                            child: new Column(children: [
+                              buildExpansionTile(key, dataForYear[key])
+                            ]),
                           );
                         }),
                   )
@@ -431,7 +474,8 @@ class _EntityTokenListPageState extends State<EntityTokenListPage> {
                 height: MediaQuery.of(context).size.height * .7,
                 width: MediaQuery.of(context).size.width * .95,
                 child: ListView(children: <Widget>[
-                  BarChartTokens(
+                  BarChartGraph(
+                    key: _key,
                     dataMap: dataMap,
                     metaEn: widget.metaEntity,
                   ),
@@ -449,6 +493,7 @@ class _EntityTokenListPageState extends State<EntityTokenListPage> {
     setState(() {
       formattedDateStr = formattedDate;
       loadingData = false;
+      // _key.currentState.refresh();
     });
   }
 
@@ -579,6 +624,97 @@ class _EntityTokenListPageState extends State<EntityTokenListPage> {
           ],
         ),
         // backgroundColor: Colors.grey[300],
+      ),
+    );
+  }
+
+  Widget buildExpansionTile(String key, TokenStats stats) {
+    List<UserToken> tokens;
+    String timeSlot = key.replaceAll('~', ':');
+
+    return Container(
+      child: Card(
+        child: Theme(
+          data: ThemeData(
+            unselectedWidgetColor: Colors.grey[600],
+            accentColor: btnColor,
+          ),
+          child: Column(
+            children: [
+              ExpansionTile(
+                initiallyExpanded: false,
+                title: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      timeSlot,
+                      style: TextStyle(fontSize: 13, color: Colors.grey[600]),
+                    ),
+                    Row(
+                      children: [
+                        Text(
+                          "Booked - " +
+                              stats.numberOfTokensCreated.toString() +
+                              ", ",
+                          style:
+                              TextStyle(fontSize: 13, color: Colors.grey[600]),
+                        ),
+                        Text(
+                          "Cancelled - " +
+                              stats.numberOfTokensCancelled.toString(),
+                          style:
+                              TextStyle(fontSize: 13, color: Colors.grey[600]),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+                // backgroundColor: Colors.grey[300],
+                children: <Widget>[
+                  (!Utils.isNullOrEmpty(tokens))
+                      ? new Container(
+                          width: MediaQuery.of(context).size.width * .94,
+                          decoration: new BoxDecoration(
+                              border: Border.all(color: Colors.grey[300]),
+                              shape: BoxShape.rectangle,
+                              color: Colors.grey[300],
+                              borderRadius: BorderRadius.only(
+                                  topLeft: Radius.circular(4.0),
+                                  topRight: Radius.circular(4.0))),
+                          padding: EdgeInsets.all(2.0),
+                          child: new Expanded(
+                            child: Align(
+                              alignment: Alignment.topCenter,
+                              //child: Text("Hello"),
+                              child: ListView.builder(
+                                padding: EdgeInsets.all(
+                                    MediaQuery.of(context).size.width * .006),
+                                //  controller: _childScrollController,
+                                reverse: true,
+                                shrinkWrap: true,
+                                //   itemExtent: itemSize,
+                                //scrollDirection: Axis.vertical,
+                                itemBuilder: (BuildContext context, int index) {
+                                  return Container(
+                                    //  height: MediaQuery.of(context).size.height * .3,
+                                    child: buildChildItem(tokens[index]),
+                                  );
+                                },
+                                itemCount: tokens.length,
+                              ),
+                            ),
+                          ),
+                        )
+                      : Container(
+                          padding: EdgeInsets.all(12),
+                          child: Text("No tokens",
+                              style: TextStyle(
+                                  fontSize: 13, color: Colors.grey[600]))),
+                ],
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
@@ -837,18 +973,16 @@ class _EntityTokenListPageState extends State<EntityTokenListPage> {
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [
                           IconButton(
-                            icon: Icon(Icons.bar_chart),
+                            icon: Icon(
+                              Icons.bar_chart,
+                              color: disabledColor,
+                            ),
                             onPressed: () {
-                              setState(() {
-                                selectedView = SelectedView.bar;
-                              });
-                              // Navigator.of(context)
-                              //     .push(PageAnimation.createRoute(
-                              //   BarChart(
-                              //     dataMap: dataMap,
-                              //     metaEn: widget.metaEntity,
-                              //   ),
-                              // ));
+                              return null;
+                              //TODO Phase2
+                              // setState(() {
+                              //   selectedView = SelectedView.bar;
+                              // });
                             },
                           ),
                           IconButton(
@@ -1005,7 +1139,9 @@ class _EntityTokenListPageState extends State<EntityTokenListPage> {
           ),
         ),
       );
-    } else if (!initCompleted || loadingData) {
+    } else
+    //if (!initCompleted || loadingData)
+    {
       return MaterialApp(
         debugShowCheckedModeBanner: false,
         theme: ThemeData.light().copyWith(),
@@ -1030,5 +1166,232 @@ class _EntityTokenListPageState extends State<EntityTokenListPage> {
         ),
       );
     }
+  }
+}
+
+class BarChartGraph extends StatefulWidget {
+  //final String chartLength;
+  final Map<String, TokenStats> dataMap;
+  final MetaEntity metaEn;
+  // final List<BarChartModel> tokenCreatedData;
+  // final List<BarChartModel> tokenCancelledData;
+
+  const BarChartGraph(
+      {Key key,
+      //  @required this.chartLength,
+      @required this.dataMap,
+      @required this.metaEn
+      // @required this.tokenCreatedData,
+      // @required this.tokenCancelledData,
+      })
+      : super(key: key);
+
+  @override
+  BarChartGraphState createState() => BarChartGraphState();
+}
+
+class BarChartGraphState extends State<BarChartGraph> {
+  List<BarChartModel> _barChartList;
+  Map<String, TokenStats> _dataMap;
+  final List<BarChartModel> tokenCancelledData = [];
+  final List<BarChartModel> tokenCreatedData = [];
+  @override
+  void initState() {
+    // TODO: implement initState
+    _dataMap = widget.dataMap;
+    // int colorCount = 0;
+    _dataMap.forEach((key, value) {
+      // if (colorCount == createdColors.length) colorCount = 0;
+      tokenCreatedData.add(BarChartModel(
+        timeSlot: key,
+        numOfTokens: value.numberOfTokensCreated,
+        color: charts.ColorUtil.fromDartColor(Colors.blue[300]),
+      ));
+      tokenCancelledData.add(BarChartModel(
+        timeSlot: key,
+        numOfTokens: value.numberOfTokensCancelled,
+        color: charts.ColorUtil.fromDartColor(Colors.orange[200]),
+      ));
+      //colorCount++;
+    });
+
+    super.initState();
+    // if (this.widget.chartLength == "today")
+    _barChartList = [
+      BarChartModel(
+          date: DateFormat(dateDisplayFormat).format(DateTime.now()),
+          color: null),
+    ];
+    // if (this.widget.chartLength == "month")
+    //   _barChartList = [
+    //     BarChartModel(
+    //         date: DateFormat(dateDisplayFormat).format(DateTime.now())),
+    //   ];
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    List<charts.Series<BarChartModel, String>> series = [
+      charts.Series(
+        id: "Booked",
+        data: tokenCreatedData,
+        domainFn: (BarChartModel series, _) => series.timeSlot,
+        measureFn: (BarChartModel series, _) => series.numOfTokens,
+        colorFn: (BarChartModel series, _) => series.color,
+        labelAccessorFn: (BarChartModel series, _) => '${series.numOfTokens}',
+      ),
+      charts.Series(
+        id: "Cancelled",
+        data: tokenCancelledData,
+        domainFn: (BarChartModel series, _) => series.timeSlot,
+        measureFn: (BarChartModel series, _) => series.numOfTokens,
+        colorFn: (BarChartModel series, _) => series.color,
+        labelAccessorFn: (BarChartModel series, _) => '${series.numOfTokens}',
+      ),
+    ];
+
+    return _buildFinancialList(series);
+  }
+
+  // _onSelectionChanged(charts.SelectionModel model) {
+  //   final selectedDatum = model.selectedDatum;
+  //   print("afdfgsdf" + selectedDatum.length.toString());
+
+  //   if (selectedDatum.isNotEmpty) {
+  //     setState(() {
+  //       print(selectedDatum.first.datum.sales);
+  //     });
+  //   }
+  // }
+
+  refresh() {
+    setState(() {
+      print("REWQDFQWDWUEDGWYEG");
+    });
+  }
+
+  Widget _buildFinancialList(series) {
+    return _barChartList != null
+        ? ListView.separated(
+            physics: NeverScrollableScrollPhysics(),
+            separatorBuilder: (context, index) => Divider(
+              color: Colors.white,
+              height: 5,
+            ),
+            scrollDirection: Axis.vertical,
+            shrinkWrap: true,
+            itemCount: _barChartList.length,
+            itemBuilder: (BuildContext context, int index) {
+              return Container(
+                height: MediaQuery.of(context).size.height * .8,
+                padding: EdgeInsets.all(10),
+                child: Column(
+                  children: [
+                    // Row(
+                    //   mainAxisAlignment: MainAxisAlignment.center,
+                    //   children: [
+                    //     Text(_barChartList[index].date,
+                    //         style: TextStyle(
+                    //             color: Colors.black,
+                    //             fontSize: 22,
+                    //             fontWeight: FontWeight.bold)),
+                    //   ],
+                    // ),
+                    Expanded(
+                      child: charts.BarChart(
+                        series,
+                        animate: true,
+                        vertical: false,
+                        barGroupingType: charts.BarGroupingType.grouped,
+                        // domainAxis: charts.OrdinalAxisSpec(
+                        //   renderSpec:
+                        //       charts.SmallTickRendererSpec(labelRotation: 60),
+                        // )
+
+                        // domainAxis: new charts.OrdinalAxisSpec(
+                        //     renderSpec: new charts.SmallTickRendererSpec(
+                        //         labelRotation: 60,
+                        //         // Tick and Label styling here.
+                        //         labelStyle: new charts.TextStyleSpec(
+                        //             fontSize: 8, // size in Pts.
+                        //             color: charts.MaterialPalette.black),
+
+                        //         // Change the line colors to match text color.
+                        //         lineStyle: new charts.LineStyleSpec(
+                        //             color: charts.MaterialPalette.black))),
+
+                        /// Assign a custom style for the measure axis.
+                        // primaryMeasureAxis: new charts.NumericAxisSpec(
+                        //     renderSpec: new charts.GridlineRendererSpec(
+
+                        //         // Tick and Label styling here.
+                        //         labelStyle: new charts.TextStyleSpec(
+                        //             fontSize: 10, // size in Pts.
+                        //             color: charts.MaterialPalette.black),
+
+                        //         // Change the line colors to match text color.
+                        //         lineStyle: new charts.LineStyleSpec(
+                        //             color: charts.MaterialPalette.black))),
+                        defaultInteractions: false,
+                        domainAxis: new charts.OrdinalAxisSpec(
+                            showAxisLine: true,
+                            //  viewport: new charts.OrdinalViewport('AePS', 10),
+                            renderSpec: new charts.SmallTickRendererSpec(
+                                //labelRotation: 60,
+                                // Tick and Label styling here.
+                                labelStyle: new charts.TextStyleSpec(
+                                    fontSize: 8, // size in Pts.
+                                    color: charts.MaterialPalette.black),
+
+                                // Change the line colors to match text color.
+                                lineStyle: new charts.LineStyleSpec(
+                                    color: charts.MaterialPalette.black))),
+                        behaviors: [
+                          new charts.SeriesLegend(),
+                          new charts.SlidingViewport(),
+                          new charts.PanAndZoomBehavior(),
+                        ],
+                        // selectionModels: [
+                        //   new charts.SelectionModelConfig(
+                        //     type: charts.SelectionModelType.info,
+                        //     changedListener: _onSelectionChanged,
+                        //   )
+                        // ],
+
+                        selectionModels: [
+                          new charts.SelectionModelConfig(
+                            type: charts.SelectionModelType.info,
+                            changedListener: (model) {
+                              print(
+                                  'Change in ${model.selectedDatum.first.datum}');
+                            },
+                            updatedListener: (model) {
+                              print('updatedListener in $model');
+                            },
+                          ),
+                        ],
+                        barRendererDecorator:
+                            new charts.BarLabelDecorator<String>(
+                          labelPosition: charts.BarLabelPosition.inside,
+                          labelAnchor: charts.BarLabelAnchor.end,
+                        ),
+                        primaryMeasureAxis: new charts.NumericAxisSpec(
+                            renderSpec: new charts.NoneRenderSpec()),
+                        // primaryMeasureAxis: new charts.NumericAxisSpec(
+                        //     tickProviderSpec:
+                        //         new charts.BasicNumericTickProviderSpec(
+                        //             desiredTickCount: 1)),
+                        // secondaryMeasureAxis: new charts.NumericAxisSpec(
+                        //     tickProviderSpec:
+                        //         new charts.BasicNumericTickProviderSpec(
+                        //             desiredTickCount: 3)),
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            },
+          )
+        : SizedBox();
   }
 }

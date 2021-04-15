@@ -88,12 +88,14 @@ class _BarChartApplicationsState extends State<BarChartApplications> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      child: BarChartGraph(
-        chartLength: "today",
-        tokenCreatedData: data,
-      ),
-    );
+    return Text("Testing");
+    //  Container(
+    //   child:
+    //   BarChartGraph(
+    //     chartLength: "today",
+    //     tokenCreatedData: data,
+    //   ),
+    // );
   }
 }
 
