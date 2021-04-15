@@ -108,6 +108,7 @@ class _BarChartGraphState extends State<BarChartGraph> {
                         series,
                         animate: true,
                         vertical: false,
+                        barGroupingType: charts.BarGroupingType.grouped,
                         // domainAxis: charts.OrdinalAxisSpec(
                         //   renderSpec:
                         //       charts.SmallTickRendererSpec(labelRotation: 60),
