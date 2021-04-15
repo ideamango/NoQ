@@ -1,5 +1,6 @@
 import 'dart:collection';
 
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:noq/constants.dart';
@@ -64,12 +65,13 @@ class _EntityTokenListPageState extends State<EntityTokenListPage> {
   Widget barChartWidget;
   DateTime defaultDate;
   final GlobalKey<BarChartGraphState> _key = GlobalKey();
-
+  Widget tokenListWidget;
   TokenCounter tokenCounterForYear;
   @override
   void initState() {
     super.initState();
     defaultDate = DateTime.now();
+    tokenListWidget = getDefaultTokenListWidget();
     getGlobalState().whenComplete(() {
       dateForShowingList = defaultDate;
       _gs
@@ -276,7 +278,8 @@ class _EntityTokenListPageState extends State<EntityTokenListPage> {
                           return Container(
                             margin: EdgeInsets.fromLTRB(10, 0, 10, 10),
                             child: new Column(children: [
-                              buildExpansionTile(key, dataMap[key])
+                              buildExpansionTile(
+                                  key, dataMap[key], date, format)
                             ]),
                           );
                         }),
@@ -372,7 +375,8 @@ class _EntityTokenListPageState extends State<EntityTokenListPage> {
                           return Container(
                             margin: EdgeInsets.fromLTRB(10, 0, 10, 50),
                             child: new Column(children: [
-                              buildExpansionTile(key, dataForMonth[key])
+                              buildExpansionTile(
+                                  key, dataForMonth[key], date, format)
                             ]),
                           );
                         }),
@@ -461,7 +465,8 @@ class _EntityTokenListPageState extends State<EntityTokenListPage> {
                           return Container(
                             margin: EdgeInsets.fromLTRB(10, 0, 10, 50),
                             child: new Column(children: [
-                              buildExpansionTile(key, dataForYear[key])
+                              buildExpansionTile(
+                                  key, dataForMonth[key], date, format)
                             ]),
                           );
                         }),
@@ -628,8 +633,73 @@ class _EntityTokenListPageState extends State<EntityTokenListPage> {
     );
   }
 
-  Widget buildExpansionTile(String key, TokenStats stats) {
+  Widget getDefaultTokenListWidget() {
+    return Container(
+        padding: EdgeInsets.all(12),
+        child: Text("No tokens",
+            style: TextStyle(fontSize: 13, color: Colors.grey[600])));
+  }
+
+  void buildExpansionTileChild(
+      String slot, DateTime date, DateDisplayFormat format) {
+//Fetch tokens for this slot
     List<UserToken> tokens;
+    String slotId;
+    String dateTime = date.year.toString() +
+        '~' +
+        date.month.toString() +
+        '~' +
+        date.day.toString() +
+        '#' +
+        slot.replaceAll(':', '~');
+    print(dateTime);
+    //Build slotId using info we have entityID#YYYY~MM~DD#HH~MM
+
+    slotId = widget.metaEntity.entityId + "#" + dateTime;
+    //6b8af7a0-9ce7-11eb-b97b-2beeb21da0d7#15~4~2021#11~20
+
+    _gs.getTokenService().getAllTokensForSlot(slotId).then((value) {
+      tokens = value;
+      tokenListWidget = (!Utils.isNullOrEmpty(tokens))
+          ? new Container(
+              width: MediaQuery.of(context).size.width * .94,
+              decoration: new BoxDecoration(
+                  border: Border.all(color: Colors.grey[300]),
+                  shape: BoxShape.rectangle,
+                  color: Colors.grey[300],
+                  borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(4.0),
+                      topRight: Radius.circular(4.0))),
+              padding: EdgeInsets.all(2.0),
+              child: new Expanded(
+                child: Align(
+                  alignment: Alignment.topCenter,
+                  //child: Text("Hello"),
+                  child: ListView.builder(
+                    padding: EdgeInsets.all(
+                        MediaQuery.of(context).size.width * .006),
+                    //  controller: _childScrollController,
+                    reverse: true,
+                    shrinkWrap: true,
+                    //   itemExtent: itemSize,
+                    //scrollDirection: Axis.vertical,
+                    itemBuilder: (BuildContext context, int index) {
+                      return Container(
+                        //  height: MediaQuery.of(context).size.height * .3,
+                        child: buildChildItem(tokens[index]),
+                      );
+                    },
+                    itemCount: tokens.length,
+                  ),
+                ),
+              ),
+            )
+          : getDefaultTokenListWidget;
+    });
+  }
+
+  Widget buildExpansionTile(
+      String key, TokenStats stats, DateTime date, DateDisplayFormat format) {
     String timeSlot = key.replaceAll('~', ':');
 
     return Container(
@@ -652,64 +722,31 @@ class _EntityTokenListPageState extends State<EntityTokenListPage> {
                     ),
                     Row(
                       children: [
-                        Text(
+                        AutoSizeText(
                           "Booked - " +
                               stats.numberOfTokensCreated.toString() +
                               ", ",
-                          style:
-                              TextStyle(fontSize: 13, color: Colors.grey[600]),
+                          minFontSize: 8,
+                          maxFontSize: 13,
+                          style: TextStyle(color: Colors.grey[600]),
                         ),
-                        Text(
+                        AutoSizeText(
                           "Cancelled - " +
                               stats.numberOfTokensCancelled.toString(),
-                          style:
-                              TextStyle(fontSize: 13, color: Colors.grey[600]),
+                          minFontSize: 8,
+                          maxFontSize: 13,
+                          style: TextStyle(color: Colors.grey[600]),
                         ),
                       ],
                     ),
                   ],
                 ),
                 // backgroundColor: Colors.grey[300],
+                onExpansionChanged: (value) {
+                  if (value) buildExpansionTileChild(key, date, format);
+                },
                 children: <Widget>[
-                  (!Utils.isNullOrEmpty(tokens))
-                      ? new Container(
-                          width: MediaQuery.of(context).size.width * .94,
-                          decoration: new BoxDecoration(
-                              border: Border.all(color: Colors.grey[300]),
-                              shape: BoxShape.rectangle,
-                              color: Colors.grey[300],
-                              borderRadius: BorderRadius.only(
-                                  topLeft: Radius.circular(4.0),
-                                  topRight: Radius.circular(4.0))),
-                          padding: EdgeInsets.all(2.0),
-                          child: new Expanded(
-                            child: Align(
-                              alignment: Alignment.topCenter,
-                              //child: Text("Hello"),
-                              child: ListView.builder(
-                                padding: EdgeInsets.all(
-                                    MediaQuery.of(context).size.width * .006),
-                                //  controller: _childScrollController,
-                                reverse: true,
-                                shrinkWrap: true,
-                                //   itemExtent: itemSize,
-                                //scrollDirection: Axis.vertical,
-                                itemBuilder: (BuildContext context, int index) {
-                                  return Container(
-                                    //  height: MediaQuery.of(context).size.height * .3,
-                                    child: buildChildItem(tokens[index]),
-                                  );
-                                },
-                                itemCount: tokens.length,
-                              ),
-                            ),
-                          ),
-                        )
-                      : Container(
-                          padding: EdgeInsets.all(12),
-                          child: Text("No tokens",
-                              style: TextStyle(
-                                  fontSize: 13, color: Colors.grey[600]))),
+                  tokenListWidget,
                 ],
               ),
             ],
