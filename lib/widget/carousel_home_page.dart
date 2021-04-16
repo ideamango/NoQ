@@ -5,15 +5,10 @@ class Item1 extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          Image.asset(
-            'assets/1.jpg',
-            height: MediaQuery.of(context).size.height * .24,
-            fit: BoxFit.cover,
-          )
-        ],
+      child: Image.asset(
+        'assets/1.jpg',
+        height: MediaQuery.of(context).size.height * .22,
+        fit: BoxFit.fill,
       ),
     );
   }
@@ -24,15 +19,10 @@ class Item2 extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          Image.asset(
-            'assets/2.jpg',
-            height: MediaQuery.of(context).size.height * .24,
-            fit: BoxFit.cover,
-          )
-        ],
+      child: Image.asset(
+        'assets/2.jpg',
+        height: MediaQuery.of(context).size.height * .22,
+        fit: BoxFit.fill,
       ),
       // child: Column(
       //   mainAxisAlignment: MainAxisAlignment.center,
@@ -58,16 +48,16 @@ class Item3 extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          Image.asset(
-            'assets/3.jpg',
-            height: MediaQuery.of(context).size.height * .24,
-            fit: BoxFit.cover,
-          )
-        ],
+      child: Image.asset(
+        'assets/3.jpg',
+        height: MediaQuery.of(context).size.height * .22,
+        fit: BoxFit.fill,
       ),
+      // child: Image.asset('assets/3.jpg',
+      //     gaplessPlayback: true,
+      //     // height: MediaQuery.of(context).size.height * .24,
+      //     // width: MediaQuery.of(context).size.width * .9,
+      //     fit: BoxFit.fitHeight),
     );
   }
 }
@@ -77,15 +67,10 @@ class Item4 extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          Image.asset(
-            'assets/4.jpg',
-            height: MediaQuery.of(context).size.height * .24,
-            fit: BoxFit.cover,
-          )
-        ],
+      child: Image.asset(
+        'assets/4.jpg',
+        height: MediaQuery.of(context).size.height * .22,
+        fit: BoxFit.fill,
       ),
     );
   }
@@ -96,15 +81,10 @@ class Item5 extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          Image.asset(
-            'assets/5.jpg',
-            height: MediaQuery.of(context).size.height * .24,
-            fit: BoxFit.cover,
-          )
-        ],
+      child: Image.asset(
+        'assets/5.jpg',
+        height: MediaQuery.of(context).size.height * .22,
+        fit: BoxFit.fill,
       ),
     );
   }
@@ -115,15 +95,10 @@ class Item6 extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          Image.asset(
-            'assets/6.jpg',
-            height: MediaQuery.of(context).size.height * .24,
-            fit: BoxFit.cover,
-          )
-        ],
+      child: Image.asset(
+        'assets/6.jpg',
+        height: MediaQuery.of(context).size.height * .22,
+        fit: BoxFit.fill,
       ),
     );
   }
@@ -134,15 +109,10 @@ class Item7 extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          Image.asset(
-            'assets/7.jpg',
-            height: MediaQuery.of(context).size.height * .24,
-            fit: BoxFit.cover,
-          )
-        ],
+      child: Image.asset(
+        'assets/7.jpg',
+        height: MediaQuery.of(context).size.height * .22,
+        fit: BoxFit.fill,
       ),
     );
   }

@@ -21,6 +21,7 @@ import 'package:noq/userHomePage.dart';
 import 'package:noq/utils.dart';
 import 'package:noq/widget/appbar.dart';
 import 'package:noq/widget/page_animation.dart';
+import 'package:noq/widget/token_expansion_tile.dart';
 import 'package:noq/widget/widgets.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -274,8 +275,12 @@ class _EntityTokenListPageState extends State<EntityTokenListPage> {
                             margin: EdgeInsets.fromLTRB(10, 0, 10, 10),
                             child: new Column(children: [
                               // Text("hehe")
-                              buildExpansionTile(
-                                  key, dataMap[key], date, format)
+                              TokenExpansionTile(
+                                  slotKey: key,
+                                  stats: dataMap[key],
+                                  date: date,
+                                  format: format,
+                                  metaEntity: widget.metaEntity)
                             ]),
                           );
                         }),
