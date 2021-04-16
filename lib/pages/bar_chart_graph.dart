@@ -25,10 +25,10 @@ class BarChartGraph extends StatefulWidget {
       : super(key: key);
 
   @override
-  _BarChartGraphState createState() => _BarChartGraphState();
+  BarChartGraphState createState() => BarChartGraphState();
 }
 
-class _BarChartGraphState extends State<BarChartGraph> {
+class BarChartGraphState extends State<BarChartGraph> {
   List<BarChartModel> _barChartList;
   Map<String, TokenStats> _dataMap;
   final List<BarChartModel> tokenCancelledData = [];

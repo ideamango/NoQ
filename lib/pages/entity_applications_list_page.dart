@@ -62,6 +62,7 @@ class _EntityApplicationListPageState extends State<EntityApplicationListPage> {
     super.initState();
     getGlobalState().whenComplete(() {
       dateForShowingList = DateTime.now();
+      getListOfData(dateForShowingList);
       setShowDate(DateTime.now(), DateDisplayFormat.date);
       dailyStatsKey = DateTime.now().year.toString() +
           "~" +

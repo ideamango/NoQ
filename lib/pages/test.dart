@@ -2,71 +2,103 @@
 // import 'package:flutter/material.dart';
 // import 'package:noq/utils.dart';
 
-// class ParentPage extends StatefulWidget {
+// class DrawerNavigationPart extends StatefulWidget {
 //   @override
-//   _ParentPageState createState() => _ParentPageState();
+//   State<StatefulWidget> createState() => _DrawerNavigationPart();
 // }
 
-// class _ParentPageState extends State<ParentPage> {
-//   final GlobalKey<ChildPageState> _key = GlobalKey();
+// class _DrawerNavigationPart extends State<DrawerNavigationPart> {
+//   final List<Category> mainCategories = Categories.categoryData;
 
 //   @override
 //   Widget build(BuildContext context) {
-//     return Scaffold(
-//       appBar: AppBar(title: Text("Parent")),
-//       body: Center(
-//         child: Column(
-//           children: <Widget>[
-//             Expanded(
-//               child: Container(
-//                 color: Colors.grey,
-//                 width: double.infinity,
-//                 alignment: Alignment.center,
-//                 child: RaisedButton(
-//                   child: Text("Call method in child"),
-//                   onPressed: () => _key.currentState
-//                       .methodInChild(), // calls method in child
-//                 ),
-//               ),
+//     return ListView.builder(
+//       itemCount: mainCategories.length,
+//       itemBuilder: (BuildContext context, int index) {
+//         final Category category = mainCategories[index];
+//         if (category.fetchFromApi) {
+//           List<Category> api = [];
+//           return ExpansionTile(
+//             key: PageStorageKey<Category>(category),
+//             leading: Icon(category.icon),
+//             title: Text(
+//               category.title,
+//               softWrap: false,
+//               overflow: TextOverflow.ellipsis,
 //             ),
-//             Text("Above = Parent\nBelow = Child"),
-//             Expanded(
-//               child: ChildPage(
-//                 key: _key,
-//                 function: methodInParent,
-//               ),
+//             onExpansionChanged: (bool open) async {
+//               if (open) {
+//                 String response = await DefaultAssetBundle.of(context)
+//                     .loadString(
+//                         'assets/822828-2228222-2222#category-api-mock.json');
+//                 api = categoryResponseFromJson(response).data;
+//                 print(api);
+//               }
+//             },
+//             children: [
+//               FutureBuilder(
+//                   future: getJsonData(),
+//                   builder: (context, snapshot) {
+//                     final CategoryResponse categoryResponse =
+//                         categoryResponseFromJson(snapshot.data);
+// //                    return ListView.builder(
+// //                        itemCount: 3,
+// //                        itemBuilder: (BuildContext context, int index) {
+// //                          return Text(index.toString());
+// //                        });
+//                     return ListTile(
+//                         title: Text(categoryResponse.data[index].title));
+//                   })
+//             ],
+//           );
+//         } else {
+//           return ListTile(
+//             leading: Icon(category.icon),
+//             title: Text(
+//               category.title,
+//               softWrap: false,
+//               overflow: TextOverflow.ellipsis,
 //             ),
-//           ],
+//             onTap: () {
+//               print(category.title + ' clicked');
+//             },
+//           );
+//         }
+//       },
+//     );
+//   }
+
+//   Widget _buildTiles(Category root) {
+//     if (root.children.isEmpty)
+//       return ListTile(
+//         leading: Icon(root.icon),
+//         title: Text(
+//           root.title,
+//           softWrap: false,
+//           overflow: TextOverflow.ellipsis,
 //         ),
+//         onTap: () {
+//           print("${root.title} listTile clicked");
+//         },
+//       );
+//     return ExpansionTile(
+//       key: PageStorageKey<Category>(root),
+//       leading: Icon(root.icon),
+//       title: Text(
+//         root.title,
+//         softWrap: false,
+//         overflow: TextOverflow.ellipsis,
 //       ),
+//       onExpansionChanged: (bool open) {
+//         print("${root.title} expansionTile clicked $open");
+//       },
+//       children: root.children.map(_buildTiles).toList(),
 //     );
 //   }
 
-//   methodInParent() => print("Clicked");
-// }
-
-// class ChildPage extends StatefulWidget {
-//   final Function function;
-
-//   ChildPage({Key key, this.function}) : super(key: key);
-
-//   @override
-//   ChildPageState createState() => ChildPageState();
-// }
-
-// class ChildPageState extends State<ChildPage> {
-//   @override
-//   Widget build(BuildContext context) {
-//     return Container(
-//       color: Colors.teal,
-//       width: double.infinity,
-//       alignment: Alignment.center,
-//       child: RaisedButton(
-//         child: Text("Call method in parent"),
-//         onPressed: () => widget.function(), // calls method in parent
-//       ),
-//     );
+//   Future<String> getJsonData() async {
+//     var str = await DefaultAssetBundle.of(context)
+//         .loadString('assets/822828-2228222-2222#category-api-mock.json');
+//     return str;
 //   }
-
-//   methodInChild() => Fluttertoast.showToast(msg: "Method called in child");
 // }
