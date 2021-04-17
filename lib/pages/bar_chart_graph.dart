@@ -4,41 +4,67 @@ import 'package:charts_flutter/flutter.dart' as charts;
 import 'package:intl/intl.dart';
 import 'package:noq/bar_chart_model.dart';
 import 'package:noq/constants.dart';
+import 'package:noq/db/db_model/meta_entity.dart';
+import 'package:noq/db/db_model/user_token.dart';
 
 class BarChartGraph extends StatefulWidget {
-  final String chartLength;
-  final List<BarChartModel> tokenCreatedData;
-  final List<BarChartModel> tokenCancelledData;
+  //final String chartLength;
+  final Map<String, TokenStats> dataMap;
+  final MetaEntity metaEn;
+  // final List<BarChartModel> tokenCreatedData;
+  // final List<BarChartModel> tokenCancelledData;
 
-  const BarChartGraph({
-    Key key,
-    @required this.chartLength,
-    @required this.tokenCreatedData,
-    @required this.tokenCancelledData,
-  }) : super(key: key);
+  const BarChartGraph(
+      {Key key,
+      //  @required this.chartLength,
+      @required this.dataMap,
+      @required this.metaEn
+      // @required this.tokenCreatedData,
+      // @required this.tokenCancelledData,
+      })
+      : super(key: key);
 
   @override
-  _BarChartGraphState createState() => _BarChartGraphState();
+  BarChartGraphState createState() => BarChartGraphState();
 }
 
-class _BarChartGraphState extends State<BarChartGraph> {
+class BarChartGraphState extends State<BarChartGraph> {
   List<BarChartModel> _barChartList;
-
+  Map<String, TokenStats> _dataMap;
+  final List<BarChartModel> tokenCancelledData = [];
+  final List<BarChartModel> tokenCreatedData = [];
   @override
   void initState() {
     // TODO: implement initState
+    _dataMap = widget.dataMap;
+    // int colorCount = 0;
+    _dataMap.forEach((key, value) {
+      // if (colorCount == createdColors.length) colorCount = 0;
+      tokenCreatedData.add(BarChartModel(
+        timeSlot: key,
+        numOfTokens: value.numberOfTokensCreated,
+        color: charts.ColorUtil.fromDartColor(Colors.blue[300]),
+      ));
+      tokenCancelledData.add(BarChartModel(
+        timeSlot: key,
+        numOfTokens: value.numberOfTokensCancelled,
+        color: charts.ColorUtil.fromDartColor(Colors.orange[200]),
+      ));
+      //colorCount++;
+    });
+
     super.initState();
-    if (this.widget.chartLength == "today")
-      _barChartList = [
-        BarChartModel(
-            date: DateFormat(dateDisplayFormat).format(DateTime.now()),
-            color: null),
-      ];
-    if (this.widget.chartLength == "month")
-      _barChartList = [
-        BarChartModel(
-            date: DateFormat(dateDisplayFormat).format(DateTime.now())),
-      ];
+    // if (this.widget.chartLength == "today")
+    _barChartList = [
+      BarChartModel(
+          date: DateFormat(dateDisplayFormat).format(DateTime.now()),
+          color: null),
+    ];
+    // if (this.widget.chartLength == "month")
+    //   _barChartList = [
+    //     BarChartModel(
+    //         date: DateFormat(dateDisplayFormat).format(DateTime.now())),
+    //   ];
   }
 
   @override
@@ -46,7 +72,7 @@ class _BarChartGraphState extends State<BarChartGraph> {
     List<charts.Series<BarChartModel, String>> series = [
       charts.Series(
         id: "Booked",
-        data: widget.tokenCreatedData,
+        data: tokenCreatedData,
         domainFn: (BarChartModel series, _) => series.timeSlot,
         measureFn: (BarChartModel series, _) => series.numOfTokens,
         colorFn: (BarChartModel series, _) => series.color,
@@ -54,7 +80,7 @@ class _BarChartGraphState extends State<BarChartGraph> {
       ),
       charts.Series(
         id: "Cancelled",
-        data: widget.tokenCancelledData,
+        data: tokenCancelledData,
         domainFn: (BarChartModel series, _) => series.timeSlot,
         measureFn: (BarChartModel series, _) => series.numOfTokens,
         colorFn: (BarChartModel series, _) => series.color,
@@ -65,15 +91,21 @@ class _BarChartGraphState extends State<BarChartGraph> {
     return _buildFinancialList(series);
   }
 
-  _onSelectionChanged(charts.SelectionModel model) {
-    final selectedDatum = model.selectedDatum;
-    print("afdfgsdf" + selectedDatum.length.toString());
+  // _onSelectionChanged(charts.SelectionModel model) {
+  //   final selectedDatum = model.selectedDatum;
+  //   print("afdfgsdf" + selectedDatum.length.toString());
 
-    if (selectedDatum.isNotEmpty) {
-      setState(() {
-        print(selectedDatum.first.datum.sales);
-      });
-    }
+  //   if (selectedDatum.isNotEmpty) {
+  //     setState(() {
+  //       print(selectedDatum.first.datum.sales);
+  //     });
+  //   }
+  // }
+
+  refresh() {
+    setState(() {
+      print("REWQDFQWDWUEDGWYEG");
+    });
   }
 
   Widget _buildFinancialList(series) {
