@@ -94,7 +94,7 @@ class EntityService {
           ePrivate = EntityPrivate.fromJson(ePrivateDoc.data());
 
           //if (existingEntity.isAdmin(fireUser.uid) == -1) {
-          if (ePrivate.roles[fireUser.phoneNumber] != ADMIN) {
+          if (ePrivate.roles[fireUser.phoneNumber] != ROLE_ADMIN) {
             throw new AccessDeniedException(
                 "User is not admin and can't update the entity");
           }
@@ -102,7 +102,7 @@ class EntityService {
         } else {
           // entity does not exist, so create a new EntityPrivate
           ePrivate = new EntityPrivate();
-          ePrivate.roles = {fireUser.phoneNumber: ADMIN};
+          ePrivate.roles = {fireUser.phoneNumber: ROLE_ADMIN};
           ePrivate.registrationNumber = regNum;
           entity.verificationStatus = VERIFICATION_PENDING;
         }
@@ -213,7 +213,7 @@ class EntityService {
         EntityPrivate ePrivate = EntityPrivate.fromJson(ePrivateDoc.data());
 
         //if (ent.isAdmin(fireUser.uid) == -1) {
-        if (ePrivate.roles[fireUser.phoneNumber] != ADMIN) {
+        if (ePrivate.roles[fireUser.phoneNumber] != ROLE_ADMIN) {
           throw new AccessDeniedException("This user can't delete the Entity");
         }
 
@@ -324,7 +324,7 @@ class EntityService {
 
         Entity ent = Entity.fromJson(entityDoc.data());
         //if (ent.isAdmin(fireUser.uid) == -1) {
-        if (ePrivate.roles[fireUser.phoneNumber] != ADMIN) {
+        if (ePrivate.roles[fireUser.phoneNumber] != ROLE_ADMIN) {
           //current logged in user should be admin of the entity then only he should be allowed to add another user as admin
           throw new AccessDeniedException(
               "User is not admin, hence can't make other users as admin");
@@ -358,7 +358,7 @@ class EntityService {
         }
 
         if (!ePrivate.roles.containsKey(phone)) {
-          ePrivate.roles[phone] = ADMIN;
+          ePrivate.roles[phone] = ROLE_ADMIN;
         }
 
         tx.set(userRef, u.toJson());
@@ -427,7 +427,7 @@ class EntityService {
               EntityPrivate.fromJson(parentEntityPrivateDoc.data());
 
           //if (parentEntity.isAdmin(fireUser.uid) == -1) {
-          if (parentEntityPrivate.roles[fireUser.phoneNumber] != ADMIN) {
+          if (parentEntityPrivate.roles[fireUser.phoneNumber] != ROLE_ADMIN) {
             throw new AccessDeniedException(
                 "User is not admin and can't update the entity");
           }
@@ -462,7 +462,7 @@ class EntityService {
 
             //int userIndex = existingChildEntity.isAdmin(fireUser.uid);
             //if (userIndex == -1) {
-            if (childEntityPrivate.roles[fireUser.phoneNumber] != ADMIN) {
+            if (childEntityPrivate.roles[fireUser.phoneNumber] != ROLE_ADMIN) {
               throw new AccessDeniedException(
                   "User is not admin of existing child entity");
             } else {
@@ -471,7 +471,7 @@ class EntityService {
           } else {
             childEntityPrivate = new EntityPrivate(
                 registrationNumber: childRegNum,
-                roles: {fireUser.phoneNumber: ADMIN});
+                roles: {fireUser.phoneNumber: ROLE_ADMIN});
             childEntity.verificationStatus = VERIFICATION_PENDING;
           }
           childEntity.parentId = parentEntityId;
@@ -558,7 +558,7 @@ class EntityService {
         EntityPrivate ePrivate = EntityPrivate.fromJson(ePrivateDoc.data());
 
         //if (ent.isAdmin(fireUser.uid) == -1) {
-        if (ePrivate.roles[fireUser.phoneNumber] != ADMIN) {
+        if (ePrivate.roles[fireUser.phoneNumber] != ROLE_ADMIN) {
           //current logged in user should be admin of the entity then only he should be allowed to add another user as admin
           throw new AccessDeniedException(
               "User is not admin, hence can't remove another user as an admin");
