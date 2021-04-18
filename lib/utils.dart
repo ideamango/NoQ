@@ -384,6 +384,20 @@ class Utils {
     return hr;
   }
 
+  static String formatTimeAsStr(String time) {
+    List hrMin = time.split(':');
+    String hr = hrMin[0];
+    String min = hrMin[1];
+    if (hr.length == 1) {
+      hr = '0' + hr;
+    }
+    if (min.length == 1) {
+      min = '0' + min;
+    }
+
+    return hr + ':' + min;
+  }
+
   static void addEntityToFavs(BuildContext context, String id) async {
     Utils.showMyFlushbar(context, Icons.info, Duration(seconds: 3),
         "Adding the Place to your Favourites...", "Hold on!");

@@ -43,7 +43,7 @@ class BarChartGraphState extends State<BarChartGraph> {
       tokenCreatedData.add(BarChartModel(
         timeSlot: key,
         numOfTokens: value.numberOfTokensCreated,
-        color: charts.ColorUtil.fromDartColor(Colors.blue[300]),
+        color: charts.ColorUtil.fromDartColor(Colors.tealAccent[400]),
       ));
       tokenCancelledData.add(BarChartModel(
         timeSlot: key,
