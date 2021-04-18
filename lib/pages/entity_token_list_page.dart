@@ -39,7 +39,8 @@ class EntityTokenListPage extends StatefulWidget {
   _EntityTokenListPageState createState() => _EntityTokenListPageState();
 }
 
-class _EntityTokenListPageState extends State<EntityTokenListPage> {
+class _EntityTokenListPageState extends State<EntityTokenListPage>
+    with SingleTickerProviderStateMixin {
   bool initCompleted = false;
   bool loadingData = true;
   GlobalState _gs;
@@ -62,8 +63,15 @@ class _EntityTokenListPageState extends State<EntityTokenListPage> {
   List<Slot> allSlotsList = new List<Slot>();
   TokenStats emptyToken;
   TokenCounter tokenCounterForYear;
+  AnimationController _animationController;
+  Animation animation;
+
   @override
   void initState() {
+    _animationController = new AnimationController(
+        vsync: this, duration: Duration(milliseconds: 2000));
+    _animationController.repeat(reverse: true);
+    animation = Tween(begin: 0.5, end: 1.0).animate(_animationController);
     super.initState();
     emptyToken = TokenStats();
     emptyToken.numberOfTokensCancelled = 0;
@@ -91,6 +99,12 @@ class _EntityTokenListPageState extends State<EntityTokenListPage> {
           initCompleted = true;
       });
     });
+  }
+
+  @override
+  void dispose() {
+    _animationController.dispose();
+    super.dispose();
   }
 
   Future<void> getGlobalState() async {
@@ -194,16 +208,24 @@ class _EntityTokenListPageState extends State<EntityTokenListPage> {
   }
 
   Widget buildAllSlots(Slot slot) {
+    bool isHighlighted = false;
     String time =
         slot.dateTime.hour.toString() + ':' + slot.dateTime.minute.toString();
 
     Color cardColor = Colors.grey[100];
+    Color textColor = highlightText;
 
     //Highlighting current time-slot
     DateFormat dateFormat = new DateFormat.Hm();
     DateTime currentTime = DateTime.now();
-    DateTime slotTime = dateFormat.parse(time);
+    //  DateTime slotTime = new DateTime(slot.dateTime.year,slot.dateTime.month, slot.dateTime.day, );
 
+    if (currentTime.isAfter(slot.dateTime) &&
+        currentTime.isBefore(
+            slot.dateTime.add(Duration(minutes: slot.slotDuration)))) {
+      cardColor = highlightColor;
+      isHighlighted = true;
+    }
     TokenStats stats;
     if (dataMap.containsKey(time)) {
       stats = dataMap[time];
@@ -216,8 +238,8 @@ class _EntityTokenListPageState extends State<EntityTokenListPage> {
     } else {
       stats = emptyToken;
     }
-
-    return Card(
+    if (isHighlighted) textColor = Colors.black;
+    Widget rowCard = Card(
       color: cardColor,
       child: Container(
         padding: EdgeInsets.fromLTRB(12, 0, 8, 0),
@@ -226,7 +248,11 @@ class _EntityTokenListPageState extends State<EntityTokenListPage> {
           children: [
             Text(
               Utils.formatTimeAsStr(time),
-              style: TextStyle(fontSize: 13, color: Colors.grey[600]),
+              style: TextStyle(
+                  fontSize: 13,
+                  color: textColor,
+                  fontWeight:
+                      isHighlighted ? FontWeight.bold : FontWeight.normal),
             ),
             Row(
               children: [
@@ -234,18 +260,27 @@ class _EntityTokenListPageState extends State<EntityTokenListPage> {
                   "Booked - " + stats.numberOfTokensCreated.toString() + ", ",
                   minFontSize: 8,
                   maxFontSize: 13,
-                  style: TextStyle(color: Colors.grey[600]),
+                  style: TextStyle(
+                      color: textColor,
+                      fontWeight:
+                          isHighlighted ? FontWeight.bold : FontWeight.normal),
                 ),
                 AutoSizeText(
                   "Cancelled - " + stats.numberOfTokensCancelled.toString(),
                   minFontSize: 8,
                   maxFontSize: 13,
-                  style: TextStyle(color: Colors.grey[600]),
+                  style: TextStyle(
+                      color: textColor,
+                      fontWeight:
+                          isHighlighted ? FontWeight.bold : FontWeight.normal),
                 ),
               ],
             ),
             IconButton(
-              icon: Icon(Icons.list),
+              icon: Icon(
+                Icons.open_in_new,
+                color: textColor,
+              ),
               onPressed: () {
                 Navigator.of(context)
                     .push(PageAnimation.createRoute(TokensInSlot(
@@ -268,6 +303,9 @@ class _EntityTokenListPageState extends State<EntityTokenListPage> {
         ),
       ),
     );
+    return (isHighlighted)
+        ? FadeTransition(opacity: animation, child: rowCard)
+        : rowCard;
   }
 
   void prepareData(DateTime date, DateDisplayFormat format) {
@@ -277,6 +315,7 @@ class _EntityTokenListPageState extends State<EntityTokenListPage> {
     setState(() {
       barChartWidget = _emptyPage();
     });
+    allSlotsList = Utils.getSlots(null, widget.metaEntity, selectedDate);
 
     switch (format) {
       case DateDisplayFormat.date:
@@ -725,11 +764,6 @@ class _EntityTokenListPageState extends State<EntityTokenListPage> {
     );
   }
 
-  @override
-  void dispose() {
-    super.dispose();
-  }
-
   Future<DateTime> pickAnyDate(BuildContext context) async {
     DateTime date = await showDatePicker(
       context: context,
@@ -1041,7 +1075,7 @@ class _EntityTokenListPageState extends State<EntityTokenListPage> {
 
                           Container(
                             decoration: buttonBackground,
-                            width: MediaQuery.of(context).size.width * .28,
+                            width: MediaQuery.of(context).size.width * .35,
                             height: MediaQuery.of(context).size.width * .08,
                             child: FlatButton(
                               visualDensity: VisualDensity.compact,
@@ -1062,6 +1096,7 @@ class _EntityTokenListPageState extends State<EntityTokenListPage> {
                                     print(value);
                                     setState(() {
                                       loadingData = true;
+                                      selectedDate = value;
                                     });
                                     selectedDateFormat = DateDisplayFormat.date;
                                     prepareData(value, selectedDateFormat);
