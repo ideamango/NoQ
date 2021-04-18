@@ -87,7 +87,7 @@ class EntityService {
 
           //if (existingEntity.isAdmin(fireUser.uid) == -1) {
           if (ePrivate.roles[fireUser.phoneNumber] !=
-              EnumToString.convertToString(EntityRole.ENTITY_ADMIN)) {
+              EnumToString.convertToString(EntityRole.Admin)) {
             throw new AccessDeniedException(
                 "User is not admin and can't update the entity");
           }

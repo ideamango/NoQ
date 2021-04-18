@@ -76,13 +76,16 @@ class _ManageEmployeePageState extends State<ManageEmployeePage> {
 
   Widget getImageForRole(EntityRole role) {
     switch (role) {
-      case EntityRole.ENTITY_ADMIN:
+      case EntityRole.Admin:
+        //Icon(Icons.person)
         break;
-      case EntityRole.ENTITY_MANAGER:
+      case EntityRole.Manager:
         break;
-      case EntityRole.ENTITY_EXECUTIVE:
+      case EntityRole.Executive:
         break;
       default:
+        Icon(Icons.person);
+
         break;
     }
     return Icon(Icons.person);
