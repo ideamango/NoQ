@@ -336,6 +336,19 @@ final gradientBackground = new BoxDecoration(
       stops: [0.0, 1.0],
       tileMode: TileMode.clamp),
 );
+
+final buttonBackground = new BoxDecoration(
+    gradient: new LinearGradient(
+        colors: [Colors.cyan[400], Colors.cyan[700]],
+        begin: const FractionalOffset(0.0, 0.0),
+        end: const FractionalOffset(1.0, 0.0),
+        stops: [0.0, 1.0],
+        tileMode: TileMode.clamp),
+    // border: Border.all(
+    //   color: Colors.cyan[600],
+    // ),
+    borderRadius: BorderRadius.all(Radius.circular(20)));
+
 final verticalBackground = new BoxDecoration(
   gradient: new LinearGradient(
     colors: [
