@@ -12,10 +12,6 @@ const SYSTEM = "SYSTEM";
 
 const TOKEN_COUNTER_PREFIX = "TOKENCOUNTER";
 
-const ROLE_ADMIN = "admin";
-const ROLE_MANAGER = "MANAGER";
-const ROLE_EXECUTIVE = "EXECUTIVE";
-
 const VERIFICATION_PENDING = "Verification Pending";
 const VERIFICATION_VERIFIED = "Verified";
 const VERIFICATION_REJECTED = "Rejected";
@@ -48,6 +44,11 @@ const PLACE_TYPE_OTHERS = "Others";
 
 const SELECT_TYPE_OF_PLACE = "Select Type of Place";
 const SEARCH_TYPE_OF_PLACE = "Search by Type of Place";
+const SELECT_ROLE_OF_PERSON = "Select the Role of Employee";
+
+String adminLegend = "Admin";
+String managerLegend = "Manager";
+String executiveLegend = "Executive";
 
 String appName = 'LESSs';
 var loginSubTxt = "Peace of Mind";

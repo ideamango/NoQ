@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:enum_to_string/enum_to_string.dart';
 import 'package:flutter/material.dart';
 import 'package:noq/constants.dart';
 import 'package:noq/db/db_model/employee.dart';
@@ -73,26 +74,40 @@ class _ManageEmployeePageState extends State<ManageEmployeePage> {
     EventBus.unregisterEvent(removeManagerListener);
   }
 
-  Widget _buildCategoryItem(BuildContext context, EntityType type) {
-    String name = Utils.getEntityTypeDisplayName(type);
-    Widget image = Utils.getEntityTypeImage(type, 30);
+  Widget getImageForRole(EntityRole role) {
+    switch (role) {
+      case EntityRole.ENTITY_ADMIN:
+        break;
+      case EntityRole.ENTITY_MANAGER:
+        break;
+      case EntityRole.ENTITY_EXECUTIVE:
+        break;
+      default:
+        break;
+    }
+    return Icon(Icons.person);
+  }
+
+  Widget _buildCategoryItem(BuildContext context, EntityRole type) {
+    String name = EnumToString.convertToString(type);
+    Widget image = getImageForRole(type);
 
     return GestureDetector(
         onTap: () {
-          categoryType = type;
+          // categoryType = type;
           bottomSheetController.close();
           bottomSheetController = null;
           //   Navigator.of(context).pop();
-          setState(() {
-            _entityType = type;
-          });
+          // setState(() {
+          //   _entityType = type;
+          // });
           //If user has selected any type then add a row else show msg to user
-          if (_entityType != null) {
-            _addNewContactRow();
-          } else {
-            //Utils.showMyFlushbar(context, icon, duration, title, msg)
-            print("Select sth ");
-          }
+          // if (_entityType != null) {
+          _addNewContactRow();
+          //  } else {
+          //Utils.showMyFlushbar(context, icon, duration, title, msg)
+          print("Select sth ");
+          // }
           // EventBus.fireEvent(SEARCH_CATEGORY_SELECTED, null, categoryType);
         },
         child: Container(
@@ -219,128 +234,48 @@ class _ManageEmployeePageState extends State<ManageEmployeePage> {
           ),
           body: Scrollbar(
             child: SingleChildScrollView(
-              child: Container(
-                margin: EdgeInsets.all(5),
-                padding: EdgeInsets.all(0),
-                decoration: BoxDecoration(
-                    border: Border.all(color: containerColor),
-                    color: Colors.white,
-                    shape: BoxShape.rectangle,
-                    borderRadius: BorderRadius.all(Radius.circular(5.0))),
-                // padding: EdgeInsets.all(5.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    Column(
-                      children: <Widget>[
-                        Container(
-                          //padding: EdgeInsets.only(left: 5),
-                          decoration: darkContainer,
-                          child: Theme(
-                            data: ThemeData(
-                              unselectedWidgetColor: Colors.white,
-                              accentColor: Colors.grey[50],
-                            ),
-                            child: CustomExpansionTile(
-                              //key: PageStorageKey(this.widget.headerTitle),
-                              initiallyExpanded: false,
-                              title: Row(
-                                children: <Widget>[
-                                  Text(
-                                    "Add an Employee",
-                                    style: TextStyle(
-                                        color: Colors.white, fontSize: 15),
-                                  ),
-                                  SizedBox(width: 5),
-                                ],
-                              ),
-                              backgroundColor: Colors.blueGrey[500],
-
-                              children: <Widget>[
-                                new Container(
-                                  width:
-                                      MediaQuery.of(context).size.width * .94,
-                                  decoration: darkContainer,
-                                  padding: EdgeInsets.all(2.0),
-                                  child: Row(
-                                    children: <Widget>[
-                                      Expanded(
-                                        child: Text(contactInfoStr,
-                                            style: buttonXSmlTextStyle),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Card(
+                    elevation: 8,
+                    margin:
+                        EdgeInsets.all(MediaQuery.of(context).size.width * .03),
+                    child: Container(
+                      padding: EdgeInsets.all(5),
+                      decoration: BoxDecoration(
+                          border: Border.all(color: highlightColor),
+                          color: Colors.white,
+                          shape: BoxShape.rectangle,
+                          borderRadius: BorderRadius.all(Radius.circular(5.0))),
+                      child: InkWell(
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: <Widget>[
+                            Text(" Add an Employee",
+                                style: TextStyle(
+                                    fontSize: 18, color: Colors.blueGrey[700])),
+                            horizontalSpacer,
+                            Icon(Icons.person_add,
+                                color: highlightColor, size: 40),
+                          ],
                         ),
-                        Container(
-                          color: Colors.grey[100],
-                          padding: const EdgeInsets.fromLTRB(8.0, 0, 8, 0),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            children: <Widget>[
-                              // Expanded(
-                              //   child: roleType,
-                              // ),
-                              Container(
-                                child: IconButton(
-                                  icon: Icon(Icons.person_add,
-                                      color: highlightColor, size: 40),
-                                  onPressed: () {
-                                    _addNewContactRow();
-                                  },
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        Card(
-                          elevation: 8,
-                          margin: EdgeInsets.all(
-                              MediaQuery.of(context).size.width * .03),
-                          child: Container(
-                            padding: EdgeInsets.all(5),
-                            decoration: BoxDecoration(
-                                border: Border.all(color: highlightColor),
-                                color: Colors.white,
-                                shape: BoxShape.rectangle,
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(5.0))),
-                            child: InkWell(
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: <Widget>[
-                                  Text(" Add a new Place",
-                                      style: TextStyle(
-                                          fontSize: 18,
-                                          color: Colors.blueGrey[700])),
-                                  horizontalSpacer,
-                                  Icon(Icons.add_circle,
-                                      color: highlightColor, size: 40),
-                                ],
-                              ),
-                              onTap: () {
-                                print("Tappped");
-                                showCategorySheet();
-                              },
-                            ),
-                          ),
-                        ),
-                        // (_msg != null)
-                        //     ? Text(
-                        //         _msg,
-                        //         style: errorTextStyle,
-                        //       )
-                        //     : Container(),
-                        if (!Utils.isNullOrEmpty(contactList))
-                          Column(children: contactRowWidgets),
-                      ],
+                        onTap: () {
+                          print("Tappped");
+                          showCategorySheet();
+                        },
+                      ),
                     ),
-                  ],
-                ),
+                  ),
+                  // (_msg != null)
+                  //     ? Text(
+                  //         _msg,
+                  //         style: errorTextStyle,
+                  //       )
+                  //     : Container(),
+                  if (!Utils.isNullOrEmpty(contactList))
+                    Column(children: contactRowWidgets),
+                ],
               ),
             ),
           ),
@@ -366,7 +301,7 @@ class _ManageEmployeePageState extends State<ManageEmployeePage> {
         employeeListPagekey.currentState.showBottomSheet<Null>(
       (context) => Container(
         color: Colors.cyan[50],
-        height: MediaQuery.of(context).size.height * .7,
+        height: MediaQuery.of(context).size.height * .4,
         child: Column(
           children: <Widget>[
             Container(
@@ -393,7 +328,7 @@ class _ManageEmployeePageState extends State<ManageEmployeePage> {
                       alignment: Alignment.center,
                       width: MediaQuery.of(context).size.width * .8,
                       child: Text(
-                        SELECT_TYPE_OF_PLACE,
+                        SELECT_ROLE_OF_PERSON,
                         style: TextStyle(
                             color: Colors.blueGrey[800],
                             fontFamily: 'RalewayRegular',
@@ -413,7 +348,7 @@ class _ManageEmployeePageState extends State<ManageEmployeePage> {
                   padding: EdgeInsets.all(0),
                   scrollDirection: Axis.vertical,
                   shrinkWrap: true,
-                  itemCount: _gs.getActiveEntityTypes().length,
+                  itemCount: EntityRole.values.length,
                   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: 4,
                       crossAxisSpacing: 10.0,
@@ -427,7 +362,7 @@ class _ManageEmployeePageState extends State<ManageEmployeePage> {
                         //     BoxDecoration(border: Border.all(color: Colors.black, width: 0.5)),
                         child: Center(
                           child: _buildCategoryItem(
-                              context, _gs.getActiveEntityTypes()[index]),
+                              context, EntityRole.values[index]),
                         ),
                       ),
                     );

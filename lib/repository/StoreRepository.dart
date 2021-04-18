@@ -1,6 +1,8 @@
+import 'package:noq/db/db_model/employee.dart';
 import 'package:noq/db/db_model/entity.dart';
 import 'package:noq/db/db_model/entity_private.dart';
 import 'package:noq/db/db_service/entity_service.dart';
+import 'package:noq/enum/entity_type.dart';
 import 'package:noq/global_state.dart';
 import 'package:noq/tuple.dart';
 import 'package:noq/utils.dart';
@@ -30,7 +32,11 @@ Future<bool> assignAdminsFromList(
   GlobalState gs = await GlobalState.getGlobalState();
   try {
     for (int i = 0; i < adminsList.length; i++) {
-      await gs.getEntityService().assignAdmin(entityId, adminsList[i]);
+      Employee emp = new Employee();
+      emp.ph = adminsList[i];
+      await gs
+          .getEntityService()
+          .addEmployee(entityId, emp, EntityRole.ENTITY_ADMIN);
     }
   } catch (e) {
     print(e);
@@ -50,7 +56,7 @@ Future<EntityPrivate> fetchAdmins(String entityId) async {
 
 Future<bool> removeAdmin(String entityId, String phone) async {
   GlobalState gs = await GlobalState.getGlobalState();
-  bool status = await gs.getEntityService().removeAdmin(entityId, phone);
+  bool status = await gs.getEntityService().removeEmployee(entityId, phone);
   return status;
 }
 

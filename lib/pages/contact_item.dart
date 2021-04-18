@@ -79,8 +79,6 @@ class ContactRowState extends State<ContactRow> {
     }
     _closedOnDays = List<days>();
     _closedOnDays = Utils.convertStringsToDays(_daysOff);
-
-    contact.isManager = true;
   }
 
   String validateText(String value) {
@@ -345,87 +343,105 @@ class ContactRowState extends State<ContactRow> {
       ),
     );
 
-    return Theme(
-      data: ThemeData(
-        unselectedWidgetColor: Colors.black,
-        accentColor: highlightColor,
-      ),
-      child: ExpansionTile(
-        //key: PageStorageKey(this.widget.headerTitle),
-        initiallyExpanded: false,
-        title: Text(
-          (contact.name != null && contact.name != "")
-              ? contact.name
-              : "Manager",
-          style: TextStyle(color: Colors.blueGrey[700], fontSize: 17),
+    return Container(
+      //  padding: EdgeInsets.all(8),
+      margin: EdgeInsets.all(12),
+      decoration: BoxDecoration(
+          border: Border.all(color: borderColor),
+          color: Colors.white,
+          shape: BoxShape.rectangle,
+          borderRadius: BorderRadius.all(Radius.circular(5.0))),
+      // padding: EdgeInsets.all(5.0),
+
+      child: Theme(
+        data: ThemeData(
+          unselectedWidgetColor: Colors.black,
+          accentColor: highlightColor,
         ),
+        child: ExpansionTile(
+          //key: PageStorageKey(this.widget.headerTitle),
+          initiallyExpanded: false,
+          title: Text(
+            (contact.name != null && contact.name != "")
+                ? contact.name
+                : "Manager",
+            style: TextStyle(color: Colors.blueGrey[700], fontSize: 17),
+          ),
 
-        backgroundColor: Colors.white,
-        leading: IconButton(
-            icon: Icon(Icons.person, color: Colors.blueGrey[300], size: 20),
-            onPressed: () {
-              // contact.isManager = false;
-            }),
-        children: <Widget>[
-          Container(
-            color: Colors.cyan[50],
-            padding: EdgeInsets.only(left: 2.0, right: 2),
-            // decoration: BoxDecoration(
-            //     // border: Border.all(color: containerColor),
-            //     color: Colors.white,
-            //     shape: BoxShape.rectangle,
-            //     borderRadius: BorderRadius.all(Radius.circular(5.0))),
-            // padding: EdgeInsets.all(5.0),
+          backgroundColor: Colors.white,
+          leading: IconButton(
+              icon: Icon(Icons.person, color: Colors.blueGrey[300], size: 20),
+              onPressed: () {
+                // contact.isManager = false;
+              }),
+          children: <Widget>[
+            Container(
+              margin: EdgeInsets.all(MediaQuery.of(context).size.width * .026),
+              padding: EdgeInsets.all(MediaQuery.of(context).size.width * .026),
+              // padding: EdgeInsets.all(MediaQuery.of(context).size.width * .026),
+              color: Colors.cyan[50],
+              // padding: EdgeInsets.only(left: 2.0, right: 2),
+              // decoration: BoxDecoration(
+              //     // border: Border.all(color: containerColor),
+              //     color: Colors.white,
+              //     shape: BoxShape.rectangle,
+              //     borderRadius: BorderRadius.all(Radius.circular(5.0))),
+              // padding: EdgeInsets.all(5.0),
 
-            child: new Form(
-              //  autovalidate: _autoValidate,
-              child: ListTile(
-                title: Column(
-                  children: <Widget>[
-                    ctNameField,
-                    ctEmpIdField,
-                    ctPhn1Field,
-                    ctPhn2Field,
-                    daysOffField,
-                    Divider(
-                      thickness: .7,
-                      color: Colors.grey[600],
-                    ),
-                    ctAvlFromTimeField,
-                    ctAvlTillTimeField,
-                    RaisedButton(
-                        color: btnColor,
-                        child: Text(
-                          "Remove",
-                          style: buttonMedTextStyle,
+              child: new Form(
+                //  autovalidate: _autoValidate,
+                child: Container(
+                  child: ListTile(
+                    title: Column(
+                      children: <Widget>[
+                        ctNameField,
+                        ctEmpIdField,
+                        ctPhn1Field,
+                        ctPhn2Field,
+                        daysOffField,
+                        Divider(
+                          thickness: .7,
+                          color: Colors.grey[600],
                         ),
-                        onPressed: () {
-                          String removeThisId;
-                          for (int i = 0; i < _entity.managers.length; i++) {
-                            if (_entity.managers[i].id == contact.id) {
-                              removeThisId = contact.id;
-                              print(_entity.managers[i].id);
-                              break;
-                            }
-                          }
-                          if (removeThisId != null) {
-                            setState(() {
-                              contact = null;
-                              _entity.managers.removeWhere(
-                                  (element) => element.id == removeThisId);
-                              _list.removeWhere(
-                                  (element) => element.id == removeThisId);
-                              EventBus.fireEvent(
-                                  MANAGER_REMOVED_EVENT, null, removeThisId);
-                            });
-                          }
-                        })
-                  ],
+                        ctAvlFromTimeField,
+                        ctAvlTillTimeField,
+                        RaisedButton(
+                            color: btnColor,
+                            child: Text(
+                              "Remove",
+                              style: buttonMedTextStyle,
+                            ),
+                            onPressed: () {
+                              String removeThisId;
+                              for (int i = 0;
+                                  i < _entity.managers.length;
+                                  i++) {
+                                if (_entity.managers[i].id == contact.id) {
+                                  removeThisId = contact.id;
+                                  print(_entity.managers[i].id);
+                                  break;
+                                }
+                              }
+                              if (removeThisId != null) {
+                                setState(() {
+                                  contact = null;
+                                  _entity.managers.removeWhere(
+                                      (element) => element.id == removeThisId);
+                                  _list.removeWhere(
+                                      (element) => element.id == removeThisId);
+                                  EventBus.fireEvent(MANAGER_REMOVED_EVENT,
+                                      null, removeThisId);
+                                });
+                              }
+                            })
+                      ],
+                    ),
+                  ),
                 ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

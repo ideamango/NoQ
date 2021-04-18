@@ -17,7 +17,9 @@ class Entity {
       this.address,
       this.advanceDays,
       this.isPublic,
+      this.admins,
       this.managers,
+      this.executives,
       this.childEntities,
       this.maxAllowed,
       this.slotDuration,
@@ -48,7 +50,8 @@ class Entity {
       this.forms,
       this.maxTokensPerSlotByUser,
       this.maxPeoplePerToken,
-      this.parentGroupId});
+      this.parentGroupId,
+      this.supportEmail});
 
   //SlotDocumentId is entityID#20~06~01 it is not auto-generated, will help in not duplicating the record
   String entityId;
@@ -58,8 +61,9 @@ class Entity {
   Address address;
   int advanceDays;
   bool isPublic;
-  //List<MetaUser> admins;
+  List<Employee> admins;
   List<Employee> managers;
+  List<Employee> executives;
   List<MetaEntity> childEntities;
   //MyGeoFirePoint geo;
   int maxAllowed;
@@ -95,6 +99,7 @@ class Entity {
   int maxPeoplePerToken = 1;
   String
       parentGroupId; //this value will be present and common for different branches of same company
+  String supportEmail;
 
   Map<String, dynamic> toJson() => {
         'entityId': entityId,
@@ -104,8 +109,9 @@ class Entity {
         'address': address != null ? address.toJson() : null,
         'advanceDays': advanceDays,
         'isPublic': isPublic,
-        //'admins': usersToJson(admins),
+        'admins': employeesToJson(admins),
         'managers': employeesToJson(managers),
+        'executives': employeesToJson(executives),
         'childEntities': metaEntitiesToJson(childEntities),
         'maxAllowed': maxAllowed,
         'slotDuration': slotDuration,
@@ -137,7 +143,8 @@ class Entity {
         'forms': metaFormsToJson(forms),
         'maxTokensPerSlotByUser': maxTokensPerSlotByUser,
         'maxPeoplePerToken': maxPeoplePerToken,
-        'parentGroupId': parentGroupId
+        'parentGroupId': parentGroupId,
+        'supportEmail': supportEmail
       };
 
   List<dynamic> usersToJson(List<MetaUser> users) {
@@ -186,8 +193,9 @@ class Entity {
         address: Address.fromJson(json['address']),
         advanceDays: json['advanceDays'],
         isPublic: json['isPublic'],
-        //admins: convertToUsersFromJson(json['admins']),
+        admins: convertToEmployeesFromJson(json['admins']),
         managers: convertToEmployeesFromJson(json['managers']),
+        executives: convertToEmployeesFromJson(json['executives']),
         childEntities: convertToMetaEntitiesFromJson(json['childEntities']),
         maxAllowed: json['maxAllowed'],
         slotDuration: json['slotDuration'],
@@ -218,7 +226,8 @@ class Entity {
         forms: convertToMetaFormsFromJson(json['forms']),
         maxTokensPerSlotByUser: json['maxTokensPerSlotByUser'],
         maxPeoplePerToken: json['maxPeoplePerToken'],
-        parentGroupId: json['parentGroupId']);
+        parentGroupId: json['parentGroupId'],
+        supportEmail: json['supportEmail']);
   }
 
   static Address convertToAddressFromJson(Map<String, dynamic> json) {
@@ -317,7 +326,8 @@ class Entity {
               : false,
           isBookable: isBookable,
           forms: forms,
-          parentGroupId: parentGroupId);
+          parentGroupId: parentGroupId,
+          supportEmail: supportEmail);
     } else {
       _meta.name = name;
       _meta.type = type;
@@ -353,6 +363,7 @@ class Entity {
       _meta.isBookable = isBookable;
       _meta.forms = forms;
       _meta.parentGroupId = parentGroupId;
+      _meta.supportEmail = supportEmail;
     }
     return _meta;
   }
