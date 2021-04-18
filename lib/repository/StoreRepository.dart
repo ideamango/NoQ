@@ -34,9 +34,7 @@ Future<bool> assignAdminsFromList(
     for (int i = 0; i < adminsList.length; i++) {
       Employee emp = new Employee();
       emp.ph = adminsList[i];
-      await gs
-          .getEntityService()
-          .addEmployee(entityId, emp, EntityRole.ENTITY_ADMIN);
+      await gs.getEntityService().addEmployee(entityId, emp, EntityRole.Admin);
     }
   } catch (e) {
     print(e);
