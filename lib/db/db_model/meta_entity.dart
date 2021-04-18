@@ -42,7 +42,8 @@ class MetaEntity {
       this.forms,
       this.maxTokensPerSlotByUser,
       this.maxPeoplePerToken,
-      this.parentGroupId});
+      this.parentGroupId,
+      this.supportEmail});
   MetaEntity.withValues({this.entityId, this.type});
 
   //SlotDocumentId is entityID#20~06~01 it is not auto-generated, will help in not duplicating the record
@@ -80,6 +81,7 @@ class MetaEntity {
   int maxTokensPerSlotByUser;
   int maxPeoplePerToken;
   String parentGroupId;
+  String supportEmail;
 
   static MetaEntity fromJson(Map<String, dynamic> json) {
     if (json == null) return null;
@@ -113,7 +115,8 @@ class MetaEntity {
         forms: convertToMetaFormsFromJson(json['forms']),
         maxTokensPerSlotByUser: json['maxTokensPerSlotByUser'],
         maxPeoplePerToken: json['maxPeoplePerToken'],
-        parentGroupId: json['parentGroupId']);
+        parentGroupId: json['parentGroupId'],
+        supportEmail: json['supportEmail']);
   }
 
   static List<String> convertToClosedOnArrayFromJson(List<dynamic> daysJson) {
@@ -174,7 +177,8 @@ class MetaEntity {
         'forms': metaFormsToJson(forms),
         'maxTokensPerSlotByUser': maxTokensPerSlotByUser,
         'maxPeoplePerToken': maxPeoplePerToken,
-        'parentGroupId': parentGroupId
+        'parentGroupId': parentGroupId,
+        'supportEmail': supportEmail
       };
 
   bool isEqual(MetaEntity metaEnt) {

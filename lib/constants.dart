@@ -12,10 +12,6 @@ const SYSTEM = "SYSTEM";
 
 const TOKEN_COUNTER_PREFIX = "TOKENCOUNTER";
 
-const ROLE_ADMIN = "admin";
-const ROLE_MANAGER = "MANAGER";
-const ROLE_EXECUTIVE = "EXECUTIVE";
-
 const VERIFICATION_PENDING = "Verification Pending";
 const VERIFICATION_VERIFIED = "Verified";
 const VERIFICATION_REJECTED = "Rejected";

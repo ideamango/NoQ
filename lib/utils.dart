@@ -444,6 +444,7 @@ class Utils {
 
   static List<Slot> getSlots(
       EntitySlots entitySlots, MetaEntity me, DateTime dateTime) {
+    //if EntitySlots is null, this method will return all the slots without merging the booking info from the DB
     DateTime breakStartTime;
     DateTime breakEndTime;
     DateTime dayStartTime;

@@ -321,7 +321,13 @@ class DBTest {
 
     await createChildEntityAndAddToParent('Child101-1', "Bata", true);
 
-    await _gs.getEntityService().assignAdmin('Child101-1', "+913611009823");
+    Employee emp = new Employee();
+    emp.ph = "+913611009823";
+    emp.name = "FName1 User1";
+
+    await _gs
+        .getEntityService()
+        .addEmployee('Child101-1', emp, EntityRole.ENTITY_ADMIN);
 
     await createChildEntityAndAddToParent('Child101-2', "Habinaro", true);
 
@@ -604,7 +610,7 @@ class DBTest {
       print("EntityService.search --------------------------> FAILURE");
     }
 
-    await _gs.getEntityService().removeAdmin('Child101-1', "+913611009823");
+    await _gs.getEntityService().removeEmployee('Child101-1', "+913611009823");
 
     Entity child101 = await _gs.getEntityService().getEntity('Child101-1');
 
@@ -766,8 +772,13 @@ class DBTest {
           "Offer and Manager added on Entity ------------------------------> Failure");
     }
 
-    bool admin6955 =
-        await _gs.getEntityService().assignAdmin("Child101-3", "+919611006955");
+    Employee emp2 = new Employee();
+    emp2.ph = "+919611006955";
+    emp2.name = "FName2 User2";
+
+    bool admin6955 = await _gs
+        .getEntityService()
+        .addEmployee("Child101-3", emp2, EntityRole.ENTITY_ADMIN);
 
     print(
         "+919611006955 added as an admin to the Child101-3, check on the real device");
@@ -807,10 +818,21 @@ class DBTest {
     print("Security permission test started.. ");
 
     updateEntity("Inorbit_AdminCheck");
-    await _gs.getEntityService().assignAdmin('Child101-1', "+913611009823");
-    await _gs.getEntityService().assignAdmin('Entity102', "+913611009823");
-    await _gs.getEntityService().removeAdmin('Entity102', "+913611009823");
-    await _gs.getEntityService().assignAdmin('Entity102', "+913611009823");
+    Employee emp = new Employee();
+    emp.ph = "+913611009823";
+    emp.name = "FName1 User1";
+    await _gs
+        .getEntityService()
+        .addEmployee('Child101-1', emp, EntityRole.ENTITY_ADMIN);
+    await _gs
+        .getEntityService()
+        .addEmployee('Entity102', emp, EntityRole.ENTITY_ADMIN);
+    await _gs
+        .getEntityService()
+        .addEmployee('Entity102', emp, EntityRole.ENTITY_ADMIN);
+    await _gs
+        .getEntityService()
+        .addEmployee('Entity102', emp, EntityRole.ENTITY_ADMIN);
 
     print("Security permission test completed.");
   }

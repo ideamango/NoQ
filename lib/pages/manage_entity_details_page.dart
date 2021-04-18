@@ -274,8 +274,6 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
     }
     _ctClosedOnDays = List<days>();
     _ctClosedOnDays = Utils.convertStringsToDays(_ctDaysOff);
-
-    contact.isManager = true;
   }
 
   Widget buildContactItem(Employee contact) {

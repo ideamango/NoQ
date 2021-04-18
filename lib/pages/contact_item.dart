@@ -79,8 +79,6 @@ class ContactRowState extends State<ContactRow> {
     }
     _closedOnDays = List<days>();
     _closedOnDays = Utils.convertStringsToDays(_daysOff);
-
-    contact.isManager = true;
   }
 
   String validateText(String value) {

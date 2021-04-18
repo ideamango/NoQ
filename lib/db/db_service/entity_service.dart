@@ -1,13 +1,14 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:enum_to_string/enum_to_string.dart';
 import 'package:firebase_auth/firebase_auth.dart' as fAuth;
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:geoflutterfire/geoflutterfire.dart';
 import 'package:noq/db/db_model/app_user.dart';
+import 'package:noq/db/db_model/employee.dart';
 import 'package:noq/db/db_model/entity.dart';
 import 'package:noq/db/db_model/entity_private.dart';
 import 'package:noq/db/db_model/meta_entity.dart';
-import 'package:noq/db/db_model/meta_form.dart';
 import 'package:noq/db/exceptions/access_denied_exception.dart';
 import 'package:noq/db/exceptions/entity_does_not_exists_exception.dart';
 import 'package:noq/db/exceptions/user_does_not_exists_exception.dart';
@@ -41,15 +42,6 @@ class EntityService {
   }
 
   Future<bool> upsertEntity(Entity entity) async {
-    if (entity.type == EntityType.PLACE_TYPE_COVID19_VACCINATION_CENTER &&
-        Utils.isNullOrEmpty(entity.forms)) {
-      MetaForm mForm = MetaForm(
-          id: COVID_VACCINATION_BOOKING_FORM_ID, name: COVID_BOOKING_FORM_NAME);
-      if (entity.forms == null) {
-        entity.forms = List<MetaForm>();
-      }
-      entity.forms.add(mForm);
-    }
     final fAuth.User fireUser = getFirebaseAuth().currentUser;
     String regNum = entity.regNum;
 
@@ -94,7 +86,8 @@ class EntityService {
           ePrivate = EntityPrivate.fromJson(ePrivateDoc.data());
 
           //if (existingEntity.isAdmin(fireUser.uid) == -1) {
-          if (ePrivate.roles[fireUser.phoneNumber] != ROLE_ADMIN) {
+          if (ePrivate.roles[fireUser.phoneNumber] !=
+              EnumToString.convertToString(EntityRole.ENTITY_ADMIN)) {
             throw new AccessDeniedException(
                 "User is not admin and can't update the entity");
           }
@@ -102,7 +95,10 @@ class EntityService {
         } else {
           // entity does not exist, so create a new EntityPrivate
           ePrivate = new EntityPrivate();
-          ePrivate.roles = {fireUser.phoneNumber: ROLE_ADMIN};
+          ePrivate.roles = {
+            fireUser.phoneNumber:
+                EnumToString.convertToString(EntityRole.ENTITY_ADMIN)
+          };
           ePrivate.registrationNumber = regNum;
           entity.verificationStatus = VERIFICATION_PENDING;
         }
@@ -113,6 +109,7 @@ class EntityService {
             currentUser.entities = new List<MetaEntity>();
           }
           currentUser.entities.add(entity.getMetaEntity());
+          currentUser.entityVsRole[entity.entityId] = EntityRole.ENTITY_ADMIN;
         } else {
           //will happen when entity exists i.e. update scenario and current user is the admin,
           //then check for the meta-entity if anything is modified
@@ -121,8 +118,35 @@ class EntityService {
               !entity.getMetaEntity().isEqual(existingEntity.getMetaEntity())) {
             int index = currentUser.isEntityAdmin(entity.entityId);
             currentUser.entities[index] = entity.getMetaEntity();
+            currentUser.entityVsRole[entity.entityId] = EntityRole.ENTITY_ADMIN;
           }
         }
+
+        Employee emp = new Employee(
+            id: fireUser.uid,
+            name: fireUser.displayName,
+            ph: fireUser.phoneNumber);
+
+        if (entity.admins == null) {
+          entity.admins = new List<Employee>();
+        }
+
+        int existingIndexInAdmin = -1;
+        for (int index; index < entity.admins.length; index++) {
+          if (entity.admins[index].ph == emp.ph) {
+            existingIndexInAdmin = index;
+            break;
+          }
+        }
+
+        if (existingIndexInAdmin == -1) {
+          //current employee is admin (creating the entity) and does not exist in the Entity Admins collection already
+          entity.admins.add(emp);
+        } else {
+          //do not need to update existing employee info, as Entity might already have more details
+          //entity.admins[existingIndexInAdmin] = emp;
+        }
+
         tx.set(userRef, currentUser.toJson());
         //TODO: Update the meta in other Admin objects too
         tx.set(entityPrivateRef, ePrivate.toJson());
@@ -213,7 +237,8 @@ class EntityService {
         EntityPrivate ePrivate = EntityPrivate.fromJson(ePrivateDoc.data());
 
         //if (ent.isAdmin(fireUser.uid) == -1) {
-        if (ePrivate.roles[fireUser.phoneNumber] != ROLE_ADMIN) {
+        if (ePrivate.roles[fireUser.phoneNumber] !=
+            EnumToString.convertToString(EntityRole.ENTITY_ADMIN)) {
           throw new AccessDeniedException("This user can't delete the Entity");
         }
 
@@ -261,6 +286,9 @@ class EntityService {
             int index = u.isEntityAdmin(entityId);
             if (index != -1) {
               u.entities.removeAt(index);
+              if (u.entityVsRole.containsKey(entityId)) {
+                u.entityVsRole.remove(entityId);
+              }
               adminUsers.add(u);
             }
           }
@@ -297,9 +325,14 @@ class EntityService {
     return isSuccess;
   }
 
-  Future<bool> assignAdmin(String entityId, String phone) async {
+  Future<bool> addEmployee(
+      String entityId, Employee employee, EntityRole role) async {
     final User fireUser = getFirebaseAuth().currentUser;
     FirebaseFirestore fStore = getFirestore();
+    String phone = employee.ph;
+    if (!Utils.isNotNullOrEmpty(phone)) {
+      throw new Exception("Phone of Employee can't be null");
+    }
 
     AppUser u;
     bool isSuccess = true;
@@ -314,20 +347,19 @@ class EntityService {
         DocumentSnapshot entityDoc = await tx.get(entityRef);
         if (!entityDoc.exists) {
           throw new EntityDoesNotExistsException(
-              "Admin can't be added for the entity which does not exist");
+              "Employee can't be added for the entity which does not exist");
         }
-
-        print("Entity initialized..");
 
         DocumentSnapshot ePrivateDoc = await tx.get(entityPrivateRef);
         EntityPrivate ePrivate = EntityPrivate.fromJson(ePrivateDoc.data());
 
         Entity ent = Entity.fromJson(entityDoc.data());
         //if (ent.isAdmin(fireUser.uid) == -1) {
-        if (ePrivate.roles[fireUser.phoneNumber] != ROLE_ADMIN) {
+        if (ePrivate.roles[fireUser.phoneNumber] !=
+            EnumToString.convertToString(EntityRole.ENTITY_ADMIN)) {
           //current logged in user should be admin of the entity then only he should be allowed to add another user as admin
           throw new AccessDeniedException(
-              "User is not admin, hence can't make other users as admin");
+              "User is not admin, hence can't add other users");
         }
 
         DocumentSnapshot usrDoc = await tx.get(userRef);
@@ -352,13 +384,76 @@ class EntityService {
           }
         } else {
           // a new user will be added in the user table for that phone number
-          u = new AppUser(id: null, ph: phone, name: null);
+          u = new AppUser(id: null, ph: phone, name: employee.name);
           u.entities = new List<MetaEntity>();
           u.entities.add(ent.getMetaEntity());
         }
 
-        if (!ePrivate.roles.containsKey(phone)) {
-          ePrivate.roles[phone] = ROLE_ADMIN;
+        ePrivate.roles[phone] = EnumToString.convertToString(role);
+
+        //add this Employee to the Entity
+        //if already exists in any of the collection, remove it and then update
+        if (ent.admins == null) {
+          ent.admins = new List<Employee>();
+        }
+
+        if (ent.managers == null) {
+          ent.managers = new List<Employee>();
+        }
+
+        if (ent.executives == null) {
+          ent.executives = new List<Employee>();
+        }
+
+        //------
+        int existingIndexInAdmin = -1;
+        for (int index; index < ent.admins.length; index++) {
+          if (ent.admins[index].ph == employee.ph) {
+            existingIndexInAdmin = index;
+            break;
+          }
+        }
+
+        if (existingIndexInAdmin > -1) {
+          ent.admins.removeAt(existingIndexInAdmin);
+        }
+        //------
+        int existingIndexInManager = -1;
+        for (int index; index < ent.managers.length; index++) {
+          if (ent.managers[index].ph == employee.ph) {
+            existingIndexInManager = index;
+            break;
+          }
+        }
+
+        if (existingIndexInManager > -1) {
+          ent.managers.removeAt(existingIndexInManager);
+        }
+        //------
+        int existingIndexInExecutive = -1;
+        for (int index = 0; index < ent.executives.length; index++) {
+          if (ent.executives[index].ph == employee.ph) {
+            existingIndexInExecutive = index;
+            break;
+          }
+        }
+
+        if (existingIndexInExecutive > -1) {
+          ent.executives.removeAt(existingIndexInExecutive);
+        }
+
+        //------
+
+        if (role == EntityRole.ENTITY_ADMIN) {
+          ent.admins.add(employee);
+        }
+
+        if (role == EntityRole.ENTITY_MANAGER) {
+          ent.managers.add(employee);
+        }
+
+        if (role == EntityRole.ENTITY_EXECUTIVE) {
+          ent.executives.add(employee);
         }
 
         tx.set(userRef, u.toJson());
@@ -427,7 +522,8 @@ class EntityService {
               EntityPrivate.fromJson(parentEntityPrivateDoc.data());
 
           //if (parentEntity.isAdmin(fireUser.uid) == -1) {
-          if (parentEntityPrivate.roles[fireUser.phoneNumber] != ROLE_ADMIN) {
+          if (parentEntityPrivate.roles[fireUser.phoneNumber] !=
+              EnumToString.convertToString(EntityRole.ENTITY_ADMIN)) {
             throw new AccessDeniedException(
                 "User is not admin and can't update the entity");
           }
@@ -462,7 +558,8 @@ class EntityService {
 
             //int userIndex = existingChildEntity.isAdmin(fireUser.uid);
             //if (userIndex == -1) {
-            if (childEntityPrivate.roles[fireUser.phoneNumber] != ROLE_ADMIN) {
+            if (childEntityPrivate.roles[fireUser.phoneNumber] !=
+                EnumToString.convertToString(EntityRole.ENTITY_ADMIN)) {
               throw new AccessDeniedException(
                   "User is not admin of existing child entity");
             } else {
@@ -471,7 +568,10 @@ class EntityService {
           } else {
             childEntityPrivate = new EntityPrivate(
                 registrationNumber: childRegNum,
-                roles: {fireUser.phoneNumber: ROLE_ADMIN});
+                roles: {
+                  fireUser.phoneNumber:
+                      EnumToString.convertToString(EntityRole.ENTITY_ADMIN)
+                });
             childEntity.verificationStatus = VERIFICATION_PENDING;
           }
           childEntity.parentId = parentEntityId;
@@ -528,7 +628,7 @@ class EntityService {
     return isSuccess;
   }
 
-  Future<bool> removeAdmin(String entityId, String phone) async {
+  Future<bool> removeEmployee(String entityId, String phone) async {
     //check of the current user is admin
     //remove from the user.entities collection
     //remove from the entity.admin collection
@@ -539,15 +639,13 @@ class EntityService {
     bool isSuccess = true;
 
     final DocumentReference userRef = fStore.doc('users/' + phone);
-    //final DocumentReference entityRef = fStore.document('entities/' + entityId);
+    final DocumentReference entityRef = fStore.doc('entities/' + entityId);
     final DocumentReference entityPrivateRef =
         fStore.doc('entities/' + entityId + '/private_data/private');
 
     await fStore.runTransaction((Transaction tx) async {
       try {
         //DocumentSnapshot entityDoc = await tx.get(entityRef);
-
-        //Entity ent = Entity.fromJson(entityDoc.data);
 
         DocumentSnapshot ePrivateDoc = await tx.get(entityPrivateRef);
         if (!ePrivateDoc.exists) {
@@ -558,14 +656,17 @@ class EntityService {
         EntityPrivate ePrivate = EntityPrivate.fromJson(ePrivateDoc.data());
 
         //if (ent.isAdmin(fireUser.uid) == -1) {
-        if (ePrivate.roles[fireUser.phoneNumber] != ROLE_ADMIN) {
+        if (ePrivate.roles[fireUser.phoneNumber] !=
+            EnumToString.convertToString(EntityRole.ENTITY_ADMIN)) {
           //current logged in user should be admin of the entity then only he should be allowed to add another user as admin
           throw new AccessDeniedException(
-              "User is not admin, hence can't remove another user as an admin");
+              "User is not admin, hence can't remove another user");
         }
 
+        DocumentSnapshot entityDoc = await tx.get(entityRef);
+        Entity ent = Entity.fromJson(entityDoc.data());
+
         DocumentSnapshot usrDoc = await tx.get(userRef);
-        bool isAlreadyAdmin = false;
         bool entityAlreadyExistsInUser = false;
 
         if (usrDoc.exists) {
@@ -585,10 +686,56 @@ class EntityService {
           }
           if (entityAlreadyExistsInUser) {
             u.entities.removeAt(count);
+
+            if (u.entityVsRole.containsKey(entityId)) {
+              u.entityVsRole.remove(entityId);
+            }
             tx.set(userRef, u.toJson());
           }
         } else {
           //nothing to be done as user does not exists - removal does not make sense
+        }
+
+        if (ent.admins != null) {
+          int existingIndexInAdmin = -1;
+          for (int index; index < ent.admins.length; index++) {
+            if (ent.admins[index].ph == phone) {
+              existingIndexInAdmin = index;
+              break;
+            }
+          }
+
+          if (existingIndexInAdmin > -1) {
+            ent.admins.removeAt(existingIndexInAdmin);
+          }
+        }
+
+        if (ent.managers != null) {
+          int existingIndexInManager = -1;
+          for (int index; index < ent.managers.length; index++) {
+            if (ent.managers[index].ph == phone) {
+              existingIndexInManager = index;
+              break;
+            }
+          }
+
+          if (existingIndexInManager > -1) {
+            ent.managers.removeAt(existingIndexInManager);
+          }
+        }
+
+        if (ent.executives != null) {
+          int existingIndexInExecutive = -1;
+          for (int index = 0; index < ent.executives.length; index++) {
+            if (ent.executives[index].ph == phone) {
+              existingIndexInExecutive = index;
+              break;
+            }
+          }
+
+          if (existingIndexInExecutive > -1) {
+            ent.executives.removeAt(existingIndexInExecutive);
+          }
         }
 
         if (ePrivate.roles.containsKey(phone)) {

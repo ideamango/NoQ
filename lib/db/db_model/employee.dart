@@ -11,7 +11,7 @@ class Employee {
   int shiftEndHour;
   int shiftEndMinute;
   List<String> daysOff;
-  bool isManager;
+
   String altPhone;
 
   Employee(
@@ -24,7 +24,6 @@ class Employee {
       this.shiftEndHour,
       this.shiftEndMinute,
       this.daysOff,
-      this.isManager,
       this.altPhone});
 
   static Employee fromJson(Map<String, dynamic> json) {
@@ -39,7 +38,6 @@ class Employee {
         shiftEndHour: json['shiftEndHour'],
         shiftEndMinute: json['shiftEndMinute'],
         daysOff: convertList(json['daysOff']),
-        isManager: json['isManager'],
         altPhone: json['altPhone']);
   }
 
@@ -62,7 +60,6 @@ class Employee {
         'shiftEndHour': shiftEndHour,
         'shiftEndMinute': shiftEndMinute,
         'daysOff': daysOff,
-        'isManager': isManager,
         'altPhone': altPhone
       };
 }
