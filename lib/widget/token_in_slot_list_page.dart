@@ -547,7 +547,7 @@ class _TokensInSlotState extends State<TokensInSlot> {
           appBar: CustomAppBarWithBackButton(
             backRoute: widget.backRoute,
             titleTxt:
-                "Tokens in $timeSlot Slot on ${dtFormat.format(widget.date)}",
+                "Tokens in ${Utils.formatTimeAsStr(timeSlot)} Slot on ${dtFormat.format(widget.date)}",
           ),
           body: Column(
             children: [

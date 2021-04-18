@@ -225,7 +225,7 @@ class _EntityTokenListPageState extends State<EntityTokenListPage> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
-              time,
+              Utils.formatTimeAsStr(time),
               style: TextStyle(fontSize: 13, color: Colors.grey[600]),
             ),
             Row(
