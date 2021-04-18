@@ -132,7 +132,7 @@ class EntityService {
         }
 
         int existingIndexInAdmin = -1;
-        for (int index; index < entity.admins.length; index++) {
+        for (int index = 0; index < entity.admins.length; index++) {
           if (entity.admins[index].ph == emp.ph) {
             existingIndexInAdmin = index;
             break;
@@ -407,7 +407,7 @@ class EntityService {
 
         //------
         int existingIndexInAdmin = -1;
-        for (int index; index < ent.admins.length; index++) {
+        for (int index = 0; index < ent.admins.length; index++) {
           if (ent.admins[index].ph == employee.ph) {
             existingIndexInAdmin = index;
             break;
@@ -419,7 +419,7 @@ class EntityService {
         }
         //------
         int existingIndexInManager = -1;
-        for (int index; index < ent.managers.length; index++) {
+        for (int index = 0; index < ent.managers.length; index++) {
           if (ent.managers[index].ph == employee.ph) {
             existingIndexInManager = index;
             break;
@@ -698,7 +698,7 @@ class EntityService {
 
         if (ent.admins != null) {
           int existingIndexInAdmin = -1;
-          for (int index; index < ent.admins.length; index++) {
+          for (int index = 0; index < ent.admins.length; index++) {
             if (ent.admins[index].ph == phone) {
               existingIndexInAdmin = index;
               break;
@@ -712,7 +712,7 @@ class EntityService {
 
         if (ent.managers != null) {
           int existingIndexInManager = -1;
-          for (int index; index < ent.managers.length; index++) {
+          for (int index = 0; index < ent.managers.length; index++) {
             if (ent.managers[index].ph == phone) {
               existingIndexInManager = index;
               break;

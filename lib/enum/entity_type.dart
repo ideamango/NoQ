@@ -23,4 +23,4 @@ enum EntityType {
   PLACE_TYPE_OTHERS
 }
 
-enum EntityRole { ENTITY_ADMIN, ENTITY_MANAGER, ENTITY_EXECUTIVE }
+enum EntityRole { Admin, Manager, Executive }
