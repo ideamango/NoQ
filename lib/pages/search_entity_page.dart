@@ -960,7 +960,7 @@ class _SearchEntityPageState extends State<SearchEntityPage>
                     borderRadius: BorderRadius.all(Radius.circular(45.0))),
                 child: Container(
                   child: Text(
-                    SELECT_TYPE_OF_PLACE,
+                    SEARCH_TYPE_OF_PLACE,
                     style: TextStyle(color: Colors.white, fontSize: 16),
                     textAlign: TextAlign.center,
                   ),
@@ -999,7 +999,7 @@ class _SearchEntityPageState extends State<SearchEntityPage>
                                     width:
                                         MediaQuery.of(context).size.width * .8,
                                     child: Text(
-                                      SELECT_TYPE_OF_PLACE,
+                                      SEARCH_TYPE_OF_PLACE,
                                       style: TextStyle(
                                           color: Colors.blueGrey[800],
                                           fontFamily: 'RalewayRegular',

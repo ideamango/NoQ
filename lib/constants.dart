@@ -12,7 +12,10 @@ const SYSTEM = "SYSTEM";
 
 const TOKEN_COUNTER_PREFIX = "TOKENCOUNTER";
 
-const ADMIN = "admin";
+const ROLE_ADMIN = "admin";
+const ROLE_MANAGER = "MANAGER";
+const ROLE_EXECUTIVE = "EXECUTIVE";
+
 const VERIFICATION_PENDING = "Verification Pending";
 const VERIFICATION_VERIFIED = "Verified";
 const VERIFICATION_REJECTED = "Rejected";
@@ -43,7 +46,8 @@ const PLACE_TYPE_BANK = "Bank";
 const PLACE_TYPE_HOSPITAL = "Hospital";
 const PLACE_TYPE_OTHERS = "Others";
 
-const SELECT_TYPE_OF_PLACE = "Search by Type of Place";
+const SELECT_TYPE_OF_PLACE = "Select Type of Place";
+const SEARCH_TYPE_OF_PLACE = "Search by Type of Place";
 
 String appName = 'LESSs';
 var loginSubTxt = "Peace of Mind";
@@ -132,11 +136,11 @@ String bundleId = 'net.lesss';
 String appStoreId = '1545296767';
 String shareURLPrefix = 'https://in.lesss.net';
 String publicInfo =
-    "Public: If this is off - it means your service/facility is restricted to only either your employees or residents. Example: Office or Apartment.";
+    "Public: If this is off - it means your Business/Facility is restricted only to either your Employees or the Residents. Example: Office or Apartment.";
 String activeDef =
-    'Active: If this is on - it means your place is Active and can be searched by other users. You MUST fill all the required details before making it "ACTIVE".';
+    'Active: If this is on - it means your Business/Facility is Active and can be searched by other users. You MUST fill all the required details before making it "ACTIVE".';
 String bookableInfo =
-    "Bookable: If your slot for your service/facility can be booked by the user and token can be issued then enable it. For example: Shop or Tennis-court is bookable but Mall or Apartment complex can't be booked.";
+    "Bookable: If a slot of your Business/Facility can be booked by the users and token can be issued then enable it. E.g. Salon or Tennis-court is bookable but Mall or Apartment complex can't be booked.";
 String addressInfoStr =
     'The address is using the current location, and same will be used by customers when searching your location.';
 String locationInfoStr = 'Current location details.';
