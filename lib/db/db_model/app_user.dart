@@ -40,7 +40,7 @@ class AppUser {
         'ph': ph,
         'entities': metaEntitiesToJson(entities),
         'favourites': metaEntitiesToJson(favourites),
-        'entityVsRole': convertFromMap
+        'entityVsRole': convertFromMap(entityVsRole)
       };
 
   static AppUser fromJson(Map<String, dynamic> json) {
