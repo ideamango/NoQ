@@ -96,8 +96,7 @@ class EntityService {
           // entity does not exist, so create a new EntityPrivate
           ePrivate = new EntityPrivate();
           ePrivate.roles = {
-            fireUser.phoneNumber:
-                EnumToString.convertToString(EntityRole.ENTITY_ADMIN)
+            fireUser.phoneNumber: EnumToString.convertToString(EntityRole.Admin)
           };
           ePrivate.registrationNumber = regNum;
           entity.verificationStatus = VERIFICATION_PENDING;
@@ -109,7 +108,7 @@ class EntityService {
             currentUser.entities = new List<MetaEntity>();
           }
           currentUser.entities.add(entity.getMetaEntity());
-          currentUser.entityVsRole[entity.entityId] = EntityRole.ENTITY_ADMIN;
+          currentUser.entityVsRole[entity.entityId] = EntityRole.Admin;
         } else {
           //will happen when entity exists i.e. update scenario and current user is the admin,
           //then check for the meta-entity if anything is modified
@@ -118,7 +117,7 @@ class EntityService {
               !entity.getMetaEntity().isEqual(existingEntity.getMetaEntity())) {
             int index = currentUser.isEntityAdmin(entity.entityId);
             currentUser.entities[index] = entity.getMetaEntity();
-            currentUser.entityVsRole[entity.entityId] = EntityRole.ENTITY_ADMIN;
+            currentUser.entityVsRole[entity.entityId] = EntityRole.Admin;
           }
         }
 
@@ -238,7 +237,7 @@ class EntityService {
 
         //if (ent.isAdmin(fireUser.uid) == -1) {
         if (ePrivate.roles[fireUser.phoneNumber] !=
-            EnumToString.convertToString(EntityRole.ENTITY_ADMIN)) {
+            EnumToString.convertToString(EntityRole.Admin)) {
           throw new AccessDeniedException("This user can't delete the Entity");
         }
 
@@ -356,7 +355,7 @@ class EntityService {
         Entity ent = Entity.fromJson(entityDoc.data());
         //if (ent.isAdmin(fireUser.uid) == -1) {
         if (ePrivate.roles[fireUser.phoneNumber] !=
-            EnumToString.convertToString(EntityRole.ENTITY_ADMIN)) {
+            EnumToString.convertToString(EntityRole.Admin)) {
           //current logged in user should be admin of the entity then only he should be allowed to add another user as admin
           throw new AccessDeniedException(
               "User is not admin, hence can't add other users");
@@ -444,15 +443,15 @@ class EntityService {
 
         //------
 
-        if (role == EntityRole.ENTITY_ADMIN) {
+        if (role == EntityRole.Admin) {
           ent.admins.add(employee);
         }
 
-        if (role == EntityRole.ENTITY_MANAGER) {
+        if (role == EntityRole.Manager) {
           ent.managers.add(employee);
         }
 
-        if (role == EntityRole.ENTITY_EXECUTIVE) {
+        if (role == EntityRole.Executive) {
           ent.executives.add(employee);
         }
 
@@ -523,7 +522,7 @@ class EntityService {
 
           //if (parentEntity.isAdmin(fireUser.uid) == -1) {
           if (parentEntityPrivate.roles[fireUser.phoneNumber] !=
-              EnumToString.convertToString(EntityRole.ENTITY_ADMIN)) {
+              EnumToString.convertToString(EntityRole.Admin)) {
             throw new AccessDeniedException(
                 "User is not admin and can't update the entity");
           }
@@ -559,7 +558,7 @@ class EntityService {
             //int userIndex = existingChildEntity.isAdmin(fireUser.uid);
             //if (userIndex == -1) {
             if (childEntityPrivate.roles[fireUser.phoneNumber] !=
-                EnumToString.convertToString(EntityRole.ENTITY_ADMIN)) {
+                EnumToString.convertToString(EntityRole.Admin)) {
               throw new AccessDeniedException(
                   "User is not admin of existing child entity");
             } else {
@@ -570,7 +569,7 @@ class EntityService {
                 registrationNumber: childRegNum,
                 roles: {
                   fireUser.phoneNumber:
-                      EnumToString.convertToString(EntityRole.ENTITY_ADMIN)
+                      EnumToString.convertToString(EntityRole.Admin)
                 });
             childEntity.verificationStatus = VERIFICATION_PENDING;
           }
@@ -657,7 +656,7 @@ class EntityService {
 
         //if (ent.isAdmin(fireUser.uid) == -1) {
         if (ePrivate.roles[fireUser.phoneNumber] !=
-            EnumToString.convertToString(EntityRole.ENTITY_ADMIN)) {
+            EnumToString.convertToString(EntityRole.Admin)) {
           //current logged in user should be admin of the entity then only he should be allowed to add another user as admin
           throw new AccessDeniedException(
               "User is not admin, hence can't remove another user");

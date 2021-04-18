@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:enum_to_string/enum_to_string.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:noq/db/db_model/address.dart';
@@ -327,7 +328,7 @@ class DBTest {
 
     await _gs
         .getEntityService()
-        .addEmployee('Child101-1', emp, EntityRole.ENTITY_ADMIN);
+        .addEmployee('Child101-1', emp, EntityRole.Admin);
 
     await createChildEntityAndAddToParent('Child101-2', "Habinaro", true);
 
@@ -387,7 +388,8 @@ class DBTest {
     if (doc.exists) {
       Map<String, dynamic> map = doc.data();
       ePrivate = EntityPrivate.fromJson(map);
-      if (ePrivate.roles['+913611009823'] == "admin") {
+      if (ePrivate.roles['+913611009823'] ==
+          EnumToString.convertToString(EntityRole.Admin)) {
         isAdminAssignedOnEntity = true;
       }
     }
@@ -630,7 +632,8 @@ class DBTest {
     if (doc.exists) {
       Map<String, dynamic> map = docChild101.data();
       ePrivateChild101 = EntityPrivate.fromJson(map);
-      if (ePrivateChild101.roles['+913611009823'] == "admin") {
+      if (ePrivateChild101.roles['+913611009823'] ==
+          EnumToString.convertToString(EntityRole.Admin)) {
         isAdminAssignedOnEntity = false;
       }
     }
@@ -778,7 +781,7 @@ class DBTest {
 
     bool admin6955 = await _gs
         .getEntityService()
-        .addEmployee("Child101-3", emp2, EntityRole.ENTITY_ADMIN);
+        .addEmployee("Child101-3", emp2, EntityRole.Admin);
 
     print(
         "+919611006955 added as an admin to the Child101-3, check on the real device");
@@ -823,16 +826,16 @@ class DBTest {
     emp.name = "FName1 User1";
     await _gs
         .getEntityService()
-        .addEmployee('Child101-1', emp, EntityRole.ENTITY_ADMIN);
+        .addEmployee('Child101-1', emp, EntityRole.Admin);
     await _gs
         .getEntityService()
-        .addEmployee('Entity102', emp, EntityRole.ENTITY_ADMIN);
+        .addEmployee('Entity102', emp, EntityRole.Admin);
     await _gs
         .getEntityService()
-        .addEmployee('Entity102', emp, EntityRole.ENTITY_ADMIN);
+        .addEmployee('Entity102', emp, EntityRole.Admin);
     await _gs
         .getEntityService()
-        .addEmployee('Entity102', emp, EntityRole.ENTITY_ADMIN);
+        .addEmployee('Entity102', emp, EntityRole.Admin);
 
     print("Security permission test completed.");
   }
