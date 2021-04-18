@@ -249,358 +249,358 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
   }
 
   ///from contact page
-  void initializeContactDetails() {
-    if (contact != null) {
-      _ctNameController.text = contact.name;
-      _ctEmpIdController.text = contact.employeeId;
-      _ctPhn1controller.text =
-          contact.ph != null ? contact.ph.substring(3) : "";
-      _ctPhn2controller.text =
-          contact.altPhone != null ? contact.altPhone.substring(3) : "";
-      if (contact.shiftStartHour != null && contact.shiftStartMinute != null)
-        _ctAvlFromTimeController.text =
-            Utils.formatTime(contact.shiftStartHour.toString()) +
-                ':' +
-                Utils.formatTime(contact.shiftStartMinute.toString());
-      if (contact.shiftEndHour != null && contact.shiftEndMinute != null)
-        _ctAvlTillTimeController.text =
-            Utils.formatTime(contact.shiftEndHour.toString()) +
-                ':' +
-                Utils.formatTime(contact.shiftEndMinute.toString());
-      _ctDaysOff = (contact.daysOff) ?? new List<String>();
-    }
-    if (_daysOff.length == 0) {
-      _ctDaysOff.add('days.sunday');
-    }
-    _ctClosedOnDays = List<days>();
-    _ctClosedOnDays = Utils.convertStringsToDays(_ctDaysOff);
+  // void initializeContactDetails() {
+  //   if (contact != null) {
+  //     _ctNameController.text = contact.name;
+  //     _ctEmpIdController.text = contact.employeeId;
+  //     _ctPhn1controller.text =
+  //         contact.ph != null ? contact.ph.substring(3) : "";
+  //     _ctPhn2controller.text =
+  //         contact.altPhone != null ? contact.altPhone.substring(3) : "";
+  //     if (contact.shiftStartHour != null && contact.shiftStartMinute != null)
+  //       _ctAvlFromTimeController.text =
+  //           Utils.formatTime(contact.shiftStartHour.toString()) +
+  //               ':' +
+  //               Utils.formatTime(contact.shiftStartMinute.toString());
+  //     if (contact.shiftEndHour != null && contact.shiftEndMinute != null)
+  //       _ctAvlTillTimeController.text =
+  //           Utils.formatTime(contact.shiftEndHour.toString()) +
+  //               ':' +
+  //               Utils.formatTime(contact.shiftEndMinute.toString());
+  //     _ctDaysOff = (contact.daysOff) ?? new List<String>();
+  //   }
+  //   if (_daysOff.length == 0) {
+  //     _ctDaysOff.add('days.sunday');
+  //   }
+  //   _ctClosedOnDays = List<days>();
+  //   _ctClosedOnDays = Utils.convertStringsToDays(_ctDaysOff);
 
-    contact.isManager = true;
-  }
+  //   contact.isManager = true;
+  // }
 
-  Widget buildContactItem(Employee contact) {
-    final ctNameField = TextFormField(
-      obscureText: false,
-      maxLines: 1,
-      minLines: 1,
-      style: textInputTextStyle,
-      keyboardType: TextInputType.text,
-      controller: _ctNameController,
-      decoration:
-          CommonStyle.textFieldStyle(labelTextStr: "Name", hintTextStr: ""),
-      validator: validateText,
-      onChanged: (String value) {
-        contact.name = value;
-      },
-      onSaved: (String value) {
-        contact.name = value;
-      },
-    );
-    final ctEmpIdField = TextFormField(
-      obscureText: false,
-      maxLines: 1,
-      minLines: 1,
-      style: textInputTextStyle,
-      keyboardType: TextInputType.text,
-      controller: _ctEmpIdController,
-      decoration: CommonStyle.textFieldStyle(
-          labelTextStr: "Employee Id", hintTextStr: ""),
-      validator: validateText,
-      onChanged: (String value) {
-        contact.employeeId = value;
-      },
-      onSaved: (String value) {
-        contact.employeeId = value;
-      },
-    );
-    final ctPhn1Field = TextFormField(
-      obscureText: false,
-      key: phn1Key,
-      maxLines: 1,
-      minLines: 1,
-      style: textInputTextStyle,
-      keyboardType: TextInputType.phone,
-      controller: _ctPhn1controller,
-      decoration: CommonStyle.textFieldStyle(
-          prefixText: '+91', labelTextStr: "Primary Phone", hintTextStr: ""),
-      validator: Utils.validateMobileField,
-      onChanged: (String value) {
-        phn1Key.currentState.validate();
-        contact.ph = "+91" + value;
-      },
-      onSaved: (value) {
-        contact.ph = "+91" + value;
-      },
-    );
-    final ctPhn2Field = TextFormField(
-      obscureText: false,
-      key: phn2Key,
-      maxLines: 1,
-      minLines: 1,
-      style: textInputTextStyle,
-      keyboardType: TextInputType.phone,
-      controller: _ctPhn2controller,
-      decoration: CommonStyle.textFieldStyle(
-          prefixText: '+91', labelTextStr: "Alternate Phone", hintTextStr: ""),
-      validator: Utils.validateMobileField,
-      onChanged: (String value) {
-        phn2Key.currentState.validate();
-        contact.altPhone = "+91" + value;
-      },
-      onSaved: (value) {
-        contact.altPhone = "+91" + value;
-      },
-    );
-    final ctAvlFromTimeField = TextFormField(
-      obscureText: false,
-      maxLines: 1,
-      readOnly: true,
-      minLines: 1,
-      style: textInputTextStyle,
-      controller: _ctAvlFromTimeController,
-      keyboardType: TextInputType.text,
-      onTap: () {
-        DatePicker.showTimePicker(context,
-            showTitleActions: true,
-            showSecondsColumn: false, onChanged: (date) {
-          print('change $date in time zone ' +
-              date.timeZoneOffset.inHours.toString());
-        }, onConfirm: (date) {
-          print('confirm $date');
-          //  String time = "${date.hour}:${date.minute} ${date.";
+  // Widget buildContactItem(Employee contact) {
+  //   final ctNameField = TextFormField(
+  //     obscureText: false,
+  //     maxLines: 1,
+  //     minLines: 1,
+  //     style: textInputTextStyle,
+  //     keyboardType: TextInputType.text,
+  //     controller: _ctNameController,
+  //     decoration:
+  //         CommonStyle.textFieldStyle(labelTextStr: "Name", hintTextStr: ""),
+  //     validator: validateText,
+  //     onChanged: (String value) {
+  //       contact.name = value;
+  //     },
+  //     onSaved: (String value) {
+  //       contact.name = value;
+  //     },
+  //   );
+  //   final ctEmpIdField = TextFormField(
+  //     obscureText: false,
+  //     maxLines: 1,
+  //     minLines: 1,
+  //     style: textInputTextStyle,
+  //     keyboardType: TextInputType.text,
+  //     controller: _ctEmpIdController,
+  //     decoration: CommonStyle.textFieldStyle(
+  //         labelTextStr: "Employee Id", hintTextStr: ""),
+  //     validator: validateText,
+  //     onChanged: (String value) {
+  //       contact.employeeId = value;
+  //     },
+  //     onSaved: (String value) {
+  //       contact.employeeId = value;
+  //     },
+  //   );
+  //   final ctPhn1Field = TextFormField(
+  //     obscureText: false,
+  //     key: phn1Key,
+  //     maxLines: 1,
+  //     minLines: 1,
+  //     style: textInputTextStyle,
+  //     keyboardType: TextInputType.phone,
+  //     controller: _ctPhn1controller,
+  //     decoration: CommonStyle.textFieldStyle(
+  //         prefixText: '+91', labelTextStr: "Primary Phone", hintTextStr: ""),
+  //     validator: Utils.validateMobileField,
+  //     onChanged: (String value) {
+  //       phn1Key.currentState.validate();
+  //       contact.ph = "+91" + value;
+  //     },
+  //     onSaved: (value) {
+  //       contact.ph = "+91" + value;
+  //     },
+  //   );
+  //   final ctPhn2Field = TextFormField(
+  //     obscureText: false,
+  //     key: phn2Key,
+  //     maxLines: 1,
+  //     minLines: 1,
+  //     style: textInputTextStyle,
+  //     keyboardType: TextInputType.phone,
+  //     controller: _ctPhn2controller,
+  //     decoration: CommonStyle.textFieldStyle(
+  //         prefixText: '+91', labelTextStr: "Alternate Phone", hintTextStr: ""),
+  //     validator: Utils.validateMobileField,
+  //     onChanged: (String value) {
+  //       phn2Key.currentState.validate();
+  //       contact.altPhone = "+91" + value;
+  //     },
+  //     onSaved: (value) {
+  //       contact.altPhone = "+91" + value;
+  //     },
+  //   );
+  //   final ctAvlFromTimeField = TextFormField(
+  //     obscureText: false,
+  //     maxLines: 1,
+  //     readOnly: true,
+  //     minLines: 1,
+  //     style: textInputTextStyle,
+  //     controller: _ctAvlFromTimeController,
+  //     keyboardType: TextInputType.text,
+  //     onTap: () {
+  //       DatePicker.showTimePicker(context,
+  //           showTitleActions: true,
+  //           showSecondsColumn: false, onChanged: (date) {
+  //         print('change $date in time zone ' +
+  //             date.timeZoneOffset.inHours.toString());
+  //       }, onConfirm: (date) {
+  //         print('confirm $date');
+  //         //  String time = "${date.hour}:${date.minute} ${date.";
 
-          String time = DateFormat.Hm().format(date);
-          print(time);
+  //         String time = DateFormat.Hm().format(date);
+  //         print(time);
 
-          _ctAvlFromTimeController.text = time.toLowerCase();
-          if (_ctAvlFromTimeController.text != "") {
-            List<String> time = _ctAvlFromTimeController.text.split(':');
-            contact.shiftStartHour = int.parse(time[0]);
-            contact.shiftStartMinute = int.parse(time[1]);
-          }
-        }, currentTime: DateTime.now());
-      },
-      decoration: InputDecoration(
-          // suffixIcon: IconButton(
-          //   icon: Icon(Icons.schedule),
-          //   onPressed: () {
-          //     DatePicker.showTime12hPicker(context, showTitleActions: true,
-          //         onChanged: (date) {
-          //       print('change $date in time zone ' +
-          //           date.timeZoneOffset.inHours.toString());
-          //     }, onConfirm: (date) {
-          //       print('confirm $date');
-          //       //  String time = "${date.hour}:${date.minute} ${date.";
+  //         _ctAvlFromTimeController.text = time.toLowerCase();
+  //         if (_ctAvlFromTimeController.text != "") {
+  //           List<String> time = _ctAvlFromTimeController.text.split(':');
+  //           contact.shiftStartHour = int.parse(time[0]);
+  //           contact.shiftStartMinute = int.parse(time[1]);
+  //         }
+  //       }, currentTime: DateTime.now());
+  //     },
+  //     decoration: InputDecoration(
+  //         // suffixIcon: IconButton(
+  //         //   icon: Icon(Icons.schedule),
+  //         //   onPressed: () {
+  //         //     DatePicker.showTime12hPicker(context, showTitleActions: true,
+  //         //         onChanged: (date) {
+  //         //       print('change $date in time zone ' +
+  //         //           date.timeZoneOffset.inHours.toString());
+  //         //     }, onConfirm: (date) {
+  //         //       print('confirm $date');
+  //         //       //  String time = "${date.hour}:${date.minute} ${date.";
 
-          //       String time = DateFormat.jm().format(date);
-          //       print(time);
+  //         //       String time = DateFormat.jm().format(date);
+  //         //       print(time);
 
-          //       _openTimeController.text = time.toLowerCase();
-          //     }, currentTime: DateTime.now());
-          //   },
-          // ),
-          labelText: "Available from",
-          hintText: "hh:mm 24 hour time format",
-          enabledBorder:
-              UnderlineInputBorder(borderSide: BorderSide(color: Colors.grey)),
-          focusedBorder: UnderlineInputBorder(
-              borderSide: BorderSide(color: Colors.orange))),
-      validator: validateTime,
-      onChanged: (String value) {
-        //TODO: test the values
-        List<String> time = value.split(':');
-        contact.shiftStartHour = int.parse(time[0]);
-        contact.shiftStartMinute = int.parse(time[1]);
-      },
-      onSaved: (String value) {
-        //TODO: test the values
-        List<String> time = value.split(':');
-        contact.shiftStartHour = int.parse(time[0]);
-        contact.shiftStartMinute = int.parse(time[1]);
-      },
-    );
-    final ctAvlTillTimeField = TextFormField(
-      enabled: true,
-      obscureText: false,
-      readOnly: true,
-      maxLines: 1,
-      minLines: 1,
-      controller: _ctAvlTillTimeController,
-      style: textInputTextStyle,
-      onTap: () {
-        DatePicker.showTimePicker(context,
-            showTitleActions: true,
-            showSecondsColumn: false, onChanged: (date) {
-          print('change $date in time zone ' +
-              date.timeZoneOffset.inHours.toString());
-        }, onConfirm: (date) {
-          print('confirm $date');
-          //  String time = "${date.hour}:${date.minute} ${date.";
+  //         //       _openTimeController.text = time.toLowerCase();
+  //         //     }, currentTime: DateTime.now());
+  //         //   },
+  //         // ),
+  //         labelText: "Available from",
+  //         hintText: "hh:mm 24 hour time format",
+  //         enabledBorder:
+  //             UnderlineInputBorder(borderSide: BorderSide(color: Colors.grey)),
+  //         focusedBorder: UnderlineInputBorder(
+  //             borderSide: BorderSide(color: Colors.orange))),
+  //     validator: validateTime,
+  //     onChanged: (String value) {
+  //       //TODO: test the values
+  //       List<String> time = value.split(':');
+  //       contact.shiftStartHour = int.parse(time[0]);
+  //       contact.shiftStartMinute = int.parse(time[1]);
+  //     },
+  //     onSaved: (String value) {
+  //       //TODO: test the values
+  //       List<String> time = value.split(':');
+  //       contact.shiftStartHour = int.parse(time[0]);
+  //       contact.shiftStartMinute = int.parse(time[1]);
+  //     },
+  //   );
+  //   final ctAvlTillTimeField = TextFormField(
+  //     enabled: true,
+  //     obscureText: false,
+  //     readOnly: true,
+  //     maxLines: 1,
+  //     minLines: 1,
+  //     controller: _ctAvlTillTimeController,
+  //     style: textInputTextStyle,
+  //     onTap: () {
+  //       DatePicker.showTimePicker(context,
+  //           showTitleActions: true,
+  //           showSecondsColumn: false, onChanged: (date) {
+  //         print('change $date in time zone ' +
+  //             date.timeZoneOffset.inHours.toString());
+  //       }, onConfirm: (date) {
+  //         print('confirm $date');
+  //         //  String time = "${date.hour}:${date.minute} ${date.";
 
-          String time = DateFormat.Hm().format(date);
-          print(time);
+  //         String time = DateFormat.Hm().format(date);
+  //         print(time);
 
-          _ctAvlTillTimeController.text = time.toLowerCase();
-          if (_ctAvlTillTimeController.text != "") {
-            List<String> time = _ctAvlTillTimeController.text.split(':');
-            contact.shiftEndHour = int.parse(time[0]);
-            contact.shiftEndMinute = int.parse(time[1]);
-          }
-        }, currentTime: DateTime.now());
-      },
-      decoration: InputDecoration(
-          labelText: "Available till",
-          hintText: "hr:mm 24 hour time format",
-          enabledBorder:
-              UnderlineInputBorder(borderSide: BorderSide(color: Colors.grey)),
-          focusedBorder: UnderlineInputBorder(
-              borderSide: BorderSide(color: Colors.orange))),
-      validator: validateTime,
-      onChanged: (String value) {
-        //TODO: test the values
-        List<String> time = value.split(':');
-        contact.shiftEndHour = int.parse(time[0]);
-        contact.shiftEndMinute = int.parse(time[1]);
-      },
-      onSaved: (String value) {},
-    );
-    final ctDaysOffField = Padding(
-      padding: EdgeInsets.only(top: 12, bottom: 8),
-      child: Row(
-        children: <Widget>[
-          Text(
-            'Days off ',
-            style: TextStyle(
-              color: Colors.grey[600],
-              // fontWeight: FontWeight.w800,
-              fontFamily: 'Monsterrat',
-              letterSpacing: 0.5,
-              fontSize: 15.0,
-              //height: 2,
-            ),
-            textAlign: TextAlign.left,
-          ),
-          SizedBox(width: 5),
-          new WeekDaySelectorFormField(
-            displayDays: [
-              days.monday,
-              days.tuesday,
-              days.wednesday,
-              days.thursday,
-              days.friday,
-              days.saturday,
-              days.sunday
-            ],
-            initialValue: _ctClosedOnDays,
-            borderRadius: 20,
-            elevation: 10,
-            textStyle: buttonXSmlTextStyle,
-            fillColor: Colors.blueGrey[400],
-            selectedFillColor: highlightColor,
-            boxConstraints: BoxConstraints(
-                minHeight: 25, minWidth: 25, maxHeight: 28, maxWidth: 28),
-            borderSide: BorderSide(color: Colors.white, width: 0),
-            language: lang.en,
-            onChange: (days) {
-              print("Days off: " + days.toString());
-              _ctDaysOff.clear();
-              days.forEach((element) {
-                var day = element.toString().substring(5);
-                _ctDaysOff.add(day);
-              });
-              contact.daysOff = _ctDaysOff;
-              print(_ctDaysOff.length);
-              print(_ctDaysOff.toString());
-            },
-          ),
-        ],
-      ),
-    );
+  //         _ctAvlTillTimeController.text = time.toLowerCase();
+  //         if (_ctAvlTillTimeController.text != "") {
+  //           List<String> time = _ctAvlTillTimeController.text.split(':');
+  //           contact.shiftEndHour = int.parse(time[0]);
+  //           contact.shiftEndMinute = int.parse(time[1]);
+  //         }
+  //       }, currentTime: DateTime.now());
+  //     },
+  //     decoration: InputDecoration(
+  //         labelText: "Available till",
+  //         hintText: "hr:mm 24 hour time format",
+  //         enabledBorder:
+  //             UnderlineInputBorder(borderSide: BorderSide(color: Colors.grey)),
+  //         focusedBorder: UnderlineInputBorder(
+  //             borderSide: BorderSide(color: Colors.orange))),
+  //     validator: validateTime,
+  //     onChanged: (String value) {
+  //       //TODO: test the values
+  //       List<String> time = value.split(':');
+  //       contact.shiftEndHour = int.parse(time[0]);
+  //       contact.shiftEndMinute = int.parse(time[1]);
+  //     },
+  //     onSaved: (String value) {},
+  //   );
+  //   final ctDaysOffField = Padding(
+  //     padding: EdgeInsets.only(top: 12, bottom: 8),
+  //     child: Row(
+  //       children: <Widget>[
+  //         Text(
+  //           'Days off ',
+  //           style: TextStyle(
+  //             color: Colors.grey[600],
+  //             // fontWeight: FontWeight.w800,
+  //             fontFamily: 'Monsterrat',
+  //             letterSpacing: 0.5,
+  //             fontSize: 15.0,
+  //             //height: 2,
+  //           ),
+  //           textAlign: TextAlign.left,
+  //         ),
+  //         SizedBox(width: 5),
+  //         new WeekDaySelectorFormField(
+  //           displayDays: [
+  //             days.monday,
+  //             days.tuesday,
+  //             days.wednesday,
+  //             days.thursday,
+  //             days.friday,
+  //             days.saturday,
+  //             days.sunday
+  //           ],
+  //           initialValue: _ctClosedOnDays,
+  //           borderRadius: 20,
+  //           elevation: 10,
+  //           textStyle: buttonXSmlTextStyle,
+  //           fillColor: Colors.blueGrey[400],
+  //           selectedFillColor: highlightColor,
+  //           boxConstraints: BoxConstraints(
+  //               minHeight: 25, minWidth: 25, maxHeight: 28, maxWidth: 28),
+  //           borderSide: BorderSide(color: Colors.white, width: 0),
+  //           language: lang.en,
+  //           onChange: (days) {
+  //             print("Days off: " + days.toString());
+  //             _ctDaysOff.clear();
+  //             days.forEach((element) {
+  //               var day = element.toString().substring(5);
+  //               _ctDaysOff.add(day);
+  //             });
+  //             contact.daysOff = _ctDaysOff;
+  //             print(_ctDaysOff.length);
+  //             print(_ctDaysOff.toString());
+  //           },
+  //         ),
+  //       ],
+  //     ),
+  //   );
 
-    return Card(
-      child: Theme(
-        data: ThemeData(
-          unselectedWidgetColor: Colors.black,
-          accentColor: highlightColor,
-        ),
-        child: ExpansionTile(
-          //key: PageStorageKey(this.widget.headerTitle),
-          initiallyExpanded: false,
-          title: Text(
-            (contact.name != null && contact.name != "")
-                ? contact.name
-                : "Manager",
-            style: TextStyle(color: Colors.blueGrey[700], fontSize: 17),
-          ),
+  //   return Card(
+  //     child: Theme(
+  //       data: ThemeData(
+  //         unselectedWidgetColor: Colors.black,
+  //         accentColor: highlightColor,
+  //       ),
+  //       child: ExpansionTile(
+  //         //key: PageStorageKey(this.widget.headerTitle),
+  //         initiallyExpanded: false,
+  //         title: Text(
+  //           (contact.name != null && contact.name != "")
+  //               ? contact.name
+  //               : "Manager",
+  //           style: TextStyle(color: Colors.blueGrey[700], fontSize: 17),
+  //         ),
 
-          backgroundColor: Colors.white,
-          leading: IconButton(
-              icon: Icon(Icons.person, color: Colors.blueGrey[300], size: 20),
-              onPressed: () {
-                // contact.isManager = false;
-              }),
-          children: <Widget>[
-            Container(
-              color: Colors.cyan[50],
-              padding: EdgeInsets.only(left: 2.0, right: 2),
-              // decoration: BoxDecoration(
-              //     // border: Border.all(color: containerColor),
-              //     color: Colors.white,
-              //     shape: BoxShape.rectangle,
-              //     borderRadius: BorderRadius.all(Radius.circular(5.0))),
-              // padding: EdgeInsets.all(5.0),
+  //         backgroundColor: Colors.white,
+  //         leading: IconButton(
+  //             icon: Icon(Icons.person, color: Colors.blueGrey[300], size: 20),
+  //             onPressed: () {
+  //               // contact.isManager = false;
+  //             }),
+  //         children: <Widget>[
+  //           Container(
+  //             color: Colors.cyan[50],
+  //             padding: EdgeInsets.only(left: 2.0, right: 2),
+  //             // decoration: BoxDecoration(
+  //             //     // border: Border.all(color: containerColor),
+  //             //     color: Colors.white,
+  //             //     shape: BoxShape.rectangle,
+  //             //     borderRadius: BorderRadius.all(Radius.circular(5.0))),
+  //             // padding: EdgeInsets.all(5.0),
 
-              child: new Form(
-                //  autovalidate: _autoValidate,
-                child: ListTile(
-                  title: Column(
-                    children: <Widget>[
-                      ctNameField,
-                      ctEmpIdField,
-                      ctPhn1Field,
-                      ctPhn2Field,
-                      ctDaysOffField,
-                      Divider(
-                        thickness: .7,
-                        color: Colors.grey[600],
-                      ),
-                      ctAvlFromTimeField,
-                      ctAvlTillTimeField,
-                      RaisedButton(
-                          color: btnColor,
-                          child: Text(
-                            "Remove",
-                            style: buttonMedTextStyle,
-                          ),
-                          onPressed: () {
-                            String removeThisId;
-                            for (int i = 0; i < _entity.managers.length; i++) {
-                              if (_entity.managers[i].id == contact.id) {
-                                removeThisId = contact.id;
-                                print(_entity.managers[i].id);
-                                break;
-                              }
-                            }
-                            if (removeThisId != null) {
-                              setState(() {
-                                contact = null;
-                                _entity.managers.removeWhere(
-                                    (element) => element.id == removeThisId);
-                                _list.removeWhere(
-                                    (element) => element.id == removeThisId);
-                              });
-                            }
-                          })
-                    ],
-                  ),
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
+  //             child: new Form(
+  //               //  autovalidate: _autoValidate,
+  //               child: ListTile(
+  //                 title: Column(
+  //                   children: <Widget>[
+  //                     ctNameField,
+  //                     ctEmpIdField,
+  //                     ctPhn1Field,
+  //                     ctPhn2Field,
+  //                     ctDaysOffField,
+  //                     Divider(
+  //                       thickness: .7,
+  //                       color: Colors.grey[600],
+  //                     ),
+  //                     ctAvlFromTimeField,
+  //                     ctAvlTillTimeField,
+  //                     RaisedButton(
+  //                         color: btnColor,
+  //                         child: Text(
+  //                           "Remove",
+  //                           style: buttonMedTextStyle,
+  //                         ),
+  //                         onPressed: () {
+  //                           String removeThisId;
+  //                           for (int i = 0; i < _entity.managers.length; i++) {
+  //                             if (_entity.managers[i].id == contact.id) {
+  //                               removeThisId = contact.id;
+  //                               print(_entity.managers[i].id);
+  //                               break;
+  //                             }
+  //                           }
+  //                           if (removeThisId != null) {
+  //                             setState(() {
+  //                               contact = null;
+  //                               _entity.managers.removeWhere(
+  //                                   (element) => element.id == removeThisId);
+  //                               _list.removeWhere(
+  //                                   (element) => element.id == removeThisId);
+  //                             });
+  //                           }
+  //                         })
+  //                   ],
+  //                 ),
+  //               ),
+  //             ),
+  //           ),
+  //         ],
+  //       ),
+  //     ),
+  //   );
+  // }
 
   ///end from contact page
   ///
