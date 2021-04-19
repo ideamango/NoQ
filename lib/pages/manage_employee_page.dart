@@ -211,6 +211,46 @@ class _ManageEmployeePageState extends State<ManageEmployeePage> {
 
   @override
   Widget build(BuildContext context) {
+    final adminInputField = new TextFormField(
+      key: adminPhoneKey,
+      autofocus: true,
+      inputFormatters: [
+        LengthLimitingTextInputFormatter(18),
+      ],
+      keyboardType: TextInputType.phone,
+
+      controller: _adminItemController,
+      cursorColor: highlightColor,
+      //cursorWidth: 1,
+      style: textInputTextStyle,
+      decoration: new InputDecoration(
+          contentPadding: EdgeInsets.fromLTRB(5, 7, 5, 7),
+          isDense: true,
+          prefixStyle: textInputTextStyle,
+          // hintStyle: hintTextStyle,
+          prefixText: '+91',
+          suffixIconConstraints: BoxConstraints(
+            maxWidth: 22,
+            maxHeight: 22,
+          ),
+          // contentPadding: EdgeInsets.all(0),
+          focusedBorder: InputBorder.none,
+          enabledBorder: InputBorder.none,
+          hintText: "Enter Admin's Contact number & press (+) (optional)",
+          hintStyle: new TextStyle(fontSize: 12, color: Colors.blueGrey[500])),
+      validator: Utils.validateMobileField,
+      onChanged: (value) {
+        adminPhoneKey.currentState.validate();
+
+        setState(() {
+          _item = '+91' + value;
+          // _errMsg = "";
+        });
+      },
+      onSaved: (newValue) {
+        _item = '+91' + newValue;
+      },
+    );
     if (_initCompleted)
       return MaterialApp(
         debugShowCheckedModeBanner: false,
@@ -282,6 +322,162 @@ class _ManageEmployeePageState extends State<ManageEmployeePage> {
                     //     : Container(),
                     if (!Utils.isNullOrEmpty(contactList))
                       Column(children: contactRowWidgets),
+                    Container(
+                      margin: EdgeInsets.all(5),
+                      padding: EdgeInsets.all(0),
+                      decoration: BoxDecoration(
+                          border: Border.all(color: containerColor),
+                          color: Colors.grey[50],
+                          shape: BoxShape.rectangle,
+                          borderRadius: BorderRadius.all(Radius.circular(5.0))),
+                      // padding: EdgeInsets.all(5.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Column(
+                            children: <Widget>[
+                              Container(
+                                //padding: EdgeInsets.only(left: 5),
+                                decoration: darkContainer,
+                                child: Theme(
+                                  data: ThemeData(
+                                    unselectedWidgetColor: Colors.white,
+                                    accentColor: Colors.grey[50],
+                                  ),
+                                  child: CustomExpansionTile(
+                                    //key: PageStorageKey(this.widget.headerTitle),
+                                    initiallyExpanded: false,
+                                    title: Row(
+                                      children: <Widget>[
+                                        Text(
+                                          "Assign an Admin",
+                                          style: TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 15),
+                                        ),
+                                        SizedBox(width: 5),
+                                      ],
+                                    ),
+                                    // trailing: IconButton(
+                                    //   icon: Icon(Icons.add_circle,
+                                    //       color: highlightColor, size: 40),
+                                    //   onPressed: () {
+                                    //     addNewAdminRow();
+                                    //   },
+                                    // ),
+                                    backgroundColor: Colors.blueGrey[500],
+                                    children: <Widget>[
+                                      new Container(
+                                        width:
+                                            MediaQuery.of(context).size.width *
+                                                .94,
+                                        decoration: darkContainer,
+                                        padding: EdgeInsets.all(2.0),
+                                        child: Row(
+                                          children: <Widget>[
+                                            Expanded(
+                                              child: Text(adminInfoStr,
+                                                  style: buttonXSmlTextStyle),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                              //Add Admins list
+                              Column(
+                                children: <Widget>[
+                                  Container(
+                                    margin: EdgeInsets.all(4),
+                                    padding: EdgeInsets.fromLTRB(0, 0, 4, 0),
+                                    height:
+                                        MediaQuery.of(context).size.width * .18,
+                                    decoration: BoxDecoration(
+                                        border: Border.all(color: borderColor),
+                                        color: Colors.white,
+                                        shape: BoxShape.rectangle,
+                                        borderRadius: BorderRadius.all(
+                                            Radius.circular(5.0))),
+                                    child: Row(
+                                      // mainAxisAlignment: MainAxisAlignment.end,
+                                      children: <Widget>[
+                                        Expanded(
+                                          child: adminInputField,
+                                        ),
+                                        Container(
+                                          padding:
+                                              EdgeInsets.fromLTRB(0, 0, 0, 0),
+                                          width: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                              .1,
+                                          height: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                              .1,
+                                          child: IconButton(
+                                              padding: EdgeInsets.all(0),
+                                              icon: Icon(Icons.person_add,
+                                                  color: highlightColor,
+                                                  size: 38),
+                                              onPressed: () {
+                                                if (_adminItemController.text ==
+                                                        null ||
+                                                    _adminItemController
+                                                        .text.isEmpty) {
+                                                  Utils.showMyFlushbar(
+                                                      context,
+                                                      Icons.info_outline,
+                                                      Duration(
+                                                        seconds: 4,
+                                                      ),
+                                                      "Something Missing ..",
+                                                      "Please enter Phone number !!");
+                                                } else {
+                                                  bool result = adminPhoneKey
+                                                      .currentState
+                                                      .validate();
+                                                  if (result) {
+                                                    _addNewAdminRow();
+                                                    _adminItemController.text =
+                                                        "";
+                                                  } else {
+                                                    Utils.showMyFlushbar(
+                                                        context,
+                                                        Icons.info_outline,
+                                                        Duration(
+                                                          seconds: 5,
+                                                        ),
+                                                        "Oops!! Seems like the phone number is not valid",
+                                                        "Please check and try again !!");
+                                                  }
+                                                }
+                                              }),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  ListView.builder(
+                                    shrinkWrap: true,
+                                    //scrollDirection: Axis.vertical,
+                                    itemBuilder:
+                                        (BuildContext context, int index) {
+                                      return new Column(
+                                          children: adminsList
+                                              .map(_buildServiceItem)
+                                              .toList());
+                                    },
+                                    itemCount: 1,
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
                   ],
                 ),
               ),
@@ -302,7 +498,7 @@ class _ManageEmployeePageState extends State<ManageEmployeePage> {
         ),
       );
     else
-      MaterialApp(
+      return MaterialApp(
         debugShowCheckedModeBanner: false,
         theme: ThemeData.light().copyWith(),
         home: new WillPopScope(
