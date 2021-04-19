@@ -15,6 +15,7 @@ import 'package:noq/pages/manage_entity_list_page.dart';
 import 'package:noq/services/circular_progress.dart';
 import 'package:noq/style.dart';
 import 'package:noq/utils.dart';
+import 'package:noq/widget/appbar.dart';
 import 'package:noq/widget/custom_expansion_tile.dart';
 import 'package:noq/widget/page_animation.dart';
 import 'package:noq/widget/widgets.dart';
@@ -210,93 +211,120 @@ class _ManageEmployeePageState extends State<ManageEmployeePage> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData.light().copyWith(),
-      home: WillPopScope(
-        child: Scaffold(
-          key: employeeListPagekey,
-          appBar: AppBar(
-            actions: <Widget>[],
-            flexibleSpace: Container(
-              decoration: gradientBackground,
+    if (_initCompleted)
+      return MaterialApp(
+        debugShowCheckedModeBanner: false,
+        theme: ThemeData.light().copyWith(),
+        home: WillPopScope(
+          child: Scaffold(
+            key: employeeListPagekey,
+            appBar: AppBar(
+              actions: <Widget>[],
+              flexibleSpace: Container(
+                decoration: gradientBackground,
+              ),
+              leading: IconButton(
+                padding: EdgeInsets.all(0),
+                alignment: Alignment.center,
+                highlightColor: highlightColor,
+                icon: Icon(Icons.arrow_back),
+                color: Colors.white,
+                onPressed: () {
+                  print("going back");
+                  Navigator.of(context).pop();
+                },
+              ),
+              title: Text(Utils.getEntityTypeDisplayName(entity.type),
+                  style: whiteBoldTextStyle1),
             ),
-            leading: IconButton(
-              padding: EdgeInsets.all(0),
-              alignment: Alignment.center,
-              highlightColor: highlightColor,
-              icon: Icon(Icons.arrow_back),
-              color: Colors.white,
-              onPressed: () {
-                print("going back");
-                Navigator.of(context).pop();
-              },
-            ),
-            title: Text(Utils.getEntityTypeDisplayName(entity.type),
-                style: whiteBoldTextStyle1),
-          ),
-          body: Scrollbar(
-            child: SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Card(
-                    elevation: 8,
-                    margin:
-                        EdgeInsets.all(MediaQuery.of(context).size.width * .03),
-                    child: Container(
-                      padding: EdgeInsets.all(5),
-                      decoration: BoxDecoration(
-                          border: Border.all(color: highlightColor),
-                          color: Colors.white,
-                          shape: BoxShape.rectangle,
-                          borderRadius: BorderRadius.all(Radius.circular(5.0))),
-                      child: InkWell(
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: <Widget>[
-                            Text(" Add an Employee",
-                                style: TextStyle(
-                                    fontSize: 18, color: Colors.blueGrey[700])),
-                            horizontalSpacer,
-                            Icon(Icons.person_add,
-                                color: highlightColor, size: 40),
-                          ],
+            body: Scrollbar(
+              child: SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Card(
+                      elevation: 8,
+                      margin: EdgeInsets.all(
+                          MediaQuery.of(context).size.width * .03),
+                      child: Container(
+                        padding: EdgeInsets.all(5),
+                        decoration: BoxDecoration(
+                            border: Border.all(color: highlightColor),
+                            color: Colors.white,
+                            shape: BoxShape.rectangle,
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(5.0))),
+                        child: InkWell(
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: <Widget>[
+                              Text(" Add an Employee",
+                                  style: TextStyle(
+                                      fontSize: 18,
+                                      color: Colors.blueGrey[700])),
+                              horizontalSpacer,
+                              Icon(Icons.person_add,
+                                  color: highlightColor, size: 40),
+                            ],
+                          ),
+                          onTap: () {
+                            print("Tappped");
+                            showCategorySheet();
+                          },
                         ),
-                        onTap: () {
-                          print("Tappped");
-                          showCategorySheet();
-                        },
                       ),
                     ),
-                  ),
-                  // (_msg != null)
-                  //     ? Text(
-                  //         _msg,
-                  //         style: errorTextStyle,
-                  //       )
-                  //     : Container(),
-                  if (!Utils.isNullOrEmpty(contactList))
-                    Column(children: contactRowWidgets),
+                    // (_msg != null)
+                    //     ? Text(
+                    //         _msg,
+                    //         style: errorTextStyle,
+                    //       )
+                    //     : Container(),
+                    if (!Utils.isNullOrEmpty(contactList))
+                      Column(children: contactRowWidgets),
+                  ],
+                ),
+              ),
+            ),
+          ),
+          onWillPop: () async {
+            if (bottomSheetController != null) {
+              bottomSheetController.close();
+              bottomSheetController = null;
+              return false;
+            } else {
+              //Navigator.of(context).pop();
+              Navigator.of(context)
+                  .push(PageAnimation.createRoute(ManageEntityListPage()));
+              return false;
+            }
+          },
+        ),
+      );
+    else
+      MaterialApp(
+        debugShowCheckedModeBanner: false,
+        theme: ThemeData.light().copyWith(),
+        home: new WillPopScope(
+          child: Scaffold(
+            appBar: CustomAppBarWithBackButton(
+              backRoute: ManageEntityListPage(),
+              titleTxt: "Booking Tokens Overview ",
+            ),
+            body: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  showCircularProgress(),
                 ],
               ),
             ),
           ),
+          onWillPop: () async {
+            return true;
+          },
         ),
-        onWillPop: () async {
-          if (bottomSheetController != null) {
-            bottomSheetController.close();
-            bottomSheetController = null;
-            return false;
-          } else {
-            //Navigator.of(context).pop();
-            Navigator.of(context)
-                .push(PageAnimation.createRoute(ManageEntityListPage()));
-            return false;
-          }
-        },
-      ),
-    );
+      );
   }
 
   showCategorySheet() {
