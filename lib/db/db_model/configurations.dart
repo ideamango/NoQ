@@ -1,4 +1,6 @@
+import 'package:enum_to_string/enum_to_string.dart';
 import 'package:noq/db/db_model/meta_form.dart';
+import 'package:noq/enum/entity_type.dart';
 import 'package:noq/utils.dart';
 
 class Configurations {
@@ -162,5 +164,25 @@ class Configurations {
       strs.add(str);
     }
     return strs;
+  }
+
+  List<MetaForm> getMetaForms(EntityType eType) {
+    List<MetaForm> forms = new List<MetaForm>();
+    if (this.formToEntityTypeMapping == null) {
+      return forms;
+    }
+
+    this.formToEntityTypeMapping.forEach((k, v) {
+      if (v == EnumToString.convertToString(eType)) {
+        for (MetaForm form in this.formMetaData) {
+          if (form.id == k) {
+            forms.add(form);
+            break;
+          }
+        }
+      }
+    });
+
+    return forms;
   }
 }

@@ -183,6 +183,28 @@ class Entity {
     return usersJson;
   }
 
+  EntityRole getRole(String phone) {
+    for (int index = 0; index < this.admins.length; index++) {
+      if (this.admins[index].ph == phone) {
+        return EntityRole.Admin;
+      }
+    }
+
+    for (int index = 0; index < this.managers.length; index++) {
+      if (this.managers[index].ph == phone) {
+        return EntityRole.Manager;
+      }
+    }
+
+    for (int index = 0; index < this.executives.length; index++) {
+      if (this.executives[index].ph == phone) {
+        return EntityRole.Executive;
+      }
+    }
+
+    return null;
+  }
+
   static Entity fromJson(Map<String, dynamic> json) {
     if (json == null) return null;
     return new Entity(
