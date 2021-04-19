@@ -3,8 +3,10 @@ import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:noq/db/db_model/employee.dart';
 import 'package:noq/db/db_model/entity.dart';
+import 'package:noq/enum/entity_type.dart';
 import 'package:noq/events/event_bus.dart';
 import 'package:noq/events/events.dart';
+import 'package:noq/global_state.dart';
 import 'package:noq/style.dart';
 import 'package:flutter/foundation.dart';
 import 'package:noq/utils.dart';
@@ -12,10 +14,15 @@ import 'package:noq/widget/weekday_selector.dart';
 
 class ContactRow extends StatefulWidget {
   final Entity entity;
+  final EntityRole empType;
   final Employee contact;
   final List<Employee> list;
   ContactRow(
-      {Key key, @required this.contact, @required this.entity, this.list})
+      {Key key,
+      @required this.entity,
+      @required this.empType,
+      @required this.contact,
+      this.list})
       : super(key: key);
   @override
   State<StatefulWidget> createState() => new ContactRowState();
@@ -39,6 +46,7 @@ class ContactRowState extends State<ContactRow> {
   List<days> _closedOnDays;
   Entity _entity;
   List<Employee> _list;
+  GlobalState _gs;
 
   @override
   void initState() {
@@ -46,6 +54,9 @@ class ContactRowState extends State<ContactRow> {
     contact = widget.contact;
     _entity = widget.entity;
     _list = widget.list;
+    GlobalState.getGlobalState().then((value) {
+      _gs = value;
+    });
     initializeContactDetails();
   }
 
@@ -117,6 +128,7 @@ class ContactRowState extends State<ContactRow> {
       validator: validateText,
       onChanged: (String value) {
         contact.name = value;
+        setState(() {});
       },
       onSaved: (String value) {
         contact.name = value;
@@ -347,7 +359,7 @@ class ContactRowState extends State<ContactRow> {
       //  padding: EdgeInsets.all(8),
       margin: EdgeInsets.all(12),
       decoration: BoxDecoration(
-          border: Border.all(color: borderColor),
+          border: Border.all(color: headerBarColor),
           color: Colors.white,
           shape: BoxShape.rectangle,
           borderRadius: BorderRadius.all(Radius.circular(5.0))),
@@ -364,20 +376,22 @@ class ContactRowState extends State<ContactRow> {
           title: Text(
             (contact.name != null && contact.name != "")
                 ? contact.name
-                : "Manager",
+                : (widget.empType == EntityRole.Manager
+                    ? "Manager"
+                    : "Executive"),
             style: TextStyle(color: Colors.blueGrey[700], fontSize: 17),
           ),
 
           backgroundColor: Colors.white,
           leading: IconButton(
-              icon: Icon(Icons.person, color: Colors.blueGrey[300], size: 20),
+              icon: Icon(Icons.person, color: Colors.blueGrey[300], size: 30),
               onPressed: () {
                 // contact.isManager = false;
               }),
           children: <Widget>[
             Container(
-              margin: EdgeInsets.all(MediaQuery.of(context).size.width * .026),
-              padding: EdgeInsets.all(MediaQuery.of(context).size.width * .026),
+              //  margin: EdgeInsets.all(MediaQuery.of(context).size.width * .026),
+              //padding: EdgeInsets.all(MediaQuery.of(context).size.width * .026),
               // padding: EdgeInsets.all(MediaQuery.of(context).size.width * .026),
               color: Colors.cyan[50],
               // padding: EdgeInsets.only(left: 2.0, right: 2),
@@ -405,35 +419,154 @@ class ContactRowState extends State<ContactRow> {
                         ),
                         ctAvlFromTimeField,
                         ctAvlTillTimeField,
-                        RaisedButton(
-                            color: btnColor,
-                            child: Text(
-                              "Remove",
-                              style: buttonMedTextStyle,
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            SizedBox(
+                              width: MediaQuery.of(context).size.width * .37,
+                              child: RaisedButton(
+                                  color: Colors.white,
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Text(
+                                        "Remove",
+                                        style: TextStyle(
+                                          color: btnColor,
+                                          fontWeight: FontWeight.w700,
+                                          fontFamily: 'Montserrat',
+                                          fontSize: 15,
+                                        ),
+                                      ),
+                                      SizedBox(
+                                          width: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                              .01),
+                                      Icon(Icons.delete, color: btnColor)
+                                    ],
+                                  ),
+                                  onPressed: () {
+                                    if (widget.empType == EntityRole.Manager) {
+                                      String removeThisId;
+                                      for (int i = 0;
+                                          i < _entity.managers.length;
+                                          i++) {
+                                        if (_entity.managers[i].id ==
+                                            contact.id) {
+                                          removeThisId = contact.id;
+                                          print(_entity.managers[i].id);
+                                          break;
+                                        }
+                                      }
+                                      if (removeThisId != null) {
+                                        setState(() {
+                                          contact = null;
+                                          // _entity.managers.removeWhere(
+                                          //     (element) => element.id == removeThisId);
+                                          _list.removeWhere((element) =>
+                                              element.id == removeThisId);
+                                          EventBus.fireEvent(
+                                              MANAGER_REMOVED_EVENT,
+                                              null,
+                                              removeThisId);
+                                        });
+                                      }
+                                    } else if (widget.empType ==
+                                        EntityRole.Executive) {
+                                      String removeThisId;
+                                      for (int i = 0;
+                                          i < _entity.executives.length;
+                                          i++) {
+                                        if (_entity.executives[i].id ==
+                                            contact.id) {
+                                          removeThisId = contact.id;
+                                          print(_entity.executives[i].id);
+                                          break;
+                                        }
+                                      }
+                                      if (removeThisId != null) {
+                                        setState(() {
+                                          contact = null;
+                                          // _entity.managers.removeWhere(
+                                          //     (element) => element.id == removeThisId);
+                                          _list.removeWhere((element) =>
+                                              element.id == removeThisId);
+                                          EventBus.fireEvent(
+                                              EXECUTIVE_REMOVED_EVENT,
+                                              null,
+                                              removeThisId);
+                                        });
+                                      }
+                                    }
+                                  }),
                             ),
-                            onPressed: () {
-                              String removeThisId;
-                              for (int i = 0;
-                                  i < _entity.managers.length;
-                                  i++) {
-                                if (_entity.managers[i].id == contact.id) {
-                                  removeThisId = contact.id;
-                                  print(_entity.managers[i].id);
-                                  break;
-                                }
-                              }
-                              if (removeThisId != null) {
-                                setState(() {
-                                  contact = null;
-                                  _entity.managers.removeWhere(
-                                      (element) => element.id == removeThisId);
-                                  _list.removeWhere(
-                                      (element) => element.id == removeThisId);
-                                  EventBus.fireEvent(MANAGER_REMOVED_EVENT,
-                                      null, removeThisId);
-                                });
-                              }
-                            })
+                            SizedBox(
+                              width: MediaQuery.of(context).size.width * .04,
+                            ),
+                            SizedBox(
+                              width: MediaQuery.of(context).size.width * .37,
+                              child: RaisedButton(
+                                  color: btnColor,
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Text(
+                                        "Save",
+                                        style: buttonMedTextStyle,
+                                      ),
+                                      SizedBox(
+                                          width: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                              .01),
+                                      Icon(Icons.save, color: Colors.white)
+                                    ],
+                                  ),
+                                  onPressed: () {
+                                    // String removeThisId;
+                                    // for (int i = 0;
+                                    //     i < _entity.managers.length;
+                                    //     i++) {
+                                    //   if (_entity.managers[i].id == contact.id) {
+                                    //     removeThisId = contact.id;
+                                    //     print(_entity.managers[i].id);
+                                    //     break;
+                                    //   }
+                                    // }
+                                    // if (removeThisId != null) {
+                                    //   setState(() {
+                                    //     contact = null;
+                                    //     // _entity.managers.removeWhere(
+                                    //     //     (element) => element.id == removeThisId);
+                                    //     _list.removeWhere(
+                                    //         (element) => element.id == removeThisId);
+                                    //     EventBus.fireEvent(MANAGER_REMOVED_EVENT,
+                                    //         null, removeThisId);
+                                    //   });
+                                    // }
+                                    //
+                                    //
+                                    //TODO: Add validation for Phone number
+                                    _gs
+                                        .getEntityService()
+                                        .addEmployee(widget.entity.entityId,
+                                            contact, widget.empType)
+                                        .then((retVal) {
+                                      if (retVal) {
+                                        print("Success");
+                                        Utils.showMyFlushbar(
+                                            context,
+                                            Icons.check,
+                                            Duration(seconds: 3),
+                                            "Employee Details Saved",
+                                            "");
+                                      }
+                                    });
+                                  }),
+                            ),
+                          ],
+                        )
                       ],
                     ),
                   ),

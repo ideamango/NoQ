@@ -708,26 +708,26 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
         _pinController.text = entity.address.zipcode;
       }
       //contact person
-      if (!(Utils.isNullOrEmpty(entity.managers))) {
-        contactList = entity.managers;
-        contactList.forEach((element) {
-          contactRowWidgets.add(new ContactRow(
-              contact: element, entity: entity, list: contactList));
-        });
-      }
+      // if (!(Utils.isNullOrEmpty(entity.managers))) {
+      //   contactList = entity.managers;
+      //   contactList.forEach((element) {
+      //     contactRowWidgets.add(new ContactRow(
+      //         contact: element, entity: entity, list: contactList));
+      //   });
+      // }
 
-      AppUser currUser = _gs.getCurrentUser();
-      Map<String, String> adminMap = Map<String, String>();
-      EntityPrivate entityPrivateList;
-      entityPrivateList = await fetchAdmins(entity.entityId);
-      if (entityPrivateList != null) {
-        adminMap = entityPrivateList.roles;
-        if (adminMap != null)
-          adminMap.forEach((k, v) {
-            if (currUser.ph != k) adminsList.add(k);
-          });
-        _regNumController.text = entityPrivateList.registrationNumber;
-      }
+      //  AppUser currUser = _gs.getCurrentUser();
+      // Map<String, String> adminMap = Map<String, String>();
+      // EntityPrivate entityPrivateList;
+      // entityPrivateList = await fetchAdmins(entity.entityId);
+      // if (entityPrivateList != null) {
+      //   adminMap = entityPrivateList.roles;
+      //   if (adminMap != null)
+      //     adminMap.forEach((k, v) {
+      //       if (currUser.ph != k) adminsList.add(k);
+      //     });
+      //   _regNumController.text = entityPrivateList.registrationNumber;
+      // }
     }
     Location lc = _gs.getLocation();
     Address defaultAdrs = new Address();
@@ -805,41 +805,41 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
     }
   }
 
-  void _addNewContactRow() {
-    Employee contact = new Employee();
-    var uuid = new Uuid();
-    contact.id = uuid.v1();
-    contactList.add(contact);
+  // void _addNewContactRow() {
+  //   Employee contact = new Employee();
+  //   var uuid = new Uuid();
+  //   contact.id = uuid.v1();
+  //   contactList.add(contact);
 
-    List<Widget> newList = new List<Widget>();
-    for (int i = 0; i < contactList.length; i++) {
-      newList.add(new ContactRow(
-        contact: contactList[i],
-        entity: entity,
-        list: contactList,
-      ));
-    }
-    setState(() {
-      contactRowWidgets.clear();
-      contactRowWidgets.addAll(newList);
-      entity.managers = contactList;
-      // _contactCount = _contactCount + 1;
-    });
-  }
+  //   List<Widget> newList = new List<Widget>();
+  //   for (int i = 0; i < contactList.length; i++) {
+  //     newList.add(new ContactRow(
+  //       contact: contactList[i],
+  //       entity: entity,
+  //       list: contactList,
+  //     ));
+  //   }
+  //   setState(() {
+  //     contactRowWidgets.clear();
+  //     contactRowWidgets.addAll(newList);
+  //     entity.managers = contactList;
+  //     // _contactCount = _contactCount + 1;
+  //   });
+  // }
 
-  void addNewAdminRow() {
-    setState(() {
-      adminsList.add("Admin");
-    });
-  }
+  // void addNewAdminRow() {
+  //   setState(() {
+  //     adminsList.add("Admin");
+  //   });
+  // }
 
-  void saveNewAdminRow(String newAdmPh) {
-    setState(() {
-      adminsList.forEach((element) {
-        if (element.compareTo(newAdmPh) != 0) adminsList.add(newAdmPh);
-      });
-    });
-  }
+  // void saveNewAdminRow(String newAdmPh) {
+  //   setState(() {
+  //     adminsList.forEach((element) {
+  //       if (element.compareTo(newAdmPh) != 0) adminsList.add(newAdmPh);
+  //     });
+  //   });
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -1804,38 +1804,38 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
       bool _delEnabled = false;
       Flushbar flush;
       bool _wasButtonClicked;
-      void _addNewAdminRow() {
-        bool insert = true;
-        String newAdminPh = '+91' + _adminItemController.text;
+      // void _addNewAdminRow() {
+      //   bool insert = true;
+      //   String newAdminPh = '+91' + _adminItemController.text;
 
-        setState(() {
-          if (adminsList.length != 0) {
-            for (int i = 0; i < adminsList.length; i++) {
-              if (adminsList[i] == (newAdminPh)) {
-                insert = false;
-                Utils.showMyFlushbar(
-                    context,
-                    Icons.info_outline,
-                    Duration(
-                      seconds: 5,
-                    ),
-                    "Error",
-                    "Phone number already exists !!");
-                break;
-              }
-              print("in for loop $insert");
-              print(adminsList[i] == newAdminPh);
-              print(newAdminPh);
-              print(adminsList[i]);
-            }
-          }
+      //   setState(() {
+      //     if (adminsList.length != 0) {
+      //       for (int i = 0; i < adminsList.length; i++) {
+      //         if (adminsList[i] == (newAdminPh)) {
+      //           insert = false;
+      //           Utils.showMyFlushbar(
+      //               context,
+      //               Icons.info_outline,
+      //               Duration(
+      //                 seconds: 5,
+      //               ),
+      //               "Error",
+      //               "Phone number already exists !!");
+      //           break;
+      //         }
+      //         print("in for loop $insert");
+      //         print(adminsList[i] == newAdminPh);
+      //         print(newAdminPh);
+      //         print(adminsList[i]);
+      //       }
+      //     }
 
-          if (insert) adminsList.insert(0, newAdminPh);
-          print("after foreach");
+      //     if (insert) adminsList.insert(0, newAdminPh);
+      //     print("after foreach");
 
-          //TODO: Smita - Update GS
-        });
-      }
+      //     //TODO: Smita - Update GS
+      //   });
+      // }
 
       void _removeServiceRow(String currItem) {
         removeAdmin(entity.entityId, currItem).then((delStatus) {
@@ -2274,47 +2274,6 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
 
       String _msg;
 
-      final adminInputField = new TextFormField(
-        key: adminPhoneKey,
-        autofocus: true,
-        inputFormatters: [
-          LengthLimitingTextInputFormatter(18),
-        ],
-        keyboardType: TextInputType.phone,
-
-        controller: _adminItemController,
-        cursorColor: highlightColor,
-        //cursorWidth: 1,
-        style: textInputTextStyle,
-        decoration: new InputDecoration(
-            contentPadding: EdgeInsets.fromLTRB(5, 7, 5, 7),
-            isDense: true,
-            prefixStyle: textInputTextStyle,
-            // hintStyle: hintTextStyle,
-            prefixText: '+91',
-            suffixIconConstraints: BoxConstraints(
-              maxWidth: 22,
-              maxHeight: 22,
-            ),
-            // contentPadding: EdgeInsets.all(0),
-            focusedBorder: InputBorder.none,
-            enabledBorder: InputBorder.none,
-            hintText: "Enter Admin's Contact number & press (+) (optional)",
-            hintStyle:
-                new TextStyle(fontSize: 12, color: Colors.blueGrey[500])),
-        validator: Utils.validateMobileField,
-        onChanged: (value) {
-          adminPhoneKey.currentState.validate();
-
-          setState(() {
-            _item = '+91' + value;
-            // _errMsg = "";
-          });
-        },
-        onSaved: (newValue) {
-          _item = '+91' + newValue;
-        },
-      );
       double rowWidth = MediaQuery.of(context).size.width * .9;
       return MaterialApp(
         debugShowCheckedModeBanner: false,
@@ -2915,301 +2874,301 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
                         height: 7,
                       ),
                       //THIS CONTAINER
-                      Container(
-                        margin: EdgeInsets.all(5),
-                        padding: EdgeInsets.all(0),
-                        decoration: BoxDecoration(
-                            border: Border.all(color: containerColor),
-                            color: Colors.grey[50],
-                            shape: BoxShape.rectangle,
-                            borderRadius:
-                                BorderRadius.all(Radius.circular(5.0))),
-                        // padding: EdgeInsets.all(5.0),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            Column(
-                              children: <Widget>[
-                                Container(
-                                  //padding: EdgeInsets.only(left: 5),
-                                  decoration: darkContainer,
-                                  child: Theme(
-                                    data: ThemeData(
-                                      unselectedWidgetColor: Colors.white,
-                                      accentColor: Colors.grey[50],
-                                    ),
-                                    child: CustomExpansionTile(
-                                      //key: PageStorageKey(this.widget.headerTitle),
-                                      initiallyExpanded: false,
-                                      title: Row(
-                                        children: <Widget>[
-                                          Text(
-                                            "Assign an Admin",
-                                            style: TextStyle(
-                                                color: Colors.white,
-                                                fontSize: 15),
-                                          ),
-                                          SizedBox(width: 5),
-                                        ],
-                                      ),
-                                      // trailing: IconButton(
-                                      //   icon: Icon(Icons.add_circle,
-                                      //       color: highlightColor, size: 40),
-                                      //   onPressed: () {
-                                      //     addNewAdminRow();
-                                      //   },
-                                      // ),
-                                      backgroundColor: Colors.blueGrey[500],
-                                      children: <Widget>[
-                                        new Container(
-                                          width: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
-                                              .94,
-                                          decoration: darkContainer,
-                                          padding: EdgeInsets.all(2.0),
-                                          child: Row(
-                                            children: <Widget>[
-                                              Expanded(
-                                                child: Text(adminInfoStr,
-                                                    style: buttonXSmlTextStyle),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                                //Add Admins list
-                                Column(
-                                  children: <Widget>[
-                                    Container(
-                                      margin: EdgeInsets.all(4),
-                                      padding: EdgeInsets.fromLTRB(0, 0, 4, 0),
-                                      height:
-                                          MediaQuery.of(context).size.width *
-                                              .18,
-                                      decoration: BoxDecoration(
-                                          border:
-                                              Border.all(color: borderColor),
-                                          color: Colors.white,
-                                          shape: BoxShape.rectangle,
-                                          borderRadius: BorderRadius.all(
-                                              Radius.circular(5.0))),
-                                      child: Row(
-                                        // mainAxisAlignment: MainAxisAlignment.end,
-                                        children: <Widget>[
-                                          Expanded(
-                                            child: adminInputField,
-                                          ),
-                                          Container(
-                                            padding:
-                                                EdgeInsets.fromLTRB(0, 0, 0, 0),
-                                            width: MediaQuery.of(context)
-                                                    .size
-                                                    .width *
-                                                .1,
-                                            height: MediaQuery.of(context)
-                                                    .size
-                                                    .width *
-                                                .1,
-                                            child: IconButton(
-                                                padding: EdgeInsets.all(0),
-                                                icon: Icon(Icons.person_add,
-                                                    color: highlightColor,
-                                                    size: 38),
-                                                onPressed: () {
-                                                  if (_adminItemController
-                                                              .text ==
-                                                          null ||
-                                                      _adminItemController
-                                                          .text.isEmpty) {
-                                                    Utils.showMyFlushbar(
-                                                        context,
-                                                        Icons.info_outline,
-                                                        Duration(
-                                                          seconds: 4,
-                                                        ),
-                                                        "Something Missing ..",
-                                                        "Please enter Phone number !!");
-                                                  } else {
-                                                    bool result = adminPhoneKey
-                                                        .currentState
-                                                        .validate();
-                                                    if (result) {
-                                                      _addNewAdminRow();
-                                                      _adminItemController
-                                                          .text = "";
-                                                    } else {
-                                                      Utils.showMyFlushbar(
-                                                          context,
-                                                          Icons.info_outline,
-                                                          Duration(
-                                                            seconds: 5,
-                                                          ),
-                                                          "Oops!! Seems like the phone number is not valid",
-                                                          "Please check and try again !!");
-                                                    }
-                                                  }
-                                                }),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                    ListView.builder(
-                                      shrinkWrap: true,
-                                      //scrollDirection: Axis.vertical,
-                                      itemBuilder:
-                                          (BuildContext context, int index) {
-                                        return new Column(
-                                            children: adminsList
-                                                .map(_buildServiceItem)
-                                                .toList());
-                                      },
-                                      itemCount: 1,
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ),
+                      // Container(
+                      //   margin: EdgeInsets.all(5),
+                      //   padding: EdgeInsets.all(0),
+                      //   decoration: BoxDecoration(
+                      //       border: Border.all(color: containerColor),
+                      //       color: Colors.grey[50],
+                      //       shape: BoxShape.rectangle,
+                      //       borderRadius:
+                      //           BorderRadius.all(Radius.circular(5.0))),
+                      //   // padding: EdgeInsets.all(5.0),
+                      //   child: Column(
+                      //     crossAxisAlignment: CrossAxisAlignment.start,
+                      //     children: <Widget>[
+                      //       Column(
+                      //         children: <Widget>[
+                      //           Container(
+                      //             //padding: EdgeInsets.only(left: 5),
+                      //             decoration: darkContainer,
+                      //             child: Theme(
+                      //               data: ThemeData(
+                      //                 unselectedWidgetColor: Colors.white,
+                      //                 accentColor: Colors.grey[50],
+                      //               ),
+                      //               child: CustomExpansionTile(
+                      //                 //key: PageStorageKey(this.widget.headerTitle),
+                      //                 initiallyExpanded: false,
+                      //                 title: Row(
+                      //                   children: <Widget>[
+                      //                     Text(
+                      //                       "Assign an Admin",
+                      //                       style: TextStyle(
+                      //                           color: Colors.white,
+                      //                           fontSize: 15),
+                      //                     ),
+                      //                     SizedBox(width: 5),
+                      //                   ],
+                      //                 ),
+                      //                 // trailing: IconButton(
+                      //                 //   icon: Icon(Icons.add_circle,
+                      //                 //       color: highlightColor, size: 40),
+                      //                 //   onPressed: () {
+                      //                 //     addNewAdminRow();
+                      //                 //   },
+                      //                 // ),
+                      //                 backgroundColor: Colors.blueGrey[500],
+                      //                 children: <Widget>[
+                      //                   new Container(
+                      //                     width: MediaQuery.of(context)
+                      //                             .size
+                      //                             .width *
+                      //                         .94,
+                      //                     decoration: darkContainer,
+                      //                     padding: EdgeInsets.all(2.0),
+                      //                     child: Row(
+                      //                       children: <Widget>[
+                      //                         Expanded(
+                      //                           child: Text(adminInfoStr,
+                      //                               style: buttonXSmlTextStyle),
+                      //                         ),
+                      //                       ],
+                      //                     ),
+                      //                   ),
+                      //                 ],
+                      //               ),
+                      //             ),
+                      //           ),
+                      //           //Add Admins list
+                      //           Column(
+                      //             children: <Widget>[
+                      //               Container(
+                      //                 margin: EdgeInsets.all(4),
+                      //                 padding: EdgeInsets.fromLTRB(0, 0, 4, 0),
+                      //                 height:
+                      //                     MediaQuery.of(context).size.width *
+                      //                         .18,
+                      //                 decoration: BoxDecoration(
+                      //                     border:
+                      //                         Border.all(color: borderColor),
+                      //                     color: Colors.white,
+                      //                     shape: BoxShape.rectangle,
+                      //                     borderRadius: BorderRadius.all(
+                      //                         Radius.circular(5.0))),
+                      //                 child: Row(
+                      //                   // mainAxisAlignment: MainAxisAlignment.end,
+                      //                   children: <Widget>[
+                      //                     Expanded(
+                      //                       child: adminInputField,
+                      //                     ),
+                      //                     Container(
+                      //                       padding:
+                      //                           EdgeInsets.fromLTRB(0, 0, 0, 0),
+                      //                       width: MediaQuery.of(context)
+                      //                               .size
+                      //                               .width *
+                      //                           .1,
+                      //                       height: MediaQuery.of(context)
+                      //                               .size
+                      //                               .width *
+                      //                           .1,
+                      //                       child: IconButton(
+                      //                           padding: EdgeInsets.all(0),
+                      //                           icon: Icon(Icons.person_add,
+                      //                               color: highlightColor,
+                      //                               size: 38),
+                      //                           onPressed: () {
+                      //                             if (_adminItemController
+                      //                                         .text ==
+                      //                                     null ||
+                      //                                 _adminItemController
+                      //                                     .text.isEmpty) {
+                      //                               Utils.showMyFlushbar(
+                      //                                   context,
+                      //                                   Icons.info_outline,
+                      //                                   Duration(
+                      //                                     seconds: 4,
+                      //                                   ),
+                      //                                   "Something Missing ..",
+                      //                                   "Please enter Phone number !!");
+                      //                             } else {
+                      //                               bool result = adminPhoneKey
+                      //                                   .currentState
+                      //                                   .validate();
+                      //                               if (result) {
+                      //                                 _addNewAdminRow();
+                      //                                 _adminItemController
+                      //                                     .text = "";
+                      //                               } else {
+                      //                                 Utils.showMyFlushbar(
+                      //                                     context,
+                      //                                     Icons.info_outline,
+                      //                                     Duration(
+                      //                                       seconds: 5,
+                      //                                     ),
+                      //                                     "Oops!! Seems like the phone number is not valid",
+                      //                                     "Please check and try again !!");
+                      //                               }
+                      //                             }
+                      //                           }),
+                      //                     ),
+                      //                   ],
+                      //                 ),
+                      //               ),
+                      //               ListView.builder(
+                      //                 shrinkWrap: true,
+                      //                 //scrollDirection: Axis.vertical,
+                      //                 itemBuilder:
+                      //                     (BuildContext context, int index) {
+                      //                   return new Column(
+                      //                       children: adminsList
+                      //                           .map(_buildServiceItem)
+                      //                           .toList());
+                      //                 },
+                      //                 itemCount: 1,
+                      //               ),
+                      //             ],
+                      //           ),
+                      //         ],
+                      //       ),
+                      //     ],
+                      //   ),
+                      // ),
 
-                      SizedBox(
-                        height: 7,
-                      ),
+                      // SizedBox(
+                      //   height: 7,
+                      // ),
                       //THIS CONTAINER
-                      Container(
-                        margin: EdgeInsets.all(5),
-                        padding: EdgeInsets.all(0),
-                        decoration: BoxDecoration(
-                            border: Border.all(color: containerColor),
-                            color: Colors.white,
-                            shape: BoxShape.rectangle,
-                            borderRadius:
-                                BorderRadius.all(Radius.circular(5.0))),
-                        // padding: EdgeInsets.all(5.0),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            Column(
-                              children: <Widget>[
-                                Container(
-                                  //padding: EdgeInsets.only(left: 5),
-                                  decoration: darkContainer,
-                                  child: Theme(
-                                    data: ThemeData(
-                                      unselectedWidgetColor: Colors.white,
-                                      accentColor: Colors.grey[50],
-                                    ),
-                                    child: CustomExpansionTile(
-                                      //key: PageStorageKey(this.widget.headerTitle),
-                                      initiallyExpanded: false,
-                                      title: Row(
-                                        children: <Widget>[
-                                          Text(
-                                            "Add a Manager",
-                                            style: TextStyle(
-                                                color: Colors.white,
-                                                fontSize: 15),
-                                          ),
-                                          SizedBox(width: 5),
-                                        ],
-                                      ),
-                                      backgroundColor: Colors.blueGrey[500],
+                      // Container(
+                      //   margin: EdgeInsets.all(5),
+                      //   padding: EdgeInsets.all(0),
+                      //   decoration: BoxDecoration(
+                      //       border: Border.all(color: containerColor),
+                      //       color: Colors.white,
+                      //       shape: BoxShape.rectangle,
+                      //       borderRadius:
+                      //           BorderRadius.all(Radius.circular(5.0))),
+                      //   // padding: EdgeInsets.all(5.0),
+                      //   child: Column(
+                      //     crossAxisAlignment: CrossAxisAlignment.start,
+                      //     children: <Widget>[
+                      //       Column(
+                      //         children: <Widget>[
+                      //           Container(
+                      //             //padding: EdgeInsets.only(left: 5),
+                      //             decoration: darkContainer,
+                      //             child: Theme(
+                      //               data: ThemeData(
+                      //                 unselectedWidgetColor: Colors.white,
+                      //                 accentColor: Colors.grey[50],
+                      //               ),
+                      //               child: CustomExpansionTile(
+                      //                 //key: PageStorageKey(this.widget.headerTitle),
+                      //                 initiallyExpanded: false,
+                      //                 title: Row(
+                      //                   children: <Widget>[
+                      //                     Text(
+                      //                       "Add a Manager",
+                      //                       style: TextStyle(
+                      //                           color: Colors.white,
+                      //                           fontSize: 15),
+                      //                     ),
+                      //                     SizedBox(width: 5),
+                      //                   ],
+                      //                 ),
+                      //                 backgroundColor: Colors.blueGrey[500],
 
-                                      children: <Widget>[
-                                        new Container(
-                                          width: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
-                                              .94,
-                                          decoration: darkContainer,
-                                          padding: EdgeInsets.all(2.0),
-                                          child: Row(
-                                            children: <Widget>[
-                                              Expanded(
-                                                child: Text(contactInfoStr,
-                                                    style: buttonXSmlTextStyle),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                                Container(
-                                  color: Colors.grey[100],
-                                  padding:
-                                      const EdgeInsets.fromLTRB(8.0, 0, 8, 0),
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.end,
-                                    children: <Widget>[
-                                      // Expanded(
-                                      //   child: roleType,
-                                      // ),
-                                      Container(
-                                        child: IconButton(
-                                          icon: Icon(Icons.person_add,
-                                              color: highlightColor, size: 40),
-                                          onPressed: () {
-                                            _addNewContactRow();
-                                          },
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                (_msg != null)
-                                    ? Text(
-                                        _msg,
-                                        style: errorTextStyle,
-                                      )
-                                    : Container(),
-                                if (!Utils.isNullOrEmpty(contactList))
-                                  Column(children: contactRowWidgets),
-                                // Expanded(
-                                //   child: ListView.builder(
-                                //       itemCount: contactList.length,
-                                //       itemBuilder:
-                                //           (BuildContext context, int index) {
-                                //         return Column(
-                                //             children: contactList
-                                //                 .map(buildContactItem)
-                                //                 .toList());
-                                //       }),
-                                // ),
-                                // Column(
-                                //   children: <Widget>[
-                                //     new Expanded(
-                                //       child: ListView.builder(
-                                //         //  controller: _childScrollController,
-                                //         reverse: true,
-                                //         shrinkWrap: true,
-                                //         // itemExtent: itemSize,
-                                //         //scrollDirection: Axis.vertical,
-                                //         itemBuilder:
-                                //             (BuildContext context, int index) {
-                                //           return ContactRow(
-                                //             contact: contactList[index],
-                                //             entity: entity,
-                                //             list: contactList,
-                                //           );
-                                //         },
-                                //         itemCount: contactList.length,
-                                //       ),
-                                //     ),
-                                //   ],
-                                // ),
-                                //
-                              ],
-                            ),
-                          ],
-                        ),
-                      ),
+                      //                 children: <Widget>[
+                      //                   new Container(
+                      //                     width: MediaQuery.of(context)
+                      //                             .size
+                      //                             .width *
+                      //                         .94,
+                      //                     decoration: darkContainer,
+                      //                     padding: EdgeInsets.all(2.0),
+                      //                     child: Row(
+                      //                       children: <Widget>[
+                      //                         Expanded(
+                      //                           child: Text(contactInfoStr,
+                      //                               style: buttonXSmlTextStyle),
+                      //                         ),
+                      //                       ],
+                      //                     ),
+                      //                   ),
+                      //                 ],
+                      //               ),
+                      //             ),
+                      //           ),
+                      //           Container(
+                      //             color: Colors.grey[100],
+                      //             padding:
+                      //                 const EdgeInsets.fromLTRB(8.0, 0, 8, 0),
+                      //             child: Row(
+                      //               mainAxisAlignment: MainAxisAlignment.end,
+                      //               children: <Widget>[
+                      //                 // Expanded(
+                      //                 //   child: roleType,
+                      //                 // ),
+                      //                 Container(
+                      //                   child: IconButton(
+                      //                     icon: Icon(Icons.person_add,
+                      //                         color: highlightColor, size: 40),
+                      //                     onPressed: () {
+                      //                       _addNewContactRow();
+                      //                     },
+                      //                   ),
+                      //                 ),
+                      //               ],
+                      //             ),
+                      //           ),
+                      //           (_msg != null)
+                      //               ? Text(
+                      //                   _msg,
+                      //                   style: errorTextStyle,
+                      //                 )
+                      //               : Container(),
+                      //           if (!Utils.isNullOrEmpty(contactList))
+                      //             Column(children: contactRowWidgets),
+                      //           // Expanded(
+                      //           //   child: ListView.builder(
+                      //           //       itemCount: contactList.length,
+                      //           //       itemBuilder:
+                      //           //           (BuildContext context, int index) {
+                      //           //         return Column(
+                      //           //             children: contactList
+                      //           //                 .map(buildContactItem)
+                      //           //                 .toList());
+                      //           //       }),
+                      //           // ),
+                      //           // Column(
+                      //           //   children: <Widget>[
+                      //           //     new Expanded(
+                      //           //       child: ListView.builder(
+                      //           //         //  controller: _childScrollController,
+                      //           //         reverse: true,
+                      //           //         shrinkWrap: true,
+                      //           //         // itemExtent: itemSize,
+                      //           //         //scrollDirection: Axis.vertical,
+                      //           //         itemBuilder:
+                      //           //             (BuildContext context, int index) {
+                      //           //           return ContactRow(
+                      //           //             contact: contactList[index],
+                      //           //             entity: entity,
+                      //           //             list: contactList,
+                      //           //           );
+                      //           //         },
+                      //           //         itemCount: contactList.length,
+                      //           //       ),
+                      //           //     ),
+                      //           //   ],
+                      //           // ),
+                      //           //
+                      //         ],
+                      //       ),
+                      //     ],
+                      //   ),
+                      // ),
 
                       Container(
                         width: MediaQuery.of(context).size.width * .9,
