@@ -85,9 +85,9 @@ class ContactRowState extends State<ContactRow> {
                 Utils.formatTime(contact.shiftEndMinute.toString());
       _daysOff = (contact.daysOff) ?? new List<String>();
     }
-    if (_daysOff.length == 0) {
-      _daysOff.add('days.sunday');
-    }
+    // if (_daysOff.length == 0) {
+    //   _daysOff.add('days.sunday');
+    // }
     _closedOnDays = List<days>();
     _closedOnDays = Utils.convertStringsToDays(_daysOff);
   }

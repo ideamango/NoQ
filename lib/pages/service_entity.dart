@@ -8,6 +8,7 @@ import 'package:noq/pages/booking_form_selection_page.dart';
 import 'package:noq/pages/entity_token_list_page.dart';
 import 'package:noq/pages/manage_child_entity_details_page.dart';
 import 'package:noq/pages/manage_child_entity_list_page.dart';
+import 'package:noq/pages/manage_employee_page.dart';
 import 'package:noq/pages/manage_entity_forms.dart';
 import 'package:noq/pages/overview_page.dart';
 import 'package:noq/services/qr_code_generate.dart';
@@ -411,6 +412,40 @@ class ChildEntityRowState extends State<ChildEntityRow> {
                 ),
               ],
             ),
+            SizedBox(
+              height: MediaQuery.of(context).size.height * .007,
+            ),
+            Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                  Container(
+                    width: MediaQuery.of(context).size.width * .42,
+                    height: MediaQuery.of(context).size.height * .05,
+                    child: FlatButton(
+                      // elevation: 7,
+                      color: Colors.white,
+                      splashColor: highlightColor.withOpacity(.8),
+                      shape: RoundedRectangleBorder(
+                          side: BorderSide(color: Colors.blueGrey[300]),
+                          borderRadius: BorderRadius.all(Radius.circular(5.0))),
+                      child: Text(
+                        'Manage Employees',
+                        style:
+                            TextStyle(color: whiteBtnTextColor, fontSize: 13),
+                      ),
+                      onPressed: () {
+                        Navigator.of(context)
+                            .push(PageAnimation.createRoute(ManageEmployeePage(
+                          metaEntity: _metaEntity,
+                          backRoute: ManageChildEntityListPage(
+                            entity: entity,
+                          ),
+                          defaultDate: null,
+                        )));
+                      },
+                    ),
+                  ),
+                ]),
           ],
         ),
       ),

@@ -3223,7 +3223,7 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
                                                 child: Icon(
                                                   Icons.info,
                                                   color: Colors.blueGrey[600],
-                                                  size: 22,
+                                                  size: 17,
                                                 ),
                                               ),
                                             ],
@@ -3287,9 +3287,9 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
                                           MediaQuery.of(context).size.height *
                                               .08,
                                       width: MediaQuery.of(context).size.width *
-                                          .15,
+                                          .2,
                                       child: Transform.scale(
-                                        scale: 1,
+                                        scale: .7,
                                         alignment: Alignment.centerRight,
                                         child: Switch(
                                           materialTapTargetSize:
@@ -3341,7 +3341,7 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
                                                   child: Icon(Icons.info,
                                                       color:
                                                           Colors.blueGrey[600],
-                                                      size: 22),
+                                                      size: 17),
                                                 ),
                                               ]),
                                           onPressed: () {
@@ -3403,9 +3403,9 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
                                           MediaQuery.of(context).size.height *
                                               .08,
                                       width: MediaQuery.of(context).size.width *
-                                          .15,
+                                          .2,
                                       child: Transform.scale(
-                                        scale: 1,
+                                        scale: .7,
                                         alignment: Alignment.centerRight,
                                         child: Switch(
                                           materialTapTargetSize:
@@ -3460,7 +3460,7 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
                                                 //     .02,
                                                 child: Icon(Icons.info,
                                                     color: Colors.blueGrey[600],
-                                                    size: 22),
+                                                    size: 17),
                                               ),
                                             ]),
                                         onPressed: () {
@@ -3520,9 +3520,9 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
                                           MediaQuery.of(context).size.height *
                                               .08,
                                       width: MediaQuery.of(context).size.width *
-                                          .15,
+                                          .2,
                                       child: Transform.scale(
-                                        scale: 1,
+                                        scale: .7,
                                         alignment: Alignment.centerRight,
                                         child: Switch(
                                           materialTapTargetSize:

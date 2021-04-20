@@ -371,7 +371,17 @@ class _ManageEmployeePageState extends State<ManageEmployeePage> {
       emp.ph = phone;
       _gs
           .getEntityService()
-          .addEmployee(widget.metaEntity.entityId, emp, EntityRole.Admin);
+          .addEmployee(widget.metaEntity.entityId, emp, EntityRole.Admin)
+          .then((retVal) {
+        Utils.showMyFlushbar(
+            context,
+            Icons.check,
+            Duration(
+              seconds: 4,
+            ),
+            "Admin Details Saved Successfully!",
+            "");
+      });
     });
     return true;
   }
@@ -380,75 +390,67 @@ class _ManageEmployeePageState extends State<ManageEmployeePage> {
     TextEditingController itemNameController = new TextEditingController();
     itemNameController.text = newAdminRowItem;
     double cardMargin = MediaQuery.of(context).size.width * .03;
-    return Card(
-      semanticContainer: true,
-      elevation: 3,
-      margin: EdgeInsets.fromLTRB(
-          cardMargin,
-          5,
-          MediaQuery.of(context).size.width * .03,
-          MediaQuery.of(context).size.width * .03),
-      child: Container(
-        height: 25,
-        //padding: EdgeInsets.fromLTRB(4, 8, 4, 14),
-        margin: EdgeInsets.fromLTRB(4, 8, 4, 6),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: <Widget>[
-            Container(
-                height: 25,
-                width: MediaQuery.of(context).size.width * .5,
-                child: TextFormField(
-                  // key: newAdminRowItemKey,
-                  //  autovalidate: _autoValidate,
-                  enabled: false,
-                  cursorColor: highlightColor,
-                  keyboardType: TextInputType.phone,
-                  inputFormatters: [
-                    LengthLimitingTextInputFormatter(18),
-                  ],
-                  style: TextStyle(fontSize: 14, color: primaryDarkColor),
-                  controller: itemNameController,
-                  decoration: InputDecoration(
-                    //contentPadding: EdgeInsets.all(12),
-                    // labelText: newItem.itemName,
-
-                    hintText: 'Admin\'s phone number',
-                    hintStyle: TextStyle(fontSize: 12, color: Colors.grey),
-                    enabledBorder: InputBorder.none,
-                    focusedBorder: InputBorder.none,
-                  ),
-                  // validator: Utils.validateMobileField,
-                  onChanged: (value) {
-                    //newAdminRowItemKey.currentState.validate();
-                    newAdminRowItem = value;
-                  },
-                )
-
-                // Text(
-                //   newItem.itemName,ggg
-
-                // ),
-                ),
-            horizontalSpacer,
-            Container(
+    return Container(
+      height: 25,
+      //padding: EdgeInsets.fromLTRB(4, 8, 4, 14),
+      margin: EdgeInsets.fromLTRB(4, 8, 4, 6),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: <Widget>[
+          Container(
+              margin: EdgeInsets.fromLTRB(12, 2, 10, 2),
               height: 25,
-              margin: EdgeInsets.fromLTRB(0, 0, 0, 0),
-              padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
-              width: MediaQuery.of(context).size.width * .1,
-              child: IconButton(
-                alignment: Alignment.topCenter,
-                padding: EdgeInsets.all(0),
-                icon: Icon(Icons.delete, color: Colors.blueGrey[300], size: 20),
-                onPressed: () {
-                  _removeServiceRow(newAdminRowItem);
-                  _adminItemController.text = "";
+              width: MediaQuery.of(context).size.width * .5,
+              child: TextFormField(
+                // key: newAdminRowItemKey,
+                //  autovalidate: _autoValidate,
+                enabled: false,
+                cursorColor: highlightColor,
+                keyboardType: TextInputType.phone,
+                inputFormatters: [
+                  LengthLimitingTextInputFormatter(18),
+                ],
+                style: TextStyle(fontSize: 14, color: primaryDarkColor),
+                controller: itemNameController,
+                decoration: InputDecoration(
+                  //contentPadding: EdgeInsets.all(12),
+                  // labelText: newItem.itemName,
+
+                  hintText: 'Admin\'s phone number',
+                  hintStyle: TextStyle(fontSize: 12, color: Colors.grey),
+                  enabledBorder: InputBorder.none,
+                  focusedBorder: InputBorder.none,
+                ),
+                // validator: Utils.validateMobileField,
+                onChanged: (value) {
+                  //newAdminRowItemKey.currentState.validate();
+                  newAdminRowItem = value;
                 },
+              )
+
+              // Text(
+              //   newItem.itemName,ggg
+
+              // ),
               ),
+          horizontalSpacer,
+          Container(
+            height: 25,
+            margin: EdgeInsets.fromLTRB(0, 0, 0, 0),
+            padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
+            width: MediaQuery.of(context).size.width * .1,
+            child: IconButton(
+              alignment: Alignment.topCenter,
+              padding: EdgeInsets.all(0),
+              icon: Icon(Icons.delete, color: Colors.blueGrey[300], size: 20),
+              onPressed: () {
+                _removeServiceRow(newAdminRowItem);
+                _adminItemController.text = "";
+              },
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
@@ -481,7 +483,8 @@ class _ManageEmployeePageState extends State<ManageEmployeePage> {
           focusedBorder: InputBorder.none,
           enabledBorder: InputBorder.none,
           hintText: "Enter Admin's Contact number & Press (+)",
-          hintStyle: new TextStyle(fontSize: 12, color: Colors.blueGrey[500])),
+          hintMaxLines: 2,
+          hintStyle: textInputTextStyle),
       validator: Utils.validateMobileField,
       onChanged: (value) {
         adminPhoneKey.currentState.validate();
@@ -607,9 +610,9 @@ class _ManageEmployeePageState extends State<ManageEmployeePage> {
                                           borderRadius: BorderRadius.all(
                                               Radius.circular(5.0))),
                                       //margin: EdgeInsets.all(4),
-                                      height:
-                                          MediaQuery.of(context).size.width *
-                                              .18,
+                                      // height:
+                                      //     MediaQuery.of(context).size.width *
+                                      //         .18,
                                       child: Row(
                                         // mainAxisAlignment: MainAxisAlignment.end,
                                         children: <Widget>[
@@ -685,26 +688,37 @@ class _ManageEmployeePageState extends State<ManageEmployeePage> {
                                   ),
                                 ],
                               ),
-                              RaisedButton(
-                                color: btnColor,
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Text(
-                                      "Save",
-                                      style: buttonMedTextStyle,
+                              (adminsList.length != 0)
+                                  ? Container(
+                                      width: MediaQuery.of(context).size.width *
+                                          .9,
+                                      child: RaisedButton(
+                                        color: btnColor,
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            Text(
+                                              "Save Admins",
+                                              style: buttonMedTextStyle,
+                                            ),
+                                            SizedBox(
+                                                width: MediaQuery.of(context)
+                                                        .size
+                                                        .width *
+                                                    .01),
+                                            Icon(Icons.save,
+                                                color: Colors.white)
+                                          ],
+                                        ),
+                                        onPressed: () {
+                                          saveAdmins();
+                                        },
+                                      ),
+                                    )
+                                  : Container(
+                                      width: 0,
                                     ),
-                                    SizedBox(
-                                        width:
-                                            MediaQuery.of(context).size.width *
-                                                .01),
-                                    Icon(Icons.save, color: Colors.white)
-                                  ],
-                                ),
-                                onPressed: () {
-                                  saveAdmins();
-                                },
-                              ),
                             ],
                           ),
                         ],
@@ -792,9 +806,7 @@ class _ManageEmployeePageState extends State<ManageEmployeePage> {
                                           MainAxisAlignment.spaceBetween,
                                       children: <Widget>[
                                         Text(" Add a Manager",
-                                            style: TextStyle(
-                                                fontSize: 18,
-                                                color: Colors.blueGrey[700])),
+                                            style: textInputTextStyle),
                                         horizontalSpacer,
                                         Icon(Icons.person_add,
                                             color: highlightColor, size: 40),
@@ -901,9 +913,7 @@ class _ManageEmployeePageState extends State<ManageEmployeePage> {
                                           MainAxisAlignment.spaceBetween,
                                       children: <Widget>[
                                         Text(" Add an Executive",
-                                            style: TextStyle(
-                                                fontSize: 18,
-                                                color: Colors.blueGrey[700])),
+                                            style: textInputTextStyle),
                                         horizontalSpacer,
                                         Icon(Icons.person_add,
                                             color: highlightColor, size: 40),

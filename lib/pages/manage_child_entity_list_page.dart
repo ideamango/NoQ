@@ -131,7 +131,7 @@ class _ManageChildEntityListPageState extends State<ManageChildEntityListPage> {
     initialize().whenComplete(() {
       setState(() {
         _initCompleted = true;
-        itemSize = MediaQuery.of(context).size.height * .23;
+        itemSize = MediaQuery.of(context).size.height * .28;
       });
     });
   }
