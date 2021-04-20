@@ -6,6 +6,7 @@ import 'package:noq/db/db_model/meta_form.dart';
 import 'package:noq/pages/booking_form_selection_page.dart';
 import 'package:noq/pages/business_info_page.dart';
 import 'package:noq/pages/entity_token_list_page.dart';
+import 'package:noq/pages/manage_employee_page.dart';
 
 import 'package:noq/pages/manage_entity_details_page.dart';
 import 'package:noq/pages/manage_entity_forms.dart';
@@ -443,6 +444,7 @@ class EntityRowState extends State<EntityRow> {
                               PageAnimation.createRoute(EntityTokenListPage(
                             metaEntity: _metaEntity,
                             backRoute: ManageEntityListPage(),
+                            defaultDate: null,
                           )));
                         } else
                           return;
@@ -454,79 +456,101 @@ class EntityRowState extends State<EntityRow> {
               SizedBox(
                 height: MediaQuery.of(context).size.height * .008,
               ),
-              Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: <Widget>[
-                    Container(
-                      margin: EdgeInsets.all(0),
-                      padding: EdgeInsets.all(0),
-                      width: MediaQuery.of(context).size.width * .42,
-                      height: MediaQuery.of(context).size.height * .05,
-                      child: FlatButton(
-                        padding: EdgeInsets.all(0),
-                        color: Colors.white,
-                        textColor: Colors.white,
-                        shape: RoundedRectangleBorder(
-                            side: BorderSide(
-                                color: _metaEntity.isBookable
-                                    ? Colors.blueGrey[300]
-                                    : Colors.blueGrey[100]),
-                            borderRadius:
-                                BorderRadius.all(Radius.circular(5.0))),
-                        splashColor: _metaEntity.isBookable
-                            ? highlightColor.withOpacity(.8)
-                            : Colors.transparent,
-                        child: Text(
-                          'Manage Forms',
-                          style: TextStyle(
-                              color: _metaEntity.isBookable
-                                  ? whiteBtnTextColor
-                                  : disabledColor,
-                              fontSize: 13),
-                        ),
-                        // Text(
-                        //   (_metaEntity.name != null)
-                        //       ? (_metaEntity.name)
-                        //       : (_metaEntity.type),
-                        //   style: labelTextStyle,
-                        // ),
-
-                        //Icon(Icons.arrow_forward),
-
-                        onPressed: () {
-                          print("To Add details page");
-                          Navigator.of(context)
-                              .push(PageAnimation.createRoute(ManageEntityForms(
-                            // forms: _metaEntity.forms,
-                            metaEntity: _metaEntity,
-                            preferredSlotTime: null,
-                            isAdmin: true,
-                            backRoute: ManageEntityListPage(),
-                          )));
-                        },
-                      ),
+              Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: <
+                  Widget>[
+                Container(
+                  margin: EdgeInsets.all(0),
+                  padding: EdgeInsets.all(0),
+                  width: MediaQuery.of(context).size.width * .42,
+                  height: MediaQuery.of(context).size.height * .05,
+                  child: FlatButton(
+                    padding: EdgeInsets.all(0),
+                    color: Colors.white,
+                    textColor: Colors.white,
+                    shape: RoundedRectangleBorder(
+                        side: BorderSide(
+                            color: _metaEntity.isBookable
+                                ? Colors.blueGrey[300]
+                                : Colors.blueGrey[100]),
+                        borderRadius: BorderRadius.all(Radius.circular(5.0))),
+                    splashColor: _metaEntity.isBookable
+                        ? highlightColor.withOpacity(.8)
+                        : Colors.transparent,
+                    child: Text(
+                      'Manage Forms',
+                      style: TextStyle(
+                          color: _metaEntity.isBookable
+                              ? whiteBtnTextColor
+                              : disabledColor,
+                          fontSize: 13),
                     ),
-                    // Container(
-                    //   width: MediaQuery.of(context).size.width * .42,
-                    //   height: MediaQuery.of(context).size.height * .05,
-                    //   child: FlatButton(
-                    //     // elevation: 7,
-                    //     color: Colors.white,
-                    //     splashColor: highlightColor.withOpacity(.8),
-                    //     shape: RoundedRectangleBorder(
-                    //         side: BorderSide(color: Colors.blueGrey[500]),
-                    //         borderRadius: BorderRadius.all(Radius.circular(5.0))),
-                    //     child: Text(
-                    //       'Child Places',
-                    //       style: TextStyle(color: primaryDarkColor, fontSize: 13),
-                    //     ),
-                    //     onPressed: () {
-                    //       print("To child list page");
-                    //       showChildListPage();
-                    //     },
-                    //   ),
+                    // Text(
+                    //   (_metaEntity.name != null)
+                    //       ? (_metaEntity.name)
+                    //       : (_metaEntity.type),
+                    //   style: labelTextStyle,
                     // ),
-                  ]),
+
+                    //Icon(Icons.arrow_forward),
+
+                    onPressed: () {
+                      print("To Add details page");
+                      Navigator.of(context)
+                          .push(PageAnimation.createRoute(ManageEntityForms(
+                        // forms: _metaEntity.forms,
+                        metaEntity: _metaEntity,
+                        preferredSlotTime: null,
+                        isAdmin: true,
+                        backRoute: ManageEntityListPage(),
+                      )));
+                    },
+                  ),
+                ),
+                // Container(
+                //   width: MediaQuery.of(context).size.width * .42,
+                //   height: MediaQuery.of(context).size.height * .05,
+                //   child: FlatButton(
+                //     // elevation: 7,
+                //     color: Colors.white,
+                //     splashColor: highlightColor.withOpacity(.8),
+                //     shape: RoundedRectangleBorder(
+                //         side: BorderSide(color: Colors.blueGrey[500]),
+                //         borderRadius: BorderRadius.all(Radius.circular(5.0))),
+                //     child: Text(
+                //       'Child Places',
+                //       style: TextStyle(color: primaryDarkColor, fontSize: 13),
+                //     ),
+                //     onPressed: () {
+                //       print("To child list page");
+                //       showChildListPage();
+                //     },
+                //   ),
+                // ),
+                Container(
+                  width: MediaQuery.of(context).size.width * .42,
+                  height: MediaQuery.of(context).size.height * .05,
+                  child: FlatButton(
+                    // elevation: 7,
+                    color: Colors.white,
+                    splashColor: highlightColor.withOpacity(.8),
+                    shape: RoundedRectangleBorder(
+                        side: BorderSide(color: Colors.blueGrey[300]),
+                        borderRadius: BorderRadius.all(Radius.circular(5.0))),
+                    child: Text(
+                      'Manage Employees',
+                      style: TextStyle(color: whiteBtnTextColor, fontSize: 13),
+                    ),
+                    onPressed: () {
+                      Navigator.of(context)
+                          .push(PageAnimation.createRoute(ManageEmployeePage(
+                        metaEntity: _metaEntity,
+                        backRoute: ManageEntityListPage(),
+                        defaultDate: null,
+                      )));
+                    },
+                  ),
+                ),
+              ]),
 
               // backgroundColor: Colors.white,
             ],

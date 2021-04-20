@@ -44,6 +44,11 @@ const PLACE_TYPE_OTHERS = "Others";
 
 const SELECT_TYPE_OF_PLACE = "Select Type of Place";
 const SEARCH_TYPE_OF_PLACE = "Search by Type of Place";
+const SELECT_ROLE_OF_PERSON = "Select the Role of Employee";
+
+String adminLegend = "Admin";
+String managerLegend = "Manager";
+String executiveLegend = "Executive";
 
 String appName = 'LESSs';
 var loginSubTxt = "Peace of Mind";
