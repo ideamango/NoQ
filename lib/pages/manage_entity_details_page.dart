@@ -685,12 +685,16 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
       _whatsappPhoneController.text = entity.whatsapp != null
           ? entity.whatsapp.toString().substring(3)
           : "";
-      _contactPhoneController.text =
-          entity.phone != null ? entity.phone.toString().substring(3) : "";
-      _gpayPhoneController.text =
-          entity.gpay != null ? entity.gpay.toString().substring(3) : "";
-      _paytmPhoneController.text =
-          entity.paytm != null ? entity.paytm.toString().substring(3) : "";
+      _contactPhoneController.text = Utils.isNotNullOrEmpty(entity.phone)
+          ? entity.phone.toString().substring(3)
+          : "";
+
+      _gpayPhoneController.text = Utils.isNotNullOrEmpty(entity.gpay)
+          ? entity.gpay.toString().substring(3)
+          : "";
+      _paytmPhoneController.text = Utils.isNotNullOrEmpty(entity.paytm)
+          ? entity.paytm.toString().substring(3)
+          : "";
 
       if (entity.coordinates != null) {
         _latController.text = entity.coordinates.geopoint.latitude.toString();
@@ -716,18 +720,18 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
       //   });
       // }
 
-      //  AppUser currUser = _gs.getCurrentUser();
+      AppUser currUser = _gs.getCurrentUser();
       // Map<String, String> adminMap = Map<String, String>();
-      // EntityPrivate entityPrivateList;
-      // entityPrivateList = await fetchAdmins(entity.entityId);
-      // if (entityPrivateList != null) {
-      //   adminMap = entityPrivateList.roles;
-      //   if (adminMap != null)
-      //     adminMap.forEach((k, v) {
-      //       if (currUser.ph != k) adminsList.add(k);
-      //     });
-      //   _regNumController.text = entityPrivateList.registrationNumber;
-      // }
+      EntityPrivate entityPrivateList;
+      entityPrivateList = await fetchAdmins(entity.entityId);
+      if (entityPrivateList != null) {
+        //   adminMap = entityPrivateList.roles;
+        //   if (adminMap != null)
+        //     adminMap.forEach((k, v) {
+        //       if (currUser.ph != k) adminsList.add(k);
+        //     });
+        _regNumController.text = entityPrivateList.registrationNumber;
+      }
     }
     Location lc = _gs.getLocation();
     Address defaultAdrs = new Address();
