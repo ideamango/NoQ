@@ -333,6 +333,8 @@ class EntityService {
       throw new Exception("Phone of Employee can't be null");
     }
 
+    String roleStr = EnumToString.convertToString(role);
+
     AppUser u;
     bool isSuccess = true;
 
@@ -379,16 +381,24 @@ class EntityService {
           }
           if (!entityAlreadyExistsInUser) {
             u.entities.add(ent.getMetaEntity());
-            //await tx.set(userRef, u.toJson());
           }
+          if (u.entityVsRole == null) {
+            u.entityVsRole = new Map<String, EntityRole>();
+          }
+
+          u.entityVsRole[ent.entityId] = role;
         } else {
           // a new user will be added in the user table for that phone number
           u = new AppUser(id: null, ph: phone, name: employee.name);
           u.entities = new List<MetaEntity>();
           u.entities.add(ent.getMetaEntity());
+          if (u.entityVsRole == null) {
+            u.entityVsRole = new Map<String, EntityRole>();
+          }
+          u.entityVsRole[ent.entityId] = role;
         }
 
-        ePrivate.roles[phone] = EnumToString.convertToString(role);
+        ePrivate.roles[phone] = roleStr;
 
         //add this Employee to the Entity
         //if already exists in any of the collection, remove it and then update
@@ -695,6 +705,8 @@ class EntityService {
           //nothing to be done as user does not exists - removal does not make sense
         }
 
+        bool entityUpdated = false;
+
         if (ent.admins != null) {
           int existingIndexInAdmin = -1;
           for (int index = 0; index < ent.admins.length; index++) {
@@ -706,6 +718,7 @@ class EntityService {
 
           if (existingIndexInAdmin > -1) {
             ent.admins.removeAt(existingIndexInAdmin);
+            entityUpdated = true;
           }
         }
 
@@ -720,6 +733,7 @@ class EntityService {
 
           if (existingIndexInManager > -1) {
             ent.managers.removeAt(existingIndexInManager);
+            entityUpdated = true;
           }
         }
 
@@ -734,7 +748,12 @@ class EntityService {
 
           if (existingIndexInExecutive > -1) {
             ent.executives.removeAt(existingIndexInExecutive);
+            entityUpdated = true;
           }
+        }
+
+        if (entityUpdated) {
+          tx.set(entityRef, ent.toJson());
         }
 
         if (ePrivate.roles.containsKey(phone)) {

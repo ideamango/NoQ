@@ -107,6 +107,9 @@ class DBTest {
       await _gs.getTokenService().deleteSlot("Child101-1#2020~7~7");
       await _gs.getTokenService().deleteSlot("Child101-1#2020~7~8");
 
+      await _gs.getEntityService().deleteEntity('MyHomeApartment');
+      await _gs.getEntityService().deleteEntity('SalonMyHomeApartment');
+
       await _gs
           .getTokenService()
           .deleteToken("Child101-1#2020~7~6#10~30#+919999999999");
@@ -293,6 +296,9 @@ class DBTest {
     _gs.getTokenService().deleteSlot("Child101-1#2021~4~13");
     _gs.getTokenService().deleteSlot("Child101-1#2021~4~14");
     _gs.getTokenService().deleteSlot("Child101-1#2021~5~1");
+
+    _gs.getUserService().deleteUser("+912626262626");
+    _gs.getUserService().deleteUser("+916565656565");
   }
 
   Future<void> tests() async {
@@ -810,6 +816,10 @@ class DBTest {
     await testPaginationInFetchingApplication();
 
     await testTokenCounter(bata);
+
+    await testAddManagerAndExecutivesToApartmentWithSalon();
+
+    await testRemoveAdminManagerAndExecutive();
 
     print(
         "<==========================================TESTING DONE=========================================>");
@@ -1653,6 +1663,250 @@ class DBTest {
       await _gs.getEntityService().upsertEntity(entity);
     } catch (e) {
       print("Exception occured " + e.toString());
+    }
+  }
+
+  Future<void> testAddManagerAndExecutivesToApartmentWithSalon() async {
+    Address adrs = new Address(
+        city: "Hyderbad",
+        state: "Telangana",
+        country: "India",
+        address: "Shop 61, Towli Chowk Bazar, Gachibowli");
+
+    Offer offer = new Offer();
+    offer.coupon = "Great Diwali Offer";
+    offer.message = "30% off for yearly subscription before Diwali 2021!!";
+    offer.startDateTime = DateTime.now();
+    offer.endDateTime = DateTime.utc(2021, 11, 4);
+
+    MyGeoFirePoint geoPoint = new MyGeoFirePoint(17.444317, 78.355321);
+    Entity entity = new Entity(
+        entityId: "MyHomeApartment",
+        name: "My Home Apartment",
+        address: adrs,
+        advanceDays: 9,
+        isPublic: false,
+        maxAllowed: 0,
+        slotDuration: 0,
+        closedOn: [WEEK_DAY_THURSDAY],
+        breakStartHour: null,
+        breakStartMinute: null,
+        breakEndHour: null,
+        breakEndMinute: null,
+        startTimeHour: null,
+        startTimeMinute: null,
+        endTimeHour: null,
+        endTimeMinute: 0,
+        parentId: null,
+        type: EntityType.PLACE_TYPE_APARTMENT,
+        isBookable: false,
+        isActive: true,
+        verificationStatus: null,
+        coordinates: geoPoint,
+        offer: null,
+        paytm: null,
+        phone: "+918328592031",
+        gpay: "",
+        whatsapp: null,
+        supportEmail: "test@test.com");
+
+    try {
+      entity.regNum = "testReg111";
+      await _gs.getEntityService().upsertEntity(entity);
+    } catch (e) {
+      print("Exception occured " + e.toString());
+    }
+
+    Entity childEntity = new Entity(
+        entityId: "SalonMyHomeApartment",
+        name: "Salon My Home Apartment",
+        address: adrs,
+        advanceDays: 7,
+        isPublic: false,
+        maxAllowed: 60,
+        slotDuration: 60,
+        closedOn: [WEEK_DAY_THURSDAY],
+        breakStartHour: 13,
+        breakStartMinute: 30,
+        breakEndHour: 14,
+        breakEndMinute: 30,
+        startTimeHour: 10,
+        startTimeMinute: 30,
+        endTimeHour: 21,
+        endTimeMinute: 0,
+        parentId: null,
+        type: EntityType.PLACE_TYPE_SALON,
+        isBookable: true,
+        isActive: true,
+        verificationStatus: VERIFICATION_VERIFIED,
+        coordinates: geoPoint,
+        offer: offer,
+        paytm: "+919611009823",
+        phone: "+918328592031",
+        gpay: "+919611009823",
+        whatsapp: "+918328592031");
+
+    try {
+      entity.regNum = "testReg111123";
+      await _gs
+          .getEntityService()
+          .upsertChildEntityToParent(childEntity, "MyHomeApartment");
+    } catch (e) {
+      print("Exception occured " + e.toString());
+    }
+
+    Employee adminSalon = new Employee();
+    adminSalon.name = "FName SalonMyHomeAdmin";
+    adminSalon.ph = "+912626262626"; //Nokia - Salon Manager
+
+    Employee managerMyHomeApt = new Employee();
+    managerMyHomeApt.name = "FName MyHomeManager";
+    managerMyHomeApt.ph = "+916565656565"; //redmi note 3 - Apartment Manager
+
+    Employee executive1 = new Employee();
+    executive1.name = "FName MyHomeExecutive";
+    executive1.ph = "+912626262626"; //Nokia - Apartment Executive
+
+    try {
+      await _gs
+          .getEntityService()
+          .addEmployee("MyHomeApartment", managerMyHomeApt, EntityRole.Manager);
+      await _gs
+          .getEntityService()
+          .addEmployee("MyHomeApartment", executive1, EntityRole.Executive);
+      await _gs
+          .getEntityService()
+          .addEmployee("SalonMyHomeApartment", adminSalon, EntityRole.Admin);
+    } catch (e) {
+      print("Exception occured " + e.toString());
+    }
+
+    AppUser salonAdmin = await _gs.getUserService().getUser("+912626262626");
+    Entity salon =
+        await _gs.getEntityService().getEntity("SalonMyHomeApartment");
+
+    EntityPrivate salonPrivate =
+        await _gs.getEntityService().getEntityPrivate("SalonMyHomeApartment");
+    if (salonAdmin.entityVsRole["SalonMyHomeApartment"] == EntityRole.Admin &&
+        salon.getRole("+912626262626") == EntityRole.Admin &&
+        salonPrivate.roles["+912626262626"] ==
+            EnumToString.convertToString(EntityRole.Admin)) {
+      print("AddEmployee as an Admin is working fine --> SUCCESS");
+    } else {
+      print("AddEmployee as an Admin -----------------------> FAILURE");
+    }
+
+    AppUser apartmentManager =
+        await _gs.getUserService().getUser("+916565656565");
+    Entity apartment =
+        await _gs.getEntityService().getEntity("MyHomeApartment");
+
+    EntityPrivate apartmentPrivate =
+        await _gs.getEntityService().getEntityPrivate("MyHomeApartment");
+    if (apartmentManager.entityVsRole["MyHomeApartment"] ==
+            EntityRole.Manager &&
+        apartment.getRole("+916565656565") == EntityRole.Manager &&
+        apartmentPrivate.roles["+916565656565"] ==
+            EnumToString.convertToString(EntityRole.Manager)) {
+      print("AddEmployee as an Manager is working fine --> SUCCESS");
+    } else {
+      print("AddEmployee as an Manager -----------------------> FAILURE");
+    }
+
+    AppUser apartmentExecutive =
+        await _gs.getUserService().getUser("+912626262626");
+
+    if (apartmentExecutive.entityVsRole["MyHomeApartment"] ==
+            EntityRole.Executive &&
+        apartment.getRole("+912626262626") == EntityRole.Executive &&
+        apartmentPrivate.roles["+912626262626"] ==
+            EnumToString.convertToString(EntityRole.Executive)) {
+      print("AddEmployee as an Executive is working fine --> SUCCESS");
+    } else {
+      print("AddEmployee as an Executive -----------------------> FAILURE");
+    }
+
+    //now make the manager as Admin of the Apartment
+    try {
+      await _gs
+          .getEntityService()
+          .addEmployee("MyHomeApartment", managerMyHomeApt, EntityRole.Admin);
+    } catch (e) {
+      print("Exception occured " + e.toString());
+    }
+
+    apartmentManager = await _gs.getUserService().getUser("+916565656565");
+    apartment = await _gs.getEntityService().getEntity("MyHomeApartment");
+
+    apartmentPrivate =
+        await _gs.getEntityService().getEntityPrivate("MyHomeApartment");
+    if (apartmentManager.entityVsRole["MyHomeApartment"] !=
+            EntityRole.Manager &&
+        apartmentManager.entityVsRole["MyHomeApartment"] == EntityRole.Admin &&
+        apartment.getRole("+916565656565") == EntityRole.Admin &&
+        apartmentPrivate.roles["+916565656565"] ==
+            EnumToString.convertToString(EntityRole.Admin)) {
+      print(
+          "AddEmployee to promote Manager to Admin is working fine --> SUCCESS");
+    } else {
+      print(
+          "AddEmployee to promote Manager to Admin -----------------------> FAILURE");
+    }
+  }
+
+  Future<void> testRemoveAdminManagerAndExecutive() async {
+    try {
+      await _gs
+          .getEntityService()
+          .removeEmployee("MyHomeApartment", "+916565656565");
+      await _gs
+          .getEntityService()
+          .removeEmployee("MyHomeApartment", "+912626262626");
+      await _gs
+          .getEntityService()
+          .removeEmployee("SalonMyHomeApartment", "+912626262626");
+    } catch (e) {
+      print("Exception occured " + e.toString());
+    }
+
+    AppUser salonAdmin = await _gs.getUserService().getUser("+912626262626");
+    Entity salon =
+        await _gs.getEntityService().getEntity("SalonMyHomeApartment");
+
+    EntityPrivate salonPrivate =
+        await _gs.getEntityService().getEntityPrivate("SalonMyHomeApartment");
+    if (!salonAdmin.entityVsRole.containsKey("SalonMyHomeApartment") &&
+        salon.getRole("+912626262626") == null &&
+        !salonPrivate.roles.containsKey("+912626262626")) {
+      print("RemoveEmployee as an Admin is working fine --> SUCCESS");
+    } else {
+      print("RemoveEmployee as an Admin -----------------------> FAILURE");
+    }
+
+    AppUser apartmentManager =
+        await _gs.getUserService().getUser("+916565656565");
+    Entity apartment =
+        await _gs.getEntityService().getEntity("MyHomeApartment");
+
+    EntityPrivate apartmentPrivate =
+        await _gs.getEntityService().getEntityPrivate("MyHomeApartment");
+    if (!apartmentManager.entityVsRole.containsKey("MyHomeApartment") &&
+        apartment.getRole("+916565656565") == null &&
+        !apartmentPrivate.roles.containsKey("+916565656565")) {
+      print("RemoveEmployee for a Manager is working fine --> SUCCESS");
+    } else {
+      print("RemoveEmployee for a Manager -----------------------> FAILURE");
+    }
+
+    AppUser apartmentExecutive =
+        await _gs.getUserService().getUser("+912626262626");
+
+    if (!apartmentExecutive.entityVsRole.containsKey("MyHomeApartment") &&
+        apartment.getRole("+912626262626") == null &&
+        !apartmentPrivate.roles.containsKey("+912626262626")) {
+      print("RemoveEmployee for an Executive is working fine --> SUCCESS");
+    } else {
+      print("RemoveEmployee for an Executive -----------------------> FAILURE");
     }
   }
 

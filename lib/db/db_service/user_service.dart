@@ -64,4 +64,32 @@ class UserService {
     }
     return true;
   }
+
+  Future<bool> deleteUser(String phone) async {
+    FirebaseFirestore fStore = getFirestore();
+    try {
+      final DocumentReference userRef = fStore.doc('users/' + phone);
+      userRef.delete();
+    } catch (e) {
+      return false;
+    }
+    return true;
+  }
+
+  Future<AppUser> getUser(String phone) async {
+    FirebaseFirestore fStore = getFirestore();
+
+    final DocumentReference userRef = fStore.doc('users/' + phone);
+
+    AppUser u;
+
+    DocumentSnapshot doc = await userRef.get();
+
+    if (doc.exists) {
+      Map<String, dynamic> map = doc.data();
+
+      u = AppUser.fromJson(map);
+    }
+    return u;
+  }
 }
