@@ -671,10 +671,10 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
         if (entity.closedOn.length != 0)
           _daysOff = Utils.convertStringsToDays(entity.closedOn);
       }
-      if (_daysOff.length == 0) {
-        _closedOnDays.add('days.sunday');
-        _daysOff = Utils.convertStringsToDays(_closedOnDays);
-      }
+      // if (_daysOff.length == 0) {
+      //   _closedOnDays.add('days.sunday');
+      //   _daysOff = Utils.convertStringsToDays(_closedOnDays);
+      // }
       _slotDurationController.text =
           entity.slotDuration != null ? entity.slotDuration.toString() : "";
       _advBookingInDaysController.text =
