@@ -48,8 +48,8 @@ class Entity {
       this.offer,
       this.phone,
       this.forms,
-      this.maxTokensPerSlotByUser,
-      this.maxPeoplePerToken,
+      this.maxTokensPerSlotByUser = 1,
+      this.maxPeoplePerToken = 1,
       this.parentGroupId,
       this.supportEmail});
 
@@ -95,8 +95,8 @@ class Entity {
   String phone;
   MetaEntity _meta;
   List<MetaForm> forms;
-  int maxTokensPerSlotByUser = 1;
-  int maxPeoplePerToken = 1;
+  int maxTokensPerSlotByUser;
+  int maxPeoplePerToken;
   String
       parentGroupId; //this value will be present and common for different branches of same company
   String supportEmail;
@@ -348,6 +348,8 @@ class Entity {
               : false,
           isBookable: isBookable,
           forms: forms,
+          maxTokensPerSlotByUser: maxTokensPerSlotByUser,
+          maxPeoplePerToken: maxPeoplePerToken,
           parentGroupId: parentGroupId,
           supportEmail: supportEmail);
     } else {
@@ -384,6 +386,8 @@ class Entity {
           (childEntities != null && childEntities.length > 0) ? true : false;
       _meta.isBookable = isBookable;
       _meta.forms = forms;
+      _meta.maxTokensPerSlotByUser = maxTokensPerSlotByUser;
+      _meta.maxPeoplePerToken = maxPeoplePerToken;
       _meta.parentGroupId = parentGroupId;
       _meta.supportEmail = supportEmail;
     }
