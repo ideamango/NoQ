@@ -168,7 +168,6 @@ class _ManageEntityListPageState extends State<ManageEntityListPage> {
     _gs.putEntity(entity, false);
     MetaEntity metaEn = entity.getMetaEntity();
     //itemSize = MediaQuery.of(context).size.height * .29;
-
     setState(() {
       metaEntitiesList.add(metaEn);
     });
@@ -178,10 +177,6 @@ class _ManageEntityListPageState extends State<ManageEntityListPage> {
           _scrollController.position.maxScrollExtent + itemSize,
           curve: Curves.easeInToLinear,
           duration: Duration(milliseconds: 200));
-
-    setState(() {
-      metaEntitiesList.add(metaEn);
-    });
   }
 
   @override
