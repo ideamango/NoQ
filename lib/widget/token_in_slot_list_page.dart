@@ -549,43 +549,54 @@ class _TokensInSlotState extends State<TokensInSlot> {
             titleTxt:
                 "Tokens in ${Utils.formatTimeAsStr(timeSlot)} Slot on ${dtFormat.format(widget.date)}",
           ),
-          body: Column(
-            children: [
-              Container(
-                child: Scrollbar(
-                    child: SingleChildScrollView(
-                  child: Column(
-                    children: [
-                      (listOfTokens.length != 0)
-                          ? ListView.builder(
-                              shrinkWrap: true,
-                              scrollDirection: Axis.vertical,
-                              physics: ClampingScrollPhysics(),
-                              itemBuilder: (BuildContext context, int index) {
-                                return Container(
-                                  padding: EdgeInsets.all(10),
-                                  child: Card(
-                                    child: new Column(
-                                        children: listOfTokens
-                                            .map(_buildItem)
-                                            .toList()),
-                                    //children: <Widget>[firstRow, secondRow],
-                                  ),
-                                );
-                              },
-                              itemCount: 1,
-                            )
-                          : _emptyPage(),
+          body: (initCompleted)
+              ? Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Container(
+                      child: Scrollbar(
+                          child: SingleChildScrollView(
+                        child: Column(
+                          children: [
+                            (listOfTokens.length != 0)
+                                ? ListView.builder(
+                                    shrinkWrap: true,
+                                    scrollDirection: Axis.vertical,
+                                    physics: ClampingScrollPhysics(),
+                                    itemBuilder:
+                                        (BuildContext context, int index) {
+                                      return Container(
+                                        padding: EdgeInsets.all(10),
+                                        child: Card(
+                                          child: new Column(
+                                              children: listOfTokens
+                                                  .map(_buildItem)
+                                                  .toList()),
+                                          //children: <Widget>[firstRow, secondRow],
+                                        ),
+                                      );
+                                    },
+                                    itemCount: 1,
+                                  )
+                                : _emptyPage(),
 
-                      // (initCompleted)
-                      //     ? buildExpansionTile()
-                      //     : showCircularProgress(),
+                            // (initCompleted)
+                            //     ? buildExpansionTile()
+                            //     : showCircularProgress(),
+                          ],
+                        ),
+                      )),
+                    ),
+                  ],
+                )
+              : Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      showCircularProgress(),
                     ],
                   ),
-                )),
-              ),
-            ],
-          ),
+                ),
         ));
   }
 }
