@@ -406,6 +406,7 @@ class ChildEntityRowState extends State<ChildEntityRow> {
                         backRoute: ManageChildEntityListPage(
                           entity: entity,
                         ),
+                        defaultDate: null,
                       )));
                     },
                   ),

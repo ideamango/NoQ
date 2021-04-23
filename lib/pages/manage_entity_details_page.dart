@@ -2061,6 +2061,17 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
         }
       }
 
+      bool validateMandatoryFieldsForBookable() {
+        print(_startDateController.text);
+        print(_endDateController.text);
+        print(_slotDurationController.text);
+        print(_startDateController.text);
+        if (Utils.isNotNullOrEmpty(_startDateController.text)) {
+          return false;
+        }
+        return true;
+      }
+
       backRoute() {
         Navigator.of(context)
             .push(PageAnimation.createRoute(ManageEntityListPage()));
@@ -3420,6 +3431,20 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
                                                 showConfirmationDialog();
                                                 //TODO: SMita - show msg with info, yes/no
                                               }
+                                              //Check if all mandatory fields for being bookable are not empty.
+                                              bool retVal =
+                                                  validateMandatoryFieldsForBookable();
+                                              if (!retVal) {
+                                                Utils.showMyFlushbar(
+                                                    context,
+                                                    Icons.info_outline,
+                                                    Duration(
+                                                      seconds: 4,
+                                                    ),
+                                                    "Mandatory fields missing for bookable",
+                                                    "");
+                                              }
+
                                               print(isBookable);
                                             });
                                           },

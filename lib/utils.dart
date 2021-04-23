@@ -474,7 +474,7 @@ class Utils {
       breakEndTime = dayStartTime;
     } else {
       breakStartTime = new DateTime(dateTime.year, dateTime.month, dateTime.day,
-          me.breakStartHour, me.breakEndMinute);
+          me.breakStartHour, me.breakStartMinute);
       breakEndTime = new DateTime(dateTime.year, dateTime.month, dateTime.day,
           me.breakEndHour, me.breakEndMinute);
     }

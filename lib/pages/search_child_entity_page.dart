@@ -33,8 +33,14 @@ class SearchChildEntityPage extends StatefulWidget {
   final List<MetaEntity> childList;
   final String parentName;
   final String parentId;
+  final EntityType parentType;
   SearchChildEntityPage(
-      {Key key, this.pageName, this.childList, this.parentName, this.parentId})
+      {Key key,
+      this.pageName,
+      this.childList,
+      this.parentName,
+      this.parentId,
+      this.parentType})
       : super(key: key);
   @override
   _SearchChildEntityPageState createState() => _SearchChildEntityPageState();
@@ -896,7 +902,7 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
                       keyChildSearch.currentState.showBottomSheet<Null>(
                     (context) => Container(
                       color: Colors.cyan[50],
-                      height: MediaQuery.of(context).size.height * .7,
+                      height: MediaQuery.of(context).size.height * .5,
                       child: Column(
                         children: <Widget>[
                           Container(
@@ -945,7 +951,10 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
                                 padding: EdgeInsets.all(0),
                                 scrollDirection: Axis.vertical,
                                 shrinkWrap: true,
-                                itemCount: EntityType.values.length,
+                                itemCount: _state
+                                    .getActiveChildEntityTypes(
+                                        widget.parentType)
+                                    .length,
                                 gridDelegate:
                                     SliverGridDelegateWithFixedCrossAxisCount(
                                         crossAxisCount: 4,
@@ -962,7 +971,9 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
                                       //     BoxDecoration(border: Border.all(color: Colors.black, width: 0.5)),
                                       child: Center(
                                         child: _buildCategoryItem(
-                                            context, EntityType.values[index]),
+                                            context,
+                                            _state.getActiveChildEntityTypes(
+                                                widget.parentType)[index]),
                                       ),
                                     ),
                                   );
