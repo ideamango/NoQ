@@ -20,12 +20,12 @@ import 'package:path_provider/path_provider.dart';
 import 'package:share/share.dart';
 
 class GenerateQrUserApplication extends StatefulWidget {
-  final String applicationId;
+  final String uniqueTokenIdentifier;
   final String entityName;
   final String backRoute;
   GenerateQrUserApplication(
       {Key key,
-      @required this.applicationId,
+      @required this.uniqueTokenIdentifier,
       @required this.entityName,
       @required this.backRoute})
       : super(key: key);
@@ -57,7 +57,7 @@ class GenerateQrUserApplicationState extends State<GenerateQrUserApplication> {
   void generateQrCode() {
     //dataString needs to be set, using this the Qr code is generated.
     Utils.createQrScreenForUserApplications(
-            widget.applicationId, widget.entityName)
+            widget.uniqueTokenIdentifier, widget.entityName)
         .then((value) {
       uriLink = value;
       // var _dynamicLink = Uri.https(uriLink.authority, uriLink.path).toString();
@@ -175,12 +175,14 @@ class GenerateQrUserApplicationState extends State<GenerateQrUserApplication> {
               width: MediaQuery.of(context).size.width * .8,
               height: MediaQuery.of(context).size.width * .9,
               child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: <Widget>[
                   Expanded(
                     child: Center(
                       child: RepaintBoundary(
                         key: globalKey,
                         child: Container(
+                          alignment: Alignment.center,
                           color: Colors.white,
                           child: QrImage(
                             data: _dataString,

@@ -144,6 +144,24 @@ class TokenService {
     return dayWiseSlots;
   }
 
+  Future<UserTokens> getUserToken(String tokenId) async {
+    FirebaseFirestore fStore = getFirestore();
+
+    UserTokens userToks;
+
+    final DocumentReference tokenCounterRef = fStore.doc('tokens/' + tokenId);
+
+    DocumentSnapshot doc = await tokenCounterRef.get();
+
+    if (doc.exists) {
+      Map<String, dynamic> map = doc.data();
+
+      userToks = UserTokens.fromJson(map);
+    }
+
+    return userToks;
+  }
+
   Future<TokenCounter> getTokenCounterForEntity(
       String entityId, String year) async {
     FirebaseFirestore fStore = getFirestore();

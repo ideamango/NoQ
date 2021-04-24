@@ -710,7 +710,7 @@ class _ShowUserApplicationDetailsState
                                       GenerateQrUserApplication(
                                 entityName: "Application QR code",
                                 backRoute: "UserAppsList",
-                                applicationId: ba.id,
+                                uniqueTokenIdentifier: ba.id,
                               )));
                             }),
                       ),

@@ -7,9 +7,11 @@ import 'package:geolocator/geolocator.dart';
 import 'package:noq/db/db_model/address.dart';
 import 'package:noq/db/db_model/booking_application.dart';
 import 'package:noq/db/db_model/meta_entity.dart';
+import 'package:noq/db/db_model/user_token.dart';
 import 'package:noq/enum/entity_type.dart';
 import 'package:noq/global_state.dart';
 import 'package:noq/pages/favs_list_page.dart';
+import 'package:noq/pages/qr_code_user_token.dart';
 import 'package:noq/pages/show_slots_page.dart';
 import 'package:noq/pages/show_user_application_details.dart';
 import 'package:noq/services/auth_service.dart';
@@ -432,27 +434,29 @@ class Utils {
   }
 
   static void showApplicationDetails(
-      BuildContext context, String applicationID) async {
+      BuildContext context, String tokenId) async {
     Utils.showMyFlushbar(context, Icons.info, Duration(seconds: 3),
         "Loading the Application details...", "Hold on!");
 
     GlobalState gs = await GlobalState.getGlobalState();
-    BookingApplication bookingApplication;
-
-    gs.getApplicationService().getApplication(applicationID).then((value) {
-      if (value == null)
+    UserTokens userTokenId;
+    print(tokenId);
+    tokenId = tokenId.replaceAll(' ', '+');
+    gs.getTokenService().getUserToken(tokenId).then((value) {
+      if (value == null) {
         Utils.showMyFlushbar(context, Icons.info, Duration(seconds: 3),
-            "The application does not exists!", "");
+            "No data found for this token.", "");
+      } else {
+        userTokenId = value;
 
-      bookingApplication = value;
-
-      Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-              builder: (context) => ShowUserApplicationDetails(
-                    bookingApplication: bookingApplication,
-                    isAdmin: true,
-                  )));
+        Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+                builder: (context) => ShowQrBookingToken(
+                      userTokens: userTokenId,
+                      isAdmin: true,
+                    )));
+      }
     });
   }
 
@@ -648,13 +652,13 @@ class Utils {
   }
 
   static Future<Uri> createQrScreenForUserApplications(
-      String applID, String entityName) async {
-    String msgTitle = entityName + entityShareByOwnerHeading;
+      String tokenID, String entityName) async {
+    String msgTitle = entityShareByUserHeading + entityName;
     final DynamicLinkParameters parameters = DynamicLinkParameters(
       // This should match firebase but without the username query param
       uriPrefix: shareURLPrefix,
       // This can be whatever you want for the uri, https://yourapp.com/groupinvite?username=$userName
-      link: Uri.parse(shareURLPrefix + '/?applicationID=$applID'),
+      link: Uri.parse(shareURLPrefix + '/?tokenIdentifier=$tokenID'),
       androidParameters: AndroidParameters(
           packageName: bundleId,
           minimumVersion: 1,
@@ -1053,5 +1057,19 @@ class Utils {
               ),
             ));
     return returnVal;
+  }
+
+  static stringToPascalCase(String str) {
+    String newStr = str
+        .replaceAll(RegExp(' +'), ' ')
+        .split(" ")
+        .map((str) => inCaps(str))
+        .join(" ");
+
+    return newStr;
+  }
+
+  static String inCaps(String str) {
+    return str.length > 0 ? '${str[0].toUpperCase()}${str.substring(1)}' : '';
   }
 }

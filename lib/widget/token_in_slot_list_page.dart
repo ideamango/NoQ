@@ -457,14 +457,25 @@ class _TokensInSlotState extends State<TokensInSlot> {
                           ),
                           onPressed: () {
                             print(booking.applicationId);
-
-                            Navigator.of(context).push(
-                                PageAnimation.createRoute(
-                                    GenerateQrUserApplication(
-                              entityName: "Application QR code",
-                              backRoute: "UserAppsList",
-                              applicationId: booking.applicationId,
-                            )));
+                            if (Utils.isNotNullOrEmpty(booking.applicationId)) {
+                              Navigator.of(context).push(
+                                  PageAnimation.createRoute(
+                                      GenerateQrUserApplication(
+                                entityName: "QR Code Result Page",
+                                backRoute: "UserAppsList",
+                                uniqueTokenIdentifier: booking.applicationId,
+                              )));
+                            }
+                            //else {
+                            //   //if application id is null then show token details page.
+                            //   Navigator.of(context).push(
+                            //       PageAnimation.createRoute(
+                            //           GenerateQrBookingToken(
+                            //     entityName: "Application QR code",
+                            //     backRoute: "UserAppsList",
+                            //     applicationId: booking.applicationId,
+                            //   )));
+                            // }
                           }),
                     ),
                     Container(

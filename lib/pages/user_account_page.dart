@@ -470,12 +470,22 @@ class _UserAccountPageState extends State<UserAccountPage> {
                           onPressed: () {
                             print(booking.applicationId);
 
+                            print('Unique identifier for TOKEN -  ' +
+                                booking.parent.slotId +
+                                '%3A' +
+                                booking.parent.userId);
+
+                            String id =
+                                booking.parent.slotId.replaceAll('#', ':') +
+                                    ':' +
+                                    booking.parent.userId;
+
                             Navigator.of(context).push(
                                 PageAnimation.createRoute(
                                     GenerateQrUserApplication(
                               entityName: "Application QR code",
                               backRoute: "UserAppsList",
-                              applicationId: booking.applicationId,
+                              uniqueTokenIdentifier: id,
                             )));
                           }),
                     ),

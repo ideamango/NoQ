@@ -6,6 +6,7 @@ import 'package:noq/constants.dart';
 import 'package:noq/global_state.dart';
 import 'package:noq/pages/how_to_reg_for_business.dart';
 import 'package:noq/pages/how_to_reg_for_users.dart';
+import 'package:noq/pages/qr_code_user_token.dart';
 import 'package:noq/pages/search_entity_page.dart';
 import 'package:noq/pages/db_test.dart';
 import 'package:noq/pages/shopping_list.dart';
@@ -387,7 +388,28 @@ class _UserHomePageState extends State<UserHomePage> {
                     ),
                     backgroundColor: primaryAccentColor,
                     onPressed: () {
+                      //Uncomment this
                       QrCodeScanner.scan(context);
+
+//Test Dummy code
+//TODO Dummy code for testing
+                      // GlobalState.getGlobalState().then((value) {
+                      //   value
+                      //       .getTokenService()
+                      //       .getUserToken(
+                      //           "5f0817c0-a263-11eb-98fd-5551d2a7a020#2021~4~24#20~53#+919876543210")
+                      //       .then((tokenValue) {
+                      //     UserTokens userTokenId = tokenValue;
+
+                      //     Navigator.pushReplacement(
+                      //         context,
+                      //         MaterialPageRoute(
+                      //             builder: (context) => ShowQrBookingToken(
+                      //                   userTokens: userTokenId,
+                      //                   isAdmin: true,
+                      //                 )));
+                      //   });
+                      // });
                     }),
               ),
               floatingActionButtonLocation:
