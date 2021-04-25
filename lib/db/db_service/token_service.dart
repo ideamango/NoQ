@@ -523,10 +523,10 @@ class TokenService {
       DocumentSnapshot tokenSnapshot = await tx.get(tokRef);
       if (tokenSnapshot.exists) {
         UserTokens tokens = UserTokens.fromJson(tokenSnapshot.data());
-        if (tokens.userId != userPhone) {
-          throw new NoTokenFoundException(
-              "Token does not belong to the requested user");
-        }
+        // if (tokens.userId != userPhone) {
+        //   throw new NoTokenFoundException(
+        //       "Token does not belong to the requested user");
+        // }
 
         if (number == null && tokens.tokens.length > 1) {
           throw new Exception(

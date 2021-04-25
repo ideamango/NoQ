@@ -233,16 +233,16 @@ class _TokensInSlotState extends State<TokensInSlot> {
                     onPressed: () {
                       print("Cancel booking");
                       bool cancelDone = false;
+                      Navigator.of(context, rootNavigator: true).pop();
+                      Utils.showMyFlushbar(
+                          context,
+                          Icons.cancel,
+                          Duration(
+                            seconds: 3,
+                          ),
+                          "Cancelling Token ${booking.getDisplayName()}",
+                          "Please wait..");
                       cancelToken(booking).then((value) {
-                        Utils.showMyFlushbar(
-                            context,
-                            Icons.cancel,
-                            Duration(
-                              seconds: 3,
-                            ),
-                            "Cancelling your booking",
-                            "Please wait..");
-
                         cancelDone = value;
                         if (!cancelDone) {
                           Utils.showMyFlushbar(
@@ -257,7 +257,6 @@ class _TokensInSlotState extends State<TokensInSlot> {
                           setState(() {
                             booking.number = -1;
                           });
-                          Navigator.of(context, rootNavigator: true).pop();
                         }
                       }).catchError((e) {
                         print(e);
