@@ -180,6 +180,7 @@ class _UserAccountPageState extends State<UserAccountPage> {
   void showShoppingList(UserToken booking) {
     Navigator.of(context).push(PageNoAnimation.createRoute(ShoppingList(
       token: booking,
+      isAdmin: false,
     )));
   }
 

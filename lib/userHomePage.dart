@@ -476,6 +476,7 @@ class _UserHomePageState extends State<UserHomePage> {
         MaterialPageRoute(
             builder: (context) => ShoppingList(
                   token: booking,
+                  isAdmin: false,
                 )));
   }
 

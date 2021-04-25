@@ -7,6 +7,8 @@ import 'package:noq/db/db_model/meta_entity.dart';
 import 'package:noq/db/db_model/user_token.dart';
 import 'package:noq/global_state.dart';
 import 'package:noq/pages/entity_token_list_page.dart';
+import 'package:noq/pages/shopping_list.dart';
+import 'package:noq/repository/slotRepository.dart';
 import 'package:noq/services/circular_progress.dart';
 import 'package:noq/services/qr_code_user_application.dart';
 import 'package:noq/services/url_services.dart';
@@ -14,6 +16,7 @@ import 'package:noq/style.dart';
 import 'package:noq/utils.dart';
 import 'package:noq/widget/appbar.dart';
 import 'package:noq/widget/page_animation.dart';
+import 'package:noq/widget/widgets.dart';
 
 class TokensInSlot extends StatefulWidget {
   final String slotKey;
@@ -185,6 +188,106 @@ class _TokensInSlotState extends State<TokensInSlot> {
     );
   }
 
+  void showCancelBooking(UserToken booking) {
+    showDialog(
+        barrierDismissible: false,
+        context: context,
+        builder: (_) => AlertDialog(
+              titlePadding: EdgeInsets.fromLTRB(10, 15, 10, 10),
+              contentPadding: EdgeInsets.all(0),
+              actionsPadding: EdgeInsets.all(5),
+              //buttonPadding: EdgeInsets.all(0),
+              title: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Text(
+                    'Are you sure you want to cancel this booking?',
+                    style: TextStyle(
+                      fontSize: 15,
+                      color: Colors.blueGrey[600],
+                    ),
+                  ),
+                  verticalSpacer,
+                  // myDivider,
+                ],
+              ),
+              content: Divider(
+                color: Colors.blueGrey[400],
+                height: 1,
+                //indent: 40,
+                //endIndent: 30,
+              ),
+
+              //content: Text('This is my content'),
+              actions: <Widget>[
+                SizedBox(
+                  height: 24,
+                  child: RaisedButton(
+                    elevation: 0,
+                    color: Colors.transparent,
+                    splashColor: highlightColor.withOpacity(.8),
+                    textColor: Colors.orange,
+                    shape: RoundedRectangleBorder(
+                        side: BorderSide(color: Colors.orange)),
+                    child: Text('Yes'),
+                    onPressed: () {
+                      print("Cancel booking");
+                      bool cancelDone = false;
+                      cancelToken(booking).then((value) {
+                        Utils.showMyFlushbar(
+                            context,
+                            Icons.cancel,
+                            Duration(
+                              seconds: 3,
+                            ),
+                            "Cancelling your booking",
+                            "Please wait..");
+
+                        cancelDone = value;
+                        if (!cancelDone) {
+                          Utils.showMyFlushbar(
+                              context,
+                              Icons.info_outline,
+                              Duration(
+                                seconds: 5,
+                              ),
+                              "Couldn't cancel your booking for some reason. ",
+                              "Please try again later.");
+                        } else {
+                          setState(() {
+                            booking.number = -1;
+                          });
+                          Navigator.of(context, rootNavigator: true).pop();
+                        }
+                      }).catchError((e) {
+                        print(e);
+                      });
+                    },
+                  ),
+                ),
+                SizedBox(
+                  height: 24,
+                  child: RaisedButton(
+                    elevation: 20,
+                    autofocus: true,
+                    focusColor: highlightColor,
+                    splashColor: highlightColor,
+                    color: Colors.white,
+                    textColor: Colors.orange,
+                    shape: RoundedRectangleBorder(
+                        side: BorderSide(color: Colors.orange)),
+                    child: Text('No'),
+                    onPressed: () {
+                      print("Do nothing");
+                      Navigator.of(context, rootNavigator: true).pop();
+                      // Navigator.of(context, rootNavigator: true).pop('dialog');
+                    },
+                  ),
+                ),
+              ],
+            ));
+  }
+
   Widget _buildItem(UserToken booking) {
     double ticketwidth = MediaQuery.of(context).size.width * .95;
     double ticketHeight = MediaQuery.of(context).size.width * .8 / 2.7;
@@ -280,15 +383,16 @@ class _TokensInSlotState extends State<TokensInSlot> {
                                       size: 20,
                                     ),
                                     onPressed: () {
-                                      if (booking.parent.phone != null) {
+                                      print(booking.parent.userId);
+                                      if (booking.parent.userId != null) {
                                         try {
-                                          callPhone(booking.parent.phone);
+                                          callPhone(booking.parent.userId);
                                         } catch (error) {
                                           Utils.showMyFlushbar(
                                               context,
                                               Icons.error,
                                               Duration(seconds: 5),
-                                              "Could not connect call to the number ${booking.parent.phone} !!",
+                                              "Could not connect call to the number ${booking.parent.userId} !!",
                                               "Try again later.");
                                         }
                                       } else {
@@ -298,68 +402,6 @@ class _TokensInSlotState extends State<TokensInSlot> {
                                             Duration(seconds: 5),
                                             "Contact information not found!!",
                                             "");
-                                      }
-                                    }),
-                              ),
-                              Container(
-                                width: MediaQuery.of(context).size.width * .08,
-                                height: MediaQuery.of(context).size.width * .07,
-                                // width: 20.0,
-                                child: IconButton(
-                                  padding: EdgeInsets.all(0),
-                                  alignment: Alignment.center,
-                                  highlightColor: Colors.orange[300],
-                                  icon: Icon(
-                                    Icons.cancel,
-                                    color: lightIcon,
-                                    size: 22,
-                                  ),
-                                  onPressed: () {
-                                    //If booking is past booking then no sense of cancelling , show msg to user
-                                    // if (booking.parent.dateTime
-                                    //     .isBefore(DateTime.now()))
-                                    Utils.showMyFlushbar(
-                                        context,
-                                        Icons.info,
-                                        Duration(seconds: 5),
-                                        "Admin cannot Cancel the token.",
-                                        "");
-                                    // //booking number is -1 means its already been cancelled, Do Nothing
-                                    // if (booking.number == -1)
-                                    //   return null;
-                                    // else
-                                    return null;
-                                    // showCancelBooking(booking);
-                                  },
-                                ),
-                              ),
-                              Container(
-                                width: MediaQuery.of(context).size.width * .08,
-                                height: MediaQuery.of(context).size.width * .07,
-                                // width: 20.0,
-                                child: IconButton(
-                                    padding: EdgeInsets.all(0),
-                                    alignment: Alignment.center,
-                                    highlightColor: Colors.orange[300],
-                                    icon: Icon(
-                                      Icons.location_on,
-                                      color: lightIcon,
-                                      size: 21,
-                                    ),
-                                    onPressed: () {
-                                      try {
-                                        launchURL(
-                                            booking.parent.entityName,
-                                            booking.parent.address,
-                                            booking.parent.lat,
-                                            booking.parent.lon);
-                                      } catch (error) {
-                                        Utils.showMyFlushbar(
-                                            context,
-                                            Icons.error,
-                                            Duration(seconds: 5),
-                                            "Could not open Maps!!",
-                                            "Try again later.");
                                       }
                                     }),
                               ),
@@ -376,8 +418,9 @@ class _TokensInSlotState extends State<TokensInSlot> {
                                     color: Colors.white,
                                   ),
                                   onPressed: () {
-                                    String phoneNo =
-                                        booking.parent.entityWhatsApp;
+                                    print(booking.parent.userId);
+
+                                    String phoneNo = booking.parent.userId;
                                     if (phoneNo != null && phoneNo != "") {
                                       try {
                                         launchWhatsApp(
@@ -413,14 +456,86 @@ class _TokensInSlotState extends State<TokensInSlot> {
                                   alignment: Alignment.center,
                                   highlightColor: Colors.orange[300],
                                   icon: Icon(
-                                    Icons.list,
+                                    Icons.cancel,
                                     color: lightIcon,
                                     size: 22,
                                   ),
-                                  onPressed: () {},
-                                  //showShoppingList(booking),
+                                  onPressed: () {
+                                    //If booking is past booking then no sense of cancelling , show msg to user
+                                    if (booking.parent.dateTime
+                                        .isBefore(DateTime.now()))
+                                      Utils.showMyFlushbar(
+                                          context,
+                                          Icons.info,
+                                          Duration(seconds: 5),
+                                          "This booking token has already expired!!",
+                                          "");
+                                    //booking number is -1 means its already been cancelled, Do Nothing
+                                    if (booking.number == -1)
+                                      return null;
+                                    else
+                                      showCancelBooking(booking);
+                                  },
                                 ),
                               ),
+                              // Container(
+                              //   width: MediaQuery.of(context).size.width * .08,
+                              //   height: MediaQuery.of(context).size.width * .07,
+                              //   // width: 20.0,
+                              //   child: IconButton(
+                              //       padding: EdgeInsets.all(0),
+                              //       alignment: Alignment.center,
+                              //       highlightColor: Colors.orange[300],
+                              //       icon: Icon(
+                              //         Icons.location_on,
+                              //         color: lightIcon,
+                              //         size: 21,
+                              //       ),
+                              //       onPressed: () {
+                              //         try {
+                              //           launchURL(
+                              //               booking.parent.entityName,
+                              //               booking.parent.address,
+                              //               booking.parent.lat,
+                              //               booking.parent.lon);
+                              //         } catch (error) {
+                              //           Utils.showMyFlushbar(
+                              //               context,
+                              //               Icons.error,
+                              //               Duration(seconds: 5),
+                              //               "Could not open Maps!!",
+                              //               "Try again later.");
+                              //         }
+                              //       }),
+                              // ),
+
+                              if (booking.order != null &&
+                                  booking.order?.isPublic == true)
+                                Container(
+                                  width:
+                                      MediaQuery.of(context).size.width * .08,
+                                  height:
+                                      MediaQuery.of(context).size.width * .07,
+                                  // width: 20.0,
+                                  child: IconButton(
+                                    padding: EdgeInsets.all(0),
+                                    alignment: Alignment.center,
+                                    highlightColor: Colors.orange[300],
+                                    icon: Icon(
+                                      Icons.list,
+                                      color: lightIcon,
+                                      size: 22,
+                                    ),
+                                    onPressed: () {
+                                      Navigator.of(context).push(
+                                          PageNoAnimation.createRoute(
+                                              ShoppingList(
+                                        token: booking,
+                                        isAdmin: true,
+                                      )));
+                                    },
+                                  ),
+                                ),
                             ],
                           ),
                         ),

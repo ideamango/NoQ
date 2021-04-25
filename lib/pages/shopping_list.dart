@@ -1,3 +1,4 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:noq/db/db_model/list_item.dart';
@@ -12,7 +13,9 @@ import 'package:noq/utils.dart';
 
 class ShoppingList extends StatefulWidget {
   final UserToken token;
-  ShoppingList({Key key, @required this.token}) : super(key: key);
+  final bool isAdmin;
+  ShoppingList({Key key, @required this.token, @required this.isAdmin})
+      : super(key: key);
   @override
   _ShoppingListState createState() => _ShoppingListState();
 }
@@ -29,6 +32,7 @@ class _ShoppingListState extends State<ShoppingList> {
   bool _initCompleted = false;
   bool _checked = false;
   String _errMsg;
+  bool isPublic = false;
 
 //Add service Row
 
@@ -55,18 +59,19 @@ class _ShoppingListState extends State<ShoppingList> {
           orderCreatedDateTime: null,
           deliveryDateTime: null,
           entityId: token.parent.entityId,
+          isPublic: false,
           userId: token.parent.userId);
       token.order = ord;
       listOfShoppingItems = token.order.items;
     } else {
+      isPublic = token.order.isPublic;
       listOfShoppingItems = token.order.items;
     }
   }
 
   void _addNewServiceRow() {
     setState(() {
-      ListItem sItem =
-          new ListItem(itemName: _item, quantity: "", isDone: false);
+      ListItem sItem = new ListItem(itemName: _item, isDone: false);
       listOfShoppingItems.add(sItem);
       _count = _count + 1;
       //token.order.items.add(sItem);
@@ -78,17 +83,14 @@ class _ShoppingListState extends State<ShoppingList> {
     setState(() {
       listOfShoppingItems.remove(currItem);
       _count = _count - 1;
-      //token.order.items.remove(currItem);
-      print(currItem.itemName + ' deleted- qty ' + currItem.quantity);
-      //TODO: Smita - Update GS
     });
   }
 
   Widget _buildServiceItem(ListItem newItem) {
     TextEditingController itemNameController = new TextEditingController();
-    TextEditingController itemQtyController = new TextEditingController();
+    //TextEditingController itemQtyController = new TextEditingController();
     itemNameController.text = newItem.itemName;
-    itemQtyController.text = newItem.quantity;
+    //itemQtyController.text = newItem.quantity;
     return Container(
         height: 40,
         child: Card(
@@ -110,9 +112,18 @@ class _ShoppingListState extends State<ShoppingList> {
                   child: Checkbox(
                     value: newItem.isDone,
                     onChanged: (value) {
-                      setState(() {
-                        newItem.isDone = value;
-                      });
+                      if (widget.isAdmin) {
+                        Utils.showMyFlushbar(
+                            context,
+                            Icons.info,
+                            Duration(seconds: 4),
+                            "Admin cannot modify the list by User",
+                            "");
+                      } else {
+                        setState(() {
+                          newItem.isDone = value;
+                        });
+                      }
                     },
                     activeColor: primaryIcon,
                     checkColor: primaryAccentColor,
@@ -122,6 +133,7 @@ class _ShoppingListState extends State<ShoppingList> {
                     height: 40,
                     width: MediaQuery.of(context).size.width * .5,
                     child: TextField(
+                      enabled: (widget.isAdmin) ? false : true,
                       cursorColor: highlightColor,
                       inputFormatters: [
                         LengthLimitingTextInputFormatter(18),
@@ -147,31 +159,6 @@ class _ShoppingListState extends State<ShoppingList> {
                     // ),
                     ),
                 // horizontalSpacer,
-                Container(
-                    width: MediaQuery.of(context).size.width * .25,
-                    height: 20,
-                    child: TextField(
-                      cursorColor: highlightColor,
-                      //maxLines: 1,
-                      maxLength: 10,
-                      // inputFormatters: [
-                      //   LengthLimitingTextInputFormatter(15),
-                      // ],
-                      style: TextStyle(fontSize: 14, color: primaryDarkColor),
-                      //  controller: itemQtyController,
-                      decoration: InputDecoration(
-                        //contentPadding: EdgeInsets.all(2),
-                        // labelText: labelTextStr,
-                        counterText: "",
-                        hintText: 'Quantity',
-                        hintStyle: TextStyle(fontSize: 12, color: Colors.grey),
-                        enabledBorder: InputBorder.none,
-                        focusedBorder: InputBorder.none,
-                      ),
-                      onChanged: (value) {
-                        newItem.quantity = value;
-                      },
-                    )),
 
                 Container(
                   height: 45,
@@ -182,12 +169,24 @@ class _ShoppingListState extends State<ShoppingList> {
                     alignment: Alignment.topCenter,
                     padding: EdgeInsets.all(0),
                     icon: Icon(Icons.delete,
-                        color: Colors.blueGrey[300], size: 20),
+                        color: (widget.isAdmin)
+                            ? disabledColor
+                            : Colors.blueGrey[400],
+                        size: 20),
                     onPressed: () {
-                      if (_shoppingListFormKey.currentState.validate()) {
-                        _shoppingListFormKey.currentState.save();
-                        _removeServiceRow(newItem);
-                        _listItem.text = "";
+                      if (!widget.isAdmin) {
+                        if (_shoppingListFormKey.currentState.validate()) {
+                          _shoppingListFormKey.currentState.save();
+                          _removeServiceRow(newItem);
+                          _listItem.text = "";
+                        }
+                      } else {
+                        Utils.showMyFlushbar(
+                            context,
+                            Icons.info,
+                            Duration(seconds: 4),
+                            "Admin cannot modify the list by User",
+                            "");
                       }
                     },
                   ),
@@ -213,6 +212,7 @@ class _ShoppingListState extends State<ShoppingList> {
       ],
       controller: _listItem,
       cursorColor: highlightColor,
+      enabled: (widget.isAdmin) ? false : true,
       //cursorWidth: 1,
       style: new TextStyle(
         // backgroundColor: Colors.white,
@@ -249,84 +249,80 @@ class _ShoppingListState extends State<ShoppingList> {
         child: Scaffold(
           appBar: AppBar(
               actions: <Widget>[
-                Container(
-                  padding: EdgeInsets.fromLTRB(0, 0, 10, 0),
-                  child: IconButton(
-                    icon: ImageIcon(
-                      AssetImage('assets/whatsapp.png'),
-                      size: 26,
-                      color: Colors.white,
-                    ),
-                    onPressed: () {
-                      if (listOfShoppingItems.length != 0) {
-                        print("This list will be shared");
+                // Container(
+                //   padding: EdgeInsets.fromLTRB(0, 0, 10, 0),
+                //   child: IconButton(
+                //     icon: ImageIcon(
+                //       AssetImage('assets/whatsapp.png'),
+                //       size: 26,
+                //       color: Colors.white,
+                //     ),
+                //     onPressed: () {
+                //       if (listOfShoppingItems.length != 0) {
+                //         print("This list will be shared");
 
-                        var concatenate = StringBuffer();
-                        // Widget heading = Text(
-                        //   'Shopping List from Sukoon',
-                        //   style: TextStyle(decoration: TextDecoration.underline),
-                        // );
+                //         var concatenate = StringBuffer();
+                //         Widget heading = Text(
+                //           'Shopping List from Sukoon',
+                //           style: TextStyle(decoration: TextDecoration.underline),
+                //         );
 
-                        concatenate.writeln("x~x~x~x~ LESSs ~x~x~x~x");
-                        concatenate
-                            .writeln("Token ~ " + token.getDisplayName());
-                        concatenate.writeln("x~x~x~x~x~x~x~x~x~x~x~x~x");
-                        //concatenate.writeln("Token: " + token.getDisplayName());
-                        //concatenate.writeln('~~~~~~~~~~~~~~~~~~~~~~~~~~');
-                        // concatenate.writeln('------------------------------');
-                        //concatenate.writeln(heading);
-                        int count = 1;
-                        for (int i = 0; i < listOfShoppingItems.length; i++) {
-                          if (listOfShoppingItems[i].itemName == null ||
-                              listOfShoppingItems[i].itemName.isEmpty) return;
+                //         concatenate.writeln("x~x~x~x~ LESSs ~x~x~x~x");
+                //         concatenate
+                //             .writeln("Token ~ " + token.getDisplayName());
+                //         concatenate.writeln("x~x~x~x~x~x~x~x~x~x~x~x~x");
+                //         concatenate.writeln("Token: " + token.getDisplayName());
+                //         concatenate.writeln('~~~~~~~~~~~~~~~~~~~~~~~~~~');
+                //         concatenate.writeln('------------------------------');
+                //         concatenate.writeln(heading);
+                //         int count = 1;
+                //         for (int i = 0; i < listOfShoppingItems.length; i++) {
+                //           if (listOfShoppingItems[i].itemName == null ||
+                //               listOfShoppingItems[i].itemName.isEmpty) return;
 
-                          concatenate.writeln(count.toString() +
-                              ") " +
-                              listOfShoppingItems[i].itemName +
-                              ((listOfShoppingItems[i].quantity != null &&
-                                      listOfShoppingItems[i].quantity != "")
-                                  ? (' - ' + listOfShoppingItems[i].quantity)
-                                  : ""));
+                //           concatenate.writeln(count.toString() +
+                //               ") " +
+                //               listOfShoppingItems[i].itemName);
 
-                          count++;
-                        }
+                //           count++;
+                //         }
 
-                        //concatenate.writeln("**************************");
-                        concatenate.writeln("x~x~x~x~x~x~x~x~x~x~x~x~x");
+                //         concatenate.writeln("**************************");
+                //         concatenate.writeln("x~x~x~x~x~x~x~x~x~x~x~x~x");
 
-                        String phoneNo = token.parent.entityWhatsApp;
+                //         String phoneNo = token.parent.entityWhatsApp;
 
-                        if (phoneNo != null) {
-                          try {
-                            launchWhatsApp(
-                                message: concatenate.toString(),
-                                phone: phoneNo);
-                          } catch (error) {
-                            Utils.showMyFlushbar(
-                                context,
-                                Icons.error,
-                                Duration(seconds: 5),
-                                "Could not connect to the Whatsapp number $phoneNo !!",
-                                "Try again later");
-                          }
-                        } else {
-                          Utils.showMyFlushbar(
-                              context,
-                              Icons.info,
-                              Duration(seconds: 5),
-                              "Whatsapp contact information not found!!",
-                              "");
-                        }
-                      } else {
-                        print("Nothing to share, add items to list first. ");
-                        setState(() {
-                          _errMsg =
-                              'Nothing to share, add items to list first.';
-                        });
-                      }
-                    },
-                  ),
-                ),
+                //         if (phoneNo != null) {
+                //           try {
+                //             launchWhatsApp(
+                //                 message: concatenate.toString(),
+                //                 phone: phoneNo);
+                //           } catch (error) {
+                //             Utils.showMyFlushbar(
+                //                 context,
+                //                 Icons.error,
+                //                 Duration(seconds: 5),
+                //                 "Could not connect to the Whatsapp number $phoneNo !!",
+                //                 "Try again later");
+                //           }
+                //         } else {
+                //           Utils.showMyFlushbar(
+                //               context,
+                //               Icons.info,
+                //               Duration(seconds: 5),
+                //               "Whatsapp contact information not found!!",
+                //               "");
+                //         }
+                //       } else {
+                //         print("Nothing to share, add items to list first. ");
+                //         setState(() {
+                //           _errMsg =
+                //               'Nothing to share, add items to list first.';
+                //         });
+                //       }
+                //     },
+                //   ),
+                // ),
                 //ToDo Smita - PHASE2
                 // Container(
                 //   padding: EdgeInsets.fromLTRB(0, 0, 10, 0),
@@ -365,6 +361,45 @@ class _ShoppingListState extends State<ShoppingList> {
                 padding: const EdgeInsets.all(5.0),
                 child: Column(
                   children: <Widget>[
+                    if (!widget.isAdmin)
+                      Row(
+                        children: [
+                          Container(
+                            padding: EdgeInsets.fromLTRB(12, 0, 12, 0),
+                            width: MediaQuery.of(context).size.width * .75,
+                            child: AutoSizeText(
+                              "Turn ON to share this list with the place Admin",
+                              maxLines: 2,
+                              minFontSize: 10,
+                              maxFontSize: 15,
+                            ),
+                          ),
+                          SizedBox(
+                            height: MediaQuery.of(context).size.height * .08,
+                            width: MediaQuery.of(context).size.width * .2,
+                            child: Transform.scale(
+                              scale: .7,
+                              alignment: Alignment.centerRight,
+                              child: Switch(
+                                materialTapTargetSize:
+                                    MaterialTapTargetSize.shrinkWrap,
+                                value: isPublic,
+                                onChanged: (value) {
+                                  setState(() {
+                                    isPublic = value;
+                                    token.order.isPublic = value;
+                                    print(isPublic);
+                                    //}
+                                  });
+                                },
+                                // activeTrackColor: Colors.green,
+                                activeColor: Colors.green,
+                                inactiveThumbColor: Colors.grey[300],
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
                     new Expanded(
                       child: ListView.builder(
                         shrinkWrap: true,
@@ -422,12 +457,22 @@ class _ShoppingListState extends State<ShoppingList> {
                                         icon: Icon(Icons.add_circle,
                                             color: highlightColor, size: 38),
                                         onPressed: () {
-                                          if (_shoppingListFormKey.currentState
-                                              .validate()) {
-                                            _shoppingListFormKey.currentState
-                                                .save();
-                                            _addNewServiceRow();
-                                            _listItem.text = "";
+                                          if (widget.isAdmin) {
+                                            Utils.showMyFlushbar(
+                                                context,
+                                                Icons.info,
+                                                Duration(seconds: 4),
+                                                "Admin cannot modify the list by User",
+                                                "");
+                                          } else {
+                                            if (_shoppingListFormKey
+                                                .currentState
+                                                .validate()) {
+                                              _shoppingListFormKey.currentState
+                                                  .save();
+                                              _addNewServiceRow();
+                                              _listItem.text = "";
+                                            }
                                           }
                                         },
                                       ),

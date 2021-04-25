@@ -1,18 +1,14 @@
 class ListItem {
-  ListItem({this.itemName, this.quantity, this.isDone});
+  ListItem({this.itemName, this.isDone});
 
   String itemName;
-  String quantity;
+
   bool isDone;
 
-  Map<String, dynamic> toJson() =>
-      {'itemName': itemName, 'quantity': quantity, 'isDone': isDone};
+  Map<String, dynamic> toJson() => {'itemName': itemName, 'isDone': isDone};
 
   static ListItem fromJson(Map<String, dynamic> json) {
     if (json == null) return null;
-    return new ListItem(
-        itemName: json['itemName'],
-        quantity: json['quantity'],
-        isDone: json['isDone']);
+    return new ListItem(itemName: json['itemName'], isDone: json['isDone']);
   }
 }

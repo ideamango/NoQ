@@ -187,8 +187,11 @@ class GlobalState {
   }
 
   static Future<GlobalState> getGlobalState() async {
-    //automatically detect country
-    Location loc = await LocationUtil.getLocation();
+    Location loc;
+    if (_gs == null || _gs._locData == null) {
+      //automatically detect country
+      loc = await LocationUtil.getLocation();
+    }
     //loc.countryCode = "Test";
     //return await GlobalState.getGlobalStateForCountry(loc);
 
