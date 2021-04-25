@@ -981,52 +981,52 @@ class _EntityTokenListPageState extends State<EntityTokenListPage>
                         },
                         child: Container(
                           padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
-                          width: MediaQuery.of(context).size.width * .38,
+                          width: MediaQuery.of(context).size.width * .45,
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.start,
                             children: [
                               Icon(Icons.date_range),
                               SizedBox(width: 5),
-                              RichText(
-                                text: TextSpan(
-                                    style: TextStyle(
-                                        color: Colors.blueGrey[700],
-                                        fontSize: 13),
-                                    children: <TextSpan>[
-                                      TextSpan(
-                                        text: formattedDateStr,
-                                        style: TextStyle(
-                                            color: btnColor,
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 17,
-                                            fontFamily: 'RalewayRegular'),
-                                      )
-                                    ]),
+                              Container(
+                                width: MediaQuery.of(context).size.width * .25,
+                                child: AutoSizeText(
+                                  formattedDateStr,
+                                  minFontSize: 10,
+                                  maxFontSize: 17,
+                                  maxLines: 2,
+                                  style: TextStyle(
+                                      color: btnColor,
+                                      fontWeight: FontWeight.bold,
+                                      fontFamily: 'RalewayRegular'),
+                                ),
                               ),
                             ],
                           ),
                         ),
                       ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          IconButton(
-                            icon: Icon(Icons.bar_chart, color: disabledColor),
-                            onPressed: () {
-                              // setState(() {
-                              //   selectedView = SelectedView.bar;
-                              // });
-                            },
-                          ),
-                          IconButton(
-                            icon: Icon(Icons.list),
-                            onPressed: () {
-                              setState(() {
-                                selectedView = SelectedView.list;
-                              });
-                            },
-                          ),
-                        ],
+                      Container(
+                        width: MediaQuery.of(context).size.width * .4,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            IconButton(
+                              icon: Icon(Icons.bar_chart, color: disabledColor),
+                              onPressed: () {
+                                // setState(() {
+                                //   selectedView = SelectedView.bar;
+                                // });
+                              },
+                            ),
+                            IconButton(
+                              icon: Icon(Icons.list),
+                              onPressed: () {
+                                setState(() {
+                                  selectedView = SelectedView.list;
+                                });
+                              },
+                            ),
+                          ],
+                        ),
                       ),
                     ],
                   )),

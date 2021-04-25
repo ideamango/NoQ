@@ -1721,7 +1721,7 @@ class _ManageChildEntityDetailsPageState
     backRoute() {
       //Navigator.of(context).pop();
       Entity parentEn;
-      _gs.getEntity(serviceEntity.parentId).then((value) {
+      _gs.getEntity(serviceEntity.parentId, true).then((value) {
         parentEn = value.item1;
         if (parentEn != null)
           Navigator.push(

@@ -202,6 +202,8 @@ class _TokensInSlotState extends State<TokensInSlot> {
             new Row(mainAxisAlignment: MainAxisAlignment.center, children: <
                 Widget>[
               Container(
+                padding: EdgeInsets.zero,
+                margin: EdgeInsets.zero,
                 width: MediaQuery.of(context).size.width * .7,
                 height: MediaQuery.of(context).size.width * .8 / 3.5,
                 child: Column(
@@ -316,12 +318,12 @@ class _TokensInSlotState extends State<TokensInSlot> {
                                     //If booking is past booking then no sense of cancelling , show msg to user
                                     // if (booking.parent.dateTime
                                     //     .isBefore(DateTime.now()))
-                                    //   Utils.showMyFlushbar(
-                                    //       context,
-                                    //       Icons.info,
-                                    //       Duration(seconds: 5),
-                                    //       bookingExpired,
-                                    //       "");
+                                    Utils.showMyFlushbar(
+                                        context,
+                                        Icons.info,
+                                        Duration(seconds: 5),
+                                        "Admin cannot Cancel the token.",
+                                        "");
                                     // //booking number is -1 means its already been cancelled, Do Nothing
                                     // if (booking.number == -1)
                                     //   return null;
@@ -435,49 +437,54 @@ class _TokensInSlotState extends State<TokensInSlot> {
                 color: Colors.blueGrey[300],
               ),
               Container(
-                width: MediaQuery.of(context).size.width * .21,
-                // padding: EdgeInsets.fromLTRB(5, 5, 0, 0),
+                width: MediaQuery.of(context).size.width * .2,
+                padding: EdgeInsets.fromLTRB(3, 0, 3, 0),
+                margin: EdgeInsets.zero,
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
-                    Container(
-                      padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
-                      margin: EdgeInsets.all(0),
-                      height: ticketwidth * .1,
-                      width: ticketwidth * .1,
-                      child: IconButton(
-                          padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
-                          alignment: Alignment.center,
-                          highlightColor: Colors.orange[300],
-                          mouseCursor: SystemMouseCursors.click,
-                          icon: ImageIcon(
-                            AssetImage('assets/qrcode.png'),
-                            size: 30,
-                            color: Colors.white,
-                          ),
-                          onPressed: () {
-                            print(booking.applicationId);
-                            if (Utils.isNotNullOrEmpty(booking.applicationId)) {
-                              Navigator.of(context).push(
-                                  PageAnimation.createRoute(
-                                      GenerateQrUserApplication(
-                                entityName: "QR Code Result Page",
-                                backRoute: "UserAppsList",
-                                uniqueTokenIdentifier: booking.applicationId,
-                              )));
-                            }
-                            //else {
-                            //   //if application id is null then show token details page.
-                            //   Navigator.of(context).push(
-                            //       PageAnimation.createRoute(
-                            //           GenerateQrBookingToken(
-                            //     entityName: "Application QR code",
-                            //     backRoute: "UserAppsList",
-                            //     applicationId: booking.applicationId,
-                            //   )));
-                            // }
-                          }),
-                    ),
+                    if (booking.applicationId != null)
+                      Container(
+                        padding: EdgeInsets.zero,
+                        margin: EdgeInsets.zero,
+                        height: ticketwidth * .1,
+                        width: ticketwidth * .1,
+                        child: IconButton(
+                            padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
+                            alignment: Alignment.center,
+                            highlightColor: Colors.orange[300],
+                            mouseCursor: SystemMouseCursors.click,
+                            icon: ImageIcon(
+                              AssetImage('assets/qrcode.png'),
+                              size: 30,
+                              color: Colors.white,
+                            ),
+                            onPressed: () {
+                              print(booking.applicationId);
+                              if (Utils.isNotNullOrEmpty(
+                                  booking.applicationId)) {
+                                Navigator.of(context).push(
+                                    PageAnimation.createRoute(
+                                        GenerateQrUserApplication(
+                                  entityName: "QR Code Result Page",
+                                  backRoute: "UserAppsList",
+                                  uniqueTokenIdentifier: booking.applicationId,
+                                )));
+                              } else {
+                                return;
+                              }
+                              //else {
+                              //   //if application id is null then show token details page.
+                              //   Navigator.of(context).push(
+                              //       PageAnimation.createRoute(
+                              //           GenerateQrBookingToken(
+                              //     entityName: "Application QR code",
+                              //     backRoute: "UserAppsList",
+                              //     applicationId: booking.applicationId,
+                              //   )));
+                              // }
+                            }),
+                      ),
                     Container(
                       height: 5,
                     ),
