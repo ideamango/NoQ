@@ -121,11 +121,11 @@ class ShowQrBookingTokenState extends State<ShowQrBookingToken>
 
   Widget nameValueText(String name, String value) {
     return Container(
-      padding: EdgeInsets.all(5),
+      padding: EdgeInsets.fromLTRB(0, 3, 0, 3),
       child: Row(
         children: [
           Container(
-            width: MediaQuery.of(context).size.width * .21,
+            width: MediaQuery.of(context).size.width * .2,
             child: Text(
               name,
               style: TextStyle(
@@ -135,14 +135,14 @@ class ShowQrBookingTokenState extends State<ShowQrBookingToken>
             ),
           ),
           Container(
-            width: MediaQuery.of(context).size.width * .6,
+            width: MediaQuery.of(context).size.width * .61,
             child: Text(
               value,
               overflow: TextOverflow.ellipsis,
               style: TextStyle(
-                  color: Colors.blueGrey[800],
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold),
+                  color: Colors.blueGrey[800], fontSize: 18, letterSpacing: 1
+                  //  fontWeight: FontWeight.bold
+                  ),
             ),
           )
         ],
@@ -182,16 +182,15 @@ class ShowQrBookingTokenState extends State<ShowQrBookingToken>
       children: [
         nameValueText('User', bookingToken.parent.userId),
         nameValueText('Place', Utils.stringToPascalCase(entityName)),
-
         nameValueText('Date', dateTime),
         Row(
           children: [
             Container(
-              padding: EdgeInsets.all(5),
+              //  padding: EdgeInsets.all(5),
               child: Row(
                 children: [
                   Container(
-                    width: MediaQuery.of(context).size.width * .21,
+                    width: MediaQuery.of(context).size.width * .2,
                     child: Text(
                       'Time',
                       style: TextStyle(
@@ -295,39 +294,43 @@ class ShowQrBookingTokenState extends State<ShowQrBookingToken>
               backRoute: UserHomePage(),
             ),
             body: Center(
-              child: Container(
-                decoration: BoxDecoration(
-                    border: Border.all(color: borderColor, width: 2),
-                    color: Colors.white,
-                    shape: BoxShape.rectangle,
-                    borderRadius: BorderRadius.all(Radius.circular(5.0))),
+              child: Card(
                 margin: EdgeInsets.all(12),
-                padding: EdgeInsets.all(8),
-                //  color: Colors.cyan[100],
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: <Widget>[
-                    (listOfTokens.length != 0)
-                        ? ListView.builder(
-                            padding: EdgeInsets.all(
-                                MediaQuery.of(context).size.width * .026),
-                            scrollDirection: Axis.vertical,
-                            physics: ClampingScrollPhysics(),
-                            reverse: true,
-                            shrinkWrap: true,
-                            itemBuilder: (BuildContext context, int index) {
-                              return Container(
-                                  margin: EdgeInsets.only(bottom: 5),
-                                  child: Column(
-                                    children: [
-                                      buildTokenCard(listOfTokens[index]),
-                                    ],
-                                  ));
-                            },
-                            itemCount: listOfTokens.length,
-                          )
-                        : Container(height: 0),
-                  ],
+                elevation: 30,
+                child: Container(
+                  decoration: BoxDecoration(
+                      border: Border.all(color: borderColor, width: 2),
+                      color: Colors.white,
+                      shape: BoxShape.rectangle,
+                      borderRadius: BorderRadius.all(Radius.circular(5.0))),
+                  // margin: EdgeInsets.all(12),
+                  padding: EdgeInsets.all(8),
+                  //  color: Colors.cyan[100],
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: <Widget>[
+                      (listOfTokens.length != 0)
+                          ? ListView.builder(
+                              padding: EdgeInsets.all(
+                                  MediaQuery.of(context).size.width * .026),
+                              scrollDirection: Axis.vertical,
+                              physics: ClampingScrollPhysics(),
+                              reverse: true,
+                              shrinkWrap: true,
+                              itemBuilder: (BuildContext context, int index) {
+                                return Container(
+                                    margin: EdgeInsets.only(bottom: 5),
+                                    child: Column(
+                                      children: [
+                                        buildTokenCard(listOfTokens[index]),
+                                      ],
+                                    ));
+                              },
+                              itemCount: listOfTokens.length,
+                            )
+                          : Container(height: 0),
+                    ],
+                  ),
                 ),
               ),
             ),
