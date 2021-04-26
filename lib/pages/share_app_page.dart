@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:noq/constants.dart';
-import 'package:noq/style.dart';
-import 'package:noq/userHomePage.dart';
-import 'package:noq/utils.dart';
-import 'package:noq/widget/appbar.dart';
-import 'package:noq/widget/header.dart';
-import 'package:noq/widget/widgets.dart';
+import '../constants.dart';
+import '../style.dart';
+import '../userHomePage.dart';
+import '../utils.dart';
+import '../widget/appbar.dart';
+import '../widget/header.dart';
+import '../widget/widgets.dart';
 import 'package:share/share.dart';
 
 class ShareAppPage extends StatefulWidget {

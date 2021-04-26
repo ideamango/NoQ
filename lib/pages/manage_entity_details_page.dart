@@ -4,35 +4,35 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:intl/intl.dart';
-import 'package:noq/constants.dart';
-import 'package:noq/db/db_model/address.dart';
-import 'package:noq/db/db_model/employee.dart';
-import 'package:noq/db/db_model/entity.dart';
-import 'package:noq/db/db_model/entity_private.dart';
-import 'package:noq/db/db_model/meta_entity.dart';
-import 'package:noq/db/db_model/meta_form.dart';
-import 'package:noq/db/db_model/my_geo_fire_point.dart';
-import 'package:noq/db/db_model/app_user.dart';
-import 'package:noq/db/db_service/user_service.dart';
-import 'package:noq/db/db_model/offer.dart';
-import 'package:noq/enum/entity_type.dart';
-import 'package:noq/events/event_bus.dart';
-import 'package:noq/events/events.dart';
-import 'package:noq/global_state.dart';
-import 'package:noq/location.dart';
-import 'package:noq/pages/contact_item.dart';
-import 'package:noq/pages/manage_entity_list_page.dart';
-import 'package:noq/repository/StoreRepository.dart';
-import 'package:noq/services/circular_progress.dart';
-import 'package:noq/style.dart';
-import 'package:noq/utils.dart';
-import 'package:noq/widget/custom_expansion_tile.dart';
-import 'package:noq/widget/page_animation.dart';
-import 'package:noq/widget/weekday_selector.dart';
+import '../constants.dart';
+import '../db/db_model/address.dart';
+import '../db/db_model/employee.dart';
+import '../db/db_model/entity.dart';
+import '../db/db_model/entity_private.dart';
+import '../db/db_model/meta_entity.dart';
+import '../db/db_model/meta_form.dart';
+import '../db/db_model/my_geo_fire_point.dart';
+import '../db/db_model/app_user.dart';
+import '../db/db_service/user_service.dart';
+import '../db/db_model/offer.dart';
+import '../enum/entity_type.dart';
+import '../events/event_bus.dart';
+import '../events/events.dart';
+import '../global_state.dart';
+import '../location.dart';
+import '../pages/contact_item.dart';
+import '../pages/manage_entity_list_page.dart';
+import '../repository/StoreRepository.dart';
+import '../services/circular_progress.dart';
+import '../style.dart';
+import '../utils.dart';
+import '../widget/custom_expansion_tile.dart';
+import '../widget/page_animation.dart';
+import '../widget/weekday_selector.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:flushbar/flushbar.dart';
-import 'package:noq/widget/widgets.dart';
+import '../widget/widgets.dart';
 import 'package:uuid/uuid.dart';
 import 'package:eventify/eventify.dart' as Eventify;
 
@@ -735,17 +735,19 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
     }
     Location lc = _gs.getLocation();
     Address defaultAdrs = new Address();
-    defaultAdrs.state = lc.region;
-    defaultAdrs.zipcode = lc.zip;
-    defaultAdrs.city = lc.city;
-    defaultAdrs.country = lc.country;
+    if (lc != null) {
+      defaultAdrs.state = lc.region;
+      defaultAdrs.zipcode = lc.zip;
+      defaultAdrs.city = lc.city;
+      defaultAdrs.country = lc.country;
+    }
     entity.address = (entity.address) ?? defaultAdrs;
 
     _cityController.text = entity.address.city;
     _stateController.text = entity.address.state;
     _countryController.text = entity.address.country;
     _pinController.text = entity.address.zipcode;
-    contactList = contactList ?? new List<Employee>();
+    contactList = contactList ?? [];
 
     //  _ctNameController.text = entity.contactPersons[0].perName;
   }

@@ -1,6 +1,6 @@
-import 'package:noq/db/db_model/list_item.dart';
-import 'package:noq/db/db_model/message.dart';
-import 'package:noq/utils.dart';
+import './list_item.dart';
+import './message.dart';
+import '../../utils.dart';
 
 class Order {
   Order(

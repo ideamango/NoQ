@@ -1,13 +1,14 @@
 import 'package:enum_to_string/enum_to_string.dart';
-import 'package:noq/db/db_model/address.dart';
-import 'package:noq/db/db_model/employee.dart';
-import 'package:noq/db/db_model/meta_entity.dart';
-import 'package:noq/db/db_model/meta_form.dart';
-import 'package:noq/db/db_model/meta_user.dart';
-import 'package:noq/db/db_model/my_geo_fire_point.dart';
-import 'package:noq/db/db_model/offer.dart';
-import 'package:noq/enum/entity_type.dart';
-import 'package:noq/utils.dart';
+import './address.dart';
+import './employee.dart';
+import './meta_entity.dart';
+import './meta_form.dart';
+import './meta_user.dart';
+import './my_geo_fire_point.dart';
+import './offer.dart';
+import '../../enum/entity_type.dart';
+import '../../enum/entity_role.dart';
+import '../../utils.dart';
 
 class Entity {
   Entity(
@@ -148,7 +149,7 @@ class Entity {
       };
 
   List<dynamic> usersToJson(List<MetaUser> users) {
-    List<dynamic> usersJson = new List<dynamic>();
+    List<dynamic> usersJson = [];
     if (users == null) return usersJson;
     for (MetaUser usr in users) {
       usersJson.add(usr.toJson());
@@ -157,7 +158,7 @@ class Entity {
   }
 
   List<dynamic> employeesToJson(List<Employee> emps) {
-    List<dynamic> usersJson = new List<dynamic>();
+    List<dynamic> usersJson = [];
     if (emps == null) return usersJson;
     for (Employee emp in emps) {
       usersJson.add(emp.toJson());
@@ -166,7 +167,7 @@ class Entity {
   }
 
   List<dynamic> metaEntitiesToJson(List<MetaEntity> metaEntities) {
-    List<dynamic> usersJson = new List<dynamic>();
+    List<dynamic> usersJson = [];
     if (metaEntities == null) return usersJson;
     for (MetaEntity meta in metaEntities) {
       usersJson.add(meta.toJson());
@@ -175,7 +176,7 @@ class Entity {
   }
 
   List<dynamic> metaFormsToJson(List<MetaForm> metaForms) {
-    List<dynamic> usersJson = new List<dynamic>();
+    List<dynamic> usersJson = [];
     if (metaForms == null) return usersJson;
     for (MetaForm meta in metaForms) {
       usersJson.add(meta.toJson());

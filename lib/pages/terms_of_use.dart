@@ -1,9 +1,9 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:noq/constants.dart';
-import 'package:noq/login_page.dart';
-import 'package:noq/style.dart';
-import 'package:noq/userHomePage.dart';
+import '../constants.dart';
+import '../login_page.dart';
+import '../style.dart';
+import '../userHomePage.dart';
 
 class TermsOfUsePage extends StatefulWidget {
   @override

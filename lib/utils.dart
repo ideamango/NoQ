@@ -4,18 +4,18 @@ import 'package:flushbar/flushbar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:noq/db/db_model/address.dart';
-import 'package:noq/db/db_model/booking_application.dart';
-import 'package:noq/db/db_model/meta_entity.dart';
-import 'package:noq/enum/entity_type.dart';
-import 'package:noq/global_state.dart';
-import 'package:noq/pages/favs_list_page.dart';
-import 'package:noq/pages/show_slots_page.dart';
-import 'package:noq/pages/show_user_application_details.dart';
-import 'package:noq/services/auth_service.dart';
-import 'package:noq/style.dart';
-import 'package:noq/widget/weekday_selector.dart';
-import 'package:noq/widget/widgets.dart';
+import './db/db_model/address.dart';
+import './db/db_model/booking_application.dart';
+import './db/db_model/meta_entity.dart';
+import './enum/entity_type.dart';
+import './global_state.dart';
+import './pages/favs_list_page.dart';
+import './pages/show_slots_page.dart';
+import './pages/show_user_application_details.dart';
+import './services/auth_service.dart';
+import './style.dart';
+import './widget/weekday_selector.dart';
+import './widget/widgets.dart';
 import 'package:share/share.dart';
 import 'package:uuid/uuid.dart';
 
@@ -588,7 +588,7 @@ class Utils {
 
   static Future<Position> getCurrLocation() async {
     //TODO SMita = getting lost at this statement
-    LocationPermission permission = await checkPermission();
+    LocationPermission permission = await Geolocator.checkPermission();
 
     if (permission == LocationPermission.deniedForever) {
       throw Exception("LocAccessDeniedForever");
@@ -609,7 +609,7 @@ class Utils {
   }
 
   static Future<void> openAppSettings() async {
-    bool locSettingsOpen = await openLocationSettings();
+    bool locSettingsOpen = await Geolocator.openLocationSettings();
     if (!locSettingsOpen) {
       await openAppSettings();
     }

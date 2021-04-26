@@ -3,17 +3,17 @@ import 'dart:math';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:noq/db/db_model/booking_application.dart';
-import 'package:noq/db/db_model/entity_slots.dart';
-import 'package:noq/db/db_model/meta_entity.dart';
+import '../db_model/booking_application.dart';
+import '../db_model/entity_slots.dart';
+import '../db_model/meta_entity.dart';
 
-import 'package:noq/db/db_model/user_token.dart';
-import 'package:noq/db/db_model/slot.dart';
+import '../db_model/user_token.dart';
+import '../db_model/slot.dart';
 
-import 'package:noq/db/exceptions/max_token_reached_exception.dart';
-import 'package:noq/db/exceptions/no_token_found_exception.dart';
-import 'package:noq/db/exceptions/slot_full_exception.dart';
-import 'package:noq/db/exceptions/token_already_exists_exception.dart';
+import '../exceptions/max_token_reached_exception.dart';
+import '../exceptions/no_token_found_exception.dart';
+import '../exceptions/slot_full_exception.dart';
+import '../exceptions/token_already_exists_exception.dart';
 
 import '../../constants.dart';
 import '../../utils.dart';
@@ -446,7 +446,7 @@ class TokenService {
   //this method is used to generate the Token by the current user for himself
   Future<UserTokens> generateToken(
       MetaEntity metaEntity, DateTime dateTime) async {
-    final User user = getFirebaseAuth().currentUser;
+    User user = getFirebaseAuth().currentUser;
     FirebaseFirestore fStore = getFirestore();
     String userPhone = user.phoneNumber;
     Exception exception;
@@ -614,7 +614,7 @@ class TokenService {
     //get the slot from the token
     //increase the slot maxallowed by one
 
-    final User user = getFirebaseAuth().currentUser;
+    User user = getFirebaseAuth().currentUser;
     String userPhone = user.phoneNumber;
     FirebaseFirestore fStore = getFirestore();
 
@@ -629,7 +629,7 @@ class TokenService {
   }
 
   Future<List<UserToken>> getAllTokensForSlot(String slotId) async {
-    List<UserToken> userTokens = new List<UserToken>();
+    List<UserToken> userTokens = [];
     User user = getFirebaseAuth().currentUser;
     if (user == null) return null;
     FirebaseFirestore fStore = getFirestore();
@@ -658,7 +658,7 @@ class TokenService {
 
   Future<List<UserTokens>> getAllTokensForCurrentUser(
       DateTime from, DateTime to) async {
-    List<UserTokens> tokens = new List<UserTokens>();
+    List<UserTokens> tokens = [];
     User user = getFirebaseAuth().currentUser;
     if (user == null) return null;
     FirebaseFirestore fStore = getFirestore();
@@ -697,7 +697,7 @@ class TokenService {
 
   Future<List<UserTokens>> getTokensForEntityBookedByCurrentUser(
       String entityId, DateTime date) async {
-    List<UserTokens> tokens = new List<UserTokens>();
+    List<UserTokens> tokens = [];
     User user = getFirebaseAuth().currentUser;
     FirebaseFirestore fStore = getFirestore();
 
@@ -780,7 +780,7 @@ class TokenService {
 
   Future<bool> updateToken(UserTokens tokens) async {
     //this should be restricted on Server, only to be used for testcases
-    final User user = getFirebaseAuth().currentUser;
+    User user = getFirebaseAuth().currentUser;
     FirebaseFirestore fStore = getFirestore();
 
     DocumentReference tokRef = fStore.doc('tokens/' + tokens.getTokenId());

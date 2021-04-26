@@ -1,26 +1,26 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:noq/constants.dart';
-import 'package:noq/db/db_model/meta_entity.dart';
-import 'package:noq/db/db_model/slot.dart';
-import 'package:noq/db/db_model/user_token.dart';
-import 'package:noq/db/db_service/token_service.dart';
-import 'package:noq/global_state.dart';
-import 'package:noq/pages/bar_chart_graph.dart';
-import 'package:noq/pages/bar_chart_tokens.dart';
-import 'package:noq/pages/manage_entity_list_page.dart';
-import 'package:noq/pages/overview_page.dart';
-import 'package:noq/repository/slotRepository.dart';
-import 'package:noq/services/circular_progress.dart';
-import 'package:noq/services/month_picker_dialog.dart';
-import 'package:noq/style.dart';
-import 'package:noq/userHomePage.dart';
-import 'package:noq/utils.dart';
-import 'package:noq/widget/appbar.dart';
-import 'package:noq/widget/page_animation.dart';
-import 'package:noq/widget/token_in_slot_list_page.dart';
-import 'package:noq/widget/widgets.dart';
+import '../constants.dart';
+import '../db/db_model/meta_entity.dart';
+import '../db/db_model/slot.dart';
+import '../db/db_model/user_token.dart';
+import '../db/db_service/token_service.dart';
+import '../global_state.dart';
+import '../pages/bar_chart_graph.dart';
+import '../pages/bar_chart_tokens.dart';
+import '../pages/manage_entity_list_page.dart';
+import '../pages/overview_page.dart';
+import '../repository/slotRepository.dart';
+import '../services/circular_progress.dart';
+import '../services/month_picker_dialog.dart';
+import '../style.dart';
+import '../userHomePage.dart';
+import '../utils.dart';
+import '../widget/appbar.dart';
+import '../widget/page_animation.dart';
+import '../widget/token_in_slot_list_page.dart';
+import '../widget/widgets.dart';
 
 enum SelectedView { list, bar, pie, line }
 enum DateDisplayFormat { date, month, year }

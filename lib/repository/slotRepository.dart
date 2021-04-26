@@ -2,14 +2,14 @@
 //Cancel Slot
 //List Slots for particular store
 
-import 'package:noq/db/db_model/entity_slots.dart';
-import 'package:noq/db/db_model/meta_entity.dart';
-import 'package:noq/db/db_model/slot.dart';
-import 'package:noq/db/db_model/user_token.dart';
-import 'package:noq/events/event_bus.dart';
-import 'package:noq/events/events.dart';
-import 'package:noq/events/local_notification_data.dart';
-import 'package:noq/global_state.dart';
+import '../db/db_model/entity_slots.dart';
+import '../db/db_model/meta_entity.dart';
+import '../db/db_model/slot.dart';
+import '../db/db_model/user_token.dart';
+import '../events/event_bus.dart';
+import '../events/events.dart';
+import '../events/local_notification_data.dart';
+import '../global_state.dart';
 
 import '../utils.dart';
 

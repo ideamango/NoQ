@@ -7,11 +7,11 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:noq/db/db_model/app_user.dart';
-import 'package:noq/db/db_service/user_service.dart';
-import 'package:noq/global_state.dart';
+import '../lib/db/db_model/app_user.dart';
+import '../lib/db/db_service/user_service.dart';
+import '../lib/global_state.dart';
 
-import 'package:noq/main.dart';
+import '../lib/main.dart';
 
 void main() {
   testWidgets('Counter increments smoke test', (WidgetTester tester) async {

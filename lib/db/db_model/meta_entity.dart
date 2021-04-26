@@ -1,7 +1,8 @@
 import 'package:enum_to_string/enum_to_string.dart';
-import 'package:noq/db/db_model/meta_form.dart';
-import 'package:noq/db/db_model/offer.dart';
-import 'package:noq/enum/entity_type.dart';
+
+import '../../enum/entity_type.dart';
+import 'meta_form.dart';
+import 'offer.dart';
 
 /// This allows the `User` class to access private members in
 /// the generated file. The value for this is *.g.dart, where
@@ -9,41 +10,42 @@ import 'package:noq/enum/entity_type.dart';
 
 class MetaEntity {
   MetaEntity(
-      {this.entityId,
-      this.name,
+      {this.entityId = "",
+      this.name = "",
       this.type,
-      this.advanceDays,
-      this.isPublic,
+      this.advanceDays = 0,
+      this.isPublic = false,
       this.closedOn,
-      this.breakStartHour,
-      this.breakStartMinute,
-      this.breakEndHour,
-      this.breakEndMinute,
-      this.startTimeHour,
-      this.startTimeMinute,
-      this.endTimeHour,
-      this.endTimeMinute,
-      this.isActive,
-      this.distance,
-      this.address,
-      this.lat,
-      this.lon,
-      this.slotDuration,
-      this.maxAllowed,
-      this.whatsapp,
-      this.parentId,
-      this.gpay,
-      this.paytm,
-      this.applepay,
+      this.breakStartHour = 0,
+      this.breakStartMinute = 0,
+      this.breakEndHour = 0,
+      this.breakEndMinute = 0,
+      this.startTimeHour = 0,
+      this.startTimeMinute = 0,
+      this.endTimeHour = 0,
+      this.endTimeMinute = 0,
+      this.isActive = false,
+      this.distance = 0,
+      this.address = "",
+      this.lat = 0,
+      this.lon = 0,
+      this.slotDuration = 0,
+      this.maxAllowed = 0,
+      this.whatsapp = "",
+      this.parentId = "",
+      this.gpay = "",
+      this.paytm = "",
+      this.applepay = "",
       this.offer,
-      this.phone,
-      this.hasChildren,
-      this.isBookable,
+      this.phone = "",
+      this.hasChildren = false,
+      this.isBookable = false,
       this.forms,
-      this.maxTokensPerSlotByUser,
-      this.maxPeoplePerToken,
-      this.parentGroupId,
-      this.supportEmail});
+      this.maxTokensPerSlotByUser = 1,
+      this.maxPeoplePerToken = 1,
+      this.parentGroupId = "",
+      this.supportEmail = ""});
+
   MetaEntity.withValues({this.entityId, this.type});
 
   //SlotDocumentId is entityID#20~06~01 it is not auto-generated, will help in not duplicating the record
@@ -120,7 +122,7 @@ class MetaEntity {
   }
 
   static List<String> convertToClosedOnArrayFromJson(List<dynamic> daysJson) {
-    List<String> days = new List<String>();
+    List<String> days = [];
     if (daysJson == null) return days;
 
     for (String day in daysJson) {
@@ -130,7 +132,7 @@ class MetaEntity {
   }
 
   static List<MetaForm> convertToMetaFormsFromJson(List<dynamic> metaFormJson) {
-    List<MetaForm> metaForms = new List<MetaForm>();
+    List<MetaForm> metaForms = [];
     if (metaFormJson == null) return metaForms;
 
     for (Map<String, dynamic> json in metaFormJson) {
@@ -141,7 +143,7 @@ class MetaEntity {
   }
 
   List<dynamic> metaFormsToJson(List<MetaForm> metaForms) {
-    List<dynamic> usersJson = new List<dynamic>();
+    List<dynamic> usersJson = [];
     if (metaForms == null) return usersJson;
     for (MetaForm meta in metaForms) {
       usersJson.add(meta.toJson());

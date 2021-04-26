@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:noq/style.dart';
+import '../style.dart';
 
 import '../constants.dart';
 

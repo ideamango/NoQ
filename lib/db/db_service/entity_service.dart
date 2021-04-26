@@ -4,18 +4,19 @@ import 'package:firebase_auth/firebase_auth.dart' as fAuth;
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:geoflutterfire/geoflutterfire.dart';
-import 'package:noq/db/db_model/app_user.dart';
-import 'package:noq/db/db_model/employee.dart';
-import 'package:noq/db/db_model/entity.dart';
-import 'package:noq/db/db_model/entity_private.dart';
-import 'package:noq/db/db_model/meta_entity.dart';
-import 'package:noq/db/exceptions/access_denied_exception.dart';
-import 'package:noq/db/exceptions/entity_does_not_exists_exception.dart';
-import 'package:noq/db/exceptions/user_does_not_exists_exception.dart';
-import 'package:noq/enum/entity_type.dart';
-import 'package:noq/utils.dart';
+import '../db_model/app_user.dart';
+import '../db_model/employee.dart';
+import '../db_model/entity.dart';
+import '../db_model/entity_private.dart';
+import '../db_model/meta_entity.dart';
+import '../exceptions/access_denied_exception.dart';
+import '../exceptions/entity_does_not_exists_exception.dart';
+import '../exceptions/user_does_not_exists_exception.dart';
+import '../../enum/entity_type.dart';
+import '../../utils.dart';
 
 import '../../constants.dart';
+import '../../enum/entity_role.dart';
 
 class EntityService {
   FirebaseApp _fb;
@@ -42,7 +43,7 @@ class EntityService {
   }
 
   Future<bool> upsertEntity(Entity entity) async {
-    final fAuth.User fireUser = getFirebaseAuth().currentUser;
+    User user = getFirebaseAuth().currentUser;
     String regNum = entity.regNum;
 
     FirebaseFirestore fStore = getFirestore();
@@ -52,8 +53,7 @@ class EntityService {
     final DocumentReference entityPrivateRef =
         fStore.doc('entities/' + entity.entityId + '/private_data/private');
 
-    final DocumentReference userRef =
-        fStore.doc('users/' + fireUser.phoneNumber);
+    final DocumentReference userRef = fStore.doc('users/' + user.phoneNumber);
 
     bool isSuccess = false;
 
@@ -68,10 +68,7 @@ class EntityService {
         AppUser currentUser;
         if (!usrDoc.exists) {
           currentUser = new AppUser(
-              id: fireUser.uid,
-              ph: fireUser.phoneNumber,
-              name: fireUser.displayName,
-              loc: null);
+              id: user.uid, ph: user.phoneNumber, name: user.displayName);
         } else {
           currentUser = AppUser.fromJson(usrDoc.data());
         }
@@ -86,7 +83,7 @@ class EntityService {
           ePrivate = EntityPrivate.fromJson(ePrivateDoc.data());
 
           //if (existingEntity.isAdmin(fireUser.uid) == -1) {
-          if (ePrivate.roles[fireUser.phoneNumber] !=
+          if (ePrivate.roles[user.phoneNumber] !=
               EnumToString.convertToString(EntityRole.Admin)) {
             throw new AccessDeniedException(
                 "User is not admin and can't update the entity");
@@ -96,7 +93,7 @@ class EntityService {
           // entity does not exist, so create a new EntityPrivate
           ePrivate = new EntityPrivate();
           ePrivate.roles = {
-            fireUser.phoneNumber: EnumToString.convertToString(EntityRole.Admin)
+            user.phoneNumber: EnumToString.convertToString(EntityRole.Admin)
           };
           ePrivate.registrationNumber = regNum;
           entity.verificationStatus = VERIFICATION_PENDING;
@@ -105,7 +102,7 @@ class EntityService {
         if (currentUser.isEntityAdmin(entity.entityId) == -1) {
           //add the meta-entity to the user, if not already present - will happen when the entity is new
           if (currentUser.entities == null) {
-            currentUser.entities = new List<MetaEntity>();
+            currentUser.entities = [];
           }
           currentUser.entities.add(entity.getMetaEntity());
           currentUser.entityVsRole[entity.entityId] = EntityRole.Admin;
@@ -122,12 +119,10 @@ class EntityService {
         }
 
         Employee emp = new Employee(
-            id: fireUser.uid,
-            name: fireUser.displayName,
-            ph: fireUser.phoneNumber);
+            id: user.uid, name: user.displayName, ph: user.phoneNumber);
 
         if (entity.admins == null) {
-          entity.admins = new List<Employee>();
+          entity.admins = [];
         }
 
         int existingIndexInAdmin = -1;
@@ -203,7 +198,7 @@ class EntityService {
   }
 
   Future<bool> deleteEntity(String entityId) async {
-    final fAuth.User fireUser = getFirebaseAuth().currentUser;
+    User user = getFirebaseAuth().currentUser;
     FirebaseFirestore fStore = getFirestore();
     bool isSuccess = false;
 
@@ -218,9 +213,8 @@ class EntityService {
     final DocumentReference entityPrivateRef =
         fStore.doc('entities/' + entityId + '/private_data/private');
     DocumentReference parentEntityRef;
-    List<DocumentReference> childEntityRefs = new List<DocumentReference>();
-    List<DocumentReference> childEntityPrivateRefs =
-        new List<DocumentReference>();
+    List<DocumentReference> childEntityRefs = [];
+    List<DocumentReference> childEntityPrivateRefs = [];
 
     await fStore.runTransaction((Transaction tx) async {
       try {
@@ -236,7 +230,7 @@ class EntityService {
         EntityPrivate ePrivate = EntityPrivate.fromJson(ePrivateDoc.data());
 
         //if (ent.isAdmin(fireUser.uid) == -1) {
-        if (ePrivate.roles[fireUser.phoneNumber] !=
+        if (ePrivate.roles[user.phoneNumber] !=
             EnumToString.convertToString(EntityRole.Admin)) {
           throw new AccessDeniedException("This user can't delete the Entity");
         }
@@ -272,7 +266,7 @@ class EntityService {
           }
         }
 
-        List<AppUser> adminUsers = new List<AppUser>();
+        List<AppUser> adminUsers = [];
 
         //for (MetaUser usr in ent.admins) {
         for (String adminPhone in ePrivate.roles.keys) {
@@ -326,7 +320,7 @@ class EntityService {
 
   Future<bool> addEmployee(
       String entityId, Employee employee, EntityRole role) async {
-    final User fireUser = getFirebaseAuth().currentUser;
+    User user = getFirebaseAuth().currentUser;
     FirebaseFirestore fStore = getFirestore();
     String phone = employee.ph;
     if (!Utils.isNotNullOrEmpty(phone)) {
@@ -356,7 +350,7 @@ class EntityService {
 
         Entity ent = Entity.fromJson(entityDoc.data());
         //if (ent.isAdmin(fireUser.uid) == -1) {
-        if (ePrivate.roles[fireUser.phoneNumber] !=
+        if (ePrivate.roles[user.phoneNumber] !=
             EnumToString.convertToString(EntityRole.Admin)) {
           //current logged in user should be admin of the entity then only he should be allowed to add another user as admin
           throw new AccessDeniedException(
@@ -369,7 +363,7 @@ class EntityService {
           //either the user is registered or added by another admin to an entity as an entity
           u = AppUser.fromJson(usrDoc.data());
           if (u.entities == null) {
-            u.entities = new List<MetaEntity>();
+            u.entities = [];
           }
 
           bool entityAlreadyExistsInUser = false;
@@ -490,7 +484,7 @@ class EntityService {
     //ChildEntity Meta should be added in the parentEntity
     //ChildEntity should have parentEntityId set on the parentId attribute
     FirebaseFirestore fStore = getFirestore();
-    final User fireUser = getFirebaseAuth().currentUser;
+    User user = getFirebaseAuth().currentUser;
     String childRegNum = childEntity.regNum;
 
     final DocumentReference entityRef =
@@ -499,8 +493,7 @@ class EntityService {
     final DocumentReference childRef =
         fStore.doc('entities/' + childEntity.entityId);
 
-    final DocumentReference userRef =
-        fStore.doc('users/' + fireUser.phoneNumber);
+    final DocumentReference userRef = fStore.doc('users/' + user.phoneNumber);
 
     final DocumentReference parentEntityPrivateRef =
         fStore.doc('entities/' + parentEntityId + '/private_data/private');
@@ -531,7 +524,7 @@ class EntityService {
               EntityPrivate.fromJson(parentEntityPrivateDoc.data());
 
           //if (parentEntity.isAdmin(fireUser.uid) == -1) {
-          if (parentEntityPrivate.roles[fireUser.phoneNumber] !=
+          if (parentEntityPrivate.roles[user.phoneNumber] !=
               EnumToString.convertToString(EntityRole.Admin)) {
             throw new AccessDeniedException(
                 "User is not admin and can't update the entity");
@@ -567,7 +560,7 @@ class EntityService {
 
             //int userIndex = existingChildEntity.isAdmin(fireUser.uid);
             //if (userIndex == -1) {
-            if (childEntityPrivate.roles[fireUser.phoneNumber] !=
+            if (childEntityPrivate.roles[user.phoneNumber] !=
                 EnumToString.convertToString(EntityRole.Admin)) {
               throw new AccessDeniedException(
                   "User is not admin of existing child entity");
@@ -575,12 +568,10 @@ class EntityService {
               //do nothing
             }
           } else {
-            childEntityPrivate = new EntityPrivate(
-                registrationNumber: childRegNum,
-                roles: {
-                  fireUser.phoneNumber:
-                      EnumToString.convertToString(EntityRole.Admin)
-                });
+            childEntityPrivate =
+                new EntityPrivate(registrationNumber: childRegNum, roles: {
+              user.phoneNumber: EnumToString.convertToString(EntityRole.Admin)
+            });
             childEntity.verificationStatus = VERIFICATION_PENDING;
           }
           childEntity.parentId = parentEntityId;
@@ -641,7 +632,7 @@ class EntityService {
     //check of the current user is admin
     //remove from the user.entities collection
     //remove from the entity.admin collection
-    final User fireUser = getFirebaseAuth().currentUser;
+    User user = getFirebaseAuth().currentUser;
     FirebaseFirestore fStore = getFirestore();
 
     AppUser u;
@@ -665,7 +656,7 @@ class EntityService {
         EntityPrivate ePrivate = EntityPrivate.fromJson(ePrivateDoc.data());
 
         //if (ent.isAdmin(fireUser.uid) == -1) {
-        if (ePrivate.roles[fireUser.phoneNumber] !=
+        if (ePrivate.roles[user.phoneNumber] !=
             EnumToString.convertToString(EntityRole.Admin)) {
           //current logged in user should be admin of the entity then only he should be allowed to add another user as admin
           throw new AccessDeniedException(
@@ -682,7 +673,7 @@ class EntityService {
           //either the user is registered or added by another admin to an entity as an entity
           u = AppUser.fromJson(usrDoc.data());
           if (u.entities == null) {
-            u.entities = new List<MetaEntity>();
+            u.entities = [];
           }
 
           int count = -1;
@@ -770,14 +761,13 @@ class EntityService {
   }
 
   Future<bool> addEntityToUserFavourite(MetaEntity me) async {
-    final User fireUser = getFirebaseAuth().currentUser;
+    User user = getFirebaseAuth().currentUser;
     FirebaseFirestore fStore = getFirestore();
 
     AppUser u;
     bool isSuccess = true;
 
-    final DocumentReference userRef =
-        fStore.doc('users/' + fireUser.phoneNumber);
+    final DocumentReference userRef = fStore.doc('users/' + user.phoneNumber);
 
     await fStore.runTransaction((Transaction tx) async {
       try {
@@ -787,7 +777,7 @@ class EntityService {
           //either the user is registered or added by another admin to an entity as an entity
           u = AppUser.fromJson(usrDoc.data());
           if (u.favourites == null) {
-            u.favourites = new List<MetaEntity>();
+            u.favourites = [];
           }
 
           bool entityAlreadyExistsInUser = false;
@@ -815,14 +805,13 @@ class EntityService {
   }
 
   Future<bool> removeEntityFromUserFavourite(String entityId) async {
-    final User fireUser = getFirebaseAuth().currentUser;
+    User user = getFirebaseAuth().currentUser;
     FirebaseFirestore fStore = getFirestore();
 
     AppUser u;
     bool isSuccess = true;
 
-    final DocumentReference userRef =
-        fStore.doc('users/' + fireUser.phoneNumber);
+    final DocumentReference userRef = fStore.doc('users/' + user.phoneNumber);
 
     await fStore.runTransaction((Transaction tx) async {
       try {

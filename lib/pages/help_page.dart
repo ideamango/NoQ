@@ -1,16 +1,16 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:noq/constants.dart';
-import 'package:noq/global_state.dart';
-import 'package:noq/pages/contact_us.dart';
-import 'package:noq/pages/manage_entity_list_page.dart';
-import 'package:noq/style.dart';
-import 'package:noq/userHomePage.dart';
-import 'package:noq/widget/appbar.dart';
-import 'package:noq/widget/bottom_nav_bar.dart';
-import 'package:noq/widget/custom_expansion_tile.dart';
-import 'package:noq/widget/header.dart';
-import 'package:noq/widget/widgets.dart';
+import '../constants.dart';
+import '../global_state.dart';
+import '../pages/contact_us.dart';
+import '../pages/manage_entity_list_page.dart';
+import '../style.dart';
+import '../userHomePage.dart';
+import '../widget/appbar.dart';
+import '../widget/bottom_nav_bar.dart';
+import '../widget/custom_expansion_tile.dart';
+import '../widget/header.dart';
+import '../widget/widgets.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class HelpPage extends StatefulWidget {

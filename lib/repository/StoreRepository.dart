@@ -1,11 +1,10 @@
-import 'package:noq/db/db_model/employee.dart';
-import 'package:noq/db/db_model/entity.dart';
-import 'package:noq/db/db_model/entity_private.dart';
-import 'package:noq/db/db_service/entity_service.dart';
-import 'package:noq/enum/entity_type.dart';
-import 'package:noq/global_state.dart';
-import 'package:noq/tuple.dart';
-import 'package:noq/utils.dart';
+import '../db/db_model/employee.dart';
+import '../db/db_model/entity.dart';
+import '../db/db_model/entity_private.dart';
+
+import '../global_state.dart';
+import '../tuple.dart';
+import '../enum/entity_role.dart';
 
 // Get list of Stores from Server
 

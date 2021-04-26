@@ -1,9 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:noq/db/db_model/my_geo_fire_point.dart';
+import '../db_model/my_geo_fire_point.dart';
 
 import 'package:geoflutterfire/geoflutterfire.dart';
-import 'package:noq/db/db_model/slot.dart';
-import 'package:noq/db/db_model/app_user.dart';
+import '../db_model/slot.dart';
+import '../db_model/app_user.dart';
 
 class DBLayer {
   static void addRecord() async {

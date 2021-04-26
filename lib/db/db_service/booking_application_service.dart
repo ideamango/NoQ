@@ -2,19 +2,19 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:enum_to_string/enum_to_string.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:noq/constants.dart';
-import 'package:noq/db/db_model/booking_application.dart';
-import 'package:noq/db/db_model/booking_application.dart';
-import 'package:noq/db/db_model/booking_application.dart';
-import 'package:noq/db/db_model/booking_form.dart';
-import 'package:noq/db/db_model/meta_entity.dart';
-import 'package:noq/db/db_model/user_token.dart';
-import 'package:noq/db/db_service/query.dart';
+import '../../constants.dart';
+import '../db_model/booking_application.dart';
+import '../db_model/booking_application.dart';
+import '../db_model/booking_application.dart';
+import '../db_model/booking_form.dart';
+import '../db_model/meta_entity.dart';
+import '../db_model/user_token.dart';
+import '../db_service/query.dart';
 
-import 'package:noq/enum/application_status.dart';
-import 'package:noq/enum/entity_type.dart';
-import 'package:noq/global_state.dart';
-import 'package:noq/utils.dart';
+import '../../enum/application_status.dart';
+import '../../enum/entity_type.dart';
+import '../../global_state.dart';
+import '../../utils.dart';
 
 import '../../tuple.dart';
 
@@ -90,8 +90,6 @@ class BookingApplicationService {
     CollectionReference collectionRef =
         fStore.collection('bookingApplications');
 
-    String statusStr = EnumToString.convertToString(status);
-
     Query query = collectionRef;
 
     if (Utils.isNotNullOrEmpty(userId)) {
@@ -99,6 +97,7 @@ class BookingApplicationService {
     }
 
     if (status != null) {
+      String statusStr = EnumToString.convertToString(status);
       query = query.where("status", isEqualTo: statusStr);
     }
 

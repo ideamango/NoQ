@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:noq/style.dart';
-import 'package:noq/widget/video_player_app.dart';
-import 'package:noq/widget/widgets.dart';
+import '../style.dart';
+import '../widget/video_player_app.dart';
+import '../widget/widgets.dart';
 
 class Item1_login extends StatelessWidget {
   const Item1_login({Key key}) : super(key: key);

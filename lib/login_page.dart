@@ -2,24 +2,24 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:noq/events/auto_verification_completed_data.dart';
-import 'package:noq/events/event_bus.dart';
-import 'package:noq/events/events.dart';
-import 'package:noq/global_state.dart';
-import 'package:noq/pages/explore_page_for_business.dart';
-import 'package:noq/pages/search_entity_page.dart';
-import 'package:noq/pages/explore_page_for_user.dart';
-import 'package:noq/pages/otpdialog.dart';
-import 'package:noq/pages/terms_of_use.dart';
-import 'package:noq/userHomePage.dart';
-import 'package:noq/utils.dart';
-import 'package:noq/widget/page_animation.dart';
-import 'package:noq/widget/widgets.dart';
+import './events/auto_verification_completed_data.dart';
+import './events/event_bus.dart';
+import './events/events.dart';
+import './global_state.dart';
+import './pages/explore_page_for_business.dart';
+import './pages/search_entity_page.dart';
+import './pages/explore_page_for_user.dart';
+import './pages/otpdialog.dart';
+import './pages/terms_of_use.dart';
+import './userHomePage.dart';
+import './utils.dart';
+import './widget/page_animation.dart';
+import './widget/widgets.dart';
 import 'package:pinput/pin_put/pin_put.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'style.dart';
-import 'package:noq/constants.dart';
+import './constants.dart';
 import 'services/auth_service.dart';
 
 class LoginPage extends StatefulWidget {

@@ -1,19 +1,19 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:enum_to_string/enum_to_string.dart';
 import 'package:flutter/material.dart';
-import 'package:noq/db/db_model/booking_application.dart';
-import 'package:noq/db/db_model/booking_form.dart';
-import 'package:noq/db/db_model/entity.dart';
-import 'package:noq/db/db_model/meta_entity.dart';
-import 'package:noq/enum/application_status.dart';
-import 'package:noq/enum/field_type.dart';
-import 'package:noq/global_state.dart';
-import 'package:noq/pages/show_user_application_details.dart';
-import 'package:noq/services/qr_code_user_application.dart';
-import 'package:noq/style.dart';
-import 'package:noq/utils.dart';
-import 'package:noq/widget/page_animation.dart';
-import 'package:noq/widget/widgets.dart';
+import '../db/db_model/booking_application.dart';
+import '../db/db_model/booking_form.dart';
+import '../db/db_model/entity.dart';
+import '../db/db_model/meta_entity.dart';
+import '../enum/application_status.dart';
+import '../enum/field_type.dart';
+import '../global_state.dart';
+import '../pages/show_user_application_details.dart';
+import '../services/qr_code_user_application.dart';
+import '../style.dart';
+import '../utils.dart';
+import '../widget/page_animation.dart';
+import '../widget/widgets.dart';
 
 class UserApplicationsList extends StatefulWidget {
   final BookingApplication ba;

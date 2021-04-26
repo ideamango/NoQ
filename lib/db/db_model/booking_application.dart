@@ -1,7 +1,7 @@
 import 'package:enum_to_string/enum_to_string.dart';
-import 'package:noq/db/db_model/booking_form.dart';
-import 'package:noq/enum/application_status.dart';
-import 'package:noq/enum/field_type.dart';
+import './booking_form.dart';
+import '../../enum/application_status.dart';
+import '../../enum/field_type.dart';
 import 'package:uuid/uuid.dart';
 
 class BookingApplication {

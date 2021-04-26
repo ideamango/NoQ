@@ -2,10 +2,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:charts_flutter/flutter.dart' as charts;
 import 'package:intl/intl.dart';
-import 'package:noq/bar_chart_model.dart';
-import 'package:noq/constants.dart';
-import 'package:noq/db/db_model/meta_entity.dart';
-import 'package:noq/db/db_model/user_token.dart';
+import '../bar_chart_model.dart';
+import '../constants.dart';
+import '../db/db_model/meta_entity.dart';
+import '../db/db_model/user_token.dart';
 
 class BarChartGraph extends StatefulWidget {
   //final String chartLength;

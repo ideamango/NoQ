@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:charts_flutter/flutter.dart' as charts;
-import 'package:noq/bar_chart_model.dart';
-import 'package:noq/db/db_model/meta_entity.dart';
-import 'package:noq/db/db_model/user_token.dart';
-import 'package:noq/pages/bar_chart_graph.dart';
-import 'package:noq/pages/entity_token_list_page.dart';
-import 'package:noq/pages/manage_entity_list_page.dart';
-import 'package:noq/utils.dart';
-import 'package:noq/widget/appbar.dart';
+import '../bar_chart_model.dart';
+import '../db/db_model/meta_entity.dart';
+import '../db/db_model/user_token.dart';
+import '../pages/bar_chart_graph.dart';
+import '../pages/entity_token_list_page.dart';
+import '../pages/manage_entity_list_page.dart';
+import '../utils.dart';
+import '../widget/appbar.dart';
 
 class BarChartApplications extends StatefulWidget {
   final Map<String, int> dataMap;

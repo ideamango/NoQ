@@ -1,21 +1,21 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
-import 'package:noq/db/db_model/booking_application.dart';
-import 'package:noq/db/db_model/meta_entity.dart';
-import 'package:noq/enum/application_status.dart';
-import 'package:noq/global_state.dart';
-import 'package:noq/pages/application_list_covid.dart';
-import 'package:noq/pages/booking_form_selection_page.dart';
-import 'package:noq/pages/manage_entity_list_page.dart';
-import 'package:noq/pages/show_application_details.dart';
-import 'package:noq/pages/applications_list.dart';
-import 'package:noq/services/circular_progress.dart';
-import 'package:noq/style.dart';
-import 'package:noq/userHomePage.dart';
-import 'package:noq/widget/animated_counter.dart';
-import 'package:noq/widget/appbar.dart';
-import 'package:noq/widget/page_animation.dart';
-import 'package:noq/widget/widgets.dart';
+import '../db/db_model/booking_application.dart';
+import '../db/db_model/meta_entity.dart';
+import '../enum/application_status.dart';
+import '../global_state.dart';
+import '../pages/application_list_covid.dart';
+import '../pages/booking_form_selection_page.dart';
+import '../pages/manage_entity_list_page.dart';
+import '../pages/show_application_details.dart';
+import '../pages/applications_list.dart';
+import '../services/circular_progress.dart';
+import '../style.dart';
+import '../userHomePage.dart';
+import '../widget/animated_counter.dart';
+import '../widget/appbar.dart';
+import '../widget/page_animation.dart';
+import '../widget/widgets.dart';
 
 class OverviewPage extends StatefulWidget {
   final String entityId;

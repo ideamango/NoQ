@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:noq/db/db_model/app_user.dart';
+import '../db_model/app_user.dart';
 
 class UserService {
   FirebaseApp _fb;
@@ -24,13 +24,12 @@ class UserService {
   }
 
   Future<AppUser> getCurrentUser() async {
-    final User fireUser = getFirebaseAuth().currentUser;
-    if (fireUser == null) return null;
+    User user = getFirebaseAuth().currentUser;
+    if (user == null) return null;
 
     FirebaseFirestore fStore = getFirestore();
 
-    final DocumentReference userRef =
-        fStore.doc('users/' + fireUser.phoneNumber);
+    final DocumentReference userRef = fStore.doc('users/' + user.phoneNumber);
 
     AppUser u;
 
@@ -42,9 +41,7 @@ class UserService {
       u = AppUser.fromJson(map);
     } else {
       u = new AppUser(
-          id: fireUser.uid,
-          ph: fireUser.phoneNumber,
-          name: fireUser.displayName);
+          id: user.uid, ph: user.phoneNumber, name: user.displayName);
 
       userRef.set(u.toJson());
     }
@@ -53,11 +50,10 @@ class UserService {
   }
 
   Future<bool> deleteCurrentUser() async {
-    final User fireUser = getFirebaseAuth().currentUser;
+    User user = getFirebaseAuth().currentUser;
     FirebaseFirestore fStore = getFirestore();
     try {
-      final DocumentReference userRef =
-          fStore.doc('users/' + fireUser.phoneNumber);
+      final DocumentReference userRef = fStore.doc('users/' + user.phoneNumber);
       userRef.delete();
     } catch (e) {
       return false;

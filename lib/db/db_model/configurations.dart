@@ -1,7 +1,7 @@
 import 'package:enum_to_string/enum_to_string.dart';
-import 'package:noq/db/db_model/meta_form.dart';
-import 'package:noq/enum/entity_type.dart';
-import 'package:noq/utils.dart';
+import './meta_form.dart';
+import '../../enum/entity_type.dart';
+import '../../utils.dart';
 
 class Configurations {
   Configurations(

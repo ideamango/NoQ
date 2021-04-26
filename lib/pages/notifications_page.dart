@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:noq/db/db_model/user_token.dart';
-import 'package:noq/global_state.dart';
-import 'package:noq/repository/local_db_repository.dart';
-import 'package:noq/style.dart';
-import 'package:noq/widget/appbar.dart';
-import 'package:noq/widget/bottom_nav_bar.dart';
-import 'package:noq/widget/header.dart';
+import '../db/db_model/user_token.dart';
+import '../global_state.dart';
+import '../repository/local_db_repository.dart';
+import '../style.dart';
+import '../widget/appbar.dart';
+import '../widget/bottom_nav_bar.dart';
+import '../widget/header.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class UserNotificationsPage extends StatefulWidget {

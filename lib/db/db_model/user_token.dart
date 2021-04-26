@@ -1,7 +1,7 @@
 import 'package:intl/intl.dart';
-import 'package:noq/db/db_model/list_item.dart';
-import 'package:noq/db/db_model/order.dart';
-import 'package:noq/utils.dart';
+import './list_item.dart';
+import './order.dart';
+import '../../utils.dart';
 
 class UserTokens {
   UserTokens(

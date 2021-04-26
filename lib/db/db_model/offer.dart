@@ -1,5 +1,5 @@
 class Offer {
-  Offer({this.message, this.startDateTime, this.endDateTime, this.coupon});
+  Offer({this.message = "", this.coupon = ""});
 
   //SlotId is entityID#20~06~01#9~30
 
@@ -10,24 +10,25 @@ class Offer {
 
   Map<String, dynamic> toJson() => {
         'message': message,
-        'startDateTime': (startDateTime != null)
-            ? startDateTime.millisecondsSinceEpoch
-            : null,
-        'endDateTime':
-            (endDateTime != null) ? endDateTime.millisecondsSinceEpoch : null,
+        'startDateTime': startDateTime?.millisecondsSinceEpoch,
+        'endDateTime': endDateTime?.millisecondsSinceEpoch,
         'coupon': coupon
       };
 
   static Offer fromJson(Map<String, dynamic> json) {
-    if (json == null) return null;
-    return new Offer(
-        message: json['message'],
-        startDateTime: (json['startDateTime'] != null)
-            ? new DateTime.fromMillisecondsSinceEpoch(json['startDateTime'])
-            : null,
-        endDateTime: (json['endDateTime'] != null)
-            ? new DateTime.fromMillisecondsSinceEpoch(json['endDateTime'])
-            : null,
-        coupon: json['coupon']);
+    if (json == null) {
+      return null;
+    }
+    Offer ofr = Offer(message: json['message'], coupon: json['coupon']);
+
+    ofr.startDateTime = (json['startDateTime'] != null)
+        ? new DateTime.fromMillisecondsSinceEpoch(json['startDateTime'])
+        : null;
+
+    ofr.endDateTime = (json['endDateTime'] != null)
+        ? new DateTime.fromMillisecondsSinceEpoch(json['endDateTime'])
+        : null;
+
+    return ofr;
   }
 }

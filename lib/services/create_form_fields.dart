@@ -6,21 +6,21 @@ import 'package:flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
-import 'package:noq/SlotSelectionPage.dart';
-import 'package:noq/constants.dart';
-import 'package:noq/db/db_model/booking_application.dart';
-import 'package:noq/db/db_model/booking_form.dart';
-import 'package:noq/db/db_model/meta_entity.dart';
-import 'package:noq/db/exceptions/slot_full_exception.dart';
-import 'package:noq/db/exceptions/token_already_exists_exception.dart';
-import 'package:noq/enum/application_status.dart';
-import 'package:noq/enum/field_type.dart';
-import 'package:noq/global_state.dart';
-import 'package:noq/services/circular_progress.dart';
+import '../SlotSelectionPage.dart';
+import '../constants.dart';
+import '../db/db_model/booking_application.dart';
+import '../db/db_model/booking_form.dart';
+import '../db/db_model/meta_entity.dart';
+import '../db/exceptions/slot_full_exception.dart';
+import '../db/exceptions/token_already_exists_exception.dart';
+import '../enum/application_status.dart';
+import '../enum/field_type.dart';
+import '../global_state.dart';
+import '../services/circular_progress.dart';
 
-import 'package:noq/style.dart';
-import 'package:noq/utils.dart';
-import 'package:noq/widget/custom_expansion_tile.dart';
+import '../style.dart';
+import '../utils.dart';
+import '../widget/custom_expansion_tile.dart';
 import 'package:email_validator/email_validator.dart';
 import 'package:path/path.dart' as pathfile;
 
@@ -47,10 +47,10 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
       new Map<String, TextEditingController>();
 
   final GlobalKey<FormState> _bookingFormKey = new GlobalKey<FormState>();
-  List<TextEditingController> _controllers = new List();
+  List<TextEditingController> _controllers = [];
   BookingForm dummyForm;
   final itemSize = 100.0;
-  List<String> dumList = new List<String>();
+  List<String> dumList = [];
 
   bool _initCompleted = false;
 

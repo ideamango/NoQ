@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:noq/pages/search_entity_page.dart';
-import 'package:noq/pages/favs_list_page.dart';
-import 'package:noq/pages/user_account_page.dart';
-import 'package:noq/style.dart';
-import 'package:noq/userHomePage.dart';
-import 'package:noq/widget/page_animation.dart';
+import '../pages/search_entity_page.dart';
+import '../pages/favs_list_page.dart';
+import '../pages/user_account_page.dart';
+import '../style.dart';
+import '../userHomePage.dart';
+import '../widget/page_animation.dart';
 
 class CustomBottomBar extends StatefulWidget {
   final int barIndex;

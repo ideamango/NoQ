@@ -1,18 +1,18 @@
 import 'package:flutter/material.dart';
-import 'package:noq/constants.dart';
-import 'package:noq/pages/about_page.dart';
-import 'package:noq/pages/business_info_page.dart';
-import 'package:noq/pages/help_page.dart';
-import 'package:noq/pages/manage_entity_list_page.dart';
-import 'package:noq/pages/notifications_page.dart';
-import 'package:noq/pages/contact_us.dart';
-import 'package:noq/pages/privacy_policy.dart';
-import 'package:noq/pages/share_app_page.dart';
-import 'package:noq/pages/terms_of_use.dart';
-import 'package:noq/pages/user_account_page.dart';
-import 'package:noq/style.dart';
+import '../constants.dart';
+import '../pages/about_page.dart';
+import '../pages/business_info_page.dart';
+import '../pages/help_page.dart';
+import '../pages/manage_entity_list_page.dart';
+import '../pages/notifications_page.dart';
+import '../pages/contact_us.dart';
+import '../pages/privacy_policy.dart';
+import '../pages/share_app_page.dart';
+import '../pages/terms_of_use.dart';
+import '../pages/user_account_page.dart';
+import '../style.dart';
 import 'package:intl/intl.dart';
-import 'package:noq/widget/page_animation.dart';
+import '../widget/page_animation.dart';
 
 class CustomDrawer extends StatefulWidget {
   final String phone;

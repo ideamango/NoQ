@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:noq/db/db_model/list_item.dart';
-import 'package:noq/db/db_model/message.dart';
-import 'package:noq/db/db_model/order.dart';
-import 'package:noq/db/db_model/user_token.dart';
-import 'package:noq/repository/slotRepository.dart';
-import 'package:noq/services/url_services.dart';
-import 'package:noq/style.dart';
+import '../db/db_model/list_item.dart';
+import '../db/db_model/message.dart';
+import '../db/db_model/order.dart';
+import '../db/db_model/user_token.dart';
+import '../repository/slotRepository.dart';
+import '../services/url_services.dart';
+import '../style.dart';
 import 'package:flutter/foundation.dart';
-import 'package:noq/utils.dart';
+import '../utils.dart';
 
 class ShoppingList extends StatefulWidget {
   final UserToken token;

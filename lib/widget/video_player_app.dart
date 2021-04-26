@@ -1,10 +1,10 @@
 import 'dart:async';
 import 'dart:io' show Platform;
 import 'package:flutter/foundation.dart';
-import 'package:app_review/app_review.dart';
+//import 'package:app_review/app_review.dart';
 import 'package:flutter/material.dart';
-import 'package:noq/style.dart';
-import 'package:noq/userHomePage.dart';
+import '../style.dart';
+import '../userHomePage.dart';
 
 import 'package:video_player/video_player.dart';
 

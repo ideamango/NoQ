@@ -1,10 +1,10 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:noq/global_state.dart';
-import 'package:noq/services/auth_service.dart';
-import 'package:noq/services/circular_progress.dart';
-import 'package:noq/style.dart';
-import 'package:noq/widget/widgets.dart';
+import '../global_state.dart';
+import '../services/auth_service.dart';
+import '../services/circular_progress.dart';
+import '../style.dart';
+import '../widget/widgets.dart';
 
 class SplashScreen extends StatefulWidget {
   @override

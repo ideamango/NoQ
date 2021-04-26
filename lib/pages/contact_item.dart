@@ -1,16 +1,19 @@
+import 'package:enum_to_string/enum_to_string.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:intl/intl.dart';
-import 'package:noq/db/db_model/employee.dart';
-import 'package:noq/db/db_model/entity.dart';
-import 'package:noq/enum/entity_type.dart';
-import 'package:noq/events/event_bus.dart';
-import 'package:noq/events/events.dart';
-import 'package:noq/global_state.dart';
-import 'package:noq/style.dart';
+import '../db/db_model/employee.dart';
+import '../db/db_model/entity.dart';
+import '../enum/entity_type.dart';
+import '../events/event_bus.dart';
+import '../events/events.dart';
+import '../global_state.dart';
+import '../style.dart';
 import 'package:flutter/foundation.dart';
-import 'package:noq/utils.dart';
-import 'package:noq/widget/weekday_selector.dart';
+import '../utils.dart';
+import '../widget/weekday_selector.dart';
+
+import '../enum/entity_role.dart';
 
 class ContactRow extends StatefulWidget {
   final Entity entity;
@@ -83,12 +86,12 @@ class ContactRowState extends State<ContactRow> {
             Utils.formatTime(contact.shiftEndHour.toString()) +
                 ':' +
                 Utils.formatTime(contact.shiftEndMinute.toString());
-      _daysOff = (contact.daysOff) ?? new List<String>();
+      _daysOff = (contact.daysOff) ?? [];
     }
     // if (_daysOff.length == 0) {
     //   _daysOff.add('days.sunday');
     // }
-    _closedOnDays = List<days>();
+    _closedOnDays = [];
     _closedOnDays = Utils.convertStringsToDays(_daysOff);
   }
 
@@ -376,9 +379,7 @@ class ContactRowState extends State<ContactRow> {
           title: Text(
             (contact.name != null && contact.name != "")
                 ? contact.name
-                : (widget.empType == EntityRole.Manager
-                    ? "Manager"
-                    : "Executive"),
+                : EnumToString.convertToString(widget.empType),
             style: TextStyle(color: Colors.blueGrey[700], fontSize: 17),
           ),
 
