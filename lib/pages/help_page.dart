@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:noq/constants.dart';
 import 'package:noq/global_state.dart';
 import 'package:noq/pages/contact_us.dart';
+import 'package:noq/pages/donate_money.dart';
 import 'package:noq/pages/manage_entity_list_page.dart';
 import 'package:noq/style.dart';
 import 'package:noq/userHomePage.dart';
@@ -10,6 +11,7 @@ import 'package:noq/widget/appbar.dart';
 import 'package:noq/widget/bottom_nav_bar.dart';
 import 'package:noq/widget/custom_expansion_tile.dart';
 import 'package:noq/widget/header.dart';
+import 'package:noq/widget/page_animation.dart';
 import 'package:noq/widget/widgets.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -334,13 +336,21 @@ class _HelpPageState extends State<HelpPage> {
                                           TextSpan(
                                             text: 'Click here to donate!!',
                                             style: new TextStyle(
-                                                color: highlightColor),
+                                                fontSize: 16,
+                                                fontWeight: FontWeight.bold,
+                                                color: Colors.orange[700]),
                                             recognizer:
                                                 new TapGestureRecognizer()
                                                   ..onTap = () {
                                                     //TODO: Smita- add payments options google pay  etc
-                                                    launch(
-                                                        'https://docs.flutter.io/flutter/services/UrlLauncher-class.html');
+                                                    // launch(
+                                                    //     'https://docs.flutter.io/flutter/services/UrlLauncher-class.html');
+                                                    Navigator.of(context).push(
+                                                        PageAnimation
+                                                            .createRoute(
+                                                                DonatePage(
+                                                      phone: widget.phone,
+                                                    )));
                                                   },
                                           ),
                                         ])),

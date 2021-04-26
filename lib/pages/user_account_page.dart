@@ -330,15 +330,16 @@ class _UserAccountPageState extends State<UserAccountPage> {
                                   onPressed: () {
                                     //If booking is past booking then no sense of cancelling , show msg to user
                                     if (booking.parent.dateTime
-                                        .isBefore(DateTime.now()))
+                                        .isBefore(DateTime.now())) {
                                       Utils.showMyFlushbar(
                                           context,
                                           Icons.info,
                                           Duration(seconds: 5),
                                           bookingExpired,
                                           "");
+                                    }
                                     //booking number is -1 means its already been cancelled, Do Nothing
-                                    if (booking.number == -1)
+                                    else if (booking.number == -1)
                                       return null;
                                     else
                                       showCancelBooking(booking);

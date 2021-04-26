@@ -21,7 +21,7 @@ class ShoppingList extends StatefulWidget {
 }
 
 class _ShoppingListState extends State<ShoppingList> {
-  final String title = "Shopping list";
+  final String title = "Notes";
 
   UserToken token;
   final GlobalKey<FormState> _shoppingListFormKey = new GlobalKey<FormState>();
@@ -203,7 +203,7 @@ class _ShoppingListState extends State<ShoppingList> {
     //    .add(new ChildEntityAppData.cType(value, entity.id));
     //   saveEntityDetails(entity);
 
-    String title = "Shopping List";
+    String title = "Notes";
 
     final itemField = new TextFormField(
       autofocus: true,

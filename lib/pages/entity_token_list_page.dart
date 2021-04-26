@@ -214,19 +214,9 @@ class _EntityTokenListPageState extends State<EntityTokenListPage>
 
     Color cardColor = Colors.grey[100];
     Color textColor = highlightText;
-
-    //Highlighting current time-slot
-    DateFormat dateFormat = new DateFormat.Hm();
-    DateTime currentTime = DateTime.now();
-    //  DateTime slotTime = new DateTime(slot.dateTime.year,slot.dateTime.month, slot.dateTime.day, );
-
-    if (currentTime.isAfter(slot.dateTime) &&
-        currentTime.isBefore(
-            slot.dateTime.add(Duration(minutes: slot.slotDuration)))) {
-      cardColor = highlightColor;
-      isHighlighted = true;
-    }
     TokenStats stats;
+    DateTime currentTime = DateTime.now();
+
     if (dataMap.containsKey(time)) {
       stats = dataMap[time];
       cardColor = Colors.cyan[50];
@@ -238,6 +228,13 @@ class _EntityTokenListPageState extends State<EntityTokenListPage>
     } else {
       stats = emptyToken;
     }
+    if (currentTime.isAfter(slot.dateTime) &&
+        currentTime.isBefore(
+            slot.dateTime.add(Duration(minutes: slot.slotDuration)))) {
+      cardColor = highlightColor;
+      isHighlighted = true;
+    }
+
     if (isHighlighted) textColor = Colors.black;
     Widget rowCard = Card(
       color: cardColor,

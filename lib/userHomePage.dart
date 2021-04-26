@@ -837,33 +837,36 @@ class _UserHomePageState extends State<UserHomePage> {
                       print("Cancel booking");
                       bool cancelDone = false;
                       cancelToken(booking).then((value) {
-                        setState(() {
-                          booking.number = -1;
-                        });
+                        Navigator.of(context, rootNavigator: true).pop();
+                        Utils.showMyFlushbar(
+                            context,
+                            Icons.cancel,
+                            Duration(
+                              seconds: 3,
+                            ),
+                            "Cancelling Token ${booking.getDisplayName()}",
+                            "Please wait..");
 
-                        cancelDone = value;
-                        if (!cancelDone) {
-                          Utils.showMyFlushbar(
-                              context,
-                              Icons.info_outline,
-                              Duration(
-                                seconds: 5,
-                              ),
-                              "Couldn't cancel your booking for some reason. ",
-                              "Please try again later.");
-                        }
-                      }).catchError((e) {
-                        print(e);
+                        cancelToken(booking).then((value) {
+                          cancelDone = value;
+                          if (!cancelDone) {
+                            Utils.showMyFlushbar(
+                                context,
+                                Icons.info_outline,
+                                Duration(
+                                  seconds: 5,
+                                ),
+                                "Couldn't cancel your booking for some reason. ",
+                                "Please try again later.");
+                          } else {
+                            setState(() {
+                              booking.number = -1;
+                            });
+                          }
+                        }).catchError((e) {
+                          print(e);
+                        });
                       });
-                      Navigator.of(context, rootNavigator: true).pop();
-                      Utils.showMyFlushbar(
-                          context,
-                          Icons.cancel,
-                          Duration(
-                            seconds: 3,
-                          ),
-                          "Cancelling your booking",
-                          "Please wait..");
                     },
                   ),
                 ),

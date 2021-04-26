@@ -195,7 +195,10 @@ class EntityRowState extends State<EntityRow> {
                                 ? _metaEntity.name
                                 : "Untitled",
                             overflow: TextOverflow.ellipsis,
-                            style: TextStyle(color: Colors.black, fontSize: 17),
+                            style: TextStyle(
+                                color: Colors.black,
+                                fontSize: 18,
+                                fontFamily: 'RalewayRegular'),
                           ),
                           Text(
                             Utils.getEntityTypeDisplayName(_metaEntity.type),
@@ -271,8 +274,11 @@ class EntityRowState extends State<EntityRow> {
                         borderRadius: BorderRadius.all(Radius.circular(5.0))),
                     splashColor: highlightColor,
                     child: Text(
-                      'Manage Details',
-                      style: TextStyle(color: whiteBtnTextColor, fontSize: 13),
+                      'Details',
+                      style: TextStyle(
+                          color: whiteBtnTextColor,
+                          fontSize: 14,
+                          fontFamily: 'RalewayRegular'),
                     ),
                     // Text(
                     //   (_metaEntity.name != null)
@@ -314,7 +320,8 @@ class EntityRowState extends State<EntityRow> {
                                   .getActiveChildEntityTypes(_metaEntity.type))
                               ? disabledColor
                               : whiteBtnTextColor,
-                          fontSize: 13),
+                          fontSize: 14,
+                          fontFamily: 'RalewayRegular'),
                     ),
                     onPressed: () {
                       if (Utils.isNullOrEmpty(
@@ -350,13 +357,14 @@ class EntityRowState extends State<EntityRow> {
                       child: Align(
                         alignment: Alignment.center,
                         child: Text(
-                          'Booking Applications',
+                          'Applications',
                           textAlign: TextAlign.center,
                           style: TextStyle(
                               color: _metaEntity.isBookable
                                   ? whiteBtnTextColor
                                   : disabledColor,
-                              fontSize: 13),
+                              fontSize: 14,
+                              fontFamily: 'RalewayRegular'),
                         ),
                       ),
                       onPressed: () {
@@ -430,12 +438,13 @@ class EntityRowState extends State<EntityRow> {
                                   : Colors.blueGrey[100]),
                           borderRadius: BorderRadius.all(Radius.circular(5.0))),
                       child: Text(
-                        'Booking Tokens',
+                        'Tokens',
                         style: TextStyle(
                             color: _metaEntity.isBookable
                                 ? whiteBtnTextColor
                                 : disabledColor,
-                            fontSize: 13),
+                            fontSize: 14,
+                            fontFamily: 'RalewayRegular'),
                       ),
                       onPressed: () {
                         if (_metaEntity.isBookable) {
@@ -482,17 +491,9 @@ class EntityRowState extends State<EntityRow> {
                           color: _metaEntity.isBookable
                               ? whiteBtnTextColor
                               : disabledColor,
-                          fontSize: 13),
+                          fontSize: 14,
+                          fontFamily: 'RalewayRegular'),
                     ),
-                    // Text(
-                    //   (_metaEntity.name != null)
-                    //       ? (_metaEntity.name)
-                    //       : (_metaEntity.type),
-                    //   style: labelTextStyle,
-                    // ),
-
-                    //Icon(Icons.arrow_forward),
-
                     onPressed: () {
                       print("To Add details page");
                       Navigator.of(context)
@@ -506,26 +507,6 @@ class EntityRowState extends State<EntityRow> {
                     },
                   ),
                 ),
-                // Container(
-                //   width: MediaQuery.of(context).size.width * .42,
-                //   height: MediaQuery.of(context).size.height * .05,
-                //   child: FlatButton(
-                //     // elevation: 7,
-                //     color: Colors.white,
-                //     splashColor: highlightColor.withOpacity(.8),
-                //     shape: RoundedRectangleBorder(
-                //         side: BorderSide(color: Colors.blueGrey[500]),
-                //         borderRadius: BorderRadius.all(Radius.circular(5.0))),
-                //     child: Text(
-                //       'Child Places',
-                //       style: TextStyle(color: primaryDarkColor, fontSize: 13),
-                //     ),
-                //     onPressed: () {
-                //       print("To child list page");
-                //       showChildListPage();
-                //     },
-                //   ),
-                // ),
                 Container(
                   width: MediaQuery.of(context).size.width * .42,
                   height: MediaQuery.of(context).size.height * .05,
@@ -536,9 +517,16 @@ class EntityRowState extends State<EntityRow> {
                     shape: RoundedRectangleBorder(
                         side: BorderSide(color: Colors.blueGrey[300]),
                         borderRadius: BorderRadius.all(Radius.circular(5.0))),
-                    child: Text(
-                      'Manage Employees',
-                      style: TextStyle(color: whiteBtnTextColor, fontSize: 13),
+                    child: Align(
+                      alignment: Alignment.center,
+                      child: Text(
+                        'Employees',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                            color: whiteBtnTextColor,
+                            fontSize: 14,
+                            fontFamily: 'RalewayRegular'),
+                      ),
                     ),
                     onPressed: () {
                       Navigator.of(context)
