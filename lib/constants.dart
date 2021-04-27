@@ -284,6 +284,10 @@ String entityShareByOwnerHeading =
 String entityShareMessage =
     "Fix your appointment well in advance & Visit us when the crowd is less.\n\nDownload the LESSs app and start booking your peace of mind!";
 
+String upiShareSubject = 'Share UPI Subject';
+String upiShareTitle = 'Share UPI title';
+String upiShareBody = 'Share UPI body';
+
 String faqHead1 = "How LESSs helps bring Sukoon to your life?";
 String faqHead1Sub1 = "Lets look at the problems first..";
 String faqHead1Sub2 = "How this app helps?";

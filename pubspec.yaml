@@ -100,9 +100,6 @@ flutter:
     - 5.jpg
     - 6.jpg    
     - whatsapp.png    
-    - paytm.svg
-    - gpay.png
-    - gpay_icon.jpg
     - cancelled.png
     - cancelled_2.png
     - qrcode.png
@@ -141,7 +138,8 @@ flutter:
     - bscreen_fill_details_offer.png
     - bscreen_fill_details_save.png
     - well_done.png
-    - calling_codes.json 
+    - calling_codes.json
+    - bigpiq_gpay.jpg 
   
   #  - images/a_dot_ham.jpeg
 

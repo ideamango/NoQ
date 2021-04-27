@@ -1,6 +1,9 @@
+import 'dart:io';
 import 'dart:math';
+import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:noq/constants.dart';
 import 'package:noq/global_state.dart';
 import 'package:noq/pages/help_page.dart';
@@ -13,8 +16,17 @@ import 'package:noq/widget/appbar.dart';
 import 'package:noq/widget/bottom_nav_bar.dart';
 import 'package:noq/widget/header.dart';
 import 'package:noq/widget/widgets.dart';
+import 'package:share/share.dart';
 import 'package:upi_pay/upi_pay.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:flutter/services.dart';
+import 'dart:async';
+import 'dart:typed_data';
+import 'dart:ui';
+import 'dart:io';
+import 'package:flutter/rendering.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:share/share.dart';
 
 class DonatePage extends StatefulWidget {
   final String phone;
@@ -28,6 +40,7 @@ class _DonatePageState extends State<DonatePage> {
   bool initCompleted = false;
   GlobalState _gs;
   String upiId;
+  GlobalKey upiKey = new GlobalKey();
 
   TextStyle header = TextStyle(
     fontSize: 18,
@@ -125,7 +138,6 @@ class _DonatePageState extends State<DonatePage> {
       transactionRef: transactionRef,
       merchantCode: '7372',
     );
-
     print(a);
   }
 
@@ -196,13 +208,13 @@ class _DonatePageState extends State<DonatePage> {
                 ),
                 titleTxt: title,
               ),
-              body: Container(
-                padding: EdgeInsets.symmetric(horizontal: 12),
-                child: ListView(
-                  children: <Widget>[
-                    Center(
-                      child: Container(
-                        //  height: MediaQuery.of(context).size.height * .85,
+              body: SafeArea(
+                child: Container(
+                  padding: EdgeInsets.symmetric(horizontal: 12),
+                  child: ListView(
+                    children: <Widget>[
+                      Container(
+                        height: MediaQuery.of(context).size.height * .1,
                         margin: EdgeInsets.fromLTRB(
                             MediaQuery.of(context).size.width * .05,
                             MediaQuery.of(context).size.width * .04,
@@ -248,129 +260,168 @@ class _DonatePageState extends State<DonatePage> {
                                       ])),
                             ]),
                       ),
-                    ),
-                    Container(
-                      margin: EdgeInsets.only(top: 32),
-                      child: Row(
-                        children: <Widget>[
-                          Expanded(
-                            child: TextFormField(
-                              controller: _upiAddressController,
-                              enabled: false,
-                              keyboardType: TextInputType.text,
-                              decoration: InputDecoration(
-                                enabledBorder: OutlineInputBorder(
-                                    borderSide: BorderSide(color: Colors.grey)),
-                                focusedBorder: OutlineInputBorder(
-                                    borderSide:
-                                        BorderSide(color: Colors.orange)),
-                                hintText: 'address@upi',
-                                labelText: 'Receiving UPI Address',
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Container(
-                      margin: EdgeInsets.only(top: 32),
-                      child: Row(
-                        children: <Widget>[
-                          Expanded(
-                            child: TextField(
-                                controller: _amountController,
-                                //  readOnly: true,
-                                enabled: true,
-                                keyboardType: TextInputType.number,
+                      Container(
+                        height: MediaQuery.of(context).size.height * .08,
+                        margin: EdgeInsets.only(top: 5),
+                        child: Row(
+                          children: <Widget>[
+                            Expanded(
+                              child: TextFormField(
+                                controller: _upiAddressController,
+                                enabled: false,
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  letterSpacing: 1.5,
+                                  color: Colors.blueGrey[600],
+                                ),
+                                keyboardType: TextInputType.text,
                                 decoration: InputDecoration(
-                                  labelText: 'Amount in INR',
                                   enabledBorder: OutlineInputBorder(
-                                      borderSide:
-                                          BorderSide(color: Colors.grey)),
+                                      borderSide: BorderSide(
+                                          color: Colors.orange[200])),
                                   focusedBorder: OutlineInputBorder(
                                       borderSide:
                                           BorderSide(color: Colors.orange)),
+                                  hintText: 'address@upi',
+                                  labelText: 'Receiving UPI Address',
                                 ),
-                                onChanged: (value) {
-                                  _validateAmount(value);
-                                }),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Container(
-                      margin: EdgeInsets.only(top: 20, bottom: 10),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: <Widget>[
-                          Container(
-                            margin: EdgeInsets.only(bottom: 12),
-                            child: Text(
-                              'Pay Using',
-                              style: Theme.of(context).textTheme.caption,
+                              ),
                             ),
-                          ),
-                          FutureBuilder<List<ApplicationMeta>>(
-                            future: _appsFuture,
-                            builder: (context, snapshot) {
-                              if (snapshot.connectionState !=
-                                  ConnectionState.done) {
-                                return Container();
-                              }
-                              print(snapshot.data.length);
-                              if (snapshot.data.length == 0) {
-                                //  print("Have some data..huh!!");
-                                return Container(
-                                  child: Text(
-                                    'No payment apps found!',
-                                    style: TextStyle(fontSize: 20),
-                                  ),
-                                );
-                              } else {
-                                return GridView.count(
-                                  crossAxisCount: 2,
-                                  shrinkWrap: true,
-                                  mainAxisSpacing: 8,
-                                  crossAxisSpacing: 8,
-                                  childAspectRatio: 1.6,
-                                  physics: NeverScrollableScrollPhysics(),
-                                  children: snapshot.data
-                                      .map((it) => Material(
-                                            key: ObjectKey(it.upiApplication),
-                                            color: Colors.grey[200],
-                                            child: InkWell(
-                                              onTap: () => _onTap(it),
-                                              child: Column(
-                                                mainAxisSize: MainAxisSize.min,
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.center,
-                                                children: <Widget>[
-                                                  Image.memory(
-                                                    it.icon,
-                                                    width: 64,
-                                                    height: 64,
-                                                  ),
-                                                  Container(
-                                                    margin:
-                                                        EdgeInsets.only(top: 4),
-                                                    child: Text(
-                                                      it.upiApplication
-                                                          .getAppName(),
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                          ))
-                                      .toList(),
-                                );
-                              }
-                            },
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
-                    )
-                  ],
+                      Container(
+                        height: MediaQuery.of(context).size.height * .07,
+                        margin: EdgeInsets.only(top: 5),
+                        child: Row(
+                          children: <Widget>[
+                            Expanded(
+                              child: TextFormField(
+                                  controller: _amountController,
+                                  //  readOnly: true,
+                                  enabled: true,
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    letterSpacing: 1.5,
+                                    color: Colors.blueGrey[600],
+                                  ),
+                                  keyboardType: TextInputType.number,
+                                  autovalidateMode:
+                                      AutovalidateMode.onUserInteraction,
+                                  decoration: InputDecoration(
+                                    hintText: 'Amount in INR',
+                                    enabledBorder: UnderlineInputBorder(
+                                        borderSide:
+                                            BorderSide(color: Colors.grey)),
+                                    focusedBorder: UnderlineInputBorder(
+                                        borderSide:
+                                            BorderSide(color: Colors.orange)),
+                                  ),
+                                  validator: (String val) {
+                                    return _validateAmount(val);
+                                  }),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Container(
+                        height: MediaQuery.of(context).size.height * .47,
+                        margin: EdgeInsets.only(top: 20, bottom: 10),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: <Widget>[
+                            Container(
+                              margin: EdgeInsets.only(bottom: 12),
+                              child: Text(
+                                'Pay Using',
+                                style: TextStyle(
+                                    height: 1.3,
+                                    color: Colors.black,
+                                    fontFamily: 'RalewayRegular',
+                                    fontSize: 14.0),
+                              ),
+                            ),
+                            FutureBuilder<List<ApplicationMeta>>(
+                              future: _appsFuture,
+                              builder: (context, snapshot) {
+                                if (snapshot.connectionState !=
+                                    ConnectionState.done) {
+                                  return Container();
+                                }
+                                print(snapshot.data.length);
+                                if (snapshot.data.length == 0) {
+                                  //  print("Have some data..huh!!");
+                                  return Container(
+                                    child: Text(
+                                      'No payment apps found!',
+                                      style: TextStyle(fontSize: 20),
+                                    ),
+                                  );
+                                } else {
+                                  return GridView.count(
+                                    crossAxisCount: 2,
+                                    shrinkWrap: true,
+                                    mainAxisSpacing: 8,
+                                    crossAxisSpacing: 8,
+                                    childAspectRatio: 1.6,
+                                    physics: NeverScrollableScrollPhysics(),
+                                    children: snapshot.data
+                                        .map((it) => Material(
+                                              key: ObjectKey(it.upiApplication),
+                                              color: Colors.grey[200],
+                                              child: InkWell(
+                                                onTap: () => _onTap(it),
+                                                child: Column(
+                                                  mainAxisSize:
+                                                      MainAxisSize.min,
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.center,
+                                                  children: <Widget>[
+                                                    Image.memory(
+                                                      it.icon,
+                                                      width: 64,
+                                                      height: 64,
+                                                    ),
+                                                    Container(
+                                                      margin: EdgeInsets.only(
+                                                          top: 4),
+                                                      child: Text(
+                                                        it.upiApplication
+                                                            .getAppName(),
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                            ))
+                                        .toList(),
+                                  );
+                                }
+                              },
+                            ),
+                          ],
+                        ),
+                      ),
+                      Container(
+                          // alignment: Alignment.bottomCenter,
+                          width: MediaQuery.of(context).size.width * .9,
+                          height: MediaQuery.of(context).size.height * .06,
+                          child: RaisedButton(
+                              elevation: 10.0,
+                              color: btnColor,
+                              splashColor: Colors.orangeAccent[700],
+                              textColor: Colors.white,
+                              shape: RoundedRectangleBorder(
+                                  side: BorderSide(color: Colors.blueGrey[300]),
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(5.0))),
+                              onPressed: () {
+                                showQrDialog();
+                              },
+                              child: Text('View/ Share QR code',
+                                  style: buttonMedTextStyle))),
+                    ],
+                  ),
                 ),
               )),
           onWillPop: () async {
@@ -378,6 +429,110 @@ class _DonatePageState extends State<DonatePage> {
           },
         ),
       );
+    }
+  }
+
+  showQrDialog() {
+    showDialog(
+        barrierDismissible: true,
+        context: context,
+        builder: (_) => AlertDialog(
+              titlePadding: EdgeInsets.fromLTRB(10, 15, 10, 10),
+              contentPadding: EdgeInsets.all(0),
+              actionsPadding: EdgeInsets.all(5),
+              //buttonPadding: EdgeInsets.all(0),
+              title: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  RepaintBoundary(
+                    key: upiKey,
+                    child: Container(
+                      height: MediaQuery.of(context).size.height * .6,
+                      decoration: BoxDecoration(
+                        image: DecorationImage(
+                            image: AssetImage("assets/bigpiq_gpay.jpg"),
+                            fit: BoxFit.contain),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              content: Divider(
+                color: Colors.blueGrey[400],
+                height: 1,
+              ),
+
+              //content: Text('This is my content'),
+              actions: <Widget>[
+                SizedBox(
+                  height: MediaQuery.of(context).size.height * .05,
+                  width: MediaQuery.of(context).size.width * .3,
+                  child: RaisedButton(
+                    elevation: 10,
+                    autofocus: true,
+                    focusColor: highlightColor,
+                    splashColor: highlightColor,
+                    color: Colors.white,
+                    textColor: Colors.blueGrey[800],
+                    shape: RoundedRectangleBorder(
+                        side: BorderSide(color: Colors.blueGrey[600]),
+                        borderRadius: BorderRadius.all(Radius.circular(5.0))),
+                    child: Text('Will do later'),
+                    onPressed: () {
+                      print("Do nothing");
+                      Navigator.of(context, rootNavigator: true).pop();
+                      // Navigator.of(context, rootNavigator: true).pop('dialog');
+                    },
+                  ),
+                ),
+                SizedBox(
+                  height: MediaQuery.of(context).size.height * .05,
+                  width: MediaQuery.of(context).size.width * .4,
+                  child: RaisedButton(
+                    elevation: 10,
+                    color: Colors.white,
+                    splashColor: highlightColor.withOpacity(.8),
+                    textColor: btnColor,
+                    shape: RoundedRectangleBorder(
+                        side: BorderSide(color: Colors.blueGrey[600]),
+                        borderRadius: BorderRadius.all(Radius.circular(5.0))),
+                    child: Text('Share QR'),
+                    onPressed: () {
+                      //Share QR with others
+                      shareQR().then((val) {
+                        Navigator.of(context, rootNavigator: true).pop();
+                      });
+                    },
+                  ),
+                ),
+              ],
+            ));
+  }
+
+  Future<void> shareQR() async {
+    Directory tempDir = await getApplicationDocumentsDirectory();
+    RenderRepaintBoundary boundary = upiKey.currentContext.findRenderObject();
+    var image = await boundary.toImage();
+    ByteData byteData = await image.toByteData(format: ImageByteFormat.png);
+    Uint8List pngBytes = byteData.buffer.asUint8List();
+    tempDir = await getApplicationDocumentsDirectory();
+    // final file =
+    //     await new File('${tempDir.path}/qrcodeForShare.png').create();
+    final file = new File('${tempDir.path}/bigpiq_gpay.jpg');
+    await file.writeAsBytes(pngBytes);
+    // final channel = const MethodChannel('channel:me.sukoon.share/share');
+    // channel.invokeMethod('shareFile', 'qrcodeForShare.png');
+    final RenderBox box = context.findRenderObject();
+    Share.shareFiles(['${tempDir.path}/bigpiq_gpay.jpg'],
+        subject: upiShareSubject,
+        text: upiShareTitle + '\n\n' + upiShareBody,
+        sharePositionOrigin: box.localToGlobal(Offset.zero) & box.size);
+    if (Platform.isIOS) {
+      Share.shareFiles(['${tempDir.path}/bigpiq_gpay.jpg'],
+          //subject: msgTitle,
+          //text: msgBody,
+          sharePositionOrigin: box.localToGlobal(Offset.zero) & box.size);
     }
   }
 }
