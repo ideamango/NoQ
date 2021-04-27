@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:noq/global_state.dart';
-import 'package:noq/services/circular_progress.dart';
-import 'package:noq/userHomePage.dart';
-import 'package:noq/widget/appbar.dart';
+import '../global_state.dart';
+import '../services/circular_progress.dart';
+import '../userHomePage.dart';
+import '../widget/appbar.dart';
 
 class TemplatePage extends StatefulWidget {
   final String entityId;

@@ -1,22 +1,22 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
-import 'package:noq/db/db_model/entity.dart';
-import 'package:noq/db/db_model/meta_entity.dart';
-import 'package:noq/db/db_model/slot.dart';
-import 'package:noq/db/exceptions/slot_full_exception.dart';
-import 'package:noq/db/exceptions/token_already_exists_exception.dart';
-import 'package:noq/global_state.dart';
-import 'package:noq/pages/token_alert.dart';
-import 'package:noq/repository/slotRepository.dart';
-import 'package:noq/style.dart';
-import 'package:noq/utils.dart';
-import 'package:noq/widget/appbar.dart';
-import 'package:noq/widget/header.dart';
-import 'package:noq/widget/widgets.dart';
+import './db/db_model/entity.dart';
+import './db/db_model/meta_entity.dart';
+import './db/db_model/slot.dart';
+import './db/exceptions/slot_full_exception.dart';
+import './db/exceptions/token_already_exists_exception.dart';
+import './global_state.dart';
+import './pages/token_alert.dart';
+import './repository/slotRepository.dart';
+import './style.dart';
+import './utils.dart';
+import './widget/appbar.dart';
+import './widget/header.dart';
+import './widget/widgets.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:intl/intl.dart';
-import 'package:noq/constants.dart';
+import './constants.dart';
 
 class SlotSelectionPage extends StatefulWidget {
   final MetaEntity metaEntity;

@@ -1,9 +1,8 @@
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:noq/db/db_model/entity.dart';
-import 'package:noq/db/db_model/meta_entity.dart';
-import 'package:noq/global_state.dart';
-import 'package:noq/style.dart';
+import '../db/db_model/entity.dart';
+import '../db/db_model/meta_entity.dart';
+import '../global_state.dart';
+import '../style.dart';
 
 Divider myDivider = new Divider(
   color: Colors.blueGrey[500],

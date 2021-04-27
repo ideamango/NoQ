@@ -1,5 +1,5 @@
-import 'package:noq/db/db_model/app_user.dart';
-import 'package:noq/utils.dart';
+import './app_user.dart';
+import '../../utils.dart';
 
 class Employee {
   String id;

@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
-import 'package:noq/global_state.dart';
+import '../global_state.dart';
 import 'dart:async';
 import 'package:path_provider/path_provider.dart';
 import 'package:json_annotation/json_annotation.dart';

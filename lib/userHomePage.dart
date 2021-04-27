@@ -1,28 +1,27 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:noq/constants.dart';
+import './constants.dart';
 
-import 'package:noq/global_state.dart';
-import 'package:noq/pages/how_to_reg_for_business.dart';
-import 'package:noq/pages/how_to_reg_for_users.dart';
-import 'package:noq/pages/qr_code_user_token.dart';
-import 'package:noq/pages/search_entity_page.dart';
-import 'package:noq/pages/db_test.dart';
-import 'package:noq/pages/shopping_list.dart';
-import 'package:noq/repository/slotRepository.dart';
-import 'package:noq/services/circular_progress.dart';
-import 'package:noq/services/url_services.dart';
-import 'package:noq/services/qr_code_scan.dart';
-import 'package:noq/style.dart';
+import './global_state.dart';
+import './pages/how_to_reg_for_business.dart';
+import './pages/how_to_reg_for_users.dart';
+import './pages/search_entity_page.dart';
+import './pages/db_test.dart';
+import './pages/shopping_list.dart';
+import './repository/slotRepository.dart';
+import './services/circular_progress.dart';
+import './services/url_services.dart';
+import './services/qr_code_scan.dart';
+import './style.dart';
 import 'package:intl/intl.dart';
-import 'package:noq/utils.dart';
-import 'package:noq/widget/appbar.dart';
-import 'package:noq/widget/bottom_nav_bar.dart';
-import 'package:noq/widget/carousel_home_page.dart';
-import 'package:noq/widget/header.dart';
-import 'package:noq/widget/page_animation.dart';
-import 'package:noq/widget/widgets.dart';
+import './utils.dart';
+import './widget/appbar.dart';
+import './widget/bottom_nav_bar.dart';
+import './widget/carousel_home_page.dart';
+import './widget/header.dart';
+import './widget/page_animation.dart';
+import './widget/widgets.dart';
 
 import 'db/db_model/user_token.dart';
 import 'package:carousel_slider/carousel_slider.dart';

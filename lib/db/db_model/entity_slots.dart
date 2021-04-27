@@ -1,4 +1,4 @@
-import 'package:noq/db/db_model/slot.dart';
+import './slot.dart';
 
 class EntitySlots {
   EntitySlots(

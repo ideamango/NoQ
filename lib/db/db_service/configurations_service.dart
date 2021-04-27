@@ -1,8 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:noq/db/db_model/configurations.dart';
-import 'package:noq/db/exceptions/access_denied_exception.dart';
+import '../db_model/configurations.dart';
+import '../exceptions/access_denied_exception.dart';
 
 class ConfigurationService {
   FirebaseApp _fb;

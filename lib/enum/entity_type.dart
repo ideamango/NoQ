@@ -22,5 +22,3 @@ enum EntityType {
   PLACE_TYPE_LAPTOP_SERVICE,
   PLACE_TYPE_OTHERS
 }
-
-enum EntityRole { Admin, Manager, Executive }

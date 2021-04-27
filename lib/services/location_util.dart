@@ -1,5 +1,4 @@
-import 'package:flutter/material.dart';
-import 'package:noq/location.dart';
+import '../location.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:flutter/services.dart';
@@ -8,38 +7,45 @@ class LocationUtil {
   static Future<Location> getLocation() async {
     Location locData;
 
-    IPStackLocation ipStackLocation = await _getLocationFromIPStack();
-    if (ipStackLocation != null) {
-      locData = _convertFromIPStack(ipStackLocation);
-    } else {
-      //fallback to ip-api.com
+    try {
+      //first call ip-api.com
       IPAPILocation ipAPILocation = await _callIPAPI();
       if (ipAPILocation != null) {
         locData = _convertFromIPAPI(ipAPILocation);
       }
-    }
 
-    if (locData == null) {
-      //just to avoid failures and user can set the calling code while login
-      locData = new Location();
-    }
+      if (locData == null) {
+        //fallback to ipstack.com
+        IPStackLocation ipStackLocation = await _getLocationFromIPStack();
+        locData = _convertFromIPStack(ipStackLocation);
+      }
 
-    String data = await rootBundle.loadString("assets/calling_codes.json");
-    locData.allCallingCodes = json.decode(data);
-    locData.callingCode = locData.allCallingCodes[locData.countryCode];
+      if (locData != null) {
+        String data = await rootBundle.loadString("assets/calling_codes.json");
+        locData.allCallingCodes = json.decode(data);
+        locData.callingCode = locData.allCallingCodes[locData.countryCode];
+      }
+    } catch (e) {
+      //do nothing
+    }
 
     return locData;
   }
 
   static Future<IPAPILocation> _callIPAPI() async {
     String ipAPIURL = "http://ip-api.com/json";
+    try {
+      Uri uri = Uri.parse(ipAPIURL);
 
-    final response = await http.get(ipAPIURL);
+      final response = await http.get(uri);
 
-    if (response.statusCode == 200) {
-      // If the server did return a 200 OK response,
-      // then parse the JSON.
-      return IPAPILocation.fromJson(jsonDecode(response.body));
+      if (response.statusCode == 200) {
+        // If the server did return a 200 OK response,
+        // then parse the JSON.
+        return IPAPILocation.fromJson(jsonDecode(response.body));
+      }
+    } catch (e) {
+      return null;
     }
 
     return null;
@@ -49,12 +55,18 @@ class LocationUtil {
     String ipstackURL =
         "http://api.ipstack.com/183.83.146.130?access_key=7dfc143d00f07856308ebcdd836dda8e";
 
-    final response = await http.get(ipstackURL);
+    try {
+      Uri uri = Uri.parse(ipstackURL);
 
-    if (response.statusCode == 200) {
-      // If the server did return a 200 OK response,
-      // then parse the JSON.
-      return IPStackLocation.fromJson(jsonDecode(response.body));
+      final response = await http.get(uri);
+
+      if (response.statusCode == 200) {
+        // If the server did return a 200 OK response,
+        // then parse the JSON.
+        return IPStackLocation.fromJson(jsonDecode(response.body));
+      }
+    } catch (e) {
+      return null;
     }
 
     return null;

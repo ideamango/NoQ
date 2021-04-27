@@ -7,11 +7,11 @@ import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-import 'package:noq/login_page.dart';
+import './login_page.dart';
 
-import 'package:noq/services/init_screen.dart';
-import 'package:noq/userHomePage.dart';
-import 'package:noq/utils.dart';
+import './services/init_screen.dart';
+import './userHomePage.dart';
+import './utils.dart';
 import 'package:timezone/data/latest.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 import 'package:flutter_native_timezone/flutter_native_timezone.dart';

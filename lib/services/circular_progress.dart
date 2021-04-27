@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:noq/style.dart';
-import 'package:noq/widget/widgets.dart';
+import '../style.dart';
+import '../widget/widgets.dart';
 
 Widget showCircularProgress() {
   return Center(

@@ -6,30 +6,31 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
-import 'package:noq/db/db_model/configurations.dart';
-import 'package:noq/db/db_model/entity.dart';
-import 'package:noq/db/db_model/meta_entity.dart';
-import 'package:noq/db/db_model/app_user.dart';
-import 'package:noq/db/db_model/slot.dart';
-import 'package:noq/db/db_model/user_token.dart';
-import 'package:noq/db/db_service/booking_application_service.dart';
+import './db/db_model/configurations.dart';
+import './db/db_model/entity.dart';
+import './db/db_model/meta_entity.dart';
+import './db/db_model/app_user.dart';
+import './db/db_model/slot.dart';
+import './db/db_model/user_token.dart';
+import './db/db_service/booking_application_service.dart';
 
-import 'package:noq/db/db_service/configurations_service.dart';
-import 'package:noq/db/db_service/entity_service.dart';
-import 'package:noq/db/db_service/token_service.dart';
-import 'package:noq/enum/entity_type.dart';
-import 'package:noq/events/local_notification_data.dart';
-import 'package:noq/location.dart';
-import 'package:noq/services/auth_service.dart';
-import 'package:noq/services/location_util.dart';
-import 'package:noq/tuple.dart';
+import './db/db_service/configurations_service.dart';
+import './db/db_service/entity_service.dart';
+import './db/db_service/token_service.dart';
+import './enum/entity_type.dart';
+import './events/local_notification_data.dart';
+import './location.dart';
+import './services/auth_service.dart';
+import './services/location_util.dart';
+import './tuple.dart';
 
-import 'package:noq/utils.dart';
+import './utils.dart';
 import 'package:package_info/package_info.dart';
 import 'db/db_service/user_service.dart';
 import 'events/event_bus.dart';
 import 'events/events.dart';
 import 'package:timezone/timezone.dart' as tz;
+import 'package:firebase_remote_config/firebase_remote_config.dart';
 
 class GlobalState {
   AppUser _currentUser;
@@ -60,6 +61,8 @@ class GlobalState {
   String buildNumber;
   bool isAndroid;
   bool isIOS;
+
+  RemoteConfig remoteConfig;
 
   static GlobalState _gs;
 
@@ -218,6 +221,10 @@ class GlobalState {
       await _gs.initSecondaryFirebaseApp();
     }
 
+    if (_gs.remoteConfig == null) {
+      _gs.remoteConfig = RemoteConfig.instance;
+    }
+
     if (_gs._authService == null) {
       _gs._authService = new AuthService(_gs._secondaryFirebaseApp);
     }
@@ -259,7 +266,7 @@ class GlobalState {
         _gs._currentUser = await _gs._userService.getCurrentUser();
         if (_gs._currentUser != null &&
             Utils.isNullOrEmpty(_gs._currentUser.favourites))
-          _gs._currentUser.favourites = new List<MetaEntity>();
+          _gs._currentUser.favourites = [];
       } catch (e) {
         print(
             "Error initializing GlobalState, User details could not be fetched from server..");
@@ -273,7 +280,7 @@ class GlobalState {
       try {
         List<UserTokens> listTokens = await _gs._tokenService
             .getAllTokensForCurrentUser(fromDate, toDate);
-        _gs.bookings = new List<UserToken>();
+        _gs.bookings = [];
 
         if (listTokens != null && listTokens.length > 0) {
           for (UserTokens tokens in listTokens) {
@@ -356,7 +363,7 @@ class GlobalState {
 
     bool existsInUser = false;
     if (Utils.isNullOrEmpty(_currentUser.entities)) {
-      _currentUser.entities = new List<MetaEntity>();
+      _currentUser.entities = [];
     }
     for (MetaEntity mEnt in _currentUser.entities) {
       if (mEnt.entityId == entity.entityId) {
@@ -389,7 +396,7 @@ class GlobalState {
   }
 
   List<UserToken> getPastBookings() {
-    List<UserToken> pastBookings = new List<UserToken>();
+    List<UserToken> pastBookings = [];
     DateTime now = DateTime.now();
 
     for (UserToken tok in bookings) {
@@ -404,7 +411,7 @@ class GlobalState {
   }
 
   List<UserToken> getUpcomingBookings() {
-    List<UserToken> newBookings = new List<UserToken>();
+    List<UserToken> newBookings = [];
     DateTime now = DateTime.now();
 
     for (UserToken tok in bookings) {
@@ -567,7 +574,7 @@ class GlobalState {
   }
 
   List<dynamic> convertPastSearchesListToJson(List<Entity> metaEntities) {
-    List<dynamic> searchListJson = new List<dynamic>();
+    List<dynamic> searchListJson = [];
     if (metaEntities == null) return searchListJson;
     for (Entity meta in metaEntities) {
       searchListJson.add(meta.toJson());
@@ -577,7 +584,7 @@ class GlobalState {
 
   static List<Entity> convertToSearchListFromJson(
       List<dynamic> metaEntityJson) {
-    List<Entity> metaEntities = new List<Entity>();
+    List<Entity> metaEntities = [];
 
     if (metaEntityJson != null) {
       for (Map<String, dynamic> json in metaEntityJson) {

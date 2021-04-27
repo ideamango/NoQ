@@ -3,7 +3,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:map_launcher/map_launcher.dart';
-import 'package:noq/utils.dart';
+import '../utils.dart';
 import 'package:package_info/package_info.dart';
 import 'package:url_launcher/url_launcher.dart' as UrlLauncher;
 import 'package:url_launcher/url_launcher.dart';
@@ -185,9 +185,9 @@ Future<String> getIosAppId({
 
   if (id.isNotEmpty) {
     try {
-      final result = await http
-          .get('http://itunes.apple.com/$country/lookup?bundleId=$id')
-          .timeout(const Duration(seconds: 5));
+      String strUlr = 'http://itunes.apple.com/$country/lookup?bundleId=$id';
+      Uri uri = Uri.parse(strUlr);
+      final result = await http.get(uri).timeout(const Duration(seconds: 5));
       final Map json = jsonDecode(result.body ?? '');
       appId = json['results'][0]['trackId']?.toString();
     } finally {

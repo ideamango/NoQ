@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:noq/widget/video_player_app.dart';
+import '../widget/video_player_app.dart';
 
 class HowToRegForUsers extends StatefulWidget {
   @override

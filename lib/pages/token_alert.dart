@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:noq/constants.dart';
-import 'package:noq/widget/widgets.dart';
-import 'package:noq/style.dart';
+import '../constants.dart';
+import '../widget/widgets.dart';
+import '../style.dart';
 
 Future<String> showTokenAlert(
     BuildContext context, String tokenNo, String storeName, String time) {

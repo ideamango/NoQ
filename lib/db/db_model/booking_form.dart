@@ -1,6 +1,6 @@
 import 'package:enum_to_string/enum_to_string.dart';
 import 'package:flutter/material.dart';
-import 'package:noq/enum/field_type.dart';
+import '../../enum/field_type.dart';
 import 'package:uuid/uuid.dart';
 
 class BookingForm {

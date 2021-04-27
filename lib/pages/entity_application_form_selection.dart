@@ -1,19 +1,19 @@
 import 'package:flutter/material.dart';
-import 'package:noq/db/db_model/meta_entity.dart';
-import 'package:noq/db/db_model/meta_form.dart';
-import 'package:noq/global_state.dart';
-import 'package:noq/pages/booking_application_form.dart';
-import 'package:noq/pages/covid_token_booking_form.dart';
-import 'package:noq/pages/manage_entity_list_page.dart';
-import 'package:noq/pages/overview_page.dart';
-import 'package:noq/pages/search_entity_page.dart';
-import 'package:noq/services/circular_progress.dart';
-import 'package:noq/services/create_form_fields.dart';
-import 'package:noq/style.dart';
-import 'package:noq/utils.dart';
-import 'package:noq/widget/appbar.dart';
-import 'package:noq/widget/header.dart';
-import 'package:noq/widget/page_animation.dart';
+import '../db/db_model/meta_entity.dart';
+import '../db/db_model/meta_form.dart';
+import '../global_state.dart';
+import '../pages/booking_application_form.dart';
+import '../pages/covid_token_booking_form.dart';
+import '../pages/manage_entity_list_page.dart';
+import '../pages/overview_page.dart';
+import '../pages/search_entity_page.dart';
+import '../services/circular_progress.dart';
+import '../services/create_form_fields.dart';
+import '../style.dart';
+import '../utils.dart';
+import '../widget/appbar.dart';
+import '../widget/header.dart';
+import '../widget/page_animation.dart';
 
 class ApplicationFormSelection extends StatefulWidget {
   final MetaEntity metaEntity;

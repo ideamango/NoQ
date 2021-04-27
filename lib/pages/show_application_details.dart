@@ -1,21 +1,21 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:enum_to_string/enum_to_string.dart';
 import 'package:flutter/material.dart';
-import 'package:noq/db/db_model/booking_application.dart';
-import 'package:noq/db/db_model/booking_form.dart';
-import 'package:noq/db/db_model/meta_entity.dart';
-import 'package:noq/enum/application_status.dart';
-import 'package:noq/enum/field_type.dart';
-import 'package:noq/global_state.dart';
-import 'package:noq/pages/applications_list.dart';
-import 'package:noq/pages/covid_token_booking_form.dart';
-import 'package:noq/pages/overview_page.dart';
-import 'package:noq/services/circular_progress.dart';
-import 'package:noq/style.dart';
-import 'package:noq/userHomePage.dart';
-import 'package:noq/utils.dart';
-import 'package:noq/widget/appbar.dart';
-import 'package:noq/widget/widgets.dart';
+import '../db/db_model/booking_application.dart';
+import '../db/db_model/booking_form.dart';
+import '../db/db_model/meta_entity.dart';
+import '../enum/application_status.dart';
+import '../enum/field_type.dart';
+import '../global_state.dart';
+import '../pages/applications_list.dart';
+import '../pages/covid_token_booking_form.dart';
+import '../pages/overview_page.dart';
+import '../services/circular_progress.dart';
+import '../style.dart';
+import '../userHomePage.dart';
+import '../utils.dart';
+import '../widget/appbar.dart';
+import '../widget/widgets.dart';
 
 class ShowApplicationDetails extends StatefulWidget {
   final BookingApplication bookingApplication;

@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:noq/global_state.dart';
-import 'package:noq/services/auth_service.dart';
-import 'package:noq/style.dart';
-import 'package:noq/userHomePage.dart';
-import 'package:noq/utils.dart';
-import 'package:noq/widget/page_animation.dart';
-import 'package:noq/widget/widgets.dart';
+
+import '../style.dart';
+
+import '../utils.dart';
+import '../widget/page_animation.dart';
 
 class CustomAppBar extends StatefulWidget implements PreferredSizeWidget {
   final String titleTxt;

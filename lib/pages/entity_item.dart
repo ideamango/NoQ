@@ -1,25 +1,25 @@
 import 'package:flutter/material.dart';
-import 'package:noq/constants.dart';
-import 'package:noq/db/db_model/entity.dart';
-import 'package:noq/db/db_model/meta_entity.dart';
-import 'package:noq/db/db_model/meta_form.dart';
-import 'package:noq/pages/booking_form_selection_page.dart';
-import 'package:noq/pages/business_info_page.dart';
-import 'package:noq/pages/entity_token_list_page.dart';
-import 'package:noq/pages/manage_employee_page.dart';
+import '../constants.dart';
+import '../db/db_model/entity.dart';
+import '../db/db_model/meta_entity.dart';
+import '../db/db_model/meta_form.dart';
+import '../pages/booking_form_selection_page.dart';
+import '../pages/business_info_page.dart';
+import '../pages/entity_token_list_page.dart';
+import '../pages/manage_employee_page.dart';
 
-import 'package:noq/pages/manage_entity_details_page.dart';
-import 'package:noq/pages/manage_entity_forms.dart';
-import 'package:noq/pages/manage_entity_list_page.dart';
-import 'package:noq/pages/overview_page.dart';
-import 'package:noq/services/circular_progress.dart';
-import 'package:noq/services/qr_code_generate.dart';
-import 'package:noq/style.dart';
+import '../pages/manage_entity_details_page.dart';
+import '../pages/manage_entity_forms.dart';
+import '../pages/manage_entity_list_page.dart';
+import '../pages/overview_page.dart';
+import '../services/circular_progress.dart';
+import '../services/qr_code_generate.dart';
+import '../style.dart';
 import 'package:flutter/foundation.dart';
-import 'package:noq/pages/manage_child_entity_list_page.dart';
-import 'package:noq/utils.dart';
-import 'package:noq/widget/page_animation.dart';
-import 'package:noq/widget/widgets.dart';
+import '../pages/manage_child_entity_list_page.dart';
+import '../utils.dart';
+import '../widget/page_animation.dart';
+import '../widget/widgets.dart';
 
 import '../global_state.dart';
 

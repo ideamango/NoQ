@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:noq/constants.dart';
-import 'package:noq/style.dart';
-import 'package:noq/userHomePage.dart';
-import 'package:noq/widget/appbar.dart';
-import 'package:noq/widget/bottom_nav_bar.dart';
-import 'package:noq/widget/header.dart';
-import 'package:noq/widget/widgets.dart';
+import '../constants.dart';
+import '../style.dart';
+import '../userHomePage.dart';
+import '../widget/appbar.dart';
+import '../widget/bottom_nav_bar.dart';
+import '../widget/header.dart';
+import '../widget/widgets.dart';
 
 class AboutUsPage extends StatefulWidget {
   @override

@@ -3,6 +3,7 @@ import 'dart:math';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+<<<<<<< HEAD
 import 'package:flutter/rendering.dart';
 import 'package:noq/constants.dart';
 import 'package:noq/global_state.dart';
@@ -17,7 +18,22 @@ import 'package:noq/widget/bottom_nav_bar.dart';
 import 'package:noq/widget/header.dart';
 import 'package:noq/widget/widgets.dart';
 import 'package:share/share.dart';
+=======
+>>>>>>> eb3680319f59c28f9363c4a1ae6bc197dcb4f33b
 import 'package:upi_pay/upi_pay.dart';
+import '../constants.dart';
+import '../global_state.dart';
+import '../pages/help_page.dart';
+import '../services/circular_progress.dart';
+import '../services/url_services.dart';
+import '../style.dart';
+import '../userHomePage.dart';
+import '../utils.dart';
+import '../widget/appbar.dart';
+import '../widget/bottom_nav_bar.dart';
+import '../widget/header.dart';
+import '../widget/widgets.dart';
+
 import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter/services.dart';
 import 'dart:async';

@@ -1,11 +1,11 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:noq/constants.dart';
-import 'package:noq/db/db_model/entity.dart';
-import 'package:noq/services/url_services.dart';
-import 'package:noq/style.dart';
-import 'package:noq/utils.dart';
-import 'package:noq/widget/widgets.dart';
+import '../constants.dart';
+import '../db/db_model/entity.dart';
+import '../services/url_services.dart';
+import '../style.dart';
+import '../utils.dart';
+import '../widget/widgets.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class PlaceDetailsPage extends StatefulWidget {

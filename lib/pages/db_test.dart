@@ -2,31 +2,33 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:enum_to_string/enum_to_string.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:noq/db/db_model/address.dart';
-import 'package:noq/db/db_model/booking_application.dart';
-import 'package:noq/db/db_model/booking_form.dart';
-import 'package:noq/db/db_model/configurations.dart';
-import 'package:noq/db/db_model/employee.dart';
-import 'package:noq/db/db_model/entity.dart';
-import 'package:noq/db/db_model/entity_private.dart';
-import 'package:noq/db/db_model/entity_slots.dart';
-import 'package:noq/db/db_model/meta_entity.dart';
-import 'package:noq/db/db_model/meta_form.dart';
-import 'package:noq/db/db_model/my_geo_fire_point.dart';
-import 'package:noq/db/db_model/offer.dart';
-import 'package:noq/db/db_model/slot.dart';
-import 'package:noq/db/db_model/app_user.dart';
-import 'package:noq/db/db_model/user_token.dart';
-import 'package:noq/db/db_service/booking_application_service.dart';
-import 'package:noq/enum/application_status.dart';
-import 'package:noq/enum/entity_type.dart';
-import 'package:noq/events/event_bus.dart';
-import 'package:noq/events/events.dart';
-import 'package:noq/events/local_notification_data.dart';
-import 'package:noq/constants.dart';
-import 'package:noq/global_state.dart';
-import 'package:noq/tuple.dart';
-import 'package:noq/utils.dart';
+import '../db/db_model/address.dart';
+import '../db/db_model/booking_application.dart';
+import '../db/db_model/booking_form.dart';
+import '../db/db_model/configurations.dart';
+import '../db/db_model/employee.dart';
+import '../db/db_model/entity.dart';
+import '../db/db_model/entity_private.dart';
+import '../db/db_model/entity_slots.dart';
+import '../db/db_model/meta_entity.dart';
+import '../db/db_model/meta_form.dart';
+import '../db/db_model/my_geo_fire_point.dart';
+import '../db/db_model/offer.dart';
+import '../db/db_model/slot.dart';
+import '../db/db_model/app_user.dart';
+import '../db/db_model/user_token.dart';
+import '../db/db_service/booking_application_service.dart';
+import '../enum/application_status.dart';
+import '../enum/entity_type.dart';
+import '../events/event_bus.dart';
+import '../events/events.dart';
+import '../events/local_notification_data.dart';
+import '../constants.dart';
+import '../global_state.dart';
+import '../tuple.dart';
+import '../utils.dart';
+
+import '../enum/entity_role.dart';
 
 class DBTest {
   String Covid_Vacination_center = "Selenium-Covid-Vacination-Center";
@@ -901,11 +903,10 @@ class DBTest {
 
     //update the offer and manager
 
-    Offer offer = new Offer(
-        message: "Get 10% off on branded items",
-        startDateTime: new DateTime(2020, 8, 13, 10, 30, 0, 0),
-        endDateTime: new DateTime(2020, 8, 20, 10, 30, 0, 0),
-        coupon: "Coup10");
+    Offer offer =
+        new Offer(message: "Get 10% off on branded items", coupon: "Coup10");
+    offer.startDateTime = new DateTime(2020, 8, 13, 10, 30, 0, 0);
+    offer.endDateTime = new DateTime(2020, 8, 20, 10, 30, 0, 0);
 
     Employee manager1 = new Employee(
         name: "Manager1 LName",
@@ -919,7 +920,7 @@ class DBTest {
     ent.address = adrs;
     ent.offer = offer;
     if (ent.managers == null) {
-      ent.managers = new List<Employee>();
+      ent.managers = [];
     }
     ent.managers.add(manager1);
 

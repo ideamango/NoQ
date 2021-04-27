@@ -1,4 +1,4 @@
-import 'package:noq/enum/comparator.dart';
+import '../../enum/comparator.dart';
 
 class RangeQuery {
   RangeQuery({this.key, this.value, this.comparatorOperator});

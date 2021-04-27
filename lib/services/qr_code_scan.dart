@@ -2,8 +2,10 @@ import 'dart:async';
 import 'package:barcode_scan_fix/barcode_scan.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:noq/constants.dart';
-import 'package:noq/utils.dart';
+import '../constants.dart';
+
+//import 'package:barcode_scan/barcode_scan.dart';
+import '../utils.dart';
 
 class QrCodeScanner {
   static Future scan(BuildContext context) async {

@@ -1,20 +1,15 @@
 import 'package:enum_to_string/enum_to_string.dart';
-import 'package:noq/db/db_model/meta_entity.dart';
-import 'package:noq/db/db_model/meta_user.dart';
-import 'package:noq/enum/entity_type.dart';
-import 'package:noq/utils.dart';
+import './meta_entity.dart';
+import './meta_user.dart';
+import '../../enum/entity_type.dart';
 
+import '../../utils.dart';
+
+import '../../enum/entity_role.dart';
 import 'my_geo_fire_point.dart';
 
 class AppUser {
-  AppUser(
-      {this.id,
-      this.name,
-      this.loc,
-      this.ph,
-      this.entities,
-      this.favourites,
-      this.entityVsRole});
+  AppUser({this.id = "", this.name = "", this.ph = ""});
 
   //just need an id which is unique even if later phone or firebase id changes
   String id;
@@ -44,23 +39,21 @@ class AppUser {
       };
 
   static AppUser fromJson(Map<String, dynamic> json) {
-    if (json == null) return null;
-    return new AppUser(
-        id: json['id'],
-        name: json['name'],
-        loc: MyGeoFirePoint.fromJson(json['loc']),
-        ph: json['ph'],
-        entities: convertToMetaEntitiesFromJson(json['entities']),
-        favourites: convertToMetaEntitiesFromJson(json['favourites']),
-        entityVsRole: convertToMapFromJSON(json['entityVsRole']));
+    AppUser appUser =
+        AppUser(id: json['id'], name: json['name'], ph: json['ph']);
+
+    appUser.loc = MyGeoFirePoint.fromJson(json['loc']);
+    appUser.entities = convertToMetaEntitiesFromJson(json['entities']);
+    appUser.favourites = convertToMetaEntitiesFromJson(json['favourites']);
+    appUser.entityVsRole = convertToMapFromJSON(json['entityVsRole']);
+    return appUser;
   }
 
   Map<String, dynamic> convertFromMap(Map<String, EntityRole> entityRoles) {
-    if (entityRoles == null) {
-      return null;
-    }
-
     Map<String, dynamic> map = Map<String, dynamic>();
+    if (entityRoles == null) {
+      return map;
+    }
     entityRoles.forEach((k, v) => map[k] = EnumToString.convertToString(v));
     return map;
   }
@@ -76,7 +69,7 @@ class AppUser {
   }
 
   List<dynamic> metaEntitiesToJson(List<MetaEntity> metaEntities) {
-    List<dynamic> usersJson = new List<dynamic>();
+    List<dynamic> usersJson = [];
     if (metaEntities == null) return usersJson;
     for (MetaEntity meta in metaEntities) {
       usersJson.add(meta.toJson());
@@ -86,7 +79,7 @@ class AppUser {
 
   static List<MetaEntity> convertToMetaEntitiesFromJson(
       List<dynamic> metaEntityJson) {
-    List<MetaEntity> metaEntities = new List<MetaEntity>();
+    List<MetaEntity> metaEntities = [];
     if (Utils.isNullOrEmpty(metaEntityJson)) return metaEntities;
 
     for (Map<String, dynamic> json in metaEntityJson) {

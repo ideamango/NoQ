@@ -1,12 +1,12 @@
 class Address {
   Address(
-      {this.address,
-      this.locality,
-      this.city,
-      this.state,
-      this.country,
-      this.landmark,
-      this.zipcode});
+      {this.address = "",
+      this.locality = "",
+      this.city = "",
+      this.state = "",
+      this.country = "",
+      this.landmark = "",
+      this.zipcode = ""});
 
   String address;
   String locality;
@@ -27,7 +27,6 @@ class Address {
       };
 
   static Address fromJson(Map<String, dynamic> json) {
-    if (json == null) return null;
     return new Address(
         address: json['address'],
         locality: json['locality'],

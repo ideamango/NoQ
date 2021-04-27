@@ -1,7 +1,7 @@
 import 'package:enum_to_string/enum_to_string.dart';
-import 'package:noq/db/db_model/meta_form.dart';
-import 'package:noq/enum/entity_type.dart';
-import 'package:noq/utils.dart';
+import './meta_form.dart';
+import '../../enum/entity_type.dart';
+import '../../utils.dart';
 
 class Configurations {
   Configurations(
@@ -22,7 +22,8 @@ class Configurations {
       this.latestVersion,
       this.typeToChildType,
       this.androidAppVersionToEntityTypes,
-      this.iosAppVersionToEntityTypes});
+      this.iosAppVersionToEntityTypes,
+      this.upi});
 
   List<String> entityTypes;
   List<String> messages;
@@ -43,6 +44,7 @@ class Configurations {
   Map<String, List<String>> typeToChildType;
   Map<String, List<String>> androidAppVersionToEntityTypes;
   Map<String, List<String>> iosAppVersionToEntityTypes;
+  String upi;
 
   Map<String, dynamic> toJson() => {
         'entityTypes': entityTypes,
@@ -64,7 +66,8 @@ class Configurations {
         'androidAppVersionToEntityTypes':
             convertFromMapOfList(androidAppVersionToEntityTypes),
         'iosAppVersionToEntityTypes':
-            convertFromMapOfList(iosAppVersionToEntityTypes)
+            convertFromMapOfList(iosAppVersionToEntityTypes),
+        'upi': upi
       };
 
   Map<String, dynamic> convertFromMap(Map<String, String> dailyStats) {
@@ -89,7 +92,7 @@ class Configurations {
   }
 
   List<dynamic> metaFormsToJson(List<MetaForm> metaForms) {
-    List<dynamic> metaFormsJson = new List<dynamic>();
+    List<dynamic> metaFormsJson = [];
     if (metaForms == null) return metaFormsJson;
     for (MetaForm metaForm in metaForms) {
       metaFormsJson.add(metaForm.toJson());
@@ -128,11 +131,12 @@ class Configurations {
         androidAppVersionToEntityTypes:
             convertToMapOfList(json['androidAppVersionToEntityTypes']),
         iosAppVersionToEntityTypes:
-            convertToMapOfList(json['iosAppVersionToEntityTypes']));
+            convertToMapOfList(json['iosAppVersionToEntityTypes']),
+        upi: json['upi']);
   }
 
   static List<MetaForm> convertToFormMetaData(List<dynamic> json) {
-    List<MetaForm> metaForms = new List<MetaForm>();
+    List<MetaForm> metaForms = [];
     if (json == null) return metaForms;
 
     for (Map<String, dynamic> metaFormJson in json) {
@@ -157,7 +161,7 @@ class Configurations {
   }
 
   static List<String> convertToStringsArrayFromJson(List<dynamic> json) {
-    List<String> strs = new List<String>();
+    List<String> strs = [];
     if (Utils.isNullOrEmpty(json)) return strs;
 
     for (String str in json) {
@@ -167,7 +171,7 @@ class Configurations {
   }
 
   List<MetaForm> getMetaForms(EntityType eType) {
-    List<MetaForm> forms = new List<MetaForm>();
+    List<MetaForm> forms = [];
     if (this.formToEntityTypeMapping == null) {
       return forms;
     }
