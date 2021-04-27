@@ -248,6 +248,8 @@ final userAccountHeadingTextStyle = TextStyle(
     fontFamily: 'Montserrat',
     fontSize: 15.0,
     height: 1.5);
+final shareAppTextStyle = TextStyle(
+    color: Colors.blueGrey[900], fontFamily: 'Roboto', fontSize: 14.0);
 final placeDetailsHeadingTextStyle = TextStyle(
     color: primaryDarkColor, fontFamily: 'Montserrat', fontSize: 14.0);
 final placeDetailsHeadingSml = TextStyle(

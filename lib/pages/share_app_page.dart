@@ -57,35 +57,32 @@ class _ShareAppPageState extends State<ShareAppPage> {
               child: Container(
                   margin: EdgeInsets.fromLTRB(10, 10, 10, 10),
                   child: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: <Widget>[
-                      Card(
-                        elevation: 20,
-                        child: Container(
-                            padding: EdgeInsets.all(0),
-                            height: MediaQuery.of(context).size.height * .35,
-                            child: Image.asset('assets/sharing.png')),
-                      ),
-                      Card(
+                      Container(
+                          padding: EdgeInsets.all(0),
+                          height: MediaQuery.of(context).size.height * .35,
+                          child: Image.asset('assets/sharing.png')),
+                      Container(
                         child: Column(
                           children: <Widget>[
                             Padding(
                               padding: EdgeInsets.symmetric(
                                   vertical: 8.0, horizontal: 16.0),
                               child: Text(shareWithFriends,
-                                  style: highlightSubTextStyle),
+                                  style: userAccountHeadingTextStyle),
                             ),
                             Padding(
                               padding: EdgeInsets.symmetric(
                                   vertical: 8.0, horizontal: 16.0),
                               child: Text(shareWithOwners,
-                                  style: highlightSubTextStyle),
+                                  style: shareAppTextStyle),
                             ),
                             Padding(
                               padding: EdgeInsets.symmetric(
                                   vertical: 8.0, horizontal: 16.0),
                               child: RaisedButton(
-                                  color: primaryAccentColor,
+                                  color: btnColor,
                                   textColor: Colors.white,
                                   splashColor: highlightColor,
                                   onPressed: () {
@@ -118,6 +115,7 @@ class _ShareAppPageState extends State<ShareAppPage> {
                                     }
                                   },
                                   child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
                                     children: <Widget>[
                                       new Icon(Icons.share,
                                           color: Colors.white),
