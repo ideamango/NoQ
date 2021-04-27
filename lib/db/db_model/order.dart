@@ -14,6 +14,7 @@ class Order {
       this.orderCreatedDateTime,
       this.deliveryDateTime,
       this.entityId,
+      this.isPublic,
       this.userId});
 
   String billNo;
@@ -26,6 +27,7 @@ class Order {
   DateTime orderCreatedDateTime;
   DateTime deliveryDateTime;
   String entityId;
+  bool isPublic;
   String userId;
 
   //TokenDocumentId is SlotId#UserId it is not auto-generated, will help in not duplicating the record
@@ -45,6 +47,7 @@ class Order {
             ? deliveryDateTime.millisecondsSinceEpoch
             : null,
         'entityId': entityId,
+        'isPublic': isPublic,
         'userId': userId
       };
 
@@ -66,6 +69,7 @@ class Order {
             ? new DateTime.fromMillisecondsSinceEpoch(json['deliveryDateTime'])
             : null,
         entityId: json['entityId'],
+        isPublic: json['isPublic'],
         userId: json['userId']);
   }
 

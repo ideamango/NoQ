@@ -180,6 +180,7 @@ class _UserAccountPageState extends State<UserAccountPage> {
   void showShoppingList(UserToken booking) {
     Navigator.of(context).push(PageNoAnimation.createRoute(ShoppingList(
       token: booking,
+      isAdmin: false,
     )));
   }
 
@@ -329,15 +330,16 @@ class _UserAccountPageState extends State<UserAccountPage> {
                                   onPressed: () {
                                     //If booking is past booking then no sense of cancelling , show msg to user
                                     if (booking.parent.dateTime
-                                        .isBefore(DateTime.now()))
+                                        .isBefore(DateTime.now())) {
                                       Utils.showMyFlushbar(
                                           context,
                                           Icons.info,
                                           Duration(seconds: 5),
                                           bookingExpired,
                                           "");
+                                    }
                                     //booking number is -1 means its already been cancelled, Do Nothing
-                                    if (booking.number == -1)
+                                    else if (booking.number == -1)
                                       return null;
                                     else
                                       showCancelBooking(booking);
@@ -470,12 +472,22 @@ class _UserAccountPageState extends State<UserAccountPage> {
                           onPressed: () {
                             print(booking.applicationId);
 
+                            print('Unique identifier for TOKEN -  ' +
+                                booking.parent.slotId +
+                                '%3A' +
+                                booking.parent.userId);
+
+                            String id =
+                                booking.parent.slotId.replaceAll('#', ':') +
+                                    ':' +
+                                    booking.parent.userId;
+
                             Navigator.of(context).push(
                                 PageAnimation.createRoute(
                                     GenerateQrUserApplication(
                               entityName: "Application QR code",
                               backRoute: "UserAppsList",
-                              applicationId: booking.applicationId,
+                              uniqueTokenIdentifier: id,
                             )));
                           }),
                     ),

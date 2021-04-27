@@ -33,8 +33,14 @@ class SearchChildEntityPage extends StatefulWidget {
   final List<MetaEntity> childList;
   final String parentName;
   final String parentId;
+  final EntityType parentType;
   SearchChildEntityPage(
-      {Key key, this.pageName, this.childList, this.parentName, this.parentId})
+      {Key key,
+      this.pageName,
+      this.childList,
+      this.parentName,
+      this.parentId,
+      this.parentType})
       : super(key: key);
   @override
   _SearchChildEntityPageState createState() => _SearchChildEntityPageState();
@@ -740,7 +746,11 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: <Widget>[
             // categoryDropDown,
-            searchInputText,
+            (_fromPage != 'FavsSearch')
+                ? searchInputText
+                : Container(
+                    height: 0,
+                  ),
             //verticalSpacer,
             Container(
               padding: EdgeInsets.only(top: 8, bottom: 8),
@@ -871,124 +881,136 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
 
   showMyFloatingActionButton() {
     return showFab
-        ? Container(
-            width: MediaQuery.of(context).size.width * .8,
-            height: MediaQuery.of(context).size.height * .08,
-            padding: EdgeInsets.all(5),
-            child: SlideTransition(
-              position: offset,
-              child: FloatingActionButton(
-                heroTag: "bottomSheetChildBtn",
-                elevation: 30,
-                backgroundColor: btnColor,
-                shape: RoundedRectangleBorder(
-                    side: BorderSide(color: Colors.blueGrey[200]),
-                    borderRadius: BorderRadius.all(Radius.circular(45.0))),
-                child: Container(
-                  child: Text(
-                    SEARCH_TYPE_OF_PLACE,
-                    style: TextStyle(color: Colors.white, fontSize: 16),
-                    textAlign: TextAlign.center,
-                  ),
-                ),
-                onPressed: () {
-                  childBottomSheetController =
-                      keyChildSearch.currentState.showBottomSheet<Null>(
-                    (context) => Container(
-                      color: Colors.cyan[50],
-                      height: MediaQuery.of(context).size.height * .7,
-                      child: Column(
-                        children: <Widget>[
-                          Container(
-                            color: Colors.cyan[200],
-                            child: Row(
-                              children: <Widget>[
-                                Container(
-                                  padding: EdgeInsets.all(0),
-                                  width: MediaQuery.of(context).size.width * .1,
-                                  height:
-                                      MediaQuery.of(context).size.width * .1,
-                                  child: IconButton(
-                                      padding: EdgeInsets.all(0),
-                                      icon: Icon(
-                                        Icons.cancel,
-                                        color: headerBarColor,
-                                      ),
-                                      onPressed: () {
-                                        childBottomSheetController.close();
-                                        childBottomSheetController = null;
-                                        //Navigator.of(context).pop();
-                                      }),
-                                ),
-                                Container(
-                                    alignment: Alignment.center,
-                                    width:
-                                        MediaQuery.of(context).size.width * .8,
-                                    child: Text(
-                                      SEARCH_TYPE_OF_PLACE,
-                                      style: TextStyle(
-                                          color: Colors.blueGrey[800],
-                                          fontFamily: 'RalewayRegular',
-                                          fontSize: 19.0),
-                                    )),
-                              ],
-                            ),
-                          ),
-                          Divider(
-                            height: 1,
-                            color: primaryDarkColor,
-                          ),
-                          Expanded(
-                            child: Container(
-                              padding: EdgeInsets.all(0),
-                              child: new GridView.builder(
-                                padding: EdgeInsets.all(0),
-                                scrollDirection: Axis.vertical,
-                                shrinkWrap: true,
-                                itemCount: EntityType.values.length,
-                                gridDelegate:
-                                    SliverGridDelegateWithFixedCrossAxisCount(
-                                        crossAxisCount: 4,
-                                        crossAxisSpacing: 10.0,
-                                        mainAxisSpacing: 10),
-                                itemBuilder: (BuildContext context, int index) {
-                                  return new GridTile(
-                                    child: Container(
-                                      height:
-                                          MediaQuery.of(context).size.height *
-                                              .25,
-                                      padding: EdgeInsets.all(0),
-                                      // decoration:
-                                      //     BoxDecoration(border: Border.all(color: Colors.black, width: 0.5)),
-                                      child: Center(
-                                        child: _buildCategoryItem(
-                                            context, EntityType.values[index]),
-                                      ),
-                                    ),
-                                  );
-                                },
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
+        ? (_fromPage != 'FavsSearch')
+            ? Container(
+                width: MediaQuery.of(context).size.width * .8,
+                height: MediaQuery.of(context).size.height * .08,
+                padding: EdgeInsets.all(5),
+                child: SlideTransition(
+                  position: offset,
+                  child: FloatingActionButton(
+                    heroTag: "bottomSheetChildBtn",
                     elevation: 30,
-                    clipBehavior: Clip.hardEdge,
+                    backgroundColor: btnColor,
                     shape: RoundedRectangleBorder(
                         side: BorderSide(color: Colors.blueGrey[200]),
-                        borderRadius: BorderRadius.only(
-                            topLeft: Radius.circular(20.0),
-                            topRight: Radius.circular(20.0))),
-                  );
-                  showFoatingActionButton(false);
-                  childBottomSheetController.closed.then((value) {
-                    showFoatingActionButton(true);
-                  });
-                },
-              ),
-            ),
-          )
+                        borderRadius: BorderRadius.all(Radius.circular(45.0))),
+                    child: Container(
+                      child: Text(
+                        SEARCH_TYPE_OF_PLACE,
+                        style: TextStyle(color: Colors.white, fontSize: 16),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                    onPressed: () {
+                      childBottomSheetController =
+                          keyChildSearch.currentState.showBottomSheet<Null>(
+                        (context) => Container(
+                          color: Colors.cyan[50],
+                          height: MediaQuery.of(context).size.height * .5,
+                          child: Column(
+                            children: <Widget>[
+                              Container(
+                                color: Colors.cyan[200],
+                                child: Row(
+                                  children: <Widget>[
+                                    Container(
+                                      padding: EdgeInsets.all(0),
+                                      width: MediaQuery.of(context).size.width *
+                                          .1,
+                                      height:
+                                          MediaQuery.of(context).size.width *
+                                              .1,
+                                      child: IconButton(
+                                          padding: EdgeInsets.all(0),
+                                          icon: Icon(
+                                            Icons.cancel,
+                                            color: headerBarColor,
+                                          ),
+                                          onPressed: () {
+                                            childBottomSheetController.close();
+                                            childBottomSheetController = null;
+                                            //Navigator.of(context).pop();
+                                          }),
+                                    ),
+                                    Container(
+                                        alignment: Alignment.center,
+                                        width:
+                                            MediaQuery.of(context).size.width *
+                                                .8,
+                                        child: Text(
+                                          SEARCH_TYPE_OF_PLACE,
+                                          style: TextStyle(
+                                              color: Colors.blueGrey[800],
+                                              fontFamily: 'RalewayRegular',
+                                              fontSize: 19.0),
+                                        )),
+                                  ],
+                                ),
+                              ),
+                              Divider(
+                                height: 1,
+                                color: primaryDarkColor,
+                              ),
+                              Expanded(
+                                child: Container(
+                                  padding: EdgeInsets.all(0),
+                                  child: new GridView.builder(
+                                    padding: EdgeInsets.all(0),
+                                    scrollDirection: Axis.vertical,
+                                    shrinkWrap: true,
+                                    itemCount: _state
+                                        .getActiveChildEntityTypes(
+                                            widget.parentType)
+                                        .length,
+                                    gridDelegate:
+                                        SliverGridDelegateWithFixedCrossAxisCount(
+                                            crossAxisCount: 4,
+                                            crossAxisSpacing: 10.0,
+                                            mainAxisSpacing: 10),
+                                    itemBuilder:
+                                        (BuildContext context, int index) {
+                                      return new GridTile(
+                                        child: Container(
+                                          height: MediaQuery.of(context)
+                                                  .size
+                                                  .height *
+                                              .25,
+                                          padding: EdgeInsets.all(0),
+                                          // decoration:
+                                          //     BoxDecoration(border: Border.all(color: Colors.black, width: 0.5)),
+                                          child: Center(
+                                            child: _buildCategoryItem(
+                                                context,
+                                                _state.getActiveChildEntityTypes(
+                                                    widget.parentType)[index]),
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        elevation: 30,
+                        clipBehavior: Clip.hardEdge,
+                        shape: RoundedRectangleBorder(
+                            side: BorderSide(color: Colors.blueGrey[200]),
+                            borderRadius: BorderRadius.only(
+                                topLeft: Radius.circular(20.0),
+                                topRight: Radius.circular(20.0))),
+                      );
+                      showFoatingActionButton(false);
+                      childBottomSheetController.closed.then((value) {
+                        showFoatingActionButton(true);
+                      });
+                    },
+                  ),
+                ),
+              )
+            : Container()
         : Container();
   }
 
@@ -1457,7 +1479,7 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
                   mainAxisAlignment: MainAxisAlignment.start,
                   mainAxisSize: MainAxisSize.min,
                   children: <Widget>[
-                    if (str.childEntities?.length != 0)
+                    if (str.getMetaEntity().hasChildren)
                       Container(
                         padding: EdgeInsets.all(0),
                         margin: EdgeInsets.all(0),

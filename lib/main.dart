@@ -173,7 +173,7 @@ class DynamicLinkService {
             String entityId = deepLink.queryParameters['entityId'];
             Utils.addEntityToFavs(context, entityId);
           }
-        } else if (deepLink.queryParameters.containsKey("applicationID")) {
+        } else if (deepLink.queryParameters.containsKey("tokenIdentifier")) {
           print("there are an user application");
           //check if user authenticated
           if (FirebaseAuth.instance.currentUser != null) {
@@ -181,8 +181,12 @@ class DynamicLinkService {
             print("current user already logged in");
             // Call method to add entity to favs list, if not already present,
             // else just load favs page.
-            String applicationID = deepLink.queryParameters['applicationID'];
-            Utils.showApplicationDetails(context, applicationID);
+            String tokenID = deepLink.queryParameters['tokenIdentifier'];
+            print(deepLink.data);
+            print(deepLink.query);
+
+            tokenID = tokenID.replaceAll(':', '#');
+            Utils.showApplicationDetails(context, tokenID);
           }
         } else
           Navigator.pushReplacement(

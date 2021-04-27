@@ -74,7 +74,7 @@ class _UserApplicationsListState extends State<UserApplicationsList> {
       } else
         Navigator.of(context)
             .push(PageAnimation.createRoute(GenerateQrUserApplication(
-          applicationId: widget.ba.id,
+          uniqueTokenIdentifier: widget.ba.id,
           entityName: metaEntity.name,
           backRoute: "UserAppsList",
         )));
@@ -313,7 +313,7 @@ class _UserApplicationsListState extends State<UserApplicationsList> {
                                       GenerateQrUserApplication(
                                 entityName: "Application QR code",
                                 backRoute: "UserAppsList",
-                                applicationId: widget.ba.id,
+                                uniqueTokenIdentifier: widget.ba.id,
                               )));
                             }),
                       ),

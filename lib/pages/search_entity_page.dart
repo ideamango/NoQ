@@ -970,7 +970,7 @@ class _SearchEntityPageState extends State<SearchEntityPage>
                       key.currentState.showBottomSheet<Null>(
                     (context) => Container(
                       color: Colors.cyan[50],
-                      height: MediaQuery.of(context).size.height * .7,
+                      height: MediaQuery.of(context).size.height * .5,
                       child: Column(
                         children: <Widget>[
                           Container(
@@ -1557,7 +1557,9 @@ class _SearchEntityPageState extends State<SearchEntityPage>
                             dynamic route = SearchChildEntityPage(
                                 pageName: "Search",
                                 childList: str.childEntities,
-                                parentName: str.name);
+                                parentName: str.name,
+                                parentId: str.entityId,
+                                parentType: str.type);
                             Navigator.of(context)
                                 .push(PageAnimation.createRoute(route));
                             // Navigator.push(context,

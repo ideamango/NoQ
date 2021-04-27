@@ -424,7 +424,7 @@ class _ManageEntityFormsState extends State<ManageEntityForms> {
                               width: MediaQuery.of(context).size.width * .9,
                               alignment: Alignment.center,
                               child: Text(
-                                "No forms selected yet!!",
+                                "No Forms added yet!!",
                                 style: TextStyle(
                                     color: Colors.black,
                                     fontSize: 14,

@@ -144,6 +144,24 @@ class TokenService {
     return dayWiseSlots;
   }
 
+  Future<UserTokens> getUserToken(String tokenId) async {
+    FirebaseFirestore fStore = getFirestore();
+
+    UserTokens userToks;
+
+    final DocumentReference tokenCounterRef = fStore.doc('tokens/' + tokenId);
+
+    DocumentSnapshot doc = await tokenCounterRef.get();
+
+    if (doc.exists) {
+      Map<String, dynamic> map = doc.data();
+
+      userToks = UserTokens.fromJson(map);
+    }
+
+    return userToks;
+  }
+
   Future<TokenCounter> getTokenCounterForEntity(
       String entityId, String year) async {
     FirebaseFirestore fStore = getFirestore();
@@ -505,10 +523,10 @@ class TokenService {
       DocumentSnapshot tokenSnapshot = await tx.get(tokRef);
       if (tokenSnapshot.exists) {
         UserTokens tokens = UserTokens.fromJson(tokenSnapshot.data());
-        if (tokens.userId != userPhone) {
-          throw new NoTokenFoundException(
-              "Token does not belong to the requested user");
-        }
+        // if (tokens.userId != userPhone) {
+        //   throw new NoTokenFoundException(
+        //       "Token does not belong to the requested user");
+        // }
 
         if (number == null && tokens.tokens.length > 1) {
           throw new Exception(

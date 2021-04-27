@@ -1,3 +1,4 @@
+import 'package:LESSs/widget/page_animation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import '../constants.dart';
@@ -12,6 +13,8 @@ import '../widget/custom_expansion_tile.dart';
 import '../widget/header.dart';
 import '../widget/widgets.dart';
 import 'package:url_launcher/url_launcher.dart';
+
+import 'donate_money.dart';
 
 class HelpPage extends StatefulWidget {
   final String phone;
@@ -334,13 +337,21 @@ class _HelpPageState extends State<HelpPage> {
                                           TextSpan(
                                             text: 'Click here to donate!!',
                                             style: new TextStyle(
-                                                color: highlightColor),
+                                                fontSize: 16,
+                                                fontWeight: FontWeight.bold,
+                                                color: Colors.orange[700]),
                                             recognizer:
                                                 new TapGestureRecognizer()
                                                   ..onTap = () {
                                                     //TODO: Smita- add payments options google pay  etc
-                                                    launch(
-                                                        'https://docs.flutter.io/flutter/services/UrlLauncher-class.html');
+                                                    // launch(
+                                                    //     'https://docs.flutter.io/flutter/services/UrlLauncher-class.html');
+                                                    Navigator.of(context).push(
+                                                        PageAnimation
+                                                            .createRoute(
+                                                                DonatePage(
+                                                      phone: widget.phone,
+                                                    )));
                                                   },
                                           ),
                                         ])),

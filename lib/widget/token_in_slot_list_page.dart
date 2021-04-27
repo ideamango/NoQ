@@ -1,3 +1,5 @@
+import 'package:LESSs/pages/shopping_list.dart';
+import 'package:LESSs/repository/slotRepository.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -14,6 +16,7 @@ import '../style.dart';
 import '../utils.dart';
 import '../widget/appbar.dart';
 import '../widget/page_animation.dart';
+import 'widgets.dart';
 
 class TokensInSlot extends StatefulWidget {
   final String slotKey;
@@ -185,6 +188,105 @@ class _TokensInSlotState extends State<TokensInSlot> {
     );
   }
 
+  void showCancelBooking(UserToken booking) {
+    showDialog(
+        barrierDismissible: false,
+        context: context,
+        builder: (_) => AlertDialog(
+              titlePadding: EdgeInsets.fromLTRB(10, 15, 10, 10),
+              contentPadding: EdgeInsets.all(0),
+              actionsPadding: EdgeInsets.all(5),
+              //buttonPadding: EdgeInsets.all(0),
+              title: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Text(
+                    'Are you sure you want to cancel this booking?',
+                    style: TextStyle(
+                      fontSize: 15,
+                      color: Colors.blueGrey[600],
+                    ),
+                  ),
+                  verticalSpacer,
+                  // myDivider,
+                ],
+              ),
+              content: Divider(
+                color: Colors.blueGrey[400],
+                height: 1,
+                //indent: 40,
+                //endIndent: 30,
+              ),
+
+              //content: Text('This is my content'),
+              actions: <Widget>[
+                SizedBox(
+                  height: 24,
+                  child: RaisedButton(
+                    elevation: 0,
+                    color: Colors.transparent,
+                    splashColor: highlightColor.withOpacity(.8),
+                    textColor: Colors.orange,
+                    shape: RoundedRectangleBorder(
+                        side: BorderSide(color: Colors.orange)),
+                    child: Text('Yes'),
+                    onPressed: () {
+                      print("Cancel booking");
+                      bool cancelDone = false;
+                      Navigator.of(context, rootNavigator: true).pop();
+                      Utils.showMyFlushbar(
+                          context,
+                          Icons.cancel,
+                          Duration(
+                            seconds: 3,
+                          ),
+                          "Cancelling Token ${booking.getDisplayName()}",
+                          "Please wait..");
+                      cancelToken(booking).then((value) {
+                        cancelDone = value;
+                        if (!cancelDone) {
+                          Utils.showMyFlushbar(
+                              context,
+                              Icons.info_outline,
+                              Duration(
+                                seconds: 5,
+                              ),
+                              "Couldn't cancel your booking for some reason. ",
+                              "Please try again later.");
+                        } else {
+                          setState(() {
+                            booking.number = -1;
+                          });
+                        }
+                      }).catchError((e) {
+                        print(e);
+                      });
+                    },
+                  ),
+                ),
+                SizedBox(
+                  height: 24,
+                  child: RaisedButton(
+                    elevation: 20,
+                    autofocus: true,
+                    focusColor: highlightColor,
+                    splashColor: highlightColor,
+                    color: Colors.white,
+                    textColor: Colors.orange,
+                    shape: RoundedRectangleBorder(
+                        side: BorderSide(color: Colors.orange)),
+                    child: Text('No'),
+                    onPressed: () {
+                      print("Do nothing");
+                      Navigator.of(context, rootNavigator: true).pop();
+                      // Navigator.of(context, rootNavigator: true).pop('dialog');
+                    },
+                  ),
+                ),
+              ],
+            ));
+  }
+
   Widget _buildItem(UserToken booking) {
     double ticketwidth = MediaQuery.of(context).size.width * .95;
     double ticketHeight = MediaQuery.of(context).size.width * .8 / 2.7;
@@ -202,6 +304,8 @@ class _TokensInSlotState extends State<TokensInSlot> {
             new Row(mainAxisAlignment: MainAxisAlignment.center, children: <
                 Widget>[
               Container(
+                padding: EdgeInsets.zero,
+                margin: EdgeInsets.zero,
                 width: MediaQuery.of(context).size.width * .7,
                 height: MediaQuery.of(context).size.width * .8 / 3.5,
                 child: Column(
@@ -278,15 +382,16 @@ class _TokensInSlotState extends State<TokensInSlot> {
                                       size: 20,
                                     ),
                                     onPressed: () {
-                                      if (booking.parent.phone != null) {
+                                      print(booking.parent.userId);
+                                      if (booking.parent.userId != null) {
                                         try {
-                                          callPhone(booking.parent.phone);
+                                          callPhone(booking.parent.userId);
                                         } catch (error) {
                                           Utils.showMyFlushbar(
                                               context,
                                               Icons.error,
                                               Duration(seconds: 5),
-                                              "Could not connect call to the number ${booking.parent.phone} !!",
+                                              "Could not connect call to the number ${booking.parent.userId} !!",
                                               "Try again later.");
                                         }
                                       } else {
@@ -296,68 +401,6 @@ class _TokensInSlotState extends State<TokensInSlot> {
                                             Duration(seconds: 5),
                                             "Contact information not found!!",
                                             "");
-                                      }
-                                    }),
-                              ),
-                              Container(
-                                width: MediaQuery.of(context).size.width * .08,
-                                height: MediaQuery.of(context).size.width * .07,
-                                // width: 20.0,
-                                child: IconButton(
-                                  padding: EdgeInsets.all(0),
-                                  alignment: Alignment.center,
-                                  highlightColor: Colors.orange[300],
-                                  icon: Icon(
-                                    Icons.cancel,
-                                    color: lightIcon,
-                                    size: 22,
-                                  ),
-                                  onPressed: () {
-                                    //If booking is past booking then no sense of cancelling , show msg to user
-                                    // if (booking.parent.dateTime
-                                    //     .isBefore(DateTime.now()))
-                                    //   Utils.showMyFlushbar(
-                                    //       context,
-                                    //       Icons.info,
-                                    //       Duration(seconds: 5),
-                                    //       bookingExpired,
-                                    //       "");
-                                    // //booking number is -1 means its already been cancelled, Do Nothing
-                                    // if (booking.number == -1)
-                                    //   return null;
-                                    // else
-                                    return null;
-                                    // showCancelBooking(booking);
-                                  },
-                                ),
-                              ),
-                              Container(
-                                width: MediaQuery.of(context).size.width * .08,
-                                height: MediaQuery.of(context).size.width * .07,
-                                // width: 20.0,
-                                child: IconButton(
-                                    padding: EdgeInsets.all(0),
-                                    alignment: Alignment.center,
-                                    highlightColor: Colors.orange[300],
-                                    icon: Icon(
-                                      Icons.location_on,
-                                      color: lightIcon,
-                                      size: 21,
-                                    ),
-                                    onPressed: () {
-                                      try {
-                                        launchURL(
-                                            booking.parent.entityName,
-                                            booking.parent.address,
-                                            booking.parent.lat,
-                                            booking.parent.lon);
-                                      } catch (error) {
-                                        Utils.showMyFlushbar(
-                                            context,
-                                            Icons.error,
-                                            Duration(seconds: 5),
-                                            "Could not open Maps!!",
-                                            "Try again later.");
                                       }
                                     }),
                               ),
@@ -374,8 +417,9 @@ class _TokensInSlotState extends State<TokensInSlot> {
                                     color: Colors.white,
                                   ),
                                   onPressed: () {
-                                    String phoneNo =
-                                        booking.parent.entityWhatsApp;
+                                    print(booking.parent.userId);
+
+                                    String phoneNo = booking.parent.userId;
                                     if (phoneNo != null && phoneNo != "") {
                                       try {
                                         launchWhatsApp(
@@ -411,14 +455,86 @@ class _TokensInSlotState extends State<TokensInSlot> {
                                   alignment: Alignment.center,
                                   highlightColor: Colors.orange[300],
                                   icon: Icon(
-                                    Icons.list,
+                                    Icons.cancel,
                                     color: lightIcon,
                                     size: 22,
                                   ),
-                                  onPressed: () {},
-                                  //showShoppingList(booking),
+                                  onPressed: () {
+                                    //If booking is past booking then no sense of cancelling , show msg to user
+                                    if (booking.parent.dateTime
+                                        .isBefore(DateTime.now()))
+                                      Utils.showMyFlushbar(
+                                          context,
+                                          Icons.info,
+                                          Duration(seconds: 5),
+                                          "This booking token has already expired!!",
+                                          "");
+                                    //booking number is -1 means its already been cancelled, Do Nothing
+                                    if (booking.number == -1)
+                                      return null;
+                                    else
+                                      showCancelBooking(booking);
+                                  },
                                 ),
                               ),
+                              // Container(
+                              //   width: MediaQuery.of(context).size.width * .08,
+                              //   height: MediaQuery.of(context).size.width * .07,
+                              //   // width: 20.0,
+                              //   child: IconButton(
+                              //       padding: EdgeInsets.all(0),
+                              //       alignment: Alignment.center,
+                              //       highlightColor: Colors.orange[300],
+                              //       icon: Icon(
+                              //         Icons.location_on,
+                              //         color: lightIcon,
+                              //         size: 21,
+                              //       ),
+                              //       onPressed: () {
+                              //         try {
+                              //           launchURL(
+                              //               booking.parent.entityName,
+                              //               booking.parent.address,
+                              //               booking.parent.lat,
+                              //               booking.parent.lon);
+                              //         } catch (error) {
+                              //           Utils.showMyFlushbar(
+                              //               context,
+                              //               Icons.error,
+                              //               Duration(seconds: 5),
+                              //               "Could not open Maps!!",
+                              //               "Try again later.");
+                              //         }
+                              //       }),
+                              // ),
+
+                              if (booking.order != null &&
+                                  booking.order?.isPublic == true)
+                                Container(
+                                  width:
+                                      MediaQuery.of(context).size.width * .08,
+                                  height:
+                                      MediaQuery.of(context).size.width * .07,
+                                  // width: 20.0,
+                                  child: IconButton(
+                                    padding: EdgeInsets.all(0),
+                                    alignment: Alignment.center,
+                                    highlightColor: Colors.orange[300],
+                                    icon: Icon(
+                                      Icons.list,
+                                      color: lightIcon,
+                                      size: 22,
+                                    ),
+                                    onPressed: () {
+                                      Navigator.of(context).push(
+                                          PageNoAnimation.createRoute(
+                                              ShoppingList(
+                                        token: booking,
+                                        isAdmin: true,
+                                      )));
+                                    },
+                                  ),
+                                ),
                             ],
                           ),
                         ),
@@ -435,38 +551,54 @@ class _TokensInSlotState extends State<TokensInSlot> {
                 color: Colors.blueGrey[300],
               ),
               Container(
-                width: MediaQuery.of(context).size.width * .21,
-                // padding: EdgeInsets.fromLTRB(5, 5, 0, 0),
+                width: MediaQuery.of(context).size.width * .2,
+                padding: EdgeInsets.fromLTRB(3, 0, 3, 0),
+                margin: EdgeInsets.zero,
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
-                    Container(
-                      padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
-                      margin: EdgeInsets.all(0),
-                      height: ticketwidth * .1,
-                      width: ticketwidth * .1,
-                      child: IconButton(
-                          padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
-                          alignment: Alignment.center,
-                          highlightColor: Colors.orange[300],
-                          mouseCursor: SystemMouseCursors.click,
-                          icon: ImageIcon(
-                            AssetImage('assets/qrcode.png'),
-                            size: 30,
-                            color: Colors.white,
-                          ),
-                          onPressed: () {
-                            print(booking.applicationId);
-
-                            Navigator.of(context).push(
-                                PageAnimation.createRoute(
-                                    GenerateQrUserApplication(
-                              entityName: "Application QR code",
-                              backRoute: "UserAppsList",
-                              applicationId: booking.applicationId,
-                            )));
-                          }),
-                    ),
+                    if (booking.applicationId != null)
+                      Container(
+                        padding: EdgeInsets.zero,
+                        margin: EdgeInsets.zero,
+                        height: ticketwidth * .1,
+                        width: ticketwidth * .1,
+                        child: IconButton(
+                            padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
+                            alignment: Alignment.center,
+                            highlightColor: Colors.orange[300],
+                            mouseCursor: SystemMouseCursors.click,
+                            icon: ImageIcon(
+                              AssetImage('assets/qrcode.png'),
+                              size: 30,
+                              color: Colors.white,
+                            ),
+                            onPressed: () {
+                              print(booking.applicationId);
+                              if (Utils.isNotNullOrEmpty(
+                                  booking.applicationId)) {
+                                Navigator.of(context).push(
+                                    PageAnimation.createRoute(
+                                        GenerateQrUserApplication(
+                                  entityName: "QR Code Result Page",
+                                  backRoute: "UserAppsList",
+                                  uniqueTokenIdentifier: booking.applicationId,
+                                )));
+                              } else {
+                                return;
+                              }
+                              //else {
+                              //   //if application id is null then show token details page.
+                              //   Navigator.of(context).push(
+                              //       PageAnimation.createRoute(
+                              //           GenerateQrBookingToken(
+                              //     entityName: "Application QR code",
+                              //     backRoute: "UserAppsList",
+                              //     applicationId: booking.applicationId,
+                              //   )));
+                              // }
+                            }),
+                      ),
                     Container(
                       height: 5,
                     ),
@@ -549,43 +681,54 @@ class _TokensInSlotState extends State<TokensInSlot> {
             titleTxt:
                 "Tokens in ${Utils.formatTimeAsStr(timeSlot)} Slot on ${dtFormat.format(widget.date)}",
           ),
-          body: Column(
-            children: [
-              Container(
-                child: Scrollbar(
-                    child: SingleChildScrollView(
-                  child: Column(
-                    children: [
-                      (listOfTokens.length != 0)
-                          ? ListView.builder(
-                              shrinkWrap: true,
-                              scrollDirection: Axis.vertical,
-                              physics: ClampingScrollPhysics(),
-                              itemBuilder: (BuildContext context, int index) {
-                                return Container(
-                                  padding: EdgeInsets.all(10),
-                                  child: Card(
-                                    child: new Column(
-                                        children: listOfTokens
-                                            .map(_buildItem)
-                                            .toList()),
-                                    //children: <Widget>[firstRow, secondRow],
-                                  ),
-                                );
-                              },
-                              itemCount: 1,
-                            )
-                          : _emptyPage(),
+          body: (initCompleted)
+              ? Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Container(
+                      child: Scrollbar(
+                          child: SingleChildScrollView(
+                        child: Column(
+                          children: [
+                            (listOfTokens.length != 0)
+                                ? ListView.builder(
+                                    shrinkWrap: true,
+                                    scrollDirection: Axis.vertical,
+                                    physics: ClampingScrollPhysics(),
+                                    itemBuilder:
+                                        (BuildContext context, int index) {
+                                      return Container(
+                                        padding: EdgeInsets.all(10),
+                                        child: Card(
+                                          child: new Column(
+                                              children: listOfTokens
+                                                  .map(_buildItem)
+                                                  .toList()),
+                                          //children: <Widget>[firstRow, secondRow],
+                                        ),
+                                      );
+                                    },
+                                    itemCount: 1,
+                                  )
+                                : _emptyPage(),
 
-                      // (initCompleted)
-                      //     ? buildExpansionTile()
-                      //     : showCircularProgress(),
+                            // (initCompleted)
+                            //     ? buildExpansionTile()
+                            //     : showCircularProgress(),
+                          ],
+                        ),
+                      )),
+                    ),
+                  ],
+                )
+              : Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      showCircularProgress(),
                     ],
                   ),
-                )),
-              ),
-            ],
-          ),
+                ),
         ));
   }
 }

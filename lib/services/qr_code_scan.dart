@@ -4,8 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../constants.dart';
 
-import '../style.dart';
-
 //import 'package:barcode_scan/barcode_scan.dart';
 import '../utils.dart';
 
@@ -29,18 +27,17 @@ class QrCodeScanner {
         }
 
         Utils.addEntityToFavs(context, entityId);
-      } else if (scanResult.contains('applicationID')) {
-        List<String> url = scanResult.split('applicationID');
+      } else if (scanResult.contains('tokenIdentifier')) {
+        List<String> url = scanResult.split('tokenIdentifier');
         String applicationID;
         String afterapplicationID = url[1];
-        int amperIndex = afterapplicationID.indexOf('&');
-        if (amperIndex > -1) {
-          //         //this is to cover the Full QR code link generated on IOS
-          applicationID = afterapplicationID.substring(3, amperIndex);
-        } else {
-          //         //this condition is for the QR code link generated from the Android
-          applicationID = afterapplicationID.substring(3);
-        }
+        //  List<String> url = afterapplicationID.split('%3A');
+        afterapplicationID = afterapplicationID.replaceAll('%3A', '#');
+        afterapplicationID = afterapplicationID.replaceAll('%2B', '+');
+
+        //         //this condition is for the QR code link generated from the Android
+        applicationID = afterapplicationID.substring(3);
+
         Utils.showApplicationDetails(context, applicationID);
       } else {
         Utils.showMyFlushbar(context, Icons.info, Duration(seconds: 3),
@@ -70,17 +67,4 @@ class QrCodeScanner {
           "Something went wrong..", "Unable to process");
     }
   }
-}
-
-Widget build(BuildContext context) {
-  return GestureDetector(
-    child: ImageIcon(
-      AssetImage('assets/qrcode.png'),
-      size: 25,
-      color: primaryIcon,
-    ),
-    onTap: () {
-      // scan(context);
-    },
-  );
 }

@@ -666,6 +666,8 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
     bookSlotForStore(meta, selectedSlot).then((value) {
       if (value == null) {
         showFlushBar();
+        selectedSlot = null;
+        setState(() {});
         return;
       } else {
         //update in global State

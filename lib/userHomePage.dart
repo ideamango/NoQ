@@ -387,7 +387,28 @@ class _UserHomePageState extends State<UserHomePage> {
                     ),
                     backgroundColor: primaryAccentColor,
                     onPressed: () {
+                      //Uncomment this
                       QrCodeScanner.scan(context);
+
+//Test Dummy code
+//TODO Dummy code for testing
+                      // GlobalState.getGlobalState().then((value) {
+                      //   value
+                      //       .getTokenService()
+                      //       .getUserToken(
+                      //           "5f0817c0-a263-11eb-98fd-5551d2a7a020#2021~4~24#20~53#+919876543210")
+                      //       .then((tokenValue) {
+                      //     UserTokens userTokenId = tokenValue;
+
+                      //     Navigator.pushReplacement(
+                      //         context,
+                      //         MaterialPageRoute(
+                      //             builder: (context) => ShowQrBookingToken(
+                      //                   userTokens: userTokenId,
+                      //                   isAdmin: true,
+                      //                 )));
+                      //   });
+                      // });
                     }),
               ),
               floatingActionButtonLocation:
@@ -454,6 +475,7 @@ class _UserHomePageState extends State<UserHomePage> {
         MaterialPageRoute(
             builder: (context) => ShoppingList(
                   token: booking,
+                  isAdmin: false,
                 )));
   }
 
@@ -814,33 +836,36 @@ class _UserHomePageState extends State<UserHomePage> {
                       print("Cancel booking");
                       bool cancelDone = false;
                       cancelToken(booking).then((value) {
-                        setState(() {
-                          booking.number = -1;
-                        });
+                        Navigator.of(context, rootNavigator: true).pop();
+                        Utils.showMyFlushbar(
+                            context,
+                            Icons.cancel,
+                            Duration(
+                              seconds: 3,
+                            ),
+                            "Cancelling Token ${booking.getDisplayName()}",
+                            "Please wait..");
 
-                        cancelDone = value;
-                        if (!cancelDone) {
-                          Utils.showMyFlushbar(
-                              context,
-                              Icons.info_outline,
-                              Duration(
-                                seconds: 5,
-                              ),
-                              "Couldn't cancel your booking for some reason. ",
-                              "Please try again later.");
-                        }
-                      }).catchError((e) {
-                        print(e);
+                        cancelToken(booking).then((value) {
+                          cancelDone = value;
+                          if (!cancelDone) {
+                            Utils.showMyFlushbar(
+                                context,
+                                Icons.info_outline,
+                                Duration(
+                                  seconds: 5,
+                                ),
+                                "Couldn't cancel your booking for some reason. ",
+                                "Please try again later.");
+                          } else {
+                            setState(() {
+                              booking.number = -1;
+                            });
+                          }
+                        }).catchError((e) {
+                          print(e);
+                        });
                       });
-                      Navigator.of(context, rootNavigator: true).pop();
-                      Utils.showMyFlushbar(
-                          context,
-                          Icons.cancel,
-                          Duration(
-                            seconds: 3,
-                          ),
-                          "Cancelling your booking",
-                          "Please wait..");
                     },
                   ),
                 ),
