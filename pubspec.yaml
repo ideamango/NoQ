@@ -142,6 +142,13 @@ flutter:
     - calling_codes.json
     - bigpiq_gpay.jpg 
     - ourStory.png
+    - employee.png
+    - tokens.png
+    - forms.png
+    - settings.png
+    - applications.png
+    - places.png
+    
   
   #  - images/a_dot_ham.jpeg
 

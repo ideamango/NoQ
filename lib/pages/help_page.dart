@@ -1,10 +1,6 @@
 import '../widget/page_animation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-<<<<<<< HEAD
-=======
-
->>>>>>> fee55a0a926cabe5f4809ef128e22df5ded1ab35
 import '../constants.dart';
 import '../pages/contact_us.dart';
 import '../pages/manage_entity_list_page.dart';

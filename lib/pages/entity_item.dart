@@ -260,134 +260,150 @@ class EntityRowState extends State<EntityRow> {
               ),
               Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: <
                   Widget>[
-                Container(
-                  margin: EdgeInsets.all(0),
-                  padding: EdgeInsets.all(0),
-                  width: MediaQuery.of(context).size.width * .42,
-                  height: MediaQuery.of(context).size.height * .05,
-                  child: FlatButton(
-                    padding: EdgeInsets.all(0),
-                    color: Colors.white,
-                    textColor: Colors.white,
-                    shape: RoundedRectangleBorder(
-                        side: BorderSide(color: Colors.blueGrey[300]),
-                        borderRadius: BorderRadius.all(Radius.circular(5.0))),
-                    splashColor: highlightColor,
-                    child: Text(
-                      'Details',
-                      style: TextStyle(
-                          color: whiteBtnTextColor,
-                          fontSize: 14,
-                          fontFamily: 'RalewayRegular'),
-                    ),
-                    // Text(
-                    //   (_metaEntity.name != null)
-                    //       ? (_metaEntity.name)
-                    //       : (_metaEntity.type),
-                    //   style: labelTextStyle,
-                    // ),
-
-                    //Icon(Icons.arrow_forward),
-
-                    onPressed: () {
-                      print("To Add details page");
+                SizedBox(
+                  width: MediaQuery.of(context).size.width * .045,
+                ),
+                Card(
+                  elevation: 10,
+                  child: GestureDetector(
+                    onTap: () {
                       showServiceForm();
                     },
+                    child: Container(
+                      margin: EdgeInsets.all(0),
+                      padding: EdgeInsets.all(0),
+                      width: MediaQuery.of(context).size.width * .21,
+                      height: MediaQuery.of(context).size.width * .21,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          SizedBox(
+                            width: MediaQuery.of(context).size.width * .11,
+                            height: MediaQuery.of(context).size.width * .11,
+                            child: Image(
+                              image: AssetImage('assets/settings.png'),
+                            ),
+                          ),
+                          Text(
+                            'Details',
+                            style: TextStyle(
+                                letterSpacing: 1.1,
+                                color: whiteBtnTextColor,
+                                fontSize: 12,
+                                fontFamily: 'Roboto'),
+                          ),
+                        ],
+                      ),
+                    ),
                   ),
                 ),
-                Container(
-                  width: MediaQuery.of(context).size.width * .42,
-                  height: MediaQuery.of(context).size.height * .05,
-                  child: FlatButton(
-                    // elevation: 7,
-                    color: Colors.white,
-                    splashColor: Utils.isNullOrEmpty(
-                            _state.getActiveChildEntityTypes(_metaEntity.type))
-                        ? Colors.transparent
-                        : highlightColor.withOpacity(.8),
-                    shape: RoundedRectangleBorder(
-                        side: BorderSide(
-                            color: Utils.isNullOrEmpty(
-                                    _state.getActiveChildEntityTypes(
-                                        _metaEntity.type))
-                                ? Colors.blueGrey[100]
-                                : Colors.blueGrey[300]),
-                        borderRadius: BorderRadius.all(Radius.circular(5.0))),
-                    child: Text(
-                      'Child Places',
-                      style: TextStyle(
-                          color: Utils.isNullOrEmpty(_state
-                                  .getActiveChildEntityTypes(_metaEntity.type))
-                              ? disabledColor
-                              : whiteBtnTextColor,
-                          fontSize: 14,
-                          fontFamily: 'RalewayRegular'),
-                    ),
-                    onPressed: () {
+                SizedBox(
+                  width: MediaQuery.of(context).size.width * .045,
+                ),
+                Card(
+                  elevation: 10,
+                  child: GestureDetector(
+                    onTap: () {
                       if (Utils.isNullOrEmpty(
                           _state.getActiveChildEntityTypes(_metaEntity.type)))
                         return;
                       print("To child list page");
                       showChildListPage();
                     },
+                    child: Container(
+                      margin: EdgeInsets.all(0),
+                      padding: EdgeInsets.all(0),
+                      width: MediaQuery.of(context).size.width * .21,
+                      height: MediaQuery.of(context).size.width * .21,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          SizedBox(
+                            width: MediaQuery.of(context).size.width * .11,
+                            height: MediaQuery.of(context).size.width * .11,
+                            child: Image(
+                              image: AssetImage('assets/places.png'),
+                            ),
+                          ),
+                          Text(
+                            'Places',
+                            style: TextStyle(
+                                letterSpacing: 1.1,
+                                color: Utils.isNullOrEmpty(
+                                        _state.getActiveChildEntityTypes(
+                                            _metaEntity.type))
+                                    ? disabledColor
+                                    : whiteBtnTextColor,
+                                fontSize: 12,
+                                fontFamily: 'Roboto'),
+                          ),
+                        ],
+                      ),
+                    ),
                   ),
+                ),
+                SizedBox(
+                  width: MediaQuery.of(context).size.width * .045,
+                ),
+                Card(
+                  elevation: 8,
+                  child: GestureDetector(
+                    onTap: () {
+                      Navigator.of(context)
+                          .push(PageAnimation.createRoute(ManageEmployeePage(
+                        metaEntity: _metaEntity,
+                        backRoute: ManageEntityListPage(),
+                        defaultDate: null,
+                      )));
+                    },
+                    child: Container(
+                      margin: EdgeInsets.all(0),
+                      padding: EdgeInsets.all(0),
+                      width: MediaQuery.of(context).size.width * .21,
+                      height: MediaQuery.of(context).size.width * .21,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          SizedBox(
+                            width: MediaQuery.of(context).size.width * .11,
+                            height: MediaQuery.of(context).size.width * .11,
+                            child: Image(
+                              image: AssetImage('assets/employee.png'),
+                            ),
+                          ),
+                          Text(
+                            'Employees',
+                            style: TextStyle(
+                                letterSpacing: 1.1,
+                                color: whiteBtnTextColor,
+                                fontSize: 12,
+                                fontFamily: 'Roboto'),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+                SizedBox(
+                  width: MediaQuery.of(context).size.width * .045,
                 ),
               ]),
               SizedBox(
                 height: MediaQuery.of(context).size.height * .008,
               ),
+
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
-                  Container(
-                    width: MediaQuery.of(context).size.width * .42,
-                    height: MediaQuery.of(context).size.height * .05,
-                    child: FlatButton(
-                      // elevation: 7,
-                      color: Colors.white,
-                      splashColor: _metaEntity.isBookable
-                          ? highlightColor.withOpacity(.8)
-                          : Colors.transparent,
-                      shape: RoundedRectangleBorder(
-                          side: BorderSide(
-                              color: _metaEntity.isBookable
-                                  ? Colors.blueGrey[300]
-                                  : Colors.blueGrey[100]),
-                          borderRadius: BorderRadius.all(Radius.circular(5.0))),
-                      child: Align(
-                        alignment: Alignment.center,
-                        child: Text(
-                          'Applications',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                              color: _metaEntity.isBookable
-                                  ? whiteBtnTextColor
-                                  : disabledColor,
-                              fontSize: 14,
-                              fontFamily: 'RalewayRegular'),
-                        ),
-                      ),
-                      onPressed: () {
+                  SizedBox(
+                    width: MediaQuery.of(context).size.width * .045,
+                  ),
+                  Card(
+                    elevation: 10,
+                    child: GestureDetector(
+                      onTap: () {
                         print("Over To overview page");
                         if (!Utils.isNullOrEmpty(_metaEntity.forms)) {
-//TODO: Show popup for differen available forms, admin selects a form then show corresponding overview page
-//TODO: Testing code Dummy remove later - Start
-                          // MetaForm m1 = new MetaForm(
-                          //     description: "Dummy formgfh",
-                          //     id: "StrGuid1",
-                          //     name: "Dummy Frgghm name");
-                          // MetaForm m2 = new MetaForm(
-                          //     description: "Dummy fordfgm",
-                          //     id: "StrGuid2",
-                          //     name: "Dummy Frhgyutym name");
-                          // MetaForm m3 = new MetaForm(
-                          //     description: "Dummy formdfg",
-                          //     id: "StrGuid3",
-                          //     name: "Dummy Frm dfgname");
-                          // _metaEntity.forms.add(m1);
-                          // _metaEntity.forms.add(m2);
-                          // _metaEntity.forms.add(m3);
-                          //TODO: Testing code Dummy remove later - End
                           if (_metaEntity.forms.length > 1) {
                             Navigator.of(context).push(
                                 PageAnimation.createRoute(BookingFormSelection(
@@ -420,33 +436,44 @@ class EntityRowState extends State<EntityRow> {
                         //   metaEntity: _metaEntity,
                         // )));
                       },
+                      child: Container(
+                        margin: EdgeInsets.all(0),
+                        padding: EdgeInsets.all(0),
+                        width: MediaQuery.of(context).size.width * .21,
+                        height: MediaQuery.of(context).size.width * .21,
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            SizedBox(
+                              width: MediaQuery.of(context).size.width * .11,
+                              height: MediaQuery.of(context).size.width * .11,
+                              child: Image(
+                                image: AssetImage('assets/applications.png'),
+                              ),
+                            ),
+                            Text(
+                              'Applications',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                  letterSpacing: 1.1,
+                                  color: _metaEntity.isBookable
+                                      ? whiteBtnTextColor
+                                      : disabledColor,
+                                  fontSize: 12,
+                                  fontFamily: 'Roboto'),
+                            ),
+                          ],
+                        ),
+                      ),
                     ),
                   ),
-                  Container(
-                    width: MediaQuery.of(context).size.width * .42,
-                    height: MediaQuery.of(context).size.height * .05,
-                    child: FlatButton(
-                      // elevation: 7,
-                      color: Colors.white,
-                      splashColor: _metaEntity.isBookable
-                          ? highlightColor.withOpacity(.8)
-                          : Colors.transparent,
-                      shape: RoundedRectangleBorder(
-                          side: BorderSide(
-                              color: _metaEntity.isBookable
-                                  ? Colors.blueGrey[300]
-                                  : Colors.blueGrey[100]),
-                          borderRadius: BorderRadius.all(Radius.circular(5.0))),
-                      child: Text(
-                        'Tokens',
-                        style: TextStyle(
-                            color: _metaEntity.isBookable
-                                ? whiteBtnTextColor
-                                : disabledColor,
-                            fontSize: 14,
-                            fontFamily: 'RalewayRegular'),
-                      ),
-                      onPressed: () {
+                  SizedBox(
+                    width: MediaQuery.of(context).size.width * .045,
+                  ),
+                  Card(
+                    elevation: 10,
+                    child: GestureDetector(
+                      onTap: () {
                         if (_metaEntity.isBookable) {
                           print("To child list page");
                           Navigator.of(context).push(
@@ -458,87 +485,89 @@ class EntityRowState extends State<EntityRow> {
                         } else
                           return;
                       },
+                      child: Container(
+                        margin: EdgeInsets.all(0),
+                        padding: EdgeInsets.all(2),
+                        width: MediaQuery.of(context).size.width * .21,
+                        height: MediaQuery.of(context).size.width * .21,
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            SizedBox(
+                              width: MediaQuery.of(context).size.width * .11,
+                              height: MediaQuery.of(context).size.width * .11,
+                              child: Image(
+                                image: AssetImage('assets/tokens.png'),
+                              ),
+                            ),
+                            Text(
+                              'Tokens',
+                              style: TextStyle(
+                                  letterSpacing: 1.1,
+                                  color: _metaEntity.isBookable
+                                      ? whiteBtnTextColor
+                                      : disabledColor,
+                                  fontSize: 12,
+                                  fontFamily: 'Roboto'),
+                            ),
+                          ],
+                        ),
+                      ),
                     ),
+                  ),
+                  SizedBox(
+                    width: MediaQuery.of(context).size.width * .045,
+                  ),
+                  Card(
+                    elevation: 10,
+                    child: GestureDetector(
+                      onTap: () {
+                        print("To Add details page");
+                        Navigator.of(context)
+                            .push(PageAnimation.createRoute(ManageEntityForms(
+                          // forms: _metaEntity.forms,
+                          metaEntity: _metaEntity,
+                          preferredSlotTime: null,
+                          isAdmin: true,
+                          backRoute: ManageEntityListPage(),
+                        )));
+                      },
+                      child: Container(
+                        margin: EdgeInsets.all(0),
+                        padding: EdgeInsets.all(0),
+                        width: MediaQuery.of(context).size.width * .21,
+                        height: MediaQuery.of(context).size.width * .21,
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            SizedBox(
+                              width: MediaQuery.of(context).size.width * .11,
+                              height: MediaQuery.of(context).size.width * .11,
+                              child: Image(
+                                image: AssetImage('assets/forms.png'),
+                              ),
+                            ),
+                            Text(
+                              'Forms',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                  letterSpacing: 1.1,
+                                  color: _metaEntity.isBookable
+                                      ? whiteBtnTextColor
+                                      : disabledColor,
+                                  fontSize: 12,
+                                  fontFamily: 'Roboto'),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                  SizedBox(
+                    width: MediaQuery.of(context).size.width * .045,
                   ),
                 ],
               ),
-              SizedBox(
-                height: MediaQuery.of(context).size.height * .008,
-              ),
-              Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: <
-                  Widget>[
-                Container(
-                  margin: EdgeInsets.all(0),
-                  padding: EdgeInsets.all(0),
-                  width: MediaQuery.of(context).size.width * .42,
-                  height: MediaQuery.of(context).size.height * .05,
-                  child: FlatButton(
-                    padding: EdgeInsets.all(0),
-                    color: Colors.white,
-                    textColor: Colors.white,
-                    shape: RoundedRectangleBorder(
-                        side: BorderSide(
-                            color: _metaEntity.isBookable
-                                ? Colors.blueGrey[300]
-                                : Colors.blueGrey[100]),
-                        borderRadius: BorderRadius.all(Radius.circular(5.0))),
-                    splashColor: _metaEntity.isBookable
-                        ? highlightColor.withOpacity(.8)
-                        : Colors.transparent,
-                    child: Text(
-                      'Manage Forms',
-                      style: TextStyle(
-                          color: _metaEntity.isBookable
-                              ? whiteBtnTextColor
-                              : disabledColor,
-                          fontSize: 14,
-                          fontFamily: 'RalewayRegular'),
-                    ),
-                    onPressed: () {
-                      print("To Add details page");
-                      Navigator.of(context)
-                          .push(PageAnimation.createRoute(ManageEntityForms(
-                        // forms: _metaEntity.forms,
-                        metaEntity: _metaEntity,
-                        preferredSlotTime: null,
-                        isAdmin: true,
-                        backRoute: ManageEntityListPage(),
-                      )));
-                    },
-                  ),
-                ),
-                Container(
-                  width: MediaQuery.of(context).size.width * .42,
-                  height: MediaQuery.of(context).size.height * .05,
-                  child: FlatButton(
-                    // elevation: 7,
-                    color: Colors.white,
-                    splashColor: highlightColor.withOpacity(.8),
-                    shape: RoundedRectangleBorder(
-                        side: BorderSide(color: Colors.blueGrey[300]),
-                        borderRadius: BorderRadius.all(Radius.circular(5.0))),
-                    child: Align(
-                      alignment: Alignment.center,
-                      child: Text(
-                        'Employees',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                            color: whiteBtnTextColor,
-                            fontSize: 14,
-                            fontFamily: 'RalewayRegular'),
-                      ),
-                    ),
-                    onPressed: () {
-                      Navigator.of(context)
-                          .push(PageAnimation.createRoute(ManageEmployeePage(
-                        metaEntity: _metaEntity,
-                        backRoute: ManageEntityListPage(),
-                        defaultDate: null,
-                      )));
-                    },
-                  ),
-                ),
-              ]),
 
               // backgroundColor: Colors.white,
             ],
