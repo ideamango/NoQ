@@ -284,6 +284,10 @@ String entityShareByOwnerHeading =
 String entityShareMessage =
     "Fix your appointment well in advance & Visit us when the crowd is less.\n\nDownload the LESSs app and start booking your peace of mind!";
 
+String upiShareSubject = 'Share UPI Subject';
+String upiShareTitle = 'Share UPI title';
+String upiShareBody = 'Share UPI body';
+
 String faqHead1 = "How LESSs helps bring Sukoon to your life?";
 String faqHead1Sub1 = "Lets look at the problems first..";
 String faqHead1Sub2 = "How this app helps?";
@@ -304,21 +308,31 @@ List<String> mailReasons = [
   'Press'
 ];
 String ourStory =
-    '''Entire World has been hit by the Covid-19 pandemic in early 2020 and the governments across the world started taking various measures to control the spread of this deadly disease. Lockdowns are being imposed across all the countries to minimize the interactions between people which was the main cause for the spread.
+    ''' "We are changing the world with technology"- said Bill Gates,  
+and Rumi said- "What you seek is seeking you!".
 
-The challenge in front of the governments is multifold, on one hand, they have to control the community spread of the disease by putting many public restrictions and on the other hand, reduce the damage to the economy by opening up business activity.
+We, on the other hand, believed that safety and upgraded services would seek us back with advanced technology. Until we stumbled upon a quote from Arthur C. Clarke-  
 
-TO CHANGE:- lack of change due to prolonged containment and restricted activities have started to impact the mental health of the people.  
+"Any sufficiently advanced technology is indistinguishable from magic!" 
+ 
 
-This is where we realized that life has to continue, we should do whatever it takes to restore the normalcy but with few extra precautionary measures should be in place to avoid the spread of infection.   
+That was it! Because that’s when we decided on making the move ourselves creating magic with technology and finally finding what we seek!  
 
-The reason was big enough to motivate us to build the LESSs App which is available on both Android and iPhone platforms. We believe that technology can help society to maintain social distancing and can still allow us to lead close to a normal life.  
+Founded at the time when the world stood still due to the pandemic in early 2020, BIGPIQ was developed keeping only one thing in mind- REVIVAL! After seeing ration hoarding, long queues, full car parking, and no distancing despite the guidelines, we knew that a solution was required. Not just for us as end-users but also businesses who were incapable of meeting demands and were losing out on the opportunity while others struggled to survive!  
+
+ Since the pandemic broke, there is loss of work, depressing news, uncertainty about the future, and monotonicity due to prolonged containment and restricted life activities have started to impact the mental health of the people. If people go out there is risk of contracting the virus. Avoiding crowded places and following suggested safety measures is the only thing people can do to bring back the life to normalcy.  
+
+Facing the issues first-hand made it easier for us to work out a solution in the form of a mobile application and named it LESSs. Even though it is the result of long brainstorming sessions, it is worth all the pulled-out hair and sleepless nights. LESSs has the capacity to balance out the business growth opportunity in the current times and give consumers the surety of services without compromising their safety. LESSs means more Satisfaction to consumers and more Opportunity to businesses. 
+
+LESSs is the go-to platform that ensures optimum safety for you and your family. If your mind is full of What! Why! How?! Here is what you need to know. Read complete list of benefits of LESSs.  
+
 
 Note: This App is not for any commercial gain, it shall remain free as long as we can support it. We are working on a donation-based model to pay for the operational cost, through which we can continue to help our society and make it a better place for everyone.  
 
-I am a Technologist turned Entrepreneur, who likes to solve problems in the real world. For more details, check out my LinkedIn profile.   
+''';
 
-Would love to hear back from you for any feedback/suggestion or even for a simple cheer which will help me know that I am moving in the right direction. ''';
+String ourTeam =
+    '''I am a Technologist turned Entrepreneur, who likes to solve problems in the real world. For more details, check out my LinkedIn profile. Would love to hear back from you for any feedback/suggestion or even for a simple cheer which will help me know that I am moving in the right direction. ''';
 
 String agreement = '''Welcome to LESSs mobile application.
 

@@ -251,6 +251,19 @@ class _UserHomePageState extends State<UserHomePage> {
                       ),
                       verticalSpacer,
                       Card(
+                          child: Container(
+                        decoration: BoxDecoration(
+                            border: Border.all(color: borderColor),
+                            color: Colors.white,
+                            shape: BoxShape.rectangle,
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(5.0))),
+                        child: ListView(
+                          children: [Text("Donation Text")],
+                        ),
+                      )),
+                      verticalSpacer,
+                      Card(
                         margin: EdgeInsets.zero,
                         elevation: 20,
                         child: Theme(

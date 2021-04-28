@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 
 final buttonStyle = Material(
   elevation: 5.0,
@@ -65,8 +64,9 @@ final buttonMedTextStyle = TextStyle(
   color: Colors.white,
   fontWeight: FontWeight.w700,
   fontFamily: 'Montserrat',
+  letterSpacing: 1.3,
 
-  fontSize: 15,
+  fontSize: 16,
   //height: 2,
 );
 final buttonSmlTextStyle = TextStyle(
@@ -248,6 +248,8 @@ final userAccountHeadingTextStyle = TextStyle(
     fontFamily: 'Montserrat',
     fontSize: 15.0,
     height: 1.5);
+final shareAppTextStyle = TextStyle(
+    color: Colors.blueGrey[900], fontFamily: 'Roboto', fontSize: 14.0);
 final placeDetailsHeadingTextStyle = TextStyle(
     color: primaryDarkColor, fontFamily: 'Montserrat', fontSize: 14.0);
 final placeDetailsHeadingSml = TextStyle(

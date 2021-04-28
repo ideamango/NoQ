@@ -25,7 +25,7 @@ class _AboutUsPageState extends State<AboutUsPage> {
 
   @override
   Widget build(BuildContext context) {
-    String title = "About Us";
+    String title = "Story of LESSs";
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: ThemeData.light().copyWith(),
@@ -42,86 +42,64 @@ class _AboutUsPageState extends State<AboutUsPage> {
           ),
           body: Center(
               child: Container(
-            margin: EdgeInsets.fromLTRB(10, 10, 10, 10),
+            margin: EdgeInsets.fromLTRB(10, 0, 10, 10),
             child: ListView(
               children: <Widget>[
-                Theme(
-                  data: ThemeData(
-                    unselectedWidgetColor: Colors.grey[600],
-                    accentColor: primaryAccentColor,
-                  ),
-                  child: ExpansionTile(
-                    //key: PageStorageKey(this.widget.headerTitle),
-                    initiallyExpanded: true,
-                    title: Text(
-                      "Story of LESSs",
-                      style:
-                          TextStyle(color: Colors.blueGrey[700], fontSize: 17),
-                    ),
-                    backgroundColor: Colors.white,
-                    leading: Icon(
-                      Icons.face,
-                      color: primaryIcon,
-                    ),
-                    children: <Widget>[
-                      ConstrainedBox(
-                        constraints: new BoxConstraints(
-                          maxHeight: MediaQuery.of(context).size.height * .5,
-                        ),
-                        child: Scrollbar(
-                          child: SingleChildScrollView(
-                            physics: BouncingScrollPhysics(),
-                            child: RichText(
-                                text: TextSpan(
-                                    style: highlightSubTextStyle,
-                                    children: <TextSpan>[
-                                  TextSpan(text: ourStory),
-                                ])),
-                          ),
-                        ),
-                      ),
-                    ],
+                Container(
+                    padding: EdgeInsets.all(0),
+                    height: MediaQuery.of(context).size.height * .35,
+                    child: Image.asset('assets/ourStory.png')),
+                Scrollbar(
+                  child: SingleChildScrollView(
+                    physics: BouncingScrollPhysics(),
+                    child: RichText(
+                        text: TextSpan(
+                            style: shareAppTextStyle,
+                            children: <TextSpan>[
+                          TextSpan(text: ourStory),
+                        ])),
                   ),
                 ),
-                Theme(
-                  data: ThemeData(
-                    unselectedWidgetColor: Colors.grey[600],
-                    accentColor: primaryAccentColor,
-                  ),
-                  child: ExpansionTile(
-                    //key: PageStorageKey(this.widget.headerTitle),
-                    initiallyExpanded: true,
-                    title: Text(
-                      "Our Mission",
-                      style:
-                          TextStyle(color: Colors.blueGrey[700], fontSize: 17),
-                    ),
-                    backgroundColor: Colors.white,
-                    leading: Icon(
-                      Icons.description,
-                      color: primaryIcon,
-                    ),
-                    children: <Widget>[
-                      ConstrainedBox(
-                        constraints: new BoxConstraints(
-                          maxHeight: MediaQuery.of(context).size.height * .3,
-                        ),
-                        child: Scrollbar(
-                          child: SingleChildScrollView(
-                            physics: BouncingScrollPhysics(),
-                            child: RichText(
-                                text: TextSpan(
-                                    style: highlightSubTextStyle,
-                                    children: <TextSpan>[
-                                  TextSpan(text: privacyPolicy),
-                                ])),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                verticalSpacer,
+
+                // Theme(
+                //   data: ThemeData(
+                //     unselectedWidgetColor: Colors.grey[600],
+                //     accentColor: primaryAccentColor,
+                //   ),
+                //   child: ExpansionTile(
+                //     //key: PageStorageKey(this.widget.headerTitle),
+                //     initiallyExpanded: true,
+                //     title: Text(
+                //       "Our Mission",
+                //       style:
+                //           TextStyle(color: Colors.blueGrey[700], fontSize: 17),
+                //     ),
+                //     backgroundColor: Colors.white,
+                //     leading: Icon(
+                //       Icons.description,
+                //       color: primaryIcon,
+                //     ),
+                //     children: <Widget>[
+                //       ConstrainedBox(
+                //         constraints: new BoxConstraints(
+                //           maxHeight: MediaQuery.of(context).size.height * .3,
+                //         ),
+                //         child: Scrollbar(
+                //           child: SingleChildScrollView(
+                //             physics: BouncingScrollPhysics(),
+                //             child: RichText(
+                //                 text: TextSpan(
+                //                     style: highlightSubTextStyle,
+                //                     children: <TextSpan>[
+                //                   TextSpan(text: privacyPolicy),
+                //                 ])),
+                //           ),
+                //         ),
+                //       ),
+                //     ],
+                //   ),
+                // ),
+                // verticalSpacer,
                 verticalSpacer,
                 // RaisedButton(
                 //   color: btnColor,

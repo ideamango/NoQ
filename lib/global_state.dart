@@ -189,6 +189,20 @@ class GlobalState {
     return _locData;
   }
 
+  // bool isEligibleForUpdate() {
+  //   if (_conf.latestVersion == null) return false;
+
+  //   if (isIOS) {
+  //     if (_conf.latestVersion.containsKey('iosVersion')) {
+  //       if (_conf.latestVersion['iosVersion'] > version) {}
+  //     } else {
+  //       return false;
+  //     }
+  //   }
+  // }
+
+  // String getUpdateMessage() {}
+
   static Future<GlobalState> getGlobalState() async {
     Location loc;
     if (_gs == null || _gs._locData == null) {
