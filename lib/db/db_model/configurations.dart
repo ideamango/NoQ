@@ -189,4 +189,20 @@ class Configurations {
 
     return forms;
   }
+
+  bool isDonationEnabled() {
+    if (donation != null &&
+        donation.containsKey("isEnabled") &&
+        donation["isEnabled"].toLowerCase() == "true") {
+      return true;
+    }
+    return false;
+  }
+
+  String getDonationMessage() {
+    if (donation != null && donation.containsKey("message")) {
+      return donation["message"];
+    }
+    return "";
+  }
 }
