@@ -1,6 +1,7 @@
+import '../widget/page_animation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:noq/widget/page_animation.dart';
+
 import '../constants.dart';
 import '../global_state.dart';
 import '../pages/contact_us.dart';

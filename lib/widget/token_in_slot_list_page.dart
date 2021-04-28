@@ -4,7 +4,7 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:intl/intl.dart';
-import 'package:noq/pages/shopping_list.dart';
+import '../pages/shopping_list.dart';
 import '../constants.dart';
 import '../db/db_model/meta_entity.dart';
 import '../db/db_model/user_token.dart';

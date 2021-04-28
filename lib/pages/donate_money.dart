@@ -3,23 +3,6 @@ import 'dart:math';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
-<<<<<<< HEAD
-import 'package:flutter/rendering.dart';
-import 'package:noq/constants.dart';
-import 'package:noq/global_state.dart';
-import 'package:noq/pages/help_page.dart';
-import 'package:noq/services/circular_progress.dart';
-import 'package:noq/services/url_services.dart';
-import 'package:noq/style.dart';
-import 'package:noq/userHomePage.dart';
-import 'package:noq/utils.dart';
-import 'package:noq/widget/appbar.dart';
-import 'package:noq/widget/bottom_nav_bar.dart';
-import 'package:noq/widget/header.dart';
-import 'package:noq/widget/widgets.dart';
-import 'package:share/share.dart';
-=======
->>>>>>> eb3680319f59c28f9363c4a1ae6bc197dcb4f33b
 import 'package:upi_pay/upi_pay.dart';
 import '../constants.dart';
 import '../global_state.dart';
