@@ -1,8 +1,11 @@
 import 'dart:async';
+import 'dart:io';
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import '../constants.dart';
 import '../db/db_model/address.dart';
@@ -53,10 +56,9 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
       new GlobalKey<FormFieldState>();
   final GlobalKey<FormFieldState> contactPhoneKey =
       new GlobalKey<FormFieldState>();
-  final GlobalKey<FormFieldState> gpayPhoneKey =
+  final GlobalKey<FormFieldState> upiIdPhoneKey =
       new GlobalKey<FormFieldState>();
-  final GlobalKey<FormFieldState> paytmPhoneKey =
-      new GlobalKey<FormFieldState>();
+  final GlobalKey<FormFieldState> upiPhoneKey = new GlobalKey<FormFieldState>();
   final GlobalKey<FormFieldState> newAdminRowItemKey =
       new GlobalKey<FormFieldState>();
 
@@ -95,9 +97,9 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
   TextEditingController _whatsappPhoneController = TextEditingController();
   TextEditingController _contactPhoneController = TextEditingController();
 
-  TextEditingController _gpayPhoneController = TextEditingController();
-  TextEditingController _paytmPhoneController = TextEditingController();
-
+  TextEditingController _upiIdController = TextEditingController();
+  TextEditingController _upiPhoneController = TextEditingController();
+  TextEditingController _upiQrCodeController = TextEditingController();
   TextEditingController _offerMessageController = TextEditingController();
   TextEditingController _offerCouponController = TextEditingController();
   TextEditingController _startDateController = TextEditingController();
@@ -123,6 +125,7 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
 
   TextEditingController _adminItemController = new TextEditingController();
   String _item;
+  String qrCodeFilePath;
 
   //ContactPerson Fields
 
@@ -201,9 +204,6 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
         });
       });
     });
-
-    removeManagerListener = EventBus.registerEvent(
-        MANAGER_REMOVED_EVENT, null, this.refreshOnManagerRemove);
   }
 
   @override
@@ -212,398 +212,6 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
     print("dispose called for child entity");
     EventBus.unregisterEvent(removeManagerListener);
   }
-
-  void refreshOnManagerRemove(event, args) {
-    setState(() {
-      //  contactRowWidgets.removeWhere((element) => element)
-      print("Inside remove Manage");
-      contactRowWidgets.clear();
-      contactRowWidgets.add(showCircularProgress());
-    });
-    //refreshContacts();
-    processRefreshContactsWithTimer();
-    print("printing event.eventData");
-    print("In parent page" + event.eventData);
-    print(event.eventData);
-  }
-
-  processRefreshContactsWithTimer() async {
-    var duration = new Duration(seconds: 1);
-    return new Timer(duration, refreshContacts);
-  }
-
-  refreshContacts() {
-    List<Widget> newList = [];
-    for (int i = 0; i < contactList.length; i++) {
-      newList.add(new ContactRow(
-        contact: contactList[i],
-        entity: entity,
-        list: contactList,
-      ));
-    }
-    setState(() {
-      contactRowWidgets.clear();
-      contactRowWidgets.addAll(newList);
-    });
-    entity.managers = contactList;
-  }
-
-  ///from contact page
-  // void initializeContactDetails() {
-  //   if (contact != null) {
-  //     _ctNameController.text = contact.name;
-  //     _ctEmpIdController.text = contact.employeeId;
-  //     _ctPhn1controller.text =
-  //         contact.ph != null ? contact.ph.substring(3) : "";
-  //     _ctPhn2controller.text =
-  //         contact.altPhone != null ? contact.altPhone.substring(3) : "";
-  //     if (contact.shiftStartHour != null && contact.shiftStartMinute != null)
-  //       _ctAvlFromTimeController.text =
-  //           Utils.formatTime(contact.shiftStartHour.toString()) +
-  //               ':' +
-  //               Utils.formatTime(contact.shiftStartMinute.toString());
-  //     if (contact.shiftEndHour != null && contact.shiftEndMinute != null)
-  //       _ctAvlTillTimeController.text =
-  //           Utils.formatTime(contact.shiftEndHour.toString()) +
-  //               ':' +
-  //               Utils.formatTime(contact.shiftEndMinute.toString());
-  //     _ctDaysOff = (contact.daysOff) ?? new List<String>();
-  //   }
-  //   if (_daysOff.length == 0) {
-  //     _ctDaysOff.add('days.sunday');
-  //   }
-  //   _ctClosedOnDays = List<days>();
-  //   _ctClosedOnDays = Utils.convertStringsToDays(_ctDaysOff);
-
-  //   contact.isManager = true;
-  // }
-
-  // Widget buildContactItem(Employee contact) {
-  //   final ctNameField = TextFormField(
-  //     obscureText: false,
-  //     maxLines: 1,
-  //     minLines: 1,
-  //     style: textInputTextStyle,
-  //     keyboardType: TextInputType.text,
-  //     controller: _ctNameController,
-  //     decoration:
-  //         CommonStyle.textFieldStyle(labelTextStr: "Name", hintTextStr: ""),
-  //     validator: validateText,
-  //     onChanged: (String value) {
-  //       contact.name = value;
-  //     },
-  //     onSaved: (String value) {
-  //       contact.name = value;
-  //     },
-  //   );
-  //   final ctEmpIdField = TextFormField(
-  //     obscureText: false,
-  //     maxLines: 1,
-  //     minLines: 1,
-  //     style: textInputTextStyle,
-  //     keyboardType: TextInputType.text,
-  //     controller: _ctEmpIdController,
-  //     decoration: CommonStyle.textFieldStyle(
-  //         labelTextStr: "Employee Id", hintTextStr: ""),
-  //     validator: validateText,
-  //     onChanged: (String value) {
-  //       contact.employeeId = value;
-  //     },
-  //     onSaved: (String value) {
-  //       contact.employeeId = value;
-  //     },
-  //   );
-  //   final ctPhn1Field = TextFormField(
-  //     obscureText: false,
-  //     key: phn1Key,
-  //     maxLines: 1,
-  //     minLines: 1,
-  //     style: textInputTextStyle,
-  //     keyboardType: TextInputType.phone,
-  //     controller: _ctPhn1controller,
-  //     decoration: CommonStyle.textFieldStyle(
-  //         prefixText: '+91', labelTextStr: "Primary Phone", hintTextStr: ""),
-  //     validator: Utils.validateMobileField,
-  //     onChanged: (String value) {
-  //       phn1Key.currentState.validate();
-  //       contact.ph = "+91" + value;
-  //     },
-  //     onSaved: (value) {
-  //       contact.ph = "+91" + value;
-  //     },
-  //   );
-  //   final ctPhn2Field = TextFormField(
-  //     obscureText: false,
-  //     key: phn2Key,
-  //     maxLines: 1,
-  //     minLines: 1,
-  //     style: textInputTextStyle,
-  //     keyboardType: TextInputType.phone,
-  //     controller: _ctPhn2controller,
-  //     decoration: CommonStyle.textFieldStyle(
-  //         prefixText: '+91', labelTextStr: "Alternate Phone", hintTextStr: ""),
-  //     validator: Utils.validateMobileField,
-  //     onChanged: (String value) {
-  //       phn2Key.currentState.validate();
-  //       contact.altPhone = "+91" + value;
-  //     },
-  //     onSaved: (value) {
-  //       contact.altPhone = "+91" + value;
-  //     },
-  //   );
-  //   final ctAvlFromTimeField = TextFormField(
-  //     obscureText: false,
-  //     maxLines: 1,
-  //     readOnly: true,
-  //     minLines: 1,
-  //     style: textInputTextStyle,
-  //     controller: _ctAvlFromTimeController,
-  //     keyboardType: TextInputType.text,
-  //     onTap: () {
-  //       DatePicker.showTimePicker(context,
-  //           showTitleActions: true,
-  //           showSecondsColumn: false, onChanged: (date) {
-  //         print('change $date in time zone ' +
-  //             date.timeZoneOffset.inHours.toString());
-  //       }, onConfirm: (date) {
-  //         print('confirm $date');
-  //         //  String time = "${date.hour}:${date.minute} ${date.";
-
-  //         String time = DateFormat.Hm().format(date);
-  //         print(time);
-
-  //         _ctAvlFromTimeController.text = time.toLowerCase();
-  //         if (_ctAvlFromTimeController.text != "") {
-  //           List<String> time = _ctAvlFromTimeController.text.split(':');
-  //           contact.shiftStartHour = int.parse(time[0]);
-  //           contact.shiftStartMinute = int.parse(time[1]);
-  //         }
-  //       }, currentTime: DateTime.now());
-  //     },
-  //     decoration: InputDecoration(
-  //         // suffixIcon: IconButton(
-  //         //   icon: Icon(Icons.schedule),
-  //         //   onPressed: () {
-  //         //     DatePicker.showTime12hPicker(context, showTitleActions: true,
-  //         //         onChanged: (date) {
-  //         //       print('change $date in time zone ' +
-  //         //           date.timeZoneOffset.inHours.toString());
-  //         //     }, onConfirm: (date) {
-  //         //       print('confirm $date');
-  //         //       //  String time = "${date.hour}:${date.minute} ${date.";
-
-  //         //       String time = DateFormat.jm().format(date);
-  //         //       print(time);
-
-  //         //       _openTimeController.text = time.toLowerCase();
-  //         //     }, currentTime: DateTime.now());
-  //         //   },
-  //         // ),
-  //         labelText: "Available from",
-  //         hintText: "hh:mm 24 hour time format",
-  //         enabledBorder:
-  //             UnderlineInputBorder(borderSide: BorderSide(color: Colors.grey)),
-  //         focusedBorder: UnderlineInputBorder(
-  //             borderSide: BorderSide(color: Colors.orange))),
-  //     validator: validateTime,
-  //     onChanged: (String value) {
-  //       //TODO: test the values
-  //       List<String> time = value.split(':');
-  //       contact.shiftStartHour = int.parse(time[0]);
-  //       contact.shiftStartMinute = int.parse(time[1]);
-  //     },
-  //     onSaved: (String value) {
-  //       //TODO: test the values
-  //       List<String> time = value.split(':');
-  //       contact.shiftStartHour = int.parse(time[0]);
-  //       contact.shiftStartMinute = int.parse(time[1]);
-  //     },
-  //   );
-  //   final ctAvlTillTimeField = TextFormField(
-  //     enabled: true,
-  //     obscureText: false,
-  //     readOnly: true,
-  //     maxLines: 1,
-  //     minLines: 1,
-  //     controller: _ctAvlTillTimeController,
-  //     style: textInputTextStyle,
-  //     onTap: () {
-  //       DatePicker.showTimePicker(context,
-  //           showTitleActions: true,
-  //           showSecondsColumn: false, onChanged: (date) {
-  //         print('change $date in time zone ' +
-  //             date.timeZoneOffset.inHours.toString());
-  //       }, onConfirm: (date) {
-  //         print('confirm $date');
-  //         //  String time = "${date.hour}:${date.minute} ${date.";
-
-  //         String time = DateFormat.Hm().format(date);
-  //         print(time);
-
-  //         _ctAvlTillTimeController.text = time.toLowerCase();
-  //         if (_ctAvlTillTimeController.text != "") {
-  //           List<String> time = _ctAvlTillTimeController.text.split(':');
-  //           contact.shiftEndHour = int.parse(time[0]);
-  //           contact.shiftEndMinute = int.parse(time[1]);
-  //         }
-  //       }, currentTime: DateTime.now());
-  //     },
-  //     decoration: InputDecoration(
-  //         labelText: "Available till",
-  //         hintText: "hr:mm 24 hour time format",
-  //         enabledBorder:
-  //             UnderlineInputBorder(borderSide: BorderSide(color: Colors.grey)),
-  //         focusedBorder: UnderlineInputBorder(
-  //             borderSide: BorderSide(color: Colors.orange))),
-  //     validator: validateTime,
-  //     onChanged: (String value) {
-  //       //TODO: test the values
-  //       List<String> time = value.split(':');
-  //       contact.shiftEndHour = int.parse(time[0]);
-  //       contact.shiftEndMinute = int.parse(time[1]);
-  //     },
-  //     onSaved: (String value) {},
-  //   );
-  //   final ctDaysOffField = Padding(
-  //     padding: EdgeInsets.only(top: 12, bottom: 8),
-  //     child: Row(
-  //       children: <Widget>[
-  //         Text(
-  //           'Days off ',
-  //           style: TextStyle(
-  //             color: Colors.grey[600],
-  //             // fontWeight: FontWeight.w800,
-  //             fontFamily: 'Monsterrat',
-  //             letterSpacing: 0.5,
-  //             fontSize: 15.0,
-  //             //height: 2,
-  //           ),
-  //           textAlign: TextAlign.left,
-  //         ),
-  //         SizedBox(width: 5),
-  //         new WeekDaySelectorFormField(
-  //           displayDays: [
-  //             days.monday,
-  //             days.tuesday,
-  //             days.wednesday,
-  //             days.thursday,
-  //             days.friday,
-  //             days.saturday,
-  //             days.sunday
-  //           ],
-  //           initialValue: _ctClosedOnDays,
-  //           borderRadius: 20,
-  //           elevation: 10,
-  //           textStyle: buttonXSmlTextStyle,
-  //           fillColor: Colors.blueGrey[400],
-  //           selectedFillColor: highlightColor,
-  //           boxConstraints: BoxConstraints(
-  //               minHeight: 25, minWidth: 25, maxHeight: 28, maxWidth: 28),
-  //           borderSide: BorderSide(color: Colors.white, width: 0),
-  //           language: lang.en,
-  //           onChange: (days) {
-  //             print("Days off: " + days.toString());
-  //             _ctDaysOff.clear();
-  //             days.forEach((element) {
-  //               var day = element.toString().substring(5);
-  //               _ctDaysOff.add(day);
-  //             });
-  //             contact.daysOff = _ctDaysOff;
-  //             print(_ctDaysOff.length);
-  //             print(_ctDaysOff.toString());
-  //           },
-  //         ),
-  //       ],
-  //     ),
-  //   );
-
-  //   return Card(
-  //     child: Theme(
-  //       data: ThemeData(
-  //         unselectedWidgetColor: Colors.black,
-  //         accentColor: highlightColor,
-  //       ),
-  //       child: ExpansionTile(
-  //         //key: PageStorageKey(this.widget.headerTitle),
-  //         initiallyExpanded: false,
-  //         title: Text(
-  //           (contact.name != null && contact.name != "")
-  //               ? contact.name
-  //               : "Manager",
-  //           style: TextStyle(color: Colors.blueGrey[700], fontSize: 17),
-  //         ),
-
-  //         backgroundColor: Colors.white,
-  //         leading: IconButton(
-  //             icon: Icon(Icons.person, color: Colors.blueGrey[300], size: 20),
-  //             onPressed: () {
-  //               // contact.isManager = false;
-  //             }),
-  //         children: <Widget>[
-  //           Container(
-  //             color: Colors.cyan[50],
-  //             padding: EdgeInsets.only(left: 2.0, right: 2),
-  //             // decoration: BoxDecoration(
-  //             //     // border: Border.all(color: containerColor),
-  //             //     color: Colors.white,
-  //             //     shape: BoxShape.rectangle,
-  //             //     borderRadius: BorderRadius.all(Radius.circular(5.0))),
-  //             // padding: EdgeInsets.all(5.0),
-
-  //             child: new Form(
-  //               //  autovalidate: _autoValidate,
-  //               child: ListTile(
-  //                 title: Column(
-  //                   children: <Widget>[
-  //                     ctNameField,
-  //                     ctEmpIdField,
-  //                     ctPhn1Field,
-  //                     ctPhn2Field,
-  //                     ctDaysOffField,
-  //                     Divider(
-  //                       thickness: .7,
-  //                       color: Colors.grey[600],
-  //                     ),
-  //                     ctAvlFromTimeField,
-  //                     ctAvlTillTimeField,
-  //                     RaisedButton(
-  //                         color: btnColor,
-  //                         child: Text(
-  //                           "Remove",
-  //                           style: buttonMedTextStyle,
-  //                         ),
-  //                         onPressed: () {
-  //                           String removeThisId;
-  //                           for (int i = 0; i < _entity.managers.length; i++) {
-  //                             if (_entity.managers[i].id == contact.id) {
-  //                               removeThisId = contact.id;
-  //                               print(_entity.managers[i].id);
-  //                               break;
-  //                             }
-  //                           }
-  //                           if (removeThisId != null) {
-  //                             setState(() {
-  //                               contact = null;
-  //                               _entity.managers.removeWhere(
-  //                                   (element) => element.id == removeThisId);
-  //                               _list.removeWhere(
-  //                                   (element) => element.id == removeThisId);
-  //                             });
-  //                           }
-  //                         })
-  //                   ],
-  //                 ),
-  //               ),
-  //             ),
-  //           ),
-  //         ],
-  //       ),
-  //     ),
-  //   );
-  // }
-
-  ///end from contact page
-  ///
 
   Future<void> getGlobalState() async {
     _gs = await GlobalState.getGlobalState();
@@ -689,12 +297,11 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
           ? entity.phone.toString().substring(3)
           : "";
 
-      _gpayPhoneController.text = Utils.isNotNullOrEmpty(entity.gpay)
-          ? entity.gpay.toString().substring(3)
-          : "";
-      _paytmPhoneController.text = Utils.isNotNullOrEmpty(entity.paytm)
-          ? entity.paytm.toString().substring(3)
-          : "";
+      _upiIdController.text =
+          Utils.isNotNullOrEmpty(entity.upiId) ? entity.upiId : "";
+      // _upiPhoneController.text = Utils.isNotNullOrEmpty(entity.upiPhoneNumber)
+      //     ? entity.upiPhoneNumber.toString().substring(3)
+      //     : "";
 
       if (entity.coordinates != null) {
         _latController.text = entity.coordinates.geopoint.latitude.toString();
@@ -762,6 +369,31 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
       return null;
   }
 
+  String validateUpiAddress(String upi) {
+    if (Utils.isNotNullOrEmpty(upi)) {
+      if (upi.split('@').length == 2) {
+        return null;
+      } else {
+        return "UPI Id is not valid";
+      }
+    }
+    return null;
+  }
+
+  String validateAdvanceBookingDays(String value) {
+    if (validateField) {
+      if (value == null || value == "") {
+        return 'Field is empty';
+      } else if (int.tryParse(value) == null) {
+        return '$value is not a valid number of Days';
+      } else if (int.parse(value) > 7) {
+        return 'Number of Days should be less than 7.';
+      } else
+        return null;
+    } else
+      return null;
+  }
+
   String validateTime(String value) {
     if (validateField) {
       if (value == null || value == "") {
@@ -811,41 +443,43 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
     }
   }
 
-  // void _addNewContactRow() {
-  //   Employee contact = new Employee();
-  //   var uuid = new Uuid();
-  //   contact.id = uuid.v1();
-  //   contactList.add(contact);
+  Future<File> captureImage(bool gallery) async {
+    ImagePicker picker = ImagePicker();
+    PickedFile pickedFile;
+    File newImageFile;
 
-  //   List<Widget> newList = new List<Widget>();
-  //   for (int i = 0; i < contactList.length; i++) {
-  //     newList.add(new ContactRow(
-  //       contact: contactList[i],
-  //       entity: entity,
-  //       list: contactList,
-  //     ));
-  //   }
-  //   setState(() {
-  //     contactRowWidgets.clear();
-  //     contactRowWidgets.addAll(newList);
-  //     entity.managers = contactList;
-  //     // _contactCount = _contactCount + 1;
-  //   });
-  // }
+    if (gallery) {
+      pickedFile = await picker.getImage(
+          source: ImageSource.gallery,
+          maxHeight: 600,
+          maxWidth: 600,
+          imageQuality: 50);
+    }
+    // Otherwise open camera to get new photo
+    else {
+      pickedFile = await picker.getImage(
+          source: ImageSource.camera,
+          maxHeight: 600,
+          maxWidth: 600,
+          imageQuality: 50);
+    }
 
-  // void addNewAdminRow() {
-  //   setState(() {
-  //     adminsList.add("Admin");
-  //   });
-  // }
+    if (pickedFile != null) {
+      newImageFile = File(pickedFile.path);
+    }
+    return newImageFile;
+  }
 
-  // void saveNewAdminRow(String newAdmPh) {
-  //   setState(() {
-  //     adminsList.forEach((element) {
-  //       if (element.compareTo(newAdmPh) != 0) adminsList.add(newAdmPh);
-  //     });
-  //   });
-  // }
+  Future<String> uploadFilesToServer(
+      String localPath, String targetFileName) async {
+    File localImage = File(localPath);
+
+    Reference ref = _gs.firebaseStorage.ref().child('$targetFileName');
+
+    await ref.putFile(localImage);
+
+    return await ref.getDownloadURL();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -1224,9 +858,11 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
           focusedBorder: UnderlineInputBorder(
               borderSide: BorderSide(color: Colors.orange)),
         ),
-        validator: validateText,
+        validator: validateAdvanceBookingDays,
         onChanged: (value) {
-          if (value != "") entity.advanceDays = int.parse(value);
+          if (value != "") {
+            entity.advanceDays = int.parse(value);
+          }
           print("Advance Booking Allowed saved");
         },
         onSaved: (String value) {
@@ -1300,7 +936,7 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
         controller: _contactPhoneController,
         decoration: InputDecoration(
           prefixText: '+91',
-          labelText: 'Contact Number  (optional)',
+          labelText: 'Contact Phone Number (recommended)',
           enabledBorder:
               UnderlineInputBorder(borderSide: BorderSide(color: Colors.grey)),
           focusedBorder: UnderlineInputBorder(
@@ -1308,69 +944,126 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
         ),
         validator: Utils.validateMobileField,
         onChanged: (value) {
-          contactPhoneKey.currentState.validate();
           if (value != "") entity.phone = _phCountryCode + (value);
         },
         onSaved: (String value) {
           if (value != "") entity.phone = _phCountryCode + (value);
         },
       );
-
-      final paytmPhone = TextFormField(
+      final upiIdField = TextFormField(
         obscureText: false,
         maxLines: 1,
         minLines: 1,
-        key: paytmPhoneKey,
         style: textInputTextStyle,
-        keyboardType: TextInputType.phone,
-        controller: _paytmPhoneController,
+        keyboardType: TextInputType.text,
+        controller: _upiIdController,
         decoration: InputDecoration(
-          prefixText: '+91',
-          labelText: 'PayTm Number (optional)',
+          //prefixText: '+91',
+          labelText: 'UPI Id in format ******@*** (optional)',
           enabledBorder:
               UnderlineInputBorder(borderSide: BorderSide(color: Colors.grey)),
           focusedBorder: UnderlineInputBorder(
               borderSide: BorderSide(color: Colors.orange)),
         ),
-        validator: Utils.validateMobileField,
+        validator: validateUpiAddress,
         onChanged: (value) {
-          //_autoValidateWhatsapp = true;
-          paytmPhoneKey.currentState.validate();
-          if (value != "") entity.paytm = _phCountryCode + (value);
+          if (value != "") entity.upiId = (value);
         },
         onSaved: (String value) {
-          if (value != "") entity.paytm = _phCountryCode + (value);
+          if (value != "") entity.upiId = (value);
         },
       );
 
-      final gPayPhone = TextFormField(
-        obscureText: false,
-        maxLines: 1,
-        minLines: 1,
-        key: gpayPhoneKey,
-        style: textInputTextStyle,
-        keyboardType: TextInputType.phone,
-        controller: _gpayPhoneController,
-        decoration: InputDecoration(
-          prefixText: '+91',
-          labelText: 'GPay Number',
-          enabledBorder:
-              UnderlineInputBorder(borderSide: BorderSide(color: Colors.grey)),
-          focusedBorder: UnderlineInputBorder(
-              borderSide: BorderSide(color: Colors.orange)),
-        ),
-        validator: Utils.validateMobileField,
-        onChanged: (value) {
-          //_autoValidateWhatsapp = true;
-          whatsappPhoneKey.currentState.validate();
-          if (value != "") entity.gpay = _phCountryCode + (value);
-          print("GPay Number");
-        },
-        onSaved: (String value) {
-          if (value != "") entity.gpay = _phCountryCode + (value);
-          print("GPay Number");
-        },
-      );
+      // final upiPhone = TextFormField(
+      //   obscureText: false,
+      //   maxLines: 1,
+      //   minLines: 1,
+      //   key: upiPhoneKey,
+      //   style: textInputTextStyle,
+      //   keyboardType: TextInputType.phone,
+      //   controller: _upiPhoneController,
+      //   decoration: InputDecoration(
+      //     prefixText: '+91',
+      //     labelText: 'UPI Phone Number (optional)',
+      //     enabledBorder:
+      //         UnderlineInputBorder(borderSide: BorderSide(color: Colors.grey)),
+      //     focusedBorder: UnderlineInputBorder(
+      //         borderSide: BorderSide(color: Colors.orange)),
+      //   ),
+      //   validator: Utils.validateMobileField,
+      //   onChanged: (value) {
+      //     //_autoValidateWhatsapp = true;
+      //     upiPhoneKey.currentState.validate();
+      //     if (value != "") entity.upiPhoneNumber = _phCountryCode + (value);
+      //   },
+      //   onSaved: (String value) {
+      //     if (value != "") entity.upiPhoneNumber = _phCountryCode + (value);
+      //   },
+      // );
+      // final upiQrCodeField = Column(
+      //   children: [
+      //     TextFormField(
+      //       obscureText: false,
+      //       maxLines: 1,
+      //       minLines: 1,
+      //       style: textInputTextStyle,
+      //       controller: _upiQrCodeController,
+      //       decoration: InputDecoration(
+      //         suffix: Row(
+      //           mainAxisAlignment: MainAxisAlignment.end,
+      //           children: [
+      //             IconButton(
+      //                 padding: EdgeInsets.zero,
+      //                 icon: Icon(
+      //                   Icons.camera_alt_rounded,
+      //                   color: primaryDarkColor,
+      //                 ),
+      //                 onPressed: () {
+      //                   captureImage(false).then((value) {
+      //                     if (value != null) {
+      //                       qrCodeFilePath = value.path;
+      //                       _upiQrCodeController.text = value.path;
+      //                       //attsField.responseFilePaths.add(value.path);
+      //                     }
+      //                     setState(() {});
+      //                   });
+      //                 }),
+      //             IconButton(
+      //                 padding: EdgeInsets.zero,
+      //                 icon: Icon(
+      //                   Icons.attach_file,
+      //                   color: primaryDarkColor,
+      //                 ),
+      //                 onPressed: () {
+      //                   captureImage(true).then((value) {
+      //                     if (value != null) {
+      //                       // _medCondsProofimages.add(value);
+      //                       qrCodeFilePath = value.path;
+      //                       _upiQrCodeController.text = value.path;
+      //                     }
+      //                     setState(() {});
+      //                   });
+      //                 }),
+      //           ],
+      //         ),
+      //         labelText: 'Upload UPI Payment Qr Code (optional)',
+      //         enabledBorder: UnderlineInputBorder(
+      //             borderSide: BorderSide(color: Colors.grey)),
+      //         focusedBorder: UnderlineInputBorder(
+      //             borderSide: BorderSide(color: Colors.orange)),
+      //       ),
+      //       // validator: Utils.validateMobileField,
+      //       onChanged: (value) {
+      //         //_autoValidateWhatsapp = true;
+      //         upiPhoneKey.currentState.validate();
+      //         if (value != "") entity.qrCodeImagePath = (value);
+      //       },
+      //       onSaved: (String value) {
+      //         if (value != "") entity.qrCodeImagePath = (value);
+      //       },
+      //     ),
+      //   ],
+      // );
 
       checkOfferDetailsFilled() {
         if (insertOffer.message != null && insertOffer.message.isNotEmpty ||
@@ -1413,14 +1106,18 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
         maxLength: null,
         maxLines: 1,
         onChanged: (String value) {
-          insertOffer.message = value;
-          offerFieldStatus = true;
-          checkOfferDetailsFilled();
+          if (Utils.isNotNullOrEmpty(value)) {
+            insertOffer.message = value;
+            offerFieldStatus = true;
+            checkOfferDetailsFilled();
+          }
         },
         onSaved: (String value) {
-          insertOffer.message = value;
-          offerFieldStatus = true;
-          checkOfferDetailsFilled();
+          if (Utils.isNotNullOrEmpty(value)) {
+            insertOffer.message = value;
+            offerFieldStatus = true;
+            checkOfferDetailsFilled();
+          }
         },
       );
 
@@ -1443,14 +1140,18 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
         maxLength: null,
         maxLines: 1,
         onChanged: (String value) {
-          insertOffer.coupon = value;
-          offerFieldStatus = true;
-          checkOfferDetailsFilled();
+          if (Utils.isNotNullOrEmpty(value)) {
+            insertOffer.coupon = value;
+            offerFieldStatus = true;
+            checkOfferDetailsFilled();
+          }
         },
         onSaved: (String value) {
-          insertOffer.coupon = value;
-          offerFieldStatus = true;
-          checkOfferDetailsFilled();
+          if (Utils.isNotNullOrEmpty(value)) {
+            insertOffer.coupon = value;
+            offerFieldStatus = true;
+            checkOfferDetailsFilled();
+          }
         },
       );
 
@@ -2569,8 +2270,9 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
                               padding: EdgeInsets.only(left: 5.0, right: 5),
                               child: Column(
                                 children: <Widget>[
-                                  gPayPhone,
-                                  paytmPhone,
+                                  upiIdField,
+                                  //  upiPhone,
+                                  // upiQrCodeField,
                                 ],
                               ),
                             ),

@@ -1303,9 +1303,9 @@ class DBTest {
         verificationStatus: VERIFICATION_VERIFIED,
         coordinates: geoPoint,
         offer: offer,
-        paytm: "+919611009823",
+        upiPhoneNumber: "+919611009823",
         phone: "+918328592031",
-        gpay: "+919611009823",
+        upiId: "+919611009823",
         whatsapp: "+918328592031");
 
     try {
@@ -1348,9 +1348,9 @@ class DBTest {
         verificationStatus: VERIFICATION_PENDING,
         coordinates: geoPoint,
         offer: null,
-        paytm: "+919611009823",
+        upiPhoneNumber: "+919611009823",
         phone: "+918328592031",
-        gpay: "+919611009823",
+        upiId: "+919611009823",
         whatsapp: "+918328592031");
 
     try {
@@ -1399,9 +1399,9 @@ class DBTest {
         verificationStatus: VERIFICATION_REJECTED,
         coordinates: geoPoint,
         offer: offer,
-        paytm: "+919611009823",
+        upiPhoneNumber: "+919611009823",
         phone: "+918328592031",
-        gpay: "+919611009823",
+        upiId: "+919611009823",
         whatsapp: "+918328592031");
 
     try {
@@ -1448,9 +1448,9 @@ class DBTest {
         verificationStatus: VERIFICATION_PENDING,
         coordinates: geoPoint,
         offer: offer,
-        paytm: "+919611009823",
+        upiPhoneNumber: "+919611009823",
         phone: "+918328592031",
-        gpay: "+919611009823",
+        upiId: "+919611009823",
         whatsapp: "+918328592031");
 
     try {
@@ -1500,9 +1500,9 @@ class DBTest {
         verificationStatus: VERIFICATION_PENDING,
         coordinates: geoPoint,
         offer: offer,
-        paytm: "+919611009823",
+        upiPhoneNumber: "+919611009823",
         phone: "+918328592031",
-        gpay: "+919611009823",
+        upiId: "+919611009823",
         whatsapp: "+918328592031");
 
     try {
@@ -1552,9 +1552,9 @@ class DBTest {
         verificationStatus: VERIFICATION_PENDING,
         coordinates: geoPoint,
         offer: offer,
-        paytm: "+919611009823",
+        upiPhoneNumber: "+919611009823",
         phone: "+918328592031",
-        gpay: "+919611009823",
+        upiId: "+919611009823",
         whatsapp: "+918328592031");
 
     try {
@@ -1603,9 +1603,9 @@ class DBTest {
         verificationStatus: VERIFICATION_VERIFIED,
         coordinates: geoPoint,
         offer: offer,
-        paytm: "+919611009823",
+        upiPhoneNumber: "+919611009823",
         phone: "+918328592031",
-        gpay: "+919611009823",
+        upiId: "+919611009823",
         whatsapp: "+918328592031");
 
     try {
@@ -1654,9 +1654,9 @@ class DBTest {
         verificationStatus: VERIFICATION_VERIFIED,
         coordinates: geoPoint,
         offer: offer,
-        paytm: "+919611009823",
+        upiPhoneNumber: "+919611009823",
         phone: "+918328592031",
-        gpay: "+919611009823",
+        upiId: "+919611009823",
         whatsapp: "+918328592031");
 
     try {
@@ -1705,9 +1705,9 @@ class DBTest {
         verificationStatus: null,
         coordinates: geoPoint,
         offer: null,
-        paytm: null,
+        upiPhoneNumber: null,
         phone: "+918328592031",
-        gpay: "",
+        upiId: "",
         whatsapp: null,
         supportEmail: "test@test.com");
 
@@ -1742,9 +1742,9 @@ class DBTest {
         verificationStatus: VERIFICATION_VERIFIED,
         coordinates: geoPoint,
         offer: offer,
-        paytm: "+919611009823",
+        upiPhoneNumber: "+919611009823",
         phone: "+918328592031",
-        gpay: "+919611009823",
+        upiId: "+919611009823",
         whatsapp: "+918328592031");
 
     try {
@@ -1950,9 +1950,9 @@ class DBTest {
         verificationStatus: VERIFICATION_VERIFIED,
         coordinates: geoPoint,
         offer: null,
-        paytm: "+919611009823",
+        upiPhoneNumber: "+919611009823",
         phone: "+918328592031",
-        gpay: "+919611009823",
+        upiId: "+919611009823",
         whatsapp: "+918328592031",
         forms: forms,
         maxTokensPerSlotByUser: 2);
@@ -2377,9 +2377,9 @@ class DBTest {
         verificationStatus: VERIFICATION_VERIFIED,
         coordinates: geoPoint,
         offer: null,
-        paytm: "+919611009823",
+        upiPhoneNumber: "+919611009823",
         phone: "+918328592031",
-        gpay: "+919611009823",
+        upiId: "+919611009823",
         whatsapp: "+918328592031",
         forms: forms,
         maxTokensPerSlotByUser: 2);

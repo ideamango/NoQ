@@ -33,9 +33,9 @@ class MetaEntity {
       this.maxAllowed = 0,
       this.whatsapp = "",
       this.parentId = "",
-      this.gpay = "",
-      this.paytm = "",
-      this.applepay = "",
+      this.upiId = "",
+      this.upiPhoneNumber = "",
+      this.qrCodeImagePath = "",
       this.offer,
       this.phone = "",
       this.hasChildren = false,
@@ -72,9 +72,9 @@ class MetaEntity {
   int maxAllowed;
   String whatsapp;
   String parentId;
-  String gpay;
-  String paytm;
-  String applepay;
+  String upiId;
+  String upiPhoneNumber;
+  String qrCodeImagePath;
   Offer offer;
   String phone;
   bool hasChildren;
@@ -111,9 +111,9 @@ class MetaEntity {
         maxAllowed: json['maxAllowed'],
         whatsapp: json['whatsapp'],
         parentId: json['parentId'],
-        gpay: json['gpay'],
-        paytm: json['paytm'],
-        applepay: json['applepay'],
+        upiId: json['upiId'],
+        upiPhoneNumber: json['upiPhoneNumber'],
+        qrCodeImagePath: json['qrCodeImagePath'],
         offer: Offer.fromJson(json['offer']),
         phone: json['phone'],
         hasChildren: json['hasChildren'],
@@ -177,9 +177,9 @@ class MetaEntity {
         'maxAllowed': maxAllowed,
         'whatsapp': whatsapp,
         'parentId': parentId,
-        'gpay': gpay,
-        'paytm': paytm,
-        'applepay': applepay,
+        'upiId': upiId,
+        'upiPhoneNumber': upiPhoneNumber,
+        'qrCodeImagePath': qrCodeImagePath,
         'offer': offer != null ? offer.toJson() : null,
         'phone': phone,
         'hasChildren': hasChildren,
@@ -210,8 +210,9 @@ class MetaEntity {
         metaEnt.lon == this.lon &&
         metaEnt.maxAllowed == this.maxAllowed &&
         metaEnt.whatsapp == this.whatsapp &&
-        metaEnt.gpay == this.gpay &&
-        metaEnt.applepay == this.applepay &&
+        metaEnt.upiId == this.upiId &&
+        metaEnt.upiPhoneNumber == this.upiPhoneNumber &&
+        metaEnt.qrCodeImagePath == this.qrCodeImagePath &&
         metaEnt.isBookable == this.isBookable &&
         metaEnt.maxTokensPerSlotByUser == this.maxTokensPerSlotByUser &&
         metaEnt.maxPeoplePerToken == this.maxPeoplePerToken) {

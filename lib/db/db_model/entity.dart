@@ -43,9 +43,9 @@ class Entity {
       this.createdAt,
       this.modifiedAt,
       this.verificationStatus,
-      this.gpay,
-      this.paytm,
-      this.applepay,
+      this.upiId,
+      this.upiPhoneNumber,
+      this.qrCodeImagePath,
       this.offer,
       this.phone,
       this.forms,
@@ -89,9 +89,9 @@ class Entity {
   DateTime modifiedAt;
   //"Verification Pending", "Verified", "Rejected"
   String verificationStatus;
-  String gpay;
-  String paytm;
-  String applepay;
+  String upiId;
+  String upiPhoneNumber;
+  String qrCodeImagePath;
   Offer offer;
   String phone;
   MetaEntity _meta;
@@ -136,9 +136,9 @@ class Entity {
         'createdAt': createdAt.millisecondsSinceEpoch,
         'modifiedAt': modifiedAt.millisecondsSinceEpoch,
         'verificationStatus': verificationStatus,
-        'gpay': gpay,
-        'paytm': paytm,
-        'applepay': applepay,
+        'upiId': upiId,
+        'upiPhoneNumber': upiPhoneNumber,
+        'qrCodeImagePath': qrCodeImagePath,
         'offer': offer != null ? offer.toJson() : null,
         'phone': phone,
         'forms': metaFormsToJson(forms),
@@ -241,9 +241,9 @@ class Entity {
         createdAt: new DateTime.fromMillisecondsSinceEpoch(json['createdAt']),
         modifiedAt: new DateTime.fromMillisecondsSinceEpoch(json['modifiedAt']),
         verificationStatus: json['verificationStatus'],
-        gpay: json['gpay'],
-        paytm: json['paytm'],
-        applepay: json['applepay'],
+        upiId: json['upiId'],
+        upiPhoneNumber: json['upiPhoneNumber'],
+        qrCodeImagePath: json['qrCodeImagePath'],
         offer: Offer.fromJson(json['offer']),
         phone: json['phone'],
         forms: convertToMetaFormsFromJson(json['forms']),
@@ -337,9 +337,9 @@ class Entity {
           distance: distance,
           whatsapp: whatsapp,
           parentId: parentId,
-          gpay: gpay,
-          paytm: paytm,
-          applepay: applepay,
+          upiId: upiId,
+          upiPhoneNumber: upiPhoneNumber,
+          qrCodeImagePath: qrCodeImagePath,
           offer: offer,
           phone: phone,
           address:
@@ -376,9 +376,9 @@ class Entity {
       _meta.distance = distance;
       _meta.whatsapp = whatsapp;
       _meta.parentId = parentId;
-      _meta.gpay = gpay;
-      _meta.paytm = paytm;
-      _meta.applepay = applepay;
+      _meta.upiId = upiId;
+      _meta.upiPhoneNumber = upiPhoneNumber;
+      _meta.qrCodeImagePath = qrCodeImagePath;
       _meta.offer = offer;
       _meta.phone = phone;
       _meta.address =
