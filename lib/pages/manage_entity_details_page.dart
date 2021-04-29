@@ -16,14 +16,11 @@ import '../db/db_model/meta_entity.dart';
 import '../db/db_model/meta_form.dart';
 import '../db/db_model/my_geo_fire_point.dart';
 import '../db/db_model/app_user.dart';
-import '../db/db_service/user_service.dart';
 import '../db/db_model/offer.dart';
 import '../enum/entity_type.dart';
 import '../events/event_bus.dart';
-import '../events/events.dart';
 import '../global_state.dart';
 import '../location.dart';
-import '../pages/contact_item.dart';
 import '../pages/manage_entity_list_page.dart';
 import '../repository/StoreRepository.dart';
 import '../services/circular_progress.dart';
@@ -36,7 +33,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:flushbar/flushbar.dart';
 import '../widget/widgets.dart';
-import 'package:uuid/uuid.dart';
 import 'package:eventify/eventify.dart' as Eventify;
 
 class ManageEntityDetailsPage extends StatefulWidget {
@@ -96,7 +92,7 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
   TextEditingController _maxPeopleController = TextEditingController();
   TextEditingController _whatsappPhoneController = TextEditingController();
   TextEditingController _contactPhoneController = TextEditingController();
-
+  TextEditingController _emailIdController = TextEditingController();
   TextEditingController _upiIdController = TextEditingController();
   TextEditingController _upiPhoneController = TextEditingController();
   TextEditingController _upiQrCodeController = TextEditingController();
@@ -296,6 +292,9 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
       _contactPhoneController.text = Utils.isNotNullOrEmpty(entity.phone)
           ? entity.phone.toString().substring(3)
           : "";
+      _emailIdController.text = Utils.isNotNullOrEmpty(entity.supportEmail)
+          ? entity.supportEmail
+          : "";
 
       _upiIdController.text =
           Utils.isNotNullOrEmpty(entity.upiId) ? entity.upiId : "";
@@ -367,17 +366,6 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
         return null;
     } else
       return null;
-  }
-
-  String validateUpiAddress(String upi) {
-    if (Utils.isNotNullOrEmpty(upi)) {
-      if (upi.split('@').length == 2) {
-        return null;
-      } else {
-        return "UPI Id is not valid";
-      }
-    }
-    return null;
   }
 
   String validateAdvanceBookingDays(String value) {
@@ -950,6 +938,29 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
           if (value != "") entity.phone = _phCountryCode + (value);
         },
       );
+      final emailId = TextFormField(
+        obscureText: false,
+        maxLines: 1,
+        minLines: 1,
+        style: textInputTextStyle,
+        keyboardType: TextInputType.emailAddress,
+        controller: _emailIdController,
+        decoration: InputDecoration(
+          // prefixText: '+91',
+          labelText: 'Contact Email Id (recommended)',
+          enabledBorder:
+              UnderlineInputBorder(borderSide: BorderSide(color: Colors.grey)),
+          focusedBorder: UnderlineInputBorder(
+              borderSide: BorderSide(color: Colors.orange)),
+        ),
+        validator: Utils.validateEmail,
+        onChanged: (value) {
+          if (value != "") entity.supportEmail = value;
+        },
+        onSaved: (String value) {
+          if (value != "") entity.supportEmail = value;
+        },
+      );
       final upiIdField = TextFormField(
         obscureText: false,
         maxLines: 1,
@@ -965,7 +976,7 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
           focusedBorder: UnderlineInputBorder(
               borderSide: BorderSide(color: Colors.orange)),
         ),
-        validator: validateUpiAddress,
+        validator: Utils.validateUpiAddress,
         onChanged: (value) {
           if (value != "") entity.upiId = (value);
         },
@@ -2193,6 +2204,7 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
                                       maxpeopleInASlot,
                                       whatsappPhone,
                                       callingPhone,
+                                      emailId,
                                     ],
                                   ),
                                 ),
@@ -3341,179 +3353,227 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
                         height: 7,
                       ),
                       Builder(
-                        builder: (context) => RaisedButton(
-                            color: btnColor,
-                            splashColor: highlightColor,
+                        builder: (context) => Card(
+                          elevation: 8,
+                          child: GestureDetector(
+                            onTap: () {
+                              print("FlushbarStatus-------");
+                              processSaveWithTimer();
+                            },
                             child: Container(
+                              padding: EdgeInsets.zero,
+                              margin: EdgeInsets.zero,
+                              height: 40,
+                              decoration: new BoxDecoration(
+                                  gradient: new LinearGradient(
+                                      colors: [
+                                        Colors.cyan[400],
+                                        Colors.cyan[700]
+                                      ],
+                                      begin: const FractionalOffset(0.0, 0.0),
+                                      end: const FractionalOffset(1.0, 0.0),
+                                      stops: [0.0, 1.0],
+                                      tileMode: TileMode.clamp),
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(5))),
                               // width: MediaQuery.of(context).size.width * .35,
-                              child: Column(
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
                                 children: <Widget>[
+                                  Icon(
+                                    Icons.save,
+                                    size: 25,
+                                    color: Colors.white,
+                                  ),
+                                  SizedBox(
+                                    width: 10,
+                                  ),
                                   Text(
                                     'Save',
                                     style: buttonMedTextStyle,
                                   ),
-                                  // Text(
-                                  //   'Details of amenities/services',
-                                  //   style: buttonXSmlTextStyle,
-                                  // ),
                                 ],
                               ),
                             ),
-                            onPressed: () {
-                              print("FlushbarStatus-------");
-                              processSaveWithTimer();
-                            }),
+                          ),
+                        ),
                       ),
+
                       Builder(
-                          builder: (context) => RaisedButton(
-                              color: Colors.blueGrey[400],
-                              splashColor: highlightColor,
-                              child: Container(
-                                //width: MediaQuery.of(context).size.width * .35,
+                        builder: (context) => Container(
+                            margin: EdgeInsets.fromLTRB(6, 15, 6, 15),
+                            height: 40,
+                            decoration: new BoxDecoration(
+                                border: Border.all(color: Colors.teal[200]),
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(5))),
+                            //width: MediaQuery.of(context).size.width * .35,
+                            child: MaterialButton(
                                 child: Column(
                                   children: <Widget>[
                                     Text(
                                       'Delete',
-                                      style: buttonMedTextStyle,
+                                      style: TextStyle(
+                                        color: btnColor,
+                                        fontWeight: FontWeight.w500,
+                                        fontFamily: 'Montserrat',
+                                        letterSpacing: 1.3,
+
+                                        fontSize: 17,
+                                        //height: 2,
+                                      ),
                                     ),
                                     Text(
-                                      'Delete this entity and all its amenities/services',
-                                      style: buttonXSmlTextStyle,
+                                      'Delete this entity and all places/amenities/services',
+                                      style: TextStyle(
+                                        color: btnColor,
+                                        fontWeight: FontWeight.w500,
+                                        fontFamily: 'Montserrat',
+                                        fontSize: 11,
+                                      ),
                                     ),
                                   ],
                                 ),
-                              ),
-                              onPressed: () {
-                                String _errorMessage;
-                                showDialog(
-                                    context: context,
-                                    barrierDismissible: true,
-                                    builder: (BuildContext context) {
-                                      return StatefulBuilder(
-                                          builder: (context, setState) {
-                                        return new AlertDialog(
-                                          backgroundColor: Colors.grey[200],
-                                          // titleTextStyle: inputTextStyle,
-                                          elevation: 10.0,
-                                          content: Column(
-                                            mainAxisSize: MainAxisSize.min,
-                                            children: <Widget>[
-                                              RichText(
-                                                text: TextSpan(
-                                                    style: lightSubTextStyle,
-                                                    children: <TextSpan>[
-                                                      TextSpan(text: "Enter "),
-                                                      TextSpan(
-                                                          text: "DELETE ",
-                                                          style:
-                                                              errorTextStyle),
-                                                      TextSpan(
-                                                          text:
-                                                              "to permanently delete this entity and all its services. Once deleted you cannot restore them. "),
-                                                    ]),
-                                              ),
-                                              new Row(
-                                                children: <Widget>[
-                                                  new Expanded(
-                                                    child: new TextField(
-                                                      style: inputTextStyle,
-                                                      textCapitalization:
-                                                          TextCapitalization
-                                                              .characters,
-                                                      controller:
-                                                          _txtController,
-                                                      decoration:
-                                                          InputDecoration(
-                                                        hintText: 'eg. delete',
-                                                        enabledBorder:
-                                                            UnderlineInputBorder(
-                                                                borderSide: BorderSide(
-                                                                    color: Colors
-                                                                        .grey)),
-                                                        focusedBorder:
-                                                            UnderlineInputBorder(
-                                                                borderSide: BorderSide(
-                                                                    color: Colors
-                                                                        .orange)),
+                                onPressed: () {
+                                  String _errorMessage;
+                                  showDialog(
+                                      context: context,
+                                      barrierDismissible: true,
+                                      builder: (BuildContext context) {
+                                        return StatefulBuilder(
+                                            builder: (context, setState) {
+                                          return new AlertDialog(
+                                            backgroundColor: Colors.grey[200],
+                                            // titleTextStyle: inputTextStyle,
+                                            elevation: 10.0,
+                                            content: Column(
+                                              mainAxisSize: MainAxisSize.min,
+                                              children: <Widget>[
+                                                RichText(
+                                                  text: TextSpan(
+                                                      style: lightSubTextStyle,
+                                                      children: <TextSpan>[
+                                                        TextSpan(
+                                                            text: "Enter "),
+                                                        TextSpan(
+                                                            text: "DELETE ",
+                                                            style:
+                                                                errorTextStyle),
+                                                        TextSpan(
+                                                            text:
+                                                                "to permanently delete this entity and all its services. Once deleted you cannot restore them. "),
+                                                      ]),
+                                                ),
+                                                new Row(
+                                                  children: <Widget>[
+                                                    new Expanded(
+                                                      child: new TextField(
+                                                        style: inputTextStyle,
+                                                        textCapitalization:
+                                                            TextCapitalization
+                                                                .characters,
+                                                        controller:
+                                                            _txtController,
+                                                        decoration:
+                                                            InputDecoration(
+                                                          hintText:
+                                                              'eg. delete',
+                                                          enabledBorder:
+                                                              UnderlineInputBorder(
+                                                                  borderSide:
+                                                                      BorderSide(
+                                                                          color:
+                                                                              Colors.grey)),
+                                                          focusedBorder:
+                                                              UnderlineInputBorder(
+                                                                  borderSide:
+                                                                      BorderSide(
+                                                                          color:
+                                                                              Colors.orange)),
+                                                        ),
+                                                        onEditingComplete: () {
+                                                          print(_txtController
+                                                              .text);
+                                                        },
+                                                        onChanged: (value) {
+                                                          if (value
+                                                                  .toUpperCase() ==
+                                                              "DELETE"
+                                                                  .toUpperCase())
+                                                            setState(() {
+                                                              _delEnabled =
+                                                                  true;
+                                                              _errorMessage =
+                                                                  null;
+                                                            });
+                                                          else
+                                                            setState(() {
+                                                              _errorMessage =
+                                                                  "You have to enter DELETE to proceed.";
+                                                            });
+                                                        },
+                                                        autofocus: false,
                                                       ),
-                                                      onEditingComplete: () {
-                                                        print(_txtController
-                                                            .text);
-                                                      },
-                                                      onChanged: (value) {
-                                                        if (value
-                                                                .toUpperCase() ==
-                                                            "DELETE"
-                                                                .toUpperCase())
-                                                          setState(() {
-                                                            _delEnabled = true;
-                                                            _errorMessage =
-                                                                null;
-                                                          });
-                                                        else
-                                                          setState(() {
-                                                            _errorMessage =
-                                                                "You have to enter DELETE to proceed.";
-                                                          });
-                                                      },
-                                                      autofocus: false,
-                                                    ),
-                                                  )
-                                                ],
-                                              ),
-                                              (_errorMessage != null
-                                                  ? Text(
-                                                      _errorMessage,
-                                                      style: errorTextStyle,
                                                     )
-                                                  : Container()),
-                                            ],
-                                          ),
-
-                                          contentPadding: EdgeInsets.all(10),
-                                          actions: <Widget>[
-                                            RaisedButton(
-                                              color: (_delEnabled)
-                                                  ? btnColor
-                                                  : Colors.blueGrey[200],
-                                              elevation: (_delEnabled) ? 20 : 0,
-                                              onPressed: () {
-                                                if (_delEnabled) {
-                                                  deleteEntity(entity.entityId)
-                                                      .whenComplete(() {
-                                                    _gs.removeEntity(
-                                                        entity.entityId);
-                                                    Navigator.pop(context);
-                                                    Navigator.of(context).push(
-                                                        PageAnimation.createRoute(
-                                                            ManageEntityListPage()));
-                                                  });
-                                                } else {
-                                                  setState(() {
-                                                    _errorMessage =
-                                                        "You have to enter DELETE to proceed.";
-                                                  });
-                                                }
-                                              },
-                                              splashColor: (_delEnabled)
-                                                  ? highlightColor
-                                                  : Colors.blueGrey[200],
-                                              child: Container(
-                                                width: MediaQuery.of(context)
-                                                        .size
-                                                        .width *
-                                                    .3,
-                                                alignment: Alignment.center,
-                                                child: Text("Delete",
-                                                    style: TextStyle(
-                                                        color: Colors.white)),
-                                              ),
+                                                  ],
+                                                ),
+                                                (_errorMessage != null
+                                                    ? Text(
+                                                        _errorMessage,
+                                                        style: errorTextStyle,
+                                                      )
+                                                    : Container()),
+                                              ],
                                             ),
-                                          ],
-                                        );
+
+                                            contentPadding: EdgeInsets.all(10),
+                                            actions: <Widget>[
+                                              RaisedButton(
+                                                color: (_delEnabled)
+                                                    ? btnColor
+                                                    : Colors.blueGrey[200],
+                                                elevation:
+                                                    (_delEnabled) ? 20 : 0,
+                                                onPressed: () {
+                                                  if (_delEnabled) {
+                                                    deleteEntity(
+                                                            entity.entityId)
+                                                        .whenComplete(() {
+                                                      _gs.removeEntity(
+                                                          entity.entityId);
+                                                      Navigator.pop(context);
+                                                      Navigator.of(context)
+                                                          .push(PageAnimation
+                                                              .createRoute(
+                                                                  ManageEntityListPage()));
+                                                    });
+                                                  } else {
+                                                    setState(() {
+                                                      _errorMessage =
+                                                          "You have to enter DELETE to proceed.";
+                                                    });
+                                                  }
+                                                },
+                                                splashColor: (_delEnabled)
+                                                    ? highlightColor
+                                                    : Colors.blueGrey[200],
+                                                child: Container(
+                                                  width: MediaQuery.of(context)
+                                                          .size
+                                                          .width *
+                                                      .3,
+                                                  alignment: Alignment.center,
+                                                  child: Text("Delete",
+                                                      style: TextStyle(
+                                                          color: Colors.white)),
+                                                ),
+                                              ),
+                                            ],
+                                          );
+                                        });
                                       });
-                                    });
-                              })),
+                                })),
+                      ),
                     ],
                   ),
                 ),

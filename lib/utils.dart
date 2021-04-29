@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:email_validator/email_validator.dart';
 import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:flushbar/flushbar.dart';
 import 'package:flutter/cupertino.dart';
@@ -108,6 +109,23 @@ class Utils {
       return 'Enter a valid phone number';
     } else
       return null;
+  }
+
+  static String validateUpiAddress(String upi) {
+    if (Utils.isNotNullOrEmpty(upi)) {
+      if (upi.split('@').length == 2) {
+        return null;
+      } else {
+        return "UPI Id is not valid";
+      }
+    }
+    return null;
+  }
+
+  static String validateEmail(String valText) {
+    return (valText != null)
+        ? (EmailValidator.validate(valText) ? null : "Email is not valid")
+        : null;
   }
 
   static Future<DateTime> pickDate(

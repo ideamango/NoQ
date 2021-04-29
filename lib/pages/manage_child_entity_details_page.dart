@@ -103,8 +103,8 @@ class _ManageChildEntityDetailsPageState
 
   TextEditingController _whatsappPhoneController = TextEditingController();
   TextEditingController _contactPhoneController = TextEditingController();
+  TextEditingController _emailIdController = TextEditingController();
   TextEditingController _upiIdController = TextEditingController();
-  TextEditingController _paytmPhoneController = TextEditingController();
   final GlobalKey<FormFieldState> whatsappPhnKey =
       new GlobalKey<FormFieldState>();
   List<String> _closedOnDays = List<String>();
@@ -244,8 +244,6 @@ class _ManageChildEntityDetailsPageState
       _nameController.text = (serviceEntity.name);
       _descController.text = (serviceEntity.description);
 
-      //TODO-Smita  add later code for getting reg thru private
-      // _regNumController.text = serviceEntity.regNum;
       if (serviceEntity.startTimeHour != null &&
           serviceEntity.startTimeMinute != null)
         _openTimeController.text =
@@ -275,41 +273,44 @@ class _ManageChildEntityDetailsPageState
         if (serviceEntity.closedOn.length != 0)
           _daysOff = Utils.convertStringsToDays(serviceEntity.closedOn);
       }
-      // if (_daysOff.length == 0) {
-      //   _closedOnDays.add('days.sunday');
-      //   _daysOff = Utils.convertStringsToDays(_closedOnDays);
-      // }
 
-      _slotDurationController.text = (serviceEntity.slotDuration != null)
-          ? serviceEntity.slotDuration.toString()
-          : "";
-      _advBookingInDaysController.text = (serviceEntity.advanceDays != null)
-          ? serviceEntity.advanceDays.toString()
-          : "";
+      _slotDurationController.text =
+          Utils.isNotNullOrEmpty(serviceEntity.slotDuration.toString())
+              ? serviceEntity.slotDuration.toString()
+              : "";
+      _advBookingInDaysController.text =
+          Utils.isNotNullOrEmpty(serviceEntity.advanceDays.toString())
+              ? serviceEntity.advanceDays.toString()
+              : "";
       if (serviceEntity.maxAllowed != null)
-        _maxPeopleController.text = (serviceEntity.maxAllowed != null)
-            ? serviceEntity.maxAllowed.toString()
-            : "";
-      _whatsappPhoneController.text = serviceEntity.whatsapp != null
-          ? serviceEntity.whatsapp.toString().substring(3)
-          : "";
-      _contactPhoneController.text = serviceEntity.phone != null
+        _maxPeopleController.text =
+            Utils.isNotNullOrEmpty(serviceEntity.maxAllowed.toString())
+                ? serviceEntity.maxAllowed.toString()
+                : "";
+      _whatsappPhoneController.text =
+          Utils.isNotNullOrEmpty(serviceEntity.whatsapp)
+              ? serviceEntity.whatsapp.toString().substring(3)
+              : "";
+      _contactPhoneController.text = Utils.isNotNullOrEmpty(serviceEntity.phone)
           ? serviceEntity.phone.toString().substring(3)
           : "";
-      _upiIdController.text = serviceEntity.upiId != null
-          ? serviceEntity.upiId.toString().substring(3)
+      _emailIdController.text =
+          Utils.isNotNullOrEmpty(serviceEntity.supportEmail)
+              ? serviceEntity.supportEmail
+              : "";
+      _upiIdController.text = Utils.isNotNullOrEmpty(serviceEntity.upiId)
+          ? serviceEntity.upiId
           : "";
-      // _paytmPhoneController.text = serviceEntity.upiPhoneNumber != null
-      //     ? serviceEntity.upiPhoneNumber.toString().substring(3)
-      //     : "";
 
       if (serviceEntity.offer != null) {
-        _offerMessageController.text = serviceEntity.offer.message != null
-            ? serviceEntity.offer.message.toString()
-            : "";
-        _offerCouponController.text = serviceEntity.offer.coupon != null
-            ? serviceEntity.offer.coupon.toString()
-            : "";
+        _offerMessageController.text =
+            Utils.isNotNullOrEmpty(serviceEntity.offer.message)
+                ? serviceEntity.offer.message.toString()
+                : "";
+        _offerCouponController.text =
+            Utils.isNotNullOrEmpty(serviceEntity.offer.coupon)
+                ? serviceEntity.offer.coupon.toString()
+                : "";
 
         _startDateController.text = serviceEntity.offer.startDateTime != null
             ? serviceEntity.offer.startDateTime.day.toString() +
@@ -385,17 +386,6 @@ class _ManageChildEntityDetailsPageState
       return null;
     } else
       return null;
-  }
-
-  String validateUpiAddress(String upi) {
-    if (Utils.isNotNullOrEmpty(upi)) {
-      if (upi.split('@').length == 2) {
-        return null;
-      } else {
-        return "UPI Id is not valid";
-      }
-    }
-    return null;
   }
 
   String validateAdvanceBookingDays(String value) {
@@ -1133,6 +1123,30 @@ class _ManageChildEntityDetailsPageState
       },
     );
 
+    final emailId = TextFormField(
+      obscureText: false,
+      maxLines: 1,
+      minLines: 1,
+      style: textInputTextStyle,
+      keyboardType: TextInputType.emailAddress,
+      controller: _emailIdController,
+      decoration: InputDecoration(
+        // prefixText: '+91',
+        labelText: 'Contact Email Id (recommended)',
+        enabledBorder:
+            UnderlineInputBorder(borderSide: BorderSide(color: Colors.grey)),
+        focusedBorder:
+            UnderlineInputBorder(borderSide: BorderSide(color: Colors.orange)),
+      ),
+      validator: Utils.validateEmail,
+      onChanged: (value) {
+        if (value != "") serviceEntity.supportEmail = value;
+      },
+      onSaved: (String value) {
+        if (value != "") serviceEntity.supportEmail = value;
+      },
+    );
+
     final upiIdField = TextFormField(
       obscureText: false,
       maxLines: 1,
@@ -1148,7 +1162,7 @@ class _ManageChildEntityDetailsPageState
         focusedBorder:
             UnderlineInputBorder(borderSide: BorderSide(color: Colors.orange)),
       ),
-      validator: validateUpiAddress,
+      validator: Utils.validateUpiAddress,
       onChanged: (value) {
         if (value != "") serviceEntity.upiId = (value);
       },
@@ -2008,585 +2022,566 @@ class _ManageChildEntityDetailsPageState
                 child: new Form(
                   key: _serviceDetailsFormKey,
                   autovalidate: _autoValidate,
-                  child: ListView(
-                    padding: const EdgeInsets.all(8.0),
-                    // crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Container(
-                        width: MediaQuery.of(context).size.width * .9,
-                        margin: EdgeInsets.all(5),
-                        padding: EdgeInsets.all(0),
-                        decoration: BoxDecoration(
-                            border: Border.all(color: borderColor),
-                            color: Colors.grey[50],
-                            shape: BoxShape.rectangle,
-                            borderRadius:
-                                BorderRadius.all(Radius.circular(5.0))),
-                        // padding: EdgeInsets.all(5.0),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            Column(
-                              children: <Widget>[
-                                Container(
-                                  decoration: darkContainer,
-                                  child: Theme(
-                                    data: ThemeData(
-                                      unselectedWidgetColor: Colors.white,
-                                      accentColor: Colors.grey[50],
-                                    ),
-                                    child: CustomExpansionTile(
-                                      //key: PageStorageKey(this.widget.headerTitle),
-                                      initiallyExpanded: false,
-                                      title: Row(
-                                        children: <Widget>[
-                                          Text(
-                                            "Basic Details",
-                                            style: TextStyle(
-                                                color: Colors.white,
-                                                fontSize: 15),
-                                          ),
-                                          SizedBox(width: 5),
-                                        ],
-                                      ),
-                                      backgroundColor: Colors.blueGrey[500],
-
-                                      children: <Widget>[
-                                        new Container(
-                                          width: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
-                                              .94,
-                                          decoration: darkContainer,
-                                          padding: EdgeInsets.all(2.0),
-                                          child: Expanded(
-                                            child: Text(basicInfoStr,
-                                                style: buttonXSmlTextStyle),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                                Container(
-                                  padding: EdgeInsets.only(left: 5.0, right: 5),
-                                  child: Column(
-                                    children: <Widget>[
-                                      nameField,
-                                      descField,
-                                      // entityType,
-                                      regNumField,
-                                      opensTimeField,
-                                      closeTimeField,
-                                      breakSartTimeField,
-                                      breakEndTimeField,
-                                      daysClosedField,
-                                      slotDuration,
-                                      advBookingInDays,
-                                      maxpeopleInASlot,
-                                      whatsappPhone,
-                                      callingPhone
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ),
-                      SizedBox(
-                        height: 7,
-                      ),
-                      Container(
-                        width: MediaQuery.of(context).size.width * .9,
-                        margin: EdgeInsets.all(5),
-
-                        padding: EdgeInsets.all(0),
-                        decoration: BoxDecoration(
-                            border: Border.all(color: containerColor),
-                            color: Colors.grey[50],
-                            shape: BoxShape.rectangle,
-                            borderRadius:
-                                BorderRadius.all(Radius.circular(5.0))),
-                        //padding: EdgeInsets.all(5.0),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            Column(
-                              children: <Widget>[
-                                Container(
-                                  //padding: EdgeInsets.only(left: 5),
-                                  decoration: darkContainer,
-                                  child: Theme(
-                                    data: ThemeData(
-                                      unselectedWidgetColor: Colors.white,
-                                      accentColor: Colors.grey[50],
-                                    ),
-                                    child: CustomExpansionTile(
-                                      //key: PageStorageKey(this.widget.headerTitle),
-                                      initiallyExpanded: false,
-                                      title: Row(
-                                        children: <Widget>[
-                                          Text(
-                                            "Payment Details",
-                                            style: TextStyle(
-                                                color: Colors.white,
-                                                fontSize: 15),
-                                          ),
-                                          SizedBox(width: 5),
-                                        ],
-                                      ),
-                                      backgroundColor: Colors.blueGrey[500],
-
-                                      children: <Widget>[
-                                        new Container(
-                                          width: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
-                                              .94,
-                                          decoration: darkContainer,
-                                          padding: EdgeInsets.all(2.0),
-                                          child: Row(
-                                            children: <Widget>[
-                                              Expanded(
-                                                child: Text(addressInfoStr,
-                                                    style: buttonXSmlTextStyle),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                            Container(
-                              padding: EdgeInsets.only(left: 5.0, right: 5),
-                              child: Column(
+                  child: ListView(padding: const EdgeInsets.all(8.0),
+                      // crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Container(
+                          width: MediaQuery.of(context).size.width * .9,
+                          margin: EdgeInsets.all(5),
+                          padding: EdgeInsets.all(0),
+                          decoration: BoxDecoration(
+                              border: Border.all(color: borderColor),
+                              color: Colors.grey[50],
+                              shape: BoxShape.rectangle,
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(5.0))),
+                          // padding: EdgeInsets.all(5.0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: <Widget>[
+                              Column(
                                 children: <Widget>[
-                                  upiIdField,
+                                  Container(
+                                    decoration: darkContainer,
+                                    child: Theme(
+                                      data: ThemeData(
+                                        unselectedWidgetColor: Colors.white,
+                                        accentColor: Colors.grey[50],
+                                      ),
+                                      child: CustomExpansionTile(
+                                        //key: PageStorageKey(this.widget.headerTitle),
+                                        initiallyExpanded: false,
+                                        title: Row(
+                                          children: <Widget>[
+                                            Text(
+                                              "Basic Details",
+                                              style: TextStyle(
+                                                  color: Colors.white,
+                                                  fontSize: 15),
+                                            ),
+                                            SizedBox(width: 5),
+                                          ],
+                                        ),
+                                        backgroundColor: Colors.blueGrey[500],
+
+                                        children: <Widget>[
+                                          new Container(
+                                            width: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                .94,
+                                            decoration: darkContainer,
+                                            padding: EdgeInsets.all(2.0),
+                                            child: Expanded(
+                                              child: Text(basicInfoStr,
+                                                  style: buttonXSmlTextStyle),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                  Container(
+                                    padding:
+                                        EdgeInsets.only(left: 5.0, right: 5),
+                                    child: Column(
+                                      children: <Widget>[
+                                        nameField,
+                                        descField,
+                                        // entityType,
+                                        regNumField,
+                                        opensTimeField,
+                                        closeTimeField,
+                                        breakSartTimeField,
+                                        breakEndTimeField,
+                                        daysClosedField,
+                                        slotDuration,
+                                        advBookingInDays,
+                                        maxpeopleInASlot,
+                                        whatsappPhone,
+                                        callingPhone,
+                                        emailId
+                                      ],
+                                    ),
+                                  ),
                                 ],
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
-                      ),
-                      SizedBox(
-                        height: 7,
-                      ),
-                      Container(
-                        width: MediaQuery.of(context).size.width * .9,
-                        margin: EdgeInsets.all(5),
-                        padding: EdgeInsets.all(0),
-                        decoration: BoxDecoration(
-                            border: Border.all(color: containerColor),
-                            color: Colors.grey[50],
-                            shape: BoxShape.rectangle,
-                            borderRadius:
-                                BorderRadius.all(Radius.circular(5.0))),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            Column(
-                              children: <Widget>[
-                                Container(
-                                  //padding: EdgeInsets.only(left: 5),
-                                  decoration: darkContainer,
-                                  child: Theme(
-                                    data: ThemeData(
-                                      unselectedWidgetColor: Colors.white,
-                                      accentColor: Colors.grey[50],
-                                    ),
-                                    child: CustomExpansionTile(
-                                      //key: PageStorageKey(this.widget.headerTitle),
-                                      initiallyExpanded: false,
-                                      title: Row(
-                                        children: <Widget>[
-                                          Text(
-                                            "Offer Details",
-                                            style: TextStyle(
-                                                color: Colors.white,
-                                                fontSize: 15),
-                                          ),
-
-                                          // RaisedButton.icon(
-                                          //   onPressed: clearOfferDetail,
-                                          //   icon: Icon(Icons.clear_sharp,
-                                          //       size: 15.0),
-                                          //   label: Text("Clear"),
-                                          // )
-                                        ],
-                                      ),
-                                      backgroundColor: Colors.blueGrey[500],
-
-                                      children: <Widget>[
-                                        new Container(
-                                          width: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
-                                              .9,
-                                          decoration: darkContainer,
-                                          padding: EdgeInsets.all(2.0),
-                                          child: Row(
-                                            children: <Widget>[
-                                              Expanded(
-                                                child: Text(offerInfoStr,
-                                                    style: buttonXSmlTextStyle),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                                Container(
-                                  padding: EdgeInsets.only(left: 5.0, right: 5),
-                                  child: Column(
-                                    children: <Widget>[
-                                      messageField,
-                                      couponField,
-                                      Row(
-                                        children: <Widget>[
-                                          Expanded(child: startDateField),
-                                          Expanded(child: endDateField),
-                                        ],
-                                      ),
-                                      Row(
-                                        children: [
-                                          Container(
-                                              width: MediaQuery.of(context)
-                                                      .size
-                                                      .width *
-                                                  .3,
-                                              child: FlatButton(
-                                                //elevation: 20,
-                                                color: Colors.transparent,
-                                                splashColor: highlightColor,
-                                                textColor: btnColor,
-                                                shape: RoundedRectangleBorder(
-                                                    side: BorderSide(
-                                                        color: btnColor)),
-                                                child: Text(
-                                                  'Clear',
-                                                  textAlign: TextAlign.center,
-                                                ),
-                                                onPressed: () {
-                                                  setState(() {
-                                                    clearOfferDetail();
-                                                  });
-                                                },
-                                              ))
-                                        ],
-                                      )
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
+                        SizedBox(
+                          height: 7,
                         ),
-                      ),
-                      SizedBox(
-                        height: 7,
-                      ),
-                      Container(
-                        width: MediaQuery.of(context).size.width * .9,
-                        margin: EdgeInsets.all(5),
+                        Container(
+                          width: MediaQuery.of(context).size.width * .9,
+                          margin: EdgeInsets.all(5),
 
-                        padding: EdgeInsets.all(0),
-                        decoration: BoxDecoration(
-                            border: Border.all(color: containerColor),
-                            color: Colors.grey[50],
-                            shape: BoxShape.rectangle,
-                            borderRadius:
-                                BorderRadius.all(Radius.circular(5.0))),
-                        //padding: EdgeInsets.all(5.0),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            Column(
-                              children: <Widget>[
-                                Container(
-                                  //padding: EdgeInsets.only(left: 5),
-                                  decoration: darkContainer,
-                                  child: Theme(
-                                    data: ThemeData(
-                                      unselectedWidgetColor: Colors.white,
-                                      accentColor: Colors.grey[50],
-                                    ),
-                                    child: CustomExpansionTile(
-                                      //key: PageStorageKey(this.widget.headerTitle),
-                                      initiallyExpanded: false,
-                                      title: Row(
-                                        children: <Widget>[
-                                          Text(
-                                            "Current Location Details",
-                                            style: TextStyle(
-                                                color: Colors.white,
-                                                fontSize: 15),
-                                          ),
-                                          SizedBox(width: 5),
-                                        ],
-                                      ),
-                                      backgroundColor: Colors.blueGrey[500],
-
-                                      children: <Widget>[
-                                        new Container(
-                                          width: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
-                                              .94,
-                                          decoration: darkContainer,
-                                          padding: EdgeInsets.all(2.0),
-                                          child: Row(
-                                            children: <Widget>[
-                                              Expanded(
-                                                child: Text(locationInfoStr,
-                                                    style: buttonXSmlTextStyle),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                            Container(
-                              padding: EdgeInsets.only(left: 5.0, right: 5),
-                              child: Column(
+                          padding: EdgeInsets.all(0),
+                          decoration: BoxDecoration(
+                              border: Border.all(color: containerColor),
+                              color: Colors.grey[50],
+                              shape: BoxShape.rectangle,
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(5.0))),
+                          //padding: EdgeInsets.all(5.0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: <Widget>[
+                              Column(
                                 children: <Widget>[
-                                  Column(children: <Widget>[
-                                    Container(
-                                      padding: EdgeInsets.all(4),
-                                      width: MediaQuery.of(context).size.width *
-                                          .95,
-                                      child: RichText(
-                                          text: TextSpan(
-                                              style: highlightSubTextStyle,
-                                              children: <TextSpan>[
-                                            TextSpan(
-                                                text: pressUseCurrentLocation +
-                                                    '\r\n'),
-                                            TextSpan(
-                                                text:
-                                                    locationMarkingActiveInfo),
-                                          ])),
+                                  Container(
+                                    //padding: EdgeInsets.only(left: 5),
+                                    decoration: darkContainer,
+                                    child: Theme(
+                                      data: ThemeData(
+                                        unselectedWidgetColor: Colors.white,
+                                        accentColor: Colors.grey[50],
+                                      ),
+                                      child: CustomExpansionTile(
+                                        //key: PageStorageKey(this.widget.headerTitle),
+                                        initiallyExpanded: false,
+                                        title: Row(
+                                          children: <Widget>[
+                                            Text(
+                                              "Payment Details",
+                                              style: TextStyle(
+                                                  color: Colors.white,
+                                                  fontSize: 15),
+                                            ),
+                                            SizedBox(width: 5),
+                                          ],
+                                        ),
+                                        backgroundColor: Colors.blueGrey[500],
+
+                                        children: <Widget>[
+                                          new Container(
+                                            width: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                .94,
+                                            decoration: darkContainer,
+                                            padding: EdgeInsets.all(2.0),
+                                            child: Row(
+                                              children: <Widget>[
+                                                Expanded(
+                                                  child: Text(addressInfoStr,
+                                                      style:
+                                                          buttonXSmlTextStyle),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ],
+                                      ),
                                     ),
+                                  ),
+                                ],
+                              ),
+                              Container(
+                                padding: EdgeInsets.only(left: 5.0, right: 5),
+                                child: Column(
+                                  children: <Widget>[
+                                    upiIdField,
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        SizedBox(
+                          height: 7,
+                        ),
+                        Container(
+                          width: MediaQuery.of(context).size.width * .9,
+                          margin: EdgeInsets.all(5),
+                          padding: EdgeInsets.all(0),
+                          decoration: BoxDecoration(
+                              border: Border.all(color: containerColor),
+                              color: Colors.grey[50],
+                              shape: BoxShape.rectangle,
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(5.0))),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: <Widget>[
+                              Column(
+                                children: <Widget>[
+                                  Container(
+                                    //padding: EdgeInsets.only(left: 5),
+                                    decoration: darkContainer,
+                                    child: Theme(
+                                      data: ThemeData(
+                                        unselectedWidgetColor: Colors.white,
+                                        accentColor: Colors.grey[50],
+                                      ),
+                                      child: CustomExpansionTile(
+                                        //key: PageStorageKey(this.widget.headerTitle),
+                                        initiallyExpanded: false,
+                                        title: Row(
+                                          children: <Widget>[
+                                            Text(
+                                              "Offer Details",
+                                              style: TextStyle(
+                                                  color: Colors.white,
+                                                  fontSize: 15),
+                                            ),
+
+                                            // RaisedButton.icon(
+                                            //   onPressed: clearOfferDetail,
+                                            //   icon: Icon(Icons.clear_sharp,
+                                            //       size: 15.0),
+                                            //   label: Text("Clear"),
+                                            // )
+                                          ],
+                                        ),
+                                        backgroundColor: Colors.blueGrey[500],
+
+                                        children: <Widget>[
+                                          new Container(
+                                            width: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                .9,
+                                            decoration: darkContainer,
+                                            padding: EdgeInsets.all(2.0),
+                                            child: Row(
+                                              children: <Widget>[
+                                                Expanded(
+                                                  child: Text(offerInfoStr,
+                                                      style:
+                                                          buttonXSmlTextStyle),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                  Container(
+                                    padding:
+                                        EdgeInsets.only(left: 5.0, right: 5),
+                                    child: Column(
+                                      children: <Widget>[
+                                        messageField,
+                                        couponField,
+                                        Row(
+                                          children: <Widget>[
+                                            Expanded(child: startDateField),
+                                            Expanded(child: endDateField),
+                                          ],
+                                        ),
+                                        Row(
+                                          children: [
+                                            Container(
+                                                width: MediaQuery.of(context)
+                                                        .size
+                                                        .width *
+                                                    .3,
+                                                child: FlatButton(
+                                                  //elevation: 20,
+                                                  color: Colors.transparent,
+                                                  splashColor: highlightColor,
+                                                  textColor: btnColor,
+                                                  shape: RoundedRectangleBorder(
+                                                      side: BorderSide(
+                                                          color: btnColor)),
+                                                  child: Text(
+                                                    'Clear',
+                                                    textAlign: TextAlign.center,
+                                                  ),
+                                                  onPressed: () {
+                                                    setState(() {
+                                                      clearOfferDetail();
+                                                    });
+                                                  },
+                                                ))
+                                          ],
+                                        )
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                        SizedBox(
+                          height: 7,
+                        ),
+                        Container(
+                          width: MediaQuery.of(context).size.width * .9,
+                          margin: EdgeInsets.all(5),
+
+                          padding: EdgeInsets.all(0),
+                          decoration: BoxDecoration(
+                              border: Border.all(color: containerColor),
+                              color: Colors.grey[50],
+                              shape: BoxShape.rectangle,
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(5.0))),
+                          //padding: EdgeInsets.all(5.0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: <Widget>[
+                              Column(
+                                children: <Widget>[
+                                  Container(
+                                    //padding: EdgeInsets.only(left: 5),
+                                    decoration: darkContainer,
+                                    child: Theme(
+                                      data: ThemeData(
+                                        unselectedWidgetColor: Colors.white,
+                                        accentColor: Colors.grey[50],
+                                      ),
+                                      child: CustomExpansionTile(
+                                        //key: PageStorageKey(this.widget.headerTitle),
+                                        initiallyExpanded: false,
+                                        title: Row(
+                                          children: <Widget>[
+                                            Text(
+                                              "Current Location Details",
+                                              style: TextStyle(
+                                                  color: Colors.white,
+                                                  fontSize: 15),
+                                            ),
+                                            SizedBox(width: 5),
+                                          ],
+                                        ),
+                                        backgroundColor: Colors.blueGrey[500],
+
+                                        children: <Widget>[
+                                          new Container(
+                                            width: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                .94,
+                                            decoration: darkContainer,
+                                            padding: EdgeInsets.all(2.0),
+                                            child: Row(
+                                              children: <Widget>[
+                                                Expanded(
+                                                  child: Text(locationInfoStr,
+                                                      style:
+                                                          buttonXSmlTextStyle),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              Container(
+                                padding: EdgeInsets.only(left: 5.0, right: 5),
+                                child: Column(
+                                  children: <Widget>[
+                                    Column(children: <Widget>[
+                                      Container(
+                                        padding: EdgeInsets.all(4),
+                                        width:
+                                            MediaQuery.of(context).size.width *
+                                                .95,
+                                        child: RichText(
+                                            text: TextSpan(
+                                                style: highlightSubTextStyle,
+                                                children: <TextSpan>[
+                                              TextSpan(
+                                                  text:
+                                                      pressUseCurrentLocation +
+                                                          '\r\n'),
+                                              TextSpan(
+                                                  text:
+                                                      locationMarkingActiveInfo),
+                                            ])),
+                                      ),
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceAround,
+                                        children: <Widget>[
+                                          latField,
+                                          lonField,
+                                        ],
+                                      ),
+                                      verticalSpacer,
+                                    ]),
                                     Row(
                                       mainAxisAlignment:
                                           MainAxisAlignment.spaceAround,
                                       children: <Widget>[
-                                        latField,
-                                        lonField,
-                                      ],
-                                    ),
-                                    verticalSpacer,
-                                  ]),
-                                  Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceAround,
-                                    children: <Widget>[
-                                      clearBtn,
-                                      Container(
-                                        width:
-                                            MediaQuery.of(context).size.width *
-                                                .57,
-                                        child: RaisedButton(
-                                          elevation: 10,
-                                          color: btnColor,
-                                          splashColor: highlightColor,
-                                          textColor: Colors.white,
-                                          shape: RoundedRectangleBorder(
-                                              side:
-                                                  BorderSide(color: btnColor)),
-                                          child: Text(
-                                            userCurrentLoc,
-                                            textAlign: TextAlign.center,
-                                          ),
-                                          onPressed: useCurrLocation,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      SizedBox(
-                        height: 7,
-                      ),
-                      Container(
-                        width: MediaQuery.of(context).size.width * .9,
-                        margin: EdgeInsets.all(5),
-                        padding: EdgeInsets.all(0),
-                        decoration: BoxDecoration(
-                            border: Border.all(color: containerColor),
-                            color: Colors.grey[50],
-                            shape: BoxShape.rectangle,
-                            borderRadius:
-                                BorderRadius.all(Radius.circular(5.0))),
-                        //padding: EdgeInsets.all(5.0),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            Column(
-                              children: <Widget>[
-                                Container(
-                                  //padding: EdgeInsets.only(left: 5),
-                                  decoration: darkContainer,
-                                  child: Theme(
-                                    data: ThemeData(
-                                      unselectedWidgetColor: Colors.white,
-                                      accentColor: Colors.grey[50],
-                                    ),
-                                    child: CustomExpansionTile(
-                                      //key: PageStorageKey(this.widget.headerTitle),
-                                      initiallyExpanded: false,
-                                      title: Row(
-                                        children: <Widget>[
-                                          Text(
-                                            "Address",
-                                            style: TextStyle(
-                                                color: Colors.white,
-                                                fontSize: 15),
-                                          ),
-                                          SizedBox(width: 5),
-                                        ],
-                                      ),
-                                      backgroundColor: Colors.blueGrey[500],
-
-                                      children: <Widget>[
-                                        new Container(
+                                        clearBtn,
+                                        Container(
                                           width: MediaQuery.of(context)
                                                   .size
                                                   .width *
-                                              .94,
-                                          decoration: darkContainer,
-                                          padding: EdgeInsets.all(2.0),
-                                          child: Expanded(
-                                            child: Text(addressInfoStr,
-                                                style: buttonXSmlTextStyle),
+                                              .57,
+                                          child: RaisedButton(
+                                            elevation: 10,
+                                            color: btnColor,
+                                            splashColor: highlightColor,
+                                            textColor: Colors.white,
+                                            shape: RoundedRectangleBorder(
+                                                side: BorderSide(
+                                                    color: btnColor)),
+                                            child: Text(
+                                              userCurrentLoc,
+                                              textAlign: TextAlign.center,
+                                            ),
+                                            onPressed: useCurrLocation,
                                           ),
                                         ),
                                       ],
                                     ),
-                                  ),
+                                  ],
                                 ),
-                              ],
-                            ),
-                            Container(
-                              padding: EdgeInsets.only(left: 5.0, right: 5),
-                              child: Column(
+                              ),
+                            ],
+                          ),
+                        ),
+                        SizedBox(
+                          height: 7,
+                        ),
+                        Container(
+                          width: MediaQuery.of(context).size.width * .9,
+                          margin: EdgeInsets.all(5),
+                          padding: EdgeInsets.all(0),
+                          decoration: BoxDecoration(
+                              border: Border.all(color: containerColor),
+                              color: Colors.grey[50],
+                              shape: BoxShape.rectangle,
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(5.0))),
+                          //padding: EdgeInsets.all(5.0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: <Widget>[
+                              Column(
                                 children: <Widget>[
-                                  adrsField1,
-                                  landmarkField2,
-                                  localityField,
-                                  cityField,
-                                  stateField,
-                                  pinField,
-                                  countryField,
+                                  Container(
+                                    //padding: EdgeInsets.only(left: 5),
+                                    decoration: darkContainer,
+                                    child: Theme(
+                                      data: ThemeData(
+                                        unselectedWidgetColor: Colors.white,
+                                        accentColor: Colors.grey[50],
+                                      ),
+                                      child: CustomExpansionTile(
+                                        //key: PageStorageKey(this.widget.headerTitle),
+                                        initiallyExpanded: false,
+                                        title: Row(
+                                          children: <Widget>[
+                                            Text(
+                                              "Address",
+                                              style: TextStyle(
+                                                  color: Colors.white,
+                                                  fontSize: 15),
+                                            ),
+                                            SizedBox(width: 5),
+                                          ],
+                                        ),
+                                        backgroundColor: Colors.blueGrey[500],
+
+                                        children: <Widget>[
+                                          new Container(
+                                            width: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                .94,
+                                            decoration: darkContainer,
+                                            padding: EdgeInsets.all(2.0),
+                                            child: Expanded(
+                                              child: Text(addressInfoStr,
+                                                  style: buttonXSmlTextStyle),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
                                 ],
                               ),
-                            ),
-                          ],
+                              Container(
+                                padding: EdgeInsets.only(left: 5.0, right: 5),
+                                child: Column(
+                                  children: <Widget>[
+                                    adrsField1,
+                                    landmarkField2,
+                                    localityField,
+                                    cityField,
+                                    stateField,
+                                    pinField,
+                                    countryField,
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
-                      ),
-                      SizedBox(
-                        height: 7,
-                      ),
-                      Container(
-                        width: MediaQuery.of(context).size.width * .9,
-                        margin: EdgeInsets.all(5),
-                        padding: EdgeInsets.all(5),
-                        // padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
-                        decoration: BoxDecoration(
-                            border: Border.all(color: containerColor),
-                            color: Colors.grey[50],
-                            shape: BoxShape.rectangle,
-                            borderRadius:
-                                BorderRadius.all(Radius.circular(5.0))),
-                        child: Column(
-                          mainAxisSize: MainAxisSize.max,
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: <Widget>[
-                            Column(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              mainAxisSize: MainAxisSize.max,
-                              children: <Widget>[
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Container(
-                                      alignment: Alignment.centerLeft,
-                                      padding:
-                                          EdgeInsets.fromLTRB(10, 0, 10, 0),
-                                      width: rowWidth * .4,
-                                      child: FlatButton(
-                                          visualDensity: VisualDensity.compact,
-                                          padding: EdgeInsets.all(0),
-                                          child: Row(
-                                            mainAxisSize: MainAxisSize.min,
-                                            children: <Widget>[
-                                              Text('Public',
-                                                  style:
-                                                      TextStyle(fontSize: 14)),
-                                              SizedBox(
-                                                width: MediaQuery.of(context)
-                                                        .size
-                                                        .width *
-                                                    .1,
-                                                // height: MediaQuery.of(context)
-                                                //         .size
-                                                //         .height *
-                                                //     .02,
-                                                child: Icon(
-                                                  Icons.info,
-                                                  color: Colors.blueGrey[600],
-                                                  size: 17,
+                        SizedBox(
+                          height: 7,
+                        ),
+                        Container(
+                          width: MediaQuery.of(context).size.width * .9,
+                          margin: EdgeInsets.all(5),
+                          padding: EdgeInsets.all(5),
+                          // padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
+                          decoration: BoxDecoration(
+                              border: Border.all(color: containerColor),
+                              color: Colors.grey[50],
+                              shape: BoxShape.rectangle,
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(5.0))),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.max,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: <Widget>[
+                              Column(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceEvenly,
+                                mainAxisSize: MainAxisSize.max,
+                                children: <Widget>[
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Container(
+                                        alignment: Alignment.centerLeft,
+                                        padding:
+                                            EdgeInsets.fromLTRB(10, 0, 10, 0),
+                                        width: rowWidth * .4,
+                                        child: FlatButton(
+                                            visualDensity:
+                                                VisualDensity.compact,
+                                            padding: EdgeInsets.all(0),
+                                            child: Row(
+                                              mainAxisSize: MainAxisSize.min,
+                                              children: <Widget>[
+                                                Text('Public',
+                                                    style: TextStyle(
+                                                        fontSize: 14)),
+                                                SizedBox(
+                                                  width: MediaQuery.of(context)
+                                                          .size
+                                                          .width *
+                                                      .1,
+                                                  // height: MediaQuery.of(context)
+                                                  //         .size
+                                                  //         .height *
+                                                  //     .02,
+                                                  child: Icon(
+                                                    Icons.info,
+                                                    color: Colors.blueGrey[600],
+                                                    size: 17,
+                                                  ),
                                                 ),
-                                              ),
-                                            ],
-                                          ),
-                                          onPressed: () {
-                                            if (!_isExpanded) {
-                                              setState(() {
-                                                _publicExpandClick = true;
-                                                _isExpanded = true;
-                                                _margin = EdgeInsets.fromLTRB(
-                                                    0, 0, 0, 8);
-                                                _width = MediaQuery.of(context)
-                                                        .size
-                                                        .width *
-                                                    .9;
-                                                _text = AutoSizeText(publicInfo,
-                                                    minFontSize: 8,
-                                                    maxFontSize: 14,
-                                                    style:
-                                                        textBotSheetTextStyle);
-
-                                                _height = 60;
-                                              });
-                                            } else {
-                                              //if bookable info is being shown
-                                              if (_publicExpandClick) {
-                                                setState(() {
-                                                  _width = 0;
-                                                  _height = 0;
-                                                  _isExpanded = false;
-                                                  _publicExpandClick = false;
-                                                });
-                                              } else {
+                                              ],
+                                            ),
+                                            onPressed: () {
+                                              if (!_isExpanded) {
                                                 setState(() {
                                                   _publicExpandClick = true;
-                                                  _activeExpandClick = false;
-                                                  _bookExpandClick = false;
                                                   _isExpanded = true;
                                                   _margin = EdgeInsets.fromLTRB(
                                                       0, 0, 0, 8);
@@ -2604,55 +2599,218 @@ class _ManageChildEntityDetailsPageState
 
                                                   _height = 60;
                                                 });
+                                              } else {
+                                                //if bookable info is being shown
+                                                if (_publicExpandClick) {
+                                                  setState(() {
+                                                    _width = 0;
+                                                    _height = 0;
+                                                    _isExpanded = false;
+                                                    _publicExpandClick = false;
+                                                  });
+                                                } else {
+                                                  setState(() {
+                                                    _publicExpandClick = true;
+                                                    _activeExpandClick = false;
+                                                    _bookExpandClick = false;
+                                                    _isExpanded = true;
+                                                    _margin =
+                                                        EdgeInsets.fromLTRB(
+                                                            0, 0, 0, 8);
+                                                    _width =
+                                                        MediaQuery.of(context)
+                                                                .size
+                                                                .width *
+                                                            .9;
+                                                    _text = AutoSizeText(
+                                                        publicInfo,
+                                                        minFontSize: 8,
+                                                        maxFontSize: 14,
+                                                        style:
+                                                            textBotSheetTextStyle);
+
+                                                    _height = 60;
+                                                  });
+                                                }
                                               }
-                                            }
-                                          }),
-                                    ),
-                                    SizedBox(
-                                      height:
-                                          MediaQuery.of(context).size.height *
-                                              .08,
-                                      width: MediaQuery.of(context).size.width *
-                                          .2,
-                                      child: Transform.scale(
-                                        scale: .7,
-                                        alignment: Alignment.centerRight,
-                                        child: Switch(
-                                          materialTapTargetSize:
-                                              MaterialTapTargetSize.shrinkWrap,
-                                          value: isPublic,
-                                          onChanged: (value) {
-                                            setState(() {
-                                              isPublic = value;
-                                              serviceEntity.isPublic = value;
-                                              print(isPublic);
-                                              //}
-                                            });
-                                          },
-                                          // activeTrackColor: Colors.green,
-                                          activeColor: Colors.green,
-                                          inactiveThumbColor: Colors.grey[300],
+                                            }),
+                                      ),
+                                      SizedBox(
+                                        height:
+                                            MediaQuery.of(context).size.height *
+                                                .08,
+                                        width:
+                                            MediaQuery.of(context).size.width *
+                                                .2,
+                                        child: Transform.scale(
+                                          scale: .7,
+                                          alignment: Alignment.centerRight,
+                                          child: Switch(
+                                            materialTapTargetSize:
+                                                MaterialTapTargetSize
+                                                    .shrinkWrap,
+                                            value: isPublic,
+                                            onChanged: (value) {
+                                              setState(() {
+                                                isPublic = value;
+                                                serviceEntity.isPublic = value;
+                                                print(isPublic);
+                                                //}
+                                              });
+                                            },
+                                            // activeTrackColor: Colors.green,
+                                            activeColor: Colors.green,
+                                            inactiveThumbColor:
+                                                Colors.grey[300],
+                                          ),
                                         ),
                                       ),
-                                    ),
-                                  ],
-                                ),
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Container(
-                                      alignment: Alignment.centerLeft,
-                                      padding:
-                                          EdgeInsets.fromLTRB(10, 0, 10, 0),
-                                      width: rowWidth * .4,
-                                      child: FlatButton(
+                                    ],
+                                  ),
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Container(
+                                        alignment: Alignment.centerLeft,
+                                        padding:
+                                            EdgeInsets.fromLTRB(10, 0, 10, 0),
+                                        width: rowWidth * .4,
+                                        child: FlatButton(
+                                            visualDensity:
+                                                VisualDensity.compact,
+                                            padding: EdgeInsets.all(0),
+                                            child: Row(
+                                                mainAxisSize: MainAxisSize.min,
+                                                children: <Widget>[
+                                                  Text('Bookable',
+                                                      style: TextStyle(
+                                                          fontSize: 14)),
+                                                  SizedBox(
+                                                    width:
+                                                        MediaQuery.of(context)
+                                                                .size
+                                                                .width *
+                                                            .1,
+                                                    // height: MediaQuery.of(context)
+                                                    //         .size
+                                                    //         .height *
+                                                    //     .02,
+                                                    child: Icon(Icons.info,
+                                                        color: Colors
+                                                            .blueGrey[600],
+                                                        size: 17),
+                                                  ),
+                                                ]),
+                                            onPressed: () {
+                                              if (!_isExpanded) {
+                                                setState(() {
+                                                  _bookExpandClick = true;
+                                                  _isExpanded = true;
+                                                  _margin = EdgeInsets.fromLTRB(
+                                                      0, 0, 0, 8);
+                                                  _width =
+                                                      MediaQuery.of(context)
+                                                              .size
+                                                              .width *
+                                                          .9;
+                                                  _text = AutoSizeText(
+                                                      bookableInfo,
+                                                      minFontSize: 8,
+                                                      maxFontSize: 14,
+                                                      style:
+                                                          textBotSheetTextStyle);
+                                                  _height = 60;
+                                                });
+                                              } else {
+                                                //if bookable info is being shown
+                                                if (_bookExpandClick) {
+                                                  setState(() {
+                                                    _width = 0;
+                                                    _height = 0;
+                                                    _isExpanded = false;
+                                                    _bookExpandClick = false;
+                                                  });
+                                                } else {
+                                                  setState(() {
+                                                    _publicExpandClick = false;
+                                                    _activeExpandClick = false;
+                                                    _bookExpandClick = true;
+                                                    _isExpanded = true;
+                                                    _margin =
+                                                        EdgeInsets.fromLTRB(
+                                                            0, 0, 0, 8);
+                                                    _width =
+                                                        MediaQuery.of(context)
+                                                                .size
+                                                                .width *
+                                                            .9;
+                                                    _text = AutoSizeText(
+                                                        bookableInfo,
+                                                        minFontSize: 8,
+                                                        maxFontSize: 14,
+                                                        style:
+                                                            textBotSheetTextStyle);
+
+                                                    _height = 60;
+                                                  });
+                                                }
+                                              }
+                                            }),
+                                      ),
+                                      SizedBox(
+                                        height:
+                                            MediaQuery.of(context).size.height *
+                                                .08,
+                                        width:
+                                            MediaQuery.of(context).size.width *
+                                                .2,
+                                        child: Transform.scale(
+                                          scale: .7,
+                                          alignment: Alignment.centerRight,
+                                          child: Switch(
+                                            materialTapTargetSize:
+                                                MaterialTapTargetSize
+                                                    .shrinkWrap,
+                                            value: isBookable,
+                                            onChanged: (value) {
+                                              setState(() {
+                                                isBookable = value;
+                                                serviceEntity.isBookable =
+                                                    value;
+
+                                                if (value) {
+                                                  showConfirmationDialog();
+                                                  //TODO: SMita - show msg with info, yes/no
+                                                }
+                                                print(isBookable);
+                                              });
+                                            },
+                                            // activeTrackColor: Colors.green,
+                                            activeColor: Colors.green,
+                                            inactiveThumbColor:
+                                                Colors.grey[300],
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Container(
+                                        alignment: Alignment.centerLeft,
+                                        padding:
+                                            EdgeInsets.fromLTRB(10, 0, 10, 0),
+                                        width: rowWidth * .4,
+                                        child: FlatButton(
                                           visualDensity: VisualDensity.compact,
                                           padding: EdgeInsets.all(0),
                                           child: Row(
                                               mainAxisSize: MainAxisSize.min,
                                               children: <Widget>[
-                                                Text('Bookable',
+                                                Text('Active',
                                                     style: TextStyle(
                                                         fontSize: 14)),
                                                 SizedBox(
@@ -2673,154 +2831,7 @@ class _ManageChildEntityDetailsPageState
                                           onPressed: () {
                                             if (!_isExpanded) {
                                               setState(() {
-                                                _bookExpandClick = true;
-                                                _isExpanded = true;
-                                                _margin = EdgeInsets.fromLTRB(
-                                                    0, 0, 0, 8);
-                                                _width = MediaQuery.of(context)
-                                                        .size
-                                                        .width *
-                                                    .9;
-                                                _text = AutoSizeText(
-                                                    bookableInfo,
-                                                    minFontSize: 8,
-                                                    maxFontSize: 14,
-                                                    style:
-                                                        textBotSheetTextStyle);
-                                                _height = 60;
-                                              });
-                                            } else {
-                                              //if bookable info is being shown
-                                              if (_bookExpandClick) {
-                                                setState(() {
-                                                  _width = 0;
-                                                  _height = 0;
-                                                  _isExpanded = false;
-                                                  _bookExpandClick = false;
-                                                });
-                                              } else {
-                                                setState(() {
-                                                  _publicExpandClick = false;
-                                                  _activeExpandClick = false;
-                                                  _bookExpandClick = true;
-                                                  _isExpanded = true;
-                                                  _margin = EdgeInsets.fromLTRB(
-                                                      0, 0, 0, 8);
-                                                  _width =
-                                                      MediaQuery.of(context)
-                                                              .size
-                                                              .width *
-                                                          .9;
-                                                  _text = AutoSizeText(
-                                                      bookableInfo,
-                                                      minFontSize: 8,
-                                                      maxFontSize: 14,
-                                                      style:
-                                                          textBotSheetTextStyle);
-
-                                                  _height = 60;
-                                                });
-                                              }
-                                            }
-                                          }),
-                                    ),
-                                    SizedBox(
-                                      height:
-                                          MediaQuery.of(context).size.height *
-                                              .08,
-                                      width: MediaQuery.of(context).size.width *
-                                          .2,
-                                      child: Transform.scale(
-                                        scale: .7,
-                                        alignment: Alignment.centerRight,
-                                        child: Switch(
-                                          materialTapTargetSize:
-                                              MaterialTapTargetSize.shrinkWrap,
-                                          value: isBookable,
-                                          onChanged: (value) {
-                                            setState(() {
-                                              isBookable = value;
-                                              serviceEntity.isBookable = value;
-
-                                              if (value) {
-                                                showConfirmationDialog();
-                                                //TODO: SMita - show msg with info, yes/no
-                                              }
-                                              print(isBookable);
-                                            });
-                                          },
-                                          // activeTrackColor: Colors.green,
-                                          activeColor: Colors.green,
-                                          inactiveThumbColor: Colors.grey[300],
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Container(
-                                      alignment: Alignment.centerLeft,
-                                      padding:
-                                          EdgeInsets.fromLTRB(10, 0, 10, 0),
-                                      width: rowWidth * .4,
-                                      child: FlatButton(
-                                        visualDensity: VisualDensity.compact,
-                                        padding: EdgeInsets.all(0),
-                                        child: Row(
-                                            mainAxisSize: MainAxisSize.min,
-                                            children: <Widget>[
-                                              Text('Active',
-                                                  style:
-                                                      TextStyle(fontSize: 14)),
-                                              SizedBox(
-                                                width: MediaQuery.of(context)
-                                                        .size
-                                                        .width *
-                                                    .1,
-                                                // height: MediaQuery.of(context)
-                                                //         .size
-                                                //         .height *
-                                                //     .02,
-                                                child: Icon(Icons.info,
-                                                    color: Colors.blueGrey[600],
-                                                    size: 17),
-                                              ),
-                                            ]),
-                                        onPressed: () {
-                                          if (!_isExpanded) {
-                                            setState(() {
-                                              _activeExpandClick = true;
-                                              _isExpanded = true;
-                                              _margin = EdgeInsets.fromLTRB(
-                                                  0, 0, 0, 8);
-                                              _width = MediaQuery.of(context)
-                                                      .size
-                                                      .width *
-                                                  .9;
-                                              _text = AutoSizeText(activeDef,
-                                                  minFontSize: 8,
-                                                  maxFontSize: 14,
-                                                  style: textBotSheetTextStyle);
-
-                                              _height = 60;
-                                            });
-                                          } else {
-                                            //if bookable info is being shown
-                                            if (_activeExpandClick) {
-                                              setState(() {
-                                                _width = 0;
-                                                _height = 0;
-                                                _isExpanded = false;
-                                                _activeExpandClick = false;
-                                              });
-                                            } else {
-                                              setState(() {
-                                                _publicExpandClick = false;
                                                 _activeExpandClick = true;
-                                                _bookExpandClick = false;
                                                 _isExpanded = true;
                                                 _margin = EdgeInsets.fromLTRB(
                                                     0, 0, 0, 8);
@@ -2836,315 +2847,400 @@ class _ManageChildEntityDetailsPageState
 
                                                 _height = 60;
                                               });
-                                            }
-                                          }
-                                        },
-                                      ),
-                                    ),
-                                    SizedBox(
-                                      height:
-                                          MediaQuery.of(context).size.height *
-                                              .08,
-                                      width: MediaQuery.of(context).size.width *
-                                          .2,
-                                      child: Transform.scale(
-                                        scale: .7,
-                                        alignment: Alignment.centerRight,
-                                        child: Switch(
-                                          materialTapTargetSize:
-                                              MaterialTapTargetSize.shrinkWrap,
-                                          value: isActive,
-                                          onChanged: (value) {
-                                            setState(() {
-                                              if (value) {
-                                                validateField = true;
-                                                _autoValidate = true;
-                                                bool retVal = false;
-                                                bool locValid = false;
-                                                if (validateAllFields())
-                                                  retVal = true;
-                                                if (validateLatLon())
-                                                  locValid = true;
+                                            } else {
+                                              //if bookable info is being shown
+                                              if (_activeExpandClick) {
+                                                setState(() {
+                                                  _width = 0;
+                                                  _height = 0;
+                                                  _isExpanded = false;
+                                                  _activeExpandClick = false;
+                                                });
+                                              } else {
+                                                setState(() {
+                                                  _publicExpandClick = false;
+                                                  _activeExpandClick = true;
+                                                  _bookExpandClick = false;
+                                                  _isExpanded = true;
+                                                  _margin = EdgeInsets.fromLTRB(
+                                                      0, 0, 0, 8);
+                                                  _width =
+                                                      MediaQuery.of(context)
+                                                              .size
+                                                              .width *
+                                                          .9;
+                                                  _text = AutoSizeText(
+                                                      activeDef,
+                                                      minFontSize: 8,
+                                                      maxFontSize: 14,
+                                                      style:
+                                                          textBotSheetTextStyle);
 
-                                                if (!locValid || !retVal) {
-                                                  if (!locValid) {
-                                                    Utils.showMyFlushbar(
-                                                        context,
-                                                        Icons.info_outline,
-                                                        Duration(
-                                                          seconds: 6,
-                                                        ),
-                                                        shouldSetLocation,
-                                                        pressUseCurrentLocation);
-                                                  } else if (!retVal) {
-                                                    //Show flushbar with info that fields has invalid data
-                                                    Utils.showMyFlushbar(
-                                                        context,
-                                                        Icons.info_outline,
-                                                        Duration(
-                                                          seconds: 6,
-                                                        ),
-                                                        "Missing Information!!",
-                                                        'Making a place "ACTIVE" requires all mandatory information to be filled in. Please provide the details and Save.');
+                                                  _height = 60;
+                                                });
+                                              }
+                                            }
+                                          },
+                                        ),
+                                      ),
+                                      SizedBox(
+                                        height:
+                                            MediaQuery.of(context).size.height *
+                                                .08,
+                                        width:
+                                            MediaQuery.of(context).size.width *
+                                                .2,
+                                        child: Transform.scale(
+                                          scale: .7,
+                                          alignment: Alignment.centerRight,
+                                          child: Switch(
+                                            materialTapTargetSize:
+                                                MaterialTapTargetSize
+                                                    .shrinkWrap,
+                                            value: isActive,
+                                            onChanged: (value) {
+                                              setState(() {
+                                                if (value) {
+                                                  validateField = true;
+                                                  _autoValidate = true;
+                                                  bool retVal = false;
+                                                  bool locValid = false;
+                                                  if (validateAllFields())
+                                                    retVal = true;
+                                                  if (validateLatLon())
+                                                    locValid = true;
+
+                                                  if (!locValid || !retVal) {
+                                                    if (!locValid) {
+                                                      Utils.showMyFlushbar(
+                                                          context,
+                                                          Icons.info_outline,
+                                                          Duration(
+                                                            seconds: 6,
+                                                          ),
+                                                          shouldSetLocation,
+                                                          pressUseCurrentLocation);
+                                                    } else if (!retVal) {
+                                                      //Show flushbar with info that fields has invalid data
+                                                      Utils.showMyFlushbar(
+                                                          context,
+                                                          Icons.info_outline,
+                                                          Duration(
+                                                            seconds: 6,
+                                                          ),
+                                                          "Missing Information!!",
+                                                          'Making a place "ACTIVE" requires all mandatory information to be filled in. Please provide the details and Save.');
+                                                    }
+                                                  } else {
+                                                    validateField = false;
+                                                    isActive = value;
+                                                    serviceEntity.isActive =
+                                                        value;
+                                                    print(isActive);
                                                   }
                                                 } else {
-                                                  validateField = false;
                                                   isActive = value;
+                                                  validateField = false;
+                                                  _autoValidate = false;
                                                   serviceEntity.isActive =
                                                       value;
                                                   print(isActive);
                                                 }
-                                              } else {
-                                                isActive = value;
-                                                validateField = false;
-                                                _autoValidate = false;
-                                                serviceEntity.isActive = value;
-                                                print(isActive);
-                                              }
-                                            });
-                                          },
-                                          // activeTrackColor: Colors.green,
-                                          activeColor: Colors.green,
-                                          inactiveThumbColor: Colors.grey[300],
+                                              });
+                                            },
+                                            // activeTrackColor: Colors.green,
+                                            activeColor: Colors.green,
+                                            inactiveThumbColor:
+                                                Colors.grey[300],
+                                          ),
                                         ),
-                                      ),
-                                    )
+                                      )
+                                    ],
+                                  ),
+                                ],
+                              ),
+                              AnimatedContainer(
+                                padding: EdgeInsets.all(5),
+                                margin: EdgeInsets.all(5),
+                                // Use the properties stored in the State class.
+                                width: _width,
+                                height: _height,
+                                alignment: Alignment.center,
+                                decoration: BoxDecoration(
+                                  color: Colors.transparent,
+                                  border: Border.all(color: Colors.blueGrey),
+                                  borderRadius: _borderRadius,
+                                ),
+                                // Define how long the animation should take.
+                                duration: Duration(seconds: 1),
+                                // Provide an optional curve to make the animation feel smoother.
+                                curve: Curves.easeInOutCirc,
+                                child: Center(child: _text),
+                              ),
+                            ],
+                          ),
+                        ),
+                        SizedBox(
+                          height: 7,
+                        ),
+                        Builder(
+                          builder: (context) => Card(
+                            elevation: 8,
+                            child: GestureDetector(
+                              onTap: () {
+                                print("FlushbarStatus-------");
+                                processSaveWithTimer();
+                              },
+                              child: Container(
+                                padding: EdgeInsets.zero,
+                                margin: EdgeInsets.zero,
+                                height: 40,
+                                decoration: new BoxDecoration(
+                                    gradient: new LinearGradient(
+                                        colors: [
+                                          Colors.cyan[400],
+                                          Colors.cyan[700]
+                                        ],
+                                        begin: const FractionalOffset(0.0, 0.0),
+                                        end: const FractionalOffset(1.0, 0.0),
+                                        stops: [0.0, 1.0],
+                                        tileMode: TileMode.clamp),
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(5))),
+                                // width: MediaQuery.of(context).size.width * .35,
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: <Widget>[
+                                    Icon(
+                                      Icons.save,
+                                      size: 25,
+                                      color: Colors.white,
+                                    ),
+                                    SizedBox(
+                                      width: 10,
+                                    ),
+                                    Text(
+                                      'Save',
+                                      style: buttonMedTextStyle,
+                                    ),
                                   ],
                                 ),
-                              ],
-                            ),
-                            AnimatedContainer(
-                              padding: EdgeInsets.all(5),
-                              margin: EdgeInsets.all(5),
-                              // Use the properties stored in the State class.
-                              width: _width,
-                              height: _height,
-                              alignment: Alignment.center,
-                              decoration: BoxDecoration(
-                                color: Colors.transparent,
-                                border: Border.all(color: Colors.blueGrey),
-                                borderRadius: _borderRadius,
                               ),
-                              // Define how long the animation should take.
-                              duration: Duration(seconds: 1),
-                              // Provide an optional curve to make the animation feel smoother.
-                              curve: Curves.easeInOutCirc,
-                              child: Center(child: _text),
                             ),
-                          ],
+                          ),
                         ),
-                      ),
-                      SizedBox(
-                        height: 7,
-                      ),
-                      Builder(
-                        builder: (context) => RaisedButton(
-                            color: btnColor,
-                            splashColor: highlightColor,
-                            child: Container(
-                              // width: MediaQuery.of(context).size.width * .35,
-                              child: Column(
-                                children: <Widget>[
-                                  Text(
-                                    'Save',
-                                    style: buttonMedTextStyle,
-                                  ),
-                                  // Text(
-                                  //   'Save this service',
-                                  //   style: buttonXSmlTextStyle,
-                                  // ),
-                                ],
-                              ),
-                            ),
-                            onPressed: () {
-                              processSaveWithTimer();
+                        Builder(
+                          builder: (context) => Container(
+                            margin: EdgeInsets.fromLTRB(6, 15, 6, 15),
+                            height: 40,
+                            decoration: new BoxDecoration(
+                                border: Border.all(color: Colors.teal[200]),
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(5))),
+                            //width: MediaQuery.of(context).size.width * .35,
+                            child: MaterialButton(
+                                child: Column(
+                                  children: <Widget>[
+                                    Text(
+                                      'Delete',
+                                      style: TextStyle(
+                                        color: btnColor,
+                                        fontWeight: FontWeight.w500,
+                                        fontFamily: 'Montserrat',
+                                        letterSpacing: 1.3,
 
-                              //processSaveWithTimer();
-                            }),
-                      ),
-                      Builder(
-                        builder: (context) => RaisedButton(
-                            color: Colors.blueGrey[400],
-                            splashColor: highlightColor,
-                            child: Container(
-                              //width: MediaQuery.of(context).size.width * .35,
-                              child: Column(
-                                children: <Widget>[
-                                  Text(
-                                    'Delete',
-                                    style: buttonMedTextStyle,
-                                  ),
-                                  Text(
-                                    'Delete this amenity/service',
-                                    style: buttonXSmlTextStyle,
-                                  ),
-                                ],
-                              ),
-                            ),
-                            onPressed: () {
-                              String _errorMessage;
-                              showDialog(
-                                  context: context,
-                                  barrierDismissible: true,
-                                  builder: (BuildContext context) {
-                                    return StatefulBuilder(
-                                        builder: (context, setState) {
-                                      return new AlertDialog(
-                                        backgroundColor: Colors.grey[200],
-                                        // titleTextStyle: inputTextStyle,
-                                        elevation: 10.0,
-                                        content: Column(
-                                          mainAxisSize: MainAxisSize.min,
-                                          children: <Widget>[
-                                            RichText(
-                                              text: TextSpan(
-                                                  style: lightSubTextStyle,
-                                                  children: <TextSpan>[
-                                                    TextSpan(text: "Enter "),
-                                                    TextSpan(
-                                                        text: "DELETE ",
-                                                        style: errorTextStyle),
-                                                    TextSpan(
-                                                        text:
-                                                            "to permanently delete this entity and all its services. Once deleted you cannot restore them. "),
-                                                  ]),
-                                            ),
-                                            new Row(
+                                        fontSize: 17,
+                                        //height: 2,
+                                      ),
+                                    ),
+                                    Text(
+                                      'Delete this entity and all places/amenities/services',
+                                      style: TextStyle(
+                                        color: btnColor,
+                                        fontWeight: FontWeight.w500,
+                                        fontFamily: 'Montserrat',
+                                        fontSize: 11,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                onPressed: () {
+                                  String _errorMessage;
+                                  showDialog(
+                                      context: context,
+                                      barrierDismissible: true,
+                                      builder: (BuildContext context) {
+                                        return StatefulBuilder(
+                                            builder: (context, setState) {
+                                          return new AlertDialog(
+                                            backgroundColor: Colors.grey[200],
+                                            // titleTextStyle: inputTextStyle,
+                                            elevation: 10.0,
+                                            content: Column(
+                                              mainAxisSize: MainAxisSize.min,
                                               children: <Widget>[
-                                                new Expanded(
-                                                  child: new TextField(
-                                                    style: inputTextStyle,
-                                                    textCapitalization:
-                                                        TextCapitalization
-                                                            .characters,
-                                                    controller: _txtController,
-                                                    decoration: InputDecoration(
-                                                      hintText: 'eg. delete',
-                                                      enabledBorder:
-                                                          UnderlineInputBorder(
-                                                              borderSide: BorderSide(
-                                                                  color: Colors
-                                                                      .grey)),
-                                                      focusedBorder:
-                                                          UnderlineInputBorder(
-                                                              borderSide: BorderSide(
-                                                                  color: Colors
-                                                                      .orange)),
-                                                    ),
-                                                    onEditingComplete: () {
-                                                      print(
-                                                          _txtController.text);
-                                                    },
-                                                    onChanged: (value) {
-                                                      if (value.toUpperCase() ==
-                                                          "DELETE"
-                                                              .toUpperCase())
-                                                        setState(() {
-                                                          _delEnabled = true;
-                                                          _errorMessage = null;
-                                                        });
-                                                      else
-                                                        setState(() {
-                                                          _errorMessage =
-                                                              "You have to enter DELETE to proceed.";
-                                                        });
-                                                    },
-                                                    autofocus: false,
-                                                  ),
-                                                )
+                                                RichText(
+                                                  text: TextSpan(
+                                                      style: lightSubTextStyle,
+                                                      children: <TextSpan>[
+                                                        TextSpan(
+                                                            text: "Enter "),
+                                                        TextSpan(
+                                                            text: "DELETE ",
+                                                            style:
+                                                                errorTextStyle),
+                                                        TextSpan(
+                                                            text:
+                                                                "to permanently delete this entity and all its services. Once deleted you cannot restore them. "),
+                                                      ]),
+                                                ),
+                                                new Row(
+                                                  children: <Widget>[
+                                                    new Expanded(
+                                                      child: new TextField(
+                                                        style: inputTextStyle,
+                                                        textCapitalization:
+                                                            TextCapitalization
+                                                                .characters,
+                                                        controller:
+                                                            _txtController,
+                                                        decoration:
+                                                            InputDecoration(
+                                                          hintText:
+                                                              'eg. delete',
+                                                          enabledBorder:
+                                                              UnderlineInputBorder(
+                                                                  borderSide:
+                                                                      BorderSide(
+                                                                          color:
+                                                                              Colors.grey)),
+                                                          focusedBorder:
+                                                              UnderlineInputBorder(
+                                                                  borderSide:
+                                                                      BorderSide(
+                                                                          color:
+                                                                              Colors.orange)),
+                                                        ),
+                                                        onEditingComplete: () {
+                                                          print(_txtController
+                                                              .text);
+                                                        },
+                                                        onChanged: (value) {
+                                                          if (value
+                                                                  .toUpperCase() ==
+                                                              "DELETE"
+                                                                  .toUpperCase())
+                                                            setState(() {
+                                                              _delEnabled =
+                                                                  true;
+                                                              _errorMessage =
+                                                                  null;
+                                                            });
+                                                          else
+                                                            setState(() {
+                                                              _errorMessage =
+                                                                  "You have to enter DELETE to proceed.";
+                                                            });
+                                                        },
+                                                        autofocus: false,
+                                                      ),
+                                                    )
+                                                  ],
+                                                ),
+                                                (_errorMessage != null
+                                                    ? Text(
+                                                        _errorMessage,
+                                                        style: errorTextStyle,
+                                                      )
+                                                    : Container()),
                                               ],
                                             ),
-                                            (_errorMessage != null
-                                                ? Text(
-                                                    _errorMessage,
-                                                    style: errorTextStyle,
-                                                  )
-                                                : Container()),
-                                          ],
-                                        ),
 
-                                        contentPadding: EdgeInsets.all(10),
-                                        actions: <Widget>[
-                                          RaisedButton(
-                                            color: (_delEnabled)
-                                                ? btnColor
-                                                : Colors.blueGrey[200],
-                                            elevation: (_delEnabled) ? 20 : 0,
-                                            onPressed: () {
-                                              if (_delEnabled) {
-                                                String parentEntityId =
-                                                    serviceEntity.parentId;
+                                            contentPadding: EdgeInsets.all(10),
+                                            actions: <Widget>[
+                                              RaisedButton(
+                                                color: (_delEnabled)
+                                                    ? btnColor
+                                                    : Colors.blueGrey[200],
+                                                elevation:
+                                                    (_delEnabled) ? 20 : 0,
+                                                onPressed: () {
+                                                  if (_delEnabled) {
+                                                    String parentEntityId =
+                                                        serviceEntity.parentId;
 
-                                                Entity parentEntity;
+                                                    Entity parentEntity;
 
-                                                //     .deleteEntity(serviceEntity.id)
-                                                //     .whenComplete(() {
-                                                //   Navigator.pop(context);
+                                                    //     .deleteEntity(serviceEntity.id)
+                                                    //     .whenComplete(() {
+                                                    //   Navigator.pop(context);
 
-                                                //   getEntity(parentEntityId)
-                                                //       .then((value) =>
-                                                //           parentEntity = value)
-                                                //       .whenComplete(() => Navigator.push(
-                                                //           context,
-                                                //           MaterialPageRoute(
-                                                //               builder: (context) =>
-                                                //                   EntityServicesListPage(
-                                                //                       entity:
-                                                //                           parentEntity))));
-                                                // });
+                                                    //   getEntity(parentEntityId)
+                                                    //       .then((value) =>
+                                                    //           parentEntity = value)
+                                                    //       .whenComplete(() => Navigator.push(
+                                                    //           context,
+                                                    //           MaterialPageRoute(
+                                                    //               builder: (context) =>
+                                                    //                   EntityServicesListPage(
+                                                    //                       entity:
+                                                    //                           parentEntity))));
+                                                    // });
 //TODO: Problem in this method, not deleting entity from list
-                                                deleteEntity(
-                                                        serviceEntity.entityId)
-                                                    .whenComplete(() {
-                                                  _gs
-                                                      .getEntity(parentEntityId)
-                                                      .then((value) => {
-                                                            parentEntity =
-                                                                value.item1
-                                                          })
-                                                      .whenComplete(() {
-                                                    _gs.removeEntity(
-                                                        serviceEntity.entityId);
-                                                    Navigator.pop(context);
-                                                    Navigator.push(
-                                                        context,
-                                                        MaterialPageRoute(
-                                                            builder: (context) =>
-                                                                ManageChildEntityListPage(
-                                                                    entity:
-                                                                        parentEntity)));
-                                                  });
-                                                });
-                                              }
-                                            },
-                                            splashColor: (_delEnabled)
-                                                ? highlightColor
-                                                : Colors.blueGrey[200],
-                                            child: Container(
-                                              width: MediaQuery.of(context)
-                                                      .size
-                                                      .width *
-                                                  .3,
-                                              alignment: Alignment.center,
-                                              child: Text("Delete",
-                                                  style: TextStyle(
-                                                      color: Colors.white)),
-                                            ),
-                                          ),
-                                          // (_errorMessage != null
-                                          //     ? Text(
-                                          //         _errorMessage,
-                                          //         style: TextStyle(color: Colors.red),
-                                          //       )
-                                          //     : Container()),
-                                        ],
-                                      );
-                                    });
-                                  });
-                            }),
-                      ),
-                    ],
-                  ),
+                                                    deleteEntity(serviceEntity
+                                                            .entityId)
+                                                        .whenComplete(() {
+                                                      _gs
+                                                          .getEntity(
+                                                              parentEntityId)
+                                                          .then((value) => {
+                                                                parentEntity =
+                                                                    value.item1
+                                                              })
+                                                          .whenComplete(() {
+                                                        _gs.removeEntity(
+                                                            serviceEntity
+                                                                .entityId);
+                                                        Navigator.pop(context);
+                                                        Navigator.push(
+                                                            context,
+                                                            MaterialPageRoute(
+                                                                builder: (context) =>
+                                                                    ManageChildEntityListPage(
+                                                                        entity:
+                                                                            parentEntity)));
+                                                      });
+                                                    });
+                                                  }
+                                                },
+                                                splashColor: (_delEnabled)
+                                                    ? highlightColor
+                                                    : Colors.blueGrey[200],
+                                                child: Container(
+                                                  width: MediaQuery.of(context)
+                                                          .size
+                                                          .width *
+                                                      .3,
+                                                  alignment: Alignment.center,
+                                                  child: Text("Delete",
+                                                      style: TextStyle(
+                                                          color: Colors.white)),
+                                                ),
+                                              ),
+                                              // (_errorMessage != null
+                                              //     ? Text(
+                                              //         _errorMessage,
+                                              //         style: TextStyle(color: Colors.red),
+                                              //       )
+                                              //     : Container()),
+                                            ],
+                                          );
+                                        });
+                                      });
+                                }),
+                          ),
+                        ),
+                      ]),
                 ),
               ),
             ),

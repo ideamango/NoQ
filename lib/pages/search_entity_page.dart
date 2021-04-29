@@ -953,7 +953,7 @@ class _SearchEntityPageState extends State<SearchEntityPage>
                     end: const FractionalOffset(1.0, 0.0),
                     stops: [0.0, 1.0],
                     tileMode: TileMode.clamp),
-                borderRadius: BorderRadius.all(Radius.circular(45))),
+                borderRadius: BorderRadius.all(Radius.circular(5))),
             width: MediaQuery.of(context).size.width * .8,
             height: MediaQuery.of(context).size.height * .06,
             padding: EdgeInsets.all(5),

@@ -62,11 +62,11 @@ final faqTabTextStyle = TextStyle(
 );
 final buttonMedTextStyle = TextStyle(
   color: Colors.white,
-  fontWeight: FontWeight.w700,
+  fontWeight: FontWeight.w500,
   fontFamily: 'Montserrat',
   letterSpacing: 1.3,
 
-  fontSize: 16,
+  fontSize: 17,
   //height: 2,
 );
 final buttonSmlTextStyle = TextStyle(
