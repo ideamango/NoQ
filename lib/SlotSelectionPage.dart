@@ -781,7 +781,7 @@ class _SlotSelectionPageState extends State<SlotSelectionPage> {
         context,
         Icons.info_outline,
         Duration(
-          seconds: 3,
+          seconds: 6,
         ),
         slotBooking,
         takingMoment);
