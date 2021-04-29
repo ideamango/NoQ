@@ -56,6 +56,19 @@ launchURL(String title, String addr, double lat, double long) async {
   print("Maps launched");
 }
 
+Future<bool> launchMail(String toMailId, String subject, String body) async {
+  var url = 'mailto:$toMailId?subject=$subject&body=$body';
+  if (await canLaunch(url)) {
+    launch(url).then((value) {
+      return true;
+    });
+    print("Mail sent");
+  } else {
+    //throw 'Could not launch $url';
+    return false;
+  }
+}
+
 callPhone(String phone) async {
   String phoneStr = "tel://$phone";
   if (await UrlLauncher.canLaunch(phoneStr)) {
