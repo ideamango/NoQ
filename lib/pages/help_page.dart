@@ -1,20 +1,14 @@
 import '../widget/page_animation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-
 import '../constants.dart';
-import '../global_state.dart';
 import '../pages/contact_us.dart';
 import '../pages/manage_entity_list_page.dart';
 import '../style.dart';
 import '../userHomePage.dart';
 import '../widget/appbar.dart';
-import '../widget/bottom_nav_bar.dart';
-import '../widget/custom_expansion_tile.dart';
 import '../widget/header.dart';
 import '../widget/widgets.dart';
-import 'package:url_launcher/url_launcher.dart';
-
 import 'donate_money.dart';
 
 class HelpPage extends StatefulWidget {

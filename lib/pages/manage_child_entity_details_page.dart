@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:LESSs/enum/entity_role.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
@@ -102,7 +103,7 @@ class _ManageChildEntityDetailsPageState
 
   TextEditingController _whatsappPhoneController = TextEditingController();
   TextEditingController _contactPhoneController = TextEditingController();
-  TextEditingController _gpayPhoneController = TextEditingController();
+  TextEditingController _upiIdController = TextEditingController();
   TextEditingController _paytmPhoneController = TextEditingController();
   final GlobalKey<FormFieldState> whatsappPhnKey =
       new GlobalKey<FormFieldState>();
@@ -295,12 +296,12 @@ class _ManageChildEntityDetailsPageState
       _contactPhoneController.text = serviceEntity.phone != null
           ? serviceEntity.phone.toString().substring(3)
           : "";
-      _gpayPhoneController.text = serviceEntity.gpay != null
-          ? serviceEntity.gpay.toString().substring(3)
+      _upiIdController.text = serviceEntity.upiId != null
+          ? serviceEntity.upiId.toString().substring(3)
           : "";
-      _paytmPhoneController.text = serviceEntity.paytm != null
-          ? serviceEntity.paytm.toString().substring(3)
-          : "";
+      // _paytmPhoneController.text = serviceEntity.upiPhoneNumber != null
+      //     ? serviceEntity.upiPhoneNumber.toString().substring(3)
+      //     : "";
 
       if (serviceEntity.offer != null) {
         _offerMessageController.text = serviceEntity.offer.message != null
@@ -382,6 +383,31 @@ class _ManageChildEntityDetailsPageState
         return 'Field is empty';
       }
       return null;
+    } else
+      return null;
+  }
+
+  String validateUpiAddress(String upi) {
+    if (Utils.isNotNullOrEmpty(upi)) {
+      if (upi.split('@').length == 2) {
+        return null;
+      } else {
+        return "UPI Id is not valid";
+      }
+    }
+    return null;
+  }
+
+  String validateAdvanceBookingDays(String value) {
+    if (validateField) {
+      if (value == null || value == "") {
+        return 'Field is empty';
+      } else if (int.tryParse(value) == null) {
+        return '$value is not a valid number of Days';
+      } else if (int.parse(value) > 7) {
+        return 'Number of Days should be less than 7.';
+      } else
+        return null;
     } else
       return null;
   }
@@ -645,6 +671,7 @@ class _ManageChildEntityDetailsPageState
         contact: contactList[i],
         entity: serviceEntity,
         list: contactList,
+        empType: EntityRole.Manager,
       ));
     }
     setState(() {
@@ -1016,7 +1043,7 @@ class _ManageChildEntityDetailsPageState
         focusedBorder:
             UnderlineInputBorder(borderSide: BorderSide(color: Colors.orange)),
       ),
-      validator: validateText,
+      validator: validateAdvanceBookingDays,
       onChanged: (value) {
         isAnythingChanged = true;
         if (value != "") serviceEntity.advanceDays = int.parse(value);
@@ -1090,7 +1117,7 @@ class _ManageChildEntityDetailsPageState
       controller: _contactPhoneController,
       decoration: InputDecoration(
         prefixText: '+91',
-        labelText: 'Contact Number',
+        labelText: 'Contact Phone Number (recommended)',
         enabledBorder:
             UnderlineInputBorder(borderSide: BorderSide(color: Colors.grey)),
         focusedBorder:
@@ -1106,59 +1133,27 @@ class _ManageChildEntityDetailsPageState
       },
     );
 
-    final paytmPhone = TextFormField(
+    final upiIdField = TextFormField(
       obscureText: false,
       maxLines: 1,
       minLines: 1,
-      key: paytmPhoneKey,
       style: textInputTextStyle,
-      keyboardType: TextInputType.phone,
-      controller: _paytmPhoneController,
+      keyboardType: TextInputType.text,
+      controller: _upiIdController,
       decoration: InputDecoration(
-        prefixText: '+91',
-        labelText: 'PayTm Number',
+        //prefixText: '+91',
+        labelText: 'UPI Id in format ******@*** (optional)',
         enabledBorder:
             UnderlineInputBorder(borderSide: BorderSide(color: Colors.grey)),
         focusedBorder:
             UnderlineInputBorder(borderSide: BorderSide(color: Colors.orange)),
       ),
-      validator: Utils.validateMobileField,
+      validator: validateUpiAddress,
       onChanged: (value) {
-        //_autoValidateWhatsapp = true;
-        paytmPhoneKey.currentState.validate();
-        if (value != "") serviceEntity.paytm = "+91" + (value);
+        if (value != "") serviceEntity.upiId = (value);
       },
       onSaved: (String value) {
-        if (value != "") serviceEntity.paytm = "+91" + (value);
-      },
-    );
-
-    final gPayPhone = TextFormField(
-      obscureText: false,
-      maxLines: 1,
-      minLines: 1,
-      key: gpayPhoneKey,
-      style: textInputTextStyle,
-      keyboardType: TextInputType.phone,
-      controller: _gpayPhoneController,
-      decoration: InputDecoration(
-        prefixText: '+91',
-        labelText: 'GPay Number',
-        enabledBorder:
-            UnderlineInputBorder(borderSide: BorderSide(color: Colors.grey)),
-        focusedBorder:
-            UnderlineInputBorder(borderSide: BorderSide(color: Colors.orange)),
-      ),
-      validator: Utils.validateMobileField,
-      onChanged: (value) {
-        //_autoValidateWhatsapp = true;
-        gpayPhoneKey.currentState.validate();
-        if (value != "") serviceEntity.gpay = "+91" + (value);
-        print("GPay Number");
-      },
-      onSaved: (String value) {
-        if (value != "") serviceEntity.gpay = "+91" + (value);
-        print("GPay Number");
+        if (value != "") serviceEntity.upiId = (value);
       },
     );
 
@@ -1203,14 +1198,18 @@ class _ManageChildEntityDetailsPageState
       maxLength: null,
       maxLines: 1,
       onChanged: (String value) {
-        insertOffer.message = value;
-        offerFieldStatus = true;
-        checkOfferDetailsFilled();
+        if (Utils.isNotNullOrEmpty(value)) {
+          insertOffer.message = value;
+          offerFieldStatus = true;
+          checkOfferDetailsFilled();
+        }
       },
       onSaved: (String value) {
-        insertOffer.message = value;
-        offerFieldStatus = true;
-        checkOfferDetailsFilled();
+        if (Utils.isNotNullOrEmpty(value)) {
+          insertOffer.message = value;
+          offerFieldStatus = true;
+          checkOfferDetailsFilled();
+        }
       },
     );
 
@@ -1233,14 +1232,18 @@ class _ManageChildEntityDetailsPageState
       maxLength: null,
       maxLines: 1,
       onChanged: (String value) {
-        insertOffer.coupon = value;
-        offerFieldStatus = true;
-        checkOfferDetailsFilled();
+        if (Utils.isNotNullOrEmpty(value)) {
+          insertOffer.coupon = value;
+          offerFieldStatus = true;
+          checkOfferDetailsFilled();
+        }
       },
       onSaved: (String value) {
-        insertOffer.coupon = value;
-        offerFieldStatus = true;
-        checkOfferDetailsFilled();
+        if (Utils.isNotNullOrEmpty(value)) {
+          insertOffer.coupon = value;
+          offerFieldStatus = true;
+          checkOfferDetailsFilled();
+        }
       },
     );
 
@@ -2162,8 +2165,7 @@ class _ManageChildEntityDetailsPageState
                               padding: EdgeInsets.only(left: 5.0, right: 5),
                               child: Column(
                                 children: <Widget>[
-                                  gPayPhone,
-                                  paytmPhone,
+                                  upiIdField,
                                 ],
                               ),
                             ),

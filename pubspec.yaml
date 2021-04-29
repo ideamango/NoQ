@@ -38,9 +38,9 @@ dependencies:
   cloud_firestore: 1.0.6
   geoflutterfire: 3.0.0-nullsafety.2
   google_sign_in: ^4.5.5
-  firebase_core: 1.0.4
+  firebase_core: ^1.1.0
   firebase_crashlytics: 2.0.1
-  firebase_auth: ^1.1.1
+  firebase_auth: ^1.1.2
   firebase_dynamic_links: 2.0.1
   firebase_storage: ^8.0.4
   uuid: ^2.2.2
@@ -143,6 +143,13 @@ flutter:
     - calling_codes.json
     - bigpiq_gpay.jpg 
     - ourStory.png
+    - employee.png
+    - tokens.png
+    - forms.png
+    - settings.png
+    - applications.png
+    - places.png
+    
   
   #  - images/a_dot_ham.jpeg
 
