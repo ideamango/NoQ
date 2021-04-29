@@ -69,6 +69,7 @@ dependencies:
   pie_chart: ^4.0.1
   firebase_remote_config: 0.10.0-dev.1
   upi_pay: ^0.2.4
+  version: ^2.0.0
 
 dev_dependencies:
   flutter_test:

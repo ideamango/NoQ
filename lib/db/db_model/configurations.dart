@@ -1,4 +1,5 @@
 import 'package:enum_to_string/enum_to_string.dart';
+import 'package:version/version.dart';
 import './meta_form.dart';
 import '../../enum/entity_type.dart';
 import '../../utils.dart';
@@ -190,6 +191,86 @@ class Configurations {
     return forms;
   }
 
+  String getForceUpdateMessage(bool isAndroid, bool isIOS) {
+    if (isAndroid) {
+      if (latestVersion.containsKey("androidForceUpdateMessage")) {
+        return latestVersion["androidForceUpdateMessage"];
+      }
+    }
+
+    if (isIOS) {
+      if (latestVersion.containsKey("iosForceUpdateMessage")) {
+        return latestVersion["iosForceUpdateMessage"];
+      }
+    }
+
+    return null;
+  }
+
+  bool isForceUpdateRequired(bool isAndroid, bool isIOS) {
+    if (isAndroid) {
+      if (latestVersion.containsKey("androidForceUpdate")) {
+        return "true" == latestVersion["androidForceUpdate"];
+      }
+    }
+
+    if (isIOS) {
+      if (latestVersion.containsKey("iosForceUpdate")) {
+        return "true" == latestVersion["iosForceUpdate"];
+      }
+    }
+
+    return false;
+  }
+
+  String getVersionUpdateMessage(bool isAndroid, bool isIOS) {
+    if (isAndroid) {
+      if (latestVersion.containsKey("androidMessage")) {
+        return latestVersion["androidMessage"];
+      } else {
+        return null;
+      }
+    }
+
+    if (isIOS) {
+      if (latestVersion.containsKey("iosMessage")) {
+        return latestVersion["iosMessage"];
+      } else {
+        return null;
+      }
+    }
+
+    return null;
+  }
+
+  Version getLatestPublishedVersion(bool isAndroid, bool isIOS) {
+    if (isAndroid) {
+      if (latestVersion.containsKey("androidVersion")) {
+        try {
+          return Version.parse(latestVersion["androidVersion"]);
+        } catch (e) {
+          return null;
+        }
+      } else {
+        return null;
+      }
+    }
+
+    if (isIOS) {
+      if (latestVersion.containsKey("iosVersion")) {
+        try {
+          return Version.parse(latestVersion["iosVersion"]);
+        } catch (e) {
+          return null;
+        }
+      } else {
+        return null;
+      }
+    }
+
+    return null;
+  }
+
   bool isDonationEnabled() {
     if (donation != null &&
         donation.containsKey("isEnabled") &&
@@ -203,6 +284,34 @@ class Configurations {
     if (donation != null && donation.containsKey("message")) {
       return donation["message"];
     }
-    return "";
+    return null;
+  }
+
+  int getBuildNumber(bool isAndroid, bool isIOS) {
+    if (isAndroid) {
+      if (latestVersion.containsKey("androidBuildNumber")) {
+        try {
+          return int.parse(latestVersion["androidBuildNumber"]);
+        } catch (e) {
+          return null;
+        }
+      } else {
+        return null;
+      }
+    }
+
+    if (isIOS) {
+      if (latestVersion.containsKey("iosBuildNumber")) {
+        try {
+          return int.parse(latestVersion["iosBuildNumber"]);
+        } catch (e) {
+          return null;
+        }
+      } else {
+        return null;
+      }
+    }
+
+    return null;
   }
 }

@@ -5,6 +5,7 @@ import 'package:enum_to_string/enum_to_string.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:version/version.dart';
 
 import './db/db_model/configurations.dart';
 import './db/db_model/entity.dart';
@@ -189,19 +190,22 @@ class GlobalState {
     return _locData;
   }
 
-  // bool isEligibleForUpdate() {
-  //   if (_conf.latestVersion == null) return false;
+  bool isEligibleForUpdate() {
+    if (_conf.latestVersion == null) return false;
 
-  //   if (isIOS) {
-  //     if (_conf.latestVersion.containsKey('iosVersion')) {
-  //       if (_conf.latestVersion['iosVersion'] > version) {}
-  //     } else {
-  //       return false;
-  //     }
-  //   }
-  // }
-
-  // String getUpdateMessage() {}
+    Version latestVer = _conf.getLatestPublishedVersion(isAndroid, isIOS);
+    if (latestVer != null) {
+      try {
+        Version currentVersion = Version.parse(version);
+        if (currentVersion < latestVer) {
+          return true;
+        }
+      } catch (e) {
+        return false;
+      }
+    }
+    return false;
+  }
 
   static Future<GlobalState> getGlobalState() async {
     Location loc;
