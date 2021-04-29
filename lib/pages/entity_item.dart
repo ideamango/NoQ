@@ -1,3 +1,4 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import '../constants.dart';
 import '../db/db_model/entity.dart';
@@ -155,6 +156,7 @@ class EntityRowState extends State<EntityRow> {
       });
     }
 
+    var labelGroup = AutoSizeGroup();
     if (_initCompleted)
       return Card(
         elevation: 5,
@@ -261,7 +263,7 @@ class EntityRowState extends State<EntityRow> {
               Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: <
                   Widget>[
                 SizedBox(
-                  width: MediaQuery.of(context).size.width * .045,
+                  width: MediaQuery.of(context).size.width * .04,
                 ),
                 Card(
                   elevation: 10,
@@ -284,8 +286,12 @@ class EntityRowState extends State<EntityRow> {
                               image: AssetImage('assets/settings.png'),
                             ),
                           ),
-                          Text(
+                          AutoSizeText(
                             'Details',
+                            group: labelGroup,
+                            maxLines: 1,
+                            minFontSize: 9,
+                            maxFontSize: 11,
                             style: TextStyle(
                                 letterSpacing: 1.1,
                                 color: whiteBtnTextColor,
@@ -298,7 +304,7 @@ class EntityRowState extends State<EntityRow> {
                   ),
                 ),
                 SizedBox(
-                  width: MediaQuery.of(context).size.width * .045,
+                  width: MediaQuery.of(context).size.width * .04,
                 ),
                 Card(
                   elevation: 10,
@@ -325,8 +331,12 @@ class EntityRowState extends State<EntityRow> {
                               image: AssetImage('assets/places.png'),
                             ),
                           ),
-                          Text(
+                          AutoSizeText(
                             'Places',
+                            group: labelGroup,
+                            maxLines: 1,
+                            minFontSize: 9,
+                            maxFontSize: 11,
                             style: TextStyle(
                                 letterSpacing: 1.1,
                                 color: Utils.isNullOrEmpty(
@@ -334,7 +344,6 @@ class EntityRowState extends State<EntityRow> {
                                             _metaEntity.type))
                                     ? disabledColor
                                     : whiteBtnTextColor,
-                                fontSize: 12,
                                 fontFamily: 'Roboto'),
                           ),
                         ],
@@ -343,7 +352,7 @@ class EntityRowState extends State<EntityRow> {
                   ),
                 ),
                 SizedBox(
-                  width: MediaQuery.of(context).size.width * .045,
+                  width: MediaQuery.of(context).size.width * .04,
                 ),
                 Card(
                   elevation: 8,
@@ -371,12 +380,15 @@ class EntityRowState extends State<EntityRow> {
                               image: AssetImage('assets/employee.png'),
                             ),
                           ),
-                          Text(
+                          AutoSizeText(
                             'Employees',
+                            group: labelGroup,
+                            maxLines: 1,
+                            minFontSize: 9,
+                            maxFontSize: 11,
                             style: TextStyle(
                                 letterSpacing: 1.1,
                                 color: whiteBtnTextColor,
-                                fontSize: 12,
                                 fontFamily: 'Roboto'),
                           ),
                         ],
@@ -385,7 +397,7 @@ class EntityRowState extends State<EntityRow> {
                   ),
                 ),
                 SizedBox(
-                  width: MediaQuery.of(context).size.width * .045,
+                  width: MediaQuery.of(context).size.width * .04,
                 ),
               ]),
               SizedBox(
@@ -396,7 +408,7 @@ class EntityRowState extends State<EntityRow> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
                   SizedBox(
-                    width: MediaQuery.of(context).size.width * .045,
+                    width: MediaQuery.of(context).size.width * .04,
                   ),
                   Card(
                     elevation: 10,
@@ -451,15 +463,18 @@ class EntityRowState extends State<EntityRow> {
                                 image: AssetImage('assets/applications.png'),
                               ),
                             ),
-                            Text(
+                            AutoSizeText(
                               'Applications',
+                              group: labelGroup,
+                              maxLines: 1,
+                              minFontSize: 9,
+                              maxFontSize: 11,
                               textAlign: TextAlign.center,
                               style: TextStyle(
                                   letterSpacing: 1.1,
                                   color: _metaEntity.isBookable
                                       ? whiteBtnTextColor
                                       : disabledColor,
-                                  fontSize: 12,
                                   fontFamily: 'Roboto'),
                             ),
                           ],
@@ -468,7 +483,7 @@ class EntityRowState extends State<EntityRow> {
                     ),
                   ),
                   SizedBox(
-                    width: MediaQuery.of(context).size.width * .045,
+                    width: MediaQuery.of(context).size.width * .04,
                   ),
                   Card(
                     elevation: 10,
@@ -500,14 +515,17 @@ class EntityRowState extends State<EntityRow> {
                                 image: AssetImage('assets/tokens.png'),
                               ),
                             ),
-                            Text(
+                            AutoSizeText(
                               'Tokens',
+                              group: labelGroup,
+                              maxLines: 1,
+                              minFontSize: 9,
+                              maxFontSize: 11,
                               style: TextStyle(
                                   letterSpacing: 1.1,
                                   color: _metaEntity.isBookable
                                       ? whiteBtnTextColor
                                       : disabledColor,
-                                  fontSize: 12,
                                   fontFamily: 'Roboto'),
                             ),
                           ],
@@ -516,7 +534,7 @@ class EntityRowState extends State<EntityRow> {
                     ),
                   ),
                   SizedBox(
-                    width: MediaQuery.of(context).size.width * .045,
+                    width: MediaQuery.of(context).size.width * .04,
                   ),
                   Card(
                     elevation: 10,
@@ -547,15 +565,17 @@ class EntityRowState extends State<EntityRow> {
                                 image: AssetImage('assets/forms.png'),
                               ),
                             ),
-                            Text(
+                            AutoSizeText(
                               'Forms',
-                              textAlign: TextAlign.center,
+                              group: labelGroup,
+                              maxLines: 1,
+                              minFontSize: 9,
+                              maxFontSize: 11,
                               style: TextStyle(
                                   letterSpacing: 1.1,
                                   color: _metaEntity.isBookable
                                       ? whiteBtnTextColor
                                       : disabledColor,
-                                  fontSize: 12,
                                   fontFamily: 'Roboto'),
                             ),
                           ],
@@ -564,7 +584,7 @@ class EntityRowState extends State<EntityRow> {
                     ),
                   ),
                   SizedBox(
-                    width: MediaQuery.of(context).size.width * .045,
+                    width: MediaQuery.of(context).size.width * .04,
                   ),
                 ],
               ),

@@ -354,7 +354,7 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
         keyChildSearch.currentState.showBottomSheet<Null>(
       (context) => Container(
         color: Colors.cyan[50],
-        height: MediaQuery.of(context).size.height * .87,
+        height: MediaQuery.of(context).size.height * .6,
         child: Column(
           children: <Widget>[
             Container(
@@ -883,7 +883,7 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
     return showFab
         ? (_fromPage != 'FavsSearch')
             ? Container(
-                width: MediaQuery.of(context).size.width * .8,
+                width: MediaQuery.of(context).size.width * .92,
                 height: MediaQuery.of(context).size.height * .08,
                 padding: EdgeInsets.all(5),
                 child: SlideTransition(
@@ -894,7 +894,7 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
                     backgroundColor: btnColor,
                     shape: RoundedRectangleBorder(
                         side: BorderSide(color: Colors.blueGrey[200]),
-                        borderRadius: BorderRadius.all(Radius.circular(45.0))),
+                        borderRadius: BorderRadius.all(Radius.circular(5.0))),
                     child: Container(
                       child: Text(
                         SEARCH_TYPE_OF_PLACE,

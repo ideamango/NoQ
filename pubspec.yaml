@@ -149,6 +149,9 @@ flutter:
     - settings.png
     - applications.png
     - places.png
+    - privacy.png
+    - terms.png
+    - contactus.png
     
   
   #  - images/a_dot_ham.jpeg

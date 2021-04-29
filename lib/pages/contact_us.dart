@@ -249,6 +249,10 @@ class _ContactUsPageState extends State<ContactUsPage> {
                                 fontSize: 17.0),
                           ),
                           verticalSpacer,
+                          Container(
+                              padding: EdgeInsets.all(0),
+                              height: MediaQuery.of(context).size.height * .2,
+                              child: Image.asset('assets/contactus.png')),
                           RichText(
                               text: TextSpan(
                                   style: TextStyle(
@@ -344,8 +348,6 @@ class _ContactUsPageState extends State<ContactUsPage> {
                               ],
                             ),
                           ),
-                          verticalSpacer,
-                          verticalSpacer,
                           verticalSpacer,
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,

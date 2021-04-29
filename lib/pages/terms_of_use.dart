@@ -62,6 +62,10 @@ class _TermsOfUsePageState extends State<TermsOfUsePage> {
             physics: BouncingScrollPhysics(),
             child: Column(
               children: [
+                Container(
+                    padding: EdgeInsets.all(0),
+                    height: MediaQuery.of(context).size.height * .3,
+                    child: Image.asset('assets/terms.png')),
                 RichText(
                   text: TextSpan(
                       style: highlightSubTextStyle,

@@ -1,3 +1,4 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import '../constants.dart';
 import '../db/db_model/entity.dart';
@@ -129,6 +130,8 @@ class ChildEntityRowState extends State<ChildEntityRow> {
       });
     }
 
+    var labelGroup = AutoSizeGroup();
+
     return Card(
       elevation: 5,
       child: Container(
@@ -227,7 +230,7 @@ class ChildEntityRowState extends State<ChildEntityRow> {
                 // mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
                   SizedBox(
-                    width: MediaQuery.of(context).size.width * .045,
+                    width: MediaQuery.of(context).size.width * .04,
                   ),
                   Card(
                     elevation: 8,
@@ -250,11 +253,14 @@ class ChildEntityRowState extends State<ChildEntityRow> {
                                 image: AssetImage('assets/settings.png'),
                               ),
                             ),
-                            Text(
+                            AutoSizeText(
                               'Details',
+                              group: labelGroup,
+                              maxLines: 1,
+                              minFontSize: 9,
+                              maxFontSize: 11,
                               style: TextStyle(
                                   color: whiteBtnTextColor,
-                                  fontSize: 11,
                                   letterSpacing: 1.1,
                                   fontFamily: 'Roboto'),
                             ),
@@ -264,7 +270,7 @@ class ChildEntityRowState extends State<ChildEntityRow> {
                     ),
                   ),
                   SizedBox(
-                    width: MediaQuery.of(context).size.width * .045,
+                    width: MediaQuery.of(context).size.width * .04,
                   ),
                   Card(
                     elevation: 8,
@@ -294,11 +300,14 @@ class ChildEntityRowState extends State<ChildEntityRow> {
                                 image: AssetImage('assets/employee.png'),
                               ),
                             ),
-                            Text(
+                            AutoSizeText(
                               'Employees',
+                              group: labelGroup,
+                              maxLines: 1,
+                              minFontSize: 9,
+                              maxFontSize: 11,
                               style: TextStyle(
                                   color: whiteBtnTextColor,
-                                  fontSize: 11,
                                   letterSpacing: 1.1,
                                   fontFamily: 'Roboto'),
                             ),
@@ -308,7 +317,7 @@ class ChildEntityRowState extends State<ChildEntityRow> {
                     ),
                   ),
                   SizedBox(
-                    width: MediaQuery.of(context).size.width * .045,
+                    width: MediaQuery.of(context).size.width * .04,
                   ),
                   Card(
                     elevation: 8,
@@ -341,12 +350,15 @@ class ChildEntityRowState extends State<ChildEntityRow> {
                                 image: AssetImage('assets/forms.png'),
                               ),
                             ),
-                            Text(
+                            AutoSizeText(
                               'Forms',
+                              group: labelGroup,
+                              maxLines: 1,
+                              minFontSize: 9,
+                              maxFontSize: 11,
                               textAlign: TextAlign.center,
                               style: TextStyle(
                                   color: whiteBtnTextColor,
-                                  fontSize: 11,
                                   letterSpacing: 1.1,
                                   fontFamily: 'Roboto'),
                             ),
@@ -356,12 +368,12 @@ class ChildEntityRowState extends State<ChildEntityRow> {
                     ),
                   ),
                   SizedBox(
-                    width: MediaQuery.of(context).size.width * .045,
+                    width: MediaQuery.of(context).size.width * .04,
                   ),
                 ]),
             Row(children: <Widget>[
               SizedBox(
-                width: MediaQuery.of(context).size.width * .045,
+                width: MediaQuery.of(context).size.width * .04,
               ),
               Card(
                 elevation: 8,
@@ -413,12 +425,15 @@ class ChildEntityRowState extends State<ChildEntityRow> {
                             image: AssetImage('assets/applications.png'),
                           ),
                         ),
-                        Text(
+                        AutoSizeText(
                           'Applications',
+                          group: labelGroup,
+                          maxLines: 1,
+                          minFontSize: 9,
+                          maxFontSize: 11,
                           style: TextStyle(
-                              color: whiteBtnTextColor,
-                              fontSize: 11,
                               letterSpacing: 1.1,
+                              color: whiteBtnTextColor,
                               fontFamily: 'Roboto'),
                         ),
                       ],
@@ -427,7 +442,7 @@ class ChildEntityRowState extends State<ChildEntityRow> {
                 ),
               ),
               SizedBox(
-                width: MediaQuery.of(context).size.width * .045,
+                width: MediaQuery.of(context).size.width * .04,
               ),
               Card(
                 elevation: 8,
@@ -458,11 +473,14 @@ class ChildEntityRowState extends State<ChildEntityRow> {
                             image: AssetImage('assets/tokens.png'),
                           ),
                         ),
-                        Text(
+                        AutoSizeText(
                           'Tokens',
+                          group: labelGroup,
+                          maxLines: 1,
+                          minFontSize: 9,
+                          maxFontSize: 11,
                           style: TextStyle(
                               color: whiteBtnTextColor,
-                              fontSize: 11,
                               letterSpacing: 1.1,
                               fontFamily: 'Roboto'),
                         ),

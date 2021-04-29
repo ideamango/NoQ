@@ -1,5 +1,6 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import '../constants.dart';
 import '../db/db_model/entity.dart';
 import '../services/url_services.dart';
@@ -17,6 +18,7 @@ class PlaceDetailsPage extends StatefulWidget {
 
 class _PlaceDetailsPageState extends State<PlaceDetailsPage> {
   Entity entity;
+  final dtFormat = new DateFormat(dateDisplayFormat);
   @override
   Widget build(BuildContext context) {
     entity = widget.entity;
@@ -74,20 +76,19 @@ class _PlaceDetailsPageState extends State<PlaceDetailsPage> {
                   Row(
                     children: [
                       Expanded(
-                        child: RichText(
-                            text: TextSpan(
-                                style: highlightSubTextStyle,
-                                children: <TextSpan>[
-                              TextSpan(
-                                  text: 'Address - ',
-                                  style: placeDetailsHeadingTextStyle),
-                              TextSpan(
-                                  text:
-                                      Utils.getFormattedAddress(entity.address),
-                                  style: labelSmlTextStyle),
-                            ])),
-                      ),
+                          child: Row(children: <Widget>[
+                        Text('Address - ', style: placeDetailsHeadingTextStyle),
+                        Expanded(
+                          child: Text(Utils.getFormattedAddress(entity.address),
+                              maxLines: 4,
+                              overflow: TextOverflow.ellipsis,
+                              style: highlightSubTextStyle),
+                        ),
+                      ])),
                     ],
+                  ),
+                  SizedBox(
+                    height: 5,
                   ),
                   Row(children: <Widget>[
                     Text("Opens at - ", style: placeDetailsHeadingTextStyle),
@@ -95,7 +96,7 @@ class _PlaceDetailsPageState extends State<PlaceDetailsPage> {
                         Utils.formatTime(entity.startTimeHour.toString()) +
                             ':' +
                             Utils.formatTime(entity.startTimeMinute.toString()),
-                        style: labelSmlTextStyle),
+                        style: highlightSubTextStyle),
                     horizontalSpacer,
                     horizontalSpacer,
                     Text("Closes at - ", style: placeDetailsHeadingTextStyle),
@@ -103,7 +104,7 @@ class _PlaceDetailsPageState extends State<PlaceDetailsPage> {
                         Utils.formatTime(entity.endTimeHour.toString()) +
                             ':' +
                             Utils.formatTime(entity.endTimeMinute.toString()),
-                        style: labelSmlTextStyle),
+                        style: highlightSubTextStyle),
                   ]),
                 ],
               ),
@@ -117,47 +118,36 @@ class _PlaceDetailsPageState extends State<PlaceDetailsPage> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      RichText(
-                          text: TextSpan(
-                              style: highlightSubTextStyle,
-                              children: <TextSpan>[
-                            TextSpan(
-                                text: 'Offers - ',
-                                style: placeDetailsHeadingTextStyle),
-                            entity.offer != null
-                                ? TextSpan(
-                                    text: entity.offer.message,
-                                    style: linkTextStyle,
-                                    recognizer: new TapGestureRecognizer()
-                                      ..onTap = () {
-                                        //TODO: Smita- add payments options google pay  etc
-                                        launch('https://google.com');
-                                      },
-                                  )
-                                : TextSpan(text: placeDetailNoOffers),
-                          ])),
-                      verticalSpacer,
-                      verticalSpacer,
                       Row(
-                          // mainAxisAlignment: MainAxisAlignment.center,
-                          children: <Widget>[
-                            Text("Valid from ", style: placeDetailsHeadingSml),
-                            Text(
-                                Utils.formatTime(
-                                        entity.startTimeHour.toString()) +
-                                    ':' +
-                                    Utils.formatTime(
-                                        entity.startTimeMinute.toString()),
-                                style: placeDetailsHeadingSml),
-                            Text(" till ", style: placeDetailsHeadingSml),
-                            Text(
-                                Utils.formatTime(
-                                        entity.endTimeHour.toString()) +
-                                    ':' +
-                                    Utils.formatTime(
-                                        entity.endTimeMinute.toString()),
-                                style: placeDetailsHeadingSml),
-                          ]),
+                        children: [
+                          Text('Offers - ',
+                              style: placeDetailsHeadingTextStyle),
+                          entity.offer != null
+                              ? Expanded(
+                                  child: Text(
+                                    entity.offer.message,
+                                    maxLines: 4,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: highlightSubTextStyle,
+                                  ),
+                                )
+                              : Text(placeDetailNoOffers,
+                                  style: highlightSubTextStyle),
+                        ],
+                      ),
+                      if (entity.offer != null)
+                        Row(
+                            // mainAxisAlignment: MainAxisAlignment.center,
+                            children: <Widget>[
+                              verticalSpacer,
+                              Text("Valid from - ",
+                                  style: placeDetailsHeadingTextStyle),
+                              Text(dtFormat.format(entity.offer.startDateTime),
+                                  style: highlightSubTextStyle),
+                              Text(" till ", style: highlightSubTextStyle),
+                              Text(dtFormat.format(entity.offer.endDateTime),
+                                  style: highlightSubTextStyle),
+                            ]),
                     ],
                   )),
             ),
@@ -169,7 +159,7 @@ class _PlaceDetailsPageState extends State<PlaceDetailsPage> {
                   alignment: Alignment.center,
                   child: Row(
                     children: [
-                      Text("Contact @", style: placeDetailsHeadingTextStyle),
+                      Text("Contact -", style: placeDetailsHeadingTextStyle),
                       horizontalSpacer,
                       horizontalSpacer,
                       Container(

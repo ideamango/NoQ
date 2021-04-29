@@ -351,7 +351,7 @@ class _SearchEntityPageState extends State<SearchEntityPage>
     placeDetailsSheetController = key.currentState.showBottomSheet<Null>(
       (context) => Container(
         color: Colors.cyan[50],
-        height: MediaQuery.of(context).size.height * .87,
+        height: MediaQuery.of(context).size.height * .6,
         child: Column(
           children: <Widget>[
             Container(
@@ -946,30 +946,24 @@ class _SearchEntityPageState extends State<SearchEntityPage>
   Widget showMyFloatingActionButton() {
     return showFab
         ? Container(
-            decoration: new BoxDecoration(
-                gradient: new LinearGradient(
-                    colors: [Colors.cyan[400], Colors.cyan[700]],
-                    begin: const FractionalOffset(0.0, 0.0),
-                    end: const FractionalOffset(1.0, 0.0),
-                    stops: [0.0, 1.0],
-                    tileMode: TileMode.clamp),
-                borderRadius: BorderRadius.all(Radius.circular(5))),
-            width: MediaQuery.of(context).size.width * .8,
-            height: MediaQuery.of(context).size.height * .06,
+            width: MediaQuery.of(context).size.width * .92,
+            height: MediaQuery.of(context).size.height * .08,
             padding: EdgeInsets.all(5),
             child: SlideTransition(
               position: offset,
               child: FloatingActionButton(
                 heroTag: "bottomSheetBtn",
                 elevation: 30,
-                backgroundColor: Colors.transparent,
-                // shape: RoundedRectangleBorder(
-                //     side: BorderSide(color: Colors.blueGrey[200]),
-                //     borderRadius: BorderRadius.all(Radius.circular(45.0))),
-                child: Text(
-                  SEARCH_TYPE_OF_PLACE,
-                  style: TextStyle(color: Colors.white, fontSize: 17),
-                  textAlign: TextAlign.center,
+                backgroundColor: btnColor,
+                shape: RoundedRectangleBorder(
+                    side: BorderSide(color: Colors.blueGrey[200]),
+                    borderRadius: BorderRadius.all(Radius.circular(5.0))),
+                child: Container(
+                  child: Text(
+                    SEARCH_TYPE_OF_PLACE,
+                    style: TextStyle(color: Colors.white, fontSize: 16),
+                    textAlign: TextAlign.center,
+                  ),
                 ),
                 onPressed: () {
                   bottomSheetController =
