@@ -346,6 +346,9 @@ class _HelpPageState extends State<HelpPage> {
                                                             .createRoute(
                                                                 DonatePage(
                                                       phone: widget.phone,
+                                                      backRoute: HelpPage(
+                                                        phone: widget.phone,
+                                                      ),
                                                     )));
                                                   },
                                           ),

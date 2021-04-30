@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:LESSs/pages/donate_money.dart';
 import 'package:flutter/material.dart';
 import './constants.dart';
 
@@ -70,31 +71,6 @@ class _UserHomePageState extends State<UserHomePage> {
 
   Future<void> getGlobalState() async {
     _state = await GlobalState.getGlobalState();
-  }
-
-  Future scan() async {
-    // try {
-    //   var result = await BarcodeScanner.scan();
-
-    //   setState(() => scanResult = result);
-    // } on PlatformException catch (e) {
-    //   var result = ScanResult(
-    //     type: ResultType.Error,
-    //     format: BarcodeFormat.unknown,
-    //   );
-
-    //   if (e.code == BarcodeScanner.cameraAccessDenied) {
-    //     setState(() {
-    //       result.rawContent = 'The user did not grant the camera permission!';
-    //     });
-    //   } else {
-    //     result.rawContent = 'Unknown error: $e';
-    //   }
-    //   setState(() {
-    //     scanResult = result;
-    //     print(scanResult);
-    //   });
-    // }
   }
 
   void fetchDataFromGlobalState() {
@@ -308,22 +284,32 @@ class _UserHomePageState extends State<UserHomePage> {
                           ),
                         ),
                       ),
-
-                      verticalSpacer,
-                      // Card(
-                      //   margin: EdgeInsets.zero,
-                      //   elevation: 20,
-                      //   child: Container(
-                      //     height: MediaQuery.of(context).size.height * .2,
-                      //     margin: EdgeInsets.zero,
-                      //     padding: EdgeInsets.all(0),
-                      //     child: Image(
-                      //       image: AssetImage('assets/6.jpg'),
-                      //       fit: BoxFit.fitHeight,
-                      //     ),
-                      //   ),
-                      // ),
+//                      TODO: uncomment this line, show donation banner only if donation is enabled
+                      // if (_state.getConfigurations().isDonationEnabled())
+                      Container(
+                        width: MediaQuery.of(context).size.width,
+                        margin: EdgeInsets.fromLTRB(0, 10, 0, 10),
+                        padding: EdgeInsets.zero,
+                        child: Card(
+                          margin: EdgeInsets.zero,
+                          elevation: 20,
+                          child: GestureDetector(
+                            onTap: () {
+                              Navigator.of(context)
+                                  .push(PageAnimation.createRoute(DonatePage(
+                                phone: _state?.getCurrentUser()?.ph,
+                                backRoute: UserHomePage(),
+                              )));
+                            },
+                            child: Image(
+                              fit: BoxFit.fitWidth,
+                              image: AssetImage('assets/donate.png'),
+                            ),
+                          ),
+                        ),
+                      ),
                       // verticalSpacer,
+
                       Column(
                         children: [
                           GestureDetector(
@@ -474,12 +460,6 @@ class _UserHomePageState extends State<UserHomePage> {
         ),
       );
     }
-  }
-
-  String getEntityAddress(String entityId) {
-    //TODO SMITA Add implementation
-
-    return 'Gachibowli, Hyderabad';
   }
 
   void showShoppingList(UserToken booking) {
