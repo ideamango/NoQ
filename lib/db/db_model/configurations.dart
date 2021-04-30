@@ -41,7 +41,7 @@ class Configurations {
 
   Map<String, String> formToEntityTypeMapping;
   List<MetaForm> formMetaData;
-  Map<String, String> latestVersion;
+  Map<String, dynamic> latestVersion;
   Map<String, List<String>> typeToChildType;
   Map<String, List<String>> androidAppVersionToEntityTypes;
   Map<String, List<String>> iosAppVersionToEntityTypes;
@@ -243,6 +243,26 @@ class Configurations {
     return null;
   }
 
+  List<String> getVersionUpdateFactors(bool isAndroid, bool isIOS) {
+    if (isAndroid) {
+      if (latestVersion.containsKey("androidUpdateFactors")) {
+        return latestVersion["androidUpdateFactors"];
+      } else {
+        return null;
+      }
+    }
+
+    if (isIOS) {
+      if (latestVersion.containsKey("iosUpdateFactors")) {
+        return latestVersion["iosUpdateFactors"];
+      } else {
+        return null;
+      }
+    }
+
+    return null;
+  }
+
   Version getLatestPublishedVersion(bool isAndroid, bool isIOS) {
     if (isAndroid) {
       if (latestVersion.containsKey("androidVersion")) {
@@ -283,6 +303,13 @@ class Configurations {
   String getDonationMessage() {
     if (donation != null && donation.containsKey("message")) {
       return donation["message"];
+    }
+    return null;
+  }
+
+  String getDonationImageURL() {
+    if (donation != null && donation.containsKey("imageURL")) {
+      return donation["imageURL"];
     }
     return null;
   }
