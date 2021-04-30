@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:LESSs/pages/donate_money.dart';
 import 'package:flutter/material.dart';
+import 'package:package_info/package_info.dart';
 import './constants.dart';
 
 import './global_state.dart';
@@ -48,12 +49,25 @@ class _UserHomePageState extends State<UserHomePage> {
   //ScanResult scanResult;
   GlobalState _state;
   bool _initCompleted = false;
+  String forceUpdateMsg = "Update now.";
+  String versionUpdateMsg;
 
   @override
   void initState() {
     super.initState();
     getGlobalState().whenComplete(() {
       _loadBookings();
+//TODO: SUMANT Why platform to be passed from here.
+      // if (_state.getConfigurations().isForceUpdateRequired(true, false)) {
+      //   forceUpdateMsg =
+      //       _state.getConfigurations().getForceUpdateMessage(true, false);
+      //   //TODO: block UI and show message to update
+      // } else
+      // {
+      //   versionUpdateMsg =
+      //       _state.getConfigurations().getVersionUpdateMessage(true, false);
+      // }
+
       if (this.mounted) {
         setState(() {
           _initCompleted = true;
@@ -118,10 +132,72 @@ class _UserHomePageState extends State<UserHomePage> {
     return result;
   }
 
+  openPlayStore() async {
+    PackageInfo info = await PackageInfo.fromPlatform();
+    String packageName = info.packageName;
+
+    // AppReview.writeReview.then((onValue) {
+    //   setState(() {
+    //     output = onValue;
+    //   });
+    //   print(onValue);
+    // });
+
+    //  openRateReviewForIos();
+    launchPlayStore(packageName: packageName);
+
+    // launch("https://play.google.com/store/apps/details?id=" + packageName);
+  }
+
   @override
   Widget build(BuildContext context) {
     if (_initCompleted) {
       String title = "Home Page";
+//       if (Utils.isNotNullOrEmpty(forceUpdateMsg)) {
+//         return Scaffold(
+//             backgroundColor: primaryAccentColor,
+//             body: Container(
+//               //  color: ,
+//               margin: EdgeInsets.all(30),
+//               height: MediaQuery.of(context).size.height,
+//               child: Column(
+//                 mainAxisAlignment: MainAxisAlignment.center,
+//                 children: [
+//                   Text(
+//                     "** Important **",
+//                     style: TextStyle(fontSize: 20),
+//                   ),
+//                   verticalSpacer,
+//                   //forceUpdateMsg
+//                   Text(
+//                     "This is an important update and includes very critical features. App may not function properly if not updated.",
+//                     style: TextStyle(fontSize: 17),
+//                   ),
+//                   Text(
+//                     "* Push Notifications",
+//                     textAlign: TextAlign.left,
+//                     style: TextStyle(fontSize: 14),
+//                   ),
+//                   Text(
+//                     "* Application forms",
+//                     textAlign: TextAlign.left,
+//                     style: TextStyle(fontSize: 14),
+//                   ),
+//                   ElevatedButton(
+//                       onPressed: () {
+// //Goto play store and update app.
+//                         openPlayStore();
+//                       },
+//                       child: Container(
+//                         margin: EdgeInsets.zero,
+//                         padding: EdgeInsets.zero,
+//                         color: Colors.blueGrey,
+//                         child: Text("Update now"),
+//                       ))
+//                 ],
+//               ),
+//             ));
+//       } else {
       return MaterialApp(
           debugShowCheckedModeBanner: false,
           theme: ThemeData.light().copyWith(),
@@ -426,6 +502,7 @@ class _UserHomePageState extends State<UserHomePage> {
           routes: <String, WidgetBuilder>{
             '/DLink': (BuildContext context) => new SearchEntityPage(),
           });
+      //}
     } else {
       return MaterialApp(
         debugShowCheckedModeBanner: false,

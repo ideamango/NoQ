@@ -109,6 +109,15 @@ class Configurations {
     return roles;
   }
 
+  static Map<String, dynamic> convertToMapOfDynamicFromJSON(
+      Map<dynamic, dynamic> map) {
+    Map<String, dynamic> roles = new Map<String, dynamic>();
+    if (map != null) {
+      map.forEach((k, v) => roles[k] = v);
+    }
+    return roles;
+  }
+
   static Configurations fromJson(Map<String, dynamic> json) {
     if (json == null) return null;
     return new Configurations(
@@ -127,7 +136,7 @@ class Configurations {
         formToEntityTypeMapping:
             convertToMapFromJSON(json['formToEntityTypeMapping']),
         formMetaData: convertToFormMetaData(json['formMetaData']),
-        latestVersion: convertToMapFromJSON(json['latestVersion']),
+        latestVersion: convertToMapOfDynamicFromJSON(json['latestVersion']),
         typeToChildType: convertToMapOfList(json['typeToChildType']),
         androidAppVersionToEntityTypes:
             convertToMapOfList(json['androidAppVersionToEntityTypes']),
