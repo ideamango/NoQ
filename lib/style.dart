@@ -206,6 +206,8 @@ final hintTextStyle = TextStyle(
 
 final subHeadingTextStyle = TextStyle(
     color: Colors.blueGrey[50], fontFamily: 'Montserrat', fontSize: 12.0);
+final btnTextStyle = TextStyle(
+    color: Colors.blueGrey[50], fontFamily: 'Montserrat', fontSize: 14.0);
 final logoSubTextStyle = TextStyle(
     color: primaryAccentColor, fontFamily: 'Montserrat', fontSize: 30.0);
 
