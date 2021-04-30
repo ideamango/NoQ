@@ -253,9 +253,13 @@ class Configurations {
   }
 
   List<String> getVersionUpdateFactors(bool isAndroid, bool isIOS) {
+    List<String> listOfReasons = [];
     if (isAndroid) {
       if (latestVersion.containsKey("androidUpdateFactors")) {
-        return latestVersion["androidUpdateFactors"];
+        for (String reason in latestVersion["androidUpdateFactors"]) {
+          listOfReasons.add(reason);
+        }
+        return listOfReasons;
       } else {
         return null;
       }
@@ -263,7 +267,10 @@ class Configurations {
 
     if (isIOS) {
       if (latestVersion.containsKey("iosUpdateFactors")) {
-        return latestVersion["iosUpdateFactors"];
+        for (String reason in latestVersion["iosUpdateFactors"]) {
+          listOfReasons.add(reason);
+        }
+        return listOfReasons;
       } else {
         return null;
       }

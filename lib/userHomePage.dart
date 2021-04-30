@@ -70,12 +70,10 @@ class _UserHomePageState extends State<UserHomePage> {
               .getConfigurations()
               .getVersionUpdateMessage(_state.isAndroid, _state.isIOS);
         }
-        if (Utils.isNullOrEmpty(_state
+
+        versionFactors = _state
             .getConfigurations()
-            .getVersionUpdateFactors(_state.isAndroid, _state.isIOS)))
-          versionFactors = _state
-              .getConfigurations()
-              .getVersionUpdateFactors(_state.isAndroid, _state.isIOS);
+            .getVersionUpdateFactors(_state.isAndroid, _state.isIOS);
       }
 
       if (this.mounted) {
@@ -165,64 +163,83 @@ class _UserHomePageState extends State<UserHomePage> {
       String title = "Home Page";
       if (Utils.isNotNullOrEmpty(forceUpdateMsg)) {
         return Scaffold(
-            backgroundColor: primaryAccentColor,
+            backgroundColor: Colors.cyan[200],
             body: Container(
               //  color: ,
               margin: EdgeInsets.all(30),
               height: MediaQuery.of(context).size.height,
               child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(
-                    "** Important **",
-                    style: TextStyle(fontSize: 20),
-                  ),
-                  verticalSpacer,
-                  Text(
-                    "There is an important update and includes very critical features. App may not function properly if not updated now.",
-                    //forceUpdateMsg
-                    style: TextStyle(fontSize: 17),
-                  ),
-                  if (versionFactors != null)
-                    ListView.builder(
-                      padding: EdgeInsets.all(
-                          MediaQuery.of(context).size.width * .026),
-                      scrollDirection: Axis.vertical,
-                      physics: ClampingScrollPhysics(),
-                      reverse: true,
-                      shrinkWrap: true,
-                      //itemExtent: itemSize,
-                      itemBuilder: (BuildContext context, int index) {
-                        return Container(
-                          margin: EdgeInsets.only(bottom: 5),
-                          child: Text("\u2022 " + versionFactors[index]),
-                        );
-                      },
-                      itemCount: versionFactors.length,
-                      // children: [
-                      //   Text(
-                      //     "* Push Notifications",
-                      //     textAlign: TextAlign.left,
-                      //     style: TextStyle(fontSize: 14),
-                      //   ),
-                      //   Text(
-                      //     "* Application forms",
-                      //     textAlign: TextAlign.left,
-                      //     style: TextStyle(fontSize: 14),
-                      //   ),
-                      // ],
+                  Container(
+                    height: MediaQuery.of(context).size.height * .5,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        Text(
+                          //"There is an important update and includes very critical features. App may not function properly if not updated now.",
+                          forceUpdateMsg,
+                          style: TextStyle(
+                              fontSize: 20, fontWeight: FontWeight.bold),
+                        ),
+                        verticalSpacer,
+                        if (versionFactors != null)
+                          ListView.builder(
+                            padding: EdgeInsets.all(
+                                MediaQuery.of(context).size.width * .026),
+                            scrollDirection: Axis.vertical,
+                            physics: ClampingScrollPhysics(),
+                            reverse: true,
+                            shrinkWrap: true,
+                            //itemExtent: itemSize,
+                            itemBuilder: (BuildContext context, int index) {
+                              return Container(
+                                margin: EdgeInsets.only(bottom: 5),
+                                child: Text(
+                                  "*  " + versionFactors[index],
+                                  style: TextStyle(height: 1.5, fontSize: 16),
+                                ),
+                              );
+                            },
+                            itemCount: versionFactors.length,
+                            // children: [
+                            //   Text(
+                            //     "* Push Notifications",
+                            //     textAlign: TextAlign.left,
+                            //     style: TextStyle(fontSize: 14),
+                            //   ),
+                            //   Text(
+                            //     "* Application forms",
+                            //     textAlign: TextAlign.left,
+                            //     style: TextStyle(fontSize: 14),
+                            //   ),
+                            // ],
+                          ),
+                      ],
                     ),
-                  ElevatedButton(
-                      onPressed: () {
+                  ),
+                  Container(
+                    child: MaterialButton(
+                        elevation: 20,
+                        //padding: EdgeInsets.fromLTRB(20, 40, 20, 40),
+                        color: Colors.green[600],
+                        onPressed: () {
 //Goto play store and update app.
-                        openPlayStore();
-                      },
-                      child: Container(
-                        margin: EdgeInsets.zero,
-                        padding: EdgeInsets.zero,
-                        color: Colors.blueGrey,
-                        child: Text("Update now"),
-                      ))
+                          openPlayStore();
+                        },
+                        child: Container(
+                          width: MediaQuery.of(context).size.width * .7,
+                          height: MediaQuery.of(context).size.width * .12,
+                          //  margin: EdgeInsets.fromLTRB(20, 40, 20, 40),
+                          padding: EdgeInsets.zero,
+                          alignment: Alignment.center,
+                          child: Text(
+                            "Update Now",
+                            textAlign: TextAlign.center,
+                            style: TextStyle(color: Colors.white, fontSize: 20),
+                          ),
+                        )),
+                  )
                 ],
               ),
             ));
