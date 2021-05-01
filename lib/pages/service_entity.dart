@@ -125,7 +125,9 @@ class ChildEntityRowState extends State<ChildEntityRow> {
           Navigator.of(context).push(PageAnimation.createRoute(GenerateScreen(
             entityId: _metaEntity.entityId,
             entityName: _metaEntity.name,
-            backRoute: "ChildList",
+            backRoute: ManageChildEntityListPage(
+              entity: entity,
+            ),
           )));
       });
     }
@@ -406,7 +408,7 @@ class ChildEntityRowState extends State<ChildEntityRow> {
                           context,
                           Icons.info_outline,
                           Duration(seconds: 5),
-                          "No Bookings found as of now!!",
+                          "No Applications found as of now!!",
                           "");
                     }
                   },

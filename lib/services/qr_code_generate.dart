@@ -22,7 +22,7 @@ import 'package:share/share.dart';
 class GenerateScreen extends StatefulWidget {
   final String entityId;
   final String entityName;
-  final String backRoute;
+  final dynamic backRoute;
   GenerateScreen(
       {Key key,
       @required this.entityId,
@@ -53,12 +53,12 @@ class GenerateScreenState extends State<GenerateScreen> {
     super.initState();
     generateQrCode();
 
-    if (widget.backRoute == "UserAppsList") {
-      route = UserAccountPage();
-    }
-    if (widget.backRoute == "EntityList") {
-      route = ManageEntityListPage();
-    }
+    // if (widget.backRoute == "UserAppsList") {
+    //   route = UserAccountPage();
+    // }
+    // if (widget.backRoute == "EntityList") {
+    //   route = ManageEntityListPage();
+    // }
   }
 
   void generateQrCode() {
@@ -174,8 +174,8 @@ class GenerateScreenState extends State<GenerateScreen> {
       theme: ThemeData.light().copyWith(),
       home: WillPopScope(
         child: Scaffold(
-          appBar:
-              CustomAppBarWithBackButton(titleTxt: "QR Code", backRoute: route),
+          appBar: CustomAppBarWithBackButton(
+              titleTxt: "QR Code", backRoute: widget.backRoute),
           body: Center(
             child: Container(
               color: Colors.white,

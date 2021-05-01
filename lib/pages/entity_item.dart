@@ -151,7 +151,7 @@ class EntityRowState extends State<EntityRow> {
           Navigator.of(context).push(PageAnimation.createRoute(GenerateScreen(
             entityId: _metaEntity.entityId,
             entityName: _metaEntity.name,
-            backRoute: "EntityList",
+            backRoute: ManageEntityListPage(),
           )));
       });
     }
