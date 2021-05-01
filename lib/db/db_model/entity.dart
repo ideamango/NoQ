@@ -52,7 +52,8 @@ class Entity {
       this.maxTokensPerSlotByUser = 1,
       this.maxPeoplePerToken = 1,
       this.parentGroupId,
-      this.supportEmail});
+      this.supportEmail,
+      this.maxTokenByUserInDay = 1});
 
   //SlotDocumentId is entityID#20~06~01 it is not auto-generated, will help in not duplicating the record
   String entityId;
@@ -101,6 +102,7 @@ class Entity {
   String
       parentGroupId; //this value will be present and common for different branches of same company
   String supportEmail;
+  int maxTokenByUserInDay;
 
   Map<String, dynamic> toJson() => {
         'entityId': entityId,
@@ -145,7 +147,8 @@ class Entity {
         'maxTokensPerSlotByUser': maxTokensPerSlotByUser,
         'maxPeoplePerToken': maxPeoplePerToken,
         'parentGroupId': parentGroupId,
-        'supportEmail': supportEmail
+        'supportEmail': supportEmail,
+        'maxTokenByUserInDay': maxTokenByUserInDay
       };
 
   List<dynamic> usersToJson(List<MetaUser> users) {
@@ -250,7 +253,8 @@ class Entity {
         maxTokensPerSlotByUser: json['maxTokensPerSlotByUser'],
         maxPeoplePerToken: json['maxPeoplePerToken'],
         parentGroupId: json['parentGroupId'],
-        supportEmail: json['supportEmail']);
+        supportEmail: json['supportEmail'],
+        maxTokenByUserInDay: json['maxTokenByUserInDay']);
   }
 
   static Address convertToAddressFromJson(Map<String, dynamic> json) {
@@ -258,7 +262,7 @@ class Entity {
   }
 
   static List<MetaUser> convertToUsersFromJson(List<dynamic> usersJson) {
-    List<MetaUser> users = new List<MetaUser>();
+    List<MetaUser> users = [];
     if (usersJson == null) return users;
 
     for (Map<String, dynamic> json in usersJson) {
@@ -269,7 +273,7 @@ class Entity {
   }
 
   static List<Employee> convertToEmployeesFromJson(List<dynamic> usersJson) {
-    List<Employee> users = new List<Employee>();
+    List<Employee> users = [];
     if (usersJson == null) return users;
 
     for (Map<String, dynamic> json in usersJson) {
@@ -281,7 +285,7 @@ class Entity {
 
   static List<MetaEntity> convertToMetaEntitiesFromJson(
       List<dynamic> metaEntityJson) {
-    List<MetaEntity> metaEntities = new List<MetaEntity>();
+    List<MetaEntity> metaEntities = [];
     if (metaEntityJson == null) return metaEntities;
 
     for (Map<String, dynamic> json in metaEntityJson) {
@@ -292,7 +296,7 @@ class Entity {
   }
 
   static List<MetaForm> convertToMetaFormsFromJson(List<dynamic> metaFormJson) {
-    List<MetaForm> metaForms = new List<MetaForm>();
+    List<MetaForm> metaForms = [];
     if (metaFormJson == null) return metaForms;
 
     for (Map<String, dynamic> json in metaFormJson) {
@@ -303,7 +307,7 @@ class Entity {
   }
 
   static List<String> convertToClosedOnArrayFromJson(List<dynamic> daysJson) {
-    List<String> days = new List<String>();
+    List<String> days = [];
     if (daysJson == null) return days;
 
     for (String day in daysJson) {
@@ -352,7 +356,8 @@ class Entity {
           maxTokensPerSlotByUser: maxTokensPerSlotByUser,
           maxPeoplePerToken: maxPeoplePerToken,
           parentGroupId: parentGroupId,
-          supportEmail: supportEmail);
+          supportEmail: supportEmail,
+          maxTokenByUserInDay: maxTokenByUserInDay);
     } else {
       _meta.name = name;
       _meta.type = type;
@@ -391,14 +396,15 @@ class Entity {
       _meta.maxPeoplePerToken = maxPeoplePerToken;
       _meta.parentGroupId = parentGroupId;
       _meta.supportEmail = supportEmail;
+      _meta.maxTokenByUserInDay = maxTokenByUserInDay;
     }
     return _meta;
   }
 
   List<String> constructQueriableList(String string) {
-    if (string == null) return new List<String>();
+    if (string == null) return [];
     String lowercased = string.toLowerCase();
-    List<String> queriables = new List<String>();
+    List<String> queriables = [];
     for (int i = 1; i <= lowercased.length; i++) {
       queriables.add(lowercased.substring(0, i));
     }

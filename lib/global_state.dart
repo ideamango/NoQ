@@ -22,7 +22,6 @@ import './enum/entity_type.dart';
 import './events/local_notification_data.dart';
 import './location.dart';
 import './services/auth_service.dart';
-import './services/location_util.dart';
 import './tuple.dart';
 
 import './utils.dart';
@@ -193,7 +192,7 @@ class GlobalState {
   bool isEligibleForUpdate() {
     if (_conf.latestVersion == null) return false;
 
-    Version latestVer = _conf.getLatestPublishedVersion(isAndroid, isIOS);
+    Version latestVer = _conf.getLatestPublishedVersion();
     if (latestVer != null) {
       try {
         Version currentVersion = Version.parse(version);

@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:enum_to_string/enum_to_string.dart';
 import 'package:version/version.dart';
 import './meta_form.dart';
@@ -200,14 +202,14 @@ class Configurations {
     return forms;
   }
 
-  String getForceUpdateMessage(bool isAndroid, bool isIOS) {
-    if (isAndroid) {
+  String getForceUpdateMessage() {
+    if (Platform.isAndroid) {
       if (latestVersion.containsKey("androidForceUpdateMessage")) {
         return latestVersion["androidForceUpdateMessage"];
       }
     }
 
-    if (isIOS) {
+    if (Platform.isAndroid) {
       if (latestVersion.containsKey("iosForceUpdateMessage")) {
         return latestVersion["iosForceUpdateMessage"];
       }
@@ -216,14 +218,14 @@ class Configurations {
     return null;
   }
 
-  bool isForceUpdateRequired(bool isAndroid, bool isIOS) {
-    if (isAndroid) {
+  bool isForceUpdateRequired() {
+    if (Platform.isAndroid) {
       if (latestVersion.containsKey("androidForceUpdate")) {
         return "true" == latestVersion["androidForceUpdate"];
       }
     }
 
-    if (isIOS) {
+    if (Platform.isIOS) {
       if (latestVersion.containsKey("iosForceUpdate")) {
         return "true" == latestVersion["iosForceUpdate"];
       }
@@ -232,8 +234,8 @@ class Configurations {
     return false;
   }
 
-  String getVersionUpdateMessage(bool isAndroid, bool isIOS) {
-    if (isAndroid) {
+  String getVersionUpdateMessage() {
+    if (Platform.isAndroid) {
       if (latestVersion.containsKey("androidMessage")) {
         return latestVersion["androidMessage"];
       } else {
@@ -241,7 +243,7 @@ class Configurations {
       }
     }
 
-    if (isIOS) {
+    if (Platform.isIOS) {
       if (latestVersion.containsKey("iosMessage")) {
         return latestVersion["iosMessage"];
       } else {
@@ -253,7 +255,7 @@ class Configurations {
   }
 
   List<String> getVersionUpdateFactors(bool isAndroid, bool isIOS) {
-    if (isAndroid) {
+    if (Platform.isAndroid) {
       if (latestVersion.containsKey("androidUpdateFactors")) {
         return latestVersion["androidUpdateFactors"];
       } else {
@@ -261,7 +263,7 @@ class Configurations {
       }
     }
 
-    if (isIOS) {
+    if (Platform.isIOS) {
       if (latestVersion.containsKey("iosUpdateFactors")) {
         return latestVersion["iosUpdateFactors"];
       } else {
@@ -272,8 +274,8 @@ class Configurations {
     return null;
   }
 
-  Version getLatestPublishedVersion(bool isAndroid, bool isIOS) {
-    if (isAndroid) {
+  Version getLatestPublishedVersion() {
+    if (Platform.isAndroid) {
       if (latestVersion.containsKey("androidVersion")) {
         try {
           return Version.parse(latestVersion["androidVersion"]);
@@ -285,7 +287,7 @@ class Configurations {
       }
     }
 
-    if (isIOS) {
+    if (Platform.isIOS) {
       if (latestVersion.containsKey("iosVersion")) {
         try {
           return Version.parse(latestVersion["iosVersion"]);
@@ -323,8 +325,8 @@ class Configurations {
     return null;
   }
 
-  int getBuildNumber(bool isAndroid, bool isIOS) {
-    if (isAndroid) {
+  int getBuildNumber() {
+    if (Platform.isAndroid) {
       if (latestVersion.containsKey("androidBuildNumber")) {
         try {
           return int.parse(latestVersion["androidBuildNumber"]);
@@ -336,7 +338,7 @@ class Configurations {
       }
     }
 
-    if (isIOS) {
+    if (Platform.isIOS) {
       if (latestVersion.containsKey("iosBuildNumber")) {
         try {
           return int.parse(latestVersion["iosBuildNumber"]);
