@@ -30,6 +30,11 @@ import 'package:carousel_slider/carousel_slider.dart';
 //import 'path';
 
 class UserHomePage extends StatefulWidget {
+  final bool dontShowUpdate;
+  UserHomePage({
+    Key key,
+    this.dontShowUpdate,
+  }) : super(key: key);
   @override
   _UserHomePageState createState() => _UserHomePageState();
 }
@@ -58,22 +63,23 @@ class _UserHomePageState extends State<UserHomePage> {
     super.initState();
     getGlobalState().whenComplete(() {
       _loadBookings();
-      if (_state.isEligibleForUpdate()) {
-        if (_state
-            .getConfigurations()
-            .isForceUpdateRequired(_state.isAndroid, _state.isIOS)) {
-          forceUpdateMsg = _state
+      if (widget.dontShowUpdate != null) {
+        if (_state.isEligibleForUpdate()) {
+          if (_state
               .getConfigurations()
-              .getForceUpdateMessage(_state.isAndroid, _state.isIOS);
-        } else {
-          versionUpdateMsg = _state
+              .isForceUpdateRequired(_state.isAndroid, _state.isIOS)) {
+            forceUpdateMsg = _state
+                .getConfigurations()
+                .getForceUpdateMessage(_state.isAndroid, _state.isIOS);
+          } else {
+            versionUpdateMsg = _state
+                .getConfigurations()
+                .getVersionUpdateMessage(_state.isAndroid, _state.isIOS);
+          }
+          versionFactors = _state
               .getConfigurations()
-              .getVersionUpdateMessage(_state.isAndroid, _state.isIOS);
+              .getVersionUpdateFactors(_state.isAndroid, _state.isIOS);
         }
-
-        versionFactors = _state
-            .getConfigurations()
-            .getVersionUpdateFactors(_state.isAndroid, _state.isIOS);
       }
 
       if (this.mounted) {
@@ -143,106 +149,129 @@ class _UserHomePageState extends State<UserHomePage> {
   openPlayStore() async {
     PackageInfo info = await PackageInfo.fromPlatform();
     String packageName = info.packageName;
-
-    // AppReview.writeReview.then((onValue) {
-    //   setState(() {
-    //     output = onValue;
-    //   });
-    //   print(onValue);
-    // });
-
-    //  openRateReviewForIos();
     launchPlayStore(packageName: packageName);
-
-    // launch("https://play.google.com/store/apps/details?id=" + packageName);
   }
 
   @override
   Widget build(BuildContext context) {
     if (_initCompleted) {
       String title = "Home Page";
-      if (Utils.isNotNullOrEmpty(forceUpdateMsg)) {
+      if (widget.dontShowUpdate != null &&
+          Utils.isNotNullOrEmpty(forceUpdateMsg)) {
         return Scaffold(
-            backgroundColor: Colors.cyan[200],
-            body: Container(
-              //  color: ,
-              margin: EdgeInsets.all(30),
-              height: MediaQuery.of(context).size.height,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Container(
-                    height: MediaQuery.of(context).size.height * .5,
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        Text(
-                          //"There is an important update and includes very critical features. App may not function properly if not updated now.",
-                          forceUpdateMsg,
-                          style: TextStyle(
-                              fontSize: 20, fontWeight: FontWeight.bold),
+            // backgroundColor: Colors.cyan[200],
+            body: Card(
+          elevation: 20,
+          child: Container(
+            //  color: ,
+
+            alignment: Alignment.center,
+            margin: EdgeInsets.all(30),
+            //  padding: EdgeInsets.all(30),
+            height: MediaQuery.of(context).size.height * .9,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Container(
+                  height: MediaQuery.of(context).size.height * .6,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      Text(
+                        //"There is an important update and includes very critical features. App may not function properly if not updated now.",
+                        forceUpdateMsg,
+                        style: TextStyle(
+                            fontSize: 20, fontWeight: FontWeight.bold),
+                      ),
+                      verticalSpacer,
+                      if (versionFactors != null)
+                        ListView.builder(
+                          padding: EdgeInsets.all(
+                              MediaQuery.of(context).size.width * .026),
+                          scrollDirection: Axis.vertical,
+                          physics: ClampingScrollPhysics(),
+                          reverse: true,
+                          shrinkWrap: true,
+                          //itemExtent: itemSize,
+                          itemBuilder: (BuildContext context, int index) {
+                            return Container(
+                              margin: EdgeInsets.only(bottom: 5),
+                              child: Text(
+                                "*  " + versionFactors[index],
+                                style: TextStyle(height: 1.5, fontSize: 14),
+                              ),
+                            );
+                          },
+                          itemCount: versionFactors.length,
                         ),
-                        verticalSpacer,
-                        if (versionFactors != null)
-                          ListView.builder(
-                            padding: EdgeInsets.all(
-                                MediaQuery.of(context).size.width * .026),
-                            scrollDirection: Axis.vertical,
-                            physics: ClampingScrollPhysics(),
-                            reverse: true,
-                            shrinkWrap: true,
-                            //itemExtent: itemSize,
-                            itemBuilder: (BuildContext context, int index) {
-                              return Container(
-                                margin: EdgeInsets.only(bottom: 5),
-                                child: Text(
-                                  "*  " + versionFactors[index],
-                                  style: TextStyle(height: 1.5, fontSize: 16),
-                                ),
-                              );
-                            },
-                            itemCount: versionFactors.length,
-                            // children: [
-                            //   Text(
-                            //     "* Push Notifications",
-                            //     textAlign: TextAlign.left,
-                            //     style: TextStyle(fontSize: 14),
-                            //   ),
-                            //   Text(
-                            //     "* Application forms",
-                            //     textAlign: TextAlign.left,
-                            //     style: TextStyle(fontSize: 14),
-                            //   ),
-                            // ],
-                          ),
-                      ],
-                    ),
+                    ],
                   ),
-                  Container(
-                    child: MaterialButton(
-                        elevation: 20,
-                        //padding: EdgeInsets.fromLTRB(20, 40, 20, 40),
-                        color: Colors.green[600],
-                        onPressed: () {
+                ),
+                Row(
+                  children: [
+                    Container(
+                      padding: EdgeInsets.fromLTRB(0, 10, 5, 0),
+                      child: MaterialButton(
+                          elevation: 0,
+                          color: Colors.white,
+                          shape: RoundedRectangleBorder(
+                              side: BorderSide(color: Colors.green[600]),
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(5.0))),
+                          onPressed: () {
 //Goto play store and update app.
-                          openPlayStore();
-                        },
-                        child: Container(
-                          width: MediaQuery.of(context).size.width * .7,
-                          height: MediaQuery.of(context).size.width * .12,
-                          //  margin: EdgeInsets.fromLTRB(20, 40, 20, 40),
-                          padding: EdgeInsets.zero,
-                          alignment: Alignment.center,
-                          child: Text(
-                            "Update Now",
-                            textAlign: TextAlign.center,
-                            style: TextStyle(color: Colors.white, fontSize: 20),
-                          ),
-                        )),
-                  )
-                ],
-              ),
-            ));
+                            Navigator.of(context).push(
+                                PageAnimation.createRoute(
+                                    UserHomePage(dontShowUpdate: null)));
+                          },
+                          child: Container(
+                            width: MediaQuery.of(context).size.width * .3,
+                            height: MediaQuery.of(context).size.width * .1,
+
+                            //  margin: EdgeInsets.fromLTRB(20, 40, 20, 40),
+                            padding: EdgeInsets.zero,
+                            alignment: Alignment.center,
+                            child: Text(
+                              "Update Later",
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                  color: Colors.green[600], fontSize: 14),
+                            ),
+                          )),
+                    ),
+                    Container(
+                      padding: EdgeInsets.fromLTRB(5, 10, 0, 0),
+                      child: MaterialButton(
+                          elevation: 20,
+                          color: Colors.green[600],
+                          shape: RoundedRectangleBorder(
+                              side: BorderSide(color: Colors.green[600]),
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(5.0))),
+                          onPressed: () {
+//Goto play store and update app.
+                            openPlayStore();
+                          },
+                          child: Container(
+                            width: MediaQuery.of(context).size.width * .3,
+                            height: MediaQuery.of(context).size.width * .1,
+                            //  margin: EdgeInsets.fromLTRB(20, 40, 20, 40),
+                            padding: EdgeInsets.zero,
+                            alignment: Alignment.center,
+                            child: Text(
+                              "Update Now",
+                              textAlign: TextAlign.center,
+                              style:
+                                  TextStyle(color: Colors.white, fontSize: 14),
+                            ),
+                          )),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ));
       } else {
         return MaterialApp(
             debugShowCheckedModeBanner: false,

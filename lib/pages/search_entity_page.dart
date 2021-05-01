@@ -680,7 +680,7 @@ class _SearchEntityPageState extends State<SearchEntityPage>
                 _buildSearchList();
               }
             } else {
-              if (_searchTextController.text.length >= 3) {
+              if (_searchTextController.text.length >= 4) {
                 setState(() {
                   messageTitle = "";
                   _isSearching = "searching";

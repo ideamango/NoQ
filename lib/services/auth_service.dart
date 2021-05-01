@@ -23,7 +23,9 @@ class AuthService {
         stream: getFirebaseAuth().authStateChanges(),
         builder: (BuildContext context, snapshot) {
           if (snapshot.hasData) {
-            return UserHomePage();
+            return UserHomePage(
+              dontShowUpdate: false,
+            );
           } else {
             return LoginPage();
           }

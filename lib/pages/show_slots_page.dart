@@ -651,7 +651,7 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
         context,
         Icons.info_outline,
         Duration(
-          seconds: 6,
+          seconds: 4,
         ),
         slotBooking,
         takingMoment);

@@ -439,7 +439,7 @@ class EntityRowState extends State<EntityRow> {
                               context,
                               Icons.info_outline,
                               Duration(seconds: 5),
-                              "No Bookings found as of now!!",
+                              "No Applications found as of now!!",
                               "");
                         }
 

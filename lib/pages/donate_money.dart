@@ -66,6 +66,7 @@ class _DonatePageState extends State<DonatePage> {
     upiId = '6281581624@okbizaxis';
     // _amountController.text =
     //     (Random.secure().nextDouble() * 10).toStringAsFixed(2);
+
     _appsFuture = UpiPay.getInstalledUpiApplications();
     _upiAddressController.text = upiId;
 
@@ -187,7 +188,7 @@ class _DonatePageState extends State<DonatePage> {
                     child: ListView(
                       children: <Widget>[
                         Container(
-                          height: MediaQuery.of(context).size.height * .1,
+                          //  height: MediaQuery.of(context).size.height * .1,
                           margin: EdgeInsets.fromLTRB(
                               MediaQuery.of(context).size.width * .05,
                               MediaQuery.of(context).size.width * .04,
@@ -214,11 +215,6 @@ class _DonatePageState extends State<DonatePage> {
                                             fontFamily: 'RalewayRegular',
                                             fontSize: 12.0),
                                         children: <TextSpan>[
-                                          //TextSpan(text: contactUsPageHeadline),
-                                          // TextSpan(
-                                          //     text:
-                                          //         "When you donate it motivates and help keep our Spirits high.\n "),
-
                                           TextSpan(
                                               text:
                                                   'We can do MORE with LESSs.\n',

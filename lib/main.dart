@@ -113,7 +113,9 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       routes: <String, WidgetBuilder>{
-        '/dashboard': (BuildContext context) => UserHomePage(),
+        '/dashboard': (BuildContext context) => UserHomePage(
+              dontShowUpdate: false,
+            ),
         '/loginpage': (BuildContext context) => LoginPage(),
       },
       theme: ThemeData(
@@ -190,7 +192,11 @@ class DynamicLinkService {
           }
         } else
           Navigator.pushReplacement(
-              context, MaterialPageRoute(builder: (context) => UserHomePage()));
+              context,
+              MaterialPageRoute(
+                  builder: (context) => UserHomePage(
+                        dontShowUpdate: false,
+                      )));
         // Navigator.pushNamed(context, deepLink.path);
       });
     } catch (e) {

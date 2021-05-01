@@ -686,7 +686,9 @@ class _LoginPageState extends State<LoginPage> {
                           Navigator.pushReplacement(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => UserHomePage()));
+                                  builder: (context) => UserHomePage(
+                                        dontShowUpdate: false,
+                                      )));
                         } else {
                           if (_pin == null || _pin == "") {
                             setState(() {
@@ -711,7 +713,9 @@ class _LoginPageState extends State<LoginPage> {
                               Navigator.pushReplacement(
                                   context,
                                   MaterialPageRoute(
-                                      builder: (context) => UserHomePage()));
+                                      builder: (context) => UserHomePage(
+                                            dontShowUpdate: false,
+                                          )));
                             }).catchError((onError) {
                               // print("printing Errorrrrrrrrrr");
                               // // print(onError.toString());
