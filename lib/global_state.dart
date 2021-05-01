@@ -573,6 +573,8 @@ class GlobalState {
       _gs._userService = null;
       _gs._entityService = null;
       _gs._currentUser = null;
+      _gs._applicationService = null;
+      _gs._authService = null;
       _gs._conf = null;
       _gs.lastSearchName = "";
       _gs.lastSearchType = null;
