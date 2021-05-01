@@ -49,24 +49,25 @@ class _UserHomePageState extends State<UserHomePage> {
   //ScanResult scanResult;
   GlobalState _state;
   bool _initCompleted = false;
-  String forceUpdateMsg = "Update now.";
+  String forceUpdateMsg;
   String versionUpdateMsg;
+  List<String> versionFactors;
 
   @override
   void initState() {
     super.initState();
     getGlobalState().whenComplete(() {
       _loadBookings();
-//TODO: SUMANT Why platform to be passed from here.
-      // if (_state.getConfigurations().isForceUpdateRequired(true, false)) {
-      //   forceUpdateMsg =
-      //       _state.getConfigurations().getForceUpdateMessage(true, false);
-      //   //TODO: block UI and show message to update
-      // } else
-      // {
-      //   versionUpdateMsg =
-      //       _state.getConfigurations().getVersionUpdateMessage(true, false);
-      // }
+      if (_state.isEligibleForUpdate()) {
+        if (_state.getConfigurations().isForceUpdateRequired()) {
+          forceUpdateMsg = _state.getConfigurations().getForceUpdateMessage();
+        } else {
+          versionUpdateMsg =
+              _state.getConfigurations().getVersionUpdateMessage();
+        }
+
+        versionFactors = _state.getConfigurations().getVersionUpdateFactors();
+      }
 
       if (this.mounted) {
         setState(() {
@@ -153,356 +154,398 @@ class _UserHomePageState extends State<UserHomePage> {
   Widget build(BuildContext context) {
     if (_initCompleted) {
       String title = "Home Page";
-//       if (Utils.isNotNullOrEmpty(forceUpdateMsg)) {
-//         return Scaffold(
-//             backgroundColor: primaryAccentColor,
-//             body: Container(
-//               //  color: ,
-//               margin: EdgeInsets.all(30),
-//               height: MediaQuery.of(context).size.height,
-//               child: Column(
-//                 mainAxisAlignment: MainAxisAlignment.center,
-//                 children: [
-//                   Text(
-//                     "** Important **",
-//                     style: TextStyle(fontSize: 20),
-//                   ),
-//                   verticalSpacer,
-//                   //forceUpdateMsg
-//                   Text(
-//                     "This is an important update and includes very critical features. App may not function properly if not updated.",
-//                     style: TextStyle(fontSize: 17),
-//                   ),
-//                   Text(
-//                     "* Push Notifications",
-//                     textAlign: TextAlign.left,
-//                     style: TextStyle(fontSize: 14),
-//                   ),
-//                   Text(
-//                     "* Application forms",
-//                     textAlign: TextAlign.left,
-//                     style: TextStyle(fontSize: 14),
-//                   ),
-//                   ElevatedButton(
-//                       onPressed: () {
-// //Goto play store and update app.
-//                         openPlayStore();
-//                       },
-//                       child: Container(
-//                         margin: EdgeInsets.zero,
-//                         padding: EdgeInsets.zero,
-//                         color: Colors.blueGrey,
-//                         child: Text("Update now"),
-//                       ))
-//                 ],
-//               ),
-//             ));
-//       } else {
-      return MaterialApp(
-          debugShowCheckedModeBanner: false,
-          theme: ThemeData.light().copyWith(),
-          home: WillPopScope(
-            child: Scaffold(
-              resizeToAvoidBottomInset: false,
-              appBar: CustomAppBar(
-                titleTxt: title,
-              ),
-              body: Scrollbar(
-                child: SingleChildScrollView(
-                  padding:
-                      EdgeInsets.all(MediaQuery.of(context).size.width * .036),
-                  child: Column(
-                    children: <Widget>[
-                      Card(
-                        margin: EdgeInsets.zero,
-                        elevation: 20,
-                        child: Container(
-                          height: MediaQuery.of(context).size.height * .37,
-                          padding: EdgeInsets.all(5),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: <Widget>[
-                              Column(
-                                children: <Widget>[
-                                  CarouselSlider(
-                                    options: CarouselOptions(
-                                      height:
-                                          MediaQuery.of(context).size.height *
-                                              .255,
-                                      autoPlay: true,
-                                      autoPlayInterval: Duration(seconds: 3),
-                                      autoPlayAnimationDuration:
-                                          Duration(milliseconds: 800),
-                                      autoPlayCurve: Curves.easeIn,
-                                      pauseAutoPlayOnTouch: true,
-                                      aspectRatio: 2.0,
-                                      onPageChanged:
-                                          (index, carouselPageChangedReason) {
-                                        setState(() {
-                                          _currentIndex = index;
-                                        });
-                                      },
-                                    ),
-                                    items: cardList.map((card) {
-                                      return Builder(
-                                          builder: (BuildContext context) {
-                                        return Container(
-                                          height: MediaQuery.of(context)
-                                                  .size
-                                                  .height *
-                                              0.4,
-                                          width:
-                                              MediaQuery.of(context).size.width,
-                                          child: Card(
-                                            color: primaryAccentColor,
-                                            child: card,
-                                          ),
-                                        );
-                                      });
-                                    }).toList(),
-                                  ),
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: <Widget>[
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        children:
-                                            map<Widget>(cardList, (index, url) {
-                                          return Container(
-                                            width: 7.0,
-                                            height: 7.0,
-                                            margin: EdgeInsets.symmetric(
-                                                vertical: 2.0, horizontal: 2.0),
-                                            decoration: BoxDecoration(
-                                              shape: BoxShape.circle,
-                                              color: _currentIndex == index
-                                                  ? highlightColor
-                                                  : Colors.grey,
-                                            ),
-                                          );
-                                        }),
-                                      ),
-                                    ],
-                                  )
-                                ],
-                              ),
-                              Column(
-                                children: <Widget>[
-                                  Text(homeScreenMsgTxt2, style: homeMsgStyle2),
-                                  Text(
-                                    homeScreenMsgTxt3,
-                                    style: homeMsgStyle3,
-                                  ),
-                                ],
-                              )
-                            ],
-                          ),
+      if (Utils.isNotNullOrEmpty(forceUpdateMsg)) {
+        return Scaffold(
+            backgroundColor: Colors.cyan[200],
+            body: Container(
+              //  color: ,
+              margin: EdgeInsets.all(30),
+              height: MediaQuery.of(context).size.height,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Container(
+                    height: MediaQuery.of(context).size.height * .5,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        Text(
+                          //"There is an important update and includes very critical features. App may not function properly if not updated now.",
+                          forceUpdateMsg,
+                          style: TextStyle(
+                              fontSize: 20, fontWeight: FontWeight.bold),
                         ),
-                        //child: Image.asset('assets/noq_home.png'),
-                      ),
-                      verticalSpacer,
-                      // Card(
-                      //     child: Container(
-                      //   decoration: BoxDecoration(
-                      //       border: Border.all(color: borderColor),
-                      //       color: Colors.white,
-                      //       shape: BoxShape.rectangle,
-                      //       borderRadius:
-                      //           BorderRadius.all(Radius.circular(5.0))),
-                      //   child: ListView(
-                      //     children: [Text("Donation Text")],
-                      //   ),
-                      // )),
-                      // verticalSpacer,
-                      Card(
-                        margin: EdgeInsets.zero,
-                        elevation: 20,
-                        child: Theme(
-                          data: ThemeData(
-                            unselectedWidgetColor: Colors.grey[600],
-                            accentColor: btnColor,
-                          ),
-                          child: ExpansionTile(
-                            //key: PageStorageKey(this.widget.headerTitle),
-                            initiallyExpanded: true,
-                            title: Text(
-                              "Upcoming Bookings",
-                              style: TextStyle(
-                                  color: Colors.blueGrey[700], fontSize: 17),
-                            ),
-                            backgroundColor: Colors.white,
-                            leading: Icon(
-                              Icons.date_range,
-                              color: primaryIcon,
-                            ),
-                            children: <Widget>[
-                              if (_upcomingBkgStatus == 'Success')
-                                ListView.builder(
-                                  shrinkWrap: true,
-                                  scrollDirection: Axis.vertical,
-                                  physics: ClampingScrollPhysics(),
-                                  itemBuilder:
-                                      (BuildContext context, int index) {
-                                    return Container(
-                                      child: new Column(
-                                          children: _newBookingsList
-                                              .map(_buildItem)
-                                              .toList()),
-                                    );
-                                  },
-                                  itemCount: 1,
+                        verticalSpacer,
+                        if (versionFactors != null)
+                          ListView.builder(
+                            padding: EdgeInsets.all(
+                                MediaQuery.of(context).size.width * .026),
+                            scrollDirection: Axis.vertical,
+                            physics: ClampingScrollPhysics(),
+                            reverse: true,
+                            shrinkWrap: true,
+                            //itemExtent: itemSize,
+                            itemBuilder: (BuildContext context, int index) {
+                              return Container(
+                                margin: EdgeInsets.only(bottom: 5),
+                                child: Text(
+                                  "*  " + versionFactors[index],
+                                  style: TextStyle(height: 1.5, fontSize: 16),
                                 ),
-                              if (_upcomingBkgStatus == 'NoBookings')
-                                _emptyStorePage(
-                                    "No bookings yet.. ", bookNowMsg),
-                            ],
+                              );
+                            },
+                            itemCount: versionFactors.length,
+                            // children: [
+                            //   Text(
+                            //     "* Push Notifications",
+                            //     textAlign: TextAlign.left,
+                            //     style: TextStyle(fontSize: 14),
+                            //   ),
+                            //   Text(
+                            //     "* Application forms",
+                            //     textAlign: TextAlign.left,
+                            //     style: TextStyle(fontSize: 14),
+                            //   ),
+                            // ],
                           ),
-                        ),
-                      ),
-//                      TODO: uncomment this line, show donation banner only if donation is enabled
-                      // if (_state.getConfigurations().isDonationEnabled())
-                      Container(
-                        width: MediaQuery.of(context).size.width,
-                        margin: EdgeInsets.fromLTRB(0, 10, 0, 10),
-                        padding: EdgeInsets.zero,
-                        child: Card(
+                      ],
+                    ),
+                  ),
+                  Container(
+                    child: MaterialButton(
+                        elevation: 20,
+                        //padding: EdgeInsets.fromLTRB(20, 40, 20, 40),
+                        color: Colors.green[600],
+                        onPressed: () {
+//Goto play store and update app.
+                          openPlayStore();
+                        },
+                        child: Container(
+                          width: MediaQuery.of(context).size.width * .7,
+                          height: MediaQuery.of(context).size.width * .12,
+                          //  margin: EdgeInsets.fromLTRB(20, 40, 20, 40),
+                          padding: EdgeInsets.zero,
+                          alignment: Alignment.center,
+                          child: Text(
+                            "Update Now",
+                            textAlign: TextAlign.center,
+                            style: TextStyle(color: Colors.white, fontSize: 20),
+                          ),
+                        )),
+                  )
+                ],
+              ),
+            ));
+      } else {
+        return MaterialApp(
+            debugShowCheckedModeBanner: false,
+            theme: ThemeData.light().copyWith(),
+            home: WillPopScope(
+              child: Scaffold(
+                resizeToAvoidBottomInset: false,
+                appBar: CustomAppBar(
+                  titleTxt: title,
+                ),
+                body: Scrollbar(
+                  child: SingleChildScrollView(
+                    padding: EdgeInsets.all(
+                        MediaQuery.of(context).size.width * .036),
+                    child: Column(
+                      children: <Widget>[
+                        Card(
                           margin: EdgeInsets.zero,
                           elevation: 20,
-                          child: GestureDetector(
-                            onTap: () {
-                              Navigator.of(context)
-                                  .push(PageAnimation.createRoute(DonatePage(
-                                phone: _state?.getCurrentUser()?.ph,
-                                backRoute: UserHomePage(),
-                              )));
-                            },
-                            child: Image(
-                              fit: BoxFit.fitWidth,
-                              image: AssetImage('assets/donate.png'),
+                          child: Container(
+                            height: MediaQuery.of(context).size.height * .37,
+                            padding: EdgeInsets.all(5),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: <Widget>[
+                                Column(
+                                  children: <Widget>[
+                                    CarouselSlider(
+                                      options: CarouselOptions(
+                                        height:
+                                            MediaQuery.of(context).size.height *
+                                                .255,
+                                        autoPlay: true,
+                                        autoPlayInterval: Duration(seconds: 3),
+                                        autoPlayAnimationDuration:
+                                            Duration(milliseconds: 800),
+                                        autoPlayCurve: Curves.easeIn,
+                                        pauseAutoPlayOnTouch: true,
+                                        aspectRatio: 2.0,
+                                        onPageChanged:
+                                            (index, carouselPageChangedReason) {
+                                          setState(() {
+                                            _currentIndex = index;
+                                          });
+                                        },
+                                      ),
+                                      items: cardList.map((card) {
+                                        return Builder(
+                                            builder: (BuildContext context) {
+                                          return Container(
+                                            height: MediaQuery.of(context)
+                                                    .size
+                                                    .height *
+                                                0.4,
+                                            width: MediaQuery.of(context)
+                                                .size
+                                                .width,
+                                            child: Card(
+                                              color: primaryAccentColor,
+                                              child: card,
+                                            ),
+                                          );
+                                        });
+                                      }).toList(),
+                                    ),
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: <Widget>[
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: map<Widget>(cardList,
+                                              (index, url) {
+                                            return Container(
+                                              width: 7.0,
+                                              height: 7.0,
+                                              margin: EdgeInsets.symmetric(
+                                                  vertical: 2.0,
+                                                  horizontal: 2.0),
+                                              decoration: BoxDecoration(
+                                                shape: BoxShape.circle,
+                                                color: _currentIndex == index
+                                                    ? highlightColor
+                                                    : Colors.grey,
+                                              ),
+                                            );
+                                          }),
+                                        ),
+                                      ],
+                                    )
+                                  ],
+                                ),
+                                Column(
+                                  children: <Widget>[
+                                    Text(homeScreenMsgTxt2,
+                                        style: homeMsgStyle2),
+                                    Text(
+                                      homeScreenMsgTxt3,
+                                      style: homeMsgStyle3,
+                                    ),
+                                  ],
+                                )
+                              ],
+                            ),
+                          ),
+                          //child: Image.asset('assets/noq_home.png'),
+                        ),
+                        verticalSpacer,
+                        // Card(
+                        //     child: Container(
+                        //   decoration: BoxDecoration(
+                        //       border: Border.all(color: borderColor),
+                        //       color: Colors.white,
+                        //       shape: BoxShape.rectangle,
+                        //       borderRadius:
+                        //           BorderRadius.all(Radius.circular(5.0))),
+                        //   child: ListView(
+                        //     children: [Text("Donation Text")],
+                        //   ),
+                        // )),
+                        // verticalSpacer,
+                        Card(
+                          margin: EdgeInsets.zero,
+                          elevation: 20,
+                          child: Theme(
+                            data: ThemeData(
+                              unselectedWidgetColor: Colors.grey[600],
+                              accentColor: btnColor,
+                            ),
+                            child: ExpansionTile(
+                              //key: PageStorageKey(this.widget.headerTitle),
+                              initiallyExpanded: true,
+                              title: Text(
+                                "Upcoming Bookings",
+                                style: TextStyle(
+                                    color: Colors.blueGrey[700], fontSize: 17),
+                              ),
+                              backgroundColor: Colors.white,
+                              leading: Icon(
+                                Icons.date_range,
+                                color: primaryIcon,
+                              ),
+                              children: <Widget>[
+                                if (_upcomingBkgStatus == 'Success')
+                                  ListView.builder(
+                                    shrinkWrap: true,
+                                    scrollDirection: Axis.vertical,
+                                    physics: ClampingScrollPhysics(),
+                                    itemBuilder:
+                                        (BuildContext context, int index) {
+                                      return Container(
+                                        child: new Column(
+                                            children: _newBookingsList
+                                                .map(_buildItem)
+                                                .toList()),
+                                      );
+                                    },
+                                    itemCount: 1,
+                                  ),
+                                if (_upcomingBkgStatus == 'NoBookings')
+                                  _emptyStorePage(
+                                      "No bookings yet.. ", bookNowMsg),
+                              ],
                             ),
                           ),
                         ),
-                      ),
-                      // verticalSpacer,
-
-                      Column(
-                        children: [
-                          GestureDetector(
-                            onTap: () {
-                              //User clicked on show how, lets show them.
-                              print("Showing how to book time-slot");
-                              Navigator.of(context).push(
-                                  PageAnimation.createRoute(
-                                      HowToRegForBusiness()));
-                            },
-                            child: Container(
-                              width: MediaQuery.of(context).size.width,
-                              margin: EdgeInsets.zero,
-                              padding: EdgeInsets.all(0),
-                              alignment: Alignment.topLeft,
-                              child: Image(
-                                image: AssetImage(
-                                    'assets/how_to_register_business.png'),
-                              ),
-                            ),
-                          ),
-                          verticalSpacer,
-                          GestureDetector(
-                            onTap: () {
-                              //User clicked on show how, lets show them.
-                              print("Showing how to book time-slot");
-                              Navigator.of(context).push(
-                                  PageAnimation.createRoute(
-                                      HowToRegForUsers()));
-                            },
-                            child: Container(
-                              width: MediaQuery.of(context).size.width,
-                              margin: EdgeInsets.zero,
-                              padding: EdgeInsets.all(0),
-                              alignment: Alignment.topLeft,
-                              child: Image(
-                                image:
-                                    AssetImage('assets/how_to_book_slot.png'),
-                              ),
-                            ),
-                          ),
-                          Container(
-                            height: MediaQuery.of(context).size.height * .06,
-                          ),
-                        ],
-                      ),
-                      if (_state?.getCurrentUser()?.ph == '+919999999999')
+//                      TODO: uncomment this line, show donation banner only if donation is enabled
+                        // if (_state.getConfigurations().isDonationEnabled())
                         Container(
-                          height: 30,
-                          width: 60,
-                          child: RaisedButton(
-                            color: btnColor,
-                            onPressed: () {
-                              print("testing");
-                              DBTest().dbCall();
-                              print("testing updated");
-                            },
-                            child: Text("Run test"),
+                          width: MediaQuery.of(context).size.width,
+                          margin: EdgeInsets.fromLTRB(0, 10, 0, 10),
+                          padding: EdgeInsets.zero,
+                          child: Card(
+                            margin: EdgeInsets.zero,
+                            elevation: 20,
+                            child: GestureDetector(
+                              onTap: () {
+                                Navigator.of(context)
+                                    .push(PageAnimation.createRoute(DonatePage(
+                                  phone: _state?.getCurrentUser()?.ph,
+                                  backRoute: UserHomePage(),
+                                )));
+                              },
+                              child: Image(
+                                fit: BoxFit.fitWidth,
+                                image: AssetImage('assets/donate.png'),
+                              ),
+                            ),
                           ),
                         ),
-                    ],
+                        // verticalSpacer,
+
+                        Column(
+                          children: [
+                            GestureDetector(
+                              onTap: () {
+                                //User clicked on show how, lets show them.
+                                print("Showing how to book time-slot");
+                                Navigator.of(context).push(
+                                    PageAnimation.createRoute(
+                                        HowToRegForBusiness()));
+                              },
+                              child: Container(
+                                width: MediaQuery.of(context).size.width,
+                                margin: EdgeInsets.zero,
+                                padding: EdgeInsets.all(0),
+                                alignment: Alignment.topLeft,
+                                child: Image(
+                                  image: AssetImage(
+                                      'assets/how_to_register_business.png'),
+                                ),
+                              ),
+                            ),
+                            verticalSpacer,
+                            GestureDetector(
+                              onTap: () {
+                                //User clicked on show how, lets show them.
+                                print("Showing how to book time-slot");
+                                Navigator.of(context).push(
+                                    PageAnimation.createRoute(
+                                        HowToRegForUsers()));
+                              },
+                              child: Container(
+                                width: MediaQuery.of(context).size.width,
+                                margin: EdgeInsets.zero,
+                                padding: EdgeInsets.all(0),
+                                alignment: Alignment.topLeft,
+                                child: Image(
+                                  image:
+                                      AssetImage('assets/how_to_book_slot.png'),
+                                ),
+                              ),
+                            ),
+                            Container(
+                              height: MediaQuery.of(context).size.height * .06,
+                            ),
+                          ],
+                        ),
+                        if (_state?.getCurrentUser()?.ph == '+919999999999')
+                          Container(
+                            height: 30,
+                            width: 60,
+                            child: RaisedButton(
+                              color: btnColor,
+                              onPressed: () {
+                                print("testing");
+                                DBTest().dbCall();
+                                print("testing updated");
+                              },
+                              child: Text("Run test"),
+                            ),
+                          ),
+                      ],
+                    ),
                   ),
                 ),
-              ),
-              floatingActionButton: SizedBox(
-                height: 45,
-                child: new FloatingActionButton(
-                    splashColor: highlightColor,
-                    elevation: 30.0,
-                    child: ImageIcon(
-                      AssetImage('assets/qrcode.png'),
-                      size: 25,
-                      color: primaryIcon,
-                    ),
-                    backgroundColor: primaryAccentColor,
-                    onPressed: () {
-                      //Uncomment this
-                      QrCodeScanner.scan(context);
+                floatingActionButton: SizedBox(
+                  height: 45,
+                  child: new FloatingActionButton(
+                      splashColor: highlightColor,
+                      elevation: 30.0,
+                      child: ImageIcon(
+                        AssetImage('assets/qrcode.png'),
+                        size: 25,
+                        color: primaryIcon,
+                      ),
+                      backgroundColor: primaryAccentColor,
+                      onPressed: () {
+                        //Uncomment this
+                        QrCodeScanner.scan(context);
 
 //Test Dummy code
 //TODO Dummy code for testing
-                      // GlobalState.getGlobalState().then((value) {
-                      //   value
-                      //       .getTokenService()
-                      //       .getUserToken(
-                      //           "5f0817c0-a263-11eb-98fd-5551d2a7a020#2021~4~24#20~53#+919876543210")
-                      //       .then((tokenValue) {
-                      //     UserTokens userTokenId = tokenValue;
+                        // GlobalState.getGlobalState().then((value) {
+                        //   value
+                        //       .getTokenService()
+                        //       .getUserToken(
+                        //           "5f0817c0-a263-11eb-98fd-5551d2a7a020#2021~4~24#20~53#+919876543210")
+                        //       .then((tokenValue) {
+                        //     UserTokens userTokenId = tokenValue;
 
-                      //     Navigator.pushReplacement(
-                      //         context,
-                      //         MaterialPageRoute(
-                      //             builder: (context) => ShowQrBookingToken(
-                      //                   userTokens: userTokenId,
-                      //                   isAdmin: true,
-                      //                 )));
-                      //   });
-                      // });
-                    }),
+                        //     Navigator.pushReplacement(
+                        //         context,
+                        //         MaterialPageRoute(
+                        //             builder: (context) => ShowQrBookingToken(
+                        //                   userTokens: userTokenId,
+                        //                   isAdmin: true,
+                        //                 )));
+                        //   });
+                        // });
+                      }),
+                ),
+                floatingActionButtonLocation:
+                    FloatingActionButtonLocation.centerDocked,
+                drawer: CustomDrawer(
+                  phone: _state?.getCurrentUser()?.ph,
+                ),
+                bottomNavigationBar: CustomBottomBar(
+                  barIndex: 0,
+                ),
               ),
-              floatingActionButtonLocation:
-                  FloatingActionButtonLocation.centerDocked,
-              drawer: CustomDrawer(
-                phone: _state?.getCurrentUser()?.ph,
-              ),
-              bottomNavigationBar: CustomBottomBar(
-                barIndex: 0,
-              ),
+              onWillPop: () async {
+                return true;
+              },
             ),
-            onWillPop: () async {
-              return true;
-            },
-          ),
-          routes: <String, WidgetBuilder>{
-            '/DLink': (BuildContext context) => new SearchEntityPage(),
-          });
-      //}
+            routes: <String, WidgetBuilder>{
+              '/DLink': (BuildContext context) => new SearchEntityPage(),
+            });
+      }
     } else {
       return MaterialApp(
         debugShowCheckedModeBanner: false,
