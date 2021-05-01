@@ -56,19 +56,19 @@ class _DonatePageState extends State<DonatePage> {
   @override
   void initState() {
     getGlobalState().then((gs) {
+      upiId = _gs.getConfigurations().upi;
+      if (Platform.isAndroid) {
+        _appsFuture = UpiPay.getInstalledUpiApplications();
+        _upiAddressController.text = upiId;
+      }
+      if (Platform.isIOS) {
+        //TODO: show the QR code and the UPI ID for IOS users to make the payment
+
+      }
       setState(() {
         initCompleted = true;
       });
     });
-    //TODO fetch UPI id from global state/configuration
-    // _gs.getConfigurations()
-    //
-    upiId = '6281581624@okbizaxis';
-    // _amountController.text =
-    //     (Random.secure().nextDouble() * 10).toStringAsFixed(2);
-
-    _appsFuture = UpiPay.getInstalledUpiApplications();
-    _upiAddressController.text = upiId;
 
     super.initState();
   }
@@ -175,7 +175,8 @@ class _DonatePageState extends State<DonatePage> {
       home: WillPopScope(
         child: Scaffold(
           drawer: CustomDrawer(
-            phone: _gs.getCurrentUser().ph,
+            phone:
+                _gs.getCurrentUser().ph != null ? _gs.getCurrentUser().ph : "",
           ),
           appBar: CustomAppBarWithBackButton(
             backRoute: widget.backRoute,

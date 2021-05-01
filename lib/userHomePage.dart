@@ -65,20 +65,13 @@ class _UserHomePageState extends State<UserHomePage> {
       _loadBookings();
       if (widget.dontShowUpdate != null) {
         if (_state.isEligibleForUpdate()) {
-          if (_state
-              .getConfigurations()
-              .isForceUpdateRequired(_state.isAndroid, _state.isIOS)) {
-            forceUpdateMsg = _state
-                .getConfigurations()
-                .getForceUpdateMessage(_state.isAndroid, _state.isIOS);
+          if (_state.getConfigurations().isForceUpdateRequired()) {
+            forceUpdateMsg = _state.getConfigurations().getForceUpdateMessage();
           } else {
-            versionUpdateMsg = _state
-                .getConfigurations()
-                .getVersionUpdateMessage(_state.isAndroid, _state.isIOS);
+            versionUpdateMsg =
+                _state.getConfigurations().getVersionUpdateMessage();
           }
-          versionFactors = _state
-              .getConfigurations()
-              .getVersionUpdateFactors(_state.isAndroid, _state.isIOS);
+          versionFactors = _state.getConfigurations().getVersionUpdateFactors();
         }
       }
 
