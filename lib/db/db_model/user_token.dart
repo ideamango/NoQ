@@ -15,13 +15,13 @@ class UserTokens {
       this.lat,
       this.lon,
       this.entityWhatsApp,
-      this.gpay,
-      this.paytm,
-      this.applepay,
       this.phone,
       this.rNum,
       this.address,
-      this.tokens});
+      this.tokens,
+      this.upiId,
+      this.upiPhoneNumber,
+      this.upiQRImagePath});
 
   String slotId; //entityID#20~06~01#9~30
   String entityId;
@@ -33,13 +33,13 @@ class UserTokens {
   double lat;
   double lon;
   String entityWhatsApp;
-  String gpay;
-  String paytm;
-  String applepay;
   String phone;
   int rNum;
   String address;
   List<UserToken> tokens;
+  String upiId;
+  String upiPhoneNumber;
+  String upiQRImagePath;
 
   //TokenDocumentId is SlotId#UserId it is not auto-generated, will help in not duplicating the record
 
@@ -54,13 +54,13 @@ class UserTokens {
         'lat': lat,
         'lon': lon,
         'entityWhatsApp': entityWhatsApp,
-        'gpay': gpay,
-        'paytm': paytm,
-        'applepay': applepay,
         'phone': phone,
         'rNum': rNum,
         'address': address,
-        'tokens': tokensToJson(tokens)
+        'tokens': tokensToJson(tokens),
+        'upiId': upiId,
+        'upiPhoneNumber': upiPhoneNumber,
+        'upiQRImagePath': upiQRImagePath
       };
 
   static UserTokens fromJson(Map<String, dynamic> json) {
@@ -78,13 +78,13 @@ class UserTokens {
         lat: json['lat'],
         lon: json['lon'],
         entityWhatsApp: json['entityWhatsApp'],
-        gpay: json['gpay'],
-        paytm: json['paytm'],
-        applepay: json['applepay'],
         phone: json['phone'],
         rNum: json['rNum'],
         address: json['address'],
-        tokens: convertToTokensFromJson(json['tokens']));
+        tokens: convertToTokensFromJson(json['tokens']),
+        upiId: json['upiId'],
+        upiPhoneNumber: json['upiPhoneNumber'],
+        upiQRImagePath: json['upiQRImagePath']);
 
     for (UserToken token in tokens.tokens) {
       token.parent = tokens;
@@ -94,7 +94,7 @@ class UserTokens {
   }
 
   static List<UserToken> convertToTokensFromJson(List<dynamic> toksJson) {
-    List<UserToken> toks = new List<UserToken>();
+    List<UserToken> toks = [];
     if (toksJson == null) return toks;
 
     for (Map<String, dynamic> json in toksJson) {
@@ -105,7 +105,7 @@ class UserTokens {
   }
 
   List<dynamic> tokensToJson(List<UserToken> toks) {
-    List<dynamic> tokensJson = new List<dynamic>();
+    List<dynamic> tokensJson = [];
     if (toks == null) return tokensJson;
     for (UserToken tok in tokens) {
       tokensJson.add(tok.toJson());
@@ -133,7 +133,7 @@ class UserTokens {
     //First 3 chars of the Entity name, followed by the date and then time and Token number
     //E.g. BAT-200708-0930-10
 
-    List<String> tokenNames = List<String>();
+    List<String> tokenNames = [];
     for (UserToken tok in tokens) {
       tokenNames.add(tok.getDisplayName());
     }
@@ -142,7 +142,7 @@ class UserTokens {
   }
 
   List<dynamic> metaEntitiesToJson(List<ListItem> items) {
-    List<dynamic> itemsJson = new List<dynamic>();
+    List<dynamic> itemsJson = [];
     if (items == null) return itemsJson;
     for (ListItem item in items) {
       itemsJson.add(item.toJson());
@@ -152,7 +152,7 @@ class UserTokens {
 
   static List<ListItem> convertToListItemsFromJson(
       List<dynamic> listItemsJson) {
-    List<ListItem> items = new List<ListItem>();
+    List<ListItem> items = [];
     if (Utils.isNullOrEmpty(listItemsJson)) return items;
 
     for (Map<String, dynamic> json in listItemsJson) {

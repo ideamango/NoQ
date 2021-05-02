@@ -35,7 +35,7 @@ class MetaEntity {
       this.parentId = "",
       this.upiId = "",
       this.upiPhoneNumber = "",
-      this.qrCodeImagePath = "",
+      this.upiQRImagePath = "",
       this.offer,
       this.phone = "",
       this.hasChildren = false,
@@ -75,7 +75,7 @@ class MetaEntity {
   String parentId;
   String upiId;
   String upiPhoneNumber;
-  String qrCodeImagePath;
+  String upiQRImagePath;
   Offer offer;
   String phone;
   bool hasChildren;
@@ -115,7 +115,7 @@ class MetaEntity {
         parentId: json['parentId'],
         upiId: json['upiId'],
         upiPhoneNumber: json['upiPhoneNumber'],
-        qrCodeImagePath: json['qrCodeImagePath'],
+        upiQRImagePath: json['upiQRImagePath'],
         offer: Offer.fromJson(json['offer']),
         phone: json['phone'],
         hasChildren: json['hasChildren'],
@@ -182,7 +182,7 @@ class MetaEntity {
         'parentId': parentId,
         'upiId': upiId,
         'upiPhoneNumber': upiPhoneNumber,
-        'qrCodeImagePath': qrCodeImagePath,
+        'upiQRImagePath': upiQRImagePath,
         'offer': offer != null ? offer.toJson() : null,
         'phone': phone,
         'hasChildren': hasChildren,
@@ -216,7 +216,7 @@ class MetaEntity {
         metaEnt.whatsapp == this.whatsapp &&
         metaEnt.upiId == this.upiId &&
         metaEnt.upiPhoneNumber == this.upiPhoneNumber &&
-        metaEnt.qrCodeImagePath == this.qrCodeImagePath &&
+        metaEnt.upiQRImagePath == this.upiQRImagePath &&
         metaEnt.isBookable == this.isBookable &&
         metaEnt.maxTokensPerSlotByUser == this.maxTokensPerSlotByUser &&
         metaEnt.maxPeoplePerToken == this.maxPeoplePerToken &&
