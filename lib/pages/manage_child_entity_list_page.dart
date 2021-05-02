@@ -1,5 +1,6 @@
 import 'package:flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import '../constants.dart';
 import '../db/db_model/entity.dart';
 import '../db/db_model/meta_entity.dart';
@@ -153,7 +154,7 @@ class _ManageChildEntityListPageState extends State<ManageChildEntityListPage> {
 
     if (_childScrollController.hasClients)
       _childScrollController.animateTo(
-          _childScrollController.position.maxScrollExtent + itemSize,
+          _childScrollController.position.maxScrollExtent,
           curve: Curves.easeInToLinear,
           duration: Duration(milliseconds: 200));
 
@@ -214,6 +215,11 @@ class _ManageChildEntityListPageState extends State<ManageChildEntityListPage> {
     //     //   saveEntityDetails(entity);
     //   },
     // );
+    SchedulerBinding.instance.addPostFrameCallback((_) {
+      if (_childScrollController.hasClients)
+        _childScrollController
+            .jumpTo(_childScrollController.position.maxScrollExtent);
+    });
 
     String title = "Manage child Places";
     if (_initCompleted) {

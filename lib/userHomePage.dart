@@ -60,6 +60,7 @@ class _UserHomePageState extends State<UserHomePage> {
   List<String> versionFactors;
   String upiId;
   String upiQrImgPath;
+   String msg;
 
   int _currentIndex = 0;
   List cardList = [
@@ -99,6 +100,9 @@ class _UserHomePageState extends State<UserHomePage> {
                 _state.getConfigurations().getVersionUpdateMessage();
           }
           versionFactors = _state.getConfigurations().getVersionUpdateFactors();
+          msg= (_state.getConfigurations().isForceUpdateRequired())
+          ? forceUpdateMsg
+          : (versionUpdateMsg);
         }
       }
 //End Code for version update dialog
@@ -158,9 +162,7 @@ class _UserHomePageState extends State<UserHomePage> {
   Widget build(BuildContext context) {
     if (_initCompleted) {
       String title = "Home Page";
-      String msg = (_state.getConfigurations().isForceUpdateRequired())
-          ? forceUpdateMsg
-          : (versionUpdateMsg);
+      
       if (widget.dontShowUpdate != null && Utils.isNotNullOrEmpty(msg)) {
         return Scaffold(
             // backgroundColor: Colors.cyan[200],

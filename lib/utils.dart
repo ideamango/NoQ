@@ -123,7 +123,7 @@ class Utils {
   }
 
   static String validateEmail(String valText) {
-    return (valText != null)
+    return (Utils.isNotNullOrEmpty(valText))
         ? (EmailValidator.validate(valText) ? null : "Email is not valid")
         : null;
   }

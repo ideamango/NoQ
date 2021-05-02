@@ -1,6 +1,7 @@
 import 'dart:ffi';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import '../constants.dart';
 import '../db/db_model/entity.dart';
 import '../db/db_model/meta_entity.dart';
@@ -173,10 +174,8 @@ class _ManageEntityListPageState extends State<ManageEntityListPage> {
     });
 
     if (_scrollController.hasClients)
-      _scrollController.animateTo(
-          _scrollController.position.maxScrollExtent + itemSize,
-          curve: Curves.easeInToLinear,
-          duration: Duration(milliseconds: 200));
+      _scrollController.animateTo(_scrollController.position.maxScrollExtent,
+          curve: Curves.easeInToLinear, duration: Duration(milliseconds: 200));
   }
 
   @override
@@ -217,7 +216,10 @@ class _ManageEntityListPageState extends State<ManageEntityListPage> {
     //     _entityType = value;
     //   },
     // );
-
+    SchedulerBinding.instance.addPostFrameCallback((_) {
+      if (_scrollController.hasClients)
+        _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
+    });
     String title = pageTitleManageEntityList;
     if (_initCompleted) {
       return MaterialApp(
@@ -273,7 +275,7 @@ class _ManageEntityListPageState extends State<ManageEntityListPage> {
                           controller: _scrollController,
                           reverse: true,
                           shrinkWrap: true,
-                          itemExtent: itemSize,
+                          //itemExtent: itemSize,
                           itemBuilder: (BuildContext context, int index) {
                             return Container(
                               margin: EdgeInsets.only(bottom: 5),
