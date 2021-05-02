@@ -3,7 +3,7 @@ import 'dart:math';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
-import '../db_model/booking_application.dart';
+
 import '../db_model/entity_slots.dart';
 import '../db_model/meta_entity.dart';
 
@@ -72,7 +72,7 @@ class TokenService {
               DateTime.now().add(Duration(days: dayCount - 1)));
     }
 
-    List<EntitySlots> entitySlots = new List<EntitySlots>();
+    List<EntitySlots> entitySlots = [];
 
     QuerySnapshot qs = await query.get();
     List<QueryDocumentSnapshot> qds = qs.docs;
@@ -82,7 +82,7 @@ class TokenService {
       }
     }
 
-    List<List<Slot>> dayWiseSlots = List<List<Slot>>();
+    List<List<Slot>> dayWiseSlots = [];
 
     for (int i = 0; i < dayCount; i++) {
       DateTime date = currentDate.add(Duration(days: i));
@@ -122,7 +122,7 @@ class TokenService {
     }
 
     if (onlyFreeSlot) {
-      List<List<Slot>> dayWiseFreeSlots = List<List<Slot>>();
+      List<List<Slot>> dayWiseFreeSlots = [];
       int count = -1;
       for (List<Slot> slots in dayWiseSlots) {
         bool dayExist = false;
@@ -341,13 +341,13 @@ class TokenService {
               lat: metaEntity.lat,
               lon: metaEntity.lon,
               entityWhatsApp: metaEntity.whatsapp,
-              gpay: metaEntity.upiId,
-              paytm: metaEntity.upiPhoneNumber,
-              applepay: metaEntity.qrCodeImagePath,
+              upiId: metaEntity.upiId,
+              upiPhoneNumber: metaEntity.upiPhoneNumber,
+              upiQRImagePath: metaEntity.upiQRImagePath,
               phone: metaEntity.phone,
               rNum: (Random().nextInt(5000) + 100),
               address: metaEntity.address,
-              tokens: new List<UserToken>());
+              tokens: []);
         }
 
         UserToken newToken = new UserToken(
@@ -375,7 +375,7 @@ class TokenService {
         int endTimeMinute = metaEntity.endTimeMinute;
 
         EntitySlots es = new EntitySlots(
-            slots: new List<Slot>(),
+            slots: [],
             entityId: metaEntity.entityId,
             date: new DateTime(dateTime.year, dateTime.month, dateTime.day),
             maxAllowed: maxAllowed,
@@ -410,13 +410,13 @@ class TokenService {
             lat: metaEntity.lat,
             lon: metaEntity.lon,
             entityWhatsApp: metaEntity.whatsapp,
-            gpay: metaEntity.upiId,
-            paytm: metaEntity.upiPhoneNumber,
-            applepay: metaEntity.qrCodeImagePath,
+            upiId: metaEntity.upiId,
+            upiPhoneNumber: metaEntity.upiPhoneNumber,
+            upiQRImagePath: metaEntity.upiQRImagePath,
             phone: metaEntity.phone,
             rNum: (Random().nextInt(5000) + 100),
             address: metaEntity.address,
-            tokens: new List<UserToken>());
+            tokens: []);
 
         UserToken newToken = new UserToken(
             number: 1,

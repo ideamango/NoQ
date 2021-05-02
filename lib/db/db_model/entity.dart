@@ -45,7 +45,7 @@ class Entity {
       this.verificationStatus,
       this.upiId,
       this.upiPhoneNumber,
-      this.qrCodeImagePath,
+      this.upiQRImagePath,
       this.offer,
       this.phone,
       this.forms,
@@ -92,7 +92,7 @@ class Entity {
   String verificationStatus;
   String upiId;
   String upiPhoneNumber;
-  String qrCodeImagePath;
+  String upiQRImagePath;
   Offer offer;
   String phone;
   MetaEntity _meta;
@@ -140,7 +140,7 @@ class Entity {
         'verificationStatus': verificationStatus,
         'upiId': upiId,
         'upiPhoneNumber': upiPhoneNumber,
-        'qrCodeImagePath': qrCodeImagePath,
+        'upiQRImagePath': upiQRImagePath,
         'offer': offer != null ? offer.toJson() : null,
         'phone': phone,
         'forms': metaFormsToJson(forms),
@@ -246,7 +246,7 @@ class Entity {
         verificationStatus: json['verificationStatus'],
         upiId: json['upiId'],
         upiPhoneNumber: json['upiPhoneNumber'],
-        qrCodeImagePath: json['qrCodeImagePath'],
+        upiQRImagePath: json['upiQRImagePath'],
         offer: Offer.fromJson(json['offer']),
         phone: json['phone'],
         forms: convertToMetaFormsFromJson(json['forms']),
@@ -343,7 +343,7 @@ class Entity {
           parentId: parentId,
           upiId: upiId,
           upiPhoneNumber: upiPhoneNumber,
-          qrCodeImagePath: qrCodeImagePath,
+          upiQRImagePath: upiQRImagePath,
           offer: offer,
           phone: phone,
           address:
@@ -383,7 +383,7 @@ class Entity {
       _meta.parentId = parentId;
       _meta.upiId = upiId;
       _meta.upiPhoneNumber = upiPhoneNumber;
-      _meta.qrCodeImagePath = qrCodeImagePath;
+      _meta.upiQRImagePath = upiQRImagePath;
       _meta.offer = offer;
       _meta.phone = phone;
       _meta.address =
