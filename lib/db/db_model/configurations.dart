@@ -209,7 +209,7 @@ class Configurations {
       }
     }
 
-    if (Platform.isAndroid) {
+    if (Platform.isIOS) {
       if (latestVersion.containsKey("iosForceUpdateMessage")) {
         return latestVersion["iosForceUpdateMessage"];
       }
