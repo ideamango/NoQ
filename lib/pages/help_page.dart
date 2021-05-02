@@ -1,3 +1,7 @@
+import 'dart:io';
+
+import 'package:LESSs/global_state.dart';
+
 import '../widget/page_animation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -9,7 +13,7 @@ import '../userHomePage.dart';
 import '../widget/appbar.dart';
 import '../widget/header.dart';
 import '../widget/widgets.dart';
-import 'donate_money.dart';
+import 'upi_payment_page.dart';
 
 class HelpPage extends StatefulWidget {
   HelpPage({
@@ -20,9 +24,26 @@ class HelpPage extends StatefulWidget {
 }
 
 class _HelpPageState extends State<HelpPage> {
+  bool initCompleted = false;
+  GlobalState _gs;
+  String upiId;
+  String upiQrImgPath;
   @override
   void initState() {
+    getGlobalState().then((gs) {
+      _gs = gs;
+      upiId = _gs.getConfigurations().upi;
+      upiQrImgPath = "assets/bigpiq_gpay.jpg";
+      upiId = upiId;
+      setState(() {
+        initCompleted = true;
+      });
+    });
     super.initState();
+  }
+
+  Future<GlobalState> getGlobalState() async {
+    return await GlobalState.getGlobalState();
   }
 
   @override
@@ -232,7 +253,10 @@ class _HelpPageState extends State<HelpPage> {
                                                     Navigator.of(context).push(
                                                         PageAnimation
                                                             .createRoute(
-                                                                DonatePage(
+                                                                UPIPaymentPage(
+                                                      upiId: upiId,
+                                                      upiQrCodeImgPath:
+                                                          upiQrImgPath,
                                                       backRoute: HelpPage(),
                                                     )));
                                                   },

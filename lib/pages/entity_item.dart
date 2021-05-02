@@ -1,3 +1,4 @@
+import 'package:LESSs/enum/entity_role.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import '../constants.dart';
@@ -39,14 +40,19 @@ class EntityRowState extends State<EntityRow> {
 
   GlobalState _state;
   bool _initCompleted = false;
-
+  bool isExec = false;
   @override
   void initState() {
     super.initState();
     GlobalState.getGlobalState().then((value) {
       _state = value;
       _metaEntity = widget.entity;
+//Check if logged in user is Admin or not
 
+      if (_state.getCurrentUser().entityVsRole[_metaEntity.entityId] ==
+          EntityRole.Executive) isExec = true;
+
+      //Setstate after init complete
       if (this.mounted) {
         setState(() {
           _initCompleted = true;
@@ -181,33 +187,27 @@ class EntityRowState extends State<EntityRow> {
               // ),
               Row(
                 children: <Widget>[
-                  GestureDetector(
-                    onTap: () {
-                      print("Opening manage details on container click");
-                      showServiceForm();
-                    },
-                    child: Container(
-                      height: MediaQuery.of(context).size.height * .058,
-                      width: MediaQuery.of(context).size.width * .5,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          Text(
-                            (_metaEntity?.name != null)
-                                ? _metaEntity.name
-                                : "Untitled",
-                            overflow: TextOverflow.ellipsis,
-                            style: TextStyle(
-                                color: Colors.black,
-                                fontSize: 18,
-                                fontFamily: 'RalewayRegular'),
-                          ),
-                          Text(
-                            Utils.getEntityTypeDisplayName(_metaEntity.type),
-                            style: labelTextStyle,
-                          ),
-                        ],
-                      ),
+                  Container(
+                    height: MediaQuery.of(context).size.height * .058,
+                    width: MediaQuery.of(context).size.width * .5,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Text(
+                          (_metaEntity?.name != null)
+                              ? _metaEntity.name
+                              : "Untitled",
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 18,
+                              fontFamily: 'RalewayRegular'),
+                        ),
+                        Text(
+                          Utils.getEntityTypeDisplayName(_metaEntity.type),
+                          style: labelTextStyle,
+                        ),
+                      ],
                     ),
                   ),
                   Container(
@@ -265,44 +265,54 @@ class EntityRowState extends State<EntityRow> {
                 SizedBox(
                   width: MediaQuery.of(context).size.width * .04,
                 ),
-                Card(
-                  elevation: 10,
-                  child: GestureDetector(
-                    onTap: () {
-                      showServiceForm();
-                    },
-                    child: Container(
-                      margin: EdgeInsets.all(0),
-                      padding: EdgeInsets.all(0),
-                      width: MediaQuery.of(context).size.width * .21,
-                      height: MediaQuery.of(context).size.width * .21,
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          SizedBox(
-                            width: MediaQuery.of(context).size.width * .11,
-                            height: MediaQuery.of(context).size.width * .11,
-                            child: Image(
-                              image: AssetImage('assets/settings.png'),
+                if (!isExec)
+                  Card(
+                    elevation: 10,
+                    child: GestureDetector(
+                      onTap: () {
+                        if (!isExec) {
+                          showServiceForm();
+                        } else {
+                          Utils.showMyFlushbar(
+                              context,
+                              Icons.info_outline,
+                              Duration(seconds: 5),
+                              "Only Admins have permission to view forms!!",
+                              "");
+                        }
+                      },
+                      child: Container(
+                        margin: EdgeInsets.all(0),
+                        padding: EdgeInsets.all(0),
+                        width: MediaQuery.of(context).size.width * .21,
+                        height: MediaQuery.of(context).size.width * .21,
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            SizedBox(
+                              width: MediaQuery.of(context).size.width * .11,
+                              height: MediaQuery.of(context).size.width * .11,
+                              child: Image(
+                                image: AssetImage('assets/settings.png'),
+                              ),
                             ),
-                          ),
-                          AutoSizeText(
-                            'Details',
-                            group: labelGroup,
-                            maxLines: 1,
-                            minFontSize: 9,
-                            maxFontSize: 11,
-                            style: TextStyle(
-                                letterSpacing: 1.1,
-                                color: whiteBtnTextColor,
-                                fontSize: 12,
-                                fontFamily: 'Roboto'),
-                          ),
-                        ],
+                            AutoSizeText(
+                              'Details',
+                              group: labelGroup,
+                              maxLines: 1,
+                              minFontSize: 9,
+                              maxFontSize: 11,
+                              style: TextStyle(
+                                  letterSpacing: 1.1,
+                                  color: whiteBtnTextColor,
+                                  fontSize: 12,
+                                  fontFamily: 'Roboto'),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ),
-                ),
                 SizedBox(
                   width: MediaQuery.of(context).size.width * .04,
                 ),
@@ -354,48 +364,59 @@ class EntityRowState extends State<EntityRow> {
                 SizedBox(
                   width: MediaQuery.of(context).size.width * .04,
                 ),
-                Card(
-                  elevation: 8,
-                  child: GestureDetector(
-                    onTap: () {
-                      Navigator.of(context)
-                          .push(PageAnimation.createRoute(ManageEmployeePage(
-                        metaEntity: _metaEntity,
-                        backRoute: ManageEntityListPage(),
-                        defaultDate: null,
-                      )));
-                    },
-                    child: Container(
-                      margin: EdgeInsets.all(0),
-                      padding: EdgeInsets.all(0),
-                      width: MediaQuery.of(context).size.width * .21,
-                      height: MediaQuery.of(context).size.width * .21,
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          SizedBox(
-                            width: MediaQuery.of(context).size.width * .11,
-                            height: MediaQuery.of(context).size.width * .11,
-                            child: Image(
-                              image: AssetImage('assets/employee.png'),
+                if (!isExec)
+                  Card(
+                    elevation: 8,
+                    child: GestureDetector(
+                      onTap: () {
+                        if (!isExec) {
+                          Navigator.of(context).push(
+                              PageAnimation.createRoute(ManageEmployeePage(
+                            metaEntity: _metaEntity,
+                            backRoute: ManageEntityListPage(),
+                            defaultDate: null,
+                          )));
+                        } else {
+                          //Only admins can view Employees for a place
+                          Utils.showMyFlushbar(
+                              context,
+                              Icons.info_outline,
+                              Duration(seconds: 4),
+                              "Only Admins have permission to view other Employees!!",
+                              "");
+                        }
+                      },
+                      child: Container(
+                        margin: EdgeInsets.all(0),
+                        padding: EdgeInsets.all(0),
+                        width: MediaQuery.of(context).size.width * .21,
+                        height: MediaQuery.of(context).size.width * .21,
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            SizedBox(
+                              width: MediaQuery.of(context).size.width * .11,
+                              height: MediaQuery.of(context).size.width * .11,
+                              child: Image(
+                                image: AssetImage('assets/employee.png'),
+                              ),
                             ),
-                          ),
-                          AutoSizeText(
-                            'Employees',
-                            group: labelGroup,
-                            maxLines: 1,
-                            minFontSize: 9,
-                            maxFontSize: 11,
-                            style: TextStyle(
-                                letterSpacing: 1.1,
-                                color: whiteBtnTextColor,
-                                fontFamily: 'Roboto'),
-                          ),
-                        ],
+                            AutoSizeText(
+                              'Employees',
+                              group: labelGroup,
+                              maxLines: 1,
+                              minFontSize: 9,
+                              maxFontSize: 11,
+                              style: TextStyle(
+                                  letterSpacing: 1.1,
+                                  color: whiteBtnTextColor,
+                                  fontFamily: 'Roboto'),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ),
-                ),
                 SizedBox(
                   width: MediaQuery.of(context).size.width * .04,
                 ),
@@ -410,78 +431,80 @@ class EntityRowState extends State<EntityRow> {
                   SizedBox(
                     width: MediaQuery.of(context).size.width * .04,
                   ),
-                  Card(
-                    elevation: 10,
-                    child: GestureDetector(
-                      onTap: () {
-                        print("Over To overview page");
-                        if (!Utils.isNullOrEmpty(_metaEntity.forms)) {
-                          if (_metaEntity.forms.length > 1) {
-                            Navigator.of(context).push(
-                                PageAnimation.createRoute(BookingFormSelection(
-                              forms: _metaEntity.forms,
-                              metaEntity: _metaEntity,
-                              preferredSlotTime: null,
-                              isAdmin: true,
-                              backRoute: ManageEntityListPage(),
-                            )));
+                  if (!isExec)
+                    Card(
+                      elevation: 10,
+                      child: GestureDetector(
+                        onTap: () {
+                          print("Over To overview page");
+                          if (!Utils.isNullOrEmpty(_metaEntity.forms)) {
+                            if (_metaEntity.forms.length > 1) {
+                              Navigator.of(context).push(
+                                  PageAnimation.createRoute(
+                                      BookingFormSelection(
+                                forms: _metaEntity.forms,
+                                metaEntity: _metaEntity,
+                                preferredSlotTime: null,
+                                isAdmin: true,
+                                backRoute: ManageEntityListPage(),
+                              )));
+                            } else {
+                              Navigator.of(context)
+                                  .push(PageAnimation.createRoute(OverviewPage(
+                                bookingFormId: _metaEntity.forms[0].id,
+                                bookingFormName: _metaEntity.forms[0].name,
+                                entityId: _metaEntity.entityId,
+                                metaEntity: _metaEntity,
+                              )));
+                            }
                           } else {
-                            Navigator.of(context)
-                                .push(PageAnimation.createRoute(OverviewPage(
-                              bookingFormId: _metaEntity.forms[0].id,
-                              bookingFormName: _metaEntity.forms[0].name,
-                              entityId: _metaEntity.entityId,
-                              metaEntity: _metaEntity,
-                            )));
+                            Utils.showMyFlushbar(
+                                context,
+                                Icons.info_outline,
+                                Duration(seconds: 5),
+                                "No Applications found as of now!!",
+                                "");
                           }
-                        } else {
-                          Utils.showMyFlushbar(
-                              context,
-                              Icons.info_outline,
-                              Duration(seconds: 5),
-                              "No Applications found as of now!!",
-                              "");
-                        }
 
-                        // Navigator.of(context)
-                        //     .push(PageAnimation.createRoute(ManageBookings(
-                        //   metaEntity: _metaEntity,
-                        // )));
-                      },
-                      child: Container(
-                        margin: EdgeInsets.all(0),
-                        padding: EdgeInsets.all(0),
-                        width: MediaQuery.of(context).size.width * .21,
-                        height: MediaQuery.of(context).size.width * .21,
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            SizedBox(
-                              width: MediaQuery.of(context).size.width * .11,
-                              height: MediaQuery.of(context).size.width * .11,
-                              child: Image(
-                                image: AssetImage('assets/applications.png'),
+                          // Navigator.of(context)
+                          //     .push(PageAnimation.createRoute(ManageBookings(
+                          //   metaEntity: _metaEntity,
+                          // )));
+                        },
+                        child: Container(
+                          margin: EdgeInsets.all(0),
+                          padding: EdgeInsets.all(0),
+                          width: MediaQuery.of(context).size.width * .21,
+                          height: MediaQuery.of(context).size.width * .21,
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              SizedBox(
+                                width: MediaQuery.of(context).size.width * .11,
+                                height: MediaQuery.of(context).size.width * .11,
+                                child: Image(
+                                  image: AssetImage('assets/applications.png'),
+                                ),
                               ),
-                            ),
-                            AutoSizeText(
-                              'Applications',
-                              group: labelGroup,
-                              maxLines: 1,
-                              minFontSize: 9,
-                              maxFontSize: 11,
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                  letterSpacing: 1.1,
-                                  color: _metaEntity.isBookable
-                                      ? whiteBtnTextColor
-                                      : disabledColor,
-                                  fontFamily: 'Roboto'),
-                            ),
-                          ],
+                              AutoSizeText(
+                                'Applications',
+                                group: labelGroup,
+                                maxLines: 1,
+                                minFontSize: 9,
+                                maxFontSize: 11,
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                    letterSpacing: 1.1,
+                                    color: _metaEntity.isBookable
+                                        ? whiteBtnTextColor
+                                        : disabledColor,
+                                    fontFamily: 'Roboto'),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                     ),
-                  ),
                   SizedBox(
                     width: MediaQuery.of(context).size.width * .04,
                   ),
@@ -536,53 +559,63 @@ class EntityRowState extends State<EntityRow> {
                   SizedBox(
                     width: MediaQuery.of(context).size.width * .04,
                   ),
-                  Card(
-                    elevation: 10,
-                    child: GestureDetector(
-                      onTap: () {
-                        print("To Add details page");
-                        Navigator.of(context)
-                            .push(PageAnimation.createRoute(ManageEntityForms(
-                          // forms: _metaEntity.forms,
-                          metaEntity: _metaEntity,
-                          preferredSlotTime: null,
-                          isAdmin: true,
-                          backRoute: ManageEntityListPage(),
-                        )));
-                      },
-                      child: Container(
-                        margin: EdgeInsets.all(0),
-                        padding: EdgeInsets.all(0),
-                        width: MediaQuery.of(context).size.width * .21,
-                        height: MediaQuery.of(context).size.width * .21,
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            SizedBox(
-                              width: MediaQuery.of(context).size.width * .11,
-                              height: MediaQuery.of(context).size.width * .11,
-                              child: Image(
-                                image: AssetImage('assets/forms.png'),
+                  if (!isExec)
+                    Card(
+                      elevation: 10,
+                      child: GestureDetector(
+                        onTap: () {
+                          if (!isExec) {
+                            print("To Add details page");
+                            Navigator.of(context).push(
+                                PageAnimation.createRoute(ManageEntityForms(
+                              // forms: _metaEntity.forms,
+                              metaEntity: _metaEntity,
+                              preferredSlotTime: null,
+                              isAdmin: true,
+                              backRoute: ManageEntityListPage(),
+                            )));
+                          } else {
+                            Utils.showMyFlushbar(
+                                context,
+                                Icons.info_outline,
+                                Duration(seconds: 5),
+                                "Only Admins have permission to view forms!!",
+                                "");
+                          }
+                        },
+                        child: Container(
+                          margin: EdgeInsets.all(0),
+                          padding: EdgeInsets.all(0),
+                          width: MediaQuery.of(context).size.width * .21,
+                          height: MediaQuery.of(context).size.width * .21,
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              SizedBox(
+                                width: MediaQuery.of(context).size.width * .11,
+                                height: MediaQuery.of(context).size.width * .11,
+                                child: Image(
+                                  image: AssetImage('assets/forms.png'),
+                                ),
                               ),
-                            ),
-                            AutoSizeText(
-                              'Forms',
-                              group: labelGroup,
-                              maxLines: 1,
-                              minFontSize: 9,
-                              maxFontSize: 11,
-                              style: TextStyle(
-                                  letterSpacing: 1.1,
-                                  color: _metaEntity.isBookable
-                                      ? whiteBtnTextColor
-                                      : disabledColor,
-                                  fontFamily: 'Roboto'),
-                            ),
-                          ],
+                              AutoSizeText(
+                                'Forms',
+                                group: labelGroup,
+                                maxLines: 1,
+                                minFontSize: 9,
+                                maxFontSize: 11,
+                                style: TextStyle(
+                                    letterSpacing: 1.1,
+                                    color: _metaEntity.isBookable
+                                        ? whiteBtnTextColor
+                                        : disabledColor,
+                                    fontFamily: 'Roboto'),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                     ),
-                  ),
                   SizedBox(
                     width: MediaQuery.of(context).size.width * .04,
                   ),

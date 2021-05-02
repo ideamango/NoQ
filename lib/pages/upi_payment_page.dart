@@ -27,22 +27,22 @@ import 'package:flutter/rendering.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:share/share.dart';
 
-class DonatePage extends StatefulWidget {
+class UPIPaymentPage extends StatefulWidget {
   final String upiId;
-  final String qrCodeImgPath;
+  final String upiQrCodeImgPath;
   final dynamic backRoute;
-  DonatePage(
+  UPIPaymentPage(
       {Key key,
       @required this.upiId,
-      @required this.qrCodeImgPath,
+      @required this.upiQrCodeImgPath,
       @required this.backRoute})
       : super(key: key);
 
   @override
-  _DonatePageState createState() => _DonatePageState();
+  _UPIPaymentPageState createState() => _UPIPaymentPageState();
 }
 
-class _DonatePageState extends State<DonatePage> {
+class _UPIPaymentPageState extends State<UPIPaymentPage> {
   bool initCompleted = false;
   GlobalState _gs;
   String upiId;
@@ -62,10 +62,10 @@ class _DonatePageState extends State<DonatePage> {
   void initState() {
     getGlobalState().then((gs) {
       _gs = gs;
-      upiId = _gs.getConfigurations().upi;
+
       if (Platform.isAndroid) {
         _appsFuture = UpiPay.getInstalledUpiApplications();
-        _upiAddressController.text = upiId;
+        _upiAddressController.text = widget.upiId;
       }
       if (Platform.isIOS) {
         //TODO: show the QR code and the UPI ID for IOS users to make the payment
@@ -255,20 +255,22 @@ class _DonatePageState extends State<DonatePage> {
                                             EdgeInsets.fromLTRB(0, 0, 0, 10),
                                         child:
                                             Text(_upiAddressController.text)),
-                                    IconButton(
-                                        visualDensity: VisualDensity.compact,
-                                        padding:
-                                            EdgeInsets.fromLTRB(0, 0, 0, 0),
-                                        alignment: Alignment.center,
-                                        highlightColor: Colors.orange[300],
-                                        icon: ImageIcon(
-                                          AssetImage('assets/qrcode.png'),
-                                          size: 25,
-                                          color: primaryIcon,
-                                        ),
-                                        onPressed: () {
-                                          showQrDialog();
-                                        }),
+                                    if (Utils.isNotNullOrEmpty(
+                                        widget.upiQrCodeImgPath))
+                                      IconButton(
+                                          visualDensity: VisualDensity.compact,
+                                          padding:
+                                              EdgeInsets.fromLTRB(0, 0, 0, 0),
+                                          alignment: Alignment.center,
+                                          highlightColor: Colors.orange[300],
+                                          icon: ImageIcon(
+                                            AssetImage('assets/qrcode.png'),
+                                            size: 25,
+                                            color: primaryIcon,
+                                          ),
+                                          onPressed: () {
+                                            showQrDialog();
+                                          }),
                                   ],
                                 ),
                               ),
@@ -341,29 +343,38 @@ class _DonatePageState extends State<DonatePage> {
                                     print(snapshot.data.length);
                                     if (snapshot.data.length == 0) {
                                       //  print("Have some data..huh!!");
-                                      return Container(
-                                        child: Column(
-                                          children: [
-                                            Text(
-                                              'Scan this QR code to make the donation.',
-                                              style: TextStyle(fontSize: 20),
-                                            ),
-                                            Container(
-                                              margin: EdgeInsets.only(top: 20),
-                                              height: MediaQuery.of(context)
-                                                      .size
-                                                      .height *
-                                                  .35,
-                                              decoration: BoxDecoration(
-                                                image: DecorationImage(
-                                                    image: AssetImage(
-                                                        "assets/bigpiq_upi.jpg"),
-                                                    fit: BoxFit.contain),
+                                      if (Utils.isNotNullOrEmpty(
+                                          widget.upiQrCodeImgPath)) {
+                                        return Container(
+                                          child: Column(
+                                            children: [
+                                              Text(
+                                                'Scan this QR code to make the donation.',
+                                                style: TextStyle(fontSize: 20),
                                               ),
-                                            ),
-                                          ],
-                                        ),
-                                      );
+                                              Container(
+                                                margin:
+                                                    EdgeInsets.only(top: 20),
+                                                height: MediaQuery.of(context)
+                                                        .size
+                                                        .height *
+                                                    .35,
+                                                decoration: BoxDecoration(
+                                                  image: DecorationImage(
+                                                      image: AssetImage(
+                                                          "assets/bigpiq_upi.jpg"),
+                                                      fit: BoxFit.contain),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        );
+                                      } else {
+                                        return Container(
+                                          child: Text(
+                                              "No UPI payment apps found on this device."),
+                                        );
+                                      }
                                     } else {
                                       return Expanded(
                                         child: GridView.count(
@@ -477,7 +488,7 @@ class _DonatePageState extends State<DonatePage> {
                       height: MediaQuery.of(context).size.height * .6,
                       decoration: BoxDecoration(
                         image: DecorationImage(
-                            image: AssetImage("assets/bigpiq_gpay.jpg"),
+                            image: AssetImage(widget.upiQrCodeImgPath),
                             fit: BoxFit.contain),
                       ),
                     ),

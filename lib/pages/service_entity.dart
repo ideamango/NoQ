@@ -1,3 +1,4 @@
+import 'package:LESSs/enum/entity_role.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import '../constants.dart';
@@ -34,12 +35,14 @@ class ChildEntityRowState extends State<ChildEntityRow> {
   GlobalState _gs;
   bool _initCompleted = false;
   // Map<String, Entity> _entityMap;
-
+  bool isExec = false;
   @override
   void initState() {
     super.initState();
     _metaEntity = widget.childEntity;
-    // _entityMap = widget.entityMap;
+    if (_gs.getCurrentUser().entityVsRole[_metaEntity.entityId] ==
+        EntityRole.Executive) isExec = true;
+
     GlobalState.getGlobalState().then((value) {
       _gs = value;
       _gs.getEntity(_metaEntity.parentId).then((value) {
@@ -152,31 +155,25 @@ class ChildEntityRowState extends State<ChildEntityRow> {
             Row(
               //mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
-                GestureDetector(
-                  onTap: () {
-                    print("Opening manage details on container click");
-                    showServiceForm();
-                  },
-                  child: Container(
-                    //padding: EdgeInsets.fromLTRB(0, 0, 5, 0),
-                    width: MediaQuery.of(context).size.width * .5,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        Text(
-                          (_metaEntity.name != null)
-                              ? _metaEntity.name
-                              : "Untitled",
-                          overflow: TextOverflow.ellipsis,
-                          style: TextStyle(
-                              color: Colors.blueGrey[700], fontSize: 17),
-                        ),
-                        Text(
-                          Utils.getEntityTypeDisplayName(_metaEntity.type),
-                          style: labelTextStyle,
-                        ),
-                      ],
-                    ),
+                Container(
+                  //padding: EdgeInsets.fromLTRB(0, 0, 5, 0),
+                  width: MediaQuery.of(context).size.width * .5,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Text(
+                        (_metaEntity.name != null)
+                            ? _metaEntity.name
+                            : "Untitled",
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                            color: Colors.blueGrey[700], fontSize: 17),
+                      ),
+                      Text(
+                        Utils.getEntityTypeDisplayName(_metaEntity.type),
+                        style: labelTextStyle,
+                      ),
+                    ],
                   ),
                 ),
                 Container(
@@ -238,7 +235,16 @@ class ChildEntityRowState extends State<ChildEntityRow> {
                     elevation: 8,
                     child: GestureDetector(
                       onTap: () {
-                        showServiceForm();
+                        if (!isExec) {
+                          showServiceForm();
+                        } else {
+                          Utils.showMyFlushbar(
+                              context,
+                              Icons.info_outline,
+                              Duration(seconds: 5),
+                              "Only Admins have permission to view forms!!",
+                              "");
+                        }
                       },
                       child: Container(
                         margin: EdgeInsets.all(0),
@@ -278,14 +284,24 @@ class ChildEntityRowState extends State<ChildEntityRow> {
                     elevation: 8,
                     child: GestureDetector(
                       onTap: () {
-                        Navigator.of(context)
-                            .push(PageAnimation.createRoute(ManageEmployeePage(
-                          metaEntity: _metaEntity,
-                          backRoute: ManageChildEntityListPage(
-                            entity: entity,
-                          ),
-                          defaultDate: null,
-                        )));
+                        if (!isExec) {
+                          Navigator.of(context).push(
+                              PageAnimation.createRoute(ManageEmployeePage(
+                            metaEntity: _metaEntity,
+                            backRoute: ManageChildEntityListPage(
+                              entity: entity,
+                            ),
+                            defaultDate: null,
+                          )));
+                        } else {
+                          //Only admins can view Employees for a place
+                          Utils.showMyFlushbar(
+                              context,
+                              Icons.info_outline,
+                              Duration(seconds: 4),
+                              "Only Admins have permission to view other Employees!!",
+                              "");
+                        }
                       },
                       child: Container(
                         margin: EdgeInsets.all(0),
@@ -325,17 +341,26 @@ class ChildEntityRowState extends State<ChildEntityRow> {
                     elevation: 8,
                     child: GestureDetector(
                       onTap: () {
-                        print("To Add details page");
-                        Navigator.of(context)
-                            .push(PageAnimation.createRoute(ManageEntityForms(
-                          // forms: _metaEntity.forms,
-                          metaEntity: _metaEntity,
-                          preferredSlotTime: null,
-                          isAdmin: true,
-                          backRoute: ManageChildEntityListPage(
-                            entity: entity,
-                          ),
-                        )));
+                        if (!isExec) {
+                          print("To Add details page");
+                          Navigator.of(context)
+                              .push(PageAnimation.createRoute(ManageEntityForms(
+                            // forms: _metaEntity.forms,
+                            metaEntity: _metaEntity,
+                            preferredSlotTime: null,
+                            isAdmin: true,
+                            backRoute: ManageChildEntityListPage(
+                              entity: entity,
+                            ),
+                          )));
+                        } else {
+                          Utils.showMyFlushbar(
+                              context,
+                              Icons.info_outline,
+                              Duration(seconds: 5),
+                              "Only Admins have permission to view forms!!",
+                              "");
+                        }
                       },
                       child: Container(
                         margin: EdgeInsets.all(0),

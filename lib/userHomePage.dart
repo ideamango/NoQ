@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:LESSs/pages/donate_money.dart';
+import 'package:LESSs/pages/upi_payment_page.dart';
 import 'package:LESSs/pages/help_page.dart';
 import 'package:flutter/material.dart';
 import 'package:package_info/package_info.dart';
@@ -58,12 +58,38 @@ class _UserHomePageState extends State<UserHomePage> {
   String forceUpdateMsg;
   String versionUpdateMsg;
   List<String> versionFactors;
+  String upiId;
+  String upiQrImgPath;
+
+  int _currentIndex = 0;
+  List cardList = [
+    Item1(),
+    Item2(),
+    Item3(),
+    Item4(),
+    Item5(),
+    Item6(),
+    //  Item7()
+  ];
+  List<T> map<T>(List list, Function handler) {
+    List<T> result = [];
+    for (var i = 0; i < list.length; i++) {
+      result.add(handler(i, list[i]));
+    }
+    return result;
+  }
 
   @override
   void initState() {
     super.initState();
     getGlobalState().whenComplete(() {
       _loadBookings();
+//Start Code for UPI pay -donation
+      upiId = _state.getConfigurations().upi;
+      upiQrImgPath = "assets/bigpiq_gpay.jpg";
+      upiId = upiId;
+//End Code for UPI pay -donation
+//Start Code for version update dialog
       if (widget.dontShowUpdate != null) {
         if (_state.isEligibleForUpdate()) {
           if (_state.getConfigurations().isForceUpdateRequired()) {
@@ -75,7 +101,7 @@ class _UserHomePageState extends State<UserHomePage> {
           versionFactors = _state.getConfigurations().getVersionUpdateFactors();
         }
       }
-
+//End Code for version update dialog
       if (this.mounted) {
         setState(() {
           _initCompleted = true;
@@ -120,24 +146,6 @@ class _UserHomePageState extends State<UserHomePage> {
   void _loadBookings() async {
     //Fetch booking details from server
     fetchDataFromGlobalState();
-  }
-
-  int _currentIndex = 0;
-  List cardList = [
-    Item1(),
-    Item2(),
-    Item3(),
-    Item4(),
-    Item5(),
-    Item6(),
-    //  Item7()
-  ];
-  List<T> map<T>(List list, Function handler) {
-    List<T> result = [];
-    for (var i = 0; i < list.length; i++) {
-      result.add(handler(i, list[i]));
-    }
-    return result;
   }
 
   openPlayStore() async {
@@ -392,6 +400,31 @@ class _UserHomePageState extends State<UserHomePage> {
                         //   ),
                         // )),
                         // verticalSpacer,
+                        if (_state.getConfigurations().isDonationEnabled())
+                          Container(
+                            width: MediaQuery.of(context).size.width,
+                            margin: EdgeInsets.fromLTRB(0, 10, 0, 10),
+                            padding: EdgeInsets.zero,
+                            child: Card(
+                              margin: EdgeInsets.zero,
+                              elevation: 20,
+                              child: GestureDetector(
+                                onTap: () {
+                                  Navigator.of(context).push(
+                                      PageAnimation.createRoute(UPIPaymentPage(
+                                    upiId: upiId,
+                                    upiQrCodeImgPath: upiQrImgPath,
+                                    backRoute: UserHomePage(),
+                                  )));
+                                },
+                                child: Image(
+                                  fit: BoxFit.fitWidth,
+                                  image: AssetImage('assets/donate.png'),
+                                ),
+                              ),
+                            ),
+                          ),
+                        verticalSpacer,
                         Card(
                           margin: EdgeInsets.zero,
                           elevation: 20,
@@ -439,28 +472,8 @@ class _UserHomePageState extends State<UserHomePage> {
                         ),
 //                      TODO: uncomment this line, show donation banner only if donation is enabled
                         // if (_state.getConfigurations().isDonationEnabled())
-                        Container(
-                          width: MediaQuery.of(context).size.width,
-                          margin: EdgeInsets.fromLTRB(0, 10, 0, 10),
-                          padding: EdgeInsets.zero,
-                          child: Card(
-                            margin: EdgeInsets.zero,
-                            elevation: 20,
-                            child: GestureDetector(
-                              onTap: () {
-                                Navigator.of(context)
-                                    .push(PageAnimation.createRoute(DonatePage(
-                                  backRoute: UserHomePage(),
-                                )));
-                              },
-                              child: Image(
-                                fit: BoxFit.fitWidth,
-                                image: AssetImage('assets/donate.png'),
-                              ),
-                            ),
-                          ),
-                        ),
-                        // verticalSpacer,
+
+                        verticalSpacer,
 
                         Column(
                           children: [
@@ -877,20 +890,39 @@ class _UserHomePageState extends State<UserHomePage> {
                                 width: MediaQuery.of(context).size.width * .07,
                                 height: MediaQuery.of(context).size.width * .07,
                                 // width: 20.0,
+                                //
                                 child: IconButton(
                                   padding: EdgeInsets.all(0),
                                   alignment: Alignment.center,
                                   highlightColor: Colors.orange[300],
                                   icon: Icon(
                                     Icons.attach_money_outlined,
-                                    color: lightIcon,
+                                    color: (Utils.isNotNullOrEmpty(
+                                            token.parent.upiId)
+                                        ? lightIcon
+                                        : Colors.blueGrey[400]),
                                     size: 22,
                                   ),
                                   onPressed: () {
-                                    Navigator.of(context).push(
-                                        PageAnimation.createRoute(DonatePage(
-                                      backRoute: HelpPage(),
-                                    )));
+                                    if (Utils.isNotNullOrEmpty(
+                                        token.parent.upiId)) {
+                                      Navigator.of(context).push(
+                                          PageAnimation.createRoute(
+                                              UPIPaymentPage(
+                                        upiId: token.parent.upiId,
+                                        upiQrCodeImgPath: null,
+                                        backRoute: UserHomePage(),
+                                      )));
+                                    } else {
+                                      Utils.showMyFlushbar(
+                                          context,
+                                          Icons.info_outline,
+                                          Duration(
+                                            seconds: 5,
+                                          ),
+                                          "Couldn't find UPI payment information for this place.",
+                                          "");
+                                    }
                                   },
                                 ),
                               ),
