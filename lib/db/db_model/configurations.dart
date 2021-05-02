@@ -221,13 +221,13 @@ class Configurations {
   bool isForceUpdateRequired() {
     if (Platform.isAndroid) {
       if (latestVersion.containsKey("androidForceUpdate")) {
-        return "true" == latestVersion["androidForceUpdate"];
+        return latestVersion["androidForceUpdate"];
       }
     }
 
     if (Platform.isIOS) {
       if (latestVersion.containsKey("iosForceUpdate")) {
-        return "true" == latestVersion["iosForceUpdate"];
+        return latestVersion["iosForceUpdate"];
       }
     }
 
