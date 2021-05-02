@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:LESSs/pages/donate_money.dart';
+import 'package:LESSs/pages/help_page.dart';
 import 'package:flutter/material.dart';
 import 'package:package_info/package_info.dart';
 import './constants.dart';
@@ -149,8 +150,10 @@ class _UserHomePageState extends State<UserHomePage> {
   Widget build(BuildContext context) {
     if (_initCompleted) {
       String title = "Home Page";
-      if (widget.dontShowUpdate != null &&
-          Utils.isNotNullOrEmpty(forceUpdateMsg)) {
+      String msg = (Utils.isNotNullOrEmpty(forceUpdateMsg))
+          ? forceUpdateMsg
+          : (versionUpdateMsg);
+      if (widget.dontShowUpdate != null && Utils.isNotNullOrEmpty(msg)) {
         return Scaffold(
             // backgroundColor: Colors.cyan[200],
             body: Card(
@@ -172,7 +175,7 @@ class _UserHomePageState extends State<UserHomePage> {
                     children: [
                       Text(
                         //"There is an important update and includes very critical features. App may not function properly if not updated now.",
-                        forceUpdateMsg,
+                        msg,
                         style: TextStyle(
                             fontSize: 20, fontWeight: FontWeight.bold),
                       ),
@@ -201,37 +204,39 @@ class _UserHomePageState extends State<UserHomePage> {
                   ),
                 ),
                 Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Container(
-                      padding: EdgeInsets.fromLTRB(0, 10, 5, 0),
-                      child: MaterialButton(
-                          elevation: 0,
-                          color: Colors.white,
-                          shape: RoundedRectangleBorder(
-                              side: BorderSide(color: Colors.green[600]),
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(5.0))),
-                          onPressed: () {
+                    if (Utils.isNotNullOrEmpty(forceUpdateMsg))
+                      Container(
+                        padding: EdgeInsets.fromLTRB(0, 10, 5, 0),
+                        child: MaterialButton(
+                            elevation: 0,
+                            color: Colors.white,
+                            shape: RoundedRectangleBorder(
+                                side: BorderSide(color: Colors.green[600]),
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(5.0))),
+                            onPressed: () {
 //Goto play store and update app.
-                            Navigator.of(context).push(
-                                PageAnimation.createRoute(
-                                    UserHomePage(dontShowUpdate: null)));
-                          },
-                          child: Container(
-                            width: MediaQuery.of(context).size.width * .3,
-                            height: MediaQuery.of(context).size.width * .1,
+                              Navigator.of(context).push(
+                                  PageAnimation.createRoute(
+                                      UserHomePage(dontShowUpdate: null)));
+                            },
+                            child: Container(
+                              width: MediaQuery.of(context).size.width * .3,
+                              height: MediaQuery.of(context).size.width * .1,
 
-                            //  margin: EdgeInsets.fromLTRB(20, 40, 20, 40),
-                            padding: EdgeInsets.zero,
-                            alignment: Alignment.center,
-                            child: Text(
-                              "Update Later",
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                  color: Colors.green[600], fontSize: 14),
-                            ),
-                          )),
-                    ),
+                              //  margin: EdgeInsets.fromLTRB(20, 40, 20, 40),
+                              padding: EdgeInsets.zero,
+                              alignment: Alignment.center,
+                              child: Text(
+                                "Update Later",
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                    color: Colors.green[600], fontSize: 14),
+                              ),
+                            )),
+                      ),
                     Container(
                       padding: EdgeInsets.fromLTRB(5, 10, 0, 0),
                       child: MaterialButton(
@@ -445,7 +450,6 @@ class _UserHomePageState extends State<UserHomePage> {
                               onTap: () {
                                 Navigator.of(context)
                                     .push(PageAnimation.createRoute(DonatePage(
-                                  phone: _state?.getCurrentUser()?.ph,
                                   backRoute: UserHomePage(),
                                 )));
                               },
@@ -718,7 +722,7 @@ class _UserHomePageState extends State<UserHomePage> {
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: <Widget>[
                               Container(
-                                width: MediaQuery.of(context).size.width * .08,
+                                width: MediaQuery.of(context).size.width * .07,
                                 height: MediaQuery.of(context).size.width * .07,
                                 child: IconButton(
                                     padding: EdgeInsets.all(0),
@@ -752,7 +756,7 @@ class _UserHomePageState extends State<UserHomePage> {
                                     }),
                               ),
                               Container(
-                                width: MediaQuery.of(context).size.width * .08,
+                                width: MediaQuery.of(context).size.width * .07,
                                 height: MediaQuery.of(context).size.width * .07,
                                 // width: 20.0,
                                 child: IconButton(
@@ -783,7 +787,7 @@ class _UserHomePageState extends State<UserHomePage> {
                                 ),
                               ),
                               Container(
-                                width: MediaQuery.of(context).size.width * .08,
+                                width: MediaQuery.of(context).size.width * .07,
                                 height: MediaQuery.of(context).size.width * .07,
                                 // width: 20.0,
                                 child: IconButton(
@@ -813,7 +817,7 @@ class _UserHomePageState extends State<UserHomePage> {
                                     }),
                               ),
                               Container(
-                                width: MediaQuery.of(context).size.width * .08,
+                                width: MediaQuery.of(context).size.width * .07,
                                 height: MediaQuery.of(context).size.width * .07,
                                 child: IconButton(
                                   padding: EdgeInsets.all(0),
@@ -854,7 +858,7 @@ class _UserHomePageState extends State<UserHomePage> {
                                 ),
                               ),
                               Container(
-                                width: MediaQuery.of(context).size.width * .08,
+                                width: MediaQuery.of(context).size.width * .07,
                                 height: MediaQuery.of(context).size.width * .07,
                                 // width: 20.0,
                                 child: IconButton(
@@ -867,6 +871,27 @@ class _UserHomePageState extends State<UserHomePage> {
                                     size: 22,
                                   ),
                                   onPressed: () => showShoppingList(token),
+                                ),
+                              ),
+                              Container(
+                                width: MediaQuery.of(context).size.width * .07,
+                                height: MediaQuery.of(context).size.width * .07,
+                                // width: 20.0,
+                                child: IconButton(
+                                  padding: EdgeInsets.all(0),
+                                  alignment: Alignment.center,
+                                  highlightColor: Colors.orange[300],
+                                  icon: Icon(
+                                    Icons.attach_money_outlined,
+                                    color: lightIcon,
+                                    size: 22,
+                                  ),
+                                  onPressed: () {
+                                    Navigator.of(context).push(
+                                        PageAnimation.createRoute(DonatePage(
+                                      backRoute: HelpPage(),
+                                    )));
+                                  },
                                 ),
                               ),
                             ],

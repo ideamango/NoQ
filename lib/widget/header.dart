@@ -59,7 +59,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
       {
         "icon": Icons.help_outline,
         "name": "FAQs",
-        "pageRoute": HelpPage(phone: _phone),
+        "pageRoute": HelpPage(),
       },
       {
         "icon": Icons.contact_mail,

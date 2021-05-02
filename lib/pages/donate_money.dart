@@ -28,9 +28,14 @@ import 'package:path_provider/path_provider.dart';
 import 'package:share/share.dart';
 
 class DonatePage extends StatefulWidget {
-  final String phone;
+  final String upiId;
+  final String qrCodeImgPath;
   final dynamic backRoute;
-  DonatePage({Key key, @required this.phone, @required this.backRoute})
+  DonatePage(
+      {Key key,
+      @required this.upiId,
+      @required this.qrCodeImgPath,
+      @required this.backRoute})
       : super(key: key);
 
   @override

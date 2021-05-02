@@ -12,18 +12,17 @@ import '../widget/widgets.dart';
 import 'donate_money.dart';
 
 class HelpPage extends StatefulWidget {
-  final String phone;
-  HelpPage({Key key, @required this.phone}) : super(key: key);
+  HelpPage({
+    Key key,
+  }) : super(key: key);
   @override
   _HelpPageState createState() => _HelpPageState();
 }
 
 class _HelpPageState extends State<HelpPage> {
-  String _phone;
   @override
   void initState() {
     super.initState();
-    _phone = widget.phone;
   }
 
   @override
@@ -39,10 +38,6 @@ class _HelpPageState extends State<HelpPage> {
       theme: ThemeData.light().copyWith(),
       home: WillPopScope(
         child: Scaffold(
-          drawer: CustomDrawer(
-              //TODO provide phone number
-              //phone: _state.currentUser.ph,
-              phone: _phone),
           appBar: CustomAppBarWithBackButton(
             backRoute: UserHomePage(),
             titleTxt: title,
@@ -52,7 +47,6 @@ class _HelpPageState extends State<HelpPage> {
               color: Colors.white,
               child: ListView(children: <Widget>[
                 Column(
-                  //mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
                     Card(
                       elevation: 20,
@@ -69,7 +63,6 @@ class _HelpPageState extends State<HelpPage> {
                               verticalSpacer,
                               Container(
                                 padding: EdgeInsets.all(5),
-                                //  decoration: rectLightContainer,
                                 child: RichText(
                                     text: TextSpan(
                                         style: highlightSubTextStyle,
@@ -89,120 +82,15 @@ class _HelpPageState extends State<HelpPage> {
                                                         showAppBar: true,
                                                       ))),
                                       ),
-                                      // TextSpan(
-                                      //     text:
-                                      //         ' We will try our best to address that at earliest.'),
                                     ])),
                               ),
                               verticalSpacer
                             ],
                           ),
                         )),
-                    // Container(
-                    //   //padding: EdgeInsets.only(left: 5),
-                    //   //decoration: darkContainer,
-                    //   child: Theme(
-                    //     data: ThemeData(
-                    //       unselectedWidgetColor: Colors.white,
-                    //       accentColor: Colors.grey[50],
-                    //     ),
-                    //     child: CustomExpansionTile(
-                    //       //key: PageStorageKey(this.widget.headerTitle),
-                    //       initiallyExpanded: true,
-
-                    //       title: Row(
-                    //         children: <Widget>[
-                    //           Container(
-                    //             height: MediaQuery.of(context).size.width * .1,
-                    //             width: MediaQuery.of(context).size.width * .8,
-                    //             child: Text(
-                    //               "How Sukoon helps bring Sukoon to your life?",
-                    //               softWrap: true,
-                    //               style: TextStyle(
-                    //                   color: primaryDarkColor, fontSize: 15),
-                    //             ),
-                    //           ),
-                    //           SizedBox(width: 5),
-                    //         ],
-                    //       ),
-                    //       // backgroundColor: Colors.blueGrey[500],
-
-                    //       children: <Widget>[
-                    //         new Container(
-                    //           width: MediaQuery.of(context).size.width * .94,
-                    //           decoration: darkContainer,
-                    //           padding: EdgeInsets.all(2.0),
-                    //           child: Row(
-                    //             children: <Widget>[
-                    //               Expanded(
-                    //                 child: Column(
-                    //                   crossAxisAlignment:
-                    //                       CrossAxisAlignment.start,
-                    //                   children: <Widget>[
-                    //                     Text('Lets look at the problems first..',
-                    //                         style: textLabelTextStyle),
-                    //                     verticalSpacer,
-                    //                     RichText(
-                    //                         text: TextSpan(
-                    //                             style: highlightSubTextStyle,
-                    //                             children: <TextSpan>[
-                    //                           TextSpan(
-                    //                               text:
-                    //                                   'There is not just one, but numerous reasons how this helps you. Here is how - '),
-                    //                           TextSpan(
-                    //                               text:
-                    //                                   'Maintaing social distance is need of the hour. Sometimes just unavoidable when you visit your '),
-                    //                           TextSpan(
-                    //                               text:
-                    //                                   'favourite grocery store for example, you see people standing in queue and wait-time could be anything from 10 mins to an hour.'),
-                    //                           TextSpan(
-                    //                               text:
-                    //                                   'Another problem is, Shopping at place this crowded is not at all advisable.'),
-                    //                           TextSpan(
-                    //                               text:
-                    //                                   'So, Not just you waste your precious time in waiting but also expose yourself to virus(Covid-19).'),
-                    //                         ])),
-                    //                     verticalSpacer,
-                    //                     myDivider,
-                    //                     verticalSpacer,
-                    //                     Text('How this app helps me?',
-                    //                         style: textLabelTextStyle),
-                    //                     verticalSpacer,
-                    //                     RichText(
-                    //                         text: TextSpan(
-                    //                             style: highlightSubTextStyle,
-                    //                             children: <TextSpan>[
-                    //                           TextSpan(
-                    //                               text:
-                    //                                   'The idea to is plan your visits well ahead so that shopping doesnt become unsafe for you.'),
-                    //                           TextSpan(
-                    //                               text:
-                    //                                   'Now, How do we do this. We lists different premises like Shopping Marts, Gaming Zones, Offices, Apartments, Medical Stores etc'),
-                    //                           TextSpan(
-                    //                               text:
-                    //                                   ' where you might visit frequently. Dates and available time slots will be shown, you can select time and date as per your convenience.  '),
-                    //                           TextSpan(
-                    //                               text:
-                    //                                   ' So, Now when you visit at your pre-booked time, you dont have to wait and second as limited people would be allowed in a given time slot, it '),
-                    //                           TextSpan(
-                    //                               text:
-                    //                                   ' much easier to maintain distance and be safe.'),
-                    //                         ])),
-                    //                     verticalSpacer,
-                    //                   ],
-                    //                 ),
-                    //               ),
-                    //             ],
-                    //           ),
-                    //         ),
-                    //       ],
-                    //     ),
-                    //   ),
-                    // ),
                     Card(
                         elevation: 20,
                         child: Container(
-                          // padding: EdgeInsets.all(8),
                           child: Column(
                             children: <Widget>[
                               Container(
@@ -345,10 +233,7 @@ class _HelpPageState extends State<HelpPage> {
                                                         PageAnimation
                                                             .createRoute(
                                                                 DonatePage(
-                                                      phone: widget.phone,
-                                                      backRoute: HelpPage(
-                                                        phone: widget.phone,
-                                                      ),
+                                                      backRoute: HelpPage(),
                                                     )));
                                                   },
                                           ),
@@ -500,9 +385,6 @@ class _HelpPageState extends State<HelpPage> {
                   ],
                 ),
               ])),
-          // bottomNavigationBar: CustomBottomBar(
-          //   barIndex: 0,
-          // ),
         ),
         onWillPop: () async {
           return true;
