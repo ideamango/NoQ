@@ -39,7 +39,7 @@ class Configurations {
   int searchRadius;
   int bookingDataFromDays;
   int bookingDataToDays;
-  Map<String, String> donation;
+  Map<String, dynamic> donation;
 
   Map<String, String> formToEntityTypeMapping;
   List<MetaForm> formMetaData;
@@ -134,7 +134,7 @@ class Configurations {
         searchRadius: json['searchRadius'],
         bookingDataFromDays: json['bookingDataFromDays'],
         bookingDataToDays: json['bookingDataToDays'],
-        donation: convertToMapFromJSON(json['donation']),
+        donation: convertToMapOfDynamicFromJSON(json['donation']),
         formToEntityTypeMapping:
             convertToMapFromJSON(json['formToEntityTypeMapping']),
         formMetaData: convertToFormMetaData(json['formMetaData']),
@@ -310,10 +310,8 @@ class Configurations {
   }
 
   bool isDonationEnabled() {
-    if (donation != null &&
-        donation.containsKey("isEnabled") &&
-        donation["isEnabled"].toLowerCase() == "true") {
-      return true;
+    if (donation != null && donation.containsKey("isEnabled")) {
+      return donation["isEnabled"];
     }
     return false;
   }
