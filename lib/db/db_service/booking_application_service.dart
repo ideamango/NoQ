@@ -4,15 +4,12 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import '../../constants.dart';
 import '../db_model/booking_application.dart';
-import '../db_model/booking_application.dart';
-import '../db_model/booking_application.dart';
 import '../db_model/booking_form.dart';
 import '../db_model/meta_entity.dart';
 import '../db_model/user_token.dart';
 import '../db_service/query.dart';
 
 import '../../enum/application_status.dart';
-import '../../enum/entity_type.dart';
 import '../../global_state.dart';
 import '../../utils.dart';
 
@@ -171,8 +168,8 @@ class BookingApplicationService {
   }
 
   //To be done by the Applicant
-  Future<bool> submitApplication(
-      BookingApplication ba, MetaEntity metaEntity) async {
+  Future<bool> submitApplication(BookingApplication ba, MetaEntity metaEntity,
+      [bool enableVedioChat = false]) async {
     //Security: BookingApplication (Application Status by the applicant can be only Null, New, Cancelled), other statuses are reserved for the Manager/Admin
     //Case 1: Create the BookingApplication object in the Applications collection
     //Case 2: Create if not already created the BookingApplicationsOverview, and update the total counter and new counter
@@ -332,7 +329,8 @@ class BookingApplicationService {
                   ba.preferredSlotTiming,
                   ba.id,
                   ba.bookingFormId,
-                  ba.responseForm.formName);
+                  ba.responseForm.formName,
+                  enableVedioChat);
 
           UserToken lastTok = toks.tokens[toks.tokens.length - 1];
           ba.tokenId = toks.getTokenId() + "#" + lastTok.number.toString();
@@ -559,7 +557,8 @@ class BookingApplicationService {
       ApplicationStatus status,
       String note,
       MetaEntity metaEntity,
-      DateTime tokenTime) async {
+      DateTime tokenTime,
+      [bool enableVedioChat = false]) async {
     //TODO Security: Application Status, Time of Respective Status Change and Status can only be updated by the Entity Manager/Entity Admin
     //TODO Security: Once submitted for review, the Application can't be edited by the Applicant
     //TODO Security: Application can be only accessed and Updated by Entity Manager/Admin
@@ -689,7 +688,8 @@ class BookingApplicationService {
                     tokenTime,
                     application.id,
                     application.bookingFormId,
-                    application.responseForm.formName);
+                    application.responseForm.formName,
+                    enableVedioChat);
 
             UserToken lastTok = toks.tokens[toks.tokens.length - 1];
             application.tokenId =
