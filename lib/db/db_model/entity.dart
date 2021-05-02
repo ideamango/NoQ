@@ -53,7 +53,8 @@ class Entity {
       this.maxPeoplePerToken = 1,
       this.parentGroupId,
       this.supportEmail,
-      this.maxTokenByUserInDay = 1});
+      this.maxTokenByUserInDay = 1,
+      this.enableVedioChat = false});
 
   //SlotDocumentId is entityID#20~06~01 it is not auto-generated, will help in not duplicating the record
   String entityId;
@@ -103,6 +104,7 @@ class Entity {
       parentGroupId; //this value will be present and common for different branches of same company
   String supportEmail;
   int maxTokenByUserInDay;
+  bool enableVedioChat;
 
   Map<String, dynamic> toJson() => {
         'entityId': entityId,
@@ -148,7 +150,8 @@ class Entity {
         'maxPeoplePerToken': maxPeoplePerToken,
         'parentGroupId': parentGroupId,
         'supportEmail': supportEmail,
-        'maxTokenByUserInDay': maxTokenByUserInDay
+        'maxTokenByUserInDay': maxTokenByUserInDay,
+        'enableVedioChat': enableVedioChat
       };
 
   List<dynamic> usersToJson(List<MetaUser> users) {
@@ -254,7 +257,8 @@ class Entity {
         maxPeoplePerToken: json['maxPeoplePerToken'],
         parentGroupId: json['parentGroupId'],
         supportEmail: json['supportEmail'],
-        maxTokenByUserInDay: json['maxTokenByUserInDay']);
+        maxTokenByUserInDay: json['maxTokenByUserInDay'],
+        enableVedioChat: json['enableVedioChat']);
   }
 
   static Address convertToAddressFromJson(Map<String, dynamic> json) {
@@ -357,7 +361,8 @@ class Entity {
           maxPeoplePerToken: maxPeoplePerToken,
           parentGroupId: parentGroupId,
           supportEmail: supportEmail,
-          maxTokenByUserInDay: maxTokenByUserInDay);
+          maxTokenByUserInDay: maxTokenByUserInDay,
+          enableVedioChat: enableVedioChat);
     } else {
       _meta.name = name;
       _meta.type = type;
@@ -397,6 +402,7 @@ class Entity {
       _meta.parentGroupId = parentGroupId;
       _meta.supportEmail = supportEmail;
       _meta.maxTokenByUserInDay = maxTokenByUserInDay;
+      _meta.enableVedioChat = enableVedioChat;
     }
     return _meta;
   }
