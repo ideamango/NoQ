@@ -61,6 +61,7 @@ class _UserHomePageState extends State<UserHomePage> {
   String upiId;
   String upiQrImgPath;
    String msg;
+   bool isDonationEnabled = false;
 
   int _currentIndex = 0;
   List cardList = [
@@ -106,6 +107,11 @@ class _UserHomePageState extends State<UserHomePage> {
         }
       }
 //End Code for version update dialog
+//Start for dnation enabled
+//
+//_state.getConfigurations().isDonationEnabled()
+//
+    isDonationEnabled= _state.getConfigurations().isDonationEnabled();
       if (this.mounted) {
         setState(() {
           _initCompleted = true;
@@ -402,7 +408,7 @@ class _UserHomePageState extends State<UserHomePage> {
                         //   ),
                         // )),
                         // verticalSpacer,
-                        if (_state.getConfigurations().isDonationEnabled())
+                        if (isDonationEnabled)
                           Container(
                             width: MediaQuery.of(context).size.width,
                             margin: EdgeInsets.fromLTRB(0, 10, 0, 10),
