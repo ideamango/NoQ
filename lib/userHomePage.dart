@@ -150,7 +150,7 @@ class _UserHomePageState extends State<UserHomePage> {
   Widget build(BuildContext context) {
     if (_initCompleted) {
       String title = "Home Page";
-      String msg = (Utils.isNotNullOrEmpty(forceUpdateMsg))
+      String msg = (_state.getConfigurations().isForceUpdateRequired())
           ? forceUpdateMsg
           : (versionUpdateMsg);
       if (widget.dontShowUpdate != null && Utils.isNotNullOrEmpty(msg)) {
@@ -206,7 +206,7 @@ class _UserHomePageState extends State<UserHomePage> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    if (Utils.isNotNullOrEmpty(forceUpdateMsg))
+                    if (!_state.getConfigurations().isForceUpdateRequired())
                       Container(
                         padding: EdgeInsets.fromLTRB(0, 10, 5, 0),
                         child: MaterialButton(
