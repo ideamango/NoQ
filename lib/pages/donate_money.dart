@@ -56,6 +56,7 @@ class _DonatePageState extends State<DonatePage> {
   @override
   void initState() {
     getGlobalState().then((gs) {
+      _gs = gs;
       upiId = _gs.getConfigurations().upi;
       if (Platform.isAndroid) {
         _appsFuture = UpiPay.getInstalledUpiApplications();
@@ -90,8 +91,8 @@ class _DonatePageState extends State<DonatePage> {
     );
   }
 
-  Future<void> getGlobalState() async {
-    _gs = await GlobalState.getGlobalState();
+  Future<GlobalState> getGlobalState() async {
+    return await GlobalState.getGlobalState();
   }
 
   String _amountError;
@@ -169,250 +170,287 @@ class _DonatePageState extends State<DonatePage> {
   Widget build(BuildContext context) {
     String title = "Donate ";
 
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData.light().copyWith(),
-      home: WillPopScope(
-        child: Scaffold(
-          drawer: CustomDrawer(
-            phone:
-                _gs.getCurrentUser().ph != null ? _gs.getCurrentUser().ph : "",
-          ),
-          appBar: CustomAppBarWithBackButton(
-            backRoute: widget.backRoute,
-            titleTxt: title,
-          ),
-          body: (initCompleted)
-              ? SafeArea(
-                  child: Container(
-                    padding: EdgeInsets.symmetric(horizontal: 12),
-                    child: ListView(
-                      children: <Widget>[
-                        Container(
-                          //  height: MediaQuery.of(context).size.height * .1,
-                          margin: EdgeInsets.fromLTRB(
-                              MediaQuery.of(context).size.width * .05,
-                              MediaQuery.of(context).size.width * .04,
-                              MediaQuery.of(context).size.width * .05,
-                              MediaQuery.of(context).size.width * .04),
-                          child: Column(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              //  padding: EdgeInsets.zero,
-                              children: <Widget>[
-                                Text(
-                                  'Thats wonderful! ',
-                                  style: TextStyle(
-                                      color: Colors.blueGrey[800],
-                                      fontFamily: 'RalewayRegular',
-                                      fontSize: 17.0),
-                                ),
-                                verticalSpacer,
-                                RichText(
-                                    textAlign: TextAlign.center,
-                                    text: TextSpan(
-                                        style: TextStyle(
-                                            height: 1.3,
-                                            color: Colors.blueGrey[800],
-                                            fontFamily: 'RalewayRegular',
-                                            fontSize: 12.0),
-                                        children: <TextSpan>[
-                                          TextSpan(
-                                              text:
-                                                  'We can do MORE with LESSs.\n',
-                                              style: TextStyle(
-                                                fontSize: 18,
-                                                fontWeight: FontWeight.w800,
-                                              )),
-                                          TextSpan(
-                                            text:
-                                                'Everything counts, So donate any amount as per your wish.',
-                                          ),
-                                        ])),
-                              ]),
-                        ),
-                        Container(
-                          height: MediaQuery.of(context).size.height * .08,
-                          margin: EdgeInsets.only(top: 5),
-                          child: Row(
-                            children: <Widget>[
-                              Expanded(
-                                child: TextFormField(
-                                  controller: _upiAddressController,
-                                  enabled: false,
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                    letterSpacing: 1.5,
-                                    color: Colors.blueGrey[600],
-                                  ),
-                                  keyboardType: TextInputType.text,
-                                  decoration: InputDecoration(
-                                    enabledBorder: OutlineInputBorder(
-                                        borderSide: BorderSide(
-                                            color: Colors.orange[200])),
-                                    focusedBorder: OutlineInputBorder(
-                                        borderSide:
-                                            BorderSide(color: Colors.orange)),
-                                    hintText: 'address@upi',
-                                    labelText: 'Receiving UPI Address',
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        Container(
-                          height: MediaQuery.of(context).size.height * .07,
-                          margin: EdgeInsets.only(top: 5),
-                          child: Row(
-                            children: <Widget>[
-                              Expanded(
-                                child: TextFormField(
-                                    controller: _amountController,
-                                    //  readOnly: true,
-                                    enabled: true,
+    if (initCompleted) {
+      return MaterialApp(
+        debugShowCheckedModeBanner: false,
+        theme: ThemeData.light().copyWith(),
+        home: WillPopScope(
+          child: Scaffold(
+            drawer: CustomDrawer(
+              phone: _gs.getCurrentUser().ph != null
+                  ? _gs.getCurrentUser().ph
+                  : "",
+            ),
+            appBar: CustomAppBarWithBackButton(
+              backRoute: widget.backRoute,
+              titleTxt: title,
+            ),
+            body: (initCompleted)
+                ? SafeArea(
+                    child: Container(
+                      padding: EdgeInsets.symmetric(horizontal: 12),
+                      child: ListView(
+                        children: <Widget>[
+                          Container(
+                            //  height: MediaQuery.of(context).size.height * .1,
+                            margin: EdgeInsets.fromLTRB(
+                                MediaQuery.of(context).size.width * .05,
+                                MediaQuery.of(context).size.width * .04,
+                                MediaQuery.of(context).size.width * .05,
+                                MediaQuery.of(context).size.width * .04),
+                            child: Column(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceEvenly,
+                                //  padding: EdgeInsets.zero,
+                                children: <Widget>[
+                                  Text(
+                                    'Thats wonderful! ',
                                     style: TextStyle(
-                                      fontSize: 14,
-                                      letterSpacing: 1.5,
-                                      color: Colors.blueGrey[600],
-                                    ),
-                                    keyboardType: TextInputType.number,
-                                    autovalidateMode:
-                                        AutovalidateMode.onUserInteraction,
-                                    decoration: InputDecoration(
-                                      hintText: 'Amount in INR',
-                                      enabledBorder: UnderlineInputBorder(
-                                          borderSide:
-                                              BorderSide(color: Colors.grey)),
-                                      focusedBorder: UnderlineInputBorder(
-                                          borderSide:
-                                              BorderSide(color: Colors.orange)),
-                                    ),
-                                    validator: (String val) {
-                                      return _validateAmount(val);
-                                    }),
-                              ),
-                            ],
+                                        color: Colors.blueGrey[800],
+                                        fontFamily: 'RalewayRegular',
+                                        fontSize: 17.0),
+                                  ),
+                                  verticalSpacer,
+                                  RichText(
+                                      textAlign: TextAlign.center,
+                                      text: TextSpan(
+                                          style: TextStyle(
+                                              height: 1.3,
+                                              color: Colors.blueGrey[800],
+                                              fontFamily: 'RalewayRegular',
+                                              fontSize: 12.0),
+                                          children: <TextSpan>[
+                                            TextSpan(
+                                                text: 'Do MORE with LESSs.\n',
+                                                style: TextStyle(
+                                                  fontSize: 18,
+                                                  fontWeight: FontWeight.w800,
+                                                )),
+                                            TextSpan(
+                                              text:
+                                                  'Everything counts, So donate any amount as per your wish.',
+                                            ),
+                                          ])),
+                                ]),
                           ),
-                        ),
-                        Container(
-                          height: MediaQuery.of(context).size.height * .47,
-                          margin: EdgeInsets.only(top: 20, bottom: 10),
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: <Widget>[
+                          Column(
+                            children: [
                               Container(
-                                margin: EdgeInsets.only(bottom: 12),
-                                child: Text(
-                                  'Pay Using',
-                                  style: TextStyle(
-                                      height: 1.3,
-                                      color: Colors.black,
-                                      fontFamily: 'RalewayRegular',
-                                      fontSize: 14.0),
+                                height:
+                                    MediaQuery.of(context).size.height * .08,
+                                margin: EdgeInsets.only(top: 5),
+                                padding: EdgeInsets.zero,
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  crossAxisAlignment: CrossAxisAlignment.end,
+                                  children: <Widget>[
+                                    Container(
+                                        padding:
+                                            EdgeInsets.fromLTRB(0, 0, 0, 10),
+                                        child:
+                                            Text(_upiAddressController.text)),
+                                    IconButton(
+                                        visualDensity: VisualDensity.compact,
+                                        padding:
+                                            EdgeInsets.fromLTRB(0, 0, 0, 0),
+                                        alignment: Alignment.center,
+                                        highlightColor: Colors.orange[300],
+                                        icon: ImageIcon(
+                                          AssetImage('assets/qrcode.png'),
+                                          size: 25,
+                                          color: primaryIcon,
+                                        ),
+                                        onPressed: () {
+                                          showQrDialog();
+                                        }),
+                                  ],
                                 ),
                               ),
-                              FutureBuilder<List<ApplicationMeta>>(
-                                future: _appsFuture,
-                                builder: (context, snapshot) {
-                                  if (snapshot.connectionState !=
-                                      ConnectionState.done) {
-                                    return Container();
-                                  }
-                                  print(snapshot.data.length);
-                                  if (snapshot.data.length == 0) {
-                                    //  print("Have some data..huh!!");
-                                    return Container(
-                                      child: Text(
-                                        'No payment apps found!',
-                                        style: TextStyle(fontSize: 20),
-                                      ),
-                                    );
-                                  } else {
-                                    return GridView.count(
-                                      crossAxisCount: 2,
-                                      shrinkWrap: true,
-                                      mainAxisSpacing: 8,
-                                      crossAxisSpacing: 8,
-                                      childAspectRatio: 1.6,
-                                      physics: NeverScrollableScrollPhysics(),
-                                      children: snapshot.data
-                                          .map((it) => Material(
-                                                key: ObjectKey(
-                                                    it.upiApplication),
-                                                color: Colors.grey[200],
-                                                child: InkWell(
-                                                  onTap: () => _onTap(it),
-                                                  child: Column(
-                                                    mainAxisSize:
-                                                        MainAxisSize.min,
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .center,
-                                                    children: <Widget>[
-                                                      Image.memory(
-                                                        it.icon,
-                                                        width: 64,
-                                                        height: 64,
-                                                      ),
-                                                      Container(
-                                                        margin: EdgeInsets.only(
-                                                            top: 4),
-                                                        child: Text(
-                                                          it.upiApplication
-                                                              .getAppName(),
-                                                        ),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                ),
-                                              ))
-                                          .toList(),
-                                    );
-                                  }
-                                },
-                              ),
+                              Divider(
+                                indent: 0,
+                                thickness: 1.5,
+                                endIndent: 8,
+                                color: Colors.grey[500],
+                              )
                             ],
                           ),
-                        ),
-                        Container(
-                            // alignment: Alignment.bottomCenter,
-                            width: MediaQuery.of(context).size.width * .9,
-                            height: MediaQuery.of(context).size.height * .06,
-                            child: RaisedButton(
-                                elevation: 10.0,
-                                color: btnColor,
-                                splashColor: Colors.orangeAccent[700],
-                                textColor: Colors.white,
-                                shape: RoundedRectangleBorder(
-                                    side:
-                                        BorderSide(color: Colors.blueGrey[300]),
-                                    borderRadius:
-                                        BorderRadius.all(Radius.circular(5.0))),
-                                onPressed: () {
-                                  showQrDialog();
-                                },
-                                child: Text('View/ Share QR code',
-                                    style: buttonMedTextStyle))),
+                          Container(
+                            height: MediaQuery.of(context).size.height * .07,
+                            margin: EdgeInsets.only(top: 5),
+                            child: Row(
+                              children: <Widget>[
+                                Expanded(
+                                  child: TextFormField(
+                                      controller: _amountController,
+                                      //  readOnly: true,
+                                      enabled: true,
+                                      style: TextStyle(
+                                        fontSize: 14,
+                                        letterSpacing: 1.5,
+                                        color: Colors.blueGrey[600],
+                                      ),
+                                      keyboardType: TextInputType.number,
+                                      autovalidateMode:
+                                          AutovalidateMode.onUserInteraction,
+                                      decoration: InputDecoration(
+                                        hintText: 'Amount in INR',
+                                        enabledBorder: UnderlineInputBorder(
+                                            borderSide:
+                                                BorderSide(color: Colors.grey)),
+                                        focusedBorder: UnderlineInputBorder(
+                                            borderSide: BorderSide(
+                                                color: Colors.orange)),
+                                      ),
+                                      validator: (String val) {
+                                        return _validateAmount(val);
+                                      }),
+                                ),
+                              ],
+                            ),
+                          ),
+                          Container(
+                            height: MediaQuery.of(context).size.height * .53,
+                            margin: EdgeInsets.only(top: 20, bottom: 10),
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: <Widget>[
+                                Container(
+                                  margin: EdgeInsets.only(bottom: 12),
+                                  child: Text(
+                                    'Easy Pay Using UPI Apps',
+                                    style: TextStyle(
+                                        height: 1.3,
+                                        color: Colors.black,
+                                        fontFamily: 'RalewayRegular',
+                                        fontSize: 14.0),
+                                  ),
+                                ),
+                                FutureBuilder<List<ApplicationMeta>>(
+                                  future: _appsFuture,
+                                  builder: (context, snapshot) {
+                                    if (snapshot.connectionState !=
+                                        ConnectionState.done) {
+                                      return Container();
+                                    }
+                                    print(snapshot.data.length);
+                                    if (snapshot.data.length == 0) {
+                                      //  print("Have some data..huh!!");
+                                      return Container(
+                                        child: Column(
+                                          children: [
+                                            Text(
+                                              'Scan this QR code to make the donation.',
+                                              style: TextStyle(fontSize: 20),
+                                            ),
+                                            Container(
+                                              margin: EdgeInsets.only(top: 20),
+                                              height: MediaQuery.of(context)
+                                                      .size
+                                                      .height *
+                                                  .35,
+                                              decoration: BoxDecoration(
+                                                image: DecorationImage(
+                                                    image: AssetImage(
+                                                        "assets/bigpiq_upi.jpg"),
+                                                    fit: BoxFit.contain),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      );
+                                    } else {
+                                      return Expanded(
+                                        child: GridView.count(
+                                          crossAxisCount: 2,
+                                          shrinkWrap: true,
+                                          mainAxisSpacing: 8,
+                                          crossAxisSpacing: 8,
+                                          childAspectRatio: 1.6,
+                                          // physics: NeverScrollableScrollPhysics(),
+                                          children: snapshot.data
+                                              .map((it) => Material(
+                                                    key: ObjectKey(
+                                                        it.upiApplication),
+                                                    color: Colors.grey[200],
+                                                    child: InkWell(
+                                                      onTap: () => _onTap(it),
+                                                      child: Column(
+                                                        mainAxisSize:
+                                                            MainAxisSize.min,
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .center,
+                                                        children: <Widget>[
+                                                          Image.memory(
+                                                            it.icon,
+                                                            width: 64,
+                                                            height: 64,
+                                                          ),
+                                                          Container(
+                                                            margin:
+                                                                EdgeInsets.only(
+                                                                    top: 4),
+                                                            child: Text(
+                                                              it.upiApplication
+                                                                  .getAppName(),
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                  ))
+                                              .toList(),
+                                        ),
+                                      );
+                                    }
+                                  },
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  )
+                : Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        showCircularProgress(),
                       ],
                     ),
                   ),
-                )
-              : Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      showCircularProgress(),
-                    ],
-                  ),
-                ),
+          ),
+          onWillPop: () async {
+            Navigator.push(context,
+                MaterialPageRoute(builder: (context) => UserHomePage()));
+            return false;
+          },
         ),
-        onWillPop: () async {
-          Navigator.push(
-              context, MaterialPageRoute(builder: (context) => UserHomePage()));
-          return false;
-        },
-      ),
-    );
+      );
+    } else {
+      return MaterialApp(
+        debugShowCheckedModeBanner: false,
+        theme: ThemeData.light().copyWith(),
+        home: WillPopScope(
+          child: Scaffold(
+              appBar: CustomAppBar(
+                titleTxt: "Donate Money",
+              ),
+              body: Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[showCircularProgress()],
+                ),
+              ),
+              bottomNavigationBar: CustomBottomBar(barIndex: 0)),
+          onWillPop: () async {
+            return true;
+          },
+        ),
+      );
+    }
   }
 
   showQrDialog() {
