@@ -207,20 +207,25 @@ class GenerateScreenState extends State<GenerateScreen> {
                       ),
                     ),
                   ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      Padding(
-                        padding: const EdgeInsets.all(5),
-                        child: FlatButton(
-                          shape: RoundedRectangleBorder(
-                              side: BorderSide(color: Colors.orange)),
-                          color: Colors.transparent,
-                          child: Text("Share QR Code"),
-                          onPressed: () {
-                            _shareContent();
-                          },
-                        ),
+                  Column(
+                    children: [
+                      Text("Share your place with other people"),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          Padding(
+                            padding: const EdgeInsets.all(5),
+                            child: FlatButton(
+                              shape: RoundedRectangleBorder(
+                                  side: BorderSide(color: Colors.orange)),
+                              color: Colors.transparent,
+                              child: Text("Share QR Code"),
+                              onPressed: () {
+                                _shareContent();
+                              },
+                            ),
+                          ),
+                        ],
                       ),
                     ],
                   ),

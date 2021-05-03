@@ -54,8 +54,6 @@ class EntityRowState extends State<EntityRow> {
 
       if (_state.getCurrentUser().entityVsRole[_metaEntity.entityId] ==
           EntityRole.Manager) isManager = true;
-      //For testing, uncomment this one line later
-      isManager = true;
 
       //Setstate after init complete
       if (this.mounted) {
