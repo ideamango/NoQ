@@ -41,6 +41,7 @@ class EntityRowState extends State<EntityRow> {
   GlobalState _state;
   bool _initCompleted = false;
   bool isExec = false;
+  bool isManager = false;
   @override
   void initState() {
     super.initState();
@@ -50,6 +51,11 @@ class EntityRowState extends State<EntityRow> {
       //Check if logged in user is Admin or not
       if (_state.getCurrentUser().entityVsRole[_metaEntity.entityId] ==
           EntityRole.Executive) isExec = true;
+
+      if (_state.getCurrentUser().entityVsRole[_metaEntity.entityId] ==
+          EntityRole.Manager) isManager = true;
+      //For testing, uncomment this one line later
+      isManager = true;
 
       //Setstate after init complete
       if (this.mounted) {
@@ -76,7 +82,7 @@ class EntityRowState extends State<EntityRow> {
               "");
         } else {
           Navigator.of(context).push(PageAnimation.createRoute(
-              ManageEntityDetailsPage(entity: entity)));
+              ManageEntityDetailsPage(entity: entity, isManager: isManager)));
         }
       });
     }
@@ -351,7 +357,7 @@ class EntityRowState extends State<EntityRow> {
                             ),
                           ),
                           AutoSizeText(
-                            'Places',
+                            'Child Places',
                             group: labelGroup,
                             maxLines: 1,
                             minFontSize: 9,
@@ -382,6 +388,7 @@ class EntityRowState extends State<EntityRow> {
                             metaEntity: _metaEntity,
                             backRoute: ManageEntityListPage(),
                             defaultDate: null,
+                            isManager: isManager,
                           )));
                         } else {
                           //Only admins can view Employees for a place
@@ -562,6 +569,7 @@ class EntityRowState extends State<EntityRow> {
                             preferredSlotTime: null,
                             isAdmin: true,
                             backRoute: ManageEntityListPage(),
+                            isManager: isManager,
                           )));
                         } else {
                           Utils.showMyFlushbar(

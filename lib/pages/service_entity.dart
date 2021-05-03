@@ -37,6 +37,7 @@ class ChildEntityRowState extends State<ChildEntityRow> {
   bool _initCompleted = false;
   // Map<String, Entity> _entityMap;
   bool isExec = false;
+  bool isManager = false;
   @override
   void initState() {
     super.initState();
@@ -46,6 +47,9 @@ class ChildEntityRowState extends State<ChildEntityRow> {
       _gs = value;
       if (_gs.getCurrentUser().entityVsRole[_metaEntity.entityId] ==
           EntityRole.Executive) isExec = true;
+      if (_gs.getCurrentUser().entityVsRole[_metaEntity.entityId] ==
+          EntityRole.Manager) isManager = true;
+
       _gs.getEntity(_metaEntity.parentId).then((value) {
         entity = value.item1;
         if (this.mounted) {
@@ -66,8 +70,11 @@ class ChildEntityRowState extends State<ChildEntityRow> {
       // else fetch from DB.
       _gs.getEntity(_metaEntity.entityId).then((value) {
         Navigator.of(context).pop();
-        Navigator.of(context).push(PageAnimation.createRoute(
-            ManageChildEntityDetailsPage(childEntity: value.item1)));
+        Navigator.of(context)
+            .push(PageAnimation.createRoute(ManageChildEntityDetailsPage(
+          childEntity: value.item1,
+          isManager: isManager,
+        )));
       });
     }
 
@@ -267,6 +274,7 @@ class ChildEntityRowState extends State<ChildEntityRow> {
                                   entity: entity,
                                 ),
                                 defaultDate: null,
+                                isManager: isManager,
                               )));
                             } else {
                               //Only admins can view Employees for a place
@@ -328,6 +336,7 @@ class ChildEntityRowState extends State<ChildEntityRow> {
                                 backRoute: ManageChildEntityListPage(
                                   entity: entity,
                                 ),
+                                isManager: isManager,
                               )));
                             } else {
                               Utils.showMyFlushbar(

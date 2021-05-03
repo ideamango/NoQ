@@ -20,11 +20,13 @@ class ContactRow extends StatefulWidget {
   final EntityRole empType;
   final Employee contact;
   final List<Employee> list;
+  final bool isManager;
   ContactRow(
       {Key key,
       @required this.entity,
       @required this.empType,
       @required this.contact,
+      @required this.isManager,
       this.list})
       : super(key: key);
   @override
@@ -123,6 +125,7 @@ class ContactRowState extends State<ContactRow> {
       obscureText: false,
       maxLines: 1,
       minLines: 1,
+      enabled: (widget.isManager ? false : true),
       style: textInputTextStyle,
       keyboardType: TextInputType.text,
       controller: _ctNameController,
@@ -141,6 +144,7 @@ class ContactRowState extends State<ContactRow> {
       obscureText: false,
       maxLines: 1,
       minLines: 1,
+      enabled: (widget.isManager ? false : true),
       style: textInputTextStyle,
       keyboardType: TextInputType.text,
       controller: _ctEmpIdController,
@@ -159,6 +163,7 @@ class ContactRowState extends State<ContactRow> {
       key: phn1Key,
       maxLines: 1,
       minLines: 1,
+      enabled: (widget.isManager ? false : true),
       style: textInputTextStyle,
       keyboardType: TextInputType.phone,
       controller: _ctPhn1controller,
@@ -178,6 +183,7 @@ class ContactRowState extends State<ContactRow> {
       key: phn2Key,
       maxLines: 1,
       minLines: 1,
+      enabled: (widget.isManager ? false : true),
       style: textInputTextStyle,
       keyboardType: TextInputType.phone,
       controller: _ctPhn2controller,
@@ -197,6 +203,7 @@ class ContactRowState extends State<ContactRow> {
       maxLines: 1,
       readOnly: true,
       minLines: 1,
+      enabled: (widget.isManager ? false : true),
       style: textInputTextStyle,
       controller: _ctAvlFromTimeController,
       keyboardType: TextInputType.text,
@@ -261,11 +268,11 @@ class ContactRowState extends State<ContactRow> {
       },
     );
     final ctAvlTillTimeField = TextFormField(
-      enabled: true,
       obscureText: false,
       readOnly: true,
       maxLines: 1,
       minLines: 1,
+      enabled: (widget.isManager ? false : true),
       controller: _ctAvlTillTimeController,
       style: textInputTextStyle,
       onTap: () {
@@ -335,6 +342,7 @@ class ContactRowState extends State<ContactRow> {
             initialValue: _closedOnDays,
             borderRadius: 20,
             elevation: 10,
+            enabled: (widget.isManager ? false : true),
             textStyle: buttonXSmlTextStyle,
             fillColor: Colors.blueGrey[400],
             selectedFillColor: highlightColor,
@@ -343,15 +351,19 @@ class ContactRowState extends State<ContactRow> {
             borderSide: BorderSide(color: Colors.white, width: 0),
             language: lang.en,
             onChange: (days) {
-              print("Days off: " + days.toString());
-              _daysOff.clear();
-              days.forEach((element) {
-                var day = element.toString().substring(5);
-                _daysOff.add(day);
-              });
-              contact.daysOff = _daysOff;
-              print(_daysOff.length);
-              print(_daysOff.toString());
+              if (widget.isManager) {
+                return;
+              } else {
+                print("Days off: " + days.toString());
+                _daysOff.clear();
+                days.forEach((element) {
+                  var day = element.toString().substring(5);
+                  _daysOff.add(day);
+                });
+                contact.daysOff = _daysOff;
+                print(_daysOff.length);
+                print(_daysOff.toString());
+              }
             },
           ),
         ],
@@ -402,7 +414,12 @@ class ContactRowState extends State<ContactRow> {
               //     shape: BoxShape.rectangle,
               //     borderRadius: BorderRadius.all(Radius.circular(5.0))),
               // padding: EdgeInsets.all(5.0),
-
+              foregroundDecoration: widget.isManager
+                  ? BoxDecoration(
+                      color: Colors.grey[50],
+                      backgroundBlendMode: BlendMode.saturation,
+                    )
+                  : BoxDecoration(),
               child: new Form(
                 //  autovalidate: _autoValidate,
                 child: Container(
@@ -434,9 +451,10 @@ class ContactRowState extends State<ContactRow> {
                                         "Remove",
                                         style: TextStyle(
                                           color: btnColor,
-                                          fontWeight: FontWeight.w700,
+                                          fontWeight: FontWeight.w500,
                                           fontFamily: 'Montserrat',
-                                          fontSize: 15,
+                                          letterSpacing: 1.3,
+                                          fontSize: 17,
                                         ),
                                       ),
                                       SizedBox(
@@ -448,56 +466,61 @@ class ContactRowState extends State<ContactRow> {
                                     ],
                                   ),
                                   onPressed: () {
-                                    if (widget.empType == EntityRole.Manager) {
-                                      String removeThisId;
-                                      for (int i = 0;
-                                          i < _entity.managers.length;
-                                          i++) {
-                                        if (_entity.managers[i].id ==
-                                            contact.id) {
-                                          removeThisId = contact.id;
-                                          print(_entity.managers[i].id);
-                                          break;
+                                    if (widget.isManager) {
+                                      return;
+                                    } else {
+                                      if (widget.empType ==
+                                          EntityRole.Manager) {
+                                        String removeThisId;
+                                        for (int i = 0;
+                                            i < _entity.managers.length;
+                                            i++) {
+                                          if (_entity.managers[i].id ==
+                                              contact.id) {
+                                            removeThisId = contact.id;
+                                            print(_entity.managers[i].id);
+                                            break;
+                                          }
                                         }
-                                      }
-                                      if (removeThisId != null) {
-                                        setState(() {
-                                          contact = null;
-                                          // _entity.managers.removeWhere(
-                                          //     (element) => element.id == removeThisId);
-                                          _list.removeWhere((element) =>
-                                              element.id == removeThisId);
-                                          EventBus.fireEvent(
-                                              MANAGER_REMOVED_EVENT,
-                                              null,
-                                              removeThisId);
-                                        });
-                                      }
-                                    } else if (widget.empType ==
-                                        EntityRole.Executive) {
-                                      String removeThisId;
-                                      for (int i = 0;
-                                          i < _entity.executives.length;
-                                          i++) {
-                                        if (_entity.executives[i].id ==
-                                            contact.id) {
-                                          removeThisId = contact.id;
-                                          print(_entity.executives[i].id);
-                                          break;
+                                        if (removeThisId != null) {
+                                          setState(() {
+                                            contact = null;
+                                            // _entity.managers.removeWhere(
+                                            //     (element) => element.id == removeThisId);
+                                            _list.removeWhere((element) =>
+                                                element.id == removeThisId);
+                                            EventBus.fireEvent(
+                                                MANAGER_REMOVED_EVENT,
+                                                null,
+                                                removeThisId);
+                                          });
                                         }
-                                      }
-                                      if (removeThisId != null) {
-                                        setState(() {
-                                          contact = null;
-                                          // _entity.managers.removeWhere(
-                                          //     (element) => element.id == removeThisId);
-                                          _list.removeWhere((element) =>
-                                              element.id == removeThisId);
-                                          EventBus.fireEvent(
-                                              EXECUTIVE_REMOVED_EVENT,
-                                              null,
-                                              removeThisId);
-                                        });
+                                      } else if (widget.empType ==
+                                          EntityRole.Executive) {
+                                        String removeThisId;
+                                        for (int i = 0;
+                                            i < _entity.executives.length;
+                                            i++) {
+                                          if (_entity.executives[i].id ==
+                                              contact.id) {
+                                            removeThisId = contact.id;
+                                            print(_entity.executives[i].id);
+                                            break;
+                                          }
+                                        }
+                                        if (removeThisId != null) {
+                                          setState(() {
+                                            contact = null;
+                                            // _entity.managers.removeWhere(
+                                            //     (element) => element.id == removeThisId);
+                                            _list.removeWhere((element) =>
+                                                element.id == removeThisId);
+                                            EventBus.fireEvent(
+                                                EXECUTIVE_REMOVED_EVENT,
+                                                null,
+                                                removeThisId);
+                                          });
+                                        }
                                       }
                                     }
                                   }),
@@ -549,21 +572,25 @@ class ContactRowState extends State<ContactRow> {
                                     //
                                     //
                                     //TODO: Add validation for Phone number
-                                    _gs
-                                        .getEntityService()
-                                        .addEmployee(widget.entity.entityId,
-                                            contact, widget.empType)
-                                        .then((retVal) {
-                                      if (retVal) {
-                                        print("Success");
-                                        Utils.showMyFlushbar(
-                                            context,
-                                            Icons.check,
-                                            Duration(seconds: 3),
-                                            "Employee Details Saved",
-                                            "");
-                                      }
-                                    });
+                                    if (widget.isManager) {
+                                      return;
+                                    } else {
+                                      _gs
+                                          .getEntityService()
+                                          .addEmployee(widget.entity.entityId,
+                                              contact, widget.empType)
+                                          .then((retVal) {
+                                        if (retVal) {
+                                          print("Success");
+                                          Utils.showMyFlushbar(
+                                              context,
+                                              Icons.check,
+                                              Duration(seconds: 3),
+                                              "Employee Details Saved",
+                                              "");
+                                        }
+                                      });
+                                    }
                                   }),
                             ),
                           ],

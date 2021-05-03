@@ -37,7 +37,10 @@ import 'package:eventify/eventify.dart' as Eventify;
 
 class ManageEntityDetailsPage extends StatefulWidget {
   final Entity entity;
-  ManageEntityDetailsPage({Key key, @required this.entity}) : super(key: key);
+  final bool isManager;
+  ManageEntityDetailsPage(
+      {Key key, @required this.entity, @required this.isManager})
+      : super(key: key);
   @override
   _ManageEntityDetailsPageState createState() =>
       _ManageEntityDetailsPageState();
@@ -477,6 +480,7 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
         obscureText: false,
         maxLines: 1,
         minLines: 1,
+        enabled: widget.isManager ? false : true,
         style: textInputTextStyle,
         controller: _nameController,
         keyboardType: TextInputType.text,
@@ -496,6 +500,7 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
         //minLines: 1,
         style: textInputTextStyle,
         controller: _descController,
+        enabled: widget.isManager ? false : true,
         decoration: CommonStyle.textFieldStyle(
             labelTextStr: "Description (optional)", hintTextStr: ""),
         validator: (value) {
@@ -519,6 +524,7 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
         maxLines: 1,
         minLines: 1,
         style: textInputTextStyle,
+        enabled: widget.isManager ? false : true,
         keyboardType: TextInputType.text,
         controller: _regNumController,
         decoration: CommonStyle.textFieldStyle(
@@ -539,6 +545,7 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
         obscureText: false,
         maxLines: 1,
         readOnly: true,
+        enabled: widget.isManager ? false : true,
         minLines: 1,
         style: textInputTextStyle,
         onTap: () {
@@ -603,9 +610,9 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
         onSaved: (String value) {},
       );
       final closeTimeField = TextFormField(
-        enabled: true,
         obscureText: false,
         readOnly: true,
+        enabled: widget.isManager ? false : true,
         maxLines: 1,
         minLines: 1,
         controller: _closeTimeController,
@@ -657,6 +664,7 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
         obscureText: false,
         maxLines: 1,
         readOnly: true,
+        enabled: widget.isManager ? false : true,
         minLines: 1,
         style: textInputTextStyle,
         onTap: () {
@@ -706,9 +714,9 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
         onSaved: (String value) {},
       );
       final breakEndTimeField = TextFormField(
-        enabled: true,
         obscureText: false,
         readOnly: true,
+        enabled: widget.isManager ? false : true,
         maxLines: 1,
         minLines: 1,
         controller: _breakEndController,
@@ -783,6 +791,7 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
                 days.saturday,
                 days.sunday
               ],
+              enabled: widget.isManager ? false : true,
               initialValue: _daysOff,
               borderRadius: 20,
               elevation: 10,
@@ -812,6 +821,7 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
         obscureText: false,
         maxLines: 1,
         minLines: 1,
+        enabled: widget.isManager ? false : true,
         style: textInputTextStyle,
         keyboardType: TextInputType.number,
         controller: _slotDurationController,
@@ -836,6 +846,7 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
         obscureText: false,
         maxLines: 1,
         minLines: 1,
+        enabled: widget.isManager ? false : true,
         style: textInputTextStyle,
         keyboardType: TextInputType.number,
         controller: _advBookingInDaysController,
@@ -862,6 +873,7 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
         obscureText: false,
         maxLines: 1,
         minLines: 1,
+        enabled: widget.isManager ? false : true,
         style: textInputTextStyle,
         keyboardType: TextInputType.number,
         controller: _maxPeopleController,
@@ -887,6 +899,7 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
         obscureText: false,
         maxLines: 1,
         minLines: 1,
+        enabled: widget.isManager ? false : true,
         key: whatsappPhoneKey,
         style: textInputTextStyle,
         keyboardType: TextInputType.phone,
@@ -918,6 +931,7 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
         obscureText: false,
         maxLines: 1,
         minLines: 1,
+        enabled: widget.isManager ? false : true,
         key: contactPhoneKey,
         style: textInputTextStyle,
         keyboardType: TextInputType.phone,
@@ -942,6 +956,7 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
         obscureText: false,
         maxLines: 1,
         minLines: 1,
+        enabled: widget.isManager ? false : true,
         style: textInputTextStyle,
         keyboardType: TextInputType.emailAddress,
         controller: _emailIdController,
@@ -965,6 +980,7 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
         obscureText: false,
         maxLines: 1,
         minLines: 1,
+        enabled: widget.isManager ? false : true,
         style: textInputTextStyle,
         keyboardType: TextInputType.text,
         controller: _upiIdController,
@@ -1099,6 +1115,7 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
       final messageField = TextFormField(
         obscureText: false,
         //minLines: 1,
+        enabled: widget.isManager ? false : true,
         style: textInputTextStyle,
         controller: _offerMessageController,
         decoration: CommonStyle.textFieldStyle(
@@ -1136,6 +1153,7 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
         obscureText: false,
         //minLines: 1,
         style: textInputTextStyle,
+        enabled: widget.isManager ? false : true,
         controller: _offerCouponController,
         decoration: CommonStyle.textFieldStyle(labelTextStr: "Coupon"),
         validator: (value) {
@@ -1255,6 +1273,7 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
         obscureText: false,
         //minLines: 1,
         style: textInputTextStyle,
+        enabled: widget.isManager ? false : true,
         controller: _startDateController,
         decoration: CommonStyle.textFieldStyle(
             labelTextStr: "Start Date", hintTextStr: ""),
@@ -1288,6 +1307,7 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
       final endDateField = TextFormField(
         obscureText: false,
         //minLines: 1,
+        enabled: widget.isManager ? false : true,
         style: textInputTextStyle,
         controller: _endDateController,
         decoration: CommonStyle.textFieldStyle(
@@ -1359,20 +1379,26 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
       final clearBtn = Container(
           width: MediaQuery.of(context).size.width * .3,
           child: FlatButton(
-            //elevation: 20,
-            color: Colors.transparent,
-            splashColor: highlightColor,
-            textColor: btnColor,
-            shape: RoundedRectangleBorder(side: BorderSide(color: btnColor)),
-            child: Text(
-              'Clear',
-              textAlign: TextAlign.center,
-            ),
-            onPressed: clearLocation,
-          ));
+              //elevation: 20,
+              color: Colors.transparent,
+              splashColor: highlightColor,
+              textColor: btnColor,
+              shape: RoundedRectangleBorder(side: BorderSide(color: btnColor)),
+              child: Text(
+                'Clear',
+                textAlign: TextAlign.center,
+              ),
+              onPressed: () {
+                if (widget.isManager) {
+                  return;
+                } else {
+                  clearLocation();
+                }
+              }));
 //Address fields
       final adrsField1 = TextFormField(
         obscureText: false,
+        enabled: widget.isManager ? false : true,
         maxLines: 1,
         minLines: 1,
         style: textInputTextStyle,
@@ -1392,6 +1418,7 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
       );
       final landmarkField2 = TextFormField(
         obscureText: false,
+        enabled: widget.isManager ? false : true,
         maxLines: 1,
         minLines: 1,
         style: textInputTextStyle,
@@ -1416,6 +1443,7 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
       );
       final localityField = TextFormField(
         obscureText: false,
+        enabled: widget.isManager ? false : true,
         maxLines: 1,
         minLines: 1,
         style: textInputTextStyle,
@@ -1436,6 +1464,7 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
       );
       final cityField = TextFormField(
         obscureText: false,
+        enabled: widget.isManager ? false : true,
         maxLines: 1,
         minLines: 1,
         style: textInputTextStyle,
@@ -1456,6 +1485,7 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
       );
       final stateField = TextFormField(
         obscureText: false,
+        enabled: widget.isManager ? false : true,
         maxLines: 1,
         minLines: 1,
         style: textInputTextStyle,
@@ -1476,6 +1506,7 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
       );
       final countryField = TextFormField(
         obscureText: false,
+        enabled: widget.isManager ? false : true,
         maxLines: 1,
         minLines: 1,
         style: textInputTextStyle,
@@ -1496,6 +1527,7 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
       );
       final pinField = TextFormField(
         obscureText: false,
+        enabled: widget.isManager ? false : true,
         maxLines: 1,
         minLines: 1,
         style: textInputTextStyle,
@@ -2135,6 +2167,12 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
                             shape: BoxShape.rectangle,
                             borderRadius:
                                 BorderRadius.all(Radius.circular(5.0))),
+                        foregroundDecoration: widget.isManager
+                            ? BoxDecoration(
+                                color: Colors.grey[50],
+                                backgroundBlendMode: BlendMode.saturation,
+                              )
+                            : BoxDecoration(),
                         margin: EdgeInsets.all(5),
                         padding: EdgeInsets.all(0),
                         child: Column(
@@ -2165,7 +2203,6 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
                                         ],
                                       ),
                                       backgroundColor: Colors.blueGrey[500],
-
                                       children: <Widget>[
                                         new Container(
                                           width: MediaQuery.of(context)
@@ -2225,6 +2262,12 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
                             shape: BoxShape.rectangle,
                             borderRadius:
                                 BorderRadius.all(Radius.circular(5.0))),
+                        foregroundDecoration: widget.isManager
+                            ? BoxDecoration(
+                                color: Colors.grey[50],
+                                backgroundBlendMode: BlendMode.saturation,
+                              )
+                            : BoxDecoration(),
                         //padding: EdgeInsets.all(5.0),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -2297,6 +2340,12 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
                       Container(
                         margin: EdgeInsets.all(5),
                         padding: EdgeInsets.all(0),
+                        foregroundDecoration: widget.isManager
+                            ? BoxDecoration(
+                                color: Colors.grey[50],
+                                backgroundBlendMode: BlendMode.saturation,
+                              )
+                            : BoxDecoration(),
                         decoration: BoxDecoration(
                             border: Border.all(color: containerColor),
                             color: Colors.grey[50],
@@ -2401,6 +2450,12 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
                       Container(
                         margin: EdgeInsets.all(5),
                         padding: EdgeInsets.all(0),
+                        foregroundDecoration: widget.isManager
+                            ? BoxDecoration(
+                                color: Colors.grey[50],
+                                backgroundBlendMode: BlendMode.saturation,
+                              )
+                            : BoxDecoration(),
                         decoration: BoxDecoration(
                             border: Border.all(color: containerColor),
                             color: Colors.grey[50],
@@ -2496,19 +2551,24 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
                                       Container(
                                         width: rowWidth * .58,
                                         child: RaisedButton(
-                                          elevation: 10,
-                                          color: btnColor,
-                                          splashColor: highlightColor,
-                                          textColor: Colors.white,
-                                          shape: RoundedRectangleBorder(
-                                              side:
-                                                  BorderSide(color: btnColor)),
-                                          child: Text(
-                                            userCurrentLoc,
-                                            textAlign: TextAlign.center,
-                                          ),
-                                          onPressed: useCurrLocation,
-                                        ),
+                                            elevation: 10,
+                                            color: btnColor,
+                                            splashColor: highlightColor,
+                                            textColor: Colors.white,
+                                            shape: RoundedRectangleBorder(
+                                                side: BorderSide(
+                                                    color: btnColor)),
+                                            child: Text(
+                                              userCurrentLoc,
+                                              textAlign: TextAlign.center,
+                                            ),
+                                            onPressed: () {
+                                              if (widget.isManager) {
+                                                return;
+                                              } else {
+                                                useCurrLocation();
+                                              }
+                                            }),
                                       ),
                                     ],
                                   ),
@@ -2525,6 +2585,12 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
                       Container(
                         margin: EdgeInsets.all(5),
                         padding: EdgeInsets.all(0),
+                        foregroundDecoration: widget.isManager
+                            ? BoxDecoration(
+                                color: Colors.grey[50],
+                                backgroundBlendMode: BlendMode.saturation,
+                              )
+                            : BoxDecoration(),
                         decoration: BoxDecoration(
                             border: Border.all(color: containerColor),
                             color: Colors.grey[50],
@@ -2905,6 +2971,12 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
                         width: MediaQuery.of(context).size.width * .9,
                         margin: EdgeInsets.all(5),
                         padding: EdgeInsets.all(0),
+                        foregroundDecoration: widget.isManager
+                            ? BoxDecoration(
+                                color: Colors.grey[50],
+                                backgroundBlendMode: BlendMode.saturation,
+                              )
+                            : BoxDecoration(),
                         // padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
                         decoration: BoxDecoration(
                             border: Border.all(color: containerColor),
@@ -3022,13 +3094,18 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
                                           materialTapTargetSize:
                                               MaterialTapTargetSize.shrinkWrap,
                                           value: isPublic,
+
                                           onChanged: (value) {
-                                            setState(() {
-                                              isPublic = value;
-                                              entity.isPublic = value;
-                                              print(isPublic);
-                                              //}
-                                            });
+                                            if (widget.isManager) {
+                                              return;
+                                            } else {
+                                              setState(() {
+                                                isPublic = value;
+                                                entity.isPublic = value;
+                                                print(isPublic);
+                                                //}
+                                              });
+                                            }
                                           },
                                           // activeTrackColor: Colors.green,
                                           activeColor: Colors.green,
@@ -3139,30 +3216,34 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
                                               MaterialTapTargetSize.shrinkWrap,
                                           value: isBookable,
                                           onChanged: (value) {
-                                            setState(() {
-                                              isBookable = value;
-                                              entity.isBookable = value;
+                                            if (widget.isManager) {
+                                              return;
+                                            } else {
+                                              setState(() {
+                                                isBookable = value;
+                                                entity.isBookable = value;
 
-                                              if (value) {
-                                                showConfirmationDialog();
-                                                //TODO: SMita - show msg with info, yes/no
-                                              }
-                                              //Check if all mandatory fields for being bookable are not empty.
-                                              bool retVal =
-                                                  validateMandatoryFieldsForBookable();
-                                              if (!retVal) {
-                                                Utils.showMyFlushbar(
-                                                    context,
-                                                    Icons.info_outline,
-                                                    Duration(
-                                                      seconds: 4,
-                                                    ),
-                                                    "Mandatory fields missing for bookable",
-                                                    "");
-                                              }
+                                                if (value) {
+                                                  showConfirmationDialog();
+                                                  //TODO: SMita - show msg with info, yes/no
+                                                }
+                                                //Check if all mandatory fields for being bookable are not empty.
+                                                bool retVal =
+                                                    validateMandatoryFieldsForBookable();
+                                                if (!retVal) {
+                                                  Utils.showMyFlushbar(
+                                                      context,
+                                                      Icons.info_outline,
+                                                      Duration(
+                                                        seconds: 4,
+                                                      ),
+                                                      "Mandatory fields missing for bookable",
+                                                      "");
+                                                }
 
-                                              print(isBookable);
-                                            });
+                                                print(isBookable);
+                                              });
+                                            }
                                           },
                                           // activeTrackColor: Colors.green,
                                           activeColor: Colors.green,
@@ -3271,49 +3352,53 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
                                           value: isActive,
                                           onChanged: (value) {
                                             setState(() {
-                                              if (value) {
-                                                validateField = true;
-                                                _autoValidate = true;
-                                                bool retVal = false;
-                                                bool locValid = false;
-                                                if (validateAllFields())
-                                                  retVal = true;
-                                                if (validateLatLon())
-                                                  locValid = true;
+                                              if (widget.isManager) {
+                                                return;
+                                              } else {
+                                                if (value) {
+                                                  validateField = true;
+                                                  _autoValidate = true;
+                                                  bool retVal = false;
+                                                  bool locValid = false;
+                                                  if (validateAllFields())
+                                                    retVal = true;
+                                                  if (validateLatLon())
+                                                    locValid = true;
 
-                                                if (!locValid || !retVal) {
-                                                  if (!locValid) {
-                                                    Utils.showMyFlushbar(
-                                                        context,
-                                                        Icons.info_outline,
-                                                        Duration(
-                                                          seconds: 6,
-                                                        ),
-                                                        shouldSetLocation,
-                                                        pressUseCurrentLocation);
-                                                  } else if (!retVal) {
-                                                    //Show flushbar with info that fields has invalid data
-                                                    Utils.showMyFlushbar(
-                                                        context,
-                                                        Icons.info_outline,
-                                                        Duration(
-                                                          seconds: 6,
-                                                        ),
-                                                        "Missing Information!!",
-                                                        'Making a place "ACTIVE" requires all mandatory information to be filled in. Please provide the details and Save.');
+                                                  if (!locValid || !retVal) {
+                                                    if (!locValid) {
+                                                      Utils.showMyFlushbar(
+                                                          context,
+                                                          Icons.info_outline,
+                                                          Duration(
+                                                            seconds: 6,
+                                                          ),
+                                                          shouldSetLocation,
+                                                          pressUseCurrentLocation);
+                                                    } else if (!retVal) {
+                                                      //Show flushbar with info that fields has invalid data
+                                                      Utils.showMyFlushbar(
+                                                          context,
+                                                          Icons.info_outline,
+                                                          Duration(
+                                                            seconds: 6,
+                                                          ),
+                                                          "Missing Information!!",
+                                                          'Making a place "ACTIVE" requires all mandatory information to be filled in. Please provide the details and Save.');
+                                                    }
+                                                  } else {
+                                                    validateField = false;
+                                                    isActive = value;
+                                                    entity.isActive = value;
+                                                    print(isActive);
                                                   }
                                                 } else {
-                                                  validateField = false;
                                                   isActive = value;
+                                                  validateField = false;
+                                                  _autoValidate = false;
                                                   entity.isActive = value;
                                                   print(isActive);
                                                 }
-                                              } else {
-                                                isActive = value;
-                                                validateField = false;
-                                                _autoValidate = false;
-                                                entity.isActive = value;
-                                                print(isActive);
                                               }
                                             });
                                           },
@@ -3357,10 +3442,20 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
                           elevation: 8,
                           child: GestureDetector(
                             onTap: () {
-                              print("FlushbarStatus-------");
-                              processSaveWithTimer();
+                              if (widget.isManager) {
+                                return;
+                              } else {
+                                print("FlushbarStatus-------");
+                                processSaveWithTimer();
+                              }
                             },
                             child: Container(
+                              foregroundDecoration: widget.isManager
+                                  ? BoxDecoration(
+                                      color: Colors.grey[50],
+                                      backgroundBlendMode: BlendMode.saturation,
+                                    )
+                                  : BoxDecoration(),
                               padding: EdgeInsets.zero,
                               margin: EdgeInsets.zero,
                               height: 40,
@@ -3403,6 +3498,12 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
                         builder: (context) => Container(
                             margin: EdgeInsets.fromLTRB(6, 15, 6, 15),
                             height: 40,
+                            foregroundDecoration: widget.isManager
+                                ? BoxDecoration(
+                                    color: Colors.grey[50],
+                                    backgroundBlendMode: BlendMode.saturation,
+                                  )
+                                : BoxDecoration(),
                             decoration: new BoxDecoration(
                                 border: Border.all(color: Colors.teal[200]),
                                 borderRadius:
@@ -3435,143 +3536,148 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
                                   ],
                                 ),
                                 onPressed: () {
-                                  String _errorMessage;
-                                  showDialog(
-                                      context: context,
-                                      barrierDismissible: true,
-                                      builder: (BuildContext context) {
-                                        return StatefulBuilder(
-                                            builder: (context, setState) {
-                                          return new AlertDialog(
-                                            backgroundColor: Colors.grey[200],
-                                            // titleTextStyle: inputTextStyle,
-                                            elevation: 10.0,
-                                            content: Column(
-                                              mainAxisSize: MainAxisSize.min,
-                                              children: <Widget>[
-                                                RichText(
-                                                  text: TextSpan(
-                                                      style: lightSubTextStyle,
-                                                      children: <TextSpan>[
-                                                        TextSpan(
-                                                            text: "Enter "),
-                                                        TextSpan(
-                                                            text: "DELETE ",
-                                                            style:
-                                                                errorTextStyle),
-                                                        TextSpan(
-                                                            text:
-                                                                "to permanently delete this entity and all its services. Once deleted you cannot restore them. "),
-                                                      ]),
-                                                ),
-                                                new Row(
-                                                  children: <Widget>[
-                                                    new Expanded(
-                                                      child: new TextField(
-                                                        style: inputTextStyle,
-                                                        textCapitalization:
-                                                            TextCapitalization
-                                                                .characters,
-                                                        controller:
-                                                            _txtController,
-                                                        decoration:
-                                                            InputDecoration(
-                                                          hintText:
-                                                              'eg. delete',
-                                                          enabledBorder:
-                                                              UnderlineInputBorder(
-                                                                  borderSide:
-                                                                      BorderSide(
-                                                                          color:
-                                                                              Colors.grey)),
-                                                          focusedBorder:
-                                                              UnderlineInputBorder(
-                                                                  borderSide:
-                                                                      BorderSide(
-                                                                          color:
-                                                                              Colors.orange)),
+                                  if (widget.isManager) {
+                                    return;
+                                  } else {
+                                    String _errorMessage;
+                                    showDialog(
+                                        context: context,
+                                        barrierDismissible: true,
+                                        builder: (BuildContext context) {
+                                          return StatefulBuilder(
+                                              builder: (context, setState) {
+                                            return new AlertDialog(
+                                              backgroundColor: Colors.grey[200],
+                                              // titleTextStyle: inputTextStyle,
+                                              elevation: 10.0,
+                                              content: Column(
+                                                mainAxisSize: MainAxisSize.min,
+                                                children: <Widget>[
+                                                  RichText(
+                                                    text: TextSpan(
+                                                        style:
+                                                            lightSubTextStyle,
+                                                        children: <TextSpan>[
+                                                          TextSpan(
+                                                              text: "Enter "),
+                                                          TextSpan(
+                                                              text: "DELETE ",
+                                                              style:
+                                                                  errorTextStyle),
+                                                          TextSpan(
+                                                              text:
+                                                                  "to permanently delete this entity and all its services. Once deleted you cannot restore them. "),
+                                                        ]),
+                                                  ),
+                                                  new Row(
+                                                    children: <Widget>[
+                                                      new Expanded(
+                                                        child: new TextField(
+                                                          style: inputTextStyle,
+                                                          textCapitalization:
+                                                              TextCapitalization
+                                                                  .characters,
+                                                          controller:
+                                                              _txtController,
+                                                          decoration:
+                                                              InputDecoration(
+                                                            hintText:
+                                                                'eg. delete',
+                                                            enabledBorder: UnderlineInputBorder(
+                                                                borderSide: BorderSide(
+                                                                    color: Colors
+                                                                        .grey)),
+                                                            focusedBorder: UnderlineInputBorder(
+                                                                borderSide: BorderSide(
+                                                                    color: Colors
+                                                                        .orange)),
+                                                          ),
+                                                          onEditingComplete:
+                                                              () {
+                                                            print(_txtController
+                                                                .text);
+                                                          },
+                                                          onChanged: (value) {
+                                                            if (value
+                                                                    .toUpperCase() ==
+                                                                "DELETE"
+                                                                    .toUpperCase())
+                                                              setState(() {
+                                                                _delEnabled =
+                                                                    true;
+                                                                _errorMessage =
+                                                                    null;
+                                                              });
+                                                            else
+                                                              setState(() {
+                                                                _errorMessage =
+                                                                    "You have to enter DELETE to proceed.";
+                                                              });
+                                                          },
+                                                          autofocus: false,
                                                         ),
-                                                        onEditingComplete: () {
-                                                          print(_txtController
-                                                              .text);
-                                                        },
-                                                        onChanged: (value) {
-                                                          if (value
-                                                                  .toUpperCase() ==
-                                                              "DELETE"
-                                                                  .toUpperCase())
-                                                            setState(() {
-                                                              _delEnabled =
-                                                                  true;
-                                                              _errorMessage =
-                                                                  null;
-                                                            });
-                                                          else
-                                                            setState(() {
-                                                              _errorMessage =
-                                                                  "You have to enter DELETE to proceed.";
-                                                            });
-                                                        },
-                                                        autofocus: false,
-                                                      ),
-                                                    )
-                                                  ],
-                                                ),
-                                                (_errorMessage != null
-                                                    ? Text(
-                                                        _errorMessage,
-                                                        style: errorTextStyle,
                                                       )
-                                                    : Container()),
-                                              ],
-                                            ),
-
-                                            contentPadding: EdgeInsets.all(10),
-                                            actions: <Widget>[
-                                              RaisedButton(
-                                                color: (_delEnabled)
-                                                    ? btnColor
-                                                    : Colors.blueGrey[200],
-                                                elevation:
-                                                    (_delEnabled) ? 20 : 0,
-                                                onPressed: () {
-                                                  if (_delEnabled) {
-                                                    deleteEntity(
-                                                            entity.entityId)
-                                                        .whenComplete(() {
-                                                      _gs.removeEntity(
-                                                          entity.entityId);
-                                                      Navigator.pop(context);
-                                                      Navigator.of(context)
-                                                          .push(PageAnimation
-                                                              .createRoute(
-                                                                  ManageEntityListPage()));
-                                                    });
-                                                  } else {
-                                                    setState(() {
-                                                      _errorMessage =
-                                                          "You have to enter DELETE to proceed.";
-                                                    });
-                                                  }
-                                                },
-                                                splashColor: (_delEnabled)
-                                                    ? highlightColor
-                                                    : Colors.blueGrey[200],
-                                                child: Container(
-                                                  width: MediaQuery.of(context)
-                                                          .size
-                                                          .width *
-                                                      .3,
-                                                  alignment: Alignment.center,
-                                                  child: Text("Delete",
-                                                      style: TextStyle(
-                                                          color: Colors.white)),
-                                                ),
+                                                    ],
+                                                  ),
+                                                  (_errorMessage != null
+                                                      ? Text(
+                                                          _errorMessage,
+                                                          style: errorTextStyle,
+                                                        )
+                                                      : Container()),
+                                                ],
                                               ),
-                                            ],
-                                          );
+
+                                              contentPadding:
+                                                  EdgeInsets.all(10),
+                                              actions: <Widget>[
+                                                RaisedButton(
+                                                  color: (_delEnabled)
+                                                      ? btnColor
+                                                      : Colors.blueGrey[200],
+                                                  elevation:
+                                                      (_delEnabled) ? 20 : 0,
+                                                  onPressed: () {
+                                                    if (_delEnabled) {
+                                                      deleteEntity(
+                                                              entity.entityId)
+                                                          .whenComplete(() {
+                                                        _gs.removeEntity(
+                                                            entity.entityId);
+                                                        Navigator.pop(context);
+                                                        Navigator.of(context)
+                                                            .push(PageAnimation
+                                                                .createRoute(
+                                                                    ManageEntityListPage()));
+                                                      });
+                                                    } else {
+                                                      setState(() {
+                                                        _errorMessage =
+                                                            "You have to enter DELETE to proceed.";
+                                                      });
+                                                    }
+                                                  },
+                                                  splashColor: (_delEnabled)
+                                                      ? highlightColor
+                                                      : Colors.blueGrey[200],
+                                                  child: Container(
+                                                    width:
+                                                        MediaQuery.of(context)
+                                                                .size
+                                                                .width *
+                                                            .3,
+                                                    alignment: Alignment.center,
+                                                    child: Text("Delete",
+                                                        style: TextStyle(
+                                                            color:
+                                                                Colors.white)),
+                                                  ),
+                                                ),
+                                              ],
+                                            );
+                                          });
                                         });
-                                      });
+                                  }
                                 })),
                       ),
                     ],
