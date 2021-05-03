@@ -243,6 +243,7 @@ String wantToBookAnotherSlot =
 String allSlotsBookedForDate = 'All slots are booked for this date!!';
 
 String couldNotBookToken = "Oops! Couldn't book the token.";
+
 String couldNotSubmitApplication =
     "Oops! Couldn't submit the application request.";
 
@@ -266,7 +267,7 @@ String appShareWithOwnerHeading =
     "Protect your Customers to Protect your Business!\nProvide Safety and Convenience to regain the confidence of your customers.";
 
 String appShareWithOwnerMessage =
-    "Register your Business or Place with LESSs app at absolutely no cost and grow your business.";
+    "Register your Business with the LESSs App at absolutely no cost, give confidence to your customers by providing a safer environment and grow your business.\nDownload the App from ";
 
 //append place name in the last
 String entityShareByUserHeading =
