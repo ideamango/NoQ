@@ -27,13 +27,15 @@ class ManageEntityForms extends StatefulWidget {
   final DateTime preferredSlotTime;
   final dynamic isAdmin;
   final dynamic backRoute;
+  final bool isManager;
   ManageEntityForms(
       {Key key,
       @required this.metaEntity,
       //  @required this.forms,
       @required this.preferredSlotTime,
       @required this.isAdmin,
-      @required this.backRoute})
+      @required this.backRoute,
+      @required this.isManager})
       : super(key: key);
 
   @override
@@ -233,15 +235,19 @@ class _ManageEntityFormsState extends State<ManageEntityForms> {
                                                   size: 30,
                                                 ),
                                                 onPressed: () {
-                                                  checkBoxListTileModel[index]
-                                                      .isCheck = true;
+                                                  if (widget.isManager) {
+                                                    return;
+                                                  } else {
+                                                    checkBoxListTileModel[index]
+                                                        .isCheck = true;
 
-                                                  selectedForms.add(
-                                                      checkBoxListTileModel[
-                                                              index]
-                                                          .form);
+                                                    selectedForms.add(
+                                                        checkBoxListTileModel[
+                                                                index]
+                                                            .form);
 
-                                                  setState(() {});
+                                                    setState(() {});
+                                                  }
                                                 },
                                               ),
                                               Text(
@@ -277,6 +283,7 @@ class _ManageEntityFormsState extends State<ManageEntityForms> {
                                                   preferredSlotTime:
                                                       widget.preferredSlotTime,
                                                   backRoute: widget.backRoute,
+                                                  isManager: widget.isManager,
                                                 ),
                                               )));
                                             },
@@ -433,6 +440,12 @@ class _ManageEntityFormsState extends State<ManageEntityForms> {
                               )),
                     )),
                     Container(
+                      foregroundDecoration: widget.isManager
+                          ? BoxDecoration(
+                              color: Colors.grey[50],
+                              backgroundBlendMode: BlendMode.saturation,
+                            )
+                          : BoxDecoration(),
                       width: MediaQuery.of(context).size.width * .92,
                       child: RaisedButton(
                           color: btnColor,
@@ -457,10 +470,13 @@ class _ManageEntityFormsState extends State<ManageEntityForms> {
                                   BorderRadius.all(Radius.circular(5.0))),
                           onPressed: () {
                             //Save Entity with updated changes.
-
-                            entity.forms.clear();
-                            entity.forms.addAll(selectedForms);
-                            _gs.putEntity(entity, true);
+                            if (widget.isManager) {
+                              return;
+                            } else {
+                              entity.forms.clear();
+                              entity.forms.addAll(selectedForms);
+                              _gs.putEntity(entity, true);
+                            }
                           }),
                     )
                   ],

@@ -32,11 +32,13 @@ class ManageEmployeePage extends StatefulWidget {
   final MetaEntity metaEntity;
   final DateTime defaultDate;
   final dynamic backRoute;
+  final bool isManager;
   ManageEmployeePage(
       {Key key,
       @required this.metaEntity,
       @required this.defaultDate,
-      @required this.backRoute})
+      @required this.backRoute,
+      @required this.isManager})
       : super(key: key);
   @override
   _ManageEmployeePageState createState() => _ManageEmployeePageState();
@@ -260,20 +262,24 @@ class _ManageEmployeePageState extends State<ManageEmployeePage> {
         contactList = entity.managers;
         contactList.forEach((element) {
           contactRowWidgets.add(new ContactRow(
-              contact: element,
-              empType: EntityRole.Manager,
-              entity: entity,
-              list: contactList));
+            contact: element,
+            empType: EntityRole.Manager,
+            entity: entity,
+            list: contactList,
+            isManager: widget.isManager,
+          ));
         });
       }
       if (!(Utils.isNullOrEmpty(entity.executives))) {
         executiveList = entity.executives;
         executiveList.forEach((element) {
           execRowWidgets.add(new ContactRow(
-              contact: element,
-              empType: EntityRole.Executive,
-              entity: entity,
-              list: executiveList));
+            contact: element,
+            empType: EntityRole.Executive,
+            entity: entity,
+            list: executiveList,
+            isManager: widget.isManager,
+          ));
         });
       }
     }
@@ -287,6 +293,7 @@ class _ManageEmployeePageState extends State<ManageEmployeePage> {
         empType: EntityRole.Manager,
         entity: entity,
         list: contactList,
+        isManager: widget.isManager,
       ));
     }
     setState(() {
@@ -304,6 +311,7 @@ class _ManageEmployeePageState extends State<ManageEmployeePage> {
         empType: EntityRole.Executive,
         entity: entity,
         list: executiveList,
+        isManager: widget.isManager,
       ));
     }
     setState(() {
@@ -326,6 +334,7 @@ class _ManageEmployeePageState extends State<ManageEmployeePage> {
         empType: EntityRole.Manager,
         entity: entity,
         list: contactList,
+        isManager: widget.isManager,
       ));
     }
     setState(() {
@@ -349,6 +358,7 @@ class _ManageEmployeePageState extends State<ManageEmployeePage> {
         empType: EntityRole.Executive,
         entity: entity,
         list: executiveList,
+        isManager: widget.isManager,
       ));
     }
     setState(() {
@@ -393,6 +403,12 @@ class _ManageEmployeePageState extends State<ManageEmployeePage> {
     itemNameController.text = newAdminRowItem;
     double cardMargin = MediaQuery.of(context).size.width * .03;
     return Container(
+      foregroundDecoration: widget.isManager
+          ? BoxDecoration(
+              color: Colors.grey[50],
+              backgroundBlendMode: BlendMode.saturation,
+            )
+          : BoxDecoration(),
       height: 25,
       //padding: EdgeInsets.fromLTRB(4, 8, 4, 14),
       margin: EdgeInsets.fromLTRB(4, 8, 4, 6),
@@ -447,8 +463,12 @@ class _ManageEmployeePageState extends State<ManageEmployeePage> {
               padding: EdgeInsets.all(0),
               icon: Icon(Icons.delete, color: Colors.blueGrey[300], size: 20),
               onPressed: () {
-                _removeServiceRow(newAdminRowItem);
-                _adminItemController.text = "";
+                if (widget.isManager) {
+                  return;
+                } else {
+                  _removeServiceRow(newAdminRowItem);
+                  _adminItemController.text = "";
+                }
               },
             ),
           ),
@@ -462,6 +482,7 @@ class _ManageEmployeePageState extends State<ManageEmployeePage> {
     final adminInputField = new TextFormField(
       key: adminPhoneKey,
       autofocus: true,
+      enabled: widget.isManager ? false : true,
       inputFormatters: [
         LengthLimitingTextInputFormatter(18),
       ],
@@ -604,6 +625,13 @@ class _ManageEmployeePageState extends State<ManageEmployeePage> {
                                             .03),
                                     child: Container(
                                       //  padding: EdgeInsets.all(5),
+                                      foregroundDecoration: widget.isManager
+                                          ? BoxDecoration(
+                                              color: Colors.grey[50],
+                                              backgroundBlendMode:
+                                                  BlendMode.saturation,
+                                            )
+                                          : BoxDecoration(),
                                       decoration: BoxDecoration(
                                           border:
                                               Border.all(color: highlightColor),
@@ -638,36 +666,41 @@ class _ManageEmployeePageState extends State<ManageEmployeePage> {
                                                     color: highlightColor,
                                                     size: 38),
                                                 onPressed: () {
-                                                  if (_adminItemController
-                                                              .text ==
-                                                          null ||
-                                                      _adminItemController
-                                                          .text.isEmpty) {
-                                                    Utils.showMyFlushbar(
-                                                        context,
-                                                        Icons.info_outline,
-                                                        Duration(
-                                                          seconds: 4,
-                                                        ),
-                                                        "Something Missing ..",
-                                                        "Please enter Phone number !!");
+                                                  if (widget.isManager) {
+                                                    return;
                                                   } else {
-                                                    bool result = adminPhoneKey
-                                                        .currentState
-                                                        .validate();
-                                                    if (result) {
-                                                      _addNewAdminRow();
-                                                      _adminItemController
-                                                          .text = "";
-                                                    } else {
+                                                    if (_adminItemController
+                                                                .text ==
+                                                            null ||
+                                                        _adminItemController
+                                                            .text.isEmpty) {
                                                       Utils.showMyFlushbar(
                                                           context,
                                                           Icons.info_outline,
                                                           Duration(
-                                                            seconds: 5,
+                                                            seconds: 4,
                                                           ),
-                                                          "Oops!! Seems like the phone number is not valid",
-                                                          "Please check and try again !!");
+                                                          "Something Missing ..",
+                                                          "Please enter Phone number !!");
+                                                    } else {
+                                                      bool result =
+                                                          adminPhoneKey
+                                                              .currentState
+                                                              .validate();
+                                                      if (result) {
+                                                        _addNewAdminRow();
+                                                        _adminItemController
+                                                            .text = "";
+                                                      } else {
+                                                        Utils.showMyFlushbar(
+                                                            context,
+                                                            Icons.info_outline,
+                                                            Duration(
+                                                              seconds: 5,
+                                                            ),
+                                                            "Oops!! Seems like the phone number is not valid",
+                                                            "Please check and try again !!");
+                                                      }
                                                     }
                                                   }
                                                 }),
@@ -692,6 +725,13 @@ class _ManageEmployeePageState extends State<ManageEmployeePage> {
                               ),
                               (adminsList.length != 0)
                                   ? Container(
+                                      foregroundDecoration: widget.isManager
+                                          ? BoxDecoration(
+                                              color: Colors.blueGrey[50],
+                                              backgroundBlendMode:
+                                                  BlendMode.saturation,
+                                            )
+                                          : BoxDecoration(),
                                       width: MediaQuery.of(context).size.width *
                                           .9,
                                       child: RaisedButton(
@@ -714,7 +754,11 @@ class _ManageEmployeePageState extends State<ManageEmployeePage> {
                                           ],
                                         ),
                                         onPressed: () {
-                                          saveAdmins();
+                                          if (widget.isManager) {
+                                            return;
+                                          } else {
+                                            saveAdmins();
+                                          }
                                         },
                                       ),
                                     )
@@ -815,8 +859,12 @@ class _ManageEmployeePageState extends State<ManageEmployeePage> {
                                       ],
                                     ),
                                     onTap: () {
-                                      print("Tappped");
-                                      _addNewContactRow();
+                                      if (widget.isManager) {
+                                        return;
+                                      } else {
+                                        print("Tappped");
+                                        _addNewContactRow();
+                                      }
                                       // showCategorySheet();
                                     },
                                   ),
@@ -922,8 +970,12 @@ class _ManageEmployeePageState extends State<ManageEmployeePage> {
                                       ],
                                     ),
                                     onTap: () {
-                                      print("Tappped");
-                                      _addNewExecutiveRow();
+                                      if (widget.isManager) {
+                                        return;
+                                      } else {
+                                        print("Tappped");
+                                        _addNewExecutiveRow();
+                                      }
                                       //showCategorySheet();
                                     },
                                   ),

@@ -60,6 +60,9 @@ class _UserHomePageState extends State<UserHomePage> {
   List<String> versionFactors;
   String upiId;
   String upiQrImgPath;
+  String msg;
+  bool isDonationEnabled = false;
+  bool isForceUpdateRequired = false;
 
   int _currentIndex = 0;
   List cardList = [
@@ -93,15 +96,24 @@ class _UserHomePageState extends State<UserHomePage> {
       if (widget.dontShowUpdate != null) {
         if (_state.isEligibleForUpdate()) {
           if (_state.getConfigurations().isForceUpdateRequired()) {
+            isForceUpdateRequired = true;
             forceUpdateMsg = _state.getConfigurations().getForceUpdateMessage();
           } else {
             versionUpdateMsg =
                 _state.getConfigurations().getVersionUpdateMessage();
           }
           versionFactors = _state.getConfigurations().getVersionUpdateFactors();
+          msg = (_state.getConfigurations().isForceUpdateRequired())
+              ? forceUpdateMsg
+              : (versionUpdateMsg);
         }
       }
 //End Code for version update dialog
+//Start for dnation enabled
+//
+//_state.getConfigurations().isDonationEnabled()
+//
+      isDonationEnabled = _state.getConfigurations().isDonationEnabled();
       if (this.mounted) {
         setState(() {
           _initCompleted = true;
@@ -158,9 +170,7 @@ class _UserHomePageState extends State<UserHomePage> {
   Widget build(BuildContext context) {
     if (_initCompleted) {
       String title = "Home Page";
-      String msg = (_state.getConfigurations().isForceUpdateRequired())
-          ? forceUpdateMsg
-          : (versionUpdateMsg);
+
       if (widget.dontShowUpdate != null && Utils.isNotNullOrEmpty(msg)) {
         return Scaffold(
             // backgroundColor: Colors.cyan[200],
@@ -214,7 +224,7 @@ class _UserHomePageState extends State<UserHomePage> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    if (!_state.getConfigurations().isForceUpdateRequired())
+                    if (!isForceUpdateRequired)
                       Container(
                         padding: EdgeInsets.fromLTRB(0, 10, 5, 0),
                         child: MaterialButton(
@@ -400,7 +410,7 @@ class _UserHomePageState extends State<UserHomePage> {
                         //   ),
                         // )),
                         // verticalSpacer,
-                        if (_state.getConfigurations().isDonationEnabled())
+                        if (isDonationEnabled)
                           Container(
                             width: MediaQuery.of(context).size.width,
                             margin: EdgeInsets.fromLTRB(0, 10, 0, 10),
@@ -470,8 +480,7 @@ class _UserHomePageState extends State<UserHomePage> {
                             ),
                           ),
                         ),
-//                      TODO: uncomment this line, show donation banner only if donation is enabled
-                        // if (_state.getConfigurations().isDonationEnabled())
+//
 
                         verticalSpacer,
 
@@ -551,7 +560,6 @@ class _UserHomePageState extends State<UserHomePage> {
                       ),
                       backgroundColor: primaryAccentColor,
                       onPressed: () {
-                        //Uncomment this
                         QrCodeScanner.scan(context);
 
 //Test Dummy code
