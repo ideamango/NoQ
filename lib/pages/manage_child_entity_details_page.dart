@@ -2,7 +2,7 @@ import 'dart:ui';
 
 import 'package:LESSs/enum/entity_role.dart';
 import 'package:auto_size_text/auto_size_text.dart';
-import 'package:flushbar/flushbar.dart';
+import 'package:another_flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
 import '../db/db_model/address.dart';
 import '../db/db_model/employee.dart';
@@ -1997,14 +1997,15 @@ class _ManageChildEntityDetailsPageState
                             ),
                           ],
                         ),
-                      )..onStatusChanged = (FlushbarStatus status) {
-                          print("FlushbarStatus-------$status");
-                          if (status == FlushbarStatus.IS_APPEARING)
-                            flushStatus = "Showing";
-                          if (status == FlushbarStatus.DISMISSED)
-                            flushStatus = "Empty";
-                          print("gfdfgdfg");
-                        };
+                      );
+                      // ..onStatusChanged = (FlushbarStatus status) {
+                      //     print("FlushbarStatus-------$status");
+                      //     if (status == FlushbarStatus.IS_APPEARING)
+                      //       flushStatus = "Showing";
+                      //     if (status == FlushbarStatus.DISMISSED)
+                      //       flushStatus = "Empty";
+                      //     print("gfdfgdfg");
+                      //   };
 
                       flush
                         ..show(context).then((result) {

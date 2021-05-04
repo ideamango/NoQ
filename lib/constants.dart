@@ -243,6 +243,11 @@ String wantToBookAnotherSlot =
 String allSlotsBookedForDate = 'All slots are booked for this date!!';
 
 String couldNotBookToken = "Oops! Couldn't book the token.";
+String maxTokenLimitReached =
+    "You have already booked allowed maximum number of token for a day.";
+String maxTokenLimitReachedSub =
+    "Please try a different date, Or contact the Business";
+
 String couldNotSubmitApplication =
     "Oops! Couldn't submit the application request.";
 

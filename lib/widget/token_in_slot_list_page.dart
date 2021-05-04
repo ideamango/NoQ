@@ -352,12 +352,13 @@ class _TokensInSlotState extends State<TokensInSlot> {
                               0,
                               0),
                           child: Text(
-                            booking.parent.entityName +
-                                (booking.parent.address != null
-                                    ? (', ' + booking.parent.address)
-                                    : ''),
+                            booking.parent.userId,
                             overflow: TextOverflow.ellipsis,
-                            style: tokenDataTextStyle,
+                            style: TextStyle(
+                                fontFamily: 'Roboto',
+                                fontSize: 12,
+                                letterSpacing: 1.2,
+                                color: primaryAccentColor),
                           ),
                         ),
                         SizedBox(

@@ -24,11 +24,12 @@ Future<List<Slot>> getSlotsListForEntity(
   return Utils.getSlots(entitySlots, entity, dateTime);
 }
 
-Future<UserToken> bookSlotForStore(MetaEntity meta, Slot slot) async {
+Future<UserToken> bookSlotForStore(
+    MetaEntity meta, Slot slot, bool enableVideoChat) async {
 //TODO: Have Entity object here, either pass entity object to generateToken() or create metaEntity and pass to this method.
 
   GlobalState gs = await GlobalState.getGlobalState();
-  UserTokens tokens = await gs.addBooking(meta, slot);
+  UserTokens tokens = await gs.addBooking(meta, slot, enableVideoChat);
 
   DateTime dt1Hour = tokens.dateTime.subtract(new Duration(hours: 1));
   DateTime dt15Minutes = tokens.dateTime.subtract(new Duration(minutes: 15));

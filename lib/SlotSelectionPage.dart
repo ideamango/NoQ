@@ -1,5 +1,5 @@
 import 'package:auto_size_text/auto_size_text.dart';
-import 'package:flushbar/flushbar.dart';
+import 'package:another_flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
 import './db/db_model/entity.dart';
 import './db/db_model/meta_entity.dart';
@@ -774,73 +774,73 @@ class _SlotSelectionPageState extends State<SlotSelectionPage> {
     );
   }
 
-  void bookSlot() {
-    _gs.initializeNotification();
+//   void bookSlot() {
+//     _gs.initializeNotification();
 
-    Utils.showMyFlushbar(
-        context,
-        Icons.info_outline,
-        Duration(
-          seconds: 4,
-        ),
-        slotBooking,
-        takingMoment);
+//     Utils.showMyFlushbar(
+//         context,
+//         Icons.info_outline,
+//         Duration(
+//           seconds: 4,
+//         ),
+//         slotBooking,
+//         takingMoment);
 
-    print(selectedSlot.dateTime);
-    if (isBooked(selectedSlot.dateTime, entity.entityId)) {
-      print("alreaddyyyyyyy booked, go back");
-    }
+//     print(selectedSlot.dateTime);
+//     if (isBooked(selectedSlot.dateTime, entity.entityId)) {
+//       print("alreaddyyyyyyy booked, go back");
+//     }
 
-    MetaEntity meta = entity;
+//     MetaEntity meta = entity;
 
-    bookSlotForStore(meta, selectedSlot).then((value) {
-      if (value == null) {
-        showFlushBar();
-        return;
-      } else {
-        //update in global State
-        selectedSlot.currentNumber++;
-      }
-      _token = value.getDisplayName();
+//     bookSlotForStore(meta, selectedSlot, enable).then((value) {
+//       if (value == null) {
+//         showFlushBar();
+//         return;
+//       } else {
+//         //update in global State
+//         selectedSlot.currentNumber++;
+//       }
+//       _token = value.getDisplayName();
 
-      String slotTiming =
-          Utils.formatTime(selectedSlot.dateTime.hour.toString()) +
-              ':' +
-              Utils.formatTime(selectedSlot.dateTime.minute.toString());
+//       String slotTiming =
+//           Utils.formatTime(selectedSlot.dateTime.hour.toString()) +
+//               ':' +
+//               Utils.formatTime(selectedSlot.dateTime.minute.toString());
 
-      showTokenAlert(context, _token, _storeName, slotTiming).then((value) {
-        _returnValues(value);
+//       showTokenAlert(context, _token, _storeName, slotTiming).then((value) {
+//         _returnValues(value);
 
-        setState(() {
-          bookedSlot = selectedSlot;
-          selectedSlot = null;
-        });
-        //Ask user if he wants to receive the notifications
+//         setState(() {
+//           bookedSlot = selectedSlot;
+//           selectedSlot = null;
+//         });
+//         //Ask user if he wants to receive the notifications
 
-        //End of notification permission
+//         //End of notification permission
 
-//Update local file with new booking.
+// //Update local file with new booking.
 
-        String returnVal = value + '-' + slotTiming;
-        // Navigator.of(context).pop(returnVal);
-        // print(value);
-      });
-    }).catchError((error, stackTrace) {
-      print("Error in token booking" + error.toString());
+//         String returnVal = value + '-' + slotTiming;
+//         // Navigator.of(context).pop(returnVal);
+//         // print(value);
+//       });
+//     }).catchError((error, stackTrace) {
+//       print("Error in token booking" + error.toString());
 
-      //TODO Smita - Not going in any of if bcoz exception is wrapped in type platform exception.
-      if (error is SlotFullException) {
-        Utils.showMyFlushbar(context, Icons.error, Duration(seconds: 5),
-            couldNotBookToken, slotsAlreadyBooked);
-      } else if (error is TokenAlreadyExistsException) {
-        Utils.showMyFlushbar(context, Icons.error, Duration(seconds: 5),
-            couldNotBookToken, tokenAlreadyExists);
-      } else {
-        Utils.showMyFlushbar(context, Icons.error, Duration(seconds: 5),
-            couldNotBookToken, tryAgainToBook);
-      }
-    });
-  }
+//       //TODO Smita - Not going in any of if bcoz exception is wrapped in type platform exception.
+//       if (error is SlotFullException) {
+//         Utils.showMyFlushbar(context, Icons.error, Duration(seconds: 5),
+//             couldNotBookToken, slotsAlreadyBooked);
+//       } else if (error is TokenAlreadyExistsException) {
+//         Utils.showMyFlushbar(context, Icons.error, Duration(seconds: 5),
+//             couldNotBookToken, tokenAlreadyExists);
+//       } else {
+//         Utils.showMyFlushbar(context, Icons.error, Duration(seconds: 5),
+//             couldNotBookToken, tryAgainToBook);
+//       }
+//     });
+//   }
 
   void showFlushBar() {
     Flushbar(

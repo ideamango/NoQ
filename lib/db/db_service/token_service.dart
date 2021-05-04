@@ -220,7 +220,7 @@ class TokenService {
       String applicationId,
       String formId,
       String formName,
-      [bool enableVedioChat = false]) async {
+      [bool enableVideoChat = false]) async {
     Exception e;
 
     UserTokens tokens;
@@ -349,7 +349,7 @@ class TokenService {
               rNum: (Random().nextInt(5000) + 100),
               address: metaEntity.address,
               tokens: [],
-              enableVedioChat: enableVedioChat);
+              enableVideoChat: enableVideoChat);
         }
 
         UserToken newToken = new UserToken(
@@ -419,7 +419,7 @@ class TokenService {
             rNum: (Random().nextInt(5000) + 100),
             address: metaEntity.address,
             tokens: [],
-            enableVedioChat: enableVedioChat);
+            enableVideoChat: enableVideoChat);
 
         UserToken newToken = new UserToken(
             number: 1,
@@ -466,7 +466,7 @@ class TokenService {
 
   //this method is used to generate the Token by the current user for himself
   Future<UserTokens> generateToken(MetaEntity metaEntity, DateTime dateTime,
-      [bool enableVedioChat = false]) async {
+      [bool enableVideoChat = false]) async {
     User user = getFirebaseAuth().currentUser;
     FirebaseFirestore fStore = getFirestore();
     String userPhone = user.phoneNumber;
@@ -481,7 +481,7 @@ class TokenService {
     await fStore.runTransaction((Transaction tx) async {
       try {
         tokens = await generateTokenInTransaction(tx, userPhone, metaEntity,
-            dateTime, null, null, null, enableVedioChat);
+            dateTime, null, null, null, enableVideoChat);
       } catch (e) {
         print("Error while generting token -> Transaction Error: " +
             e.toString());
