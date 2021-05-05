@@ -1,4 +1,6 @@
 //const COVID_BOOKING_FORM_ID = "0ba22050-5347-11eb-929a-87c3b00dc095";
+import 'dart:core';
+
 const COVID_VACCINATION_BOOKING_FORM_ID = "COVID_VACCINATION_BOOKING_FORM_ID";
 const SCHOOL_GENERAL_NEW_ADMISSION_BOOKING_FORM_ID =
     "SCHOOL_GENERAL_NEW_ADMISSION_BOOKING_FORM_ID";
@@ -243,13 +245,10 @@ String wantToBookAnotherSlot =
 String allSlotsBookedForDate = 'All slots are booked for this date!!';
 
 String couldNotBookToken = "Oops! Couldn't book the token.";
-<<<<<<< HEAD
-=======
 String maxTokenLimitReached =
     "You have already booked allowed maximum number of token for a day.";
 String maxTokenLimitReachedSub =
     "Please try a different date, Or contact the Business";
->>>>>>> ee00222a02ec87abc0160c106389669707c36d22
 
 String couldNotSubmitApplication =
     "Oops! Couldn't submit the application request.";
