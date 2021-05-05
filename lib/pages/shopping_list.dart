@@ -261,19 +261,15 @@ class _ShoppingListState extends State<ShoppingList> {
                       if (listOfShoppingItems.length != 0) {
                         print("This list will be shared");
                         var concatenate = StringBuffer();
-                        Widget heading = Text(
-                          'Shopping List from Sukoon',
-                          style:
-                              TextStyle(decoration: TextDecoration.underline),
-                        );
-
+                        String heading = "Items List from Sukoon";
+                        concatenate.writeln(heading);
                         // concatenate.writeln("x~x~x~x~ LESSs ~x~x~x~x");
                         concatenate.writeln("Token: " + token.getDisplayName());
                         // concatenate.writeln("x~x~x~x~x~x~x~x~x~x~x~x~x");
                         // concatenate.writeln("Token: " + token.getDisplayName());
                         //  concatenate.writeln('~~~~~~~~~~~~~~~~~~~~~~~~~~');
                         // concatenate.writeln('------------------------------');
-                        concatenate.writeln(heading);
+
                         int count = 1;
                         for (int i = 0; i < listOfShoppingItems.length; i++) {
                           if (listOfShoppingItems[i].itemName == null ||
