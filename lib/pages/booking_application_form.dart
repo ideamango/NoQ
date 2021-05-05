@@ -31,7 +31,7 @@ import '../widget/custom_expansion_tile.dart';
 import '../widget/page_animation.dart';
 import '../widget/weekday_selector.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flushbar/flushbar.dart';
+import 'package:another_flushbar/flushbar.dart';
 import '../widget/widgets.dart';
 import 'package:path/path.dart';
 
@@ -1405,14 +1405,15 @@ class _BookingApplicationFormPageState extends State<BookingApplicationFormPage>
                             ),
                           ],
                         ),
-                      )..onStatusChanged = (FlushbarStatus status) {
-                          print("FlushbarStatus-------$status");
-                          if (status == FlushbarStatus.IS_APPEARING)
-                            flushStatus = "Showing";
-                          if (status == FlushbarStatus.DISMISSED)
-                            flushStatus = "Empty";
-                          print("gfdfgdfg");
-                        };
+                      );
+                      // ..onStatusChanged = (FlushbarStatus status) {
+                      //     print("FlushbarStatus-------$status");
+                      //     if (status == FlushbarStatus.IS_APPEARING)
+                      //       flushStatus = "Showing";
+                      //     if (status == FlushbarStatus.DISMISSED)
+                      //       flushStatus = "Empty";
+                      //     print("gfdfgdfg");
+                      //   };
 
                       flush
                         ..show(context).then((result) {

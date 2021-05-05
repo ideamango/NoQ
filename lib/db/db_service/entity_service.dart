@@ -1,3 +1,5 @@
+import 'package:LESSs/db/exceptions/entity_deletion_denied_child_exists_exception.dart';
+import 'package:LESSs/db/exceptions/not_admin_parent_entity_exception.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:enum_to_string/enum_to_string.dart';
 import 'package:firebase_auth/firebase_auth.dart' as fAuth;
@@ -239,6 +241,12 @@ class EntityService {
     FirebaseFirestore fStore = getFirestore();
     bool isSuccess = false;
 
+    AccessDeniedException accessDeniedException;
+    EntityDeletionDeniedChildExistsException
+        entityDeletionDeniedChildExistsException;
+
+    NotAdminParentEntityException notAdminParentEntityException;
+
     //STEPS:
     //1. Do not allow delete if the childEntities exist
     //2. Allow deletion of Child only if LogedIn user is Admin of Parent Entity also, update the parent by removing current entityReference
@@ -266,12 +274,16 @@ class EntityService {
 
         if (ePrivate.roles[user.phoneNumber] !=
             EnumToString.convertToString(EntityRole.Admin)) {
-          throw new AccessDeniedException("This user can't delete the Entity");
+          accessDeniedException =
+              new AccessDeniedException("This user can't delete the Entity");
+          throw accessDeniedException;
         }
 
         if (ent.childEntities.length > 0) {
-          throw new Exception(
-              "Parent Entity can't be deleted until all it's child entities are deleted");
+          entityDeletionDeniedChildExistsException =
+              new EntityDeletionDeniedChildExistsException(
+                  "Parent Entity can't be deleted until all it's child entities are deleted");
+          throw entityDeletionDeniedChildExistsException;
         }
 
         Entity parentEnt;
@@ -292,8 +304,9 @@ class EntityService {
           }
 
           if (!isParentAdmin) {
-            throw new Exception(
+            notAdminParentEntityException = new NotAdminParentEntityException(
                 "Current user is not admin of the Parent Entity, hence can't delete the Child Entity");
+            throw notAdminParentEntityException;
           }
 
           int index = -1;
@@ -342,6 +355,7 @@ class EntityService {
 
         //step2: Update the parent if exists
         if (parentEntityRef != null) {
+          //if user is not admin of Parent this call will fail at DB level
           tx.set(parentEntityRef, parentEnt.toJson());
         }
 
@@ -360,6 +374,18 @@ class EntityService {
       }
     });
 
+    if (accessDeniedException != null) {
+      throw accessDeniedException;
+    }
+
+    if (entityDeletionDeniedChildExistsException != null) {
+      throw entityDeletionDeniedChildExistsException;
+    }
+
+    if (notAdminParentEntityException != null) {
+      throw notAdminParentEntityException;
+    }
+
     return isSuccess;
   }
 
@@ -371,6 +397,8 @@ class EntityService {
     if (!Utils.isNotNullOrEmpty(phone)) {
       throw new Exception("Phone of Employee can't be null");
     }
+
+    AccessDeniedException accessDeniedException;
 
     String roleStr = EnumToString.convertToString(role);
 
@@ -398,8 +426,9 @@ class EntityService {
         if (ePrivate.roles[user.phoneNumber] !=
             EnumToString.convertToString(EntityRole.Admin)) {
           //current logged in user should be admin of the entity then only he should be allowed to add another user as admin
-          throw new AccessDeniedException(
+          accessDeniedException = new AccessDeniedException(
               "User is not admin, hence can't add other users");
+          throw accessDeniedException;
         }
 
         DocumentSnapshot usrDoc = await tx.get(userRef);
@@ -513,20 +542,17 @@ class EntityService {
       }
     });
 
+    if (accessDeniedException != null) {
+      throw accessDeniedException;
+    }
+
     return isSuccess;
-  }
-
-  Future<bool> addToParentEntity(
-      String childEntityId, String parentEntityId) async {
-    //this is an existing entity which is being moved under a parent entity
-
-    return false;
   }
 
   Future<bool> upsertChildEntityToParent(
       Entity childEntity, String parentEntityId) async {
     //ChildEntity might already exists or can be new
-    //ChildEntity Meta should be added in the parentEntity
+    //ChildEntity Meta should be added/updated in the parentEntity
     //ChildEntity should have parentEntityId set on the parentId attribute
     FirebaseFirestore fStore = getFirestore();
     User user = getFirebaseAuth().currentUser;

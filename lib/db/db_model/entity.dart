@@ -54,7 +54,7 @@ class Entity {
       this.parentGroupId,
       this.supportEmail,
       this.maxTokenByUserInDay = 1,
-      this.enableVedioChat = false});
+      this.enableVideoChat = false});
 
   //SlotDocumentId is entityID#20~06~01 it is not auto-generated, will help in not duplicating the record
   String entityId;
@@ -104,7 +104,7 @@ class Entity {
       parentGroupId; //this value will be present and common for different branches of same company
   String supportEmail;
   int maxTokenByUserInDay;
-  bool enableVedioChat;
+  bool enableVideoChat;
 
   Map<String, dynamic> toJson() => {
         'entityId': entityId,
@@ -151,7 +151,7 @@ class Entity {
         'parentGroupId': parentGroupId,
         'supportEmail': supportEmail,
         'maxTokenByUserInDay': maxTokenByUserInDay,
-        'enableVedioChat': enableVedioChat
+        'enableVideoChat': enableVideoChat
       };
 
   List<dynamic> usersToJson(List<MetaUser> users) {
@@ -258,7 +258,7 @@ class Entity {
         parentGroupId: json['parentGroupId'],
         supportEmail: json['supportEmail'],
         maxTokenByUserInDay: json['maxTokenByUserInDay'],
-        enableVedioChat: json['enableVedioChat']);
+        enableVideoChat: json['enableVideoChat']);
   }
 
   static Address convertToAddressFromJson(Map<String, dynamic> json) {
@@ -362,7 +362,7 @@ class Entity {
           parentGroupId: parentGroupId,
           supportEmail: supportEmail,
           maxTokenByUserInDay: maxTokenByUserInDay,
-          enableVedioChat: enableVedioChat);
+          enableVideoChat: enableVideoChat);
     } else {
       _meta.name = name;
       _meta.type = type;
@@ -402,7 +402,7 @@ class Entity {
       _meta.parentGroupId = parentGroupId;
       _meta.supportEmail = supportEmail;
       _meta.maxTokenByUserInDay = maxTokenByUserInDay;
-      _meta.enableVedioChat = enableVedioChat;
+      _meta.enableVideoChat = enableVideoChat;
     }
     return _meta;
   }

@@ -1,5 +1,7 @@
 import 'package:auto_size_text/auto_size_text.dart';
-import 'package:flushbar/flushbar.dart';
+import 'package:another_flushbar/flushbar.dart';
+import 'package:another_flushbar/flushbar_helper.dart';
+import 'package:another_flushbar/flushbar_route.dart';
 import 'package:flutter/material.dart';
 import '../db/db_model/entity.dart';
 import '../db/db_model/meta_entity.dart';
@@ -69,6 +71,10 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
   MetaEntity entity;
   Entity parentEntity;
   DateTime currDateTime = DateTime.now();
+  bool enableVideoChat = false;
+  bool entitySupportsVideo = false;
+  int numOfTokensByUser = 0;
+  List<String> bookedSlots = [];
 
   @override
   void initState() {
@@ -81,6 +87,8 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
 
     getGlobalState().whenComplete(() {
       _loadSlots();
+      entitySupportsVideo =
+          (entity.enableVideoChat == null) ? false : entity.enableVideoChat;
       if (entity.parentId != null) {
         getEntityDetails(entity.parentId).then((value) => parentEntity = value);
       }
@@ -356,6 +364,43 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
                             // SizedBox(
                             //   height: 10,
                             // ),
+                            if (entitySupportsVideo)
+                              Container(
+                                height:
+                                    MediaQuery.of(context).size.height * .05,
+                                width: MediaQuery.of(context).size.width * .9,
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Text("Opt for Video Consultation"),
+                                    SizedBox(
+                                      height:
+                                          MediaQuery.of(context).size.height *
+                                              .08,
+                                      width: MediaQuery.of(context).size.width *
+                                          .2,
+                                      child: Transform.scale(
+                                        scale: .7,
+                                        alignment: Alignment.centerRight,
+                                        child: Switch(
+                                          materialTapTargetSize:
+                                              MaterialTapTargetSize.shrinkWrap,
+
+                                          value: enableVideoChat,
+                                          onChanged: (value) {
+                                            setState(() {
+                                              enableVideoChat = value;
+                                            });
+                                          },
+                                          // activeTrackColor: Colors.green,
+                                          activeColor: Colors.green,
+                                          inactiveThumbColor: Colors.grey[300],
+                                        ),
+                                      ),
+                                    )
+                                  ],
+                                ),
+                              ),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: <Widget>[
@@ -424,7 +469,7 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
                                       style: TextStyle(
                                         color: Colors.blueGrey[900],
                                         // fontWeight: FontWeight.w800,
-                                        fontFamily: 'Monsterrat',
+                                        fontFamily: 'Roboto',
                                         letterSpacing: 0.5,
                                         fontSize: 9.0,
                                         //height: 2,
@@ -504,7 +549,12 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
     for (int i = 0; i < _gs.bookings.length; i++) {
       if (_gs.bookings[i].parent.entityId == entityId &&
           _gs.bookings[i].parent.dateTime == dateTime) {
-        if (_gs.bookings[i].number != -1) return true;
+        if (_gs.bookings[i].number != -1) {
+          if (!bookedSlots.contains(_gs.bookings[i].parent.slotId)) {
+            bookedSlots.add(_gs.bookings[i].parent.slotId);
+          }
+          return true;
+        }
       }
     }
     return false;
@@ -630,15 +680,28 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
           ),
         ),
         Container(
-          child: Text(sl.currentNumber.toString() + ' Booked',
-              style: TextStyle(
-                color: Colors.black,
-                // fontWeight: FontWeight.w800,
-                //fontFamily: 'Roboto',
-                letterSpacing: 0.5,
-                fontSize: 7.0,
-                //height: 2,
-              )),
+          width: MediaQuery.of(context).size.width * .17,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              AutoSizeText(sl.currentNumber.toString(),
+                  minFontSize: 9,
+                  maxFontSize: 11,
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontFamily: 'Roboto',
+                    letterSpacing: 0.5,
+                  )),
+              AutoSizeText(' booked',
+                  minFontSize: 8,
+                  maxFontSize: 10,
+                  style: TextStyle(
+                      color: Colors.black,
+                      fontFamily: 'Roboto',
+                      letterSpacing: 0.5,
+                      fontSize: 10)),
+            ],
+          ),
         ),
       ],
     );
@@ -655,15 +718,20 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
         ),
         slotBooking,
         takingMoment);
+    print(entity.maxTokenByUserInDay);
 
-    print(selectedSlot.dateTime);
-    if (isBooked(selectedSlot.dateTime, entity.entityId)) {
-      print("alreaddyyyyyyy booked, go back");
+    if (entity.maxTokenByUserInDay <= bookedSlots.length) {
+      //Max tokens already booked, then user cant book further slots.
+      Utils.showMyFlushbar(context, Icons.error, Duration(seconds: 5),
+          maxTokenLimitReached, maxTokenLimitReachedSub);
+      selectedSlot = null;
+      setState(() {});
+      return;
     }
 
     MetaEntity meta = entity;
 
-    bookSlotForStore(meta, selectedSlot).then((value) {
+    bookSlotForStore(meta, selectedSlot, enableVideoChat).then((value) {
       if (value == null) {
         showFlushBar();
         selectedSlot = null;

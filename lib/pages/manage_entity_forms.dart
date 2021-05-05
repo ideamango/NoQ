@@ -416,6 +416,7 @@ class _ManageEntityFormsState extends State<ManageEntityForms> {
                                                     preferredSlotTime: widget
                                                         .preferredSlotTime,
                                                     backRoute: widget.backRoute,
+                                                    isManager: widget.isManager,
                                                   ),
                                                 )));
                                               },

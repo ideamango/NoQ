@@ -31,7 +31,7 @@ import '../widget/page_animation.dart';
 import '../widget/weekday_selector.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
-import 'package:flushbar/flushbar.dart';
+import 'package:another_flushbar/flushbar.dart';
 import '../widget/widgets.dart';
 import 'package:eventify/eventify.dart' as Eventify;
 
@@ -93,6 +93,9 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
   TextEditingController _breakEndController = TextEditingController();
 
   TextEditingController _maxPeopleController = TextEditingController();
+  TextEditingController _maxBookingsInDayForUserController =
+      TextEditingController();
+
   TextEditingController _whatsappPhoneController = TextEditingController();
   TextEditingController _contactPhoneController = TextEditingController();
   TextEditingController _emailIdController = TextEditingController();
@@ -286,9 +289,14 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
           entity.slotDuration != null ? entity.slotDuration.toString() : "";
       _advBookingInDaysController.text =
           entity.advanceDays != null ? entity.advanceDays.toString() : "";
-      if (entity.maxAllowed != null)
-        _maxPeopleController.text =
-            (entity.maxAllowed != null) ? entity.maxAllowed.toString() : "";
+
+      _maxPeopleController.text =
+          (entity.maxAllowed != null) ? entity.maxAllowed.toString() : "";
+      _maxBookingsInDayForUserController.text =
+          (entity.maxPeoplePerToken != null)
+              ? entity.maxPeoplePerToken.toString()
+              : "";
+
       _whatsappPhoneController.text = entity.whatsapp != null
           ? entity.whatsapp.toString().substring(3)
           : "";
@@ -892,6 +900,29 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
         onSaved: (String value) {
           if (value != "") entity.maxAllowed = int.parse(value);
           print("saved max people");
+        },
+      );
+      final maxTokenPerDay = TextFormField(
+        obscureText: false,
+        maxLines: 1,
+        minLines: 1,
+        enabled: widget.isManager ? false : true,
+        style: textInputTextStyle,
+        keyboardType: TextInputType.number,
+        controller: _maxBookingsInDayForUserController,
+        decoration: InputDecoration(
+          labelText: 'Max. bookings allowed for a user per day',
+          enabledBorder:
+              UnderlineInputBorder(borderSide: BorderSide(color: Colors.grey)),
+          focusedBorder: UnderlineInputBorder(
+              borderSide: BorderSide(color: Colors.orange)),
+        ),
+        validator: validateText,
+        onChanged: (value) {
+          if (value != "") entity.maxTokenByUserInDay = int.parse(value);
+        },
+        onSaved: (String value) {
+          if (value != "") entity.maxTokenByUserInDay = int.parse(value);
         },
       );
 
@@ -2127,14 +2158,15 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
                           ),
                         ],
                       ),
-                    )..onStatusChanged = (FlushbarStatus status) {
-                        print("FlushbarStatus-------$status");
-                        if (status == FlushbarStatus.IS_APPEARING)
-                          flushStatus = "Showing";
-                        if (status == FlushbarStatus.DISMISSED)
-                          flushStatus = "Empty";
-                        print("gfdfgdfg");
-                      };
+                    );
+                    // ..onStatusChanged = (FlushbarStatus status) {
+                    //     print("FlushbarStatus-------$status");
+                    //     if (status == FlushbarStatus.IS_APPEARING)
+                    //       flushStatus = "Showing";
+                    //     if (status == FlushbarStatus.DISMISSED)
+                    //       flushStatus = "Empty";
+                    //     print("gfdfgdfg");
+                    //   };
 
                     flush
                       ..show(context).then((result) {
@@ -2239,6 +2271,7 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
                                       slotDuration,
                                       advBookingInDays,
                                       maxpeopleInASlot,
+                                      maxTokenPerDay,
                                       whatsappPhone,
                                       callingPhone,
                                       emailId,

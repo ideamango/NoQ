@@ -2,7 +2,7 @@ import 'dart:async';
 import 'dart:io';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:flushbar/flushbar.dart';
+import 'package:another_flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
@@ -1523,14 +1523,15 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
                           ),
                         ],
                       ),
-                    )..onStatusChanged = (FlushbarStatus status) {
-                        print("FlushbarStatus-------$status");
-                        if (status == FlushbarStatus.IS_APPEARING)
-                          flushStatus = "Showing";
-                        if (status == FlushbarStatus.DISMISSED)
-                          flushStatus = "Empty";
-                        print("gfdfgdfg");
-                      };
+                    );
+                    // ..onStatusChanged = (FlushbarStatus status) {
+                    //     print("FlushbarStatus-------$status");
+                    //     if (status == FlushbarStatus.IS_APPEARING)
+                    //       flushStatus = "Showing";
+                    //     if (status == FlushbarStatus.DISMISSED)
+                    //       flushStatus = "Empty";
+                    //     print("gfdfgdfg");
+                    //   };
 
                     flush
                       ..show(context).then((result) {

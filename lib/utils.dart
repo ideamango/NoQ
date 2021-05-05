@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'package:email_validator/email_validator.dart';
 import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
-import 'package:flushbar/flushbar.dart';
+import 'package:another_flushbar/flushbar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';

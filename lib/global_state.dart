@@ -546,9 +546,11 @@ class GlobalState {
     return true;
   }
 
-  Future<UserTokens> addBooking(MetaEntity meta, Slot slot) async {
+  Future<UserTokens> addBooking(
+      MetaEntity meta, Slot slot, bool enableVideoChat) async {
     UserTokens tokens;
-    tokens = await _tokenService.generateToken(meta, slot.dateTime);
+    tokens =
+        await _tokenService.generateToken(meta, slot.dateTime, enableVideoChat);
     if (tokens != null) {
       for (UserToken tok in tokens.tokens) {
         bookings.add(tok);
