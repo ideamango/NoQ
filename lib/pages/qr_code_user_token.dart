@@ -107,6 +107,8 @@ class ShowQrBookingTokenState extends State<ShowQrBookingToken>
 
   @override
   void dispose() {
+    _animationController.dispose();
+
     super.dispose();
   }
 

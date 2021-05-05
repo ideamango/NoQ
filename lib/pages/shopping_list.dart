@@ -249,80 +249,74 @@ class _ShoppingListState extends State<ShoppingList> {
         child: Scaffold(
           appBar: AppBar(
               actions: <Widget>[
-                // Container(
-                //   padding: EdgeInsets.fromLTRB(0, 0, 10, 0),
-                //   child: IconButton(
-                //     icon: ImageIcon(
-                //       AssetImage('assets/whatsapp.png'),
-                //       size: 26,
-                //       color: Colors.white,
-                //     ),
-                //     onPressed: () {
-                //       if (listOfShoppingItems.length != 0) {
-                //         print("This list will be shared");
+                Container(
+                  padding: EdgeInsets.fromLTRB(0, 0, 10, 0),
+                  child: IconButton(
+                    icon: ImageIcon(
+                      AssetImage('assets/whatsapp.png'),
+                      size: 26,
+                      color: Colors.white,
+                    ),
+                    onPressed: () {
+                      if (listOfShoppingItems.length != 0) {
+                        print("This list will be shared");
+                        var concatenate = StringBuffer();
+                        String heading = "Items List from Sukoon";
+                        concatenate.writeln(heading);
+                        // concatenate.writeln("x~x~x~x~ LESSs ~x~x~x~x");
+                        concatenate.writeln("Token: " + token.getDisplayName());
+                        // concatenate.writeln("x~x~x~x~x~x~x~x~x~x~x~x~x");
+                        // concatenate.writeln("Token: " + token.getDisplayName());
+                        //  concatenate.writeln('~~~~~~~~~~~~~~~~~~~~~~~~~~');
+                        // concatenate.writeln('------------------------------');
 
-                //         var concatenate = StringBuffer();
-                //         Widget heading = Text(
-                //           'Shopping List from Sukoon',
-                //           style: TextStyle(decoration: TextDecoration.underline),
-                //         );
+                        int count = 1;
+                        for (int i = 0; i < listOfShoppingItems.length; i++) {
+                          if (listOfShoppingItems[i].itemName == null ||
+                              listOfShoppingItems[i].itemName.isEmpty) return;
 
-                //         concatenate.writeln("x~x~x~x~ LESSs ~x~x~x~x");
-                //         concatenate
-                //             .writeln("Token ~ " + token.getDisplayName());
-                //         concatenate.writeln("x~x~x~x~x~x~x~x~x~x~x~x~x");
-                //         concatenate.writeln("Token: " + token.getDisplayName());
-                //         concatenate.writeln('~~~~~~~~~~~~~~~~~~~~~~~~~~');
-                //         concatenate.writeln('------------------------------');
-                //         concatenate.writeln(heading);
-                //         int count = 1;
-                //         for (int i = 0; i < listOfShoppingItems.length; i++) {
-                //           if (listOfShoppingItems[i].itemName == null ||
-                //               listOfShoppingItems[i].itemName.isEmpty) return;
+                          concatenate.writeln(count.toString() +
+                              ") " +
+                              listOfShoppingItems[i].itemName);
 
-                //           concatenate.writeln(count.toString() +
-                //               ") " +
-                //               listOfShoppingItems[i].itemName);
+                          count++;
+                        }
 
-                //           count++;
-                //         }
+                        //   concatenate.writeln("**************************");
+                        //    concatenate.writeln("x~x~x~x~x~x~x~x~x~x~x~x~x");
 
-                //         concatenate.writeln("**************************");
-                //         concatenate.writeln("x~x~x~x~x~x~x~x~x~x~x~x~x");
-
-                //         String phoneNo = token.parent.entityWhatsApp;
-
-                //         if (phoneNo != null) {
-                //           try {
-                //             launchWhatsApp(
-                //                 message: concatenate.toString(),
-                //                 phone: phoneNo);
-                //           } catch (error) {
-                //             Utils.showMyFlushbar(
-                //                 context,
-                //                 Icons.error,
-                //                 Duration(seconds: 5),
-                //                 "Could not connect to the Whatsapp number $phoneNo !!",
-                //                 "Try again later");
-                //           }
-                //         } else {
-                //           Utils.showMyFlushbar(
-                //               context,
-                //               Icons.info,
-                //               Duration(seconds: 5),
-                //               "Whatsapp contact information not found!!",
-                //               "");
-                //         }
-                //       } else {
-                //         print("Nothing to share, add items to list first. ");
-                //         setState(() {
-                //           _errMsg =
-                //               'Nothing to share, add items to list first.';
-                //         });
-                //       }
-                //     },
-                //   ),
-                // ),
+                        String phoneNo = token.parent.entityWhatsApp;
+                        if (phoneNo != null) {
+                          try {
+                            launchWhatsApp(
+                                message: concatenate.toString(),
+                                phone: phoneNo);
+                          } catch (error) {
+                            Utils.showMyFlushbar(
+                                context,
+                                Icons.error,
+                                Duration(seconds: 5),
+                                "Could not connect to the Whatsapp number $phoneNo !!",
+                                "Try again later");
+                          }
+                        } else {
+                          Utils.showMyFlushbar(
+                              context,
+                              Icons.info,
+                              Duration(seconds: 5),
+                              "Whatsapp contact information not found!!",
+                              "");
+                        }
+                      } else {
+                        print("Nothing to share, add items to list first. ");
+                        setState(() {
+                          _errMsg =
+                              'Nothing to share, add items to list first.';
+                        });
+                      }
+                    },
+                  ),
+                ),
                 //ToDo Smita - PHASE2
                 // Container(
                 //   padding: EdgeInsets.fromLTRB(0, 0, 10, 0),

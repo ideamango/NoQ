@@ -2,7 +2,9 @@ import 'dart:async';
 
 import 'package:LESSs/pages/upi_payment_page.dart';
 import 'package:LESSs/pages/help_page.dart';
+import 'package:LESSs/services/qr_code_user_application.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:package_info/package_info.dart';
 import './constants.dart';
 
@@ -955,7 +957,46 @@ class _UserHomePageState extends State<UserHomePage> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
-                    //verticalSpacer,
+                    Container(
+                      padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
+                      margin: EdgeInsets.all(0),
+                      height: MediaQuery.of(context).size.width * .095,
+                      width: MediaQuery.of(context).size.width * .905,
+                      child: IconButton(
+                          padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
+                          alignment: Alignment.center,
+                          highlightColor: Colors.orange[300],
+                          mouseCursor: SystemMouseCursors.click,
+                          icon: ImageIcon(
+                            AssetImage('assets/qrcode.png'),
+                            size: 30,
+                            color: Colors.white,
+                          ),
+                          onPressed: () {
+                            print(token.applicationId);
+
+                            print('Unique identifier for TOKEN -  ' +
+                                token.parent.slotId +
+                                '%3A' +
+                                token.parent.userId);
+
+                            String id =
+                                token.parent.slotId.replaceAll('#', ':') +
+                                    ':' +
+                                    token.parent.userId;
+
+                            Navigator.of(context).push(
+                                PageAnimation.createRoute(
+                                    GenerateQrUserApplication(
+                              entityName: "Application QR code",
+                              backRoute: "UserAppsList",
+                              uniqueTokenIdentifier: id,
+                            )));
+                          }),
+                    ),
+                    Container(
+                      height: 5,
+                    ),
                     Text(
                       dtFormat.format(token.parent.dateTime),
                       style: tokenDataTextStyle,

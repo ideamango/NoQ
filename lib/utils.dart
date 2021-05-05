@@ -454,7 +454,7 @@ class Utils {
   static void showApplicationDetails(
       BuildContext context, String tokenId) async {
     Utils.showMyFlushbar(context, Icons.info, Duration(seconds: 3),
-        "Loading the Application details...", "Hold on!");
+        "Loading the Booking details...", "Hold on!");
 
     GlobalState gs = await GlobalState.getGlobalState();
     UserTokens userTokenId;
