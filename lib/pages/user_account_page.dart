@@ -1,4 +1,5 @@
 //import 'package:barcode_scan/barcode_scan.dart';
+import 'package:LESSs/pages/upi_payment_page.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -431,6 +432,46 @@ class _UserAccountPageState extends State<UserAccountPage> {
                                     size: 22,
                                   ),
                                   onPressed: () => showShoppingList(booking),
+                                ),
+                              ),
+                              Container(
+                                width: MediaQuery.of(context).size.width * .07,
+                                height: MediaQuery.of(context).size.width * .07,
+                                // width: 20.0,
+                                //
+                                child: IconButton(
+                                  padding: EdgeInsets.all(0),
+                                  alignment: Alignment.center,
+                                  highlightColor: Colors.orange[300],
+                                  icon: Icon(
+                                    Icons.attach_money_outlined,
+                                    color: (Utils.isNotNullOrEmpty(
+                                            booking.parent.upiId)
+                                        ? lightIcon
+                                        : Colors.blueGrey[400]),
+                                    size: 22,
+                                  ),
+                                  onPressed: () {
+                                    if (Utils.isNotNullOrEmpty(
+                                        booking.parent.upiId)) {
+                                      Navigator.of(context).push(
+                                          PageAnimation.createRoute(
+                                              UPIPaymentPage(
+                                        upiId: booking.parent.upiId,
+                                        upiQrCodeImgPath: null,
+                                        backRoute: UserHomePage(),
+                                      )));
+                                    } else {
+                                      Utils.showMyFlushbar(
+                                          context,
+                                          Icons.info_outline,
+                                          Duration(
+                                            seconds: 5,
+                                          ),
+                                          "Couldn't find UPI payment information for this place.",
+                                          "");
+                                    }
+                                  },
                                 ),
                               ),
                             ],

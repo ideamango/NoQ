@@ -479,6 +479,29 @@ class _TokensInSlotState extends State<TokensInSlot> {
                                   },
                                 ),
                               ),
+                              Container(
+                                width: MediaQuery.of(context).size.width * .08,
+                                height: MediaQuery.of(context).size.width * .07,
+                                // width: 20.0,
+                                child: IconButton(
+                                  padding: EdgeInsets.all(0),
+                                  alignment: Alignment.center,
+                                  highlightColor: Colors.orange[300],
+                                  icon: Icon(
+                                    Icons.video_call,
+                                    color: lightIcon,
+                                    size: 25,
+                                  ),
+                                  onPressed: () {
+                                    Utils.showMyFlushbar(
+                                        context,
+                                        Icons.info,
+                                        Duration(seconds: 5),
+                                        "This booking is for a video chat using whatsapp!!",
+                                        "");
+                                  },
+                                ),
+                              ),
                               // Container(
                               //   width: MediaQuery.of(context).size.width * .08,
                               //   height: MediaQuery.of(context).size.width * .07,
