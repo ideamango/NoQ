@@ -1,3 +1,5 @@
+import 'package:LESSs/db/exceptions/entity_deletion_denied_child_exists_exception.dart';
+import 'package:LESSs/db/exceptions/not_admin_parent_entity_exception.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:enum_to_string/enum_to_string.dart';
 import 'package:firebase_auth/firebase_auth.dart' as fAuth;
@@ -99,6 +101,8 @@ class EntityService {
           entity.verificationStatus = VERIFICATION_PENDING;
         }
 
+        MetaEntity me = entity.getMetaEntity();
+
         if (currentUser.isEntityAdmin(entity.entityId) == -1) {
           //add the meta-entity to the user, if not already present - will happen when the entity is new
           if (currentUser.entities == null) {
@@ -111,7 +115,7 @@ class EntityService {
           //then check for the meta-entity if anything is modified
           //update the user with the udated meta-entity
           if (existingEntity != null &&
-              !entity.getMetaEntity().isEqual(existingEntity.getMetaEntity())) {
+              !me.isEqual(existingEntity.getMetaEntity())) {
             int index = currentUser.isEntityAdmin(entity.entityId);
             currentUser.entities[index] = entity.getMetaEntity();
             currentUser.entityVsRole[entity.entityId] = EntityRole.Admin;
@@ -141,8 +145,43 @@ class EntityService {
           //entity.admins[existingIndexInAdmin] = emp;
         }
 
+        //this is not just admin but also Managers and Executives
+        List<AppUser> employees = [];
+
+        //for (MetaUser usr of the entity i.e. admins/managers/execs) {
+        for (String adminPhone in ePrivate.roles.keys) {
+          DocumentReference userRef = fStore.doc('users/' + adminPhone);
+          DocumentSnapshot userDoc = await tx.get(userRef);
+
+          if (userDoc.exists) {
+            AppUser u = AppUser.fromJson(userDoc.data());
+            int indexOfEntityInUser = -1;
+            bool entityExistsInUser = false;
+            for (MetaEntity me in u.entities) {
+              indexOfEntityInUser++;
+              if (me.entityId == entity.entityId) {
+                entityExistsInUser = true;
+                break;
+              }
+            }
+
+            if (entityExistsInUser) {
+              MetaEntity existingME = u.entities[indexOfEntityInUser];
+              if (!me.isEqual(existingME)) {
+                u.entities[indexOfEntityInUser] = entity.getMetaEntity();
+                employees.add(u);
+              }
+            }
+          }
+        }
+
+        //step3: update employees with the modified Entity Ref
+        for (AppUser u in employees) {
+          DocumentReference userRef = fStore.doc('users/' + u.ph);
+          tx.set(userRef, u.toJson());
+        }
+
         tx.set(userRef, currentUser.toJson());
-        //TODO: Update the meta in other Admin objects too
         tx.set(entityPrivateRef, ePrivate.toJson());
 
         if (entity.createdAt != null) {
@@ -202,19 +241,23 @@ class EntityService {
     FirebaseFirestore fStore = getFirestore();
     bool isSuccess = false;
 
+    AccessDeniedException accessDeniedException;
+    EntityDeletionDeniedChildExistsException
+        entityDeletionDeniedChildExistsException;
+
+    NotAdminParentEntityException notAdminParentEntityException;
+
     //STEPS:
-    //1. delete all the childEntities in the recursive manner (out of the main transaction)
-    //2. update the parent by removing current entityReference
-    //3. update the users with current entityReference
-    //4. delete the current entity
+    //1. Do not allow delete if the childEntities exist
+    //2. Allow deletion of Child only if LogedIn user is Admin of Parent Entity also, update the parent by removing current entityReference
+    //3. Update the users with current entityReference
+    //4. Delete the current entity
     // Known limitation - Admins of the child entities wil not be cleaned up and will see ref to the deleted objects
 
     DocumentReference entityRef = fStore.doc('entities/' + entityId);
     final DocumentReference entityPrivateRef =
         fStore.doc('entities/' + entityId + '/private_data/private');
     DocumentReference parentEntityRef;
-    List<DocumentReference> childEntityRefs = [];
-    List<DocumentReference> childEntityPrivateRefs = [];
 
     await fStore.runTransaction((Transaction tx) async {
       try {
@@ -229,21 +272,18 @@ class EntityService {
         DocumentSnapshot ePrivateDoc = await tx.get(entityPrivateRef);
         EntityPrivate ePrivate = EntityPrivate.fromJson(ePrivateDoc.data());
 
-        //if (ent.isAdmin(fireUser.uid) == -1) {
         if (ePrivate.roles[user.phoneNumber] !=
             EnumToString.convertToString(EntityRole.Admin)) {
-          throw new AccessDeniedException("This user can't delete the Entity");
+          accessDeniedException =
+              new AccessDeniedException("This user can't delete the Entity");
+          throw accessDeniedException;
         }
 
-        print(ent.childEntities.length);
-        //Step1: first delete all the child entities
-        for (MetaEntity meta in ent.childEntities) {
-          print(meta.entityId);
-          DocumentReference childRef = fStore.doc('entities/' + meta.entityId);
-          DocumentReference childPrivateRef =
-              fStore.doc('entities/' + meta.entityId + '/private_data/private');
-          childEntityPrivateRefs.add(childPrivateRef);
-          childEntityRefs.add(childRef);
+        if (ent.childEntities.length > 0) {
+          entityDeletionDeniedChildExistsException =
+              new EntityDeletionDeniedChildExistsException(
+                  "Parent Entity can't be deleted until all it's child entities are deleted");
+          throw entityDeletionDeniedChildExistsException;
         }
 
         Entity parentEnt;
@@ -254,58 +294,77 @@ class EntityService {
           DocumentSnapshot parentEntityDoc = await tx.get(parentEntityRef);
 
           parentEnt = Entity.fromJson(parentEntityDoc.data());
+
+          //check if the user is admin for the partent entity, if no throw the exception
+          bool isParentAdmin = false;
+          for (Employee admin in parentEnt.admins) {
+            if (admin.ph == user.phoneNumber) {
+              isParentAdmin = true;
+            }
+          }
+
+          if (!isParentAdmin) {
+            notAdminParentEntityException = new NotAdminParentEntityException(
+                "Current user is not admin of the Parent Entity, hence can't delete the Child Entity");
+            throw notAdminParentEntityException;
+          }
+
           int index = -1;
+          bool childExistInParentEntity = false;
           for (MetaEntity childMeta in parentEnt.childEntities) {
             index++;
             if (childMeta.entityId == entityId) {
+              childExistInParentEntity = true;
               break;
             }
           }
-          if (index != -1) {
+          if (childExistInParentEntity) {
             parentEnt.childEntities.removeAt(index);
           }
         }
 
-        List<AppUser> adminUsers = [];
+        //this is not just admin but also Managers and Executives
+        List<AppUser> employees = [];
 
-        //for (MetaUser usr in ent.admins) {
+        //for (MetaUser usr of the entity i.e. admins/managers/execs) {
         for (String adminPhone in ePrivate.roles.keys) {
           DocumentReference userRef = fStore.doc('users/' + adminPhone);
           DocumentSnapshot userDoc = await tx.get(userRef);
 
           if (userDoc.exists) {
             AppUser u = AppUser.fromJson(userDoc.data());
+            int indexOfEntityInUser = -1;
+            bool entityExistsInUser = false;
+            for (MetaEntity me in u.entities) {
+              indexOfEntityInUser++;
+              if (me.entityId == entityId) {
+                entityExistsInUser = true;
+                break;
+              }
+            }
 
-            int index = u.isEntityAdmin(entityId);
-            if (index != -1) {
-              u.entities.removeAt(index);
+            if (entityExistsInUser) {
+              u.entities.removeAt(indexOfEntityInUser);
               if (u.entityVsRole.containsKey(entityId)) {
                 u.entityVsRole.remove(entityId);
               }
-              adminUsers.add(u);
+              employees.add(u);
             }
           }
         }
 
         //step2: Update the parent if exists
         if (parentEntityRef != null) {
+          //if user is not admin of Parent this call will fail at DB level
           tx.set(parentEntityRef, parentEnt.toJson());
         }
 
-        //step3: update admin users
-        for (AppUser u in adminUsers) {
+        //step3: update employees with the Entity Ref
+        for (AppUser u in employees) {
           DocumentReference userRef = fStore.doc('users/' + u.ph);
           tx.set(userRef, u.toJson());
         }
 
-        //Step4: now delete the child entities and the entity
-        int count = 0;
-        for (DocumentReference childRef in childEntityRefs) {
-          tx.delete(childRef);
-          tx.delete(childEntityPrivateRefs[count]);
-
-          count++;
-        }
         tx.delete(entityRef);
         tx.delete(entityPrivateRef);
 
@@ -314,6 +373,18 @@ class EntityService {
         isSuccess = false;
       }
     });
+
+    if (accessDeniedException != null) {
+      throw accessDeniedException;
+    }
+
+    if (entityDeletionDeniedChildExistsException != null) {
+      throw entityDeletionDeniedChildExistsException;
+    }
+
+    if (notAdminParentEntityException != null) {
+      throw notAdminParentEntityException;
+    }
 
     return isSuccess;
   }
@@ -326,6 +397,8 @@ class EntityService {
     if (!Utils.isNotNullOrEmpty(phone)) {
       throw new Exception("Phone of Employee can't be null");
     }
+
+    AccessDeniedException accessDeniedException;
 
     String roleStr = EnumToString.convertToString(role);
 
@@ -353,8 +426,9 @@ class EntityService {
         if (ePrivate.roles[user.phoneNumber] !=
             EnumToString.convertToString(EntityRole.Admin)) {
           //current logged in user should be admin of the entity then only he should be allowed to add another user as admin
-          throw new AccessDeniedException(
+          accessDeniedException = new AccessDeniedException(
               "User is not admin, hence can't add other users");
+          throw accessDeniedException;
         }
 
         DocumentSnapshot usrDoc = await tx.get(userRef);
@@ -384,7 +458,7 @@ class EntityService {
         } else {
           // a new user will be added in the user table for that phone number
           u = new AppUser(id: null, ph: phone, name: employee.name);
-          u.entities = new List<MetaEntity>();
+          u.entities = [];
           u.entities.add(ent.getMetaEntity());
           if (u.entityVsRole == null) {
             u.entityVsRole = new Map<String, EntityRole>();
@@ -397,15 +471,15 @@ class EntityService {
         //add this Employee to the Entity
         //if already exists in any of the collection, remove it and then update
         if (ent.admins == null) {
-          ent.admins = new List<Employee>();
+          ent.admins = [];
         }
 
         if (ent.managers == null) {
-          ent.managers = new List<Employee>();
+          ent.managers = [];
         }
 
         if (ent.executives == null) {
-          ent.executives = new List<Employee>();
+          ent.executives = [];
         }
 
         //------
@@ -468,20 +542,17 @@ class EntityService {
       }
     });
 
+    if (accessDeniedException != null) {
+      throw accessDeniedException;
+    }
+
     return isSuccess;
-  }
-
-  Future<bool> addToParentEntity(
-      String childEntityId, String parentEntityId) async {
-    //this is an existing entity which is being moved under a parent entity
-
-    return false;
   }
 
   Future<bool> upsertChildEntityToParent(
       Entity childEntity, String parentEntityId) async {
     //ChildEntity might already exists or can be new
-    //ChildEntity Meta should be added in the parentEntity
+    //ChildEntity Meta should be added/updated in the parentEntity
     //ChildEntity should have parentEntityId set on the parentId attribute
     FirebaseFirestore fStore = getFirestore();
     User user = getFirebaseAuth().currentUser;
@@ -585,23 +656,36 @@ class EntityService {
             throw new UserDoesNotExistsException("User does not exist");
           }
 
-          int childEntityIndex = usr.isEntityAdmin(childEntity.entityId);
-
-          if (childEntityIndex == -1) {
-            usr.entities.add(childEntity.getMetaEntity());
-          } else {
-            usr.entities[childEntityIndex] = childEntity.getMetaEntity();
+          bool entityExist = false;
+          int childEntityIndex = -1;
+          for (MetaEntity me in usr.entities) {
+            childEntityIndex++;
+            if (me.entityId == childEntity.entityId) {
+              entityExist = true;
+              break;
+            }
           }
+
+          MetaEntity childMetaEntity = childEntity.getMetaEntity();
+
+          if (!entityExist) {
+            usr.entities.add(childMetaEntity);
+          } else {
+            usr.entities[childEntityIndex] = childMetaEntity;
+          }
+          usr.entityVsRole[childEntity.entityId] = EntityRole.Admin;
 
           tx.set(userRef, usr.toJson());
 
           tx.set(entityRef, parentEntity.toJson());
 
-          tx.set(parentEntityPrivateRef, parentEntityPrivate.toJson());
+          //Updating the private of the Partent Entity is not required as nothing is changed here
+          //tx.set(parentEntityPrivateRef, parentEntityPrivate.toJson());
 
           tx.set(childEntityPrivateRef, childEntityPrivate.toJson());
 
           if (childEntity.createdAt != null) {
+            //its a existing Entity
             childEntity.modifiedAt = DateTime.now();
           } else {
             childEntity.createdAt = DateTime.now();
@@ -708,6 +792,12 @@ class EntityService {
           }
 
           if (existingIndexInAdmin > -1) {
+            if (ent.admins.length == 1) {
+              //user can't remove self when only one admin is left
+              throw Exception(
+                  "User can't remove self, when only one admin is present with the Entity");
+            }
+
             ent.admins.removeAt(existingIndexInAdmin);
             entityUpdated = true;
           }
@@ -851,7 +941,7 @@ class EntityService {
   Future<List<Entity>> search(String name, EntityType entityType, double lat,
       double lon, int radius, int pageNumber, int pageSize) async {
     double rad = radius.toDouble();
-    List<Entity> entities = new List<Entity>();
+    List<Entity> entities = [];
     FirebaseFirestore fStore = getFirestore();
     Geoflutterfire geo = Geoflutterfire();
     GeoFirePoint center = geo.point(latitude: lat, longitude: lon);

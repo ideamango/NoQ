@@ -1,4 +1,6 @@
 //const COVID_BOOKING_FORM_ID = "0ba22050-5347-11eb-929a-87c3b00dc095";
+import 'dart:core';
+
 const COVID_VACCINATION_BOOKING_FORM_ID = "COVID_VACCINATION_BOOKING_FORM_ID";
 const SCHOOL_GENERAL_NEW_ADMISSION_BOOKING_FORM_ID =
     "SCHOOL_GENERAL_NEW_ADMISSION_BOOKING_FORM_ID";
@@ -277,7 +279,7 @@ String appShareWithOwnerHeading =
     "Protect your Customers to Protect your Business!\nProvide Safety and Convenience to regain the confidence of your customers.";
 
 String appShareWithOwnerMessage =
-    "Register your Business or Place with LESSs app at absolutely no cost and grow your business.";
+    "Register your Business with the LESSs App at absolutely no cost, give confidence to your customers by providing a safer environment and grow your business.\nDownload the App from ";
 
 //append place name in the last
 String entityShareByUserHeading =
