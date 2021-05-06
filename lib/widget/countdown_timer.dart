@@ -28,7 +28,7 @@ class _CountDownTimerState extends State<CountDownTimer>
     super.initState();
     controller = AnimationController(
       vsync: this,
-      duration: Duration(seconds: 120),
+      duration: Duration(seconds: 30),
     );
 
     controller.reverse(from: controller.value == 0.0 ? 1.0 : controller.value);

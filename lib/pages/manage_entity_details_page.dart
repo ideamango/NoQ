@@ -554,7 +554,10 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
           //entity.regNum = value;
         },
       );
-
+      bool dayStartClearClicked = false;
+      bool dayEndClearClicked = false;
+      bool breakStartClearClicked = false;
+      bool breakEndClearClicked = false;
       final opensTimeField = TextFormField(
         obscureText: false,
         maxLines: 1,
@@ -563,26 +566,28 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
         minLines: 1,
         style: textInputTextStyle,
         onTap: () {
-          DatePicker.showTimePicker(context,
-              showTitleActions: true,
-              showSecondsColumn: false, onChanged: (date) {
-            print('change $date in time zone ' +
-                date.timeZoneOffset.inHours.toString());
-          }, onConfirm: (date) {
-            print('confirm $date');
-            //  String time = "${date.hour}:${date.minute} ${date.";
+          if (!dayStartClearClicked) {
+            DatePicker.showTimePicker(context,
+                showTitleActions: true,
+                showSecondsColumn: false, onChanged: (date) {
+              print('change $date in time zone ' +
+                  date.timeZoneOffset.inHours.toString());
+            }, onConfirm: (date) {
+              print('confirm $date');
+              //  String time = "${date.hour}:${date.minute} ${date.";
 
-            String time = DateFormat.Hm().format(date);
-            print(time);
+              String time = DateFormat.Hm().format(date);
+              print(time);
 
-            _openTimeController.text = time.toLowerCase();
-            if (_openTimeController.text != "") {
-              List<String> time = _openTimeController.text.split(':');
-              entity.startTimeHour = int.parse(time[0]);
+              _openTimeController.text = time.toLowerCase();
+              if (_openTimeController.text != "") {
+                List<String> time = _openTimeController.text.split(':');
+                entity.startTimeHour = int.parse(time[0]);
 
-              entity.startTimeMinute = int.parse(time[1]);
-            }
-          }, currentTime: DateTime.now());
+                entity.startTimeMinute = int.parse(time[1]);
+              }
+            }, currentTime: DateTime.now());
+          }
         },
         controller: _openTimeController,
         keyboardType: TextInputType.text,
@@ -605,6 +610,26 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
             //     }, currentTime: DateTime.now());
             //   },
             // ),
+            suffixIconConstraints: BoxConstraints(
+              maxWidth: 25,
+              maxHeight: 22,
+            ),
+            suffixIcon: new IconButton(
+                //constraints: BoxConstraints.tight(Size(15, 15)),
+                alignment: Alignment.centerLeft,
+                padding: EdgeInsets.all(0),
+                icon: new Icon(
+                  Icons.cancel,
+                  size: 25,
+                  color: Colors.blueGrey[500],
+                ),
+                onPressed: () {
+                  dayStartClearClicked = true;
+                  _openTimeController.text = "";
+                  entity.startTimeHour = null;
+                  entity.startTimeMinute = null;
+                  setState(() {});
+                }),
             labelText: "Opening time",
             hintText: "hh:mm 24 hour time format",
             enabledBorder: UnderlineInputBorder(
@@ -632,30 +657,52 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
         controller: _closeTimeController,
         style: textInputTextStyle,
         onTap: () {
-          DatePicker.showTimePicker(context,
-              showTitleActions: true,
-              showSecondsColumn: false, onChanged: (date) {
-            print('change $date in time zone ' +
-                date.timeZoneOffset.inHours.toString());
-          }, onConfirm: (date) {
-            print('confirm $date');
-            //  String time = "${date.hour}:${date.minute} ${date.";
+          if (!dayEndClearClicked) {
+            DatePicker.showTimePicker(context,
+                showTitleActions: true,
+                showSecondsColumn: false, onChanged: (date) {
+              print('change $date in time zone ' +
+                  date.timeZoneOffset.inHours.toString());
+            }, onConfirm: (date) {
+              print('confirm $date');
+              //  String time = "${date.hour}:${date.minute} ${date.";
 
-            String time = DateFormat.Hm().format(date);
-            print(time);
+              String time = DateFormat.Hm().format(date);
+              print(time);
 
-            _closeTimeController.text = time.toLowerCase();
-            if (_closeTimeController.text != "") {
-              List<String> time = _closeTimeController.text.split(':');
-              entity.endTimeHour = int.parse(time[0]);
+              _closeTimeController.text = time.toLowerCase();
+              if (_closeTimeController.text != "") {
+                List<String> time = _closeTimeController.text.split(':');
+                entity.endTimeHour = int.parse(time[0]);
 
-              entity.endTimeMinute = int.parse(time[1]);
-            }
-          }, currentTime: DateTime.now());
+                entity.endTimeMinute = int.parse(time[1]);
+              }
+            }, currentTime: DateTime.now());
+          }
         },
         decoration: InputDecoration(
             labelText: "Closing time",
             hintText: "hh:mm 24 hour time format",
+            suffixIconConstraints: BoxConstraints(
+              maxWidth: 25,
+              maxHeight: 22,
+            ),
+            suffixIcon: new IconButton(
+                //constraints: BoxConstraints.tight(Size(15, 15)),
+                alignment: Alignment.centerLeft,
+                padding: EdgeInsets.all(0),
+                icon: new Icon(
+                  Icons.cancel,
+                  size: 25,
+                  color: Colors.blueGrey[500],
+                ),
+                onPressed: () {
+                  dayEndClearClicked = true;
+                  _closeTimeController.text = "";
+                  entity.endTimeHour = null;
+                  entity.endTimeMinute = null;
+                  setState(() {});
+                }),
             enabledBorder: UnderlineInputBorder(
                 borderSide: BorderSide(color: Colors.grey)),
             focusedBorder: UnderlineInputBorder(
@@ -666,7 +713,6 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
           if (value != "") {
             List<String> time = value.split(':');
             entity.endTimeHour = int.parse(time[0]);
-
             entity.endTimeMinute = int.parse(time[1]);
           }
         },
@@ -682,32 +728,54 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
         minLines: 1,
         style: textInputTextStyle,
         onTap: () {
-          DatePicker.showTimePicker(context,
-              showTitleActions: true,
-              showSecondsColumn: false, onChanged: (date) {
-            print('change $date in time zone ' +
-                date.timeZoneOffset.inHours.toString());
-          }, onConfirm: (date) {
-            print('confirm $date');
-            //  String time = "${date.hour}:${date.minute} ${date.";
+          if (!breakStartClearClicked) {
+            DatePicker.showTimePicker(context,
+                showTitleActions: true,
+                showSecondsColumn: false, onChanged: (date) {
+              print('change $date in time zone ' +
+                  date.timeZoneOffset.inHours.toString());
+            }, onConfirm: (date) {
+              print('confirm $date');
+              //  String time = "${date.hour}:${date.minute} ${date.";
 
-            String time = DateFormat.Hm().format(date);
-            print(time);
+              String time = DateFormat.Hm().format(date);
+              print(time);
 
-            _breakStartController.text = time.toLowerCase();
-            if (_breakStartController.text != "") {
-              List<String> time = _breakStartController.text.split(':');
-              entity.breakStartHour = int.parse(time[0]);
+              _breakStartController.text = time.toLowerCase();
+              if (_breakStartController.text != "") {
+                List<String> time = _breakStartController.text.split(':');
+                entity.breakStartHour = int.parse(time[0]);
 
-              entity.breakStartMinute = int.parse(time[1]);
-            }
-          }, currentTime: DateTime.now());
+                entity.breakStartMinute = int.parse(time[1]);
+              }
+            }, currentTime: DateTime.now());
+          }
         },
         controller: _breakStartController,
         keyboardType: TextInputType.text,
         decoration: InputDecoration(
             labelText: "Break starts at",
             hintText: "hh:mm 24 hour time format",
+            suffixIconConstraints: BoxConstraints(
+              maxWidth: 25,
+              maxHeight: 22,
+            ),
+            suffixIcon: new IconButton(
+                //constraints: BoxConstraints.tight(Size(15, 15)),
+                alignment: Alignment.centerLeft,
+                padding: EdgeInsets.all(0),
+                icon: new Icon(
+                  Icons.cancel,
+                  size: 25,
+                  color: Colors.blueGrey[500],
+                ),
+                onPressed: () {
+                  breakStartClearClicked = true;
+                  _breakStartController.text = "";
+                  entity.breakStartHour = null;
+                  entity.breakStartMinute = null;
+                  setState(() {});
+                }),
             enabledBorder: UnderlineInputBorder(
                 borderSide: BorderSide(color: Colors.grey)),
             focusedBorder: UnderlineInputBorder(
@@ -736,29 +804,51 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
         controller: _breakEndController,
         style: textInputTextStyle,
         onTap: () {
-          DatePicker.showTimePicker(context,
-              showTitleActions: true,
-              showSecondsColumn: false, onChanged: (date) {
-            print('change $date in time zone ' +
-                date.timeZoneOffset.inHours.toString());
-          }, onConfirm: (date) {
-            print('confirm $date');
-            //  String time = "${date.hour}:${date.minute} ${date.";
+          if (!breakEndClearClicked) {
+            DatePicker.showTimePicker(context,
+                showTitleActions: true,
+                showSecondsColumn: false, onChanged: (date) {
+              print('change $date in time zone ' +
+                  date.timeZoneOffset.inHours.toString());
+            }, onConfirm: (date) {
+              print('confirm $date');
+              //  String time = "${date.hour}:${date.minute} ${date.";
 
-            String time = DateFormat.Hm().format(date);
-            print(time);
+              String time = DateFormat.Hm().format(date);
+              print(time);
 
-            _breakEndController.text = time.toLowerCase();
-            if (_breakEndController.text != "") {
-              List<String> time = _breakEndController.text.split(':');
-              entity.breakEndHour = int.parse(time[0]);
-              entity.breakEndMinute = int.parse(time[1]);
-            }
-          }, currentTime: DateTime.now());
+              _breakEndController.text = time.toLowerCase();
+              if (_breakEndController.text != "") {
+                List<String> time = _breakEndController.text.split(':');
+                entity.breakEndHour = int.parse(time[0]);
+                entity.breakEndMinute = int.parse(time[1]);
+              }
+            }, currentTime: DateTime.now());
+          }
         },
         decoration: InputDecoration(
             labelText: "Break ends at",
             hintText: "hh:mm 24 hour time format",
+            suffixIconConstraints: BoxConstraints(
+              maxWidth: 25,
+              maxHeight: 22,
+            ),
+            suffixIcon: new IconButton(
+                //constraints: BoxConstraints.tight(Size(15, 15)),
+                alignment: Alignment.centerLeft,
+                padding: EdgeInsets.all(0),
+                icon: new Icon(
+                  Icons.cancel,
+                  size: 25,
+                  color: Colors.blueGrey[500],
+                ),
+                onPressed: () {
+                  breakEndClearClicked = true;
+                  _breakEndController.text = "";
+                  entity.breakEndHour = null;
+                  entity.breakEndMinute = null;
+                  setState(() {});
+                }),
             enabledBorder: UnderlineInputBorder(
                 borderSide: BorderSide(color: Colors.grey)),
             focusedBorder: UnderlineInputBorder(

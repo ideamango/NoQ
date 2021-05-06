@@ -50,6 +50,7 @@ class EntityRowState extends State<EntityRow> {
     GlobalState.getGlobalState().then((value) {
       _state = value;
       _metaEntity = widget.entity;
+      //
       //Check if logged in user is Admin or not
       if (_state
           .getCurrentUser()
@@ -64,7 +65,11 @@ class EntityRowState extends State<EntityRow> {
             EntityRole.Admin) isAdmin = true;
         //isExec = true;
       } else {
-        hideAll = true;
+        //TODO : Two cases - 1.This is an entity for which logged-in user doesnt have any defined role defined.
+        //2. Entity is just now created.
+        //
+
+        //hideAll = true;
       }
 
       //Setstate after init complete
