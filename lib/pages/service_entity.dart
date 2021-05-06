@@ -55,7 +55,6 @@ class ChildEntityRowState extends State<ChildEntityRow> {
             EntityRole.Manager) isManager = true;
         if (_gs.getCurrentUser().entityVsRole[_metaEntity.entityId] ==
             EntityRole.Admin) isAdmin = true;
-        isExec = true;
       } else {
         hideAll = true;
       }
@@ -231,7 +230,7 @@ class ChildEntityRowState extends State<ChildEntityRow> {
                                 context,
                                 Icons.info_outline,
                                 Duration(seconds: 5),
-                                "$noViewPermission forms!!",
+                                "$noViewPermission details of this Place!",
                                 contactAdmin);
                           } else {
                             showServiceForm();

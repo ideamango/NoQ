@@ -69,7 +69,7 @@ class EntityRowState extends State<EntityRow> {
         //2. Entity is just now created.
         //
 
-        //hideAll = true;
+        hideAll = true;
       }
 
       //Setstate after init complete
