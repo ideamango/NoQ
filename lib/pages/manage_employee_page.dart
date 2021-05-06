@@ -328,17 +328,17 @@ class _ManageEmployeePageState extends State<ManageEmployeePage> {
     contactList.add(contact);
 
     List<Widget> newList = new List<Widget>();
-    for (int i = 0; i < contactList.length; i++) {
-      newList.add(new ContactRow(
-        contact: contactList[i],
-        empType: EntityRole.Manager,
-        entity: entity,
-        list: contactList,
-        isManager: widget.isManager,
-      ));
-    }
+    // for (int i = 0; i < contactList.length; i++) {
+    newList.add(new ContactRow(
+      contact: contactList[contactList.length - 1],
+      empType: EntityRole.Manager,
+      entity: entity,
+      list: contactList,
+      isManager: widget.isManager,
+    ));
+    // }
     setState(() {
-      contactRowWidgets.clear();
+      //  contactRowWidgets.clear();
       contactRowWidgets.addAll(newList);
       entity.managers = contactList;
       // _contactCount = _contactCount + 1;
@@ -466,8 +466,18 @@ class _ManageEmployeePageState extends State<ManageEmployeePage> {
                 if (widget.isManager) {
                   return;
                 } else {
-                  _removeServiceRow(newAdminRowItem);
-                  _adminItemController.text = "";
+                  //do not allow delete if this is the last admin of this place
+                  if (adminsList.length == 1) {
+                    Utils.showMyFlushbar(
+                        context,
+                        Icons.info_outline,
+                        Duration(seconds: 5),
+                        "Assign another Admin, before you move out!",
+                        "Because you are the Only Admin here.");
+                  } else {
+                    _removeServiceRow(newAdminRowItem);
+                    _adminItemController.text = "";
+                  }
                 }
               },
             ),

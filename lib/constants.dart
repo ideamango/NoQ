@@ -136,12 +136,18 @@ String drawerHeaderTxt42 = 'time !!';
 String bundleId = 'net.lesss';
 String appStoreId = '1545296767';
 String shareURLPrefix = 'https://in.lesss.net';
+String noViewPermission = "It seems you do not have permission to view";
+String noEditPermission = "It seems you do not have permission to modify";
+String contactAdmin = "Contact Admin of this place.";
 String publicInfo =
     "Public: If this is off - it means your Business/Facility is restricted only to either your Employees or the Residents. Example: Office or Apartment.";
 String activeDef =
     'Active: If this is on - it means your Business/Facility is Active and can be searched by other users. You MUST fill all the required details before making it "ACTIVE".';
 String bookableInfo =
     "Bookable: If a slot of your Business/Facility can be booked by the users and token can be issued then enable it. E.g. Salon or Tennis-court is bookable but Mall or Apartment complex can't be booked.";
+String videoInfo =
+    "No need to gather crowd at your place, if it can be done Online. Support online(Video/Audio/Chat) consultations by enabling this.";
+
 String addressInfoStr =
     'The address is using the current location, and same will be used by customers when searching your location.';
 String locationInfoStr = 'Current location details.';

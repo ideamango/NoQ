@@ -1,3 +1,4 @@
+import 'package:LESSs/widget/countdown_timer.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -38,7 +39,8 @@ class _LoginPageState extends State<LoginPage> {
   bool isButtonPressed = false;
   String _errorMessage;
   GlobalState _state;
-  //METHODS
+
+  int _forceResendingToken;
 
   //UI ELEMENTS
   final headingText = Text(
@@ -204,19 +206,20 @@ class _LoginPageState extends State<LoginPage> {
                 loginButon,
                 verticalSpacer,
                 (_errorMsg != null
-                    ? Text('$_errorMsg', style: errorTextStyle)
+                    ? Container(
+                        child: Text('$_errorMsg', style: errorTextStyle))
                     : Container()),
-                Container(
-                  padding: EdgeInsets.all(5),
-                  alignment: Alignment.center,
-                  width: MediaQuery.of(context).size.width * .8,
-                  child: Text(
-                    "To know more how LESSs help Save Lives",
-                    style: TextStyle(
-                      color: Colors.white,
-                    ),
-                  ),
-                ),
+                // Container(
+                //   padding: EdgeInsets.all(5),
+                //   alignment: Alignment.center,
+                //   width: MediaQuery.of(context).size.width * .8,
+                //   child: Text(
+                //     "To know more about LESSs",
+                //     style: TextStyle(
+                //       color: Colors.white,
+                //     ),
+                //   ),
+                // ),
                 Container(
                   alignment: Alignment.center,
                   width: MediaQuery.of(context).size.width * .8,
@@ -297,6 +300,9 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   void submitForm() {
+    EventBus.registerEvent(OTP_RESEND_EVENT, context, (evt, obj) {
+      resendOTP(_mobile);
+    });
     if (_loginPageFormKey.currentState.validate()) {
       _errorMsg = null;
       _loginPageFormKey.currentState.save();
@@ -333,9 +339,62 @@ class _LoginPageState extends State<LoginPage> {
     // }
   }
 
-  Future<void> verifyPhone(phoneNo) async {
-    int _forceResendingToken;
+  handleAuthException(FirebaseAuthException authException) {
+    String message;
+//Handle errors -
+//1.User Not found
+//2. OTP invalid
+//3.User disable
+//4.Network error
+//5. Default
+    switch (authException.code) {
+      case 'invalid-phone-number':
+        message = "The provided phone number is not valid.";
+        break;
+      case 'firebaseAuth':
+        message = 'Invalid phone number';
+        break;
+      case 'too-many-requests':
+        message =
+            'You have sent too many requests, Account is disabled temporarily..';
+        break;
+      case 'invalid-verification-code':
+        message = 'OTP is invalid, Please try again.';
+        break;
+      case "session-expired":
+        message = 'The OTP has expired. Please click ReSend OTP.';
+        break;
+      case 'firebaseAuth':
+        message = 'Phone number is invalid, Please enter a valid Phone number.';
+        break;
+      case 'user-disabled':
+        message =
+            'The user account has been disabled by an admin. Please contact our team.';
+        break;
 
+      default:
+        //if (authException.message.contains('not authorized'))
+        //  message = 'Something has gone wrong, please try again later.';
+        // else
+        if (authException.message != null) {
+          if (authException.message.contains('network'))
+            message =
+                'There seems to be some problem with your internet connection. Please Check.';
+        } else
+          message =
+              'Oops, Something went wrong. Check your internet connection.';
+        break;
+    }
+
+    Utils.showMyFlushbar(context, Icons.error, Duration(seconds: 6), message,
+        "Please try again later.");
+  }
+
+  Future<void> resendOTP(String phone) async {
+    verifyPhone(phone);
+  }
+
+  Future<void> verifyPhone(phoneNo) async {
     try {
       final PhoneVerificationCompleted phoneVerified =
           (PhoneAuthCredential authResult) {
@@ -352,22 +411,7 @@ class _LoginPageState extends State<LoginPage> {
 
       final PhoneVerificationFailed verificationFailed =
           (FirebaseAuthException authException) {
-        setState(() {
-          _errorMsg = '${authException.message}';
-          if (Utils.isNotNullOrEmpty(_errorMsg)) {
-            print("Error message: " + _errorMsg);
-            if (authException.message.contains('not authorized'))
-              _errorMsg = 'Something has gone wrong, please try again later.';
-            else if (authException.message.contains('network'))
-              _errorMsg =
-                  'Please check your internet connection and try again.';
-            // else if (authException.message.contains(''))
-            //   _errorMsg = 'The phone number is not correct, try again.';
-          } else
-            _errorMsg =
-                'We are trying to figure out what went wrong, Please check the Phone Number and try again.';
-        });
-        print("Main - verification failed");
+        handleAuthException(authException);
         return;
         //handleError(authException);
       };
@@ -397,11 +441,7 @@ class _LoginPageState extends State<LoginPage> {
           otpSent,
           autoTimeout);
     } catch (e) {
-      setState(() {
-        _errorMsg = "Invalid phone number.";
-      });
       print(e.toString());
-      print("Main - in catch");
       handleError(e);
     }
   }
@@ -422,27 +462,37 @@ class _LoginPageState extends State<LoginPage> {
   showDialogForOtp(String verId) async {
     String last4digits = _mobile.substring(_mobile.length - 4);
     _errorMessage = "";
-
+    bool timeLapsed = false;
+    bool codeFilled = false;
+    bool autoReadFailed = false;
+    double dialogWidth = MediaQuery.of(context).size.width * .85;
     await showDialog(
         context: context,
         barrierDismissible: false,
         builder: (context) {
           String _errorMessage;
           return StatefulBuilder(builder: (context, setState) {
-            // if (smsCode != null) {
-            //   _pinPutController.text = smsCode;
-            // }
-
             //this dialog is shown on Login once, but the event should be unregistered when the user logs-out
             EventBus.registerEvent(AUTO_VERIFICATION_COMPLETED_EVENT, context,
                 (evt, obj) {
               AutoVerificationCompletedData data =
                   evt.eventData as AutoVerificationCompletedData;
               _pinPutController.text = data.code;
+              //Highlight approve
+              codeFilled = true;
+              setState(() {});
             });
 
+            setState(() {
+              _errorMessage = null;
+            });
+
+            Future.delayed(Duration(seconds: 30)).then((value) {
+              timeLapsed = true;
+              setState(() {});
+            });
             return AlertDialog(
-              // title:
+              insetPadding: EdgeInsets.symmetric(horizontal: 10, vertical: 20),
               backgroundColor: Colors.grey[200],
               titleTextStyle: inputTextStyle,
               elevation: 10.0,
@@ -455,13 +505,13 @@ class _LoginPageState extends State<LoginPage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     Container(
-                      height: MediaQuery.of(context).size.height * .05,
+                      height: MediaQuery.of(context).size.height * .03,
                       child: Row(
                         // mainAxisSize: MainAxisSize.max,
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: <Widget>[
                           Container(
-                            height: MediaQuery.of(context).size.height * .06,
+                            height: MediaQuery.of(context).size.height * .03,
                             transform: Matrix4.translationValues(12.0, -10, 0),
                             child: IconButton(
                               icon: Icon(
@@ -485,26 +535,29 @@ class _LoginPageState extends State<LoginPage> {
                             TextSpan(
                                 text: 'OTP',
                                 style: TextStyle(
-                                  fontSize: 14,
+                                  fontSize: 18,
                                   fontWeight: FontWeight.w800,
-                                  color: Colors.blueGrey[500],
+                                  color: Colors.blueGrey[800],
                                 )),
                             TextSpan(
                                 text:
-                                    ' is sent on your phone number ending with $last4digits',
+                                    ' will be sent on your phone number ending with',
                                 style: TextStyle(
-                                  fontSize: 12,
-                                  color: Colors.blueGrey[500],
+                                  fontSize: 15,
+                                  fontFamily: 'Roboto',
+                                  color: Colors.blueGrey[800],
+                                )),
+                            TextSpan(
+                                text: ' $last4digits',
+                                style: TextStyle(
+                                  fontSize: 17,
+                                  fontWeight: FontWeight.w800,
+                                  color: Colors.blueGrey[800],
                                 )),
                           ]),
                     ),
-                    SizedBox(
-                      height: 10,
-                    ),
+                    verticalSpacer, verticalSpacer,
                     Container(
-                      //     height: MediaQuery.of(context).size.height * .09,
-                      //color: Colors.black,
-                      //margin: EdgeInsets.all(5),
                       padding: EdgeInsets.all(0),
                       child: PinPut(
                         fieldsCount: 6,
@@ -513,6 +566,9 @@ class _LoginPageState extends State<LoginPage> {
 
                           //   _pin = pin;
                           print(pin);
+                          codeFilled = true;
+                          timeLapsed = false;
+                          setState(() {});
                           // try {
                           //   User user = FirebaseAuth.instance.currentUser;
                           //   if (user != null) {
@@ -599,39 +655,95 @@ class _LoginPageState extends State<LoginPage> {
                         ),
                       ),
                     ),
+
+                    // (_errorMessage != null
+                    //     ? Text(
+                    //         _errorMessage,
+                    //         textAlign: TextAlign.left,
+                    //         style: errorTextStyle,
+                    //       )
+                    //     : SizedBox(height: 1)),
+                    (!timeLapsed)
+                        ? Container(
+                            padding: EdgeInsets.fromLTRB(0, 12, 0, 12),
+                            width: dialogWidth,
+                            height: MediaQuery.of(context).size.width * .15,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                Container(
+                                  alignment: Alignment.centerRight,
+                                  padding: EdgeInsets.zero,
+                                  margin: EdgeInsets.zero,
+                                  //   width: MediaQuery.of(context).size.width * .7,
+                                  child: Text("Automatically reading OTP in ",
+                                      style: TextStyle(
+                                        fontSize: 14,
+                                        fontFamily: 'Roboto',
+                                        color: Colors.blueGrey[800],
+                                      )),
+                                ),
+                                Container(
+                                    padding: EdgeInsets.all(0),
+                                    margin: EdgeInsets.zero,
+                                    alignment: Alignment.center,
+                                    width: dialogWidth * .11,
+                                    height:
+                                        MediaQuery.of(context).size.width * .11,
+                                    //  width: 50,
+                                    child: CountDownTimer()),
+                                Container(
+                                  alignment: Alignment.centerRight,
+                                  padding: EdgeInsets.zero,
+                                  margin: EdgeInsets.zero,
+                                  //   width: MediaQuery.of(context).size.width * .7,
+                                  child: Text("seconds. ",
+                                      style: TextStyle(
+                                        fontSize: 14,
+                                        fontFamily: 'Roboto',
+                                        color: Colors.blueGrey[800],
+                                      )),
+                                ),
+                              ],
+                            ))
+                        : Container(
+                            padding: EdgeInsets.fromLTRB(0, 12, 0, 12),
+                            width: dialogWidth,
+                            height: 80,
+                            child: Text(
+                                "Could not read OTP automatically. Click 'Resend' to receive a new OTP.  ",
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  fontFamily: 'Roboto',
+                                  color: Colors.blueGrey[800],
+                                )),
+                          ),
                     Divider(
                       color: Colors.blueGrey[400],
                       height: 1,
                       //indent: 40,
                       //endIndent: 30,
                     ),
-                    (_errorMessage != null
-                        ? Text(
-                            _errorMessage,
-                            textAlign: TextAlign.left,
-                            style: errorTextStyle,
-                          )
-                        : SizedBox(height: 1)),
                     // SizedBox(height: 10),
                     //Divider(),
                   ],
                 ),
               ),
-              // titlePadding: EdgeInsets.fromLTRB(5, 10, 0, 0),
-              contentPadding: EdgeInsets.all(8),
-              actionsPadding: EdgeInsets.all(0),
+              contentPadding: EdgeInsets.all(10),
+              actionsPadding: EdgeInsets.symmetric(horizontal: 8),
               actions: <Widget>[
                 SizedBox(
-                  height: 30,
-                  child: FlatButton(
-                    color: Colors.transparent,
+                  height: 40,
+                  width: dialogWidth * .3,
+                  child: MaterialButton(
+                    color: Colors.white,
                     textColor: btnColor,
                     shape: RoundedRectangleBorder(
                         side: BorderSide(color: btnColor),
                         borderRadius: BorderRadius.all(Radius.circular(3.0))),
                     child: Text(
-                      'Clear All',
-                      style: TextStyle(fontSize: 11),
+                      'Clear',
+                      style: TextStyle(fontSize: dialogWidth * .037),
                     ),
                     onPressed: () {
                       setState(() {
@@ -642,129 +754,101 @@ class _LoginPageState extends State<LoginPage> {
                     },
                   ),
                 ),
-                // Container(
-                //   height: 30,
-                //   alignment: Alignment.center,
-                //   child: FlatButton(
-                //     color: disabledColor,
-                //     textColor: Colors.white,
-                //     shape: RoundedRectangleBorder(
-                //         // side: BorderSide(color: btnColor),
-                //         borderRadius: BorderRadius.all(Radius.circular(3.0))),
-                //     child: Text(
-                //       'Resend OTP',
-                //       style: TextStyle(fontSize: 11),
-                //     ),
-                //     onPressed: () {
-                //       //TODO SMITA add code for resend
-                //       //verifyPhone(_mobile);
-                //       // resendVerificationCode(_phoneNo, verId);
-                //     },
-                //   ),
-                // ),
                 SizedBox(
-                  height: 30,
-                  child: RaisedButton(
-                    color: btnColor,
-                    textColor: Colors.white,
+                  height: timeLapsed ? 50 : 40,
+                  width: dialogWidth * .3,
+                  child: MaterialButton(
+                    color: timeLapsed ? btnColor : Colors.white,
+                    textColor: timeLapsed ? Colors.white : btnColor,
                     shape: RoundedRectangleBorder(
                         side: BorderSide(color: btnColor),
                         borderRadius: BorderRadius.all(Radius.circular(3.0))),
-                    child: Text('Approve OTP', style: TextStyle(fontSize: 11)),
+                    child: Text(
+                      'Resend OTP',
+                      style: TextStyle(fontSize: dialogWidth * .037),
+                    ),
                     onPressed: () {
-                      print(_pinPutController.text);
-                      _pin = _pinPutController.text;
+                      if (timeLapsed)
+                        EventBus.fireEvent(OTP_RESEND_EVENT, null, null);
+                      else
+                        return;
+                    },
+                  ),
+                ),
+                SizedBox(
+                  width: dialogWidth * .3,
+                  height: !timeLapsed ? 50 : 40,
+                  child: MaterialButton(
+                    color: !timeLapsed ? btnColor : Colors.white,
+                    textColor: !timeLapsed ? Colors.white : btnColor,
+                    shape: RoundedRectangleBorder(
+                        side: BorderSide(color: btnColor),
+                        borderRadius: BorderRadius.all(Radius.circular(3.0))),
+                    child: Text('Approve OTP',
+                        style: TextStyle(fontSize: dialogWidth * .037)),
+                    onPressed: () {
+                      if (!timeLapsed) {
+                        print(_pinPutController.text);
+                        _pin = _pinPutController.text;
 
-                      try {
-                        User user = _state
-                            .getAuthService()
-                            .getFirebaseAuth()
-                            .currentUser;
+                        try {
+                          User user = _state
+                              .getAuthService()
+                              .getFirebaseAuth()
+                              .currentUser;
 
-                        if (user != null) {
-                          Navigator.of(context).pop();
-                          Navigator.pushReplacement(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => UserHomePage(
-                                        dontShowUpdate: false,
-                                      )));
-                        } else {
-                          if (_pin == null || _pin == "") {
-                            setState(() {
-                              _errorMessage =
-                                  "Please enter 6 digit OTP sent on your phone.";
-                            });
+                          if (user != null) {
+                            Navigator.of(context).pop();
+                            Navigator.pushReplacement(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => UserHomePage(
+                                          dontShowUpdate: false,
+                                        )));
                           } else {
-                            AuthCredential authCreds =
-                                PhoneAuthProvider.credential(
-                                    verificationId: verificationId,
-                                    smsCode: _pin);
-                            _state
-                                .getAuthService()
-                                .getFirebaseAuth()
-                                .signInWithCredential(authCreds)
-                                .then((UserCredential authResult) {
-                              // AuthService()
-                              //     .signInWithOTP(_pin, verificationId, context)
-                              // .then(() {
-                              print("inside then");
-                              Navigator.of(context).pop();
-                              Navigator.pushReplacement(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => UserHomePage(
-                                            dontShowUpdate: false,
-                                          )));
-                            }).catchError((onError) {
-                              // print("printing Errorrrrrrrrrr");
-                              // // print(onError.toString());
-                              // handleError(onError);
-                              switch (onError.code) {
-                                case 'invalid-verification-code':
-                                  // FocusScope.of(context).requestFocus(new FocusNode());
-                                  setState(() {
-                                    _errorMessage =
-                                        'OTP is invalid, Please try again.';
-                                  });
+                            if (_pin == null || _pin == "") {
+                              setState(() {
+                                _errorMessage =
+                                    "Please enter 6 digit OTP sent on your phone.";
+                              });
+                            } else {
+                              AuthCredential authCreds =
+                                  PhoneAuthProvider.credential(
+                                      verificationId: verificationId,
+                                      smsCode: _pin);
+                              _state
+                                  .getAuthService()
+                                  .getFirebaseAuth()
+                                  .signInWithCredential(authCreds)
+                                  .then((UserCredential authResult) {
+                                Navigator.of(context).pop();
+                                Navigator.pushReplacement(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => UserHomePage(
+                                              dontShowUpdate: false,
+                                            )));
+                              }).catchError((onError) {
+                                handleAuthException(onError);
 
-                                  print(_errorMessage);
-
-                                  break;
-                                case 'firebaseAuth':
-                                  _errorMessage =
-                                      'Phone number is invalid, Please enter a valid Phone number.';
-                                  print(_errorMessage);
-
-                                  break;
-                                case 'ERROR_USER_DISABLED':
-                                  setState(() {
-                                    _errorMessage = 'User has been disabled.';
-                                  });
-                                  break;
-
-                                default:
-                                  _errorMessage =
-                                      'Oops, something went wrong. Check your internet connection and try again.';
-                                  print(_errorMessage);
-
-                                  break;
-                              }
-                            });
+                                setState(() {});
+                              });
+                            }
                           }
+                        } catch (err) {
+                          print("$err.toString()");
+                          setState(() {
+                            _errorMessage = err.toString();
+                          });
                         }
-                      } catch (err) {
-                        print("$err.toString()");
-                        setState(() {
-                          _errorMessage = err.toString();
-                        });
+                      } else {
+                        return;
                       }
                     },
                   ),
                 ),
               ],
             );
-            //  OTPDialog(verificationId: verId, phoneNo: _mobile);
           });
         });
   }
@@ -773,7 +857,6 @@ class _LoginPageState extends State<LoginPage> {
     print(error);
     switch (error.code) {
       case 'ERROR_INVALID_VERIFICATION_CODE':
-        // FocusScope.of(context).requestFocus(new FocusNode());
         setState(() {
           _errorMsg = 'Invalid OTP Code';
         });
@@ -790,21 +873,5 @@ class _LoginPageState extends State<LoginPage> {
 
         break;
     }
-
-    //  _errorMsg = '${authException.message}';
-    //       if (Utils.isNotNullOrEmpty(_errorMsg)) {
-    //         print("Error message: " + _errorMsg);
-    //         if (authException.message.contains('not authorized'))
-    //           _errorMsg = 'Something has gone wrong, please try later';
-    //         else if (authException.message.contains('network'))
-    //           _errorMsg =
-    //               'Please check your internet connection and try again.';
-    //         else if (authException.message.contains(''))
-    //           _errorMsg = 'The phone number is not correct, try again.';
-    //         else
-    //           _errorMsg = '$_errorMsg';
-    //       } else
-    //         _errorMsg =
-    //             'We are trying to figure out what went wrong, Please check the Phone Number and try again.';
   }
 }

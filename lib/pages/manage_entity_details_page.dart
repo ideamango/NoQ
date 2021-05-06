@@ -64,8 +64,12 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
   //Fields used in info - animated container
   double _width = 0;
   double _height = 0;
+  double _videoWidth = 0;
+  double _videoHeight = 0;
+  bool _isVideoExpanded = false;
   EdgeInsets _margin = EdgeInsets.fromLTRB(5, 0, 5, 0);
   Widget _text;
+  Widget _videoText;
   bool _isExpanded = false;
   bool _publicExpandClick = false;
   bool _activeExpandClick = false;
@@ -166,6 +170,7 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
   bool isPublic = false;
   bool isActive = false;
   bool isBookable = false;
+  bool isVideoChatEnabled = false;
   Position pos;
   GlobalState _gs;
   String _phCountryCode;
@@ -225,6 +230,7 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
       isPublic = (entity.isPublic) ?? false;
       isBookable = (entity.isBookable) ?? false;
       isActive = (entity.isActive) ?? false;
+      isVideoChatEnabled = entity.enableVideoChat ?? false;
 
       if (entity.offer != null) {
         insertOffer = entity.offer;
@@ -3462,6 +3468,149 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
                               // Provide an optional curve to make the animation feel smoother.
                               curve: Curves.easeInOutCirc,
                               child: Center(child: _text),
+                            ),
+                          ],
+                        ),
+                      ),
+
+                      SizedBox(
+                        height: 7,
+                      ),
+                      Container(
+                        width: MediaQuery.of(context).size.width * .9,
+                        margin: EdgeInsets.all(5),
+                        padding: EdgeInsets.all(0),
+                        foregroundDecoration: widget.isManager
+                            ? BoxDecoration(
+                                color: Colors.grey[50],
+                                backgroundBlendMode: BlendMode.saturation,
+                              )
+                            : BoxDecoration(),
+                        // padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
+                        decoration: BoxDecoration(
+                            border: Border.all(color: containerColor),
+                            color: Colors.grey[50],
+                            shape: BoxShape.rectangle,
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(5.0))),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.max,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: <Widget>[
+                            Column(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              mainAxisSize: MainAxisSize.max,
+                              children: <Widget>[
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Container(
+                                      alignment: Alignment.centerLeft,
+                                      padding:
+                                          EdgeInsets.fromLTRB(10, 0, 10, 0),
+                                      width: rowWidth * .6,
+                                      child: FlatButton(
+                                          visualDensity: VisualDensity.compact,
+                                          padding: EdgeInsets.all(0),
+                                          child: Row(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: <Widget>[
+                                              Text('Online Consultation',
+                                                  style:
+                                                      TextStyle(fontSize: 14)),
+                                              SizedBox(
+                                                width: MediaQuery.of(context)
+                                                        .size
+                                                        .width *
+                                                    .1,
+                                                child: Icon(
+                                                  Icons.info,
+                                                  color: Colors.blueGrey[600],
+                                                  size: 17,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                          onPressed: () {
+                                            if (!_isVideoExpanded) {
+                                              setState(() {
+                                                _margin = EdgeInsets.fromLTRB(
+                                                    0, 0, 0, 8);
+                                                _videoWidth =
+                                                    MediaQuery.of(context)
+                                                            .size
+                                                            .width *
+                                                        .9;
+                                                _videoText = AutoSizeText(
+                                                    videoInfo,
+                                                    minFontSize: 8,
+                                                    maxFontSize: 14,
+                                                    style:
+                                                        textBotSheetTextStyle);
+
+                                                _videoHeight = 60;
+                                              });
+                                            } else {
+                                              setState(() {
+                                                _isVideoExpanded = false;
+                                                _videoWidth = 0;
+                                                _videoHeight = 0;
+                                              });
+                                            }
+                                          }),
+                                    ),
+                                    SizedBox(
+                                      height:
+                                          MediaQuery.of(context).size.height *
+                                              .08,
+                                      width: MediaQuery.of(context).size.width *
+                                          .2,
+                                      child: Transform.scale(
+                                        scale: .7,
+                                        alignment: Alignment.centerRight,
+                                        child: Switch(
+                                          materialTapTargetSize:
+                                              MaterialTapTargetSize.shrinkWrap,
+                                          value: isVideoChatEnabled,
+
+                                          onChanged: (value) {
+                                            if (widget.isManager) {
+                                              return;
+                                            } else {
+                                              setState(() {
+                                                isVideoChatEnabled = value;
+                                                entity.enableVideoChat = value;
+                                              });
+                                            }
+                                          },
+                                          // activeTrackColor: Colors.green,
+                                          activeColor: Colors.green,
+                                          inactiveThumbColor: Colors.grey[300],
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                            AnimatedContainer(
+                              padding: EdgeInsets.all(5),
+                              margin: EdgeInsets.all(5),
+                              // Use the properties stored in the State class.
+                              width: _videoWidth,
+                              height: _videoHeight,
+                              alignment: Alignment.center,
+                              decoration: BoxDecoration(
+                                color: Colors.transparent,
+                                border: Border.all(color: Colors.blueGrey),
+                                borderRadius: _borderRadius,
+                              ),
+                              // Define how long the animation should take.
+                              duration: Duration(seconds: 1),
+                              // Provide an optional curve to make the animation feel smoother.
+                              curve: Curves.easeInOutCirc,
+                              child: Center(child: _videoText),
                             ),
                           ],
                         ),

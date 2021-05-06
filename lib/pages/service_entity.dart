@@ -38,6 +38,9 @@ class ChildEntityRowState extends State<ChildEntityRow> {
   // Map<String, Entity> _entityMap;
   bool isExec = false;
   bool isManager = false;
+  bool hideAll = false;
+  bool isAdmin = false;
+  bool readOnly;
   @override
   void initState() {
     super.initState();
@@ -45,10 +48,18 @@ class ChildEntityRowState extends State<ChildEntityRow> {
 
     GlobalState.getGlobalState().then((value) {
       _gs = value;
-      if (_gs.getCurrentUser().entityVsRole[_metaEntity.entityId] ==
-          EntityRole.Executive) isExec = true;
-      if (_gs.getCurrentUser().entityVsRole[_metaEntity.entityId] ==
-          EntityRole.Manager) isManager = true;
+      if (_gs.getCurrentUser().entityVsRole.containsKey(_metaEntity.entityId)) {
+        if (_gs.getCurrentUser().entityVsRole[_metaEntity.entityId] ==
+            EntityRole.Executive) isExec = true;
+        if (_gs.getCurrentUser().entityVsRole[_metaEntity.entityId] ==
+            EntityRole.Manager) isManager = true;
+        if (_gs.getCurrentUser().entityVsRole[_metaEntity.entityId] ==
+            EntityRole.Admin) isAdmin = true;
+        isExec = true;
+      } else {
+        hideAll = true;
+      }
+      readOnly = isManager || isExec;
 
       _gs.getEntity(_metaEntity.parentId).then((value) {
         entity = value.item1;
@@ -73,7 +84,7 @@ class ChildEntityRowState extends State<ChildEntityRow> {
         Navigator.of(context)
             .push(PageAnimation.createRoute(ManageChildEntityDetailsPage(
           childEntity: value.item1,
-          isManager: isManager,
+          isManager: isManager || isExec,
         )));
       });
     }
@@ -210,63 +221,67 @@ class ChildEntityRowState extends State<ChildEntityRow> {
               Wrap(
                   // mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
-                    if (!isExec)
-                      Card(
-                        margin: EdgeInsets.fromLTRB(12, 0, 12, 12),
-                        elevation: 8,
-                        child: GestureDetector(
-                          onTap: () {
-                            if (!isExec) {
-                              showServiceForm();
-                            } else {
-                              Utils.showMyFlushbar(
-                                  context,
-                                  Icons.info_outline,
-                                  Duration(seconds: 5),
-                                  "Only Admins have permission to view forms!!",
-                                  "");
-                            }
-                          },
-                          child: Container(
-                            margin: EdgeInsets.all(0),
-                            padding: EdgeInsets.all(0),
-                            width: MediaQuery.of(context).size.width * .21,
-                            height: MediaQuery.of(context).size.width * .21,
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              children: [
-                                SizedBox(
-                                  width:
-                                      MediaQuery.of(context).size.width * .11,
-                                  height:
-                                      MediaQuery.of(context).size.width * .11,
-                                  child: Image(
-                                    image: AssetImage('assets/settings.png'),
-                                  ),
+                    Card(
+                      margin: EdgeInsets.fromLTRB(12, 0, 12, 12),
+                      elevation: 8,
+                      child: GestureDetector(
+                        onTap: () {
+                          if (hideAll) {
+                            Utils.showMyFlushbar(
+                                context,
+                                Icons.info_outline,
+                                Duration(seconds: 5),
+                                "$noViewPermission forms!!",
+                                contactAdmin);
+                          } else {
+                            showServiceForm();
+                          }
+                        },
+                        child: Container(
+                          margin: EdgeInsets.all(0),
+                          padding: EdgeInsets.all(0),
+                          width: MediaQuery.of(context).size.width * .21,
+                          height: MediaQuery.of(context).size.width * .21,
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              SizedBox(
+                                width: MediaQuery.of(context).size.width * .11,
+                                height: MediaQuery.of(context).size.width * .11,
+                                child: Image(
+                                  image: AssetImage('assets/settings.png'),
                                 ),
-                                AutoSizeText(
-                                  'Details',
-                                  group: labelGroup,
-                                  maxLines: 1,
-                                  minFontSize: 9,
-                                  maxFontSize: 11,
-                                  style: TextStyle(
-                                      color: whiteBtnTextColor,
-                                      letterSpacing: 1.1,
-                                      fontFamily: 'Roboto'),
-                                ),
-                              ],
-                            ),
+                              ),
+                              AutoSizeText(
+                                'Details',
+                                group: labelGroup,
+                                maxLines: 1,
+                                minFontSize: 9,
+                                maxFontSize: 11,
+                                style: TextStyle(
+                                    color: whiteBtnTextColor,
+                                    letterSpacing: 1.1,
+                                    fontFamily: 'Roboto'),
+                              ),
+                            ],
                           ),
                         ),
                       ),
+                    ),
                     if (!isExec)
                       Card(
                         margin: EdgeInsets.fromLTRB(12, 0, 12, 12),
                         elevation: 8,
                         child: GestureDetector(
                           onTap: () {
-                            if (!isExec) {
+                            if (hideAll) {
+                              Utils.showMyFlushbar(
+                                  context,
+                                  Icons.info_outline,
+                                  Duration(seconds: 4),
+                                  "$noViewPermission Employees!!",
+                                  contactAdmin);
+                            } else {
                               Navigator.of(context).push(
                                   PageAnimation.createRoute(ManageEmployeePage(
                                 metaEntity: _metaEntity,
@@ -276,14 +291,6 @@ class ChildEntityRowState extends State<ChildEntityRow> {
                                 defaultDate: null,
                                 isManager: isManager,
                               )));
-                            } else {
-                              //Only admins can view Employees for a place
-                              Utils.showMyFlushbar(
-                                  context,
-                                  Icons.info_outline,
-                                  Duration(seconds: 4),
-                                  "Only Admins have permission to view other Employees!!",
-                                  "");
                             }
                           },
                           child: Container(
@@ -319,75 +326,79 @@ class ChildEntityRowState extends State<ChildEntityRow> {
                           ),
                         ),
                       ),
-                    if (!isExec)
-                      Card(
-                        margin: EdgeInsets.fromLTRB(12, 0, 12, 12),
-                        elevation: 8,
-                        child: GestureDetector(
-                          onTap: () {
-                            if (!isExec) {
-                              print("To Add details page");
-                              Navigator.of(context).push(
-                                  PageAnimation.createRoute(ManageEntityForms(
-                                // forms: _metaEntity.forms,
-                                metaEntity: _metaEntity,
-                                preferredSlotTime: null,
-                                isAdmin: true,
-                                backRoute: ManageChildEntityListPage(
-                                  entity: entity,
+                    Card(
+                      margin: EdgeInsets.fromLTRB(12, 0, 12, 12),
+                      elevation: 8,
+                      child: GestureDetector(
+                        onTap: () {
+                          if (hideAll) {
+                            Utils.showMyFlushbar(
+                                context,
+                                Icons.info_outline,
+                                Duration(seconds: 5),
+                                "$noViewPermission forms!!",
+                                contactAdmin);
+                          } else {
+                            print("To Add details page");
+                            Navigator.of(context).push(
+                                PageAnimation.createRoute(ManageEntityForms(
+                              // forms: _metaEntity.forms,
+                              metaEntity: _metaEntity,
+                              preferredSlotTime: null,
+                              isFullPermission: !readOnly,
+                              backRoute: ManageChildEntityListPage(
+                                entity: entity,
+                              ),
+                              isReadOnly: readOnly,
+                            )));
+                          }
+                        },
+                        child: Container(
+                          margin: EdgeInsets.all(0),
+                          padding: EdgeInsets.all(2),
+                          width: MediaQuery.of(context).size.width * .21,
+                          height: MediaQuery.of(context).size.width * .21,
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              SizedBox(
+                                width: MediaQuery.of(context).size.width * .11,
+                                height: MediaQuery.of(context).size.width * .11,
+                                child: Image(
+                                  image: AssetImage('assets/forms.png'),
                                 ),
-                                isManager: isManager,
-                              )));
-                            } else {
-                              Utils.showMyFlushbar(
-                                  context,
-                                  Icons.info_outline,
-                                  Duration(seconds: 5),
-                                  "Only Admins have permission to view forms!!",
-                                  "");
-                            }
-                          },
-                          child: Container(
-                            margin: EdgeInsets.all(0),
-                            padding: EdgeInsets.all(2),
-                            width: MediaQuery.of(context).size.width * .21,
-                            height: MediaQuery.of(context).size.width * .21,
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              children: [
-                                SizedBox(
-                                  width:
-                                      MediaQuery.of(context).size.width * .11,
-                                  height:
-                                      MediaQuery.of(context).size.width * .11,
-                                  child: Image(
-                                    image: AssetImage('assets/forms.png'),
-                                  ),
-                                ),
-                                AutoSizeText(
-                                  'Forms',
-                                  group: labelGroup,
-                                  maxLines: 1,
-                                  minFontSize: 9,
-                                  maxFontSize: 11,
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                      color: whiteBtnTextColor,
-                                      letterSpacing: 1.1,
-                                      fontFamily: 'Roboto'),
-                                ),
-                              ],
-                            ),
+                              ),
+                              AutoSizeText(
+                                'Forms',
+                                group: labelGroup,
+                                maxLines: 1,
+                                minFontSize: 9,
+                                maxFontSize: 11,
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                    color: whiteBtnTextColor,
+                                    letterSpacing: 1.1,
+                                    fontFamily: 'Roboto'),
+                              ),
+                            ],
                           ),
                         ),
                       ),
-                    if (!isExec)
-                      Card(
-                        margin: EdgeInsets.fromLTRB(12, 0, 12, 12),
-                        elevation: 8,
-                        child: GestureDetector(
-                          onTap: () {
-                            print("Over To Applications overview page");
+                    ),
+                    Card(
+                      margin: EdgeInsets.fromLTRB(12, 0, 12, 12),
+                      elevation: 8,
+                      child: GestureDetector(
+                        onTap: () {
+                          print("Over To Applications overview page");
+                          if (hideAll) {
+                            Utils.showMyFlushbar(
+                                context,
+                                Icons.info_outline,
+                                Duration(seconds: 5),
+                                "$noViewPermission Applications!!",
+                                contactAdmin);
+                          } else {
                             if (!Utils.isNullOrEmpty(_metaEntity.forms)) {
                               if (_metaEntity.forms.length > 1) {
                                 Navigator.of(context).push(
@@ -408,6 +419,7 @@ class ChildEntityRowState extends State<ChildEntityRow> {
                                   bookingFormName: _metaEntity.forms[0].name,
                                   entityId: _metaEntity.entityId,
                                   metaEntity: _metaEntity,
+                                  isExec: isExec,
                                 )));
                               }
                             } else {
@@ -418,55 +430,71 @@ class ChildEntityRowState extends State<ChildEntityRow> {
                                   "No Applications found as of now!!",
                                   "");
                             }
-                          },
-                          child: Container(
-                            margin: EdgeInsets.all(0),
-                            padding: EdgeInsets.all(0),
-                            width: MediaQuery.of(context).size.width * .21,
-                            height: MediaQuery.of(context).size.width * .21,
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              children: [
-                                SizedBox(
-                                  width:
-                                      MediaQuery.of(context).size.width * .11,
-                                  height:
-                                      MediaQuery.of(context).size.width * .11,
-                                  child: Image(
-                                    image:
-                                        AssetImage('assets/applications.png'),
-                                  ),
+                          }
+                        },
+                        child: Container(
+                          margin: EdgeInsets.all(0),
+                          padding: EdgeInsets.all(0),
+                          width: MediaQuery.of(context).size.width * .21,
+                          height: MediaQuery.of(context).size.width * .21,
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              SizedBox(
+                                width: MediaQuery.of(context).size.width * .11,
+                                height: MediaQuery.of(context).size.width * .11,
+                                child: Image(
+                                  image: AssetImage('assets/applications.png'),
                                 ),
-                                AutoSizeText(
-                                  'Applications',
-                                  group: labelGroup,
-                                  maxLines: 1,
-                                  minFontSize: 9,
-                                  maxFontSize: 11,
-                                  style: TextStyle(
-                                      letterSpacing: 1.1,
-                                      color: whiteBtnTextColor,
-                                      fontFamily: 'Roboto'),
-                                ),
-                              ],
-                            ),
+                              ),
+                              AutoSizeText(
+                                'Applications',
+                                group: labelGroup,
+                                maxLines: 1,
+                                minFontSize: 9,
+                                maxFontSize: 11,
+                                style: TextStyle(
+                                    letterSpacing: 1.1,
+                                    color: whiteBtnTextColor,
+                                    fontFamily: 'Roboto'),
+                              ),
+                            ],
                           ),
                         ),
                       ),
+                    ),
                     Card(
                       margin: EdgeInsets.fromLTRB(12, 0, 12, 12),
                       elevation: 8,
                       child: GestureDetector(
                         onTap: () {
                           print("To child list page");
-                          Navigator.of(context).push(
-                              PageAnimation.createRoute(EntityTokenListPage(
-                            metaEntity: _metaEntity,
-                            backRoute: ManageChildEntityListPage(
-                              entity: entity,
-                            ),
-                            defaultDate: null,
-                          )));
+                          if (hideAll) {
+                            Utils.showMyFlushbar(
+                                context,
+                                Icons.info_outline,
+                                Duration(seconds: 5),
+                                "$noViewPermission Booking Tokens!",
+                                contactAdmin);
+                          } else {
+                            if (_metaEntity.isBookable) {
+                              print("To child list page");
+                              Navigator.of(context).push(
+                                  PageAnimation.createRoute(EntityTokenListPage(
+                                metaEntity: _metaEntity,
+                                backRoute: ManageChildEntityListPage(
+                                  entity: entity,
+                                ),
+                                defaultDate: null,
+                              )));
+                            } else
+                              Utils.showMyFlushbar(
+                                  context,
+                                  Icons.info_outline,
+                                  Duration(seconds: 5),
+                                  "It seems this place is not marked as Bookable.",
+                                  "Go to Entity Details page and make this Bookable.");
+                          }
                         },
                         child: Container(
                           margin: EdgeInsets.all(0),

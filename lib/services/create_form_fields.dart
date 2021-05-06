@@ -1401,12 +1401,10 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
         if (error is SlotFullException) {
           Utils.showMyFlushbar(context, Icons.error, Duration(seconds: 5),
               couldNotBookToken, slotsAlreadyBooked);
-        }
-        // else if (error is TokenAlreadyExistsException) {
-        //   Utils.showMyFlushbar(context, Icons.error, Duration(seconds: 5),
-        //       couldNotBookToken, tokenAlreadyExists);
-        //}
-        else {
+        } else if (error.toString().contains("already submitted")) {
+          Utils.showMyFlushbar(context, Icons.error, Duration(seconds: 5),
+              "Your application is already submitted.", "");
+        } else {
           Utils.showMyFlushbar(context, Icons.error, Duration(seconds: 5),
               couldNotBookToken, tryAgainToBook);
         }

@@ -619,7 +619,7 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
             onPressed: () {
               if (!isDisabled(sl.dateTime)) {
                 if (!Utils.isNullOrEmpty(entity.forms)) {
-                  if (entity.forms.length > 1) {
+                  if (entity.forms.length >= 1) {
                     //Show Booking request form SELECTION page
                     Navigator.of(context)
                         .push(PageAnimation.createRoute(BookingFormSelection(
@@ -629,24 +629,25 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
                       isAdmin: false,
                       backRoute: SearchEntityPage(),
                     )));
-                  } else {
-                    _gs
-                        .getApplicationService()
-                        .getBookingForm(entity.forms[0].id)
-                        .then((value) {
-                      print(value.appointmentRequired);
-                      //TODO: Build FORM page and NAVIGATE to display
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => BookingApplicationFormPage(
-                                    metaEntity: entity,
-                                    bookingFormId: entity.forms[0].id,
-                                    preferredSlotTime: sl.dateTime,
-                                    backRoute: SearchEntityPage(),
-                                  )));
-                    });
                   }
+                  //  else {
+                  //   _gs
+                  //       .getApplicationService()
+                  //       .getBookingForm(entity.forms[0].id)
+                  //       .then((value) {
+                  //     print(value.appointmentRequired);
+                  //     //TODO: Build FORM page and NAVIGATE to display
+                  //     Navigator.push(
+                  //         context,
+                  //         MaterialPageRoute(
+                  //             builder: (context) => BookingApplicationFormPage(
+                  //                   metaEntity: entity,
+                  //                   bookingFormId: entity.forms[0].id,
+                  //                   preferredSlotTime: sl.dateTime,
+                  //                   backRoute: SearchEntityPage(),
+                  //                 )));
+                  //   });
+                  // }
 
                   // Navigator.push(
                   //     context,

@@ -22,12 +22,14 @@ class OverviewPage extends StatefulWidget {
   final String bookingFormId;
   final String bookingFormName;
   final MetaEntity metaEntity;
+  final bool isExec;
   OverviewPage(
       {Key key,
       @required this.entityId,
       @required this.bookingFormId,
       @required this.bookingFormName,
-      @required this.metaEntity})
+      @required this.metaEntity,
+      @required this.isExec})
       : super(key: key);
   @override
   _OverviewPageState createState() => _OverviewPageState();
