@@ -443,7 +443,7 @@ class GlobalState {
   }
 
   List<EntityType> getActiveEntityTypes() {
-    List<EntityType> types = new List<EntityType>();
+    List<EntityType> types = [];
     List<String> stringTypes;
 
     if (isAndroid) {
@@ -464,7 +464,7 @@ class GlobalState {
   }
 
   List<EntityType> getActiveChildEntityTypes(EntityType parentType) {
-    List<EntityType> types = new List<EntityType>();
+    List<EntityType> types = [];
 
     if (!_conf.typeToChildType
         .containsKey(EnumToString.convertToString(parentType))) {

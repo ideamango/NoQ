@@ -179,7 +179,7 @@ class BookingApplicationService {
         !Utils.isNotNullOrEmpty(ba.bookingFormId) ||
         ba.responseForm == null ||
         metaEntity == null) {
-      throw Exception("Insufficient arguements to submit the application");
+      throw Exception("Insufficient arguments to submit the application");
     }
 
     Exception e;
@@ -193,13 +193,13 @@ class BookingApplicationService {
     BookingForm bf;
     BookingApplication baDraft;
     BookingApplicationCounter localCounter;
-    BookingApplicationCounter globalCounter;
+    //BookingApplicationCounter globalCounter;
 
     String bookingApplicationId = ba.id;
     String bookingFormId = ba.bookingFormId;
     String localCounterId =
         bookingFormId + "#" + metaEntity.entityId + "#" + now.year.toString();
-    String globalCounterId = bookingFormId + "#" + now.year.toString();
+    //String globalCounterId = bookingFormId + "#" + now.year.toString();
 
     final DocumentReference applicationRef =
         fStore.doc('bookingApplications/' + bookingApplicationId);
@@ -210,8 +210,8 @@ class BookingApplicationService {
     final DocumentReference localCounterRef =
         fStore.doc('counter/' + localCounterId);
 
-    final DocumentReference globalCounterRef =
-        fStore.doc('counter/' + globalCounterId);
+    // final DocumentReference globalCounterRef =
+    //     fStore.doc('counter/' + globalCounterId);
 
     DocumentSnapshot doc = await bookingFormRef.get();
 
@@ -249,27 +249,27 @@ class BookingApplicationService {
         ba.status = ApplicationStatus.NEW;
         ba.userId = userPhone;
 
-        if (bf.isSystemTemplate) {
-          DocumentSnapshot globalCounterSnapshot =
-              await tx.get(globalCounterRef);
-          //global counters have to be update or created
-          if (globalCounterSnapshot.exists) {
-            Map<String, dynamic> map = globalCounterSnapshot.data();
-            globalCounter = BookingApplicationCounter.fromJson(map);
-          } else {
-            globalCounter = new BookingApplicationCounter(
-                bookingFormId: bookingFormId, entityId: null);
-          }
+        // if (bf.isSystemTemplate) {
+        //   DocumentSnapshot globalCounterSnapshot =
+        //       await tx.get(globalCounterRef);
+        //   //global counters have to be update or created
+        //   if (globalCounterSnapshot.exists) {
+        //     Map<String, dynamic> map = globalCounterSnapshot.data();
+        //     globalCounter = BookingApplicationCounter.fromJson(map);
+        //   } else {
+        //     globalCounter = new BookingApplicationCounter(
+        //         bookingFormId: bookingFormId, entityId: null);
+        //   }
 
-          if (globalCounter.dailyStats == null) {
-            globalCounter.dailyStats = Map<String, ApplicationStats>();
-          }
+        //   if (globalCounter.dailyStats == null) {
+        //     globalCounter.dailyStats = Map<String, ApplicationStats>();
+        //   }
 
-          if (!globalCounter.dailyStats.containsKey(dailyStatsKey)) {
-            ApplicationStats todayStats = new ApplicationStats();
-            globalCounter.dailyStats[dailyStatsKey] = todayStats;
-          }
-        }
+        //   if (!globalCounter.dailyStats.containsKey(dailyStatsKey)) {
+        //     ApplicationStats todayStats = new ApplicationStats();
+        //     globalCounter.dailyStats[dailyStatsKey] = todayStats;
+        //   }
+        // }
 
         //local Counter to be updated or created
         if (localCounterSnapshot.exists) {
@@ -290,11 +290,11 @@ class BookingApplicationService {
         }
 
         if (bf.autoApproved) {
-          if (globalCounter != null) {
-            globalCounter.numberOfApproved++;
-            globalCounter.dailyStats[dailyStatsKey].numberOfNew++;
-            globalCounter.dailyStats[dailyStatsKey].numberOfApproved++;
-          }
+          // if (globalCounter != null) {
+          //   globalCounter.numberOfApproved++;
+          //   globalCounter.dailyStats[dailyStatsKey].numberOfNew++;
+          //   globalCounter.dailyStats[dailyStatsKey].numberOfApproved++;
+          // }
           localCounter.numberOfApproved++;
           localCounter.dailyStats[dailyStatsKey].numberOfNew++;
           localCounter.dailyStats[dailyStatsKey].numberOfApproved++;
@@ -303,16 +303,16 @@ class BookingApplicationService {
           ba.status = ApplicationStatus.APPROVED;
           ba.timeOfApproval = now;
         } else {
-          if (globalCounter != null) {
-            globalCounter.numberOfNew++;
-            globalCounter.dailyStats[dailyStatsKey].numberOfNew++;
-          }
+          // if (globalCounter != null) {
+          //   globalCounter.numberOfNew++;
+          //   globalCounter.dailyStats[dailyStatsKey].numberOfNew++;
+          // }
           localCounter.numberOfNew++;
           localCounter.dailyStats[dailyStatsKey].numberOfNew++;
         }
-        if (globalCounter != null) {
-          globalCounter.totalApplications++;
-        }
+        // if (globalCounter != null) {
+        //   globalCounter.totalApplications++;
+        // }
         localCounter.totalApplications++;
 
         //if auto approved, then generate the token
@@ -338,9 +338,9 @@ class BookingApplicationService {
 
         tx.set(applicationRef, ba.toJson());
         tx.set(localCounterRef, localCounter.toJson());
-        if (globalCounter != null) {
-          tx.set(globalCounterRef, globalCounter.toJson());
-        }
+        // if (globalCounter != null) {
+        //   tx.set(globalCounterRef, globalCounter.toJson());
+        // }
 
         isSuccess = true;
       } catch (ex) {
@@ -377,7 +377,7 @@ class BookingApplicationService {
     BookingApplication ba;
 
     BookingApplicationCounter localCounter;
-    BookingApplicationCounter globalCounter;
+    //BookingApplicationCounter globalCounter;
 
     String bookingApplicationId = applicationId;
 
@@ -411,39 +411,39 @@ class BookingApplicationService {
 
         String localCounterId =
             bookingFormId + "#" + ba.entityId + "#" + now.year.toString();
-        String globalCounterId = bookingFormId + "#" + now.year.toString();
+        //String globalCounterId = bookingFormId + "#" + now.year.toString();
 
         final DocumentReference localCounterRef =
             fStore.doc('counter/' + localCounterId);
         DocumentSnapshot localCounterSnapshot = await tx.get(localCounterRef);
 
-        final DocumentReference globalCounterRef =
-            fStore.doc('counter/' + globalCounterId);
+        // final DocumentReference globalCounterRef =
+        //     fStore.doc('counter/' + globalCounterId);
 
         ba.status = ApplicationStatus.CANCELLED;
         ba.timeOfCancellation = DateTime.now();
         ba.notesOnCancellation = notesOnCancellation;
 
         if (ba.responseForm.isSystemTemplate) {
-          DocumentSnapshot globalCounterSnapshot =
-              await tx.get(globalCounterRef);
+          // DocumentSnapshot globalCounterSnapshot =
+          //     await tx.get(globalCounterRef);
           //global counters have to be update or created
-          if (globalCounterSnapshot.exists) {
-            Map<String, dynamic> map = globalCounterSnapshot.data();
-            globalCounter = BookingApplicationCounter.fromJson(map);
-          } else {
-            globalCounter = new BookingApplicationCounter(
-                bookingFormId: bookingFormId, entityId: null);
-          }
+          // if (globalCounterSnapshot.exists) {
+          //   Map<String, dynamic> map = globalCounterSnapshot.data();
+          //   globalCounter = BookingApplicationCounter.fromJson(map);
+          // } else {
+          //   globalCounter = new BookingApplicationCounter(
+          //       bookingFormId: bookingFormId, entityId: null);
+          // }
 
-          if (globalCounter.dailyStats == null) {
-            globalCounter.dailyStats = Map<String, ApplicationStats>();
-          }
+          // if (globalCounter.dailyStats == null) {
+          //   globalCounter.dailyStats = Map<String, ApplicationStats>();
+          // }
 
-          if (!globalCounter.dailyStats.containsKey(dailyStatsKey)) {
-            ApplicationStats todayStats = new ApplicationStats();
-            globalCounter.dailyStats[dailyStatsKey] = todayStats;
-          }
+          // if (!globalCounter.dailyStats.containsKey(dailyStatsKey)) {
+          //   ApplicationStats todayStats = new ApplicationStats();
+          //   globalCounter.dailyStats[dailyStatsKey] = todayStats;
+          // }
         }
 
         //local Counter to be updated or created
@@ -464,10 +464,10 @@ class BookingApplicationService {
           localCounter.dailyStats[dailyStatsKey] = todayStats;
         }
 
-        if (globalCounter != null) {
-          globalCounter.numberOfCancelled++;
-          globalCounter.dailyStats[dailyStatsKey].numberOfCancelled++;
-        }
+        // if (globalCounter != null) {
+        //   globalCounter.numberOfCancelled++;
+        //   globalCounter.dailyStats[dailyStatsKey].numberOfCancelled++;
+        // }
         localCounter.numberOfCancelled++;
         localCounter.dailyStats[dailyStatsKey].numberOfCancelled++;
 
@@ -491,44 +491,44 @@ class BookingApplicationService {
         }
 
         if (existingStatus == ApplicationStatus.APPROVED) {
-          if (globalCounter != null) {
-            globalCounter.numberOfApproved--;
-          }
+          // if (globalCounter != null) {
+          //   globalCounter.numberOfApproved--;
+          // }
           if (localCounter != null) {
             localCounter.numberOfApproved--;
           }
         } else if (existingStatus == ApplicationStatus.NEW) {
-          if (globalCounter != null) {
-            globalCounter.numberOfNew--;
-          }
+          // if (globalCounter != null) {
+          //   globalCounter.numberOfNew--;
+          // }
           if (localCounter != null) {
             localCounter.numberOfNew--;
           }
         } else if (existingStatus == ApplicationStatus.COMPLETED) {
-          if (globalCounter != null) {
-            globalCounter.numberOfCompleted--;
-          }
+          // if (globalCounter != null) {
+          //   globalCounter.numberOfCompleted--;
+          // }
           if (localCounter != null) {
             localCounter.numberOfCompleted--;
           }
         } else if (existingStatus == ApplicationStatus.INPROCESS) {
-          if (globalCounter != null) {
-            globalCounter.numberOfInProcess--;
-          }
+          // if (globalCounter != null) {
+          //   globalCounter.numberOfInProcess--;
+          // }
           if (localCounter != null) {
             localCounter.numberOfInProcess--;
           }
         } else if (existingStatus == ApplicationStatus.ONHOLD) {
-          if (globalCounter != null) {
-            globalCounter.numberOfPutOnHold--;
-          }
+          // if (globalCounter != null) {
+          //   globalCounter.numberOfPutOnHold--;
+          // }
           if (localCounter != null) {
             localCounter.numberOfPutOnHold--;
           }
         } else if (existingStatus == ApplicationStatus.REJECTED) {
-          if (globalCounter != null) {
-            globalCounter.numberOfRejected--;
-          }
+          // if (globalCounter != null) {
+          //   globalCounter.numberOfRejected--;
+          // }
           if (localCounter != null) {
             localCounter.numberOfRejected--;
           }
@@ -536,9 +536,9 @@ class BookingApplicationService {
 
         tx.set(applicationRef, ba.toJson());
         tx.set(localCounterRef, localCounter.toJson());
-        if (globalCounter != null) {
-          tx.set(globalCounterRef, globalCounter.toJson());
-        }
+        // if (globalCounter != null) {
+        //   tx.set(globalCounterRef, globalCounter.toJson());
+        // }
 
         isSuccess = true;
       } catch (e) {
@@ -584,11 +584,11 @@ class BookingApplicationService {
     BookingForm bf;
     BookingApplication application;
     BookingApplicationCounter localCounter;
-    BookingApplicationCounter globalCounter;
+    //BookingApplicationCounter globalCounter;
     ApplicationStatus existingStatus;
 
     String localCounterId;
-    String globalCounterId;
+    //String globalCounterId;
     bool requestProcessed = false;
 
     String dailyStatsKey = now.year.toString() +
@@ -623,25 +623,25 @@ class BookingApplicationService {
 
         localCounterId =
             bookingFormId + "#" + entityId + "#" + now.year.toString();
-        globalCounterId = bookingFormId + "#" + now.year.toString();
+        //globalCounterId = bookingFormId + "#" + now.year.toString();
 
         final DocumentReference localCounterRef =
             fStore.doc('counter/' + localCounterId);
 
-        final DocumentReference globalCounterRef =
-            fStore.doc('counter/' + globalCounterId);
+        // final DocumentReference globalCounterRef =
+        //     fStore.doc('counter/' + globalCounterId);
 
         DocumentSnapshot localCounterSnapshot = await tx.get(localCounterRef);
 
-        if (bf.isSystemTemplate) {
-          DocumentSnapshot globalCounterSnapshot =
-              await tx.get(globalCounterRef);
-          //global counters have to be update or created
-          if (globalCounterSnapshot.exists) {
-            Map<String, dynamic> map = globalCounterSnapshot.data();
-            globalCounter = BookingApplicationCounter.fromJson(map);
-          }
-        }
+        // if (bf.isSystemTemplate) {
+        //   DocumentSnapshot globalCounterSnapshot =
+        //       await tx.get(globalCounterRef);
+        //   //global counters have to be update or created
+        //   if (globalCounterSnapshot.exists) {
+        //     Map<String, dynamic> map = globalCounterSnapshot.data();
+        //     globalCounter = BookingApplicationCounter.fromJson(map);
+        //   }
+        // }
 
         //local Counter to be updated or created
         if (localCounterSnapshot.exists) {
@@ -654,16 +654,16 @@ class BookingApplicationService {
           application.timeOfApproval = now;
           application.notesOnApproval = note;
           application.approvedBy = userPhone;
-          if (globalCounter != null) {
-            globalCounter.numberOfApproved++;
-            if (globalCounter.dailyStats.containsKey(dailyStatsKey)) {
-              globalCounter.dailyStats[dailyStatsKey].numberOfApproved++;
-            } else {
-              ApplicationStats todayStats = new ApplicationStats();
-              globalCounter.dailyStats[dailyStatsKey] = todayStats;
-              globalCounter.dailyStats[dailyStatsKey].numberOfApproved++;
-            }
-          }
+          // if (globalCounter != null) {
+          //   globalCounter.numberOfApproved++;
+          //   if (globalCounter.dailyStats.containsKey(dailyStatsKey)) {
+          //     globalCounter.dailyStats[dailyStatsKey].numberOfApproved++;
+          //   } else {
+          //     ApplicationStats todayStats = new ApplicationStats();
+          //     globalCounter.dailyStats[dailyStatsKey] = todayStats;
+          //     globalCounter.dailyStats[dailyStatsKey].numberOfApproved++;
+          //   }
+          // }
           if (localCounter != null) {
             localCounter.numberOfApproved++;
             if (localCounter.dailyStats.containsKey(dailyStatsKey)) {
@@ -699,16 +699,16 @@ class BookingApplicationService {
           application.timeOfCompletion = now;
           application.notesOnCompletion = note;
           application.completedBy = userPhone;
-          if (globalCounter != null) {
-            globalCounter.numberOfCompleted++;
-            if (globalCounter.dailyStats.containsKey(dailyStatsKey)) {
-              globalCounter.dailyStats[dailyStatsKey].numberOfCompleted++;
-            } else {
-              ApplicationStats todayStats = new ApplicationStats();
-              globalCounter.dailyStats[dailyStatsKey] = todayStats;
-              globalCounter.dailyStats[dailyStatsKey].numberOfCompleted++;
-            }
-          }
+          // if (globalCounter != null) {
+          //   globalCounter.numberOfCompleted++;
+          //   if (globalCounter.dailyStats.containsKey(dailyStatsKey)) {
+          //     globalCounter.dailyStats[dailyStatsKey].numberOfCompleted++;
+          //   } else {
+          //     ApplicationStats todayStats = new ApplicationStats();
+          //     globalCounter.dailyStats[dailyStatsKey] = todayStats;
+          //     globalCounter.dailyStats[dailyStatsKey].numberOfCompleted++;
+          //   }
+          // }
           if (localCounter != null) {
             localCounter.numberOfCompleted++;
             if (localCounter.dailyStats.containsKey(dailyStatsKey)) {
@@ -723,16 +723,16 @@ class BookingApplicationService {
           application.timeOfInProcess = now;
           application.notesInProcess = note;
           application.processedBy = userPhone;
-          if (globalCounter != null) {
-            globalCounter.numberOfInProcess++;
-            if (globalCounter.dailyStats.containsKey(dailyStatsKey)) {
-              globalCounter.dailyStats[dailyStatsKey].numberOfInProcess++;
-            } else {
-              ApplicationStats todayStats = new ApplicationStats();
-              globalCounter.dailyStats[dailyStatsKey] = todayStats;
-              globalCounter.dailyStats[dailyStatsKey].numberOfInProcess++;
-            }
-          }
+          // if (globalCounter != null) {
+          //   globalCounter.numberOfInProcess++;
+          //   if (globalCounter.dailyStats.containsKey(dailyStatsKey)) {
+          //     globalCounter.dailyStats[dailyStatsKey].numberOfInProcess++;
+          //   } else {
+          //     ApplicationStats todayStats = new ApplicationStats();
+          //     globalCounter.dailyStats[dailyStatsKey] = todayStats;
+          //     globalCounter.dailyStats[dailyStatsKey].numberOfInProcess++;
+          //   }
+          // }
           if (localCounter != null) {
             localCounter.numberOfInProcess++;
             if (localCounter.dailyStats.containsKey(dailyStatsKey)) {
@@ -747,16 +747,16 @@ class BookingApplicationService {
           application.timeOfPuttingOnHold = now;
           application.notesOnPuttingOnHold = note;
           application.putOnHoldBy = userPhone;
-          if (globalCounter != null) {
-            globalCounter.numberOfPutOnHold++;
-            if (globalCounter.dailyStats.containsKey(dailyStatsKey)) {
-              globalCounter.dailyStats[dailyStatsKey].numberOfPutOnHold++;
-            } else {
-              ApplicationStats todayStats = new ApplicationStats();
-              globalCounter.dailyStats[dailyStatsKey] = todayStats;
-              globalCounter.dailyStats[dailyStatsKey].numberOfPutOnHold++;
-            }
-          }
+          // if (globalCounter != null) {
+          //   globalCounter.numberOfPutOnHold++;
+          //   if (globalCounter.dailyStats.containsKey(dailyStatsKey)) {
+          //     globalCounter.dailyStats[dailyStatsKey].numberOfPutOnHold++;
+          //   } else {
+          //     ApplicationStats todayStats = new ApplicationStats();
+          //     globalCounter.dailyStats[dailyStatsKey] = todayStats;
+          //     globalCounter.dailyStats[dailyStatsKey].numberOfPutOnHold++;
+          //   }
+          // }
           if (localCounter != null) {
             localCounter.numberOfPutOnHold++;
             if (localCounter.dailyStats.containsKey(dailyStatsKey)) {
@@ -771,16 +771,16 @@ class BookingApplicationService {
           application.timeOfRejection = now;
           application.notesOnRejection = note;
           application.rejectedBy = userPhone;
-          if (globalCounter != null) {
-            globalCounter.numberOfRejected++;
-            if (globalCounter.dailyStats.containsKey(dailyStatsKey)) {
-              globalCounter.dailyStats[dailyStatsKey].numberOfRejected++;
-            } else {
-              ApplicationStats todayStats = new ApplicationStats();
-              globalCounter.dailyStats[dailyStatsKey] = todayStats;
-              globalCounter.dailyStats[dailyStatsKey].numberOfRejected++;
-            }
-          }
+          // if (globalCounter != null) {
+          //   globalCounter.numberOfRejected++;
+          //   if (globalCounter.dailyStats.containsKey(dailyStatsKey)) {
+          //     globalCounter.dailyStats[dailyStatsKey].numberOfRejected++;
+          //   } else {
+          //     ApplicationStats todayStats = new ApplicationStats();
+          //     globalCounter.dailyStats[dailyStatsKey] = todayStats;
+          //     globalCounter.dailyStats[dailyStatsKey].numberOfRejected++;
+          //   }
+          // }
           if (localCounter != null) {
             localCounter.numberOfRejected++;
             if (localCounter.dailyStats.containsKey(dailyStatsKey)) {
@@ -794,44 +794,44 @@ class BookingApplicationService {
         }
 
         if (existingStatus == ApplicationStatus.APPROVED) {
-          if (globalCounter != null) {
-            globalCounter.numberOfApproved--;
-          }
+          // if (globalCounter != null) {
+          //   globalCounter.numberOfApproved--;
+          // }
           if (localCounter != null) {
             localCounter.numberOfApproved--;
           }
         } else if (existingStatus == ApplicationStatus.NEW) {
-          if (globalCounter != null) {
-            globalCounter.numberOfNew--;
-          }
+          // if (globalCounter != null) {
+          //   globalCounter.numberOfNew--;
+          // }
           if (localCounter != null) {
             localCounter.numberOfNew--;
           }
         } else if (existingStatus == ApplicationStatus.COMPLETED) {
-          if (globalCounter != null) {
-            globalCounter.numberOfCompleted--;
-          }
+          // if (globalCounter != null) {
+          //   globalCounter.numberOfCompleted--;
+          // }
           if (localCounter != null) {
             localCounter.numberOfCompleted--;
           }
         } else if (existingStatus == ApplicationStatus.INPROCESS) {
-          if (globalCounter != null) {
-            globalCounter.numberOfInProcess--;
-          }
+          // if (globalCounter != null) {
+          //   globalCounter.numberOfInProcess--;
+          // }
           if (localCounter != null) {
             localCounter.numberOfInProcess--;
           }
         } else if (existingStatus == ApplicationStatus.ONHOLD) {
-          if (globalCounter != null) {
-            globalCounter.numberOfPutOnHold--;
-          }
+          // if (globalCounter != null) {
+          //   globalCounter.numberOfPutOnHold--;
+          // }
           if (localCounter != null) {
             localCounter.numberOfPutOnHold--;
           }
         } else if (existingStatus == ApplicationStatus.REJECTED) {
-          if (globalCounter != null) {
-            globalCounter.numberOfRejected--;
-          }
+          // if (globalCounter != null) {
+          //   globalCounter.numberOfRejected--;
+          // }
           if (localCounter != null) {
             localCounter.numberOfRejected--;
           }
@@ -841,9 +841,9 @@ class BookingApplicationService {
 
         tx.set(applicationRef, application.toJson());
         tx.set(localCounterRef, localCounter.toJson());
-        if (globalCounter != null) {
-          tx.set(globalCounterRef, globalCounter.toJson());
-        }
+        // if (globalCounter != null) {
+        //   tx.set(globalCounterRef, globalCounter.toJson());
+        // }
 
         requestProcessed = true;
       } catch (ex) {
