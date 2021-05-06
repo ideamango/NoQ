@@ -42,18 +42,35 @@ class EntityRowState extends State<EntityRow> {
   bool _initCompleted = false;
   bool isExec = false;
   bool isManager = false;
+  bool isAdmin = false;
+  bool hideAll = false;
   @override
   void initState() {
     super.initState();
     GlobalState.getGlobalState().then((value) {
       _state = value;
       _metaEntity = widget.entity;
+      //
       //Check if logged in user is Admin or not
-      if (_state.getCurrentUser().entityVsRole[_metaEntity.entityId] ==
-          EntityRole.Executive) isExec = true;
+      if (_state
+          .getCurrentUser()
+          .entityVsRole
+          .containsKey(_metaEntity.entityId)) {
+        if (_state.getCurrentUser().entityVsRole[_metaEntity.entityId] ==
+            EntityRole.Executive) isExec = true;
 
-      if (_state.getCurrentUser().entityVsRole[_metaEntity.entityId] ==
-          EntityRole.Manager) isManager = true;
+        if (_state.getCurrentUser().entityVsRole[_metaEntity.entityId] ==
+            EntityRole.Manager) isManager = true;
+        if (_state.getCurrentUser().entityVsRole[_metaEntity.entityId] ==
+            EntityRole.Admin) isAdmin = true;
+        //isExec = true;
+      } else {
+        //TODO : Two cases - 1.This is an entity for which logged-in user doesnt have any defined role defined.
+        //2. Entity is just now created.
+        //
+
+        //hideAll = true;
+      }
 
       //Setstate after init complete
       if (this.mounted) {
@@ -80,7 +97,8 @@ class EntityRowState extends State<EntityRow> {
               "");
         } else {
           Navigator.of(context).push(PageAnimation.createRoute(
-              ManageEntityDetailsPage(entity: entity, isManager: isManager)));
+              ManageEntityDetailsPage(
+                  entity: entity, isManager: isManager || isExec)));
         }
       });
     }
@@ -262,55 +280,54 @@ class EntityRowState extends State<EntityRow> {
                 height: MediaQuery.of(context).size.height * .008,
               ),
               Wrap(children: <Widget>[
-                if (!isExec)
-                  Card(
-                    margin: EdgeInsets.fromLTRB(12, 0, 12, 12),
-                    elevation: 10,
-                    child: GestureDetector(
-                      onTap: () {
-                        if (!isExec) {
-                          showServiceForm();
-                        } else {
-                          Utils.showMyFlushbar(
-                              context,
-                              Icons.info_outline,
-                              Duration(seconds: 5),
-                              "Only Admins have permission to view forms!!",
-                              "");
-                        }
-                      },
-                      child: Container(
-                        margin: EdgeInsets.all(0),
-                        padding: EdgeInsets.all(0),
-                        width: MediaQuery.of(context).size.width * .21,
-                        height: MediaQuery.of(context).size.width * .21,
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            SizedBox(
-                              width: MediaQuery.of(context).size.width * .11,
-                              height: MediaQuery.of(context).size.width * .11,
-                              child: Image(
-                                image: AssetImage('assets/settings.png'),
-                              ),
+                Card(
+                  margin: EdgeInsets.fromLTRB(12, 0, 12, 12),
+                  elevation: 10,
+                  child: GestureDetector(
+                    onTap: () {
+                      if (!hideAll) {
+                        showServiceForm();
+                      } else {
+                        Utils.showMyFlushbar(
+                            context,
+                            Icons.info_outline,
+                            Duration(seconds: 5),
+                            "Only Admins have permission to view forms!!",
+                            "");
+                      }
+                    },
+                    child: Container(
+                      margin: EdgeInsets.all(0),
+                      padding: EdgeInsets.all(0),
+                      width: MediaQuery.of(context).size.width * .21,
+                      height: MediaQuery.of(context).size.width * .21,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          SizedBox(
+                            width: MediaQuery.of(context).size.width * .11,
+                            height: MediaQuery.of(context).size.width * .11,
+                            child: Image(
+                              image: AssetImage('assets/settings.png'),
                             ),
-                            AutoSizeText(
-                              'Details',
-                              group: labelGroup,
-                              maxLines: 1,
-                              minFontSize: 9,
-                              maxFontSize: 11,
-                              style: TextStyle(
-                                  letterSpacing: 1.1,
-                                  color: whiteBtnTextColor,
-                                  fontSize: 12,
-                                  fontFamily: 'Roboto'),
-                            ),
-                          ],
-                        ),
+                          ),
+                          AutoSizeText(
+                            'Details',
+                            group: labelGroup,
+                            maxLines: 1,
+                            minFontSize: 9,
+                            maxFontSize: 11,
+                            style: TextStyle(
+                                letterSpacing: 1.1,
+                                color: whiteBtnTextColor,
+                                fontSize: 12,
+                                fontFamily: 'Roboto'),
+                          ),
+                        ],
                       ),
                     ),
                   ),
+                ),
                 Card(
                   margin: EdgeInsets.fromLTRB(12, 0, 12, 12),
                   elevation: (Utils.isNullOrEmpty(
@@ -319,17 +336,26 @@ class EntityRowState extends State<EntityRow> {
                       : 8,
                   child: GestureDetector(
                     onTap: () {
-                      if (Utils.isNullOrEmpty(
-                          _state.getActiveChildEntityTypes(_metaEntity.type))) {
+                      if (hideAll) {
                         Utils.showMyFlushbar(
                             context,
                             Icons.info_outline,
                             Duration(seconds: 4),
-                            "Contact LESSs team, if you require to add new places inside your ${Utils.getEntityTypeDisplayName(_metaEntity.type)}.",
-                            "");
+                            "$noViewPermission Employees!!",
+                            contactAdmin);
                       } else {
-                        print("To child list page");
-                        showChildListPage();
+                        if (Utils.isNullOrEmpty(_state
+                            .getActiveChildEntityTypes(_metaEntity.type))) {
+                          Utils.showMyFlushbar(
+                              context,
+                              Icons.info_outline,
+                              Duration(seconds: 4),
+                              "Contact LESSs team, if you require to add new places inside your ${Utils.getEntityTypeDisplayName(_metaEntity.type)}.",
+                              "");
+                        } else {
+                          print("To child list page");
+                          showChildListPage();
+                        }
                       }
                     },
                     child: Container(
@@ -429,12 +455,19 @@ class EntityRowState extends State<EntityRow> {
                       ),
                     ),
                   ),
-                if (!isExec)
-                  Card(
-                    margin: EdgeInsets.fromLTRB(12, 0, 12, 12),
-                    elevation: 8,
-                    child: GestureDetector(
-                      onTap: () {
+                Card(
+                  margin: EdgeInsets.fromLTRB(12, 0, 12, 12),
+                  elevation: 8,
+                  child: GestureDetector(
+                    onTap: () {
+                      if (hideAll) {
+                        Utils.showMyFlushbar(
+                            context,
+                            Icons.info_outline,
+                            Duration(seconds: 5),
+                            "$noViewPermission Applications!!",
+                            contactAdmin);
+                      } else {
                         print("Over To overview page");
                         if (!Utils.isNullOrEmpty(_metaEntity.forms)) {
                           if (_metaEntity.forms.length > 1) {
@@ -443,17 +476,17 @@ class EntityRowState extends State<EntityRow> {
                               forms: _metaEntity.forms,
                               metaEntity: _metaEntity,
                               preferredSlotTime: null,
-                              isAdmin: true,
+                              isAdmin: isAdmin,
                               backRoute: ManageEntityListPage(),
                             )));
                           } else {
-                            Navigator.of(context)
-                                .push(PageAnimation.createRoute(OverviewPage(
-                              bookingFormId: _metaEntity.forms[0].id,
-                              bookingFormName: _metaEntity.forms[0].name,
-                              entityId: _metaEntity.entityId,
-                              metaEntity: _metaEntity,
-                            )));
+                            Navigator.of(context).push(
+                                PageAnimation.createRoute(OverviewPage(
+                                    bookingFormId: _metaEntity.forms[0].id,
+                                    bookingFormName: _metaEntity.forms[0].name,
+                                    entityId: _metaEntity.entityId,
+                                    metaEntity: _metaEntity,
+                                    isExec: isExec)));
                           }
                         } else {
                           Utils.showMyFlushbar(
@@ -463,61 +496,76 @@ class EntityRowState extends State<EntityRow> {
                               "No Applications found as of now!!",
                               "");
                         }
+                      }
 
-                        // Navigator.of(context)
-                        //     .push(PageAnimation.createRoute(ManageBookings(
-                        //   metaEntity: _metaEntity,
-                        // )));
-                      },
-                      child: Container(
-                        margin: EdgeInsets.all(0),
-                        padding: EdgeInsets.all(0),
-                        width: MediaQuery.of(context).size.width * .21,
-                        height: MediaQuery.of(context).size.width * .21,
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            SizedBox(
-                              width: MediaQuery.of(context).size.width * .11,
-                              height: MediaQuery.of(context).size.width * .11,
-                              child: Image(
-                                image: AssetImage('assets/applications.png'),
-                              ),
+                      // Navigator.of(context)
+                      //     .push(PageAnimation.createRoute(ManageBookings(
+                      //   metaEntity: _metaEntity,
+                      // )));
+                    },
+                    child: Container(
+                      margin: EdgeInsets.all(0),
+                      padding: EdgeInsets.all(0),
+                      width: MediaQuery.of(context).size.width * .21,
+                      height: MediaQuery.of(context).size.width * .21,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          SizedBox(
+                            width: MediaQuery.of(context).size.width * .11,
+                            height: MediaQuery.of(context).size.width * .11,
+                            child: Image(
+                              image: AssetImage('assets/applications.png'),
                             ),
-                            AutoSizeText(
-                              'Applications',
-                              group: labelGroup,
-                              maxLines: 1,
-                              minFontSize: 9,
-                              maxFontSize: 11,
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                  letterSpacing: 1.1,
-                                  color: _metaEntity.isBookable
-                                      ? whiteBtnTextColor
-                                      : disabledColor,
-                                  fontFamily: 'Roboto'),
-                            ),
-                          ],
-                        ),
+                          ),
+                          AutoSizeText(
+                            'Applications',
+                            group: labelGroup,
+                            maxLines: 1,
+                            minFontSize: 9,
+                            maxFontSize: 11,
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                                letterSpacing: 1.1,
+                                color: _metaEntity.isBookable
+                                    ? whiteBtnTextColor
+                                    : disabledColor,
+                                fontFamily: 'Roboto'),
+                          ),
+                        ],
                       ),
                     ),
                   ),
+                ),
                 Card(
                   margin: EdgeInsets.fromLTRB(12, 0, 12, 12),
                   elevation: 8,
                   child: GestureDetector(
                     onTap: () {
-                      if (_metaEntity.isBookable) {
-                        print("To child list page");
-                        Navigator.of(context)
-                            .push(PageAnimation.createRoute(EntityTokenListPage(
-                          metaEntity: _metaEntity,
-                          backRoute: ManageEntityListPage(),
-                          defaultDate: null,
-                        )));
-                      } else
-                        return;
+                      if (hideAll) {
+                        Utils.showMyFlushbar(
+                            context,
+                            Icons.info_outline,
+                            Duration(seconds: 5),
+                            "$noViewPermission Booking Tokens!",
+                            contactAdmin);
+                      } else {
+                        if (_metaEntity.isBookable) {
+                          print("To child list page");
+                          Navigator.of(context).push(
+                              PageAnimation.createRoute(EntityTokenListPage(
+                            metaEntity: _metaEntity,
+                            backRoute: ManageEntityListPage(),
+                            defaultDate: null,
+                          )));
+                        } else
+                          Utils.showMyFlushbar(
+                              context,
+                              Icons.info_outline,
+                              Duration(seconds: 5),
+                              "It seems this place is not marked as Bookable.",
+                              "Go to Entity Details page and make this Bookable.");
+                      }
                     },
                     child: Container(
                       margin: EdgeInsets.all(0),
@@ -552,65 +600,64 @@ class EntityRowState extends State<EntityRow> {
                     ),
                   ),
                 ),
-                if (!isExec)
-                  Card(
-                    margin: EdgeInsets.fromLTRB(12, 0, 12, 12),
-                    elevation: 8,
-                    child: GestureDetector(
-                      onTap: () {
-                        if (!isExec) {
-                          print("To Add details page");
-                          Navigator.of(context)
-                              .push(PageAnimation.createRoute(ManageEntityForms(
-                            // forms: _metaEntity.forms,
-                            metaEntity: _metaEntity,
-                            preferredSlotTime: null,
-                            isAdmin: true,
-                            backRoute: ManageEntityListPage(),
-                            isManager: isManager,
-                          )));
-                        } else {
-                          Utils.showMyFlushbar(
-                              context,
-                              Icons.info_outline,
-                              Duration(seconds: 5),
-                              "Only Admins have permission to view forms!!",
-                              "");
-                        }
-                      },
-                      child: Container(
-                        margin: EdgeInsets.all(0),
-                        padding: EdgeInsets.all(0),
-                        width: MediaQuery.of(context).size.width * .21,
-                        height: MediaQuery.of(context).size.width * .21,
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            SizedBox(
-                              width: MediaQuery.of(context).size.width * .11,
-                              height: MediaQuery.of(context).size.width * .11,
-                              child: Image(
-                                image: AssetImage('assets/forms.png'),
-                              ),
+                Card(
+                  margin: EdgeInsets.fromLTRB(12, 0, 12, 12),
+                  elevation: 8,
+                  child: GestureDetector(
+                    onTap: () {
+                      if (!hideAll) {
+                        print("To Add details page");
+                        Navigator.of(context)
+                            .push(PageAnimation.createRoute(ManageEntityForms(
+                          // forms: _metaEntity.forms,
+                          metaEntity: _metaEntity,
+                          preferredSlotTime: null,
+                          isFullPermission: isManager || isAdmin,
+                          backRoute: ManageEntityListPage(),
+                          isReadOnly: isExec,
+                        )));
+                      } else {
+                        Utils.showMyFlushbar(
+                            context,
+                            Icons.info_outline,
+                            Duration(seconds: 5),
+                            "Only Admins have permission to view forms!!",
+                            "");
+                      }
+                    },
+                    child: Container(
+                      margin: EdgeInsets.all(0),
+                      padding: EdgeInsets.all(0),
+                      width: MediaQuery.of(context).size.width * .21,
+                      height: MediaQuery.of(context).size.width * .21,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          SizedBox(
+                            width: MediaQuery.of(context).size.width * .11,
+                            height: MediaQuery.of(context).size.width * .11,
+                            child: Image(
+                              image: AssetImage('assets/forms.png'),
                             ),
-                            AutoSizeText(
-                              'Forms',
-                              group: labelGroup,
-                              maxLines: 1,
-                              minFontSize: 9,
-                              maxFontSize: 11,
-                              style: TextStyle(
-                                  letterSpacing: 1.1,
-                                  color: _metaEntity.isBookable
-                                      ? whiteBtnTextColor
-                                      : disabledColor,
-                                  fontFamily: 'Roboto'),
-                            ),
-                          ],
-                        ),
+                          ),
+                          AutoSizeText(
+                            'Forms',
+                            group: labelGroup,
+                            maxLines: 1,
+                            minFontSize: 9,
+                            maxFontSize: 11,
+                            style: TextStyle(
+                                letterSpacing: 1.1,
+                                color: _metaEntity.isBookable
+                                    ? whiteBtnTextColor
+                                    : disabledColor,
+                                fontFamily: 'Roboto'),
+                          ),
+                        ],
                       ),
                     ),
                   ),
+                ),
               ]),
 
               // backgroundColor: Colors.white,

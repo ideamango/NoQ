@@ -1,3 +1,4 @@
+import 'package:LESSs/constants.dart';
 import 'package:enum_to_string/enum_to_string.dart';
 import 'package:flutter/material.dart';
 import '../db/db_model/configurations.dart';
@@ -25,17 +26,17 @@ class ManageEntityForms extends StatefulWidget {
   final MetaEntity metaEntity;
   // final List<MetaForm> forms;
   final DateTime preferredSlotTime;
-  final dynamic isAdmin;
+  final dynamic isFullPermission;
   final dynamic backRoute;
-  final bool isManager;
+  final bool isReadOnly;
   ManageEntityForms(
       {Key key,
       @required this.metaEntity,
       //  @required this.forms,
       @required this.preferredSlotTime,
-      @required this.isAdmin,
+      @required this.isFullPermission,
       @required this.backRoute,
-      @required this.isManager})
+      @required this.isReadOnly})
       : super(key: key);
 
   @override
@@ -85,7 +86,7 @@ class _ManageEntityFormsState extends State<ManageEntityForms> {
 
       _gs.getEntity(widget.metaEntity.entityId).then((value) {
         entity = value.item1;
-        selectedForms.addAll(entity.forms);
+        if (entity.forms != null) selectedForms.addAll(entity.forms);
         setState(() {
           initCompleted = true;
         });
@@ -97,41 +98,41 @@ class _ManageEntityFormsState extends State<ManageEntityForms> {
     _gs = await GlobalState.getGlobalState();
   }
 
-  void _handleValueChange(int value) {
-    setState(() {
-      _selectedValue = value;
-      if (!widget.isAdmin) {
-        dashBoardRoute = CreateFormFields(
-          bookingFormId: forms[_selectedValue].id,
-          metaEntity: widget.metaEntity,
-          preferredSlotTime: widget.preferredSlotTime,
-          backRoute: SearchEntityPage(),
-        );
+  // void _handleValueChange(int value) {
+  //   setState(() {
+  //     _selectedValue = value;
+  //     if (!widget.isFullPermission) {
+  //       dashBoardRoute = CreateFormFields(
+  //         bookingFormId: forms[_selectedValue].id,
+  //         metaEntity: widget.metaEntity,
+  //         preferredSlotTime: widget.preferredSlotTime,
+  //         backRoute: SearchEntityPage(),
+  //       );
 
-        // fwdRoute = BookingApplicationFormPage(
-        //   bookingFormId: forms[_selectedValue].id,
-        //   metaEntity: widget.metaEntity,
-        //   //TODO: getting null check this - SMITA
-        //   preferredSlotTime: widget.preferredSlotTime,
-        //   backRoute: SearchEntityPage(),
-        // );
-      } else {
-        reportsRoute = EntityApplicationListPage(
-          bookingFormId: forms[_selectedValue].id,
-          entityId: widget.metaEntity.entityId,
-          metaEntity: widget.metaEntity,
-          bookingFormName: forms[_selectedValue].name,
-        );
-        //If admin then show overview page as per selected form id
-        dashBoardRoute = OverviewPage(
-          bookingFormId: forms[_selectedValue].id,
-          entityId: widget.metaEntity.entityId,
-          metaEntity: widget.metaEntity,
-          bookingFormName: forms[_selectedValue].name,
-        );
-      }
-    });
-  }
+  //       // fwdRoute = BookingApplicationFormPage(
+  //       //   bookingFormId: forms[_selectedValue].id,
+  //       //   metaEntity: widget.metaEntity,
+  //       //   //TODO: getting null check this - SMITA
+  //       //   preferredSlotTime: widget.preferredSlotTime,
+  //       //   backRoute: SearchEntityPage(),
+  //       // );
+  //     } else {
+  //       reportsRoute = EntityApplicationListPage(
+  //         bookingFormId: forms[_selectedValue].id,
+  //         entityId: widget.metaEntity.entityId,
+  //         metaEntity: widget.metaEntity,
+  //         bookingFormName: forms[_selectedValue].name,
+  //       );
+  //       //If admin then show overview page as per selected form id
+  //       dashBoardRoute = OverviewPage(
+  //         bookingFormId: forms[_selectedValue].id,
+  //         entityId: widget.metaEntity.entityId,
+  //         metaEntity: widget.metaEntity,
+  //         bookingFormName: forms[_selectedValue].name,
+  //       );
+  //     }
+  //   });
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -190,7 +191,7 @@ class _ManageEntityFormsState extends State<ManageEntityForms> {
                       text: TextSpan(
                         style: TextStyle(
                           color: Colors.blueGrey[700],
-                          fontFamily: 'RalewayRegular',
+                          fontFamily: 'Roboto',
                           letterSpacing: 0.5,
                           fontSize: 12.0,
                         ),
@@ -231,22 +232,42 @@ class _ManageEntityFormsState extends State<ManageEntityForms> {
                                               IconButton(
                                                 icon: Icon(
                                                   Icons.add_circle,
-                                                  color: Colors.cyan[700],
+                                                  color: widget.isReadOnly
+                                                      ? Colors.grey[700]
+                                                      : Colors.cyan[700],
                                                   size: 30,
                                                 ),
                                                 onPressed: () {
-                                                  if (widget.isManager) {
+                                                  if (widget.isReadOnly) {
+                                                    Utils.showMyFlushbar(
+                                                        context,
+                                                        Icons.info,
+                                                        Duration(seconds: 3),
+                                                        "$noEditPermission Forms",
+                                                        "");
                                                     return;
                                                   } else {
                                                     checkBoxListTileModel[index]
                                                         .isCheck = true;
 
-                                                    selectedForms.add(
+                                                    if (selectedForms.contains(
                                                         checkBoxListTileModel[
                                                                 index]
-                                                            .form);
+                                                            .form)) {
+                                                      Utils.showMyFlushbar(
+                                                          context,
+                                                          Icons.info,
+                                                          Duration(seconds: 3),
+                                                          "This form is already added.",
+                                                          "");
+                                                    } else {
+                                                      selectedForms.add(
+                                                          checkBoxListTileModel[
+                                                                  index]
+                                                              .form);
 
-                                                    setState(() {});
+                                                      setState(() {});
+                                                    }
                                                   }
                                                 },
                                               ),
@@ -278,12 +299,13 @@ class _ManageEntityFormsState extends State<ManageEntityForms> {
                                                 preferredSlotTime:
                                                     widget.preferredSlotTime,
                                                 backRoute: ManageEntityForms(
-                                                  isAdmin: widget.isAdmin,
+                                                  isFullPermission:
+                                                      widget.isFullPermission,
                                                   metaEntity: widget.metaEntity,
                                                   preferredSlotTime:
                                                       widget.preferredSlotTime,
                                                   backRoute: widget.backRoute,
-                                                  isManager: widget.isManager,
+                                                  isReadOnly: widget.isReadOnly,
                                                 ),
                                               )));
                                             },
@@ -306,15 +328,15 @@ class _ManageEntityFormsState extends State<ManageEntityForms> {
                               )),
                     ),
                     Container(
-                      // color: Colors.blue,
+                      foregroundDecoration: widget.isReadOnly
+                          ? BoxDecoration(
+                              color: Colors.grey[50],
+                              backgroundBlendMode: BlendMode.saturation,
+                            )
+                          : BoxDecoration(),
                       decoration: BoxDecoration(
                           color: Colors.cyan[100],
                           border: Border.all(color: Colors.grey[400]),
-                          // border: Border(
-                          //   top: BorderSide(width: 3.0, color: Colors.amber),
-                          //   bottom:
-                          //       BorderSide(width: 16.0, color: Colors.amber),
-                          // ),
                           borderRadius: BorderRadius.only(
                               topLeft: Radius.circular(4.0),
                               topRight: Radius.circular(4.0))),
@@ -356,6 +378,13 @@ class _ManageEntityFormsState extends State<ManageEntityForms> {
                               itemCount: selectedForms.length,
                               itemBuilder: (BuildContext context, int index) {
                                 return new Container(
+                                  foregroundDecoration: widget.isReadOnly
+                                      ? BoxDecoration(
+                                          color: Colors.grey[50],
+                                          backgroundBlendMode:
+                                              BlendMode.saturation,
+                                        )
+                                      : BoxDecoration(),
                                   padding: EdgeInsets.zero,
                                   margin: EdgeInsets.zero,
                                   child: Column(
@@ -377,6 +406,15 @@ class _ManageEntityFormsState extends State<ManageEntityForms> {
                                                     size: 30,
                                                   ),
                                                   onPressed: () {
+                                                    if (widget.isReadOnly) {
+                                                      Utils.showMyFlushbar(
+                                                          context,
+                                                          Icons.info,
+                                                          Duration(seconds: 3),
+                                                          "$noEditPermission Forms",
+                                                          "");
+                                                      return;
+                                                    }
                                                     selectedForms
                                                         .removeAt(index);
                                                     print(selectedForms.length);
@@ -393,34 +431,35 @@ class _ManageEntityFormsState extends State<ManageEntityForms> {
                                                 ),
                                               ],
                                             ),
-                                            IconButton(
-                                              icon: Icon(
-                                                Icons.preview,
-                                                color: primaryIcon,
-                                              ),
-                                              onPressed: () {
-//Open the form in edit mode
+                                            //TODO Phase2 - dont delete
+//                                             IconButton(
+//                                               icon: Icon(
+//                                                 Icons.preview,
+//                                                 color: primaryIcon,
+//                                               ),
+//                                               onPressed: () {
+// //Open the form in edit mode
 
-                                                Navigator.of(context).push(
-                                                    PageAnimation.createRoute(
-                                                        EntityForm(
-                                                  bookingFormId:
-                                                      selectedForms[index].id,
-                                                  metaEntity: widget.metaEntity,
-                                                  preferredSlotTime:
-                                                      widget.preferredSlotTime,
-                                                  backRoute: ManageEntityForms(
-                                                    isAdmin: widget.isAdmin,
-                                                    metaEntity:
-                                                        widget.metaEntity,
-                                                    preferredSlotTime: widget
-                                                        .preferredSlotTime,
-                                                    backRoute: widget.backRoute,
-                                                    isManager: widget.isManager,
-                                                  ),
-                                                )));
-                                              },
-                                            ),
+//                                                 Navigator.of(context).push(
+//                                                     PageAnimation.createRoute(
+//                                                         EntityForm(
+//                                                   bookingFormId:
+//                                                       selectedForms[index].id,
+//                                                   metaEntity: widget.metaEntity,
+//                                                   preferredSlotTime:
+//                                                       widget.preferredSlotTime,
+//                                                   backRoute: ManageEntityForms(
+//                                                     isAdmin: widget.isAdmin,
+//                                                     metaEntity:
+//                                                         widget.metaEntity,
+//                                                     preferredSlotTime: widget
+//                                                         .preferredSlotTime,
+//                                                     backRoute: widget.backRoute,
+//                                                     isManager: widget.isManager,
+//                                                   ),
+//                                                 )));
+//                                               },
+//                                             ),
                                           ],
                                         ),
                                       )
@@ -441,7 +480,7 @@ class _ManageEntityFormsState extends State<ManageEntityForms> {
                               )),
                     )),
                     Container(
-                      foregroundDecoration: widget.isManager
+                      foregroundDecoration: widget.isReadOnly
                           ? BoxDecoration(
                               color: Colors.grey[50],
                               backgroundBlendMode: BlendMode.saturation,
@@ -456,12 +495,15 @@ class _ManageEntityFormsState extends State<ManageEntityForms> {
                             children: [
                               Text(
                                 "Save Changes ",
-                                style: TextStyle(fontSize: 17),
+                                style: btnTextStyle,
                               ),
                               SizedBox(
                                 width: 5,
                               ),
-                              Icon(Icons.save)
+                              Icon(
+                                Icons.save,
+                                color: Colors.white,
+                              )
                             ],
                           ),
                           splashColor: highlightColor,
@@ -471,9 +513,17 @@ class _ManageEntityFormsState extends State<ManageEntityForms> {
                                   BorderRadius.all(Radius.circular(5.0))),
                           onPressed: () {
                             //Save Entity with updated changes.
-                            if (widget.isManager) {
+                            if (widget.isReadOnly) {
+                              Utils.showMyFlushbar(
+                                  context,
+                                  Icons.info,
+                                  Duration(seconds: 3),
+                                  "$noEditPermission Forms",
+                                  "");
+                              return;
                               return;
                             } else {
+                              if (entity.forms == null) entity.forms = [];
                               entity.forms.clear();
                               entity.forms.addAll(selectedForms);
                               _gs.putEntity(entity, true);

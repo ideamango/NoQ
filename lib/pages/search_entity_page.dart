@@ -509,364 +509,299 @@ class _SearchEntityPageState extends State<SearchEntityPage>
     fontSize = MediaQuery.of(context).size.width;
     print("Font size" + fontSize.toString());
 // build widget only after init has completed, till then show progress indicator.
-    if (!initCompleted) {
-      return MaterialApp(
-        debugShowCheckedModeBanner: false,
-        theme: ThemeData.light().copyWith(),
-        home: new WillPopScope(
-          child: Scaffold(
-              appBar: CustomAppBar(
-                titleTxt: "Search",
-              ),
-              body: Center(
-                child: Container(
-                  margin: EdgeInsets.fromLTRB(
-                      10,
-                      MediaQuery.of(context).size.width * .5,
-                      10,
-                      MediaQuery.of(context).size.width * .5),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      showCircularProgress(),
-                    ],
-                  ),
-                ),
-              ),
+    // if  {
+    // return MaterialApp(
+    //   debugShowCheckedModeBanner: false,
+    //   theme: ThemeData.light().copyWith(),
+    //   home: new WillPopScope(
+    //     child: Scaffold(
+    //         appBar: CustomAppBar(
+    //           titleTxt: "Search",
+    //         ),
+    //         body: Center(
+    //           child: Container(
+    //             margin: EdgeInsets.fromLTRB(
+    //                 10,
+    //                 MediaQuery.of(context).size.width * .5,
+    //                 10,
+    //                 MediaQuery.of(context).size.width * .5),
+    //             child: Column(
+    //               mainAxisAlignment: MainAxisAlignment.center,
+    //               children: <Widget>[
+    //                 showCircularProgress(),
+    //               ],
+    //             ),
+    //           ),
+    //         ),
 
-              //drawer: CustomDrawer(),
-              bottomNavigationBar: CustomBottomBar(barIndex: 1)),
-          onWillPop: willPopCallback,
+    //         //drawer: CustomDrawer(),
+    //         bottomNavigationBar: CustomBottomBar(barIndex: 1)),
+    //     onWillPop: willPopCallback,
+    //   ),
+    // );
+    //  } else {
+    // Widget categoryDropDown = Container(
+    //     width: MediaQuery.of(context).size.width * .48,
+    //     height: MediaQuery.of(context).size.width * .1,
+    //     decoration: new BoxDecoration(
+    //       shape: BoxShape.rectangle,
+    //       color: Colors.white,
+    //       // color: Colors.white,
+    //       borderRadius: BorderRadius.all(Radius.circular(5.0)),
+    //       border: new Border.all(
+    //         color: Colors.blueGrey[400],
+    //         width: 0.5,
+    //       ),
+    //     ),
+    //     child: DropdownButtonHideUnderline(
+    //         child: ButtonTheme(
+    //       alignedDropdown: true,
+    //       child: new DropdownButton(
+    //         iconEnabledColor: Colors.blueGrey[500],
+    //         dropdownColor: Colors.white,
+    //         itemHeight: kMinInteractiveDimension,
+    //         hint: new Text("Select a category"),
+    //         style: TextStyle(fontSize: 12, color: Colors.blueGrey[500]),
+    //         value: _entityType,
+    //         isDense: true,
+    //         // icon: Icon(Icons.search),
+    //         onChanged: (newValue) {
+    //           setState(() {
+    //             print('entity type - old value');
+    //             print(_entityType);
+    //             _entityType = newValue;
+    //             print('entity type - new value - $_entityType');
+    //             _isSearching = "searching";
+    //             _buildSearchList();
+    //           });
+    //         },
+    //         items: searchTypes.map((type) {
+    //           return DropdownMenuItem(
+    //             value: type,
+    //             child: new Text(type.toString(),
+    //                 style:
+    //                     TextStyle(fontSize: 12, color: Colors.blueGrey[500])),
+    //           );
+    //         }).toList(),
+    //       ),
+    //     )));
+
+    Widget searchInputText = Container(
+      width: MediaQuery.of(context).size.width * .95,
+      height: MediaQuery.of(context).size.width * .12,
+      margin: EdgeInsets.only(top: 8),
+      decoration: new BoxDecoration(
+        shape: BoxShape.rectangle,
+        color: Colors.white,
+        // color: Colors.white,
+        borderRadius: BorderRadius.all(Radius.circular(5.0)),
+        border: new Border.all(
+          color: highlightColor,
+          width: 1,
         ),
-      );
-    } else {
-      // Widget categoryDropDown = Container(
-      //     width: MediaQuery.of(context).size.width * .48,
-      //     height: MediaQuery.of(context).size.width * .1,
-      //     decoration: new BoxDecoration(
-      //       shape: BoxShape.rectangle,
-      //       color: Colors.white,
-      //       // color: Colors.white,
-      //       borderRadius: BorderRadius.all(Radius.circular(5.0)),
-      //       border: new Border.all(
-      //         color: Colors.blueGrey[400],
-      //         width: 0.5,
-      //       ),
-      //     ),
-      //     child: DropdownButtonHideUnderline(
-      //         child: ButtonTheme(
-      //       alignedDropdown: true,
-      //       child: new DropdownButton(
-      //         iconEnabledColor: Colors.blueGrey[500],
-      //         dropdownColor: Colors.white,
-      //         itemHeight: kMinInteractiveDimension,
-      //         hint: new Text("Select a category"),
-      //         style: TextStyle(fontSize: 12, color: Colors.blueGrey[500]),
-      //         value: _entityType,
-      //         isDense: true,
-      //         // icon: Icon(Icons.search),
-      //         onChanged: (newValue) {
-      //           setState(() {
-      //             print('entity type - old value');
-      //             print(_entityType);
-      //             _entityType = newValue;
-      //             print('entity type - new value - $_entityType');
-      //             _isSearching = "searching";
-      //             _buildSearchList();
-      //           });
-      //         },
-      //         items: searchTypes.map((type) {
-      //           return DropdownMenuItem(
-      //             value: type,
-      //             child: new Text(type.toString(),
-      //                 style:
-      //                     TextStyle(fontSize: 12, color: Colors.blueGrey[500])),
-      //           );
-      //         }).toList(),
-      //       ),
-      //     )));
+      ),
+      alignment: Alignment.center,
+      child: new TextField(
+        //autofocus: true,
+        controller: _searchTextController,
+        cursorColor: Colors.blueGrey[500],
+        cursorWidth: 1,
+        textAlignVertical: TextAlignVertical.center,
+        style: new TextStyle(fontSize: 15, color: Colors.blueGrey[700]),
+        decoration: new InputDecoration(
+            contentPadding: EdgeInsets.all(2),
+            isDense: true,
+            prefixIconConstraints: BoxConstraints(
+              maxWidth: 25,
+              maxHeight: 22,
+            ),
+            suffixIconConstraints: BoxConstraints(
+              maxWidth: 25,
+              maxHeight: 22,
+            ),
 
-      Widget searchInputText = Container(
-        width: MediaQuery.of(context).size.width * .95,
-        height: MediaQuery.of(context).size.width * .12,
-        margin: EdgeInsets.only(top: 8),
-        decoration: new BoxDecoration(
-          shape: BoxShape.rectangle,
-          color: Colors.white,
-          // color: Colors.white,
-          borderRadius: BorderRadius.all(Radius.circular(5.0)),
-          border: new Border.all(
-            color: highlightColor,
-            width: 1,
-          ),
-        ),
-        alignment: Alignment.center,
-        child: new TextField(
-          //autofocus: true,
-          controller: _searchTextController,
-          cursorColor: Colors.blueGrey[500],
-          cursorWidth: 1,
-          textAlignVertical: TextAlignVertical.center,
-          style: new TextStyle(fontSize: 15, color: Colors.blueGrey[700]),
-          decoration: new InputDecoration(
-              contentPadding: EdgeInsets.all(2),
-              isDense: true,
-              prefixIconConstraints: BoxConstraints(
-                maxWidth: 25,
-                maxHeight: 22,
-              ),
-              suffixIconConstraints: BoxConstraints(
-                maxWidth: 25,
-                maxHeight: 22,
-              ),
-
-              //contentPadding: EdgeInsets.all(0),
-              focusedBorder: UnderlineInputBorder(
-                  borderSide: BorderSide(color: Colors.transparent)),
-              enabledBorder: OutlineInputBorder(
-                borderSide: BorderSide(color: Colors.transparent, width: 0.5),
-              ),
-              prefixIcon: IconButton(
-                // transform: Matrix4.translationValues(-10.0, 0, 0),
-                icon: new Icon(Icons.search,
-                    size: 17, color: Colors.blueGrey[500]),
-                alignment: Alignment.center,
+            //contentPadding: EdgeInsets.all(0),
+            focusedBorder: UnderlineInputBorder(
+                borderSide: BorderSide(color: Colors.transparent)),
+            enabledBorder: OutlineInputBorder(
+              borderSide: BorderSide(color: Colors.transparent, width: 0.5),
+            ),
+            prefixIcon: IconButton(
+              // transform: Matrix4.translationValues(-10.0, 0, 0),
+              icon:
+                  new Icon(Icons.search, size: 17, color: Colors.blueGrey[500]),
+              alignment: Alignment.center,
+              padding: EdgeInsets.all(0),
+              onPressed: () {},
+            ),
+            suffixIcon: new IconButton(
+                //constraints: BoxConstraints.tight(Size(15, 15)),
+                alignment: Alignment.centerLeft,
                 padding: EdgeInsets.all(0),
-                onPressed: () {},
-              ),
-              suffixIcon: new IconButton(
-                  //constraints: BoxConstraints.tight(Size(15, 15)),
-                  alignment: Alignment.centerLeft,
-                  padding: EdgeInsets.all(0),
-                  icon: new Icon(
-                    Icons.close,
-                    size: 17,
-                    color: Colors.blueGrey[500],
-                  ),
-                  onPressed: () {
-                    //Clear search text and build new search results
-                    searchBoxClicked = false;
-                    _searchTextController.clear();
-                    _searchText = "";
-                    setState(() {
-                      messageTitle = "";
-                      _isSearching = "searching";
-                    });
-                    _buildSearchList();
-                  }),
-
-              // Container(
-              //   // transform: Matrix4.translationValues(3.0, 3, 0),
-              //   padding: EdgeInsets.all(0),
-              //   margin: ,
-              //   child:
-              // ),
-              // suffixIconConstraints: BoxConstraints(
-              //   maxWidth: 25,
-              //   maxHeight: 22,
-              // ),
-              hintText: "Search by Name of Business/Place",
-              hintStyle:
-                  new TextStyle(fontSize: 12, color: Colors.blueGrey[500])),
-          onChanged: (value) {
-            if (_searchTextController.text.isEmpty) {
-              if (_entityType == null)
-                setState(() {
-                  _isSearching = "initial";
+                icon: new Icon(
+                  Icons.close,
+                  size: 17,
+                  color: Colors.blueGrey[500],
+                ),
+                onPressed: () {
+                  //Clear search text and build new search results
+                  searchBoxClicked = false;
+                  _searchTextController.clear();
                   _searchText = "";
-                });
-              else {
+                  setState(() {
+                    messageTitle = "";
+                    _isSearching = "searching";
+                  });
+                  _buildSearchList();
+                }),
+
+            // Container(
+            //   // transform: Matrix4.translationValues(3.0, 3, 0),
+            //   padding: EdgeInsets.all(0),
+            //   margin: ,
+            //   child:
+            // ),
+            // suffixIconConstraints: BoxConstraints(
+            //   maxWidth: 25,
+            //   maxHeight: 22,
+            // ),
+            hintText: "Search by Name of Business/Place",
+            hintStyle:
+                new TextStyle(fontSize: 12, color: Colors.blueGrey[500])),
+        onChanged: (value) {
+          if (_searchTextController.text.isEmpty) {
+            if (_entityType == null)
+              setState(() {
+                _isSearching = "initial";
+                _searchText = "";
+              });
+            else {
+              _searchText = _searchTextController.text;
+              _buildSearchList();
+            }
+          } else {
+            if (_searchTextController.text.length >= 4) {
+              setState(() {
+                messageTitle = "";
+                _isSearching = "searching";
                 _searchText = _searchTextController.text;
                 _buildSearchList();
-              }
-            } else {
-              if (_searchTextController.text.length >= 4) {
-                setState(() {
-                  messageTitle = "";
-                  _isSearching = "searching";
-                  _searchText = _searchTextController.text;
-                  _buildSearchList();
-                });
-              }
+              });
             }
-          },
-        ),
-      );
-      Widget searchResultText = Container(
-        width: MediaQuery.of(context).size.width * .85,
-        //height: MediaQuery.of(context).size.height * .03,
-        padding: EdgeInsets.only(bottom: 3),
-        child: RichText(
-            overflow: TextOverflow.visible,
-            maxLines: 2,
-            text: TextSpan(
-                style: TextStyle(color: Colors.blueGrey, fontSize: 12),
-                children: <TextSpan>[
-                  _entityType != null || Utils.isNotNullOrEmpty(_searchText)
-                      ? TextSpan(text: searchResultText1)
-                      : TextSpan(text: ""),
-                  _entityType != null
-                      ? TextSpan(
-                          text: searchResultText2,
-                        )
-                      : TextSpan(text: ""),
-                  _entityType != null
-                      ? TextSpan(
-                          text: Utils.getEntityTypeDisplayName(_entityType),
-                          style: TextStyle(color: highlightColor, fontSize: 12))
-                      : TextSpan(text: ""),
-                  _entityType != null
-                      ? TextSpan(
-                          text: searchResultText3,
-                        )
-                      : TextSpan(text: ""),
-                  Utils.isNotNullOrEmpty(_searchText)
-                      ? (_entityType != null)
-                          ? TextSpan(text: SYMBOL_AND + searchResultText4)
-                          : TextSpan(
-                              text: searchResultText4,
-                            )
-                      : TextSpan(text: ""),
-                  Utils.isNotNullOrEmpty(_searchText)
-                      ? TextSpan(
-                          text: _searchText,
-                          style: TextStyle(color: highlightColor, fontSize: 12))
-                      : TextSpan(text: ""),
-                ])),
-      );
-      Widget filterBar = Container(
-        margin: EdgeInsets.fromLTRB(0, 5, 0, 0),
-        //  padding: EdgeInsets.fromLTRB(5, 0, 5, 0),
-        //decoration: gradientBackground,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: <Widget>[
-            // categoryDropDown,
-            searchInputText,
-            SizedBox(height: 12),
-
-            Container(
-              width: MediaQuery.of(context).size.width * .95,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: <Widget>[
-                  (Utils.isNotNullOrEmpty(_searchText) || _entityType != null)
-                      ? searchResultText
-                      : Container(),
-                  (Utils.isNotNullOrEmpty(_searchText) || _entityType != null)
-                      ? Container(
-                          //  alignment: Alignment.topCenter,
-                          width: MediaQuery.of(context).size.width * .09,
-                          //height: MediaQuery.of(context).size.height * .05,
-                          child: InkWell(
-                            child: Text(
-                              "Clear",
-                              style: errorTextStyleWithUnderLine,
-                            ),
-                            onTap: () {
-                              setState(() {
-                                _searchTextController.clear();
-                                messageTitle = "";
-                                _isSearching = "searching";
-                                _searchText = "";
-                                _entityType = null;
-                                _buildSearchList();
-                              });
-                            },
-                          ),
-                        )
-                      : Container(),
-                ],
-              ),
-            ),
-          ],
-        ),
-      );
-      String title = "Search";
-      print(_searchText);
-      print(_entityType);
-      if (_isSearching == "initial" &&
-          _searchText.isEmpty &&
-          _entityType == null)
-        return MaterialApp(
-          debugShowCheckedModeBanner: false,
-          routes: <String, WidgetBuilder>{
-            '/childSearch': (BuildContext context) => SearchChildEntityPage(),
-            '/mainSearch': (BuildContext context) => SearchEntityPage(),
-          },
-          theme: ThemeData.light().copyWith(),
-          home: new WillPopScope(
-            child: Scaffold(
-                key: key,
-                resizeToAvoidBottomInset: false,
-                appBar: AppBar(
-                    actions: <Widget>[],
-                    flexibleSpace: Container(
-                      decoration: gradientBackground,
-                    ),
-                    leading: IconButton(
-                        padding: EdgeInsets.all(0),
-                        alignment: Alignment.center,
-                        highlightColor: Colors.orange[300],
-                        icon: Icon(Icons.arrow_back),
-                        color: Colors.white,
-                        onPressed: () {
-                          Navigator.of(context).pop();
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => UserHomePage()));
-                        }),
-                    title: Text(
-                      title,
-                      style: TextStyle(color: Colors.white, fontSize: 16),
-                      overflow: TextOverflow.ellipsis,
-                    )),
-                body: Column(
-                  children: <Widget>[
-                    filterBar,
-                    (!Utils.isNullOrEmpty(_pastSearches))
-                        ? Expanded(
-                            child: ListView.builder(
-                                controller: _selectCategoryBtnController,
-                                itemCount: 1,
-                                itemBuilder: (BuildContext context, int index) {
-                                  return Container(
-                                    margin: EdgeInsets.fromLTRB(10, 0, 10, 50),
-                                    child: new Column(
-                                      children: showPastSearches(),
-                                    ),
-                                  );
-                                }),
+          }
+        },
+      ),
+    );
+    Widget searchResultText = Container(
+      width: MediaQuery.of(context).size.width * .85,
+      //height: MediaQuery.of(context).size.height * .03,
+      padding: EdgeInsets.only(bottom: 3),
+      child: RichText(
+          overflow: TextOverflow.visible,
+          maxLines: 2,
+          text: TextSpan(
+              style: TextStyle(color: Colors.blueGrey, fontSize: 12),
+              children: <TextSpan>[
+                _entityType != null || Utils.isNotNullOrEmpty(_searchText)
+                    ? TextSpan(text: searchResultText1)
+                    : TextSpan(text: ""),
+                _entityType != null
+                    ? TextSpan(
+                        text: searchResultText2,
+                      )
+                    : TextSpan(text: ""),
+                _entityType != null
+                    ? TextSpan(
+                        text: Utils.getEntityTypeDisplayName(_entityType),
+                        style: TextStyle(color: highlightColor, fontSize: 12))
+                    : TextSpan(text: ""),
+                _entityType != null
+                    ? TextSpan(
+                        text: searchResultText3,
+                      )
+                    : TextSpan(text: ""),
+                Utils.isNotNullOrEmpty(_searchText)
+                    ? (_entityType != null)
+                        ? TextSpan(text: SYMBOL_AND + searchResultText4)
+                        : TextSpan(
+                            text: searchResultText4,
                           )
-                        : _emptySearchPage(),
-                  ],
-                ),
-                // drawer: CustomDrawer(),
-                floatingActionButton: showMyFloatingActionButton(),
-                floatingActionButtonLocation:
-                    FloatingActionButtonLocation.centerFloat,
-                bottomNavigationBar: CustomBottomBar(barIndex: 1)
+                    : TextSpan(text: ""),
+                Utils.isNotNullOrEmpty(_searchText)
+                    ? TextSpan(
+                        text: _searchText,
+                        style: TextStyle(color: highlightColor, fontSize: 12))
+                    : TextSpan(text: ""),
+              ])),
+    );
+    Widget filterBar = Container(
+      margin: EdgeInsets.fromLTRB(0, 5, 0, 0),
+      //  padding: EdgeInsets.fromLTRB(5, 0, 5, 0),
+      //decoration: gradientBackground,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: <Widget>[
+          // categoryDropDown,
+          searchInputText,
+          SizedBox(height: 12),
 
-                // drawer: CustomDrawer(),
-                ),
-            onWillPop: willPopCallback,
+          Container(
+            width: MediaQuery.of(context).size.width * .95,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                (Utils.isNotNullOrEmpty(_searchText) || _entityType != null)
+                    ? searchResultText
+                    : Container(),
+                (Utils.isNotNullOrEmpty(_searchText) || _entityType != null)
+                    ? Container(
+                        //  alignment: Alignment.topCenter,
+                        width: MediaQuery.of(context).size.width * .09,
+                        //height: MediaQuery.of(context).size.height * .05,
+                        child: InkWell(
+                          child: Text(
+                            "Clear",
+                            style: errorTextStyleWithUnderLine,
+                          ),
+                          onTap: () {
+                            setState(() {
+                              _searchTextController.clear();
+                              messageTitle = "";
+                              _isSearching = "searching";
+                              _searchText = "";
+                              _entityType = null;
+                              _buildSearchList();
+                            });
+                          },
+                        ),
+                      )
+                    : Container(),
+              ],
+            ),
           ),
-        );
-      else {
-        print("Came in isSearching");
-        return MaterialApp(
-          debugShowCheckedModeBanner: false,
-          routes: <String, WidgetBuilder>{
-            '/childSearch': (BuildContext context) => SearchChildEntityPage(),
-            '/mainSearch': (BuildContext context) => SearchEntityPage(),
-          },
-          theme: ThemeData.light().copyWith(),
-          home: new WillPopScope(
-            child: Scaffold(
-                key: key,
-                resizeToAvoidBottomInset: false,
-                appBar: AppBar(
+        ],
+      ),
+    );
+    String title = "Search";
+    print(_searchText);
+    print(_entityType);
+
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      routes: <String, WidgetBuilder>{
+        '/childSearch': (BuildContext context) => SearchChildEntityPage(),
+        '/mainSearch': (BuildContext context) => SearchEntityPage(),
+      },
+      theme: ThemeData.light().copyWith(),
+      home: new WillPopScope(
+        child: Scaffold(
+            key: key,
+            resizeToAvoidBottomInset: false,
+            appBar: (!initCompleted)
+                ? CustomAppBar(
+                    titleTxt: "Search",
+                  )
+                : AppBar(
                     actions: <Widget>[],
                     flexibleSpace: Container(
                       decoration: gradientBackground,
@@ -889,58 +824,177 @@ class _SearchEntityPageState extends State<SearchEntityPage>
                       style: TextStyle(color: Colors.white, fontSize: 16),
                       overflow: TextOverflow.ellipsis,
                     )),
-                body: Stack(
-                  children: <Widget>[
-                    Column(
-                      children: <Widget>[
-                        filterBar,
-                        (_isSearching == "done")
-                            ? ((_stores.length == 0)
-                                ? _emptySearchPage()
-                                : Expanded(child: _listSearchResults()))
-                            //Else could be one when isSearching is 'searching', show circular progress.
-                            : Center(
-                                child: Container(
-                                  height:
-                                      MediaQuery.of(context).size.height * .35,
-                                  alignment: Alignment.bottomCenter,
-                                  child: SingleChildScrollView(
-                                    child: Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: <Widget>[
-                                        showCircularProgress(),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              ),
-                      ],
+            body: (!initCompleted)
+                ? Center(
+                    child: Container(
+                      margin: EdgeInsets.fromLTRB(
+                          10,
+                          MediaQuery.of(context).size.width * .5,
+                          10,
+                          MediaQuery.of(context).size.width * .5),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          showCircularProgress(),
+                        ],
+                      ),
                     ),
-                    // isLoading
-                    //     ? Container(
-                    //         color: Colors.black.withOpacity(0.5),
-                    //         child: Center(
-                    //           child: CircularProgressIndicator(),
-                    //         ),
-                    //       )
-                    //     : Container()
-                  ],
-                ),
-                // drawer: CustomDrawer(),
-                floatingActionButton: showMyFloatingActionButton(),
-                floatingActionButtonLocation:
-                    FloatingActionButtonLocation.centerFloat,
-                bottomNavigationBar: CustomBottomBar(barIndex: 1)
+                  )
+                : ((_isSearching == "initial" &&
+                        _searchText.isEmpty &&
+                        _entityType == null)
+                    ? Column(
+                        children: <Widget>[
+                          filterBar,
+                          (!Utils.isNullOrEmpty(_pastSearches))
+                              ? Expanded(
+                                  child: ListView.builder(
+                                      controller: _selectCategoryBtnController,
+                                      itemCount: 1,
+                                      itemBuilder:
+                                          (BuildContext context, int index) {
+                                        return Container(
+                                          margin: EdgeInsets.fromLTRB(
+                                              10, 0, 10, 50),
+                                          child: new Column(
+                                            children: showPastSearches(),
+                                          ),
+                                        );
+                                      }),
+                                )
+                              : _emptySearchPage(),
+                        ],
+                      )
+                    : Stack(
+                        children: <Widget>[
+                          Column(
+                            children: <Widget>[
+                              filterBar,
+                              (_isSearching == "done")
+                                  ? ((_stores.length == 0)
+                                      ? _emptySearchPage()
+                                      : Expanded(child: _listSearchResults()))
+                                  //Else could be one when isSearching is 'searching', show circular progress.
+                                  : Center(
+                                      child: Container(
+                                        height:
+                                            MediaQuery.of(context).size.height *
+                                                .35,
+                                        alignment: Alignment.bottomCenter,
+                                        child: SingleChildScrollView(
+                                          child: Column(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: <Widget>[
+                                              showCircularProgress(),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                            ],
+                          ),
+                        ],
+                      )),
+            // drawer: CustomDrawer(),
+            floatingActionButton: showMyFloatingActionButton(),
+            floatingActionButtonLocation:
+                FloatingActionButtonLocation.centerFloat,
+            bottomNavigationBar: CustomBottomBar(barIndex: 1)
 
-                // drawer: CustomDrawer(),
-                ),
-            onWillPop: willPopCallback,
-          ),
-        );
-      }
-    }
+            // drawer: CustomDrawer(),
+            ),
+        onWillPop: willPopCallback,
+      ),
+    );
+    // else {
+    //   print("Came in isSearching");
+    //   return MaterialApp(
+    //     debugShowCheckedModeBanner: false,
+    //     routes: <String, WidgetBuilder>{
+    //       '/childSearch': (BuildContext context) => SearchChildEntityPage(),
+    //       '/mainSearch': (BuildContext context) => SearchEntityPage(),
+    //     },
+    //     theme: ThemeData.light().copyWith(),
+    //     home: new WillPopScope(
+    //       child: Scaffold(
+    //           key: key,
+    //           resizeToAvoidBottomInset: false,
+    //           appBar: AppBar(
+    //               actions: <Widget>[],
+    //               flexibleSpace: Container(
+    //                 decoration: gradientBackground,
+    //               ),
+    //               leading: IconButton(
+    //                   padding: EdgeInsets.all(0),
+    //                   alignment: Alignment.center,
+    //                   highlightColor: Colors.orange[300],
+    //                   icon: Icon(Icons.arrow_back),
+    //                   color: Colors.white,
+    //                   onPressed: () {
+    //                     Navigator.of(context).pop();
+    //                     Navigator.push(
+    //                         context,
+    //                         MaterialPageRoute(
+    //                             builder: (context) => UserHomePage()));
+    //                   }),
+    //               title: Text(
+    //                 title,
+    //                 style: TextStyle(color: Colors.white, fontSize: 16),
+    //                 overflow: TextOverflow.ellipsis,
+    //               )),
+    //           body: Stack(
+    //             children: <Widget>[
+    //               Column(
+    //                 children: <Widget>[
+    //                   filterBar,
+    //                   (_isSearching == "done")
+    //                       ? ((_stores.length == 0)
+    //                           ? _emptySearchPage()
+    //                           : Expanded(child: _listSearchResults()))
+    //                       //Else could be one when isSearching is 'searching', show circular progress.
+    //                       : Center(
+    //                           child: Container(
+    //                             height:
+    //                                 MediaQuery.of(context).size.height * .35,
+    //                             alignment: Alignment.bottomCenter,
+    //                             child: SingleChildScrollView(
+    //                               child: Column(
+    //                                 mainAxisAlignment:
+    //                                     MainAxisAlignment.center,
+    //                                 mainAxisSize: MainAxisSize.min,
+    //                                 children: <Widget>[
+    //                                   showCircularProgress(),
+    //                                 ],
+    //                               ),
+    //                             ),
+    //                           ),
+    //                         ),
+    //                 ],
+    //               ),
+    //               // isLoading
+    //               //     ? Container(
+    //               //         color: Colors.black.withOpacity(0.5),
+    //               //         child: Center(
+    //               //           child: CircularProgressIndicator(),
+    //               //         ),
+    //               //       )
+    //               //     : Container()
+    //             ],
+    //           ),
+    //           // drawer: CustomDrawer(),
+    //           floatingActionButton: showMyFloatingActionButton(),
+    //           floatingActionButtonLocation:
+    //               FloatingActionButtonLocation.centerFloat,
+    //           bottomNavigationBar: CustomBottomBar(barIndex: 1)
+
+    //           // drawer: CustomDrawer(),
+    //           ),
+    //       onWillPop: willPopCallback,
+    //     ),
+    //   );
+    // }
   }
 
   Widget showMyFloatingActionButton() {
@@ -1083,10 +1137,10 @@ class _SearchEntityPageState extends State<SearchEntityPage>
       placeDetailsSheetController = null;
       return false;
     } else {
-      //Navigator.of(context).pop();
-      Navigator.push(
-          context, MaterialPageRoute(builder: (context) => UserHomePage()));
-      return false;
+      Navigator.of(context).pop();
+      // Navigator.push(
+      //     context, MaterialPageRoute(builder: (context) => UserHomePage()));
+      // return false;
     }
   }
 
