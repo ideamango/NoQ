@@ -564,13 +564,15 @@ class Utils {
     String entityId = uuid.v1();
     var isPublic = true;
     var isBookable = true;
-    if (entityType == EntityType.PLACE_TYPE_MALL) {
+    if (entityType == EntityType.PLACE_TYPE_MALL ||
+        entityType == EntityType.PLACE_TYPE_HOSPITAL ||
+        entityType == EntityType.PLACE_TYPE_PUBLIC_OFFICE) {
       //is Public and Not bookable
       isPublic = true;
       isBookable = false;
     } else if (entityType == EntityType.PLACE_TYPE_APARTMENT ||
         entityType == EntityType.PLACE_TYPE_SCHOOL ||
-        entityType == EntityType.PLACE_TYPE_OFFICE) {
+        entityType == EntityType.PLACE_TYPE_PRIVATE_OFFICE) {
       // is Private and Not bookable
       isPublic = false;
       isBookable = false;
@@ -584,7 +586,7 @@ class Utils {
         entityId: entityId,
         name: null,
         address: null,
-        advanceDays: null,
+        advanceDays: 2,
         isPublic: isPublic,
         //geo: geoPoint,
         maxAllowed: null,
@@ -764,6 +766,9 @@ class Utils {
         icon = Icons.location_city;
         break;
       case EntityType.PLACE_TYPE_MEDICAL_CLINIC:
+        icon = Icons.local_hospital;
+        break;
+      case EntityType.PLACE_TYPE_PHARMACY:
         icon = Icons.local_pharmacy;
         break;
       case EntityType.PLACE_TYPE_RESTAURANT:
@@ -781,7 +786,10 @@ class Utils {
       case EntityType.PLACE_TYPE_SCHOOL:
         icon = Icons.school;
         break;
-      case EntityType.PLACE_TYPE_OFFICE:
+      case EntityType.PLACE_TYPE_PRIVATE_OFFICE:
+        icon = Icons.work;
+        break;
+      case EntityType.PLACE_TYPE_PUBLIC_OFFICE:
         icon = Icons.work;
         break;
       case EntityType.PLACE_TYPE_GYM:
@@ -799,10 +807,32 @@ class Utils {
       case EntityType.PLACE_TYPE_HOSPITAL:
         icon = Icons.local_hospital;
         break;
+      case EntityType.PLACE_TYPE_DIAGNOSTICS:
+        icon = Icons.biotech;
+        break;
+      case EntityType.PLACE_TYPE_REALSTATE:
+        icon = Icons.home_filled;
+        break;
+      case EntityType.PLACE_TYPE_CAR_SERVICE:
+        icon = Icons.car_repair;
+        break;
+      case EntityType.PLACE_TYPE_BIKE_SERVICE:
+        icon = Icons.directions_bike;
+        break;
+      case EntityType.PLACE_TYPE_PHONE_SERVICE:
+        icon = Icons.mobile_off;
+        break;
+      case EntityType.PLACE_TYPE_OTHERS:
+        icon = Icons.add_shopping_cart;
+        break;
+      case EntityType.PLACE_TYPE_LAPTOP_SERVICE:
+        icon = Icons.laptop_mac;
+        break;
       case EntityType.PLACE_TYPE_OTHERS:
         icon = Icons.add_shopping_cart;
         break;
     }
+
     if (icon != null)
       entityImageWidget = Icon(
         icon,
@@ -858,8 +888,11 @@ class Utils {
       case EntityType.PLACE_TYPE_SCHOOL:
         displayName = PLACE_TYPE_SCHOOL;
         break;
-      case EntityType.PLACE_TYPE_OFFICE:
-        displayName = PLACE_TYPE_OFFICE;
+      case EntityType.PLACE_TYPE_PUBLIC_OFFICE:
+        displayName = PLACE_TYPE_PUBLIC_OFFICE;
+        break;
+      case EntityType.PLACE_TYPE_PRIVATE_OFFICE:
+        displayName = PLACE_TYPE_PRIVATE_OFFICE;
         break;
       case EntityType.PLACE_TYPE_GYM:
         displayName = PLACE_TYPE_GYM;
@@ -875,6 +908,27 @@ class Utils {
         break;
       case EntityType.PLACE_TYPE_HOSPITAL:
         displayName = PLACE_TYPE_HOSPITAL;
+        break;
+      case EntityType.PLACE_TYPE_PHARMACY:
+        displayName = PLACE_TYPE_PHARMACY;
+        break;
+      case EntityType.PLACE_TYPE_DIAGNOSTICS:
+        displayName = PLACE_TYPE_DIAGNOSTICS;
+        break;
+      case EntityType.PLACE_TYPE_REALSTATE:
+        displayName = PLACE_TYPE_REALSTATE;
+        break;
+      case EntityType.PLACE_TYPE_CAR_SERVICE:
+        displayName = PLACE_TYPE_CAR_SERVICE;
+        break;
+      case EntityType.PLACE_TYPE_BIKE_SERVICE:
+        displayName = PLACE_TYPE_BIKE_SERVICE;
+        break;
+      case EntityType.PLACE_TYPE_PHONE_SERVICE:
+        displayName = PLACE_TYPE_PHONE_SERVICE;
+        break;
+      case EntityType.PLACE_TYPE_LAPTOP_SERVICE:
+        displayName = PLACE_TYPE_LAPTOP_SERVICE;
         break;
       case EntityType.PLACE_TYPE_OTHERS:
         displayName = PLACE_TYPE_OTHERS;

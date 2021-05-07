@@ -38,7 +38,7 @@ class ManageChildEntityListPage extends StatefulWidget {
 class _ManageChildEntityListPageState extends State<ManageChildEntityListPage> {
   String _msg;
   final GlobalKey<FormState> _servicesListFormKey = new GlobalKey<FormState>();
-  List<MetaEntity> servicesList = new List<MetaEntity>();
+  List<MetaEntity> servicesList = [];
   ScrollController _childScrollController;
 
   final String title = "Child Amenities Details Form";
@@ -120,7 +120,7 @@ class _ManageChildEntityListPageState extends State<ManageChildEntityListPage> {
 
     parentEntity = widget.entity;
     if (parentEntity == null)
-      servicesList = List<MetaEntity>();
+      servicesList = [];
     else {
       if (!Utils.isNullOrEmpty(parentEntity.childEntities))
         setState(() {
@@ -149,7 +149,6 @@ class _ManageChildEntityListPageState extends State<ManageChildEntityListPage> {
 
   void _addNewServiceRow() {
     Entity en = Utils.createEntity(_subEntityType, parentEntity.entityId);
-    _gs.getCurrentUser().entityVsRole[en.entityId] = EntityRole.Admin;
     _gs.putEntity(en, false, parentEntity.entityId);
     MetaEntity meta;
     //itemSize = MediaQuery.of(context).size.height * .23;

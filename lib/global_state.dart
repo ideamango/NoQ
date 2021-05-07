@@ -27,6 +27,7 @@ import './tuple.dart';
 import './utils.dart';
 import 'package:package_info/package_info.dart';
 import 'db/db_service/user_service.dart';
+import 'enum/entity_role.dart';
 import 'events/event_bus.dart';
 import 'events/events.dart';
 import 'package:timezone/timezone.dart' as tz;
@@ -368,6 +369,7 @@ class GlobalState {
 
     if (isDeleted) {
       _currentUser.entities.removeWhere((element) => element.entityId == id);
+      _currentUser.entityVsRole.remove(id);
       _entities.remove(id);
       _entityState.remove(id);
     }
@@ -391,6 +393,12 @@ class GlobalState {
     if (!existsInUser) {
       _currentUser.entities.add(entity.getMetaEntity());
     }
+
+    if (_currentUser.entityVsRole == null) {
+      _currentUser.entityVsRole = new Map<String, EntityRole>();
+    }
+
+    _currentUser.entityVsRole[entity.entityId] = EntityRole.Admin;
 
     bool saved = false;
     if (saveOnServer) {
@@ -443,7 +451,7 @@ class GlobalState {
   }
 
   List<EntityType> getActiveEntityTypes() {
-    List<EntityType> types = new List<EntityType>();
+    List<EntityType> types = [];
     List<String> stringTypes;
 
     if (isAndroid) {
@@ -464,7 +472,7 @@ class GlobalState {
   }
 
   List<EntityType> getActiveChildEntityTypes(EntityType parentType) {
-    List<EntityType> types = new List<EntityType>();
+    List<EntityType> types = [];
 
     if (!_conf.typeToChildType
         .containsKey(EnumToString.convertToString(parentType))) {
