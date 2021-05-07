@@ -96,21 +96,82 @@ class DBTest {
   Future<void> clearAll() async {
     DateTime now = DateTime.now();
     try {
-      await _gs.getEntityService().deleteEntity('SportsEntity103');
-      await _gs.getEntityService().deleteEntity('SportsEntity104');
-      await _gs.getEntityService().deleteEntity('SportsEntity105');
-      await _gs.getEntityService().deleteEntity('BankEntity106');
-      await _gs.getEntityService().deleteEntity('SalonEntity107');
-      await _gs.getEntityService().deleteEntity('SalonEntity108');
-      await _gs.getEntityService().deleteEntity('GymEntity109');
-      await _gs.getEntityService().deleteEntity('GymEntity110');
+      try {
+        await _gs.getEntityService().deleteEntity('SportsEntity103');
+      } catch (e) {
+        print("SportsEntity103 is not cleared");
+      }
+      try {
+        await _gs.getEntityService().deleteEntity('SportsEntity104');
+      } catch (e) {
+        print("SportsEntity104 is not cleared");
+      }
 
-      await _gs.getTokenService().deleteSlot("Child101-1#2020~7~6");
-      await _gs.getTokenService().deleteSlot("Child101-1#2020~7~7");
-      await _gs.getTokenService().deleteSlot("Child101-1#2020~7~8");
+      try {
+        await _gs.getEntityService().deleteEntity('SportsEntity105');
+      } catch (e) {
+        print("SportsEntity105 is not cleared");
+      }
 
-      await _gs.getEntityService().deleteEntity('MyHomeApartment');
-      await _gs.getEntityService().deleteEntity('SalonMyHomeApartment');
+      try {
+        await _gs.getEntityService().deleteEntity('BankEntity106');
+      } catch (e) {
+        print("BankEntity106 is not cleared");
+      }
+
+      try {
+        await _gs.getEntityService().deleteEntity('SalonEntity107');
+      } catch (e) {
+        print("SalonEntity107 is not cleared");
+      }
+
+      try {
+        await _gs.getEntityService().deleteEntity('SalonEntity108');
+      } catch (e) {
+        print("SalonEntity108 is not cleared");
+      }
+
+      try {
+        await _gs.getEntityService().deleteEntity('GymEntity109');
+      } catch (e) {
+        print("GymEntity109 is not cleared");
+      }
+
+      try {
+        await _gs.getEntityService().deleteEntity('GymEntity110');
+      } catch (e) {
+        print("GymEntity110 is not cleared");
+      }
+
+      try {
+        await _gs.getTokenService().deleteSlot("Child101-1#2020~7~6");
+      } catch (e) {
+        print("Child101-1#2020~7~6 is not cleared");
+      }
+
+      try {
+        await _gs.getTokenService().deleteSlot("Child101-1#2020~7~7");
+      } catch (e) {
+        print("Child101-1#2020~7~7 is not cleared");
+      }
+
+      try {
+        await _gs.getTokenService().deleteSlot("Child101-1#2020~7~8");
+      } catch (e) {
+        print("Child101-1#2020~7~8 is not cleared");
+      }
+
+      try {
+        await _gs.getEntityService().deleteEntity('MyHomeApartment');
+      } catch (e) {
+        print("MyHomeApartment is not cleared");
+      }
+
+      try {
+        await _gs.getEntityService().deleteEntity('SalonMyHomeApartment');
+      } catch (e) {
+        print("SalonMyHomeApartment is not cleared");
+      }
 
       await _gs
           .getTokenService()
@@ -124,13 +185,27 @@ class DBTest {
       await _gs
           .getTokenService()
           .deleteToken("Child101-1#2020~7~8#10~30#+919999999999");
-      await _gs.getEntityService().deleteEntity('Entity101');
 
-      await _gs.getEntityService().deleteEntity('Entity102');
+      try {
+        await _gs.getEntityService().deleteEntity('Entity101');
+      } catch (e) {
+        print("Entity101 is not cleared");
+      }
+
+      try {
+        await _gs.getEntityService().deleteEntity('Entity102');
+      } catch (e) {
+        print("Entity102 is not cleared");
+      }
       //delete user
+
       await _gs.getUserService().deleteCurrentUser();
 
-      await _gs.getEntityService().deleteEntity(Covid_Vacination_center);
+      try {
+        await _gs.getEntityService().deleteEntity(Covid_Vacination_center);
+      } catch (e) {
+        print(Covid_Vacination_center + " is not cleared");
+      }
 
       //delete booking form, NOTE: should not be done for the TEST_COVID_BOOKING_FORM_ID else Ids of the field are
       //going to change and queries would fail
@@ -188,8 +263,11 @@ class DBTest {
       print("Error occurred in cleaning.. may be DB is already cleaned.");
     }
 
-    await _gs.getEntityService().deleteEntity(Multi_Forms_School_ID);
-
+    try {
+      await _gs.getEntityService().deleteEntity(Multi_Forms_School_ID);
+    } catch (e) {
+      print(Multi_Forms_School_ID + " is not cleared");
+    }
     //delete globalCounter
     // String globalCounterNewAdmissionRequestFormId =
     //     SCHOOL_GENERAL_NEW_ADMISSION_BOOKING_FORM_ID +
