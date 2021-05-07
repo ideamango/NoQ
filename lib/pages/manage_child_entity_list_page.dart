@@ -1,3 +1,4 @@
+import 'package:LESSs/enum/entity_role.dart';
 import 'package:another_flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
@@ -47,7 +48,7 @@ class _ManageChildEntityListPageState extends State<ManageChildEntityListPage> {
   EntityType _subEntityType;
   bool _initCompleted = false;
   List<String> subEntityTypes;
-  GlobalState _state;
+  GlobalState _gs;
   double itemSize;
 
 //Add service Row
@@ -105,7 +106,7 @@ class _ManageChildEntityListPageState extends State<ManageChildEntityListPage> {
   }
 
   Future<Entity> getEntityById(String id) async {
-    var tup = await _state.getEntity(id);
+    var tup = await _gs.getEntity(id);
     if (tup != null) {
       return tup.item1;
     }
@@ -138,17 +139,18 @@ class _ManageChildEntityListPageState extends State<ManageChildEntityListPage> {
   }
 
   Future<void> getGlobalState() async {
-    _state = await GlobalState.getGlobalState();
+    _gs = await GlobalState.getGlobalState();
   }
 
   initialize() async {
     await getGlobalState();
-    subEntityTypes = _state.getConfigurations().entityTypes;
+    subEntityTypes = _gs.getConfigurations().entityTypes;
   }
 
   void _addNewServiceRow() {
     Entity en = Utils.createEntity(_subEntityType, parentEntity.entityId);
-    _state.putEntity(en, false, parentEntity.entityId);
+    _gs.getCurrentUser().entityVsRole[en.entityId] = EntityRole.Admin;
+    _gs.putEntity(en, false, parentEntity.entityId);
     MetaEntity meta;
     //itemSize = MediaQuery.of(context).size.height * .23;
 
@@ -390,9 +392,8 @@ class _ManageChildEntityListPageState extends State<ManageChildEntityListPage> {
                   padding: EdgeInsets.all(0),
                   scrollDirection: Axis.vertical,
                   shrinkWrap: true,
-                  itemCount: _state
-                      .getActiveChildEntityTypes(parentEntity.type)
-                      .length,
+                  itemCount:
+                      _gs.getActiveChildEntityTypes(parentEntity.type).length,
                   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: 4,
                       crossAxisSpacing: 10.0,
@@ -407,7 +408,7 @@ class _ManageChildEntityListPageState extends State<ManageChildEntityListPage> {
                         child: Center(
                           child: _buildCategoryItem(
                               context,
-                              _state.getActiveChildEntityTypes(
+                              _gs.getActiveChildEntityTypes(
                                   parentEntity.type)[index]),
                         ),
                       ),
