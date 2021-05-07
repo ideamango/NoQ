@@ -167,7 +167,7 @@ class _ManageEntityListPageState extends State<ManageEntityListPage> {
 
   void _addNewServiceRow() {
     Entity entity = Utils.createEntity(_entityType);
-    _gs.getCurrentUser().entityVsRole[entity.entityId] = EntityRole.Admin;
+    // _gs.getCurrentUser().entityVsRole[entity.entityId] = EntityRole.Admin;
     _gs.putEntity(entity, false);
     MetaEntity metaEn = entity.getMetaEntity();
     //itemSize = MediaQuery.of(context).size.height * .29;
