@@ -83,6 +83,14 @@ class Utils {
     return true;
   }
 
+  static bool isStrNullOrEmpty(String str) {
+    if (str == null) return true;
+    if (str == "") return true;
+    if (str.isEmpty) return true;
+
+    return false;
+  }
+
   static String getFormattedAddress(Address address) {
     String adr =
         (Utils.isNotNullOrEmpty(address.address) ? (address.address) : "") +
