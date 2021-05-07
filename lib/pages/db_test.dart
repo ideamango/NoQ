@@ -137,9 +137,9 @@ class DBTest {
       //commenting it for now, delete the BookingForm only when required
 
       //delete globalCounter
-      String globalCounterId =
-          COVID_VACCINATION_BOOKING_FORM_ID + "#" + now.year.toString();
-      await _gs.getApplicationService().deleteCounter(globalCounterId);
+      // String globalCounterId =
+      //     COVID_VACCINATION_BOOKING_FORM_ID + "#" + now.year.toString();
+      // await _gs.getApplicationService().deleteCounter(globalCounterId);
 
       //delete local counter
       String localCounterId = COVID_VACCINATION_BOOKING_FORM_ID +
@@ -191,13 +191,13 @@ class DBTest {
     await _gs.getEntityService().deleteEntity(Multi_Forms_School_ID);
 
     //delete globalCounter
-    String globalCounterNewAdmissionRequestFormId =
-        SCHOOL_GENERAL_NEW_ADMISSION_BOOKING_FORM_ID +
-            "#" +
-            now.year.toString();
-    await _gs
-        .getApplicationService()
-        .deleteCounter(globalCounterNewAdmissionRequestFormId);
+    // String globalCounterNewAdmissionRequestFormId =
+    //     SCHOOL_GENERAL_NEW_ADMISSION_BOOKING_FORM_ID +
+    //         "#" +
+    //         now.year.toString();
+    // await _gs
+    //     .getApplicationService()
+    //     .deleteCounter(globalCounterNewAdmissionRequestFormId);
 
     //delete local counter
     String localCounterNewAdmissionId =
@@ -210,11 +210,11 @@ class DBTest {
     await _gs.getApplicationService().deleteCounter(localCounterNewAdmissionId);
 
     //delete globalCounter for TC form
-    String globalCounterTCRequestFormId =
-        SCHOOL_GENERAL_TC_REQUEST_FORM_ID + "#" + now.year.toString();
-    await _gs
-        .getApplicationService()
-        .deleteCounter(globalCounterTCRequestFormId);
+    // String globalCounterTCRequestFormId =
+    //     SCHOOL_GENERAL_TC_REQUEST_FORM_ID + "#" + now.year.toString();
+    // await _gs
+    //     .getApplicationService()
+    //     .deleteCounter(globalCounterTCRequestFormId);
 
     //delete local counter for TC form
     String localCounterTCId = SCHOOL_GENERAL_TC_REQUEST_FORM_ID +
@@ -2042,25 +2042,25 @@ class DBTest {
       await tas.submitApplication(ba, vacinationCenter.getMetaEntity());
     }
 
-    BookingApplicationCounter globalOverView = await _gs
-        .getApplicationService()
-        .getApplicationsOverview(
-            COVID_VACCINATION_BOOKING_FORM_ID, null, DateTime.now().year);
+    // BookingApplicationCounter globalOverView = await _gs
+    //     .getApplicationService()
+    //     .getApplicationsOverview(
+    //         COVID_VACCINATION_BOOKING_FORM_ID, null, DateTime.now().year);
 
     BookingApplicationCounter localOverView = await _gs
         .getApplicationService()
         .getApplicationsOverview(COVID_VACCINATION_BOOKING_FORM_ID,
             Covid_Vacination_center, DateTime.now().year);
 
-    if (globalOverView.numberOfApproved == 0 &&
-        globalOverView.numberOfNew == 10 &&
-        globalOverView.numberOfCompleted == 0 &&
-        globalOverView.totalApplications == 10) {
-      print("GlobalApplicationOverview stats after submission --> SUCCESS");
-    } else {
-      print(
-          "GlobalApplicationOverview stats after submission ------------------------------> Failure");
-    }
+    // if (globalOverView.numberOfApproved == 0 &&
+    //     globalOverView.numberOfNew == 10 &&
+    //     globalOverView.numberOfCompleted == 0 &&
+    //     globalOverView.totalApplications == 10) {
+    //   print("GlobalApplicationOverview stats after submission --> SUCCESS");
+    // } else {
+    //   print(
+    //       "GlobalApplicationOverview stats after submission ------------------------------> Failure");
+    // }
 
     if (localOverView.numberOfApproved == 0 &&
         localOverView.numberOfNew == 10 &&
@@ -2128,27 +2128,27 @@ class DBTest {
         null);
 
     //now get the ApplicationOver object to check the count
-    BookingApplicationCounter globalOverView = await _gs
-        .getApplicationService()
-        .getApplicationsOverview(
-            COVID_VACCINATION_BOOKING_FORM_ID, null, DateTime.now().year);
+    // BookingApplicationCounter globalOverView = await _gs
+    //     .getApplicationService()
+    //     .getApplicationsOverview(
+    //         COVID_VACCINATION_BOOKING_FORM_ID, null, DateTime.now().year);
 
     BookingApplicationCounter localOverView = await _gs
         .getApplicationService()
         .getApplicationsOverview(COVID_VACCINATION_BOOKING_FORM_ID,
             Covid_Vacination_center, DateTime.now().year);
 
-    if (globalOverView.numberOfApproved == 2 &&
-        globalOverView.numberOfNew == 5 &&
-        globalOverView.numberOfCompleted == 1 &&
-        globalOverView.totalApplications == 10 &&
-        globalOverView.numberOfPutOnHold == 1 &&
-        globalOverView.numberOfRejected == 1) {
-      print("GlobalApplicationOverview stats after status change --> SUCCESS");
-    } else {
-      print(
-          "GlobalApplicationOverview stats after status change ------------------------------> Failure");
-    }
+    // if (globalOverView.numberOfApproved == 2 &&
+    //     globalOverView.numberOfNew == 5 &&
+    //     globalOverView.numberOfCompleted == 1 &&
+    //     globalOverView.totalApplications == 10 &&
+    //     globalOverView.numberOfPutOnHold == 1 &&
+    //     globalOverView.numberOfRejected == 1) {
+    //   print("GlobalApplicationOverview stats after status change --> SUCCESS");
+    // } else {
+    //   print(
+    //       "GlobalApplicationOverview stats after status change ------------------------------> Failure");
+    // }
 
     if (localOverView.numberOfApproved == 2 &&
         localOverView.numberOfNew == 5 &&
@@ -2178,15 +2178,15 @@ class DBTest {
           "LocalApplicationOverview Daily stats after status change ------------------------------> Failure");
     }
 
-    ApplicationStats globalStats = globalOverView.dailyStats[dailyStatsKey];
+    // ApplicationStats globalStats = globalOverView.dailyStats[dailyStatsKey];
 
-    if (globalStats.numberOfApproved == 2 && globalStats.numberOfNew == 10) {
-      print(
-          "GlobalApplicationOverview Daily Stats after status change --> SUCCESS");
-    } else {
-      print(
-          "GlobalApplicationOverview Daily stats after status change ------------------------------> Failure");
-    }
+    // if (globalStats.numberOfApproved == 2 && globalStats.numberOfNew == 10) {
+    //   print(
+    //       "GlobalApplicationOverview Daily Stats after status change --> SUCCESS");
+    // } else {
+    //   print(
+    //       "GlobalApplicationOverview Daily stats after status change ------------------------------> Failure");
+    // }
 
     List<Tuple<BookingApplication, DocumentSnapshot>> approvedApplications =
         await _gs.getApplicationService().getApplications(
@@ -2219,37 +2219,36 @@ class DBTest {
         approvedBA.id,
         "Cancelled the application and as a result the token should also get cancelled");
 
-    //now get the ApplicationOver object to check the count
-    BookingApplicationCounter globalOverView = await _gs
-        .getApplicationService()
-        .getApplicationsOverview(
-            COVID_VACCINATION_BOOKING_FORM_ID, null, DateTime.now().year);
+    // //now get the ApplicationOver object to check the count
+    // BookingApplicationCounter globalOverView = await _gs
+    //     .getApplicationService()
+    //     .getApplicationsOverview(
+    //         COVID_VACCINATION_BOOKING_FORM_ID, null, DateTime.now().year);
 
     BookingApplicationCounter localOverView = await _gs
         .getApplicationService()
         .getApplicationsOverview(COVID_VACCINATION_BOOKING_FORM_ID,
             Covid_Vacination_center, DateTime.now().year);
 
-    if (globalOverView.numberOfApproved == 1 &&
-        globalOverView.numberOfNew == 5 &&
-        globalOverView.numberOfCompleted == 1 &&
-        globalOverView.totalApplications == 10 &&
-        globalOverView.numberOfPutOnHold == 1 &&
-        globalOverView.numberOfRejected == 1 &&
-        globalOverView.numberOfCancelled == 1) {
-      print("GlobalApplicationOverview stats after cancellation --> SUCCESS");
-    } else {
-      print(
-          "GlobalApplicationOverview stats after cancellation ------------------------------> Failure");
-    }
+    // if (globalOverView.numberOfApproved == 1 &&
+    //     globalOverView.numberOfNew == 5 &&
+    //     globalOverView.numberOfCompleted == 1 &&
+    //     globalOverView.totalApplications == 10 &&
+    //     globalOverView.numberOfPutOnHold == 1 &&
+    //     globalOverView.numberOfRejected == 1 &&
+    //     globalOverView.numberOfCancelled == 1) {
+    //   print("GlobalApplicationOverview stats after cancellation --> SUCCESS");
+    // } else {
+    //   print(
+    //       "GlobalApplicationOverview stats after cancellation ------------------------------> Failure");
+    // }
 
     if (localOverView.numberOfApproved == 1 &&
         localOverView.numberOfNew == 5 &&
         localOverView.numberOfCompleted == 1 &&
         localOverView.totalApplications == 10 &&
         localOverView.numberOfPutOnHold == 1 &&
-        localOverView.numberOfRejected == 1 &&
-        globalOverView.numberOfCancelled == 1) {
+        localOverView.numberOfRejected == 1) {
       print("LocalApplicationOverview stats after cancellation --> SUCCESS");
     } else {
       print(
@@ -2274,17 +2273,17 @@ class DBTest {
           "LocalApplicationOverview Daily stats after cancellation ------------------------------> Failure");
     }
 
-    ApplicationStats globalStats = globalOverView.dailyStats[dailyStatsKey];
+    // ApplicationStats globalStats = globalOverView.dailyStats[dailyStatsKey];
 
-    if (globalStats.numberOfCancelled == 1 &&
-        globalStats.numberOfApproved == 2 &&
-        globalStats.numberOfNew == 10) {
-      print(
-          "GlobalApplicationOverview Daily Stats after cancellation --> SUCCESS");
-    } else {
-      print(
-          "GlobalApplicationOverview Daily stats after cancellation ------------------------------> Failure");
-    }
+    // if (globalStats.numberOfCancelled == 1 &&
+    //     globalStats.numberOfApproved == 2 &&
+    //     globalStats.numberOfNew == 10) {
+    //   print(
+    //       "GlobalApplicationOverview Daily Stats after cancellation --> SUCCESS");
+    // } else {
+    //   print(
+    //       "GlobalApplicationOverview Daily stats after cancellation ------------------------------> Failure");
+    // }
 
     List<Tuple<BookingApplication, DocumentSnapshot>> approvedApplications =
         await _gs.getApplicationService().getApplications(
@@ -2348,7 +2347,7 @@ class DBTest {
 
     print("TCForm for a school with is created");
 
-    List<MetaForm> forms = List<MetaForm>();
+    List<MetaForm> forms = [];
     forms.add(MetaForm(id: admissionForm.id, name: admissionForm.formName));
     forms.add(MetaForm(id: tcForm.id, name: tcForm.formName));
 
