@@ -1,3 +1,4 @@
+import 'package:LESSs/db/exceptions/cant_remove_admin_with_one_admin_exception.dart';
 import 'package:LESSs/db/exceptions/entity_deletion_denied_child_exists_exception.dart';
 import 'package:LESSs/db/exceptions/not_admin_parent_entity_exception.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -399,6 +400,7 @@ class EntityService {
     }
 
     AccessDeniedException accessDeniedException;
+    CantRemoveAdminWithOneAdminException cantRemoveAdminWithOneAdminException;
 
     String roleStr = EnumToString.convertToString(role);
 
@@ -533,6 +535,12 @@ class EntityService {
           ent.executives.add(employee);
         }
 
+        if (ent.admins.length == 0) {
+          cantRemoveAdminWithOneAdminException =
+              CantRemoveAdminWithOneAdminException("Entity cant have no admin");
+          throw cantRemoveAdminWithOneAdminException;
+        }
+
         tx.set(userRef, u.toJson());
         tx.set(entityPrivateRef, ePrivate.toJson());
         tx.set(entityRef, ent.toJson());
@@ -544,6 +552,10 @@ class EntityService {
 
     if (accessDeniedException != null) {
       throw accessDeniedException;
+    }
+
+    if (cantRemoveAdminWithOneAdminException != null) {
+      throw cantRemoveAdminWithOneAdminException;
     }
 
     return isSuccess;
@@ -722,6 +734,10 @@ class EntityService {
     AppUser u;
     bool isSuccess = true;
 
+    AccessDeniedException accessDeniedException;
+    EntityDoesNotExistsException entityDoesNotExistsException;
+    CantRemoveAdminWithOneAdminException cantRemoveAdminWithOneAdminException;
+
     final DocumentReference userRef = fStore.doc('users/' + phone);
     final DocumentReference entityRef = fStore.doc('entities/' + entityId);
     final DocumentReference entityPrivateRef =
@@ -733,8 +749,9 @@ class EntityService {
 
         DocumentSnapshot ePrivateDoc = await tx.get(entityPrivateRef);
         if (!ePrivateDoc.exists) {
-          throw new EntityDoesNotExistsException(
+          entityDoesNotExistsException = EntityDoesNotExistsException(
               "Admin can't be added for the entity which does not exist");
+          throw entityDoesNotExistsException;
         }
 
         EntityPrivate ePrivate = EntityPrivate.fromJson(ePrivateDoc.data());
@@ -743,8 +760,25 @@ class EntityService {
         if (ePrivate.roles[user.phoneNumber] !=
             EnumToString.convertToString(EntityRole.Admin)) {
           //current logged in user should be admin of the entity then only he should be allowed to add another user as admin
-          throw new AccessDeniedException(
+          accessDeniedException = AccessDeniedException(
               "User is not admin, hence can't remove another user");
+          throw accessDeniedException;
+        }
+
+        int adminCount = 0;
+        ePrivate.roles.forEach((key, value) {
+          if (value == EnumToString.convertToString(EntityRole.Admin)) {
+            adminCount++;
+          }
+        });
+
+        if (adminCount == 1) {
+          //user can't remove self when only one admin is left
+          cantRemoveAdminWithOneAdminException =
+              CantRemoveAdminWithOneAdminException(
+                  "User can't remove self, when only one admin is present with the Entity");
+
+          throw cantRemoveAdminWithOneAdminException;
         }
 
         DocumentSnapshot entityDoc = await tx.get(entityRef);
@@ -792,12 +826,6 @@ class EntityService {
           }
 
           if (existingIndexInAdmin > -1) {
-            if (ent.admins.length == 1) {
-              //user can't remove self when only one admin is left
-              throw Exception(
-                  "User can't remove self, when only one admin is present with the Entity");
-            }
-
             ent.admins.removeAt(existingIndexInAdmin);
             entityUpdated = true;
           }
@@ -846,6 +874,18 @@ class EntityService {
         isSuccess = false;
       }
     });
+
+    if (entityDoesNotExistsException != null) {
+      throw entityDoesNotExistsException;
+    }
+
+    if (cantRemoveAdminWithOneAdminException != null) {
+      throw cantRemoveAdminWithOneAdminException;
+    }
+
+    if (accessDeniedException != null) {
+      throw accessDeniedException;
+    }
 
     return isSuccess;
   }

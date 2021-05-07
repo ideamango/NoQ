@@ -1,3 +1,5 @@
+import 'package:LESSs/db/exceptions/cant_remove_admin_with_one_admin_exception.dart';
+import 'package:LESSs/db/exceptions/entity_deletion_denied_child_exists_exception.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:enum_to_string/enum_to_string.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -97,6 +99,18 @@ class DBTest {
     DateTime now = DateTime.now();
     try {
       try {
+        await _gs.getEntityService().deleteEntity('SalonMyHomeApartment');
+      } catch (e) {
+        print("SalonMyHomeApartment is not cleared");
+      }
+
+      try {
+        await _gs.getEntityService().deleteEntity('MyHomeApartment');
+      } catch (e) {
+        print("MyHomeApartment is not cleared");
+      }
+
+      try {
         await _gs.getEntityService().deleteEntity('SportsEntity103');
       } catch (e) {
         print("SportsEntity103 is not cleared");
@@ -187,9 +201,33 @@ class DBTest {
           .deleteToken("Child101-1#2020~7~8#10~30#+919999999999");
 
       try {
-        await _gs.getEntityService().deleteEntity('Entity101');
+        bool deleted = await _gs.getEntityService().deleteEntity('Entity101');
+        if (deleted) {
+          print(
+              "Entity101 deletion failed as per expectation as Child Enities Exists --> FAILURE");
+        }
       } catch (e) {
-        print("Entity101 is not cleared");
+        if (e is EntityDeletionDeniedChildExistsException) {
+          print(
+              "Entity101 deletion failed as per expectation as Child Enities Exists --> SUCCESS");
+        } else {
+          print(
+              "Entity101 deletion failed as per expectation as Child Enities Exists --> FAILURE");
+        }
+      }
+
+      try {
+        //first delete all children then deleted parent Entity
+        bool deletedChild1 =
+            await _gs.getEntityService().deleteEntity('Child101-1');
+        bool deletedChild2 =
+            await _gs.getEntityService().deleteEntity('Child101-2');
+        bool deletedChild3 =
+            await _gs.getEntityService().deleteEntity('Child101-3');
+        bool parentDeleted =
+            await _gs.getEntityService().deleteEntity('Entity101');
+      } catch (e) {
+        print("Entity101 deletion failed --> FAILURE");
       }
 
       try {
@@ -699,6 +737,24 @@ class DBTest {
     }
 
     await _gs.getEntityService().removeEmployee('Child101-1', "+913611009823");
+
+    try {
+      bool removed = await _gs
+          .getEntityService()
+          .removeEmployee('Child101-1', "+919999999999");
+      if (removed) {
+        print(
+            "Remove Admin failed as per expectation, as +919999999999 was the only admin --> FAILURE");
+      }
+    } catch (e) {
+      if (e is CantRemoveAdminWithOneAdminException) {
+        print(
+            "Remove Admin failed as per expectation, as +919999999999 was the only admin --> SUCCESS");
+      } else {
+        print(
+            "Remove Admin failed as per expectation, as +919999999999 was the only admin --> FAILURE");
+      }
+    }
 
     Entity child101 = await _gs.getEntityService().getEntity('Child101-1');
 
@@ -1830,6 +1886,23 @@ class DBTest {
       await _gs
           .getEntityService()
           .upsertChildEntityToParent(childEntity, "MyHomeApartment");
+    } catch (e) {
+      print("Exception occured " + e.toString());
+    }
+
+    //this is added so that removal of single admin case does not arise
+    Employee secondAdmin = new Employee();
+    secondAdmin.name = "Second Admin";
+    secondAdmin.ph = "+911111111111";
+
+    try {
+      await _gs
+          .getEntityService()
+          .addEmployee("MyHomeApartment", secondAdmin, EntityRole.Admin);
+
+      await _gs
+          .getEntityService()
+          .addEmployee("SalonMyHomeApartment", secondAdmin, EntityRole.Admin);
     } catch (e) {
       print("Exception occured " + e.toString());
     }
