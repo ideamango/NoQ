@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:LESSs/widget/countdown_timer.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/gestures.dart';
@@ -663,61 +665,63 @@ class _LoginPageState extends State<LoginPage> {
                     //         style: errorTextStyle,
                     //       )
                     //     : SizedBox(height: 1)),
-                    (!timeLapsed)
-                        ? Container(
-                            padding: EdgeInsets.fromLTRB(0, 12, 0, 12),
-                            width: dialogWidth,
-                            height: MediaQuery.of(context).size.width * .15,
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: [
-                                Container(
-                                  alignment: Alignment.centerRight,
-                                  padding: EdgeInsets.zero,
-                                  margin: EdgeInsets.zero,
-                                  //   width: MediaQuery.of(context).size.width * .7,
-                                  child: Text("Automatically reading OTP in ",
-                                      style: TextStyle(
-                                        fontSize: 14,
-                                        fontFamily: 'Roboto',
-                                        color: Colors.blueGrey[800],
-                                      )),
-                                ),
-                                Container(
-                                    padding: EdgeInsets.all(0),
+                    if (Platform.isAndroid)
+                      (!timeLapsed)
+                          ? Container(
+                              padding: EdgeInsets.fromLTRB(0, 12, 0, 12),
+                              width: dialogWidth,
+                              height: MediaQuery.of(context).size.width * .15,
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  Container(
+                                    alignment: Alignment.centerRight,
+                                    padding: EdgeInsets.zero,
                                     margin: EdgeInsets.zero,
-                                    alignment: Alignment.center,
-                                    width: dialogWidth * .11,
-                                    height:
-                                        MediaQuery.of(context).size.width * .11,
-                                    //  width: 50,
-                                    child: CountDownTimer()),
-                                Container(
-                                  alignment: Alignment.centerRight,
-                                  padding: EdgeInsets.zero,
-                                  margin: EdgeInsets.zero,
-                                  //   width: MediaQuery.of(context).size.width * .7,
-                                  child: Text("seconds. ",
-                                      style: TextStyle(
-                                        fontSize: 14,
-                                        fontFamily: 'Roboto',
-                                        color: Colors.blueGrey[800],
-                                      )),
-                                ),
-                              ],
-                            ))
-                        : Container(
-                            padding: EdgeInsets.fromLTRB(0, 12, 0, 12),
-                            width: dialogWidth,
-                            height: 80,
-                            child: Text(
-                                "Could not read OTP automatically. Click 'Resend' to receive a new OTP.  ",
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  fontFamily: 'Roboto',
-                                  color: Colors.blueGrey[800],
-                                )),
-                          ),
+                                    //   width: MediaQuery.of(context).size.width * .7,
+                                    child: Text("Automatically reading OTP in ",
+                                        style: TextStyle(
+                                          fontSize: 14,
+                                          fontFamily: 'Roboto',
+                                          color: Colors.blueGrey[800],
+                                        )),
+                                  ),
+                                  Container(
+                                      padding: EdgeInsets.all(0),
+                                      margin: EdgeInsets.zero,
+                                      alignment: Alignment.center,
+                                      width: dialogWidth * .11,
+                                      height:
+                                          MediaQuery.of(context).size.width *
+                                              .11,
+                                      //  width: 50,
+                                      child: CountDownTimer()),
+                                  Container(
+                                    alignment: Alignment.centerRight,
+                                    padding: EdgeInsets.zero,
+                                    margin: EdgeInsets.zero,
+                                    //   width: MediaQuery.of(context).size.width * .7,
+                                    child: Text("seconds. ",
+                                        style: TextStyle(
+                                          fontSize: 14,
+                                          fontFamily: 'Roboto',
+                                          color: Colors.blueGrey[800],
+                                        )),
+                                  ),
+                                ],
+                              ))
+                          : Container(
+                              padding: EdgeInsets.fromLTRB(0, 12, 0, 12),
+                              width: dialogWidth,
+                              height: 80,
+                              child: Text(
+                                  "Could not read OTP automatically. Click 'Resend' to receive a new OTP.  ",
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    fontFamily: 'Roboto',
+                                    color: Colors.blueGrey[800],
+                                  )),
+                            ),
                     Divider(
                       color: Colors.blueGrey[400],
                       height: 1,

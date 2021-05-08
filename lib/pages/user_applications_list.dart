@@ -214,24 +214,17 @@ class _UserApplicationsListState extends State<UserApplicationsList> {
         .where((element) => element.isMeta == true));
 
     for (var element in listOfMeta) {
-      switch (element.label) {
-        case "Name of the Applicant":
+      switch (element.type) {
+        case FieldType.TEXT:
           name = (element as FormInputFieldText).response;
           break;
-        case "Date of Birth of the Applicant":
+        case FieldType.DATETIME:
           FormInputFieldDateTime newfield = element;
           age = ((DateTime.now().difference(newfield.responseDateTime).inDays) /
                   365)
               .toStringAsFixed(0);
           break;
-        case "Only for Frontline workers":
-          FormInputFieldOptionsWithAttachments newfield = element;
-          isFrontlineWorker = !Utils.isNullOrEmpty(newfield.responseValues);
-          if (isFrontlineWorker) {
-            fwImg1 = newfield.responseValues[0].value;
-          }
-          break;
-        case "Pre-existing Medical Conditions":
+        case FieldType.OPTIONS_ATTACHMENTS:
           FormInputFieldOptionsWithAttachments newfield = element;
           isMedicalMorbidities = !Utils.isNullOrEmpty(newfield.responseValues);
           if (isMedicalMorbidities) {
@@ -249,7 +242,20 @@ class _UserApplicationsListState extends State<UserApplicationsList> {
             //   mbImg2 = newfield.responseValues[1].value;
           }
           break;
+        case FieldType.PHONE:
+          break;
+        case FieldType.NUMBER:
+          {}
+          break;
+        case FieldType.OPTIONS:
+          {}
+          break;
+        case FieldType.ATTACHMENT:
+          {}
+          break;
+
         default:
+          name = (element as FormInputFieldText).response;
           break;
       }
     }
