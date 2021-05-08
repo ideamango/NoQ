@@ -495,7 +495,7 @@ class _LoginPageState extends State<LoginPage> {
             });
             return AlertDialog(
               insetPadding: EdgeInsets.symmetric(horizontal: 10, vertical: 20),
-              backgroundColor: Colors.grey[200],
+              backgroundColor: Colors.white,
               titleTextStyle: inputTextStyle,
               elevation: 10.0,
               contentTextStyle: TextStyle(color: primaryDarkColor),
@@ -510,11 +510,27 @@ class _LoginPageState extends State<LoginPage> {
                       height: MediaQuery.of(context).size.height * .03,
                       child: Row(
                         // mainAxisSize: MainAxisSize.max,
-                        mainAxisAlignment: MainAxisAlignment.end,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: <Widget>[
                           Container(
+                            width: dialogWidth * .1,
+                          ),
+                          Container(
+                            alignment: Alignment.center,
+                            width: dialogWidth * .7,
                             height: MediaQuery.of(context).size.height * .03,
-                            transform: Matrix4.translationValues(12.0, -10, 0),
+                            //  transform: Matrix4.translationValues(12.0, -10, 0),
+                            child: Text("Enter One-Time Password(OTP)",
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w800,
+                                  color: Colors.blueGrey[800],
+                                )),
+                          ),
+                          Container(
+                            width: dialogWidth * .08,
+                            height: MediaQuery.of(context).size.height * .03,
+                            transform: Matrix4.translationValues(0, -10, 0),
                             child: IconButton(
                               icon: Icon(
                                 Icons.cancel,
@@ -537,8 +553,8 @@ class _LoginPageState extends State<LoginPage> {
                             TextSpan(
                                 text: 'OTP',
                                 style: TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.w800,
+                                  fontSize: 15,
+                                  fontFamily: 'Roboto',
                                   color: Colors.blueGrey[800],
                                 )),
                             TextSpan(
@@ -678,10 +694,10 @@ class _LoginPageState extends State<LoginPage> {
                                     alignment: Alignment.centerRight,
                                     padding: EdgeInsets.zero,
                                     margin: EdgeInsets.zero,
-                                    //   width: MediaQuery.of(context).size.width * .7,
+                                    //width: dialogWidth * .7,
                                     child: Text("Automatically reading OTP in ",
                                         style: TextStyle(
-                                          fontSize: 14,
+                                          fontSize: 16,
                                           fontFamily: 'Roboto',
                                           color: Colors.blueGrey[800],
                                         )),
@@ -689,21 +705,21 @@ class _LoginPageState extends State<LoginPage> {
                                   Container(
                                       padding: EdgeInsets.all(0),
                                       margin: EdgeInsets.zero,
-                                      alignment: Alignment.center,
-                                      width: dialogWidth * .11,
+                                      alignment: Alignment.bottomLeft,
+                                      width: dialogWidth * .1,
                                       height:
                                           MediaQuery.of(context).size.width *
                                               .11,
                                       //  width: 50,
                                       child: CountDownTimer()),
                                   Container(
-                                    alignment: Alignment.centerRight,
+                                    alignment: Alignment.centerLeft,
                                     padding: EdgeInsets.zero,
                                     margin: EdgeInsets.zero,
-                                    //   width: MediaQuery.of(context).size.width * .7,
+                                    width: dialogWidth * .15,
                                     child: Text("seconds. ",
                                         style: TextStyle(
-                                          fontSize: 14,
+                                          fontSize: 12,
                                           fontFamily: 'Roboto',
                                           color: Colors.blueGrey[800],
                                         )),
@@ -738,7 +754,7 @@ class _LoginPageState extends State<LoginPage> {
               actions: <Widget>[
                 SizedBox(
                   height: 40,
-                  width: dialogWidth * .3,
+                  width: dialogWidth * .4,
                   child: MaterialButton(
                     color: Colors.white,
                     textColor: btnColor,
@@ -747,7 +763,7 @@ class _LoginPageState extends State<LoginPage> {
                         borderRadius: BorderRadius.all(Radius.circular(3.0))),
                     child: Text(
                       'Clear',
-                      style: TextStyle(fontSize: dialogWidth * .037),
+                      style: TextStyle(fontSize: dialogWidth * .047),
                     ),
                     onPressed: () {
                       setState(() {
@@ -758,99 +774,101 @@ class _LoginPageState extends State<LoginPage> {
                     },
                   ),
                 ),
-                SizedBox(
-                  height: timeLapsed ? 50 : 40,
-                  width: dialogWidth * .3,
-                  child: MaterialButton(
-                    color: timeLapsed ? btnColor : Colors.white,
-                    textColor: timeLapsed ? Colors.white : btnColor,
-                    shape: RoundedRectangleBorder(
-                        side: BorderSide(color: btnColor),
-                        borderRadius: BorderRadius.all(Radius.circular(3.0))),
-                    child: Text(
-                      'Resend OTP',
-                      style: TextStyle(fontSize: dialogWidth * .037),
+                if (timeLapsed)
+                  SizedBox(
+                    height: 40,
+                    width: dialogWidth * .5,
+                    child: MaterialButton(
+                      color: timeLapsed ? btnColor : Colors.white,
+                      textColor: timeLapsed ? Colors.white : btnColor,
+                      shape: RoundedRectangleBorder(
+                          side: BorderSide(color: btnColor),
+                          borderRadius: BorderRadius.all(Radius.circular(3.0))),
+                      child: Text(
+                        'Resend OTP',
+                        style: TextStyle(fontSize: dialogWidth * .047),
+                      ),
+                      onPressed: () {
+                        if (timeLapsed)
+                          EventBus.fireEvent(OTP_RESEND_EVENT, null, null);
+                        else
+                          return;
+                      },
                     ),
-                    onPressed: () {
-                      if (timeLapsed)
-                        EventBus.fireEvent(OTP_RESEND_EVENT, null, null);
-                      else
-                        return;
-                    },
                   ),
-                ),
-                SizedBox(
-                  width: dialogWidth * .3,
-                  height: !timeLapsed ? 50 : 40,
-                  child: MaterialButton(
-                    color: !timeLapsed ? btnColor : Colors.white,
-                    textColor: !timeLapsed ? Colors.white : btnColor,
-                    shape: RoundedRectangleBorder(
-                        side: BorderSide(color: btnColor),
-                        borderRadius: BorderRadius.all(Radius.circular(3.0))),
-                    child: Text('Approve OTP',
-                        style: TextStyle(fontSize: dialogWidth * .037)),
-                    onPressed: () {
-                      if (!timeLapsed) {
-                        print(_pinPutController.text);
-                        _pin = _pinPutController.text;
+                if (!timeLapsed)
+                  SizedBox(
+                    width: dialogWidth * .5,
+                    height: 40,
+                    child: MaterialButton(
+                      color: !timeLapsed ? btnColor : Colors.white,
+                      textColor: !timeLapsed ? Colors.white : btnColor,
+                      shape: RoundedRectangleBorder(
+                          side: BorderSide(color: btnColor),
+                          borderRadius: BorderRadius.all(Radius.circular(3.0))),
+                      child: Text('Approve OTP',
+                          style: TextStyle(fontSize: dialogWidth * .047)),
+                      onPressed: () {
+                        if (!timeLapsed) {
+                          print(_pinPutController.text);
+                          _pin = _pinPutController.text;
 
-                        try {
-                          User user = _state
-                              .getAuthService()
-                              .getFirebaseAuth()
-                              .currentUser;
+                          try {
+                            User user = _state
+                                .getAuthService()
+                                .getFirebaseAuth()
+                                .currentUser;
 
-                          if (user != null) {
-                            Navigator.of(context).pop();
-                            Navigator.pushReplacement(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => UserHomePage(
-                                          dontShowUpdate: false,
-                                        )));
-                          } else {
-                            if (_pin == null || _pin == "") {
-                              setState(() {
-                                _errorMessage =
-                                    "Please enter 6 digit OTP sent on your phone.";
-                              });
+                            if (user != null) {
+                              Navigator.of(context).pop();
+                              Navigator.pushReplacement(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => UserHomePage(
+                                            dontShowUpdate: false,
+                                          )));
                             } else {
-                              AuthCredential authCreds =
-                                  PhoneAuthProvider.credential(
-                                      verificationId: verificationId,
-                                      smsCode: _pin);
-                              _state
-                                  .getAuthService()
-                                  .getFirebaseAuth()
-                                  .signInWithCredential(authCreds)
-                                  .then((UserCredential authResult) {
-                                Navigator.of(context).pop();
-                                Navigator.pushReplacement(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => UserHomePage(
-                                              dontShowUpdate: false,
-                                            )));
-                              }).catchError((onError) {
-                                handleAuthException(onError);
+                              if (_pin == null || _pin == "") {
+                                setState(() {
+                                  _errorMessage =
+                                      "Please enter 6 digit OTP sent on your phone.";
+                                });
+                              } else {
+                                AuthCredential authCreds =
+                                    PhoneAuthProvider.credential(
+                                        verificationId: verificationId,
+                                        smsCode: _pin);
+                                _state
+                                    .getAuthService()
+                                    .getFirebaseAuth()
+                                    .signInWithCredential(authCreds)
+                                    .then((UserCredential authResult) {
+                                  Navigator.of(context).pop();
+                                  Navigator.pushReplacement(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => UserHomePage(
+                                                dontShowUpdate: false,
+                                              )));
+                                }).catchError((onError) {
+                                  handleAuthException(onError);
 
-                                setState(() {});
-                              });
+                                  setState(() {});
+                                });
+                              }
                             }
+                          } catch (err) {
+                            print("$err.toString()");
+                            setState(() {
+                              _errorMessage = err.toString();
+                            });
                           }
-                        } catch (err) {
-                          print("$err.toString()");
-                          setState(() {
-                            _errorMessage = err.toString();
-                          });
+                        } else {
+                          return;
                         }
-                      } else {
-                        return;
-                      }
-                    },
+                      },
+                    ),
                   ),
-                ),
               ],
             );
           });
