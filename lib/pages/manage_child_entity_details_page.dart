@@ -1169,7 +1169,7 @@ class _ManageChildEntityDetailsPageState
       style: textInputTextStyle,
       keyboardType: TextInputType.phone,
       controller: _whatsappPhoneController,
-      autovalidateMode: AutovalidateMode.onUserInteraction,
+      autovalidateMode: AutovalidateMode.always,
       decoration: InputDecoration(
         prefixText: '+91',
         labelText: 'WhatsApp Number',
@@ -1187,10 +1187,10 @@ class _ManageChildEntityDetailsPageState
         return Utils.validateMobileField(value);
       },
       onChanged: (value) {
-        if (value != "") serviceEntity.whatsapp = _phCountryCode + (value);
+        serviceEntity.whatsapp = _phCountryCode + (value);
       },
       onSaved: (String value) {
-        if (value != "") serviceEntity.whatsapp = "+91" + (value);
+        serviceEntity.whatsapp = _phCountryCode + (value);
         print("Whatsapp Number");
       },
     );
@@ -1204,7 +1204,7 @@ class _ManageChildEntityDetailsPageState
       keyboardType: TextInputType.phone,
       controller: _contactPhoneController,
       decoration: InputDecoration(
-        prefixText: '+91',
+        prefixText: _phCountryCode,
         labelText: 'Contact Phone Number (recommended)',
         enabledBorder:
             UnderlineInputBorder(borderSide: BorderSide(color: Colors.grey)),
@@ -3210,22 +3210,23 @@ class _ManageChildEntityDetailsPageState
                                         alignment: Alignment.centerLeft,
                                         padding:
                                             EdgeInsets.fromLTRB(10, 0, 10, 0),
-                                        width: rowWidth * .6,
-                                        child: FlatButton(
+                                        width: rowWidth * .7,
+                                        child: MaterialButton(
                                             visualDensity:
                                                 VisualDensity.compact,
                                             padding: EdgeInsets.all(0),
                                             child: Row(
                                               mainAxisSize: MainAxisSize.min,
                                               children: <Widget>[
-                                                Text('Online Consultation',
-                                                    style: TextStyle(
-                                                        fontSize: 14)),
+                                                Container(
+                                                  //  width: rowWidth * .5,
+                                                  child: Text(
+                                                      'Online Consultation',
+                                                      style: TextStyle(
+                                                          fontSize: 14)),
+                                                ),
                                                 SizedBox(
-                                                  width: MediaQuery.of(context)
-                                                          .size
-                                                          .width *
-                                                      .1,
+                                                  width: rowWidth * .1,
                                                   child: Icon(
                                                     Icons.info,
                                                     color: Colors.blueGrey[600],
@@ -3290,9 +3291,13 @@ class _ManageChildEntityDetailsPageState
                                                       validateFieldsForOnlineConsultation();
                                                   if (Utils.isNotNullOrEmpty(
                                                       msg)) {
-                                                    whatsappPhoneKey
-                                                        .currentState
-                                                        .validate();
+                                                    if (whatsappPhoneKey
+                                                            .currentState !=
+                                                        null) {
+                                                      whatsappPhoneKey
+                                                          .currentState
+                                                          .validate();
+                                                    }
                                                     Utils.showMyFlushbar(
                                                         context,
                                                         Icons.info_outline,

@@ -1136,7 +1136,7 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
         style: textInputTextStyle,
         keyboardType: TextInputType.phone,
         controller: _whatsappPhoneController,
-        autovalidateMode: AutovalidateMode.onUserInteraction,
+        autovalidateMode: AutovalidateMode.always,
         decoration: InputDecoration(
           prefixText: '+91',
           labelText: 'WhatsApp Number (optional)',
@@ -1154,10 +1154,10 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
           return Utils.validateMobileField(value);
         },
         onChanged: (value) {
-          if (value != "") entity.whatsapp = _phCountryCode + (value);
+          entity.whatsapp = _phCountryCode + (value);
         },
         onSaved: (String value) {
-          if (value != "") entity.whatsapp = _phCountryCode + (value);
+          entity.whatsapp = _phCountryCode + (value);
         },
       );
       final callingPhone = TextFormField(
@@ -3678,21 +3678,22 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
                                       alignment: Alignment.centerLeft,
                                       padding:
                                           EdgeInsets.fromLTRB(10, 0, 10, 0),
-                                      width: rowWidth * .6,
-                                      child: FlatButton(
+                                      width: rowWidth * .7,
+                                      child: MaterialButton(
                                           visualDensity: VisualDensity.compact,
                                           padding: EdgeInsets.all(0),
                                           child: Row(
                                             mainAxisSize: MainAxisSize.min,
                                             children: <Widget>[
-                                              Text('Online Consultation',
-                                                  style:
-                                                      TextStyle(fontSize: 14)),
+                                              Container(
+                                                //  width: rowWidth * .5,
+                                                child: Text(
+                                                    'Online Consultation',
+                                                    style: TextStyle(
+                                                        fontSize: 14)),
+                                              ),
                                               SizedBox(
-                                                width: MediaQuery.of(context)
-                                                        .size
-                                                        .width *
-                                                    .1,
+                                                width: rowWidth * .1,
                                                 child: Icon(
                                                   Icons.info,
                                                   color: Colors.blueGrey[600],
@@ -3754,8 +3755,13 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
                                                     validateFieldsForOnlineConsultation();
                                                 if (Utils.isNotNullOrEmpty(
                                                     msg)) {
-                                                  whatsappPhoneKey.currentState
-                                                      .validate();
+                                                  if (whatsappPhoneKey
+                                                          .currentState !=
+                                                      null) {
+                                                    whatsappPhoneKey
+                                                        .currentState
+                                                        .validate();
+                                                  }
                                                   Utils.showMyFlushbar(
                                                       context,
                                                       Icons.info_outline,

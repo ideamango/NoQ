@@ -1,3 +1,4 @@
+import 'package:enum_to_string/enum_to_string.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -1321,6 +1322,38 @@ class _SearchEntityPageState extends State<SearchEntityPage>
                       width: MediaQuery.of(context).size.width * .78,
                       padding: EdgeInsets.zero,
                       margin: EdgeInsets.zero,
+                      child: Column(
+                        // direction: Axis.horizontal,
+                        children: [
+                          Container(
+                            padding: EdgeInsets.all(0),
+                            margin: EdgeInsets.zero,
+                            //width: MediaQuery.of(context).size.width * .3,
+                            child: Container(
+                              width: MediaQuery.of(context).size.width * .78,
+                              child: Text(
+                                Utils.isNotNullOrEmpty(
+                                        EnumToString.convertToString(str.type))
+                                    ? Utils.getEntityTypeDisplayName(str.type)
+                                    : "",
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: TextStyle(
+                                    color: Colors.black,
+                                    letterSpacing: 0.5,
+                                    fontFamily: 'Roboto',
+                                    fontSize: 12.0),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    // SizedBox(height: 5),
+                    Container(
+                      width: MediaQuery.of(context).size.width * .78,
+                      padding: EdgeInsets.zero,
+                      margin: EdgeInsets.zero,
                       child: Row(
                         children: [
                           Container(
@@ -1354,7 +1387,36 @@ class _SearchEntityPageState extends State<SearchEntityPage>
                         ],
                       ),
                     ),
+                    (str.enableVideoChat)
+                        ? Container(
+                            padding: EdgeInsets.all(0),
+                            width: MediaQuery.of(context).size.width * .78,
+                            child: Row(
+                              children: [
+                                Text("(Supports",
+                                    style: TextStyle(
+                                        color: Colors.black,
+                                        letterSpacing: 0.5,
+                                        fontWeight: FontWeight.w700,
+                                        fontFamily: 'Roboto',
+                                        fontSize: 14.0)),
+                                Icon(
+                                  Icons.video_call,
+                                  size: 28,
+                                  color: highlightColor,
+                                ),
+                                Text(" on Whatsapp)",
+                                    style: TextStyle(
+                                        color: Colors.black,
+                                        letterSpacing: 0.5,
+                                        fontWeight: FontWeight.w700,
+                                        fontFamily: 'Roboto',
+                                        fontSize: 14.0)),
+                              ],
+                            ))
+                        : Container(width: 0),
                     SizedBox(height: 5),
+
                     if (str.isBookable != null && str.isActive != null)
                       if (str.isBookable && str.isActive)
                         Container(
