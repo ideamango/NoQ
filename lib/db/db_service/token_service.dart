@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:LESSs/db/exceptions/MaxTokenReachedByUserPerDayException.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -10,7 +11,7 @@ import '../db_model/meta_entity.dart';
 import '../db_model/user_token.dart';
 import '../db_model/slot.dart';
 
-import '../exceptions/max_token_reached_exception.dart';
+import '../exceptions/MaxTokenReachedByUserPerSlotException.dart';
 import '../exceptions/no_token_found_exception.dart';
 import '../exceptions/slot_full_exception.dart';
 import '../exceptions/token_already_exists_exception.dart';
@@ -129,7 +130,7 @@ class TokenService {
         for (Slot sl in slots) {
           if (!sl.isFull) {
             if (!dayExist) {
-              dayWiseFreeSlots.add(List<Slot>());
+              dayWiseFreeSlots.add([]);
               dayExist = true;
               count++;
             }
@@ -254,17 +255,6 @@ class TokenService {
     final DocumentReference tokenCounterRef =
         fStore.doc('counter/' + tokenCounterId);
 
-    DocumentSnapshot tokenCounterSnapshot = await tx.get(tokenCounterRef);
-
-    if (tokenCounterSnapshot.exists) {
-      Map<String, dynamic> map = tokenCounterSnapshot.data();
-      tokenCounter = TokenCounter.fromJson(map);
-    } else {
-      tokenCounter = new TokenCounter(
-          entityId: metaEntity.entityId, year: dateTime.year.toString());
-      tokenCounter.slotWiseStats = new Map<String, TokenStats>();
-    }
-
     try {
       DocumentSnapshot entitySlotsSnapshot = await tx.get(entitySlotsRef);
       EntitySlots es;
@@ -280,7 +270,7 @@ class TokenService {
 
         if (tokenSnapshot.exists &&
             metaEntity.maxTokensPerSlotByUser == tokens.tokens.length) {
-          throw new MaxTokenReachedException(
+          throw new MaxTokenReachedByUserPerSlotException(
               "Can't book more than ${metaEntity.maxTokensPerSlotByUser.toString} tokens per slot");
         }
 
@@ -289,8 +279,9 @@ class TokenService {
         int maxAllowed = es.maxAllowed;
 
         int slotCount = -1;
-        bool slotExist = false;
+
         int newNumber = 1;
+        Slot existingSlot;
         for (var sl in es.slots) {
           slotCount++;
           if (sl.dateTime.hour == dateTime.hour &&
@@ -310,25 +301,27 @@ class TokenService {
             // set the current number to be incremented
             sl.currentNumber = newNumber;
 
-            slotExist = true;
+            existingSlot = sl;
             break;
           }
         }
 
-        if (!slotExist) {
-          // Create a new Slot with current number as 1 and add to the Slots list of Entity_Slots object
-          Slot sl = new Slot(
-              currentNumber: 1,
-              slotId: slotId,
-              maxAllowed: es.maxAllowed,
-              dateTime: dateTime,
-              slotDuration: es.slotDuration,
-              isFull: false);
-          es.slots.add(sl);
+        //check if the user has already reached the limit for the day
+        int dayCountForUser = 0;
+        for (Slot sl in es.slots) {
+          for (UserTokens ut in sl.tokens) {
+            if (ut.userId == userId) {
+              int numOfTokensInASlot = ut.tokens.length;
+              dayCountForUser += numOfTokensInASlot;
+            }
+          }
         }
 
-        // Save the EntitySlots using set method
-        tx.set(entitySlotsRef, es.toJson());
+        if (dayCountForUser == metaEntity.maxTokenByUserInDay) {
+          throw new MaxTokenReachedByUserPerDayException(
+              "User has reached max token count for the day, which is " +
+                  dayCountForUser.toString());
+        }
 
         if (tokens == null) {
           tokens = new UserTokens(
@@ -361,7 +354,27 @@ class TokenService {
             parent: tokens);
 
         tokens.tokens.add(newToken);
-        tx.set(tokRef, tokens.toJson());
+
+        if (existingSlot == null) {
+          // Create a new Slot with current number as 1 and add to the Slots list of Entity_Slots object
+          Slot newSlot = new Slot(
+              currentNumber: 1,
+              slotId: slotId,
+              maxAllowed: es.maxAllowed,
+              dateTime: dateTime,
+              slotDuration: es.slotDuration,
+              isFull: false);
+          if (newSlot.tokens == null) {
+            newSlot.tokens = [];
+          }
+          newSlot.tokens.add(tokens);
+          es.slots.add(newSlot);
+        } else {
+          if (existingSlot.tokens == null) {
+            existingSlot.tokens = [];
+          }
+          existingSlot.tokens.add(tokens);
+        }
       } else {
         //This is the first token for the entity for the given day
         int maxAllowed = metaEntity.maxAllowed;
@@ -375,31 +388,6 @@ class TokenService {
         int startTimeMinute = metaEntity.startTimeMinute;
         int endTimeHour = metaEntity.endTimeHour;
         int endTimeMinute = metaEntity.endTimeMinute;
-
-        EntitySlots es = new EntitySlots(
-            slots: [],
-            entityId: metaEntity.entityId,
-            date: new DateTime(dateTime.year, dateTime.month, dateTime.day),
-            maxAllowed: maxAllowed,
-            slotDuration: slotDuration,
-            closedOn: closedOn,
-            breakStartHour: breakStartHour,
-            breakStartMinute: breakStartMinute,
-            breakEndHour: breakEndHour,
-            breakEndMinute: breakEndMinute,
-            startTimeHour: startTimeHour,
-            startTimeMinute: startTimeMinute,
-            endTimeHour: endTimeHour,
-            endTimeMinute: endTimeMinute);
-
-        Slot sl = new Slot(
-            currentNumber: 1,
-            slotId: slotId,
-            maxAllowed: es.maxAllowed,
-            dateTime: dateTime,
-            slotDuration: es.slotDuration,
-            isFull: false);
-        es.slots.add(sl);
 
         tokens = new UserTokens(
             slotId: slotId,
@@ -429,13 +417,49 @@ class TokenService {
             bookingFormName: formName,
             parent: tokens);
 
+        es = new EntitySlots(
+            slots: [],
+            entityId: metaEntity.entityId,
+            date: new DateTime(dateTime.year, dateTime.month, dateTime.day),
+            maxAllowed: maxAllowed,
+            slotDuration: slotDuration,
+            closedOn: closedOn,
+            breakStartHour: breakStartHour,
+            breakStartMinute: breakStartMinute,
+            breakEndHour: breakEndHour,
+            breakEndMinute: breakEndMinute,
+            startTimeHour: startTimeHour,
+            startTimeMinute: startTimeMinute,
+            endTimeHour: endTimeHour,
+            endTimeMinute: endTimeMinute);
+
+        Slot sl = new Slot(
+            currentNumber: 1,
+            slotId: slotId,
+            maxAllowed: es.maxAllowed,
+            dateTime: dateTime,
+            slotDuration: es.slotDuration,
+            isFull: false);
+        if (sl.tokens == null) {
+          sl.tokens = [];
+        }
+
+        sl.tokens.add(tokens);
+
+        es.slots.add(sl);
+
         tokens.tokens.add(newToken);
+      }
 
-        //create EntitySlots with one slot in it
-        tx.set(entitySlotsRef, es.toJson());
+      DocumentSnapshot tokenCounterSnapshot = await tx.get(tokenCounterRef);
 
-        //create Token
-        tx.set(tokRef, tokens.toJson());
+      if (tokenCounterSnapshot.exists) {
+        Map<String, dynamic> map = tokenCounterSnapshot.data();
+        tokenCounter = TokenCounter.fromJson(map);
+      } else {
+        tokenCounter = new TokenCounter(
+            entityId: metaEntity.entityId, year: dateTime.year.toString());
+        tokenCounter.slotWiseStats = new Map<String, TokenStats>();
       }
 
       //update the TokenCounter, check the key year~month~day#slot-time
@@ -446,16 +470,17 @@ class TokenService {
       tokenCounter.slotWiseStats[key].numberOfTokensCreated =
           tokenCounter.slotWiseStats[key].numberOfTokensCreated + 1;
 
+      //create EntitySlots with one slot in it
+      tx.set(entitySlotsRef, es.toJson());
+
+      //create Token
+      tx.set(tokRef, tokens.toJson());
       //create/update the TokenCounter
       tx.set(tokenCounterRef, tokenCounter.toJson());
     } catch (ex) {
       print(
           "Error while generting token -> Transaction Error: " + e.toString());
-      e = ex;
-    }
-
-    if (e != null) {
-      throw e;
+      throw ex;
     }
 
     return tokens;

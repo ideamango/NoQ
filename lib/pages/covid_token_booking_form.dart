@@ -1177,7 +1177,7 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage>
           }
           medConditionsField.responseFilePaths = medCondsTargetPaths;
 
-          List<String> frontLineTargetPaths = List<String>();
+          List<String> frontLineTargetPaths = [];
           for (String path in frontlineWorkerField.responseFilePaths) {
             String fileName = basename(path);
             print(fileName);

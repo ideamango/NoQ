@@ -90,7 +90,7 @@ class EntitySlots {
       };
 
   List<dynamic> slotsToJson(List<Slot> slots) {
-    List<dynamic> slotsJson = new List<dynamic>();
+    List<dynamic> slotsJson = [];
     for (Slot sl in slots) {
       slotsJson.add(sl.toJson());
     }

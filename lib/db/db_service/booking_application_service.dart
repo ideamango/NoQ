@@ -142,8 +142,7 @@ class BookingApplicationService {
       query = query.endBeforeDocument(firstRecord);
     }
 
-    List<Tuple<BookingApplication, QueryDocumentSnapshot>> applications =
-        new List<Tuple<BookingApplication, QueryDocumentSnapshot>>();
+    List<Tuple<BookingApplication, QueryDocumentSnapshot>> applications = [];
 
     QuerySnapshot qs = await query.get();
     List<QueryDocumentSnapshot> qds = qs.docs;
@@ -320,17 +319,20 @@ class BookingApplicationService {
             bf.autoApproved &&
             bf.generateTokenOnApproval) {
           //generate the token
-          UserTokens toks = await _gs
-              .getTokenService()
-              .generateTokenInTransaction(
-                  tx,
-                  userPhone,
-                  metaEntity,
-                  ba.preferredSlotTiming,
-                  ba.id,
-                  ba.bookingFormId,
-                  ba.responseForm.formName,
-                  enableVideoChat);
+          UserTokens toks;
+          try {
+            toks = await _gs.getTokenService().generateTokenInTransaction(
+                tx,
+                userPhone,
+                metaEntity,
+                ba.preferredSlotTiming,
+                ba.id,
+                ba.bookingFormId,
+                ba.responseForm.formName,
+                enableVideoChat);
+          } catch (e) {
+            throw e;
+          }
 
           UserToken lastTok = toks.tokens[toks.tokens.length - 1];
           ba.tokenId = toks.getTokenId() + "#" + lastTok.number.toString();
@@ -355,7 +357,7 @@ class BookingApplicationService {
       throw e;
     }
 
-    return false;
+    return isSuccess;
   }
 
   //to be done by the Applicant
@@ -678,18 +680,21 @@ class BookingApplicationService {
           //TODO: generate the token and send the notification to the applicant
           //generate the token
           //send notification
+          UserTokens toks;
           if (bf.generateTokenOnApproval && bf.appointmentRequired) {
-            UserTokens toks = await _gs
-                .getTokenService()
-                .generateTokenInTransaction(
-                    tx,
-                    userPhone,
-                    metaEntity,
-                    tokenTime,
-                    application.id,
-                    application.bookingFormId,
-                    application.responseForm.formName,
-                    enableVideoChat);
+            try {
+              toks = await _gs.getTokenService().generateTokenInTransaction(
+                  tx,
+                  userPhone,
+                  metaEntity,
+                  tokenTime,
+                  application.id,
+                  application.bookingFormId,
+                  application.responseForm.formName,
+                  enableVideoChat);
+            } catch (e) {
+              throw e;
+            }
 
             UserToken lastTok = toks.tokens[toks.tokens.length - 1];
             application.tokenId =
