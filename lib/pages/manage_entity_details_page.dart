@@ -711,13 +711,10 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
           return null;
         },
         onChanged: (String value) {
-          //TODO: test the values
-          if (value != "") {
-            List<String> time = value.split(':');
-            entity.startTimeHour = int.parse(time[0]);
+          List<String> time = value.split(':');
+          entity.startTimeHour = int.parse(time[0]);
 
-            entity.startTimeMinute = int.parse(time[1]);
-          }
+          entity.startTimeMinute = int.parse(time[1]);
         },
         onSaved: (String value) {},
       );
@@ -792,12 +789,9 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
           return null;
         },
         onChanged: (String value) {
-          //TODO: test the values
-          if (value != "") {
-            List<String> time = value.split(':');
-            entity.endTimeHour = int.parse(time[0]);
-            entity.endTimeMinute = int.parse(time[1]);
-          }
+          List<String> time = value.split(':');
+          entity.endTimeHour = int.parse(time[0]);
+          entity.endTimeMinute = int.parse(time[1]);
         },
         onSaved: (String value) {
           //TODO: test the values
@@ -867,11 +861,9 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
           return null;
         },
         onChanged: (value) {
-          if (value != "") {
-            List<String> time = value.split(':');
-            entity.breakStartHour = int.parse(time[0]);
-            entity.breakStartMinute = int.parse(time[1]);
-          }
+          List<String> time = value.split(':');
+          entity.breakStartHour = int.parse(time[0]);
+          entity.breakStartMinute = int.parse(time[1]);
         },
         onSaved: (String value) {},
       );
@@ -1022,12 +1014,10 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
           return null;
         },
         onChanged: (value) {
-          if (value != "") entity.slotDuration = int.parse(value);
-          print("slot duration saved");
+          entity.slotDuration = int.tryParse(value);
         },
         onSaved: (String value) {
-          if (value != "") entity.slotDuration = int.parse(value);
-          print("slot duration saved");
+          entity.slotDuration = int.tryParse(value);
         },
       );
       final advBookingInDays = TextFormField(
@@ -1054,14 +1044,10 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
           return null;
         },
         onChanged: (value) {
-          if (value != "") {
-            entity.advanceDays = int.parse(value);
-          }
-          print("Advance Booking Allowed saved");
+          entity.advanceDays = int.tryParse(value);
         },
         onSaved: (String value) {
-          if (value != "") entity.advanceDays = int.parse(value);
-          print("Advance Booking Allowed saved");
+          entity.advanceDays = int.tryParse(value);
         },
       );
       final maxpeopleInASlot = TextFormField(
@@ -1088,12 +1074,10 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
           return null;
         },
         onChanged: (value) {
-          if (value != "") entity.maxAllowed = int.parse(value);
-          print("saved max people");
+          entity.maxAllowed = int.tryParse(value);
         },
         onSaved: (String value) {
-          if (value != "") entity.maxAllowed = int.parse(value);
-          print("saved max people");
+          entity.maxAllowed = int.tryParse(value);
         },
       );
       final maxTokenPerDay = TextFormField(
@@ -1120,10 +1104,10 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
           return null;
         },
         onChanged: (value) {
-          if (value != "") entity.maxTokenByUserInDay = int.parse(value);
+          entity.maxTokenByUserInDay = int.tryParse(value);
         },
         onSaved: (String value) {
-          if (value != "") entity.maxTokenByUserInDay = int.parse(value);
+          entity.maxTokenByUserInDay = int.tryParse(value);
         },
       );
 
@@ -1185,10 +1169,10 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
           return null;
         },
         onChanged: (value) {
-          if (value != "") entity.phone = _phCountryCode + (value);
+          entity.phone = _phCountryCode + (value);
         },
         onSaved: (String value) {
-          if (value != "") entity.phone = _phCountryCode + (value);
+          entity.phone = _phCountryCode + (value);
         },
       );
       final emailId = TextFormField(
@@ -1209,10 +1193,10 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
         ),
         validator: Utils.validateEmail,
         onChanged: (value) {
-          if (value != "") entity.supportEmail = value;
+          entity.supportEmail = value;
         },
         onSaved: (String value) {
-          if (value != "") entity.supportEmail = value;
+          entity.supportEmail = value;
         },
       );
       final upiIdField = TextFormField(
@@ -1233,10 +1217,10 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
         ),
         validator: Utils.validateUpiAddress,
         onChanged: (value) {
-          if (value != "") entity.upiId = (value);
+          entity.upiId = (value);
         },
         onSaved: (String value) {
-          if (value != "") entity.upiId = (value);
+          entity.upiId = (value);
         },
       );
 
@@ -1822,7 +1806,7 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
         ),
         validator: (value) {
           if (isBookable || isActiveValidation)
-            return validateText(value);
+            return validateNumber(value);
           else
             return null;
         },
@@ -1839,69 +1823,9 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
       bool _delEnabled = false;
       Flushbar flush;
       bool _wasButtonClicked;
-      // void _addNewAdminRow() {
-      //   bool insert = true;
-      //   String newAdminPh = '+91' + _adminItemController.text;
-
-      //   setState(() {
-      //     if (adminsList.length != 0) {
-      //       for (int i = 0; i < adminsList.length; i++) {
-      //         if (adminsList[i] == (newAdminPh)) {
-      //           insert = false;
-      //           Utils.showMyFlushbar(
-      //               context,
-      //               Icons.info_outline,
-      //               Duration(
-      //                 seconds: 5,
-      //               ),
-      //               "Error",
-      //               "Phone number already exists !!");
-      //           break;
-      //         }
-      //         print("in for loop $insert");
-      //         print(adminsList[i] == newAdminPh);
-      //         print(newAdminPh);
-      //         print(adminsList[i]);
-      //       }
-      //     }
-
-      //     if (insert) adminsList.insert(0, newAdminPh);
-      //     print("after foreach");
-
-      //     //TODO: Smita - Update GS
-      //   });
-      // }
-
-      void _removeServiceRow(String currItem) {
-        removeAdmin(entity.entityId, currItem).then((delStatus) {
-          if (delStatus)
-            setState(() {
-              adminsList.remove(currItem);
-            });
-          else
-            Utils.showMyFlushbar(
-                context,
-                Icons.info_outline,
-                Duration(
-                  seconds: 5,
-                ),
-                'Oops!! There is some trouble deleting that admin.',
-                'Please check and try again..');
-        });
-      }
 
       saveRoute() {
         print("saving ");
-
-        // String addressStr1;
-        // addressStr1 =
-        //     (_localityController.text != null) ? _localityController.text : "";
-        // String addressStr2 =
-        //     (_cityController.text != null) ? _cityController.text : "";
-        // String addressStr3 =
-        //     _stateController.text != null ? _stateController.text : "";
-        // String addressStr4 =
-        //     _countryController.text != null ? _countryController.text : "";
 
         String validationPh1;
         String validationPh2;
