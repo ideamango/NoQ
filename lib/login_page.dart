@@ -482,16 +482,21 @@ class _LoginPageState extends State<LoginPage> {
               _pinPutController.text = data.code;
               //Highlight approve
               codeFilled = true;
-              setState(() {});
+              if (mounted) {
+                setState(() {});
+              }
             });
-
-            setState(() {
-              _errorMessage = null;
-            });
+            if (mounted) {
+              setState(() {
+                _errorMessage = null;
+              });
+            }
 
             Future.delayed(Duration(seconds: 30)).then((value) {
               timeLapsed = true;
-              setState(() {});
+              if (mounted) {
+                setState(() {});
+              }
             });
             return AlertDialog(
               insetPadding: EdgeInsets.symmetric(horizontal: 10, vertical: 20),
@@ -586,7 +591,9 @@ class _LoginPageState extends State<LoginPage> {
                           print(pin);
                           codeFilled = true;
                           timeLapsed = false;
-                          setState(() {});
+                          if (mounted) {
+                            setState(() {});
+                          }
                           // try {
                           //   User user = FirebaseAuth.instance.currentUser;
                           //   if (user != null) {
