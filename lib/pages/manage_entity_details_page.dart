@@ -80,6 +80,7 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
   //Fields used in info - animated container
   double _width = 0;
   double _height = 0;
+  EdgeInsets _videoMargin = EdgeInsets.all(0);
   double _videoWidth = 0;
   double _videoHeight = 0;
   bool _isVideoExpanded = false;
@@ -3630,8 +3631,10 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
                                           onPressed: () {
                                             if (!_isVideoExpanded) {
                                               setState(() {
-                                                _margin = EdgeInsets.fromLTRB(
-                                                    0, 0, 0, 8);
+                                                _isVideoExpanded = true;
+                                                _videoMargin =
+                                                    EdgeInsets.fromLTRB(
+                                                        0, 0, 0, 5);
                                                 _videoWidth =
                                                     MediaQuery.of(context)
                                                             .size
@@ -3716,6 +3719,8 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
                             ),
                             AnimatedContainer(
                               // Use the properties stored in the State class.
+                              margin: _videoMargin,
+                              padding: EdgeInsets.symmetric(horizontal: 5),
                               width: _videoWidth,
                               height: _videoHeight,
                               alignment: Alignment.center,
