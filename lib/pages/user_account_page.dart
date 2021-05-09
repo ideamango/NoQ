@@ -814,7 +814,7 @@ class _UserAccountPageState extends State<UserAccountPage> {
                                     Container(
                                       width: MediaQuery.of(context).size.width *
                                           .43,
-                                      child: RaisedButton(
+                                      child: MaterialButton(
                                           color: btnColor,
                                           textColor: Colors.white,
                                           splashColor: highlightColor,
@@ -845,7 +845,7 @@ class _UserAccountPageState extends State<UserAccountPage> {
                                     Container(
                                       width: MediaQuery.of(context).size.width *
                                           .43,
-                                      child: RaisedButton(
+                                      child: MaterialButton(
                                         color: btnColor,
                                         textColor: Colors.white,
                                         splashColor: highlightColor,
