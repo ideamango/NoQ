@@ -506,7 +506,7 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
 
   String validateMandatoryFieldsForBookable() {
     String msg;
-    bool error = false;
+    bool error;
     if (isBookable) {
       if (openDayTimeKey.currentState != null) {
         error = (openDayTimeKey.currentState.validate());
@@ -533,9 +533,10 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
         error = (lonKey.currentState.validate());
       }
 
-      if (!error) {
-        msg =
-            "Current Location, Slot duration, Max. People allowed etc are missing.";
+      if (error != null) {
+        msg = error
+            ? null
+            : "Current Location, Slot duration, Max. People allowed etc are missing.";
       }
     }
 
@@ -1155,7 +1156,7 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
         autovalidateMode: AutovalidateMode.always,
         controller: _contactPhoneController,
         decoration: InputDecoration(
-          prefixText: '+91',
+          prefixText: _phCountryCode,
           labelText: 'Contact Phone Number (recommended)',
           enabledBorder:
               UnderlineInputBorder(borderSide: BorderSide(color: Colors.grey)),
