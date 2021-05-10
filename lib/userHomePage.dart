@@ -1083,7 +1083,7 @@ class _UserHomePageState extends State<UserHomePage> {
                     child: Text('Yes'),
                     onPressed: () {
                       print("Cancel booking");
-                      bool cancelDone = false;
+
                       cancelToken(booking).then((value) {
                         Navigator.of(context, rootNavigator: true).pop();
                         Utils.showMyFlushbar(
@@ -1095,25 +1095,22 @@ class _UserHomePageState extends State<UserHomePage> {
                             "Cancelling Token ${booking.getDisplayName()}",
                             "Please wait..");
 
-                        cancelToken(booking).then((value) {
-                          cancelDone = value;
-                          if (!cancelDone) {
-                            Utils.showMyFlushbar(
-                                context,
-                                Icons.info_outline,
-                                Duration(
-                                  seconds: 5,
-                                ),
-                                "Couldn't cancel your booking for some reason. ",
-                                "Please try again later.");
-                          } else {
-                            setState(() {
-                              booking.number = -1;
-                            });
-                          }
-                        }).catchError((e) {
-                          print(e);
-                        });
+                        if (!value) {
+                          Utils.showMyFlushbar(
+                              context,
+                              Icons.info_outline,
+                              Duration(
+                                seconds: 5,
+                              ),
+                              "Couldn't cancel your booking for some reason. ",
+                              "Please try again later.");
+                        } else {
+                          setState(() {
+                            booking.number = -1;
+                          });
+                        }
+                      }).catchError((e) {
+                        print(e);
                       });
                     },
                   ),

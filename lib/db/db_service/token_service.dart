@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:LESSs/db/exceptions/MaxTokenReachedByUserPerDayException.dart';
+import 'package:LESSs/db/exceptions/token_already_cancelled_exception.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -261,17 +262,27 @@ class TokenService {
 
       if (entitySlotsSnapshot.exists) {
         DocumentSnapshot tokenSnapshot = await tx.get(tokRef);
+        tokens = UserTokens.fromJson(tokenSnapshot.data());
         if (tokenSnapshot.exists && metaEntity.maxTokensPerSlotByUser == 1) {
-          throw new TokenAlreadyExistsException(
-              "Token for this user is already booked");
+          if (tokens.tokens[0].number != -1)
+            throw new TokenAlreadyExistsException(
+                "Token for this user is already booked");
         }
 
-        tokens = UserTokens.fromJson(tokenSnapshot.data());
-
         if (tokenSnapshot.exists &&
-            metaEntity.maxTokensPerSlotByUser == tokens.tokens.length) {
-          throw new MaxTokenReachedByUserPerSlotException(
-              "Can't book more than ${metaEntity.maxTokensPerSlotByUser.toString} tokens per slot");
+            metaEntity.maxTokensPerSlotByUser <= tokens.tokens.length) {
+          int numberOfCancelledInSlot = 0;
+          for (UserToken ut in tokens.tokens) {
+            if (ut.number == -1) {
+              numberOfCancelledInSlot++;
+            }
+          }
+
+          if (tokens.tokens.length - numberOfCancelledInSlot ==
+              metaEntity.maxTokensPerSlotByUser) {
+            throw new MaxTokenReachedByUserPerSlotException(
+                "Can't book more than ${metaEntity.maxTokensPerSlotByUser.toString} tokens per slot");
+          }
         }
 
         //atleast one token is issued for the given entity for that day
@@ -308,16 +319,23 @@ class TokenService {
 
         //check if the user has already reached the limit for the day
         int dayCountForUser = 0;
+        int numberOfCancelledInDay = 0;
         for (Slot sl in es.slots) {
-          for (UserTokens ut in sl.tokens) {
-            if (ut.userId == userId) {
-              int numOfTokensInASlot = ut.tokens.length;
+          for (UserTokens uts in sl.tokens) {
+            if (uts.userId == userId) {
+              int numOfTokensInASlot = uts.tokens.length;
               dayCountForUser += numOfTokensInASlot;
+            }
+            for (UserToken ut in uts.tokens) {
+              if (ut.number == -1) {
+                numberOfCancelledInDay++;
+              }
             }
           }
         }
 
-        if (dayCountForUser == metaEntity.maxTokenByUserInDay) {
+        if (dayCountForUser - numberOfCancelledInDay ==
+            metaEntity.maxTokensByUserInDay) {
           throw new MaxTokenReachedByUserPerDayException(
               "User has reached max token count for the day, which is " +
                   dayCountForUser.toString());
@@ -373,7 +391,21 @@ class TokenService {
           if (existingSlot.tokens == null) {
             existingSlot.tokens = [];
           }
-          existingSlot.tokens.add(tokens);
+          int existingTokenIndex = -1;
+          bool tokenAlreadyExists = false;
+          for (UserTokens uts in existingSlot.tokens) {
+            existingTokenIndex++;
+            if (uts.getTokenId() == tokens.getTokenId()) {
+              tokenAlreadyExists = true;
+              break;
+            }
+          }
+
+          if (existingTokenIndex > -1 && tokenAlreadyExists) {
+            existingSlot.tokens[existingTokenIndex] = tokens;
+          } else {
+            existingSlot.tokens.add(tokens);
+          }
         }
       } else {
         //This is the first token for the entity for the given day
@@ -565,6 +597,10 @@ class TokenService {
 
         for (UserToken tok in tokens.tokens) {
           if (number == null && tokens.tokens.length == 1) {
+            if (tok.number == -1) {
+              throw new TokenAlreadyCancelledException(
+                  "Token is already cancelled");
+            }
             tok.number = -1;
             numberMatched = true;
             break;
@@ -577,8 +613,8 @@ class TokenService {
         }
 
         if (!numberMatched) {
-          throw new Exception(
-              "Supplied token number for the cancellation did not match");
+          throw new TokenAlreadyCancelledException(
+              "Token number for the cancellation not found OR already cancelled");
         }
 
         String slotId = tokens.slotId;
@@ -632,6 +668,27 @@ class TokenService {
         }
         tokenCounter.slotWiseStats[key].numberOfTokensCancelled =
             tokenCounter.slotWiseStats[key].numberOfTokensCancelled + 1;
+
+        //update slot object with the new state of token
+        Slot slot;
+        int count;
+        for (Slot sl in es.slots) {
+          count = -1;
+          for (UserTokens uts in sl.tokens) {
+            count++;
+            if (uts.getTokenId() == tokens.getTokenId()) {
+              slot = sl;
+              break;
+            }
+          }
+          if (slot != null) {
+            break;
+          }
+        }
+
+        if (slot != null && count > -1) {
+          slot.tokens[count] = tokens;
+        }
 
         //create/update the TokenCounter
         tx.set(tokenCounterRef, tokenCounter.toJson());
