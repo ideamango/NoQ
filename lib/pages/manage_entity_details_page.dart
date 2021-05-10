@@ -80,6 +80,7 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
   //Fields used in info - animated container
   double _width = 0;
   double _height = 0;
+  EdgeInsets _videoMargin = EdgeInsets.all(0);
   double _videoWidth = 0;
   double _videoHeight = 0;
   bool _isVideoExpanded = false;
@@ -506,7 +507,7 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
 
   String validateMandatoryFieldsForBookable() {
     String msg;
-    bool error = false;
+    bool error;
     if (isBookable) {
       if (openDayTimeKey.currentState != null) {
         error = (openDayTimeKey.currentState.validate());
@@ -533,9 +534,10 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
         error = (lonKey.currentState.validate());
       }
 
-      if (!error) {
-        msg =
-            "Current Location, Slot duration, Max. People allowed etc are missing.";
+      if (error != null) {
+        msg = error
+            ? null
+            : "Current Location, Slot duration, Max. People allowed etc are missing.";
       }
     }
 
@@ -711,13 +713,10 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
           return null;
         },
         onChanged: (String value) {
-          //TODO: test the values
-          if (value != "") {
-            List<String> time = value.split(':');
-            entity.startTimeHour = int.parse(time[0]);
+          List<String> time = value.split(':');
+          entity.startTimeHour = int.parse(time[0]);
 
-            entity.startTimeMinute = int.parse(time[1]);
-          }
+          entity.startTimeMinute = int.parse(time[1]);
         },
         onSaved: (String value) {},
       );
@@ -792,12 +791,9 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
           return null;
         },
         onChanged: (String value) {
-          //TODO: test the values
-          if (value != "") {
-            List<String> time = value.split(':');
-            entity.endTimeHour = int.parse(time[0]);
-            entity.endTimeMinute = int.parse(time[1]);
-          }
+          List<String> time = value.split(':');
+          entity.endTimeHour = int.parse(time[0]);
+          entity.endTimeMinute = int.parse(time[1]);
         },
         onSaved: (String value) {
           //TODO: test the values
@@ -867,11 +863,9 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
           return null;
         },
         onChanged: (value) {
-          if (value != "") {
-            List<String> time = value.split(':');
-            entity.breakStartHour = int.parse(time[0]);
-            entity.breakStartMinute = int.parse(time[1]);
-          }
+          List<String> time = value.split(':');
+          entity.breakStartHour = int.parse(time[0]);
+          entity.breakStartMinute = int.parse(time[1]);
         },
         onSaved: (String value) {},
       );
@@ -1022,12 +1016,10 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
           return null;
         },
         onChanged: (value) {
-          if (value != "") entity.slotDuration = int.parse(value);
-          print("slot duration saved");
+          entity.slotDuration = int.tryParse(value);
         },
         onSaved: (String value) {
-          if (value != "") entity.slotDuration = int.parse(value);
-          print("slot duration saved");
+          entity.slotDuration = int.tryParse(value);
         },
       );
       final advBookingInDays = TextFormField(
@@ -1054,14 +1046,10 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
           return null;
         },
         onChanged: (value) {
-          if (value != "") {
-            entity.advanceDays = int.parse(value);
-          }
-          print("Advance Booking Allowed saved");
+          entity.advanceDays = int.tryParse(value);
         },
         onSaved: (String value) {
-          if (value != "") entity.advanceDays = int.parse(value);
-          print("Advance Booking Allowed saved");
+          entity.advanceDays = int.tryParse(value);
         },
       );
       final maxpeopleInASlot = TextFormField(
@@ -1088,12 +1076,10 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
           return null;
         },
         onChanged: (value) {
-          if (value != "") entity.maxAllowed = int.parse(value);
-          print("saved max people");
+          entity.maxAllowed = int.tryParse(value);
         },
         onSaved: (String value) {
-          if (value != "") entity.maxAllowed = int.parse(value);
-          print("saved max people");
+          entity.maxAllowed = int.tryParse(value);
         },
       );
       final maxTokenPerDay = TextFormField(
@@ -1120,10 +1106,10 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
           return null;
         },
         onChanged: (value) {
-          if (value != "") entity.maxTokensByUserInDay = int.parse(value);
+          entity.maxTokensByUserInDay = int.tryParse(value);
         },
         onSaved: (String value) {
-          if (value != "") entity.maxTokensByUserInDay = int.parse(value);
+          entity.maxTokensByUserInDay = int.tryParse(value);
         },
       );
 
@@ -1171,7 +1157,7 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
         autovalidateMode: AutovalidateMode.always,
         controller: _contactPhoneController,
         decoration: InputDecoration(
-          prefixText: '+91',
+          prefixText: _phCountryCode,
           labelText: 'Contact Phone Number (recommended)',
           enabledBorder:
               UnderlineInputBorder(borderSide: BorderSide(color: Colors.grey)),
@@ -1185,10 +1171,10 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
           return null;
         },
         onChanged: (value) {
-          if (value != "") entity.phone = _phCountryCode + (value);
+          entity.phone = _phCountryCode + (value);
         },
         onSaved: (String value) {
-          if (value != "") entity.phone = _phCountryCode + (value);
+          entity.phone = _phCountryCode + (value);
         },
       );
       final emailId = TextFormField(
@@ -1209,10 +1195,10 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
         ),
         validator: Utils.validateEmail,
         onChanged: (value) {
-          if (value != "") entity.supportEmail = value;
+          entity.supportEmail = value;
         },
         onSaved: (String value) {
-          if (value != "") entity.supportEmail = value;
+          entity.supportEmail = value;
         },
       );
       final upiIdField = TextFormField(
@@ -1233,10 +1219,10 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
         ),
         validator: Utils.validateUpiAddress,
         onChanged: (value) {
-          if (value != "") entity.upiId = (value);
+          entity.upiId = (value);
         },
         onSaved: (String value) {
-          if (value != "") entity.upiId = (value);
+          entity.upiId = (value);
         },
       );
 
@@ -1822,7 +1808,7 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
         ),
         validator: (value) {
           if (isBookable || isActiveValidation)
-            return validateText(value);
+            return validateNumber(value);
           else
             return null;
         },
@@ -1839,69 +1825,9 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
       bool _delEnabled = false;
       Flushbar flush;
       bool _wasButtonClicked;
-      // void _addNewAdminRow() {
-      //   bool insert = true;
-      //   String newAdminPh = '+91' + _adminItemController.text;
-
-      //   setState(() {
-      //     if (adminsList.length != 0) {
-      //       for (int i = 0; i < adminsList.length; i++) {
-      //         if (adminsList[i] == (newAdminPh)) {
-      //           insert = false;
-      //           Utils.showMyFlushbar(
-      //               context,
-      //               Icons.info_outline,
-      //               Duration(
-      //                 seconds: 5,
-      //               ),
-      //               "Error",
-      //               "Phone number already exists !!");
-      //           break;
-      //         }
-      //         print("in for loop $insert");
-      //         print(adminsList[i] == newAdminPh);
-      //         print(newAdminPh);
-      //         print(adminsList[i]);
-      //       }
-      //     }
-
-      //     if (insert) adminsList.insert(0, newAdminPh);
-      //     print("after foreach");
-
-      //     //TODO: Smita - Update GS
-      //   });
-      // }
-
-      void _removeServiceRow(String currItem) {
-        removeAdmin(entity.entityId, currItem).then((delStatus) {
-          if (delStatus)
-            setState(() {
-              adminsList.remove(currItem);
-            });
-          else
-            Utils.showMyFlushbar(
-                context,
-                Icons.info_outline,
-                Duration(
-                  seconds: 5,
-                ),
-                'Oops!! There is some trouble deleting that admin.',
-                'Please check and try again..');
-        });
-      }
 
       saveRoute() {
         print("saving ");
-
-        // String addressStr1;
-        // addressStr1 =
-        //     (_localityController.text != null) ? _localityController.text : "";
-        // String addressStr2 =
-        //     (_cityController.text != null) ? _cityController.text : "";
-        // String addressStr3 =
-        //     _stateController.text != null ? _stateController.text : "";
-        // String addressStr4 =
-        //     _countryController.text != null ? _countryController.text : "";
 
         String validationPh1;
         String validationPh2;
@@ -3705,8 +3631,10 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
                                           onPressed: () {
                                             if (!_isVideoExpanded) {
                                               setState(() {
-                                                _margin = EdgeInsets.fromLTRB(
-                                                    0, 0, 0, 8);
+                                                _isVideoExpanded = true;
+                                                _videoMargin =
+                                                    EdgeInsets.fromLTRB(
+                                                        0, 0, 0, 5);
                                                 _videoWidth =
                                                     MediaQuery.of(context)
                                                             .size
@@ -3791,6 +3719,8 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
                             ),
                             AnimatedContainer(
                               // Use the properties stored in the State class.
+                              margin: _videoMargin,
+                              padding: EdgeInsets.symmetric(horizontal: 5),
                               width: _videoWidth,
                               height: _videoHeight,
                               alignment: Alignment.center,

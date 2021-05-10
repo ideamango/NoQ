@@ -74,10 +74,24 @@ class _ManageChildEntityDetailsPageState
       new GlobalKey<FormFieldState>();
   final GlobalKey<FormFieldState> paytmPhoneKey =
       new GlobalKey<FormFieldState>();
+  final GlobalKey<FormFieldState> openDayTimeKey =
+      new GlobalKey<FormFieldState>();
+  final GlobalKey<FormFieldState> endDayTimeKey =
+      new GlobalKey<FormFieldState>();
+  final GlobalKey<FormFieldState> slotDurationKey =
+      new GlobalKey<FormFieldState>();
+  final GlobalKey<FormFieldState> maxPeopleKey =
+      new GlobalKey<FormFieldState>();
+  final GlobalKey<FormFieldState> maxTokenUserKey =
+      new GlobalKey<FormFieldState>();
+  final GlobalKey<FormFieldState> advDaysKey = new GlobalKey<FormFieldState>();
+  final GlobalKey<FormFieldState> latKey = new GlobalKey<FormFieldState>();
+  final GlobalKey<FormFieldState> lonKey = new GlobalKey<FormFieldState>();
 
   //Fields used in info - animated container
   double _width = 0;
   double _height = 0;
+  EdgeInsets _videoMargin = EdgeInsets.all(0);
   double _videoWidth = 0;
   double _videoHeight = 0;
   bool _isVideoExpanded = false;
@@ -95,7 +109,7 @@ class _ManageChildEntityDetailsPageState
   Offer insertOffer = new Offer();
   bool offerFieldStatus = false;
   BorderRadiusGeometry _borderRadius = BorderRadius.circular(5);
-
+  bool isActiveValidation = false;
   bool validateField = false;
   TextEditingController _nameController = TextEditingController();
   TextEditingController _descController = TextEditingController();
@@ -106,6 +120,8 @@ class _ManageChildEntityDetailsPageState
   TextEditingController _breakEndController = TextEditingController();
   TextEditingController _advBookingInDaysController = TextEditingController();
   TextEditingController _maxPeopleController = TextEditingController();
+  TextEditingController _maxBookingsInDayForUserController =
+      TextEditingController();
   TextEditingController _slotDurationController = TextEditingController();
 
   TextEditingController _whatsappPhoneController = TextEditingController();
@@ -218,9 +234,12 @@ class _ManageChildEntityDetailsPageState
       isPublic = (serviceEntity.isPublic) ?? false;
       isBookable = (serviceEntity.isBookable) ?? false;
       isActive = (serviceEntity.isActive) ?? false;
+      isVideoChatEnabled = serviceEntity.enableVideoChat ?? false;
       if (isActive) {
-        validateField = true;
-        _autoValidate = true;
+        isActiveValidation = true;
+      }
+      if (isBookable) {
+        validateMandatoryFieldsForBookable();
       }
 
       if (serviceEntity.offer != null) {
@@ -281,19 +300,21 @@ class _ManageChildEntityDetailsPageState
           _daysOff = Utils.convertStringsToDays(serviceEntity.closedOn);
       }
 
-      _slotDurationController.text =
-          Utils.isNotNullOrEmpty(serviceEntity.slotDuration.toString())
-              ? serviceEntity.slotDuration.toString()
+      _slotDurationController.text = (serviceEntity.slotDuration != null)
+          ? serviceEntity.slotDuration.toString()
+          : "";
+      _advBookingInDaysController.text = (serviceEntity.advanceDays != null)
+          ? serviceEntity.advanceDays.toString()
+          : "";
+
+      _maxPeopleController.text = (serviceEntity.maxAllowed != null)
+          ? serviceEntity.maxAllowed.toString()
+          : "";
+
+      _maxBookingsInDayForUserController.text =
+          (serviceEntity.maxPeoplePerToken != null)
+              ? serviceEntity.maxPeoplePerToken.toString()
               : "";
-      _advBookingInDaysController.text =
-          Utils.isNotNullOrEmpty(serviceEntity.advanceDays.toString())
-              ? serviceEntity.advanceDays.toString()
-              : "";
-      if (serviceEntity.maxAllowed != null)
-        _maxPeopleController.text =
-            Utils.isNotNullOrEmpty(serviceEntity.maxAllowed.toString())
-                ? serviceEntity.maxAllowed.toString()
-                : "";
       _whatsappPhoneController.text =
           Utils.isNotNullOrEmpty(serviceEntity.whatsapp)
               ? serviceEntity.whatsapp.toString().substring(3)
@@ -386,37 +407,37 @@ class _ManageChildEntityDetailsPageState
   }
 
   String validateText(String value) {
-    if (validateField) {
-      if (value == null || value == "") {
-        return 'Field is empty';
-      }
-      return null;
+    if (value == null || value == "") {
+      return 'Field is empty';
+    }
+    return null;
+  }
+
+  String validateNumber(String value) {
+    if (value == null || value == "") {
+      return 'Field is empty';
+    } else if (int.tryParse(value) == null) {
+      return '$value is not a valid number';
     } else
       return null;
   }
 
   String validateAdvanceBookingDays(String value) {
-    if (validateField) {
-      if (value == null || value == "") {
-        return 'Field is empty';
-      } else if (int.tryParse(value) == null) {
-        return '$value is not a valid number of Days';
-      } else if (int.parse(value) > 7) {
-        return 'Number of Days should be less than 7.';
-      } else
-        return null;
+    if (value == null || value == "") {
+      return 'Field is empty';
+    } else if (int.tryParse(value) == null) {
+      return '$value is not a valid number of Days';
+    } else if (int.parse(value) > 7) {
+      return 'Number of Days should be less than 7.';
     } else
       return null;
   }
 
   String validateTime(String value) {
-    if (validateField) {
-      if (value == null || value == "") {
-        return 'Field is empty';
-      }
-      return null;
-    } else
-      return null;
+    if (value == null || value == "") {
+      return 'Field is empty';
+    }
+    return null;
   }
 
   String validateTimeFields() {
@@ -656,10 +677,48 @@ class _ManageChildEntityDetailsPageState
     });
   }
 
+  String validateMandatoryFieldsForBookable() {
+    String msg;
+    bool error;
+    if (isBookable) {
+      if (openDayTimeKey.currentState != null) {
+        error = (openDayTimeKey.currentState.validate());
+      }
+      if (endDayTimeKey.currentState != null) {
+        error = (endDayTimeKey.currentState.validate());
+      }
+      if (slotDurationKey.currentState != null) {
+        error = (slotDurationKey.currentState.validate());
+      }
+      if (advDaysKey.currentState != null) {
+        error = (advDaysKey.currentState.validate());
+      }
+      if (maxPeopleKey.currentState != null) {
+        error = (maxPeopleKey.currentState.validate());
+      }
+      if (maxTokenUserKey.currentState != null) {
+        error = (maxTokenUserKey.currentState.validate());
+      }
+      if (latKey.currentState != null) {
+        error = (latKey.currentState.validate());
+      }
+      if (lonKey.currentState != null) {
+        error = (lonKey.currentState.validate());
+      }
+
+      if (error != null) {
+        msg = error
+            ? null
+            : "Current Location, Slot duration, Max. People allowed etc are missing.";
+      }
+    }
+    return msg;
+  }
+
   String validateFieldsForOnlineConsultation() {
     //Whatsapp number should be given
     String msg;
-    if (!Utils.isNotNullOrEmpty(_whatsappPhoneController.text)) {
+    if (Utils.isStrNullOrEmpty(_whatsappPhoneController.text)) {
       msg =
           "WhatsApp phone number should be provided, for enabling Online Consultation.";
     }
@@ -677,12 +736,14 @@ class _ManageChildEntityDetailsPageState
       controller: _nameController,
       //initialValue: serviceEntity.name,
       keyboardType: TextInputType.text,
+      autovalidateMode: AutovalidateMode.always,
       decoration: CommonStyle.textFieldStyle(
           labelTextStr: "Name of Establishment", hintTextStr: ""),
-      validator: validateText,
+      validator: (value) {
+        return validateText(value);
+      },
       onChanged: (String value) {
         serviceEntity.name = value;
-        isAnythingChanged = true;
       },
       onSaved: (String value) {
         serviceEntity.name = value;
@@ -696,18 +757,12 @@ class _ManageChildEntityDetailsPageState
       enabled: widget.isManager ? false : true,
       decoration: CommonStyle.textFieldStyle(
           labelTextStr: "Description", hintTextStr: ""),
-      validator: (value) {
-        if (!validateField)
-          return validateText(value);
-        else
-          return null;
-      },
+
       keyboardType: TextInputType.multiline,
       maxLength: null,
       maxLines: 3,
       onChanged: (String value) {
         serviceEntity.description = value;
-        isAnythingChanged = true;
       },
       onSaved: (String value) {
         serviceEntity.description = value;
@@ -723,12 +778,6 @@ class _ManageChildEntityDetailsPageState
       controller: _regNumController,
       decoration: CommonStyle.textFieldStyle(
           labelTextStr: "Registration Number", hintTextStr: ""),
-      validator: (value) {
-        if (!validateField)
-          return validateText(value);
-        else
-          return null;
-      },
       onChanged: (String value) {
         isAnythingChanged = true;
         //serviceEntity.regNum = value;
@@ -772,6 +821,7 @@ class _ManageChildEntityDetailsPageState
         }
       },
       controller: _openTimeController,
+      autovalidateMode: AutovalidateMode.always,
       keyboardType: TextInputType.text,
       decoration: InputDecoration(
           labelText: "Opening time",
@@ -800,17 +850,21 @@ class _ManageChildEntityDetailsPageState
               UnderlineInputBorder(borderSide: BorderSide(color: Colors.grey)),
           focusedBorder: UnderlineInputBorder(
               borderSide: BorderSide(color: Colors.orange))),
-      validator: validateTime,
+      validator: (value) {
+        if (isBookable || isActiveValidation) {
+          if (value == null || value == "") {
+            return 'Field is empty';
+          } else
+            return null;
+        }
+        return null;
+      },
       onChanged: (String value) {
-        isAnythingChanged = true;
-        //TODO: test the values
         List<String> time = value.split(':');
         serviceEntity.startTimeHour = int.parse(time[0]);
         serviceEntity.startTimeMinute = int.parse(time[1]);
       },
-      onSaved: (String value) {
-        //TODO: test the values
-      },
+      onSaved: (String value) {},
     );
     final closeTimeField = TextFormField(
       obscureText: false,
@@ -819,6 +873,7 @@ class _ManageChildEntityDetailsPageState
       maxLines: 1,
       minLines: 1,
       controller: _closeTimeController,
+      autovalidateMode: AutovalidateMode.always,
       style: textInputTextStyle,
       onTap: () {
         if (!dayEndClearClicked) {
@@ -870,10 +925,16 @@ class _ManageChildEntityDetailsPageState
               UnderlineInputBorder(borderSide: BorderSide(color: Colors.grey)),
           focusedBorder: UnderlineInputBorder(
               borderSide: BorderSide(color: Colors.orange))),
-      validator: validateTime,
+      validator: (value) {
+        if (isBookable || isActiveValidation) {
+          if (value == null || value == "") {
+            return 'Field is empty';
+          } else
+            return null;
+        }
+        return null;
+      },
       onChanged: (String value) {
-        isAnythingChanged = true;
-        //TODO: test the values
         List<String> time = value.split(':');
         serviceEntity.endTimeHour = int.parse(time[0]);
         serviceEntity.endTimeMinute = int.parse(time[1]);
@@ -940,14 +1001,9 @@ class _ManageChildEntityDetailsPageState
           focusedBorder: UnderlineInputBorder(
               borderSide: BorderSide(color: Colors.orange))),
       validator: (value) {
-        if (!validateField)
-          return validateTime(value);
-        else
-          return null;
+        return null;
       },
       onChanged: (String value) {
-        isAnythingChanged = true;
-        //TODO: test the values
         List<String> time = value.split(':');
         serviceEntity.breakStartHour = int.parse(time[0]);
         serviceEntity.breakStartMinute = int.parse(time[1]);
@@ -1013,17 +1069,14 @@ class _ManageChildEntityDetailsPageState
           focusedBorder: UnderlineInputBorder(
               borderSide: BorderSide(color: Colors.orange))),
       validator: (value) {
-        if (!validateField)
-          return validateTime(value);
-        else
-          return null;
+        return null;
       },
       onChanged: (String value) {
-        isAnythingChanged = true;
-        //TODO: test the values
-        List<String> time = value.split(':');
-        serviceEntity.breakEndHour = int.parse(time[0]);
-        serviceEntity.breakEndMinute = int.parse(time[1]);
+        if (value != "") {
+          List<String> time = value.split(':');
+          serviceEntity.breakEndHour = int.parse(time[0]);
+          serviceEntity.breakEndMinute = int.parse(time[1]);
+        }
       },
       onSaved: (String value) {
         //TODO: test the values
@@ -1083,12 +1136,14 @@ class _ManageChildEntityDetailsPageState
       ),
     );
     final slotDuration = TextFormField(
+      key: slotDurationKey,
       obscureText: false,
       maxLines: 1,
       minLines: 1,
       enabled: widget.isManager ? false : true,
       style: textInputTextStyle,
       keyboardType: TextInputType.number,
+      autovalidateMode: AutovalidateMode.always,
       controller: _slotDurationController,
       decoration: InputDecoration(
         labelText: 'Duration of time slot (in minutes)',
@@ -1097,21 +1152,25 @@ class _ManageChildEntityDetailsPageState
         focusedBorder:
             UnderlineInputBorder(borderSide: BorderSide(color: Colors.orange)),
       ),
-      validator: validateText,
+      validator: (value) {
+        if (isBookable) {
+          return validateNumber(value);
+        }
+        return null;
+      },
       onChanged: (value) {
-        isAnythingChanged = true;
-        if (value != "") serviceEntity.slotDuration = int.parse(value);
-        print("slot duration saved");
+        serviceEntity.slotDuration = int.tryParse(value);
       },
       onSaved: (String value) {
-        if (value != "") serviceEntity.slotDuration = int.parse(value);
-        print("slot duration saved");
+        serviceEntity.slotDuration = int.tryParse(value);
       },
     );
     final advBookingInDays = TextFormField(
+      key: advDaysKey,
       obscureText: false,
       maxLines: 1,
       minLines: 1,
+      autovalidateMode: AutovalidateMode.always,
       enabled: widget.isManager ? false : true,
       style: textInputTextStyle,
       keyboardType: TextInputType.number,
@@ -1123,21 +1182,25 @@ class _ManageChildEntityDetailsPageState
         focusedBorder:
             UnderlineInputBorder(borderSide: BorderSide(color: Colors.orange)),
       ),
-      validator: validateAdvanceBookingDays,
+      validator: (value) {
+        if (isBookable) {
+          return validateAdvanceBookingDays(value);
+        }
+        return null;
+      },
       onChanged: (value) {
-        isAnythingChanged = true;
-        if (value != "") serviceEntity.advanceDays = int.parse(value);
-        print("Advance Booking Allowed saved");
+        serviceEntity.advanceDays = int.tryParse(value);
       },
       onSaved: (String value) {
-        if (value != "") serviceEntity.advanceDays = int.parse(value);
-        print("Advance Booking Allowed saved");
+        serviceEntity.advanceDays = int.tryParse(value);
       },
     );
     final maxpeopleInASlot = TextFormField(
+      key: maxPeopleKey,
       obscureText: false,
       maxLines: 1,
       minLines: 1,
+      autovalidateMode: AutovalidateMode.always,
       enabled: widget.isManager ? false : true,
       style: textInputTextStyle,
       keyboardType: TextInputType.number,
@@ -1149,17 +1212,53 @@ class _ManageChildEntityDetailsPageState
         focusedBorder:
             UnderlineInputBorder(borderSide: BorderSide(color: Colors.orange)),
       ),
-      validator: validateText,
+      validator: (value) {
+        if (isBookable) {
+          return validateNumber(value);
+        }
+        return null;
+      },
       onChanged: (String value) {
-        isAnythingChanged = true;
         serviceEntity.maxAllowed = int.tryParse(value);
       },
       onSaved: (String value) {
-        if (value != "") serviceEntity.maxAllowed = int.parse(value);
+        serviceEntity.maxAllowed = int.tryParse(value);
         print("saved max people");
         // entity. = value;
       },
     );
+
+    final maxTokenPerDay = TextFormField(
+      key: maxTokenUserKey,
+      obscureText: false,
+      maxLines: 1,
+      minLines: 1,
+      autovalidateMode: AutovalidateMode.always,
+      enabled: widget.isManager ? false : true,
+      style: textInputTextStyle,
+      keyboardType: TextInputType.number,
+      controller: _maxBookingsInDayForUserController,
+      decoration: InputDecoration(
+        labelText: 'Max. bookings allowed for a user per day',
+        enabledBorder:
+            UnderlineInputBorder(borderSide: BorderSide(color: Colors.grey)),
+        focusedBorder:
+            UnderlineInputBorder(borderSide: BorderSide(color: Colors.orange)),
+      ),
+      validator: (value) {
+        if (isBookable) {
+          return validateText(value);
+        }
+        return null;
+      },
+      onChanged: (value) {
+        serviceEntity.maxTokenByUserInDay = int.tryParse(value);
+      },
+      onSaved: (String value) {
+        serviceEntity.maxTokenByUserInDay = int.tryParse(value);
+      },
+    );
+
     final whatsappPhone = TextFormField(
       obscureText: false,
       key: whatsappPhnKey,
@@ -1200,6 +1299,7 @@ class _ManageChildEntityDetailsPageState
       minLines: 1,
       enabled: widget.isManager ? false : true,
       key: contactPhoneKey,
+      autovalidateMode: AutovalidateMode.always,
       style: textInputTextStyle,
       keyboardType: TextInputType.phone,
       controller: _contactPhoneController,
@@ -1211,13 +1311,17 @@ class _ManageChildEntityDetailsPageState
         focusedBorder:
             UnderlineInputBorder(borderSide: BorderSide(color: Colors.orange)),
       ),
-      validator: Utils.validateMobileField,
+      validator: (value) {
+        if (isBookable || isActiveValidation) {
+          return Utils.validateMobileField(value);
+        }
+        return null;
+      },
       onChanged: (value) {
-        contactPhoneKey.currentState.validate();
-        if (value != "") serviceEntity.phone = _phCountryCode + (value);
+        serviceEntity.phone = _phCountryCode + (value);
       },
       onSaved: (String value) {
-        if (value != "") serviceEntity.phone = _phCountryCode + (value);
+        serviceEntity.phone = _phCountryCode + (value);
       },
     );
 
@@ -1239,10 +1343,10 @@ class _ManageChildEntityDetailsPageState
       ),
       validator: Utils.validateEmail,
       onChanged: (value) {
-        if (value != "") serviceEntity.supportEmail = value;
+        serviceEntity.supportEmail = value;
       },
       onSaved: (String value) {
-        if (value != "") serviceEntity.supportEmail = value;
+        serviceEntity.supportEmail = value;
       },
     );
 
@@ -1264,10 +1368,10 @@ class _ManageChildEntityDetailsPageState
       ),
       validator: Utils.validateUpiAddress,
       onChanged: (value) {
-        if (value != "") serviceEntity.upiId = (value);
+        serviceEntity.upiId = (value);
       },
       onSaved: (String value) {
-        if (value != "") serviceEntity.upiId = (value);
+        serviceEntity.upiId = (value);
       },
     );
 
@@ -1302,7 +1406,7 @@ class _ManageChildEntityDetailsPageState
       ),
       validator: (value) {
         if (offerFieldStatus) {
-          if (value == null || value == "") {
+          if (Utils.isStrNullOrEmpty(value)) {
             return 'Field is empty';
           } else
             return null;
@@ -1337,7 +1441,7 @@ class _ManageChildEntityDetailsPageState
       decoration: CommonStyle.textFieldStyle(labelTextStr: "Coupon"),
       validator: (value) {
         if (offerFieldStatus) {
-          if (value == null || value == "") {
+          if (Utils.isStrNullOrEmpty(value)) {
             return 'Field is empty';
           } else
             return null;
@@ -1521,16 +1625,23 @@ class _ManageChildEntityDetailsPageState
     final latField = Container(
         width: MediaQuery.of(context).size.width * .3,
         child: TextFormField(
+          key: latKey,
           obscureText: false,
           maxLines: 1,
           minLines: 1,
-          enabled: false,
+          // enabled: false,
           style: textInputTextStyle,
           keyboardType: TextInputType.text,
           controller: _latController,
+          autovalidateMode: AutovalidateMode.always,
           decoration: CommonStyle.textFieldStyle(
               labelTextStr: "Latitude", hintTextStr: ""),
-          validator: validateText,
+          validator: (value) {
+            if (isBookable || isActiveValidation) {
+              return validateText(value);
+            }
+            return null;
+          },
           onChanged: (String value) {},
           onSaved: (String value) {},
         ));
@@ -1538,16 +1649,23 @@ class _ManageChildEntityDetailsPageState
     final lonField = Container(
         width: MediaQuery.of(context).size.width * .3,
         child: TextFormField(
+          key: lonKey,
           obscureText: false,
           maxLines: 1,
           minLines: 1,
-          enabled: false,
+          //enabled: false,
+          autovalidateMode: AutovalidateMode.always,
           style: textInputTextStyle,
           keyboardType: TextInputType.text,
           controller: _lonController,
           decoration: CommonStyle.textFieldStyle(
               labelTextStr: "Longitude", hintTextStr: ""),
-          validator: validateText,
+          validator: (value) {
+            if (isBookable || isActiveValidation) {
+              return validateText(value);
+            }
+            return null;
+          },
           onChanged: (String value) {},
           onSaved: (String value) {},
         ));
@@ -1580,9 +1698,14 @@ class _ManageChildEntityDetailsPageState
       controller: _adrs1Controller,
       decoration: CommonStyle.textFieldStyle(
           labelTextStr: "Apartment/ House No./ Lane", hintTextStr: ""),
-      validator: validateText,
+      autovalidateMode: AutovalidateMode.always,
+      validator: (value) {
+        if (isBookable || isActiveValidation) {
+          return validateText(value);
+        } else
+          return null;
+      },
       onChanged: (String value) {
-        isAnythingChanged = true;
         serviceEntity.address.address = value;
         print("saved address");
       },
@@ -1599,6 +1722,7 @@ class _ManageChildEntityDetailsPageState
       enabled: widget.isManager ? false : true,
       style: textInputTextStyle,
       keyboardType: TextInputType.text,
+      autovalidateMode: AutovalidateMode.always,
       controller: _landController,
       decoration: InputDecoration(
         labelText: 'Landmark',
@@ -1607,9 +1731,8 @@ class _ManageChildEntityDetailsPageState
         focusedBorder:
             UnderlineInputBorder(borderSide: BorderSide(color: Colors.orange)),
       ),
-      validator: validateText,
+      // validator: validateText,
       onChanged: (String value) {
-        isAnythingChanged = true;
         serviceEntity.address.landmark = value;
       },
       onSaved: (String value) {
@@ -1617,6 +1740,7 @@ class _ManageChildEntityDetailsPageState
       },
     );
     final localityField = TextFormField(
+      autovalidateMode: AutovalidateMode.always,
       obscureText: false,
       maxLines: 1,
       minLines: 1,
@@ -1635,7 +1759,12 @@ class _ManageChildEntityDetailsPageState
         isAnythingChanged = true;
         serviceEntity.address.locality = value;
       },
-      validator: validateText,
+      validator: (value) {
+        if (isBookable || isActiveValidation)
+          return validateText(value);
+        else
+          return null;
+      },
       onSaved: (String value) {
         serviceEntity.address.locality = value;
       },
@@ -1655,7 +1784,13 @@ class _ManageChildEntityDetailsPageState
         focusedBorder:
             UnderlineInputBorder(borderSide: BorderSide(color: Colors.orange)),
       ),
-      validator: validateText,
+      autovalidateMode: AutovalidateMode.always,
+      validator: (value) {
+        if (isBookable || isActiveValidation)
+          return validateText(value);
+        else
+          return null;
+      },
       onChanged: (String value) {
         serviceEntity.address.city = value;
       },
@@ -1678,7 +1813,13 @@ class _ManageChildEntityDetailsPageState
         focusedBorder:
             UnderlineInputBorder(borderSide: BorderSide(color: Colors.orange)),
       ),
-      validator: validateText,
+      autovalidateMode: AutovalidateMode.always,
+      validator: (value) {
+        if (isBookable || isActiveValidation)
+          return validateText(value);
+        else
+          return null;
+      },
       onChanged: (String value) {
         isAnythingChanged = true;
         serviceEntity.address.state = value;
@@ -1702,7 +1843,13 @@ class _ManageChildEntityDetailsPageState
         focusedBorder:
             UnderlineInputBorder(borderSide: BorderSide(color: Colors.orange)),
       ),
-      validator: validateText,
+      autovalidateMode: AutovalidateMode.always,
+      validator: (value) {
+        if (isBookable || isActiveValidation)
+          return validateText(value);
+        else
+          return null;
+      },
       onSaved: (String value) {
         serviceEntity.address.country = value;
       },
@@ -1722,7 +1869,13 @@ class _ManageChildEntityDetailsPageState
         focusedBorder:
             UnderlineInputBorder(borderSide: BorderSide(color: Colors.orange)),
       ),
-      validator: validateText,
+      autovalidateMode: AutovalidateMode.always,
+      validator: (value) {
+        if (isBookable || isActiveValidation)
+          return validateNumber(value);
+        else
+          return null;
+      },
       onChanged: (String value) {
         serviceEntity.address.zipcode = value;
       },
@@ -1743,11 +1896,22 @@ class _ManageChildEntityDetailsPageState
       bool timeFieldsValid = true;
       String errTimeFields;
       String errContactPhone;
+      String errBookablePlace;
 
-      if (isActive)
-        validateField = true;
-      else
-        validateField = false;
+      if (isBookable) {
+        errBookablePlace = validateMandatoryFieldsForBookable();
+        if (Utils.isNotNullOrEmpty(errBookablePlace)) {
+          Utils.showMyFlushbar(
+              context,
+              Icons.info_outline,
+              Duration(
+                seconds: 4,
+              ),
+              errBookablePlace,
+              "Please fill all mandatory details to allow Booking.");
+          return;
+        }
+      }
 
       for (int i = 0; i < contactList.length; i++) {
         validationPh1 = (contactList[i].ph != null)
@@ -2221,6 +2385,7 @@ class _ManageChildEntityDetailsPageState
                                         slotDuration,
                                         advBookingInDays,
                                         maxpeopleInASlot,
+                                        maxTokenPerDay,
                                         whatsappPhone,
                                         callingPhone,
                                         emailId
@@ -2953,17 +3118,31 @@ class _ManageChildEntityDetailsPageState
                                                 if (widget.isManager) {
                                                   return;
                                                 } else {
-                                                  setState(() {
-                                                    isBookable = value;
-                                                    serviceEntity.isBookable =
-                                                        value;
-
-                                                    if (value) {
-                                                      showConfirmationDialog();
-                                                      //TODO: SMita - show msg with info, yes/no
+                                                  isBookable = value;
+                                                  if (value) {
+                                                    showConfirmationDialog();
+                                                    //Check if all mandatory fields for being bookable are not empty.
+                                                    String errMsg =
+                                                        validateMandatoryFieldsForBookable();
+                                                    if (Utils.isNotNullOrEmpty(
+                                                        errMsg)) {
+                                                      Utils.showMyFlushbar(
+                                                          context,
+                                                          Icons.info_outline,
+                                                          Duration(
+                                                            seconds: 4,
+                                                          ),
+                                                          errMsg,
+                                                          "Please fill all mandatory details to allow Booking.");
+                                                      isBookable = !value;
+                                                      return;
                                                     }
-                                                    print(isBookable);
-                                                  });
+                                                  }
+
+                                                  serviceEntity.isBookable =
+                                                      value;
+
+                                                  setState(() {});
                                                 }
                                               },
                                               // activeTrackColor: Colors.green,
@@ -3091,8 +3270,7 @@ class _ManageChildEntityDetailsPageState
                                                 } else {
                                                   setState(() {
                                                     if (value) {
-                                                      validateField = true;
-                                                      _autoValidate = true;
+                                                      isActiveValidation = true;
                                                       bool retVal = false;
                                                       bool locValid = false;
                                                       if (validateAllFields())
@@ -3125,7 +3303,8 @@ class _ManageChildEntityDetailsPageState
                                                               'Making a place "ACTIVE" requires all mandatory information to be filled in. Please provide the details and Save.');
                                                         }
                                                       } else {
-                                                        validateField = false;
+                                                        isActiveValidation =
+                                                            false;
                                                         isActive = value;
                                                         serviceEntity.isActive =
                                                             value;
@@ -3133,8 +3312,9 @@ class _ManageChildEntityDetailsPageState
                                                       }
                                                     } else {
                                                       isActive = value;
-                                                      validateField = false;
-                                                      _autoValidate = false;
+                                                      isActiveValidation =
+                                                          false;
+
                                                       serviceEntity.isActive =
                                                           value;
                                                       print(isActive);
@@ -3238,8 +3418,10 @@ class _ManageChildEntityDetailsPageState
                                             onPressed: () {
                                               if (!_isVideoExpanded) {
                                                 setState(() {
-                                                  _margin = EdgeInsets.fromLTRB(
-                                                      0, 0, 0, 8);
+                                                  _isVideoExpanded = true;
+                                                  _videoMargin =
+                                                      EdgeInsets.fromLTRB(
+                                                          0, 0, 0, 5);
                                                   _videoWidth =
                                                       MediaQuery.of(context)
                                                               .size
@@ -3316,6 +3498,7 @@ class _ManageChildEntityDetailsPageState
                                                 setState(() {});
                                               }
                                             },
+
                                             // activeTrackColor: Colors.green,
                                             activeColor: Colors.green,
                                             inactiveThumbColor:
@@ -3329,6 +3512,8 @@ class _ManageChildEntityDetailsPageState
                               ),
                               AnimatedContainer(
                                 // Use the properties stored in the State class.
+                                margin: _videoMargin,
+                                padding: EdgeInsets.symmetric(horizontal: 5),
                                 width: _videoWidth,
                                 height: _videoHeight,
                                 alignment: Alignment.center,
