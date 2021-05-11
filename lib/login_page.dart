@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:LESSs/widget/countdown_timer.dart';
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -506,40 +507,47 @@ class _LoginPageState extends State<LoginPage> {
               contentTextStyle: TextStyle(color: primaryDarkColor),
               content: Container(
                 //height: MediaQuery.of(context).size.height * .25,
-                width: MediaQuery.of(context).size.width * .85,
+                width: dialogWidth,
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     Container(
-                      height: MediaQuery.of(context).size.height * .03,
+                      height: MediaQuery.of(context).size.height * .05,
                       child: Row(
                         // mainAxisSize: MainAxisSize.max,
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: <Widget>[
-                          Container(
-                            width: dialogWidth * .1,
-                          ),
+                          // Container(
+                          //   width: dialogWidth * .1,
+                          // ),
                           Container(
                             alignment: Alignment.center,
-                            width: dialogWidth * .7,
-                            height: MediaQuery.of(context).size.height * .03,
+                            width: dialogWidth * .9,
+                            padding: EdgeInsets.fromLTRB(10, 0, 0, 0),
+                            margin: EdgeInsets.zero,
+
+                            height: MediaQuery.of(context).size.height * .04,
                             //  transform: Matrix4.translationValues(12.0, -10, 0),
-                            child: Text("Enter One-Time Password(OTP)",
+                            child: AutoSizeText("Enter One-Time Password",
+                                minFontSize: 16,
+                                maxFontSize: 18,
                                 style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w800,
+                                  //  fontWeight: FontWeight.w800,
                                   color: Colors.blueGrey[800],
                                 )),
                           ),
                           Container(
-                            width: dialogWidth * .08,
-                            height: MediaQuery.of(context).size.height * .03,
-                            transform: Matrix4.translationValues(0, -10, 0),
+                            width: MediaQuery.of(context).size.height * .04,
+                            padding: EdgeInsets.zero,
+                            margin: EdgeInsets.zero,
+                            height: MediaQuery.of(context).size.height * .04,
+                            transform: Matrix4.translationValues(0, -14, 0),
                             child: IconButton(
                               icon: Icon(
                                 Icons.cancel,
                                 color: Colors.grey[600],
+                                size: 30,
                               ),
                               onPressed: () {
                                 codeSent = false;
@@ -698,13 +706,16 @@ class _LoginPageState extends State<LoginPage> {
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 children: [
                                   Container(
-                                    alignment: Alignment.centerRight,
+                                    width: dialogWidth * .7,
+                                    alignment: Alignment.centerLeft,
                                     padding: EdgeInsets.zero,
                                     margin: EdgeInsets.zero,
                                     //width: dialogWidth * .7,
-                                    child: Text("Automatically reading OTP in ",
+                                    child: AutoSizeText(
+                                        "Automatically reading OTP in ",
+                                        minFontSize: 13,
+                                        maxFontSize: 16,
                                         style: TextStyle(
-                                          fontSize: 16,
                                           fontFamily: 'Roboto',
                                           color: Colors.blueGrey[800],
                                         )),
@@ -721,12 +732,13 @@ class _LoginPageState extends State<LoginPage> {
                                       child: CountDownTimer()),
                                   Container(
                                     alignment: Alignment.centerLeft,
-                                    padding: EdgeInsets.zero,
+                                    padding: EdgeInsets.only(top: 4),
                                     margin: EdgeInsets.zero,
-                                    width: dialogWidth * .15,
-                                    child: Text("seconds. ",
+                                    width: dialogWidth * .16,
+                                    child: AutoSizeText("seconds. ",
+                                        minFontSize: 10,
+                                        maxFontSize: 12,
                                         style: TextStyle(
-                                          fontSize: 12,
                                           fontFamily: 'Roboto',
                                           color: Colors.blueGrey[800],
                                         )),

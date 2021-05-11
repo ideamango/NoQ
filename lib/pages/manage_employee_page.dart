@@ -213,6 +213,9 @@ class _ManageEmployeePageState extends State<ManageEmployeePage> {
       contactRowWidgets.add(showCircularProgress());
     });
     //refreshContacts();
+    contactList
+        .removeWhere((element) => element.id == event.eventData.toString());
+
     processRefreshContactsWithTimer();
     print("printing event.eventData");
     print("In parent page" + event.eventData);

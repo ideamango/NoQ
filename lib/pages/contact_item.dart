@@ -387,7 +387,7 @@ class ContactRowState extends State<ContactRow> {
         ),
         child: ExpansionTile(
           //key: PageStorageKey(this.widget.headerTitle),
-          initiallyExpanded: false,
+          initiallyExpanded: true,
           title: Text(
             (contact.name != null && contact.name != "")
                 ? contact.name
@@ -483,6 +483,35 @@ class ContactRowState extends State<ContactRow> {
                                           }
                                         }
                                         if (removeThisId != null) {
+                                          if (widget.isManager) {
+                                            return;
+                                          } else {
+                                            _gs
+                                                .getEntityService()
+                                                .removeEmployee(
+                                                  widget.entity.entityId,
+                                                  contact.ph,
+                                                )
+                                                .then((retVal) {
+                                              if (retVal) {
+                                                print("Success");
+                                                Utils.showMyFlushbar(
+                                                    context,
+                                                    Icons.check,
+                                                    Duration(seconds: 3),
+                                                    "Manager Removed Successfully!",
+                                                    "");
+                                              } else {
+                                                Utils.showMyFlushbar(
+                                                    context,
+                                                    Icons.check,
+                                                    Duration(seconds: 3),
+                                                    "Oho! Could not Remove Manager.",
+                                                    "");
+                                              }
+                                            });
+                                          }
+
                                           setState(() {
                                             contact = null;
                                             // _entity.managers.removeWhere(

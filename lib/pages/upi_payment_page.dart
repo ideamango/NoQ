@@ -173,7 +173,7 @@ class _UPIPaymentPageState extends State<UPIPaymentPage> {
 
   @override
   Widget build(BuildContext context) {
-    String title = "Donate ";
+    String title = "Easy Payments";
 
     if (initCompleted) {
       return MaterialApp(

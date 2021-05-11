@@ -1,5 +1,6 @@
 //import 'package:barcode_scan/barcode_scan.dart';
 import 'package:LESSs/pages/upi_payment_page.dart';
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -490,7 +491,7 @@ class _UserAccountPageState extends State<UserAccountPage> {
                 color: Colors.blueGrey[300],
               ),
               Container(
-                width: MediaQuery.of(context).size.width * .21,
+                width: MediaQuery.of(context).size.width * .2,
                 // padding: EdgeInsets.fromLTRB(5, 5, 0, 0),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -535,9 +536,14 @@ class _UserAccountPageState extends State<UserAccountPage> {
                     Container(
                       height: 5,
                     ),
-                    Text(
+                    AutoSizeText(
                       dtFormat.format(booking.parent.dateTime),
-                      style: tokenDataTextStyle,
+                      minFontSize: 10,
+                      maxFontSize: 12,
+                      maxLines: 1,
+                      style: TextStyle(
+                          fontFamily: 'RalewayRegular',
+                          color: primaryAccentColor),
                     ),
                     Container(
                       height: 5,

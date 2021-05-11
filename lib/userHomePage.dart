@@ -4,6 +4,7 @@ import 'package:LESSs/pages/upi_payment_page.dart';
 import 'package:LESSs/pages/help_page.dart';
 import 'package:LESSs/services/qr_code_user_application.dart';
 import 'package:LESSs/widget/countdown_timer.dart';
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:package_info/package_info.dart';
@@ -667,10 +668,11 @@ class _UserHomePageState extends State<UserHomePage> {
 
   Widget _buildItem(UserToken token) {
     // String address = Utils.getFormattedAddress(booking.address);
-
+    double ticketwidth = MediaQuery.of(context).size.width * .95;
+    double ticketHeight = MediaQuery.of(context).size.width * .8 / 2.7;
     return Container(
-        width: MediaQuery.of(context).size.width * .95,
-        height: MediaQuery.of(context).size.width * .7 / 2.7,
+        width: ticketwidth,
+        height: ticketHeight,
         decoration: BoxDecoration(
           image: DecorationImage(
             image: AssetImage('assets/ticket.jpg'),
@@ -683,7 +685,7 @@ class _UserHomePageState extends State<UserHomePage> {
                 Widget>[
               Container(
                 width: MediaQuery.of(context).size.width * .7,
-                height: MediaQuery.of(context).size.width * .7 / 3.5,
+                height: MediaQuery.of(context).size.width * .8 / 3.5,
                 child: Column(
                   //mainAxisSize: MainAxisSize.max,
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -953,7 +955,7 @@ class _UserHomePageState extends State<UserHomePage> {
                 color: Colors.blueGrey[300],
               ),
               Container(
-                width: MediaQuery.of(context).size.width * .21,
+                width: MediaQuery.of(context).size.width * .2,
                 // padding: EdgeInsets.fromLTRB(5, 5, 0, 0),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -961,8 +963,8 @@ class _UserHomePageState extends State<UserHomePage> {
                     Container(
                       padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
                       margin: EdgeInsets.all(0),
-                      height: MediaQuery.of(context).size.width * .095,
-                      width: MediaQuery.of(context).size.width * .905,
+                      height: ticketwidth * .1,
+                      width: ticketwidth * .1,
                       child: IconButton(
                           padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
                           alignment: Alignment.center,
@@ -998,9 +1000,14 @@ class _UserHomePageState extends State<UserHomePage> {
                     Container(
                       height: 5,
                     ),
-                    Text(
+                    AutoSizeText(
                       dtFormat.format(token.parent.dateTime),
-                      style: tokenDataTextStyle,
+                      minFontSize: 10,
+                      maxFontSize: 12,
+                      maxLines: 1,
+                      style: TextStyle(
+                          fontFamily: 'RalewayRegular',
+                          color: primaryAccentColor),
                     ),
                     Container(
                       height: 5,

@@ -72,7 +72,7 @@ String bookNowMsg = "Book now to save time later!";
 String whatsappMessageToPlaceOwner = "Hey there! My LESSs Token number is ";
 String whatsappMessage =
     "Hey!! Are you worried about safety in the crowded place or long waiting in queues? \nNo worries, book your peace of mind with LESSs mobile app. \nBook your slot when it's Less crowded and Stay Safe!!";
-
+String videoCallWhatsappMsg = "LESSs: Video Call ";
 String qrCodeShareHeading = "You Safety and Convenience is our top priority!";
 String applicationShareTitle =
     "View the application details you have submitted";

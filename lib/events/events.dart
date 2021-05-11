@@ -5,3 +5,4 @@ const LOCAL_NOTIFICATION_CREATED_EVENT = 'lcl_notification_added';
 const AUTO_VERIFICATION_COMPLETED_EVENT = 'auto_verification_completed';
 const OTP_RESEND_EVENT = 'otp_resend_event';
 const SEARCH_CATEGORY_SELECTED = 'search_category_selected';
+const SEARCH_CHILD_CATEGORY_SELECTED = 'search_child_category_selected';
