@@ -97,323 +97,241 @@ class DBTest {
 
   Future<void> clearAll() async {
     DateTime now = DateTime.now();
+
     try {
-      try {
-        await _gs.getEntityService().deleteEntity('SalonMyHomeApartment');
-      } catch (e) {
-        print("SalonMyHomeApartment is not cleared");
-      }
-
-      try {
-        await _gs.getEntityService().deleteEntity('MyHomeApartment');
-      } catch (e) {
-        print("MyHomeApartment is not cleared");
-      }
-
-      try {
-        await _gs.getEntityService().deleteEntity('SportsEntity103');
-      } catch (e) {
-        print("SportsEntity103 is not cleared");
-      }
-      try {
-        await _gs.getEntityService().deleteEntity('SportsEntity104');
-      } catch (e) {
-        print("SportsEntity104 is not cleared");
-      }
-
-      try {
-        await _gs.getEntityService().deleteEntity('SportsEntity105');
-      } catch (e) {
-        print("SportsEntity105 is not cleared");
-      }
-
-      try {
-        await _gs.getEntityService().deleteEntity('BankEntity106');
-      } catch (e) {
-        print("BankEntity106 is not cleared");
-      }
-
-      try {
-        await _gs.getEntityService().deleteEntity('SalonEntity107');
-      } catch (e) {
-        print("SalonEntity107 is not cleared");
-      }
-
-      try {
-        await _gs.getEntityService().deleteEntity('SalonEntity108');
-      } catch (e) {
-        print("SalonEntity108 is not cleared");
-      }
-
-      try {
-        await _gs.getEntityService().deleteEntity('GymEntity109');
-      } catch (e) {
-        print("GymEntity109 is not cleared");
-      }
-
-      try {
-        await _gs.getEntityService().deleteEntity('GymEntity110');
-      } catch (e) {
-        print("GymEntity110 is not cleared");
-      }
-
-      try {
-        await _gs.getTokenService().deleteSlot("Child101-1#2020~7~6");
-      } catch (e) {
-        print("Child101-1#2020~7~6 is not cleared");
-      }
-
-      try {
-        await _gs.getTokenService().deleteSlot("Child101-1#2020~7~7");
-      } catch (e) {
-        print("Child101-1#2020~7~7 is not cleared");
-      }
-
-      try {
-        await _gs.getTokenService().deleteSlot("Child101-1#2020~7~8");
-      } catch (e) {
-        print("Child101-1#2020~7~8 is not cleared");
-      }
-
-      try {
-        await _gs.getEntityService().deleteEntity('MyHomeApartment');
-      } catch (e) {
-        print("MyHomeApartment is not cleared");
-      }
-
-      try {
-        await _gs.getEntityService().deleteEntity('SalonMyHomeApartment');
-      } catch (e) {
-        print("SalonMyHomeApartment is not cleared");
-      }
-
+      await _gs.getEntityService().deleteEntity('SalonMyHomeApartment');
+      await _gs.getTokenService().deleteSlotsForEntity('SalonMyHomeApartment');
+      await _gs.getTokenService().deleteTokensForEntity('SalonMyHomeApartment');
       await _gs
           .getTokenService()
-          .deleteToken("Child101-1#2020~7~6#10~30#+919999999999");
+          .deleteTokenCountersForEntity('SalonMyHomeApartment');
+      await _gs
+          .getApplicationService()
+          .deleteApplicationsForEntity('SalonMyHomeApartment');
+    } catch (e) {
+      print("SalonMyHomeApartment is not cleared");
+    }
+
+    try {
+      await _gs.getEntityService().deleteEntity('MyHomeApartment');
+      await _gs.getTokenService().deleteSlotsForEntity('MyHomeApartment');
+      await _gs.getTokenService().deleteTokensForEntity('MyHomeApartment');
       await _gs
           .getTokenService()
-          .deleteToken("Child101-1#2020~7~7#10~30#+919999999999");
+          .deleteTokenCountersForEntity('MyHomeApartment');
+      await _gs
+          .getApplicationService()
+          .deleteApplicationsForEntity('MyHomeApartment');
+    } catch (e) {
+      print("MyHomeApartment is not cleared");
+    }
+
+    try {
+      await _gs.getEntityService().deleteEntity('SportsEntity103');
+      await _gs.getTokenService().deleteSlotsForEntity('SportsEntity103');
+      await _gs.getTokenService().deleteTokensForEntity('SportsEntity103');
       await _gs
           .getTokenService()
-          .deleteToken("Child101-1#2020~7~7#12~30#+919999999999");
+          .deleteTokenCountersForEntity('SportsEntity103');
+      await _gs
+          .getApplicationService()
+          .deleteApplicationsForEntity('SportsEntity103');
+    } catch (e) {
+      print("SportsEntity103 is not cleared");
+    }
+    try {
+      await _gs.getEntityService().deleteEntity('SportsEntity104');
+      await _gs.getTokenService().deleteSlotsForEntity('SportsEntity104');
+      await _gs.getTokenService().deleteTokensForEntity('SportsEntity104');
       await _gs
           .getTokenService()
-          .deleteToken("Child101-1#2020~7~8#10~30#+919999999999");
+          .deleteTokenCountersForEntity('SportsEntity104');
+      await _gs
+          .getApplicationService()
+          .deleteApplicationsForEntity('SportsEntity104');
+    } catch (e) {
+      print("SportsEntity104 is not cleared");
+    }
 
-      try {
-        bool deleted = await _gs.getEntityService().deleteEntity('Entity101');
-        if (deleted) {
-          print(
-              "Entity101 deletion failed as per expectation as Child Enities Exists --> FAILURE");
-        }
-      } catch (e) {
-        if (e is EntityDeletionDeniedChildExistsException) {
-          print(
-              "Entity101 deletion failed as per expectation as Child Enities Exists --> SUCCESS");
-        } else {
-          print(
-              "Entity101 deletion failed as per expectation as Child Enities Exists --> FAILURE");
-        }
-      }
-
-      try {
-        //first delete all children then deleted parent Entity
-        bool deletedChild1 =
-            await _gs.getEntityService().deleteEntity('Child101-1');
-        bool deletedChild2 =
-            await _gs.getEntityService().deleteEntity('Child101-2');
-        bool deletedChild3 =
-            await _gs.getEntityService().deleteEntity('Child101-3');
-        bool parentDeleted =
-            await _gs.getEntityService().deleteEntity('Entity101');
-      } catch (e) {
-        print("Entity101 deletion failed --> FAILURE");
-      }
-
-      try {
-        await _gs.getEntityService().deleteEntity('Entity102');
-      } catch (e) {
-        print("Entity102 is not cleared");
-      }
-      //delete user
-
-      await _gs.getUserService().deleteCurrentUser();
-
-      try {
-        await _gs.getEntityService().deleteEntity(Covid_Vacination_center);
-      } catch (e) {
-        print(Covid_Vacination_center + " is not cleared");
-      }
-
-      //delete booking form, NOTE: should not be done for the TEST_COVID_BOOKING_FORM_ID else Ids of the field are
-      //going to change and queries would fail
-      //commenting it for now, delete the BookingForm only when required
-
-      //delete globalCounter
-      // String globalCounterId =
-      //     COVID_VACCINATION_BOOKING_FORM_ID + "#" + now.year.toString();
-      // await _gs.getApplicationService().deleteCounter(globalCounterId);
-
-      //delete local counter
-      String localCounterId = COVID_VACCINATION_BOOKING_FORM_ID +
-          "#" +
-          Covid_Vacination_center +
-          "#" +
-          now.year.toString();
-
-      await _gs.getApplicationService().deleteCounter(localCounterId);
-
-      //delete application
-      for (int i = 0; i < 10; i++) {
-        String applicationId = COVID_VACCINATION_BOOKING_FORM_ID +
-            "#" +
-            "TestApplicationID" +
-            i.toString();
-        await _gs.getApplicationService().deleteApplication(applicationId);
-      }
-
-      List<UserTokens> tokens = await _gs
+    try {
+      await _gs.getEntityService().deleteEntity('SportsEntity105');
+      await _gs.getTokenService().deleteSlotsForEntity('SportsEntity105');
+      await _gs.getTokenService().deleteTokensForEntity('SportsEntity105');
+      await _gs
           .getTokenService()
-          .getTokensForEntityBookedByCurrentUser(Covid_Vacination_center, null);
+          .deleteTokenCountersForEntity('SportsEntity105');
+      await _gs
+          .getApplicationService()
+          .deleteApplicationsForEntity('SportsEntity105');
+    } catch (e) {
+      print("SportsEntity105 is not cleared");
+    }
 
-      for (UserTokens toks in tokens) {
-        try {
-          await _gs.getTokenService().deleteToken(toks.getTokenId());
-        } catch (ex) {
-          //ignore
-        }
+    try {
+      await _gs.getEntityService().deleteEntity('BankEntity106');
+      await _gs.getTokenService().deleteSlotsForEntity('BankEntity106');
+      await _gs.getTokenService().deleteTokensForEntity('BankEntity106');
+      await _gs.getTokenService().deleteTokenCountersForEntity('BankEntity106');
+      await _gs
+          .getApplicationService()
+          .deleteApplicationsForEntity('BankEntity106');
+    } catch (e) {
+      print("BankEntity106 is not cleared");
+    }
 
-        try {
-          String slotsId = toks.entityId +
-              "#" +
-              toks.dateTime.year.toString() +
-              "~" +
-              toks.dateTime.month.toString() +
-              "~" +
-              toks.dateTime.day.toString();
+    try {
+      await _gs.getEntityService().deleteEntity('SalonEntity107');
+      await _gs.getTokenService().deleteSlotsForEntity('SalonEntity107');
+      await _gs.getTokenService().deleteTokensForEntity('SalonEntity107');
+      await _gs
+          .getTokenService()
+          .deleteTokenCountersForEntity('SalonEntity107');
+      await _gs
+          .getApplicationService()
+          .deleteApplicationsForEntity('SalonEntity107');
+    } catch (e) {
+      print("SalonEntity107 is not cleared");
+    }
 
-          await _gs.getTokenService().deleteSlot(slotsId);
-        } catch (ex) {
-          //ignore
-        }
+    try {
+      await _gs.getEntityService().deleteEntity('SalonEntity108');
+      await _gs.getTokenService().deleteSlotsForEntity('SalonEntity108');
+      await _gs.getTokenService().deleteTokensForEntity('SalonEntity108');
+      await _gs
+          .getTokenService()
+          .deleteTokenCountersForEntity('SalonEntity108');
+      await _gs
+          .getApplicationService()
+          .deleteApplicationsForEntity('SalonEntity108');
+    } catch (e) {
+      print("SalonEntity108 is not cleared");
+    }
+
+    try {
+      await _gs.getEntityService().deleteEntity('GymEntity109');
+      await _gs.getTokenService().deleteSlotsForEntity('GymEntity109');
+      await _gs.getTokenService().deleteTokensForEntity('GymEntity109');
+      await _gs.getTokenService().deleteTokenCountersForEntity('GymEntity109');
+      await _gs
+          .getApplicationService()
+          .deleteApplicationsForEntity('GymEntity109');
+    } catch (e) {
+      print("GymEntity109 is not cleared");
+    }
+
+    try {
+      await _gs.getEntityService().deleteEntity('GymEntity110');
+      await _gs.getTokenService().deleteSlotsForEntity('GymEntity110');
+      await _gs.getTokenService().deleteTokensForEntity('GymEntity110');
+      await _gs.getTokenService().deleteTokenCountersForEntity('GymEntity110');
+      await _gs
+          .getApplicationService()
+          .deleteApplicationsForEntity('GymEntity110');
+    } catch (e) {
+      print("GymEntity110 is not cleared");
+    }
+
+    try {
+      bool deleted = await _gs.getEntityService().deleteEntity('Entity101');
+      if (deleted) {
+        print(
+            "Entity101 deletion failed as per expectation as Child Enities Exists --> FAILURE");
       }
     } catch (e) {
-      print("Error occurred in cleaning.. may be DB is already cleaned.");
+      if (e is EntityDeletionDeniedChildExistsException) {
+        print(
+            "Entity101 deletion failed as per expectation as Child Enities Exists --> SUCCESS");
+      } else {
+        print(
+            "Entity101 deletion failed as per expectation as Child Enities Exists --> FAILURE");
+      }
+    }
+
+    try {
+      //first delete all children then deleted parent Entity
+      bool deletedChild1 =
+          await _gs.getEntityService().deleteEntity('Child101-1');
+      await _gs.getTokenService().deleteSlotsForEntity('Child101-1');
+      await _gs.getTokenService().deleteTokensForEntity('Child101-1');
+      await _gs.getTokenService().deleteTokenCountersForEntity('Child101-1');
+      await _gs
+          .getApplicationService()
+          .deleteApplicationsForEntity('Child101-1');
+
+      bool deletedChild2 =
+          await _gs.getEntityService().deleteEntity('Child101-2');
+      await _gs.getTokenService().deleteSlotsForEntity('Child101-2');
+      await _gs.getTokenService().deleteTokensForEntity('Child101-2');
+      await _gs.getTokenService().deleteTokenCountersForEntity('Child101-2');
+      await _gs
+          .getApplicationService()
+          .deleteApplicationsForEntity('Child101-2');
+
+      bool deletedChild3 =
+          await _gs.getEntityService().deleteEntity('Child101-3');
+      await _gs.getTokenService().deleteSlotsForEntity('Child101-3');
+      await _gs.getTokenService().deleteTokensForEntity('Child101-3');
+      await _gs.getTokenService().deleteTokenCountersForEntity('Child101-3');
+      await _gs
+          .getApplicationService()
+          .deleteApplicationsForEntity('Child101-3');
+
+      bool parentDeleted =
+          await _gs.getEntityService().deleteEntity('Entity101');
+      await _gs.getTokenService().deleteSlotsForEntity('Entity101');
+      await _gs.getTokenService().deleteTokensForEntity('Entity101');
+      await _gs.getTokenService().deleteTokenCountersForEntity('Entity101');
+      await _gs
+          .getApplicationService()
+          .deleteApplicationsForEntity('Entity101');
+    } catch (e) {
+      print("Entity101 deletion failed --> FAILURE");
+    }
+
+    try {
+      await _gs.getEntityService().deleteEntity('Entity102');
+      await _gs.getTokenService().deleteSlotsForEntity('Entity102');
+      await _gs.getTokenService().deleteTokensForEntity('Entity102');
+      await _gs.getTokenService().deleteTokenCountersForEntity('Entity102');
+      await _gs
+          .getApplicationService()
+          .deleteApplicationsForEntity('Entity102');
+    } catch (e) {
+      print("Entity102 is not cleared");
+    }
+    //delete user
+
+    await _gs.getUserService().deleteCurrentUser();
+
+    try {
+      await _gs.getEntityService().deleteEntity(Covid_Vacination_center);
+      await _gs.getTokenService().deleteSlotsForEntity(Covid_Vacination_center);
+      await _gs
+          .getTokenService()
+          .deleteTokensForEntity(Covid_Vacination_center);
+      await _gs
+          .getTokenService()
+          .deleteTokenCountersForEntity(Covid_Vacination_center);
+      await _gs
+          .getApplicationService()
+          .deleteApplicationsForEntity(Covid_Vacination_center);
+    } catch (e) {
+      print(Covid_Vacination_center + " is not cleared");
     }
 
     try {
       await _gs.getEntityService().deleteEntity(Multi_Forms_School_ID);
+      await _gs.getTokenService().deleteSlotsForEntity(Multi_Forms_School_ID);
+      await _gs.getTokenService().deleteTokensForEntity(Multi_Forms_School_ID);
+      await _gs
+          .getTokenService()
+          .deleteTokenCountersForEntity(Multi_Forms_School_ID);
+      await _gs
+          .getApplicationService()
+          .deleteApplicationsForEntity(Multi_Forms_School_ID);
     } catch (e) {
       print(Multi_Forms_School_ID + " is not cleared");
     }
-    //delete globalCounter
-    // String globalCounterNewAdmissionRequestFormId =
-    //     SCHOOL_GENERAL_NEW_ADMISSION_BOOKING_FORM_ID +
-    //         "#" +
-    //         now.year.toString();
-    // await _gs
-    //     .getApplicationService()
-    //     .deleteCounter(globalCounterNewAdmissionRequestFormId);
-
-    //delete local counter
-    String localCounterNewAdmissionId =
-        SCHOOL_GENERAL_NEW_ADMISSION_BOOKING_FORM_ID +
-            "#" +
-            Multi_Forms_School_ID +
-            "#" +
-            now.year.toString();
-
-    await _gs.getApplicationService().deleteCounter(localCounterNewAdmissionId);
-
-    //delete globalCounter for TC form
-    // String globalCounterTCRequestFormId =
-    //     SCHOOL_GENERAL_TC_REQUEST_FORM_ID + "#" + now.year.toString();
-    // await _gs
-    //     .getApplicationService()
-    //     .deleteCounter(globalCounterTCRequestFormId);
-
-    //delete local counter for TC form
-    String localCounterTCId = SCHOOL_GENERAL_TC_REQUEST_FORM_ID +
-        "#" +
-        Multi_Forms_School_ID +
-        "#" +
-        now.year.toString();
-
-    await _gs.getApplicationService().deleteCounter(localCounterTCId);
-
-    List<Tuple<BookingApplication, DocumentSnapshot>> admissionApplications =
-        await _gs.getApplicationService().getApplications(
-            SCHOOL_GENERAL_NEW_ADMISSION_BOOKING_FORM_ID,
-            Multi_Forms_School_ID,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            -1);
-
-    for (Tuple<BookingApplication, DocumentSnapshot> ba
-        in admissionApplications) {
-      await _gs.getApplicationService().deleteApplication(ba.item1.id);
-    }
-
-    List<Tuple<BookingApplication, DocumentSnapshot>> tcApplications = await _gs
-        .getApplicationService()
-        .getApplications(
-            SCHOOL_GENERAL_NEW_ADMISSION_BOOKING_FORM_ID,
-            Multi_Forms_School_ID,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            -1);
-
-    for (Tuple<BookingApplication, DocumentSnapshot> ba in tcApplications) {
-      await _gs.getApplicationService().deleteApplication(ba.item1.id);
-    }
-
-    _gs.getTokenService().deleteTokenCounter("Child101-1", "2020");
-    _gs.getTokenService().deleteTokenCounter("Child101-1", "2021");
-    _gs
-        .getTokenService()
-        .deleteTokenCounter("Selenium-Covid-Vacination-Center", "2021");
-    _gs
-        .getTokenService()
-        .deleteToken("Child101-1#2021~4~13#10~30#+919999999999");
-
-    _gs
-        .getTokenService()
-        .deleteToken("Child101-1#2021~4~13#11~30#+919999999999");
-
-    _gs
-        .getTokenService()
-        .deleteToken("Child101-1#2021~4~13#15~30#+919999999999");
-
-    _gs
-        .getTokenService()
-        .deleteToken("Child101-1#2021~4~14#11~30#+919999999999");
-    _gs
-        .getTokenService()
-        .deleteToken("Child101-1#2021~5~1#10~30#+919999999999");
-    _gs
-        .getTokenService()
-        .deleteToken("Child101-1#2021~5~1#11~30#+919999999999");
-    _gs
-        .getTokenService()
-        .deleteToken("Child101-1#2021~5~1#12~30#+919999999999");
-
-    _gs.getTokenService().deleteSlot("Child101-1#2021~4~13");
-    _gs.getTokenService().deleteSlot("Child101-1#2021~4~14");
-    _gs.getTokenService().deleteSlot("Child101-1#2021~5~1");
 
     _gs.getUserService().deleteUser("+912626262626");
     _gs.getUserService().deleteUser("+916565656565");

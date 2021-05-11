@@ -985,6 +985,24 @@ class BookingApplicationService {
     return true;
   }
 
+  Future<void> deleteApplicationsForEntity(String entityId) async {
+    CollectionReference slots =
+        FirebaseFirestore.instance.collection('bookingApplications');
+
+    WriteBatch batch = FirebaseFirestore.instance.batch();
+    QuerySnapshot qs;
+    return slots
+        .where('entityId', isEqualTo: entityId)
+        .get()
+        .then((querySnapshot) {
+      querySnapshot.docs.forEach((document) {
+        batch.delete(document.reference);
+      });
+
+      return batch.commit();
+    });
+  }
+
   Future<bool> deleteBookingForm(String formId) async {
     FirebaseFirestore fStore = getFirestore();
 

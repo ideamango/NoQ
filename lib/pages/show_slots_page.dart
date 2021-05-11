@@ -684,7 +684,7 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              AutoSizeText(sl.currentNumber.toString(),
+              AutoSizeText(sl.totalBooked.toString(),
                   minFontSize: 9,
                   maxFontSize: 11,
                   style: TextStyle(
@@ -739,7 +739,7 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
         return;
       } else {
         //update in global State
-        selectedSlot.currentNumber++;
+        selectedSlot.totalBooked++;
       }
       _token = value.getDisplayName();
 

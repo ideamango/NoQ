@@ -525,7 +525,7 @@ class Utils {
       if (sl == null) {
         sl = new Slot(
             slotId: "",
-            currentNumber: 0,
+            totalBooked: 0,
             maxAllowed: me.maxAllowed,
             dateTime: dt,
             slotDuration: me.slotDuration,
@@ -542,7 +542,7 @@ class Utils {
       if (sl == null) {
         sl = new Slot(
             slotId: "",
-            currentNumber: 0,
+            totalBooked: 0,
             maxAllowed: me.maxAllowed,
             dateTime: dt,
             slotDuration: me.slotDuration,
