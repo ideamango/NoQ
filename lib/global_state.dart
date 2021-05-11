@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:LESSs/pages/favs_list_page.dart';
 import 'package:enum_to_string/enum_to_string.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -559,9 +560,25 @@ class GlobalState {
     UserTokens tokens;
     tokens =
         await _tokenService.generateToken(meta, slot.dateTime, enableVideoChat);
+    UserToken newToken;
+    bool matched;
     if (tokens != null) {
       for (UserToken tok in tokens.tokens) {
-        bookings.add(tok);
+        matched = false;
+        for (UserToken ut in bookings) {
+          if (ut.getID() == tok.getID()) {
+            matched = true;
+            break;
+          }
+        }
+
+        if (!matched) {
+          newToken = tok;
+          break;
+        }
+      }
+      if (newToken != null) {
+        bookings.add(newToken);
       }
     }
     return tokens;
@@ -595,7 +612,43 @@ class GlobalState {
   }
 
   Future<bool> cancelBooking(String tokenId, [int number]) async {
-    return await _tokenService.cancelToken(tokenId);
+    UserTokens uts = await _tokenService.cancelToken(tokenId, number);
+    if (uts != null) {
+      //update the bookings in the collection
+      int index = -1;
+      UserToken cancelledToken;
+      bool didMatch = false;
+      for (UserToken existingTok in bookings) {
+        index++;
+        if (existingTok.parent.getTokenId() == uts.getTokenId()) {
+          if (number == null) {
+            didMatch = true;
+            cancelledToken = uts.tokens[0];
+            break;
+          } else {
+            //supplied number should not exist in the returned UserTokens object as that would have changed to -1 and original number should match
+            for (UserToken ut in uts.tokens) {
+              if (number == ut.numberBeforeCancellation &&
+                  number == existingTok.number) {
+                didMatch = true;
+                cancelledToken = ut;
+                break;
+              }
+            }
+            if (didMatch) {
+              break;
+            }
+          }
+        }
+      }
+
+      if (didMatch) {
+        bookings[index] = cancelledToken;
+      }
+      return true;
+    } else {
+      return false;
+    }
   }
 
   static Future<void> saveGlobalState() async {

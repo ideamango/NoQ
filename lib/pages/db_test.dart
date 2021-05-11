@@ -605,11 +605,11 @@ class DBTest {
           "TokenService.getTokensForEntityBookedByCurrentUser ------------------------> FAILURE");
     }
 
-    bool isTokenCancelled = await _gs
+    UserTokens cancelledToken = await _gs
         .getTokenService()
         .cancelToken("Child101-1#2020~7~7#10~30#+919999999999");
 
-    if (!isTokenCancelled) {
+    if (cancelledToken == null) {
       print("TokenService.cancelToken ------> FAILURE");
     }
 
@@ -1114,7 +1114,9 @@ class DBTest {
         type: EntityType.PLACE_TYPE_SHOP,
         isBookable: true,
         isActive: isActive,
-        coordinates: geoPoint);
+        coordinates: geoPoint,
+        maxTokensPerSlotByUser: 5,
+        maxTokensByUserInDay: 15);
     try {
       child1.regNum = "testregnum";
       bool added = await _gs
@@ -1225,7 +1227,6 @@ class DBTest {
 
   Future<void> testTokenCounter(Entity bata) async {
     //set the max token booked by a user in a slot to 3
-    bata.maxTokensPerSlotByUser = 4;
     await _gs.getEntityService().upsertEntity(bata);
     MetaEntity me = bata.getMetaEntity();
 
@@ -1371,7 +1372,9 @@ class DBTest {
         isActive: true,
         coordinates: geoPoint,
         phone: "+919611009823",
-        whatsapp: "+919611009823");
+        whatsapp: "+919611009823",
+        maxTokensByUserInDay: 15,
+        maxTokensPerSlotByUser: 5);
 
     try {
       entity.regNum = "SampleChildRegNum";
@@ -2073,7 +2076,7 @@ class DBTest {
         .getApplicationService()
         .getBookingForm(COVID_VACCINATION_BOOKING_FORM_ID);
 
-    List<MetaForm> forms = List<MetaForm>();
+    List<MetaForm> forms = [];
     forms.add(MetaForm(id: bf.id, name: bf.formName));
 
     MyGeoFirePoint geoPoint = new MyGeoFirePoint(17.444317, 78.355321);
@@ -2106,7 +2109,8 @@ class DBTest {
         upiId: "+919611009823",
         whatsapp: "+918328592031",
         forms: forms,
-        maxTokensPerSlotByUser: 2);
+        maxTokensPerSlotByUser: 2,
+        maxTokensByUserInDay: 15);
 
     try {
       entity.regNum = "testReg111";
@@ -2146,15 +2150,15 @@ class DBTest {
 
       FormInputFieldOptionsWithAttachments healthDetailsInput =
           bf.getFormFields()[2];
-      healthDetailsInput.responseValues = new List<Value>();
+      healthDetailsInput.responseValues = [];
       healthDetailsInput.responseValues.add(healthDetailsInput.options[1]);
       healthDetailsInput.responseValues.add(healthDetailsInput.options[3]);
 
       FormInputFieldOptionsWithAttachments idProof = bf.getFormFields()[3];
-      idProof.responseValues = new List<Value>();
+      idProof.responseValues = [];
       idProof.responseValues.add(idProof.options[1]);
       idProof.responseValues.add(idProof.options[3]);
-      idProof.responseFilePaths = List<String>();
+      idProof.responseFilePaths = [];
       idProof.responseFilePaths.add(
           "https://firebasestorage.googleapis.com/v0/b/sukoon-india.appspot.com/o/8d33fca0-567c-11eb-ab9e-3186f616ddb9%238d3200d0-567c-11eb-8f72-39e1ef14fb06%23O72Pv6XakoRlxNKYbZLruYaMlwi1%23scaled_f511c73a-5c2b-43b6-91b7-fe1698dffb671714737705318816047.jpg?alt=media&token=d4b890c9-ff3c-4529-a65f-493e29763b61");
       idProof.responseFilePaths.add(
@@ -2162,10 +2166,10 @@ class DBTest {
 
       FormInputFieldOptionsWithAttachments frontLineWorker =
           bf.getFormFields()[4];
-      frontLineWorker.responseValues = new List<Value>();
+      frontLineWorker.responseValues = [];
       frontLineWorker.responseValues.add(frontLineWorker.options[0]);
       frontLineWorker.responseValues.add(frontLineWorker.options[2]);
-      frontLineWorker.responseFilePaths = List<String>();
+      frontLineWorker.responseFilePaths = [];
       frontLineWorker.responseFilePaths.add(
           "https://firebasestorage.googleapis.com/v0/b/sukoon-india.appspot.com/o/8d33fca0-567c-11eb-ab9e-3186f616ddb9%238d3200d0-567c-11eb-8f72-39e1ef14fb06%23O72Pv6XakoRlxNKYbZLruYaMlwi1%23scaled_f511c73a-5c2b-43b6-91b7-fe1698dffb671714737705318816047.jpg?alt=media&token=d4b890c9-ff3c-4529-a65f-493e29763b61");
       frontLineWorker.responseFilePaths.add(

@@ -106,7 +106,7 @@ class BookingApplication {
         map[t.key] = t.response;
       } else if (f.type == FieldType.OPTIONS) {
         FormInputFieldOptions t = f;
-        List<String> fieldValueIds = List<String>();
+        List<String> fieldValueIds = [];
         for (Value val in t.responseValues) {
           fieldValueIds.add(val.key);
         }
@@ -121,7 +121,7 @@ class BookingApplication {
         map[t.key] = t.responsePhone;
       } else if (f.type == FieldType.OPTIONS_ATTACHMENTS) {
         FormInputFieldOptionsWithAttachments t = f;
-        List<String> fieldValueIds = List<String>();
+        List<String> fieldValueIds = [];
         if (t.responseValues != null) {
           for (Value val in t.responseValues) {
             fieldValueIds.add(val.key);

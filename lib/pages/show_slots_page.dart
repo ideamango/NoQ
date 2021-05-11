@@ -1,18 +1,17 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:another_flushbar/flushbar.dart';
-import 'package:another_flushbar/flushbar_helper.dart';
-import 'package:another_flushbar/flushbar_route.dart';
+
 import 'package:flutter/material.dart';
 import '../db/db_model/entity.dart';
 import '../db/db_model/meta_entity.dart';
-import '../db/db_model/meta_form.dart';
+
 import '../db/db_model/slot.dart';
 import '../db/exceptions/slot_full_exception.dart';
 import '../db/exceptions/token_already_exists_exception.dart';
 import '../global_state.dart';
-import '../pages/booking_application_form.dart';
+
 import '../pages/booking_form_selection_page.dart';
-import '../pages/covid_token_booking_form.dart';
+
 import '../pages/search_child_entity_page.dart';
 import '../pages/search_entity_page.dart';
 import '../pages/favs_list_page.dart';
@@ -719,9 +718,9 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
         ),
         slotBooking,
         takingMoment);
-    print(entity.maxTokenByUserInDay);
+    print(entity.maxTokensByUserInDay);
 
-    if (entity.maxTokenByUserInDay <= bookedSlots.length) {
+    if (entity.maxTokensByUserInDay <= bookedSlots.length) {
       //Max tokens already booked, then user cant book further slots.
       Utils.showMyFlushbar(context, Icons.error, Duration(seconds: 5),
           maxTokenLimitReached, maxTokenLimitReachedSub);

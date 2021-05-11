@@ -1106,10 +1106,10 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
           return null;
         },
         onChanged: (value) {
-          entity.maxTokenByUserInDay = int.tryParse(value);
+          entity.maxTokensByUserInDay = int.tryParse(value);
         },
         onSaved: (String value) {
-          entity.maxTokenByUserInDay = int.tryParse(value);
+          entity.maxTokensByUserInDay = int.tryParse(value);
         },
       );
 

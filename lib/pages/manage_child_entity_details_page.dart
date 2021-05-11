@@ -1252,10 +1252,10 @@ class _ManageChildEntityDetailsPageState
         return null;
       },
       onChanged: (value) {
-        serviceEntity.maxTokenByUserInDay = int.tryParse(value);
+        serviceEntity.maxTokensByUserInDay = int.tryParse(value);
       },
       onSaved: (String value) {
-        serviceEntity.maxTokenByUserInDay = int.tryParse(value);
+        serviceEntity.maxTokensByUserInDay = int.tryParse(value);
       },
     );
 

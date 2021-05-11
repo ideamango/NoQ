@@ -53,7 +53,7 @@ class Entity {
       this.maxPeoplePerToken = 1,
       this.parentGroupId,
       this.supportEmail,
-      this.maxTokenByUserInDay = 1,
+      this.maxTokensByUserInDay = 1,
       this.enableVideoChat = false});
 
   //SlotDocumentId is entityID#20~06~01 it is not auto-generated, will help in not duplicating the record
@@ -103,7 +103,7 @@ class Entity {
   String
       parentGroupId; //this value will be present and common for different branches of same company
   String supportEmail;
-  int maxTokenByUserInDay;
+  int maxTokensByUserInDay;
   bool enableVideoChat;
 
   Map<String, dynamic> toJson() => {
@@ -150,7 +150,7 @@ class Entity {
         'maxPeoplePerToken': maxPeoplePerToken,
         'parentGroupId': parentGroupId,
         'supportEmail': supportEmail,
-        'maxTokenByUserInDay': maxTokenByUserInDay,
+        'maxTokensByUserInDay': maxTokensByUserInDay,
         'enableVideoChat': enableVideoChat
       };
 
@@ -257,7 +257,7 @@ class Entity {
         maxPeoplePerToken: json['maxPeoplePerToken'],
         parentGroupId: json['parentGroupId'],
         supportEmail: json['supportEmail'],
-        maxTokenByUserInDay: json['maxTokenByUserInDay'],
+        maxTokensByUserInDay: json['maxTokensByUserInDay'],
         enableVideoChat: json['enableVideoChat']);
   }
 
@@ -361,7 +361,7 @@ class Entity {
           maxPeoplePerToken: maxPeoplePerToken,
           parentGroupId: parentGroupId,
           supportEmail: supportEmail,
-          maxTokenByUserInDay: maxTokenByUserInDay,
+          maxTokensByUserInDay: maxTokensByUserInDay,
           enableVideoChat: enableVideoChat);
     } else {
       _meta.name = name;
@@ -401,7 +401,7 @@ class Entity {
       _meta.maxPeoplePerToken = maxPeoplePerToken;
       _meta.parentGroupId = parentGroupId;
       _meta.supportEmail = supportEmail;
-      _meta.maxTokenByUserInDay = maxTokenByUserInDay;
+      _meta.maxTokensByUserInDay = maxTokensByUserInDay;
       _meta.enableVideoChat = enableVideoChat;
     }
     return _meta;

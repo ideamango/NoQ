@@ -120,10 +120,10 @@ class _ApplicationsListState extends State<ApplicationsList> {
     BookingForm bookingForm;
     List<Field> fields;
     BookingApplication bookingApplication1;
-    List<Value> idProofTypesStrList = List<Value>();
-    List<Item> idProofTypes = List<Item>();
-    List<Value> medConditionsStrList = List<Value>();
-    List<Item> medConditions = List<Item>();
+    List<Value> idProofTypesStrList = [];
+    List<Item> idProofTypes = [];
+    List<Value> medConditionsStrList = [];
+    List<Item> medConditions = [];
     FormInputFieldText nameInput;
     FormInputFieldDateTime dobInput;
     FormInputFieldText primaryPhone;

@@ -1,5 +1,7 @@
 import 'dart:math';
 
+import 'package:LESSs/db/exceptions/MaxTokenReachedByUserPerDayException.dart';
+import 'package:LESSs/db/exceptions/token_already_cancelled_exception.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -10,7 +12,7 @@ import '../db_model/meta_entity.dart';
 import '../db_model/user_token.dart';
 import '../db_model/slot.dart';
 
-import '../exceptions/max_token_reached_exception.dart';
+import '../exceptions/MaxTokenReachedByUserPerSlotException.dart';
 import '../exceptions/no_token_found_exception.dart';
 import '../exceptions/slot_full_exception.dart';
 import '../exceptions/token_already_exists_exception.dart';
@@ -129,7 +131,7 @@ class TokenService {
         for (Slot sl in slots) {
           if (!sl.isFull) {
             if (!dayExist) {
-              dayWiseFreeSlots.add(List<Slot>());
+              dayWiseFreeSlots.add([]);
               dayExist = true;
               count++;
             }
@@ -254,34 +256,33 @@ class TokenService {
     final DocumentReference tokenCounterRef =
         fStore.doc('counter/' + tokenCounterId);
 
-    DocumentSnapshot tokenCounterSnapshot = await tx.get(tokenCounterRef);
-
-    if (tokenCounterSnapshot.exists) {
-      Map<String, dynamic> map = tokenCounterSnapshot.data();
-      tokenCounter = TokenCounter.fromJson(map);
-    } else {
-      tokenCounter = new TokenCounter(
-          entityId: metaEntity.entityId, year: dateTime.year.toString());
-      tokenCounter.slotWiseStats = new Map<String, TokenStats>();
-    }
-
     try {
       DocumentSnapshot entitySlotsSnapshot = await tx.get(entitySlotsRef);
       EntitySlots es;
 
       if (entitySlotsSnapshot.exists) {
         DocumentSnapshot tokenSnapshot = await tx.get(tokRef);
+        tokens = UserTokens.fromJson(tokenSnapshot.data());
         if (tokenSnapshot.exists && metaEntity.maxTokensPerSlotByUser == 1) {
-          throw new TokenAlreadyExistsException(
-              "Token for this user is already booked");
+          if (tokens.tokens[0].number != -1)
+            throw new TokenAlreadyExistsException(
+                "Token for this user is already booked");
         }
 
-        tokens = UserTokens.fromJson(tokenSnapshot.data());
-
         if (tokenSnapshot.exists &&
-            metaEntity.maxTokensPerSlotByUser == tokens.tokens.length) {
-          throw new MaxTokenReachedException(
-              "Can't book more than ${metaEntity.maxTokensPerSlotByUser.toString} tokens per slot");
+            metaEntity.maxTokensPerSlotByUser <= tokens.tokens.length) {
+          int numberOfCancelledInSlot = 0;
+          for (UserToken ut in tokens.tokens) {
+            if (ut.number == -1) {
+              numberOfCancelledInSlot++;
+            }
+          }
+
+          if (tokens.tokens.length - numberOfCancelledInSlot ==
+              metaEntity.maxTokensPerSlotByUser) {
+            throw new MaxTokenReachedByUserPerSlotException(
+                "Can't book more than ${metaEntity.maxTokensPerSlotByUser.toString} tokens per slot");
+          }
         }
 
         //atleast one token is issued for the given entity for that day
@@ -289,8 +290,9 @@ class TokenService {
         int maxAllowed = es.maxAllowed;
 
         int slotCount = -1;
-        bool slotExist = false;
+
         int newNumber = 1;
+        Slot existingSlot;
         for (var sl in es.slots) {
           slotCount++;
           if (sl.dateTime.hour == dateTime.hour &&
@@ -310,25 +312,34 @@ class TokenService {
             // set the current number to be incremented
             sl.currentNumber = newNumber;
 
-            slotExist = true;
+            existingSlot = sl;
             break;
           }
         }
 
-        if (!slotExist) {
-          // Create a new Slot with current number as 1 and add to the Slots list of Entity_Slots object
-          Slot sl = new Slot(
-              currentNumber: 1,
-              slotId: slotId,
-              maxAllowed: es.maxAllowed,
-              dateTime: dateTime,
-              slotDuration: es.slotDuration,
-              isFull: false);
-          es.slots.add(sl);
+        //check if the user has already reached the limit for the day
+        int dayCountForUser = 0;
+        int numberOfCancelledInDay = 0;
+        for (Slot sl in es.slots) {
+          for (UserTokens uts in sl.tokens) {
+            if (uts.userId == userId) {
+              int numOfTokensInASlot = uts.tokens.length;
+              dayCountForUser += numOfTokensInASlot;
+            }
+            for (UserToken ut in uts.tokens) {
+              if (ut.number == -1) {
+                numberOfCancelledInDay++;
+              }
+            }
+          }
         }
 
-        // Save the EntitySlots using set method
-        tx.set(entitySlotsRef, es.toJson());
+        if (dayCountForUser - numberOfCancelledInDay ==
+            metaEntity.maxTokensByUserInDay) {
+          throw new MaxTokenReachedByUserPerDayException(
+              "User has reached max token count for the day, which is " +
+                  dayCountForUser.toString());
+        }
 
         if (tokens == null) {
           tokens = new UserTokens(
@@ -361,7 +372,41 @@ class TokenService {
             parent: tokens);
 
         tokens.tokens.add(newToken);
-        tx.set(tokRef, tokens.toJson());
+
+        if (existingSlot == null) {
+          // Create a new Slot with current number as 1 and add to the Slots list of Entity_Slots object
+          Slot newSlot = new Slot(
+              currentNumber: 1,
+              slotId: slotId,
+              maxAllowed: es.maxAllowed,
+              dateTime: dateTime,
+              slotDuration: es.slotDuration,
+              isFull: false);
+          if (newSlot.tokens == null) {
+            newSlot.tokens = [];
+          }
+          newSlot.tokens.add(tokens);
+          es.slots.add(newSlot);
+        } else {
+          if (existingSlot.tokens == null) {
+            existingSlot.tokens = [];
+          }
+          int existingTokenIndex = -1;
+          bool tokenAlreadyExists = false;
+          for (UserTokens uts in existingSlot.tokens) {
+            existingTokenIndex++;
+            if (uts.getTokenId() == tokens.getTokenId()) {
+              tokenAlreadyExists = true;
+              break;
+            }
+          }
+
+          if (existingTokenIndex > -1 && tokenAlreadyExists) {
+            existingSlot.tokens[existingTokenIndex] = tokens;
+          } else {
+            existingSlot.tokens.add(tokens);
+          }
+        }
       } else {
         //This is the first token for the entity for the given day
         int maxAllowed = metaEntity.maxAllowed;
@@ -375,31 +420,6 @@ class TokenService {
         int startTimeMinute = metaEntity.startTimeMinute;
         int endTimeHour = metaEntity.endTimeHour;
         int endTimeMinute = metaEntity.endTimeMinute;
-
-        EntitySlots es = new EntitySlots(
-            slots: [],
-            entityId: metaEntity.entityId,
-            date: new DateTime(dateTime.year, dateTime.month, dateTime.day),
-            maxAllowed: maxAllowed,
-            slotDuration: slotDuration,
-            closedOn: closedOn,
-            breakStartHour: breakStartHour,
-            breakStartMinute: breakStartMinute,
-            breakEndHour: breakEndHour,
-            breakEndMinute: breakEndMinute,
-            startTimeHour: startTimeHour,
-            startTimeMinute: startTimeMinute,
-            endTimeHour: endTimeHour,
-            endTimeMinute: endTimeMinute);
-
-        Slot sl = new Slot(
-            currentNumber: 1,
-            slotId: slotId,
-            maxAllowed: es.maxAllowed,
-            dateTime: dateTime,
-            slotDuration: es.slotDuration,
-            isFull: false);
-        es.slots.add(sl);
 
         tokens = new UserTokens(
             slotId: slotId,
@@ -429,13 +449,49 @@ class TokenService {
             bookingFormName: formName,
             parent: tokens);
 
+        es = new EntitySlots(
+            slots: [],
+            entityId: metaEntity.entityId,
+            date: new DateTime(dateTime.year, dateTime.month, dateTime.day),
+            maxAllowed: maxAllowed,
+            slotDuration: slotDuration,
+            closedOn: closedOn,
+            breakStartHour: breakStartHour,
+            breakStartMinute: breakStartMinute,
+            breakEndHour: breakEndHour,
+            breakEndMinute: breakEndMinute,
+            startTimeHour: startTimeHour,
+            startTimeMinute: startTimeMinute,
+            endTimeHour: endTimeHour,
+            endTimeMinute: endTimeMinute);
+
+        Slot sl = new Slot(
+            currentNumber: 1,
+            slotId: slotId,
+            maxAllowed: es.maxAllowed,
+            dateTime: dateTime,
+            slotDuration: es.slotDuration,
+            isFull: false);
+        if (sl.tokens == null) {
+          sl.tokens = [];
+        }
+
+        sl.tokens.add(tokens);
+
+        es.slots.add(sl);
+
         tokens.tokens.add(newToken);
+      }
 
-        //create EntitySlots with one slot in it
-        tx.set(entitySlotsRef, es.toJson());
+      DocumentSnapshot tokenCounterSnapshot = await tx.get(tokenCounterRef);
 
-        //create Token
-        tx.set(tokRef, tokens.toJson());
+      if (tokenCounterSnapshot.exists) {
+        Map<String, dynamic> map = tokenCounterSnapshot.data();
+        tokenCounter = TokenCounter.fromJson(map);
+      } else {
+        tokenCounter = new TokenCounter(
+            entityId: metaEntity.entityId, year: dateTime.year.toString());
+        tokenCounter.slotWiseStats = new Map<String, TokenStats>();
       }
 
       //update the TokenCounter, check the key year~month~day#slot-time
@@ -446,16 +502,17 @@ class TokenService {
       tokenCounter.slotWiseStats[key].numberOfTokensCreated =
           tokenCounter.slotWiseStats[key].numberOfTokensCreated + 1;
 
+      //create EntitySlots with one slot in it
+      tx.set(entitySlotsRef, es.toJson());
+
+      //create Token
+      tx.set(tokRef, tokens.toJson());
       //create/update the TokenCounter
       tx.set(tokenCounterRef, tokenCounter.toJson());
     } catch (ex) {
       print(
           "Error while generting token -> Transaction Error: " + e.toString());
-      e = ex;
-    }
-
-    if (e != null) {
-      throw e;
+      throw ex;
     }
 
     return tokens;
@@ -510,7 +567,7 @@ class TokenService {
     return tokens;
   }
 
-  Future<bool> cancelTokenInTransaction(
+  Future<UserTokens> cancelTokenInTransaction(
       Transaction tx, String userId, String tokenId,
       [int number]) async {
     FirebaseFirestore fStore = getFirestore();
@@ -540,11 +597,17 @@ class TokenService {
 
         for (UserToken tok in tokens.tokens) {
           if (number == null && tokens.tokens.length == 1) {
+            if (tok.number == -1) {
+              throw new TokenAlreadyCancelledException(
+                  "Token is already cancelled");
+            }
+            tok.numberBeforeCancellation = tok.number;
             tok.number = -1;
             numberMatched = true;
             break;
           } else {
             if (tok.number == number) {
+              tok.numberBeforeCancellation = tok.number;
               tok.number = -1;
               numberMatched = true;
             }
@@ -552,8 +615,8 @@ class TokenService {
         }
 
         if (!numberMatched) {
-          throw new Exception(
-              "Supplied token number for the cancellation did not match");
+          throw new TokenAlreadyCancelledException(
+              "Token number for the cancellation not found OR already cancelled");
         }
 
         String slotId = tokens.slotId;
@@ -608,6 +671,27 @@ class TokenService {
         tokenCounter.slotWiseStats[key].numberOfTokensCancelled =
             tokenCounter.slotWiseStats[key].numberOfTokensCancelled + 1;
 
+        //update slot object with the new state of token
+        Slot slot;
+        int count;
+        for (Slot sl in es.slots) {
+          count = -1;
+          for (UserTokens uts in sl.tokens) {
+            count++;
+            if (uts.getTokenId() == tokens.getTokenId()) {
+              slot = sl;
+              break;
+            }
+          }
+          if (slot != null) {
+            break;
+          }
+        }
+
+        if (slot != null && count > -1) {
+          slot.tokens[count] = tokens;
+        }
+
         //create/update the TokenCounter
         tx.set(tokenCounterRef, tokenCounter.toJson());
 
@@ -617,7 +701,7 @@ class TokenService {
         //change the max allowed by 1, if a token is cancelled
         tx.set(entitySlotsRef, es.toJson());
 
-        isCancelled = true;
+        return tokens;
       } else {
         throw new NoTokenFoundException("Token does not exists");
       }
@@ -626,10 +710,10 @@ class TokenService {
       isCancelled = false;
     }
 
-    return isCancelled;
+    return null;
   }
 
-  Future<bool> cancelToken(String tokenId, [int number]) async {
+  Future<UserTokens> cancelToken(String tokenId, [int number]) async {
     //number param is optional, only required when multiple tokens are booked by the user for the same slot
     //get the token, mark it cancelled
     //get the slot from the token
@@ -639,14 +723,14 @@ class TokenService {
     String userPhone = user.phoneNumber;
     FirebaseFirestore fStore = getFirestore();
 
-    bool isCancelled = false;
+    UserTokens cancelledToken;
 
     await fStore.runTransaction((Transaction tx) async {
-      isCancelled =
+      cancelledToken =
           await cancelTokenInTransaction(tx, userPhone, tokenId, number);
     });
 
-    return isCancelled;
+    return cancelledToken;
   }
 
   Future<List<UserToken>> getAllTokensForSlot(String slotId) async {

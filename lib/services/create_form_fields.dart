@@ -1315,7 +1315,7 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
       for (int i = 0; i < listOfFields.length; i++) {
         switch (listOfFields[i].type) {
           case FieldType.ATTACHMENT:
-            List<String> targetPaths = List<String>();
+            List<String> targetPaths = [];
             for (String path in (listOfFields[i] as FormInputFieldAttachment)
                 .responseFilePaths) {
               String fileName = pathfile.basename(path);
@@ -1336,7 +1336,7 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
             break;
           case FieldType.OPTIONS_ATTACHMENTS:
             print("df");
-            List<String> targetPaths = List<String>();
+            List<String> targetPaths = [];
             for (String path
                 in (listOfFields[i] as FormInputFieldOptionsWithAttachments)
                     .responseFilePaths) {

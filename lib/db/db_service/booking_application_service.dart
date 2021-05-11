@@ -131,7 +131,7 @@ class BookingApplicationService {
     if (Utils.isNotNullOrEmpty(orderByFieldName)) {
       query = query.orderBy(orderByFieldName, descending: isDescending);
     }
-//TODO - Sumant - takeCount coming as null
+    //TODO - Sumant - takeCount coming as null
     if (takeCount > 0) {
       query = query.limit(takeCount);
     }
@@ -142,8 +142,7 @@ class BookingApplicationService {
       query = query.endBeforeDocument(firstRecord);
     }
 
-    List<Tuple<BookingApplication, QueryDocumentSnapshot>> applications =
-        new List<Tuple<BookingApplication, QueryDocumentSnapshot>>();
+    List<Tuple<BookingApplication, QueryDocumentSnapshot>> applications = [];
 
     QuerySnapshot qs = await query.get();
     List<QueryDocumentSnapshot> qds = qs.docs;
@@ -320,20 +319,26 @@ class BookingApplicationService {
             bf.autoApproved &&
             bf.generateTokenOnApproval) {
           //generate the token
-          UserTokens toks = await _gs
-              .getTokenService()
-              .generateTokenInTransaction(
-                  tx,
-                  userPhone,
-                  metaEntity,
-                  ba.preferredSlotTiming,
-                  ba.id,
-                  ba.bookingFormId,
-                  ba.responseForm.formName,
-                  enableVideoChat);
+          UserTokens toks;
+          try {
+            toks = await _gs.getTokenService().generateTokenInTransaction(
+                tx,
+                userPhone,
+                metaEntity,
+                ba.preferredSlotTiming,
+                ba.id,
+                ba.bookingFormId,
+                ba.responseForm.formName,
+                enableVideoChat);
+          } catch (e) {
+            throw e;
+          }
 
           UserToken lastTok = toks.tokens[toks.tokens.length - 1];
-          ba.tokenId = toks.getTokenId() + "#" + lastTok.number.toString();
+          ba.tokenId = lastTok.getID();
+
+          //HACK: by accessing bookings of GS to add this new Token, so that it apears immediately in users list
+          _gs.bookings.add(lastTok);
         }
 
         tx.set(applicationRef, ba.toJson());
@@ -355,7 +360,7 @@ class BookingApplicationService {
       throw e;
     }
 
-    return false;
+    return isSuccess;
   }
 
   //to be done by the Applicant
@@ -485,9 +490,33 @@ class BookingApplicationService {
           String tokenId = ba.tokenId.substring(0, beforeLastHash);
 
           //cancel the token
-          await _gs
+          UserTokens cancelledToken = await _gs
               .getTokenService()
               .cancelTokenInTransaction(tx, userPhone, tokenId, tokenNumber);
+
+          //update the GlobalState bookings collection with the cancelled token
+          int index = -1;
+          bool matched = false;
+          UserToken cancelledTok;
+          for (UserToken ut in _gs.bookings) {
+            index++;
+            for (UserToken cut in cancelledToken.tokens) {
+              if (cancelledToken.getTokenId() == cut.parent.getTokenId() &&
+                  tokenNumber == cut.numberBeforeCancellation &&
+                  ut.number == tokenNumber) {
+                matched = true;
+                cancelledTok = cut;
+                break;
+              }
+            }
+            if (matched) {
+              break;
+            }
+          }
+
+          if (index > -1 && cancelledTok != null) {
+            _gs.bookings[index] = cancelledTok;
+          }
         }
 
         if (existingStatus == ApplicationStatus.APPROVED) {
@@ -678,22 +707,27 @@ class BookingApplicationService {
           //TODO: generate the token and send the notification to the applicant
           //generate the token
           //send notification
+          UserTokens toks;
           if (bf.generateTokenOnApproval && bf.appointmentRequired) {
-            UserTokens toks = await _gs
-                .getTokenService()
-                .generateTokenInTransaction(
-                    tx,
-                    userPhone,
-                    metaEntity,
-                    tokenTime,
-                    application.id,
-                    application.bookingFormId,
-                    application.responseForm.formName,
-                    enableVideoChat);
+            try {
+              toks = await _gs.getTokenService().generateTokenInTransaction(
+                  tx,
+                  userPhone,
+                  metaEntity,
+                  tokenTime,
+                  application.id,
+                  application.bookingFormId,
+                  application.responseForm.formName,
+                  enableVideoChat);
+            } catch (e) {
+              throw e;
+            }
 
             UserToken lastTok = toks.tokens[toks.tokens.length - 1];
-            application.tokenId =
-                toks.getTokenId() + "#" + lastTok.number.toString();
+            application.tokenId = lastTok.getID();
+
+            //HACK: by accessing bookings of GS to add this new Token, so that it apears immediately in users list
+            _gs.bookings.add(lastTok);
           }
         } else if (status == ApplicationStatus.COMPLETED) {
           application.timeOfCompletion = now;
