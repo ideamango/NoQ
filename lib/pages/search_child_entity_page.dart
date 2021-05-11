@@ -1125,28 +1125,12 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
                                             size: 25,
                                           ),
                                           onPressed: () {
-                                            if (str.whatsapp != null &&
-                                                str.whatsapp != "") {
-                                              try {
-                                                launchWhatsApp(
-                                                    message: whatsappMessage,
-                                                    phone: str.whatsapp);
-                                              } catch (error) {
-                                                Utils.showMyFlushbar(
-                                                    context,
-                                                    Icons.error,
-                                                    Duration(seconds: 5),
-                                                    "Could not connect to the Whatsapp number ${str.whatsapp} !!",
-                                                    "Try again later");
-                                              }
-                                            } else {
-                                              Utils.showMyFlushbar(
-                                                  context,
-                                                  Icons.info,
-                                                  Duration(seconds: 5),
-                                                  "Whatsapp contact information not found!!",
-                                                  "");
-                                            }
+                                            Utils.showMyFlushbar(
+                                                context,
+                                                Icons.info,
+                                                Duration(seconds: 5),
+                                                "This place provides OnlineConsultation on Whatsapp number ${str.whatsapp} !!",
+                                                "Help in reducing crowd at places.");
                                           },
                                         ),
                                       )
