@@ -70,7 +70,7 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
   String categoryType;
   // Map<String, String> categoryList = new Map<String, String>();
   double fontSize;
-
+  var sideInfoGrp = new AutoSizeGroup();
   List<String> searchTypes = new List<String>();
 
   final compareDateFormat = new DateFormat('YYYYMMDD');
@@ -182,7 +182,8 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
             childBottomSheetController.close();
             childBottomSheetController = null;
           }
-          EventBus.fireEvent(SEARCH_CATEGORY_SELECTED, null, categoryType);
+          EventBus.fireEvent(
+              SEARCH_CHILD_CATEGORY_SELECTED, null, categoryType);
         },
         child: Column(
           children: <Widget>[
@@ -224,8 +225,8 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
   }
 
   void registerCategorySelectEvent() {
-    _eventListener =
-        EventBus.registerEvent(SEARCH_CATEGORY_SELECTED, null, (event, arg) {
+    _eventListener = EventBus.registerEvent(
+        SEARCH_CHILD_CATEGORY_SELECTED, null, (event, arg) {
       if (event == null) {
         return;
       }
@@ -386,7 +387,7 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
                         style: TextStyle(
                             color: Colors.blueGrey[800],
                             fontFamily: 'RalewayRegular',
-                            fontSize: 19.0),
+                            fontSize: 18.0),
                       )),
                 ],
               ),
@@ -511,7 +512,7 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
 
   @override
   Widget build(BuildContext context) {
-    fontSize = MediaQuery.of(context).size.width;
+    fontSize = MediaQuery.of(context).size.width * .045;
     print("Font size" + fontSize.toString());
 // build widget only after init has completed, till then show progress indicator.
     if (!initCompleted) {
@@ -1075,130 +1076,84 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: <Widget>[
                           Container(
-                            width: MediaQuery.of(context).size.width * .6,
+                            width: MediaQuery.of(context).size.width * .78,
                             padding: EdgeInsets.all(0),
                             margin: EdgeInsets.zero,
                             child: Row(
-                              // mainAxisAlignment: Mai1nAxisAlignment.spaceBetween,
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               // crossAxisAlignment: CrossAxisAlignment.center,
                               children: <Widget>[
                                 GestureDetector(
                                   onTap: () {
+                                    print("Container clicked");
                                     showPlaceDetailsSheet(str);
+                                    // Navigator.push(
+                                    //     context,
+                                    //     MaterialPageRoute(
+                                    //         builder: (context) =>
+                                    //             PlaceDetailsPage()));
+                                    // showDialogForPlaceDetails(
+                                    //     null, str, context);
                                   },
                                   child: Container(
                                     padding: EdgeInsets.zero,
                                     width:
-                                        MediaQuery.of(context).size.width * .46,
+                                        MediaQuery.of(context).size.width * .7,
                                     child: AutoSizeText(
                                       (str.name) ?? str.name.toString(),
                                       style: TextStyle(
                                           fontSize: fontSize * .045,
                                           color: btnColor),
                                       maxLines: 1,
-                                      minFontSize: 14,
+                                      minFontSize: 18,
                                       overflow: TextOverflow.ellipsis,
                                     ),
                                   ),
                                 ),
-                                (str.verificationStatus ==
-                                        VERIFICATION_VERIFIED)
-                                    ? new Container(
-                                        width:
-                                            MediaQuery.of(context).size.width *
-                                                .06,
-                                        height:
-                                            MediaQuery.of(context).size.height *
-                                                .03,
-                                        child: IconButton(
-                                          padding:
-                                              EdgeInsets.fromLTRB(1, 1, 0, 2),
-                                          icon: Icon(
-                                            Icons.verified_user,
-                                            color: Colors.green,
-                                            size: 15,
-                                          ),
-                                          onPressed: () {
-                                            Utils.showMyFlushbar(
-                                                context,
-                                                Icons.info,
-                                                Duration(seconds: 5),
-                                                VERIFICATION_VERIFIED,
-                                                "");
-                                          },
-                                        ),
-                                      )
-                                    : Container(),
-                                (str.isPublic != true)
+                                (str.enableVideoChat)
                                     ? Container(
                                         width:
                                             MediaQuery.of(context).size.width *
-                                                .06,
+                                                .08,
                                         height:
                                             MediaQuery.of(context).size.height *
-                                                .03,
+                                                .04,
                                         child: IconButton(
-                                          padding:
-                                              EdgeInsets.fromLTRB(1, 1, 1, 2),
                                           icon: Icon(
-                                            Icons.lock,
+                                            Icons.videocam,
                                             color: primaryIcon,
-                                            size: 15,
+                                            size: 25,
                                           ),
                                           onPressed: () {
-                                            Utils.showMyFlushbar(
-                                                context,
-                                                Icons.info,
-                                                Duration(seconds: 5),
-                                                "Access to this place is restricted to its residents or employees.",
-                                                "");
+                                            if (str.whatsapp != null &&
+                                                str.whatsapp != "") {
+                                              try {
+                                                launchWhatsApp(
+                                                    message: whatsappMessage,
+                                                    phone: str.whatsapp);
+                                              } catch (error) {
+                                                Utils.showMyFlushbar(
+                                                    context,
+                                                    Icons.error,
+                                                    Duration(seconds: 5),
+                                                    "Could not connect to the Whatsapp number ${str.whatsapp} !!",
+                                                    "Try again later");
+                                              }
+                                            } else {
+                                              Utils.showMyFlushbar(
+                                                  context,
+                                                  Icons.info,
+                                                  Duration(seconds: 5),
+                                                  "Whatsapp contact information not found!!",
+                                                  "");
+                                            }
                                           },
                                         ),
                                       )
-                                    : Container(),
+                                    : Container(width: 0),
                               ],
                             ),
                           ),
-                          if (str.startTimeHour != null)
-                            Container(
-                              width: MediaQuery.of(context).size.width * .18,
-                              padding: EdgeInsets.all(0),
-                              margin: EdgeInsets.all(0),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.end,
-                                children: <Widget>[
-                                  Text(
-                                      Utils.formatTime(
-                                              str.startTimeHour.toString()) +
-                                          ':' +
-                                          Utils.formatTime(
-                                              str.startTimeMinute.toString()),
-                                      style: TextStyle(
-                                          color: Colors.green[600],
-                                          fontFamily: 'Monsterrat',
-                                          fontSize: fontSize * .022)),
-                                  Text(' - ',
-                                      style: TextStyle(
-                                          color: primaryDarkColor,
-                                          fontSize: fontSize * .022)),
-                                  Text(
-                                      Utils.formatTime(
-                                              str.endTimeHour.toString()) +
-                                          ':' +
-                                          Utils.formatTime(
-                                              str.endTimeMinute.toString()),
-                                      style: TextStyle(
-                                          color: Colors.red[900],
-                                          fontFamily: 'Monsterrat',
-                                          fontSize: fontSize * .022)),
-                                ],
-                              ),
-                            ),
-                          if (str.startTimeHour == null)
-                            Container(
-                              width: MediaQuery.of(context).size.width * .18,
-                              child: Text(""),
-                            ),
                         ],
                       ),
                     ),
@@ -1213,21 +1168,147 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
                             padding: EdgeInsets.all(0),
                             margin: EdgeInsets.zero,
                             //width: MediaQuery.of(context).size.width * .3,
-                            child: Container(
-                              width: MediaQuery.of(context).size.width * .78,
-                              child: Text(
-                                Utils.isNotNullOrEmpty(
-                                        EnumToString.convertToString(str.type))
-                                    ? Utils.getEntityTypeDisplayName(str.type)
-                                    : "",
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                                style: TextStyle(
-                                    color: Colors.black,
-                                    letterSpacing: 0.5,
-                                    fontFamily: 'Roboto',
-                                    fontSize: 12.0),
-                              ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: [
+                                Container(
+                                  width:
+                                      MediaQuery.of(context).size.width * .48,
+                                  child: Text(
+                                    Utils.isNotNullOrEmpty(
+                                            EnumToString.convertToString(
+                                                str.type))
+                                        ? Utils.getEntityTypeDisplayName(
+                                            str.type)
+                                        : "",
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: TextStyle(
+                                        color: Colors.black,
+                                        letterSpacing: 0.5,
+                                        fontFamily: 'Roboto',
+                                        fontSize: 12.0),
+                                  ),
+                                ),
+                                Container(
+                                  width:
+                                      MediaQuery.of(context).size.width * .12,
+                                  child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        (str.verificationStatus ==
+                                                VERIFICATION_VERIFIED)
+                                            ? new Container(
+                                                width: MediaQuery.of(context)
+                                                        .size
+                                                        .width *
+                                                    .06,
+                                                height: MediaQuery.of(context)
+                                                        .size
+                                                        .height *
+                                                    .03,
+                                                child: IconButton(
+                                                  padding: EdgeInsets.fromLTRB(
+                                                      1, 1, 0, 2),
+                                                  icon: Icon(
+                                                    Icons.verified_user,
+                                                    color: Colors.green,
+                                                    size: 15,
+                                                  ),
+                                                  onPressed: () {
+                                                    Utils.showMyFlushbar(
+                                                        context,
+                                                        Icons.info,
+                                                        Duration(seconds: 5),
+                                                        VERIFICATION_VERIFIED,
+                                                        "");
+                                                  },
+                                                ),
+                                              )
+                                            : Container(),
+                                        (str.isPublic != true)
+                                            ? Container(
+                                                width: MediaQuery.of(context)
+                                                        .size
+                                                        .width *
+                                                    .06,
+                                                height: MediaQuery.of(context)
+                                                        .size
+                                                        .height *
+                                                    .03,
+                                                child: IconButton(
+                                                  padding: EdgeInsets.fromLTRB(
+                                                      1, 1, 1, 2),
+                                                  icon: Icon(
+                                                    Icons.lock,
+                                                    color: primaryIcon,
+                                                    size: 15,
+                                                  ),
+                                                  onPressed: () {
+                                                    Utils.showMyFlushbar(
+                                                        context,
+                                                        Icons.info,
+                                                        Duration(seconds: 5),
+                                                        "Access to this place is restricted to its residents or employees.",
+                                                        "");
+                                                  },
+                                                ),
+                                              )
+                                            : Container(),
+                                      ]),
+                                ),
+                                if (str.startTimeHour != null)
+                                  Container(
+                                    width:
+                                        MediaQuery.of(context).size.width * .18,
+                                    padding: EdgeInsets.all(0),
+                                    margin: EdgeInsets.all(0),
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.end,
+                                      children: <Widget>[
+                                        AutoSizeText(
+                                            Utils.formatTime(str.startTimeHour
+                                                    .toString()) +
+                                                ':' +
+                                                Utils.formatTime(str
+                                                    .startTimeMinute
+                                                    .toString()),
+                                            group: sideInfoGrp,
+                                            minFontSize: 9,
+                                            maxFontSize: 11,
+                                            style: TextStyle(
+                                                color: Colors.green[600],
+                                                fontFamily: 'Monsterrat',
+                                                fontSize: fontSize * .022)),
+                                        Text(' - ',
+                                            style: TextStyle(
+                                                color: primaryDarkColor,
+                                                fontSize: 10)),
+                                        AutoSizeText(
+                                            Utils.formatTime(str.endTimeHour
+                                                    .toString()) +
+                                                ':' +
+                                                Utils.formatTime(str
+                                                    .endTimeMinute
+                                                    .toString()),
+                                            group: sideInfoGrp,
+                                            minFontSize: 9,
+                                            maxFontSize: 11,
+                                            style: TextStyle(
+                                              color: Colors.red[900],
+                                              fontFamily: 'Monsterrat',
+                                            )),
+                                      ],
+                                    ),
+                                  ),
+                                if (str.startTimeHour == null)
+                                  Container(
+                                    width:
+                                        MediaQuery.of(context).size.width * .18,
+                                    child: Text(""),
+                                  ),
+                              ],
                             ),
                           ),
                         ],
@@ -1270,34 +1351,6 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
                         ],
                       ),
                     ),
-                    (str.enableVideoChat)
-                        ? Container(
-                            padding: EdgeInsets.all(0),
-                            width: MediaQuery.of(context).size.width * .78,
-                            child: Row(
-                              children: [
-                                Text("(Supports",
-                                    style: TextStyle(
-                                        color: Colors.black,
-                                        letterSpacing: 0.5,
-                                        fontWeight: FontWeight.w700,
-                                        fontFamily: 'Roboto',
-                                        fontSize: 14.0)),
-                                Icon(
-                                  Icons.video_call,
-                                  size: 28,
-                                  color: highlightColor,
-                                ),
-                                Text(" on Whatsapp)",
-                                    style: TextStyle(
-                                        color: Colors.black,
-                                        letterSpacing: 0.5,
-                                        fontWeight: FontWeight.w700,
-                                        fontFamily: 'Roboto',
-                                        fontSize: 14.0)),
-                              ],
-                            ))
-                        : Container(width: 0),
                     SizedBox(height: 5),
                     if (str.isBookable != null && str.isActive != null)
                       if (str.isBookable && str.isActive)
@@ -1897,7 +1950,7 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
           }
         } else if ((Utils.isNotNullOrEmpty(_entityType) &&
             !Utils.isNotNullOrEmpty(_searchText))) {
-          if (en.type == _entityType) {
+          if (Utils.getEntityTypeDisplayName(en.type) == _entityType) {
             searchList.add(en);
           }
         }

@@ -772,7 +772,7 @@ class EntityService {
           }
         });
 
-        if (adminCount == 1) {
+        if (adminCount == 1 && user.phoneNumber == phone) {
           //user can't remove self when only one admin is left
           cantRemoveAdminWithOneAdminException =
               CantRemoveAdminWithOneAdminException(
