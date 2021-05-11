@@ -567,7 +567,7 @@ class TokenService {
     return tokens;
   }
 
-  Future<bool> cancelTokenInTransaction(
+  Future<UserTokens> cancelTokenInTransaction(
       Transaction tx, String userId, String tokenId,
       [int number]) async {
     FirebaseFirestore fStore = getFirestore();
@@ -601,11 +601,13 @@ class TokenService {
               throw new TokenAlreadyCancelledException(
                   "Token is already cancelled");
             }
+            tok.numberBeforeCancellation = tok.number;
             tok.number = -1;
             numberMatched = true;
             break;
           } else {
             if (tok.number == number) {
+              tok.numberBeforeCancellation = tok.number;
               tok.number = -1;
               numberMatched = true;
             }
@@ -699,7 +701,7 @@ class TokenService {
         //change the max allowed by 1, if a token is cancelled
         tx.set(entitySlotsRef, es.toJson());
 
-        isCancelled = true;
+        return tokens;
       } else {
         throw new NoTokenFoundException("Token does not exists");
       }
@@ -708,10 +710,10 @@ class TokenService {
       isCancelled = false;
     }
 
-    return isCancelled;
+    return null;
   }
 
-  Future<bool> cancelToken(String tokenId, [int number]) async {
+  Future<UserTokens> cancelToken(String tokenId, [int number]) async {
     //number param is optional, only required when multiple tokens are booked by the user for the same slot
     //get the token, mark it cancelled
     //get the slot from the token
@@ -721,14 +723,14 @@ class TokenService {
     String userPhone = user.phoneNumber;
     FirebaseFirestore fStore = getFirestore();
 
-    bool isCancelled = false;
+    UserTokens cancelledToken;
 
     await fStore.runTransaction((Transaction tx) async {
-      isCancelled =
+      cancelledToken =
           await cancelTokenInTransaction(tx, userPhone, tokenId, number);
     });
 
-    return isCancelled;
+    return cancelledToken;
   }
 
   Future<List<UserToken>> getAllTokensForSlot(String slotId) async {

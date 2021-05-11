@@ -605,11 +605,11 @@ class DBTest {
           "TokenService.getTokensForEntityBookedByCurrentUser ------------------------> FAILURE");
     }
 
-    bool isTokenCancelled = await _gs
+    UserTokens cancelledToken = await _gs
         .getTokenService()
         .cancelToken("Child101-1#2020~7~7#10~30#+919999999999");
 
-    if (!isTokenCancelled) {
+    if (cancelledToken == null) {
       print("TokenService.cancelToken ------> FAILURE");
     }
 

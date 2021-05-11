@@ -181,7 +181,8 @@ class UserToken {
       this.applicationId,
       this.bookingFormId,
       this.bookingFormName,
-      this.parent});
+      this.parent,
+      this.numberBeforeCancellation});
 
   Order order;
   int number;
@@ -189,13 +190,15 @@ class UserToken {
   String bookingFormId;
   String bookingFormName;
   UserTokens parent;
+  int numberBeforeCancellation = -1;
 
   Map<String, dynamic> toJson() => {
         'number': number,
         'order': order != null ? order.toJson() : null,
         'applicationId': applicationId,
         'bookingFormId': bookingFormId,
-        'bookingFormName': bookingFormName
+        'bookingFormName': bookingFormName,
+        'numberBeforeCancellation': numberBeforeCancellation
       };
 
   static UserToken fromJson(Map<String, dynamic> json) {
@@ -205,11 +208,16 @@ class UserToken {
         order: Order.fromJson(json['order']),
         applicationId: json['applicationId'],
         bookingFormId: json['bookingFormId'],
-        bookingFormName: json['bookingFormName']);
+        bookingFormName: json['bookingFormName'],
+        numberBeforeCancellation: json['numberBeforeCancellation']);
   }
 
   String getDisplayName() {
     return parent.getDisplayNamePrefix() + number.toString();
+  }
+
+  String getID() {
+    return parent.getTokenId() + "#" + number.toString();
   }
 }
 

@@ -131,7 +131,7 @@ class BookingApplicationService {
     if (Utils.isNotNullOrEmpty(orderByFieldName)) {
       query = query.orderBy(orderByFieldName, descending: isDescending);
     }
-//TODO - Sumant - takeCount coming as null
+    //TODO - Sumant - takeCount coming as null
     if (takeCount > 0) {
       query = query.limit(takeCount);
     }
@@ -335,7 +335,10 @@ class BookingApplicationService {
           }
 
           UserToken lastTok = toks.tokens[toks.tokens.length - 1];
-          ba.tokenId = toks.getTokenId() + "#" + lastTok.number.toString();
+          ba.tokenId = lastTok.getID();
+
+          //HACK: by accessing bookings of GS to add this new Token, so that it apears immediately in users list
+          _gs.bookings.add(lastTok);
         }
 
         tx.set(applicationRef, ba.toJson());
@@ -487,9 +490,33 @@ class BookingApplicationService {
           String tokenId = ba.tokenId.substring(0, beforeLastHash);
 
           //cancel the token
-          await _gs
+          UserTokens cancelledToken = await _gs
               .getTokenService()
               .cancelTokenInTransaction(tx, userPhone, tokenId, tokenNumber);
+
+          //update the GlobalState bookings collection with the cancelled token
+          int index = -1;
+          bool matched = false;
+          UserToken cancelledTok;
+          for (UserToken ut in _gs.bookings) {
+            index++;
+            for (UserToken cut in cancelledToken.tokens) {
+              if (cancelledToken.getTokenId() == cut.parent.getTokenId() &&
+                  tokenNumber == cut.numberBeforeCancellation &&
+                  ut.number == tokenNumber) {
+                matched = true;
+                cancelledTok = cut;
+                break;
+              }
+            }
+            if (matched) {
+              break;
+            }
+          }
+
+          if (index > -1 && cancelledTok != null) {
+            _gs.bookings[index] = cancelledTok;
+          }
         }
 
         if (existingStatus == ApplicationStatus.APPROVED) {
@@ -697,8 +724,10 @@ class BookingApplicationService {
             }
 
             UserToken lastTok = toks.tokens[toks.tokens.length - 1];
-            application.tokenId =
-                toks.getTokenId() + "#" + lastTok.number.toString();
+            application.tokenId = lastTok.getID();
+
+            //HACK: by accessing bookings of GS to add this new Token, so that it apears immediately in users list
+            _gs.bookings.add(lastTok);
           }
         } else if (status == ApplicationStatus.COMPLETED) {
           application.timeOfCompletion = now;
