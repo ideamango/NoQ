@@ -1129,7 +1129,7 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
                                                 context,
                                                 Icons.info,
                                                 Duration(seconds: 5),
-                                                "This place provides OnlineConsultation on Whatsapp number ${str.whatsapp} !!",
+                                                "This place provides Online Consultation on Whatsapp number ${str.whatsapp} !!",
                                                 "Help in reducing crowd at places.");
                                           },
                                         ),
