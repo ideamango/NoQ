@@ -397,7 +397,7 @@ class _SlotSelectionPageState extends State<SlotSelectionPage> {
                             itemCount: _slotList.length,
                             gridDelegate:
                                 SliverGridDelegateWithFixedCrossAxisCount(
-                                    crossAxisCount: 5,
+                                    crossAxisCount: 4,
                                     crossAxisSpacing: 2.0,
                                     mainAxisSpacing: 0.5),
                             itemBuilder: (BuildContext context, int index) {
@@ -760,15 +760,31 @@ class _SlotSelectionPageState extends State<SlotSelectionPage> {
           ),
         ),
         Container(
-          child: Text(sl.totalBooked.toString() + ' Booked',
-              style: TextStyle(
-                color: Colors.black,
-                // fontWeight: FontWeight.w800,
-                //fontFamily: 'Roboto',
-                letterSpacing: 0.5,
-                fontSize: 7.0,
-                //height: 2,
-              )),
+          width: MediaQuery.of(context).size.width * .17,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              AutoSizeText(
+                  (sl.totalBooked -
+                          (sl.totalCancelled != null ? sl.totalCancelled : 0))
+                      .toString(),
+                  minFontSize: 9,
+                  maxFontSize: 11,
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontFamily: 'Roboto',
+                    letterSpacing: 0.5,
+                  )),
+              AutoSizeText(' booked',
+                  minFontSize: 8,
+                  maxFontSize: 10,
+                  style: TextStyle(
+                      color: Colors.black,
+                      fontFamily: 'Roboto',
+                      letterSpacing: 0.5,
+                      fontSize: 10)),
+            ],
+          ),
         ),
       ],
     );

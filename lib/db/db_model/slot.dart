@@ -14,13 +14,13 @@ class Slot {
   //SlotId is entityID#20~06~01#9~30
 
   String slotId;
-  int totalBooked;
+  int totalBooked = 0;
   int maxAllowed;
   DateTime dateTime;
   int slotDuration;
   bool isFull = false;
   List<UserTokens> tokens = [];
-  int totalCancelled;
+  int totalCancelled = 0;
 
   Map<String, dynamic> toJson() => {
         'slotId': slotId,

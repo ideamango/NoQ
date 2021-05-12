@@ -684,7 +684,10 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              AutoSizeText(sl.totalBooked.toString(),
+              AutoSizeText(
+                  (sl.totalBooked -
+                          (sl.totalCancelled != null ? sl.totalCancelled : 0))
+                      .toString(),
                   minFontSize: 9,
                   maxFontSize: 11,
                   style: TextStyle(

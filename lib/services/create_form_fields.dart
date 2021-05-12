@@ -1,5 +1,7 @@
 import 'dart:async';
 import 'dart:io';
+import 'package:LESSs/db/exceptions/MaxTokenReachedByUserPerDayException.dart';
+import 'package:LESSs/db/exceptions/MaxTokenReachedByUserPerSlotException.dart';
 import 'package:LESSs/pages/search_entity_page.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -1277,11 +1279,15 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
 
   bool validateMandatoryFields() {
     for (int i = 0; i < listOfFields.length; i++) {
-      if (listOfFields[i].isMandatory) {
-        if (!Utils.isNotNullOrEmpty(
-            listOfFieldControllers[listOfFields[i].label].text)) {
-          validationErrMsg =
-              validationErrMsg + "\n ${listOfFields[i].label} cannot be empty.";
+      if (listOfFields[i].type != FieldType.OPTIONS &&
+          listOfFields[i].type != FieldType.ATTACHMENT &&
+          listOfFields[i].type != FieldType.OPTIONS_ATTACHMENTS) {
+        if (listOfFields[i].isMandatory) {
+          if (!Utils.isNotNullOrEmpty(
+              listOfFieldControllers[listOfFields[i].label].text)) {
+            validationErrMsg = validationErrMsg +
+                "\n ${listOfFields[i].label} cannot be empty.";
+          }
         }
       }
     }
@@ -1297,118 +1303,123 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
     setState(() {
       validateField = true;
     });
-    if (_bookingFormKey.currentState.validate()) {
-      if (!validateMandatoryFields()) {
-        Utils.showMyFlushbar(
-            context,
-            Icons.error,
-            Duration(
-              seconds: 5,
-            ),
-            validationErrMsg,
-            'Its mandatory information.',
-            Colors.red);
-        return;
+    // if (_bookingFormKey.currentState.validate()) {
+    if (!validateMandatoryFields()) {
+      Utils.showMyFlushbar(
+          context,
+          Icons.error,
+          Duration(
+            seconds: 5,
+          ),
+          validationErrMsg,
+          'Its mandatory information.',
+          Colors.red);
+      return;
+    }
+    //***Handle the Options and Attachments field.****
+    List<Field> listOfFields = bookingApplication.responseForm.getFormFields();
+    for (int i = 0; i < listOfFields.length; i++) {
+      switch (listOfFields[i].type) {
+        case FieldType.OPTIONS:
+          FormInputFieldOptions f = listOfFields[i] as FormInputFieldOptions;
+          if (f.isMandatory && f.responseValues.length == 0) {
+            validationErrMsg = '${f.label} is empty.';
+            Utils.showMyFlushbar(
+                context,
+                Icons.error,
+                Duration(
+                  seconds: 5,
+                ),
+                validationErrMsg,
+                'Please fill and try again.',
+                Colors.red);
+            return;
+          }
+          break;
+        case FieldType.ATTACHMENT:
+          FormInputFieldAttachment f =
+              listOfFields[i] as FormInputFieldAttachment;
+          if (f.isMandatory && f.responseFilePaths.length == 0) {
+            validationErrMsg = '${f.label} is empty.';
+            Utils.showMyFlushbar(
+                context,
+                Icons.error,
+                Duration(
+                  seconds: 5,
+                ),
+                validationErrMsg,
+                'Please fill and try again.',
+                Colors.red);
+            return;
+          } else {
+            List<String> targetPaths = [];
+            for (String path in (listOfFields[i] as FormInputFieldAttachment)
+                .responseFilePaths) {
+              String fileName = pathfile.basename(path);
+              print(fileName);
+
+              String targetFileName =
+                  '${bookingApplication.id}#${(listOfFields[i] as FormInputFieldAttachment).id}#${_gs.getCurrentUser().id}#$fileName';
+
+              String targetPath =
+                  await uploadFilesToServer(path, targetFileName);
+              print(targetPath);
+              targetPaths.add(targetPath);
+              (bookingApplication.responseForm.getFormFields()[i]
+                      as FormInputFieldAttachment)
+                  .responseFilePaths = targetPaths;
+            }
+          }
+
+          break;
+        case FieldType.OPTIONS_ATTACHMENTS:
+          FormInputFieldOptionsWithAttachments f =
+              listOfFields[i] as FormInputFieldOptionsWithAttachments;
+          if (f.isMandatory &&
+              (f.responseFilePaths.length == 0 ||
+                  f.responseValues.length == 0)) {
+            validationErrMsg = '${f.label} is empty.';
+            Utils.showMyFlushbar(
+                context,
+                Icons.error,
+                Duration(
+                  seconds: 5,
+                ),
+                validationErrMsg,
+                'Please fill and try again.',
+                Colors.red);
+            return;
+          } else {
+            print("df");
+            List<String> targetPaths = [];
+            for (String path
+                in (listOfFields[i] as FormInputFieldOptionsWithAttachments)
+                    .responseFilePaths) {
+              String fileName = pathfile.basename(path);
+              print(fileName);
+
+              String targetFileName =
+                  '${bookingApplication.id}#${(listOfFields[i] as FormInputFieldOptionsWithAttachments).id}#${_gs.getCurrentUser().id}#$fileName';
+
+              String targetPath =
+                  await uploadFilesToServer(path, targetFileName);
+              print(targetPath);
+              targetPaths.add(targetPath);
+              (bookingApplication.responseForm.getFormFields()[i]
+                      as FormInputFieldOptionsWithAttachments)
+                  .responseFilePaths = targetPaths;
+            }
+          }
+          break;
+        default:
+          break;
       }
-      //***Handle the Options and Attachments field.****
-      List<Field> listOfFields =
-          bookingApplication.responseForm.getFormFields();
-      for (int i = 0; i < listOfFields.length; i++) {
-        switch (listOfFields[i].type) {
-          case FieldType.OPTIONS:
-            FormInputFieldOptions f = listOfFields[i] as FormInputFieldOptions;
-            if (f.isMandatory && f.responseValues.length == 0) {
-              Utils.showMyFlushbar(
-                  context,
-                  Icons.error,
-                  Duration(
-                    seconds: 5,
-                  ),
-                  '${f.label} is empty.',
-                  'Please fill and try again.',
-                  Colors.red);
-            }
-            break;
-          case FieldType.ATTACHMENT:
-            FormInputFieldAttachment f =
-                listOfFields[i] as FormInputFieldAttachment;
-            if (f.isMandatory && f.responseFilePaths.length == 0) {
-              Utils.showMyFlushbar(
-                  context,
-                  Icons.error,
-                  Duration(
-                    seconds: 5,
-                  ),
-                  '${f.label} is empty.',
-                  'Please fill and try again.',
-                  Colors.red);
-            } else {
-              List<String> targetPaths = [];
-              for (String path in (listOfFields[i] as FormInputFieldAttachment)
-                  .responseFilePaths) {
-                String fileName = pathfile.basename(path);
-                print(fileName);
+    }
 
-                String targetFileName =
-                    '${bookingApplication.id}#${(listOfFields[i] as FormInputFieldAttachment).id}#${_gs.getCurrentUser().id}#$fileName';
+    ///**Validation Ends */
 
-                String targetPath =
-                    await uploadFilesToServer(path, targetFileName);
-                print(targetPath);
-                targetPaths.add(targetPath);
-                (bookingApplication.responseForm.getFormFields()[i]
-                        as FormInputFieldAttachment)
-                    .responseFilePaths = targetPaths;
-              }
-            }
-
-            break;
-          case FieldType.OPTIONS_ATTACHMENTS:
-            FormInputFieldOptionsWithAttachments f =
-                listOfFields[i] as FormInputFieldOptionsWithAttachments;
-            if (f.isMandatory &&
-                (f.responseFilePaths.length == 0 ||
-                    f.responseValues.length == 0)) {
-              Utils.showMyFlushbar(
-                  context,
-                  Icons.error,
-                  Duration(
-                    seconds: 5,
-                  ),
-                  '${f.label} is empty.',
-                  'Please fill and try again.',
-                  Colors.red);
-            } else {
-              print("df");
-              List<String> targetPaths = [];
-              for (String path
-                  in (listOfFields[i] as FormInputFieldOptionsWithAttachments)
-                      .responseFilePaths) {
-                String fileName = pathfile.basename(path);
-                print(fileName);
-
-                String targetFileName =
-                    '${bookingApplication.id}#${(listOfFields[i] as FormInputFieldOptionsWithAttachments).id}#${_gs.getCurrentUser().id}#$fileName';
-
-                String targetPath =
-                    await uploadFilesToServer(path, targetFileName);
-                print(targetPath);
-                targetPaths.add(targetPath);
-                (bookingApplication.responseForm.getFormFields()[i]
-                        as FormInputFieldOptionsWithAttachments)
-                    .responseFilePaths = targetPaths;
-              }
-            }
-            break;
-          default:
-            break;
-        }
-      }
-
-      ///**Validation Ends */
-
-      //TODO SMITA - Check AGAIN if selected slot is stil available else prompt user to select another one.
-
+    //TODO SMITA - Check AGAIN if selected slot is stil available else prompt user to select another one.
+    if (Utils.isStrNullOrEmpty(validationErrMsg)) {
       _bookingFormKey.currentState.save();
       _gs
           .getApplicationService()
@@ -1435,30 +1446,31 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
               couldNotSubmitApplication, tryAgainToBook);
         }
       }).catchError((error) {
-        print("Error in token booking" + error.toString());
-        //TODO Smita - Not going in any of if bcoz exception is wrapped in type platform exception.
-        if (error is SlotFullException) {
-          Utils.showMyFlushbar(context, Icons.error, Duration(seconds: 5),
-              couldNotBookToken, slotsAlreadyBooked);
-        } else if (error.toString().contains("already submitted")) {
-          Utils.showMyFlushbar(context, Icons.error, Duration(seconds: 5),
-              "Your application is already submitted.", "");
-        } else {
-          Utils.showMyFlushbar(context, Icons.error, Duration(seconds: 5),
-              couldNotBookToken, tryAgainToBook);
+        switch (error.runtimeType) {
+          case MaxTokenReachedByUserPerDayException:
+            print("max token reached");
+            Utils.showMyFlushbar(context, Icons.error, Duration(seconds: 6),
+                maxTokenLimitReached, maxTokenLimitReachedSub);
+            break;
+          case MaxTokenReachedByUserPerSlotException:
+            Utils.showMyFlushbar(context, Icons.error, Duration(seconds: 6),
+                maxTokenForTimeReached, maxTokenLimitReachedSub);
+            print("max per slot reached");
+            break;
+          case TokenAlreadyExistsException:
+            Utils.showMyFlushbar(context, Icons.error, Duration(seconds: 6),
+                tokenAlreadyExists, selectDateSub);
+            print("token exists");
+            break;
+          case SlotFullException:
+            Utils.showMyFlushbar(context, Icons.error, Duration(seconds: 6),
+                slotsAlreadyBooked, selectDateSub);
+            print("slot full ");
+            break;
+          default:
+            break;
         }
       });
-    } else {
-      print(validationErrMsg);
-      Utils.showMyFlushbar(
-          context,
-          Icons.error,
-          Duration(
-            seconds: 10,
-          ),
-          "Please fill all mandatory fields and Save again.",
-          "",
-          Colors.red);
     }
   }
 

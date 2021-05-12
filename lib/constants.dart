@@ -263,6 +263,8 @@ String maxTokenLimitReached =
     "You have already booked allowed maximum number of token for a day.";
 String maxTokenLimitReachedSub =
     "Please try a different date, Or contact the Business";
+String maxTokenForTimeReached =
+    "You have already booked allowed maximum number of tokens in a Time-Slot.";
 
 String couldNotSubmitApplication =
     "Oops! Couldn't submit the application request.";
@@ -272,6 +274,7 @@ String slotsAlreadyBooked =
 
 String tokenAlreadyExists =
     "You already have an active booking for the same time.";
+String selectDateSub = 'Please choose a different time or date.';
 
 String bookingExpired = "This booking token has already expired!!";
 

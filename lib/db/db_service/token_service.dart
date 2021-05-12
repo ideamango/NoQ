@@ -303,7 +303,7 @@ class TokenService {
                   "Token can't be generated as the slot is full");
             }
 
-            newNumber = sl.totalBooked + 1;
+            newNumber = sl.totalBooked != null ? sl.totalBooked + 1 : 1;
 
             if (sl.maxAllowed == newNumber) {
               // set the isFull for that slot to true
