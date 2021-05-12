@@ -131,7 +131,7 @@ class BookingApplicationService {
     if (Utils.isNotNullOrEmpty(orderByFieldName)) {
       query = query.orderBy(orderByFieldName, descending: isDescending);
     }
-    //TODO - Sumant - takeCount coming as null
+    //TODO - takeCount coming as null
     if (takeCount > 0) {
       query = query.limit(takeCount);
     }
