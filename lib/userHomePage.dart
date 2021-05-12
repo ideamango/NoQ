@@ -426,10 +426,10 @@ class _UserHomePageState extends State<UserHomePage> {
                                 onTap: () {
                                   Navigator.of(context).push(
                                       PageAnimation.createRoute(UPIPaymentPage(
-                                    upiId: upiId,
-                                    upiQrCodeImgPath: upiQrImgPath,
-                                    backRoute: UserHomePage(),
-                                  )));
+                                          upiId: upiId,
+                                          upiQrCodeImgPath: upiQrImgPath,
+                                          backRoute: UserHomePage(),
+                                          isDonation: true)));
                                 },
                                 child: Image(
                                   fit: BoxFit.fitWidth,
@@ -922,10 +922,10 @@ class _UserHomePageState extends State<UserHomePage> {
                                       Navigator.of(context).push(
                                           PageAnimation.createRoute(
                                               UPIPaymentPage(
-                                        upiId: token.parent.upiId,
-                                        upiQrCodeImgPath: null,
-                                        backRoute: UserHomePage(),
-                                      )));
+                                                  upiId: token.parent.upiId,
+                                                  upiQrCodeImgPath: null,
+                                                  backRoute: UserHomePage(),
+                                                  isDonation: false)));
                                     } else {
                                       Utils.showMyFlushbar(
                                           context,

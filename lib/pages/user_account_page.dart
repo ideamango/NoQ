@@ -458,10 +458,10 @@ class _UserAccountPageState extends State<UserAccountPage> {
                                       Navigator.of(context).push(
                                           PageAnimation.createRoute(
                                               UPIPaymentPage(
-                                        upiId: booking.parent.upiId,
-                                        upiQrCodeImgPath: null,
-                                        backRoute: UserHomePage(),
-                                      )));
+                                                  upiId: booking.parent.upiId,
+                                                  upiQrCodeImgPath: null,
+                                                  backRoute: UserHomePage(),
+                                                  isDonation: false)));
                                     } else {
                                       Utils.showMyFlushbar(
                                           context,

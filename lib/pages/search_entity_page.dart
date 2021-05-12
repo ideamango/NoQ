@@ -125,12 +125,12 @@ class _SearchEntityPageState extends State<SearchEntityPage>
 
   @override
   void dispose() {
-    super.dispose();
     _animationController.dispose();
     _searchTextController.dispose();
     EventBus.unregisterEvent(_eventListener);
     _selectCategoryBtnController.dispose();
     print("Search page dispose called...");
+    super.dispose();
   }
 
   @override
@@ -299,46 +299,53 @@ class _SearchEntityPageState extends State<SearchEntityPage>
               if (messageTitle == "NotFound")
                 Column(
                   children: <Widget>[
-                    SizedBox(height: MediaQuery.of(context).size.height * .1),
+                    // SizedBox(height: MediaQuery.of(context).size.height * .1),
                     Container(
                       height: MediaQuery.of(context).size.height * .2,
+                      margin: EdgeInsets.symmetric(
+                          vertical: MediaQuery.of(context).size.height * .1),
                       decoration: BoxDecoration(
                         image: DecorationImage(
                             image: AssetImage("assets/notFound.png"),
-                            fit: BoxFit.cover),
+                            fit: BoxFit.contain),
                       ),
                     ),
-                    verticalSpacer,
-                    verticalSpacer,
-                    InkWell(
-                      child: Container(
-                        height: MediaQuery.of(context).size.height * .1,
-                        decoration: BoxDecoration(
-                          image: DecorationImage(
-                              image: AssetImage("assets/notFound1.png"),
-                              fit: BoxFit.cover),
-                        ),
-                      ),
-                      onTap: () {
-                        _searchTextController.text = "";
-                        Utils.generateLinkAndShare(null,
-                            appShareWithOwnerHeading, appShareWithOwnerMessage);
-                      },
-                    ),
-                    InkWell(
-                      child: Container(
-                        height: MediaQuery.of(context).size.height * .1,
-                        decoration: BoxDecoration(
-                          image: DecorationImage(
-                              image: AssetImage("assets/notFound2.png"),
-                              fit: BoxFit.cover),
-                        ),
-                      ),
-                      onTap: () {
-                        _searchTextController.text = "";
 
-                        showContactUsSheet();
-                      },
+                    Column(
+                      children: [
+                        InkWell(
+                          child: Container(
+                            height: MediaQuery.of(context).size.height * .1,
+                            decoration: BoxDecoration(
+                              image: DecorationImage(
+                                  image: AssetImage("assets/notFound1.png"),
+                                  fit: BoxFit.contain),
+                            ),
+                          ),
+                          onTap: () {
+                            _searchTextController.text = "";
+                            Utils.generateLinkAndShare(
+                                null,
+                                appShareWithOwnerHeading,
+                                appShareWithOwnerMessage);
+                          },
+                        ),
+                        InkWell(
+                          child: Container(
+                            height: MediaQuery.of(context).size.height * .1,
+                            decoration: BoxDecoration(
+                              image: DecorationImage(
+                                  image: AssetImage("assets/notFound2.png"),
+                                  fit: BoxFit.contain),
+                            ),
+                          ),
+                          onTap: () {
+                            _searchTextController.text = "";
+
+                            showContactUsSheet();
+                          },
+                        ),
+                      ],
                     ),
                   ],
                 ),
@@ -428,7 +435,7 @@ class _SearchEntityPageState extends State<SearchEntityPage>
     contactUsSheetController = key.currentState.showBottomSheet<Null>(
       (context) => Container(
         color: Colors.cyan[50],
-        height: MediaQuery.of(context).size.height * .87,
+        height: MediaQuery.of(context).size.height,
         child: Column(
           children: <Widget>[
             Container(
@@ -515,87 +522,21 @@ class _SearchEntityPageState extends State<SearchEntityPage>
     }
   }
 
+  void searchClicked() {
+    searchBoxClicked = false;
+    _searchTextController.clear();
+    _searchText = "";
+    setState(() {
+      messageTitle = "";
+      _isSearching = "searching";
+    });
+    _buildSearchList();
+  }
+
   @override
   Widget build(BuildContext context) {
     fontSize = MediaQuery.of(context).size.width * .045;
     print("Font size" + fontSize.toString());
-// build widget only after init has completed, till then show progress indicator.
-    // if  {
-    // return MaterialApp(
-    //   debugShowCheckedModeBanner: false,
-    //   theme: ThemeData.light().copyWith(),
-    //   home: new WillPopScope(
-    //     child: Scaffold(
-    //         appBar: CustomAppBar(
-    //           titleTxt: "Search",
-    //         ),
-    //         body: Center(
-    //           child: Container(
-    //             margin: EdgeInsets.fromLTRB(
-    //                 10,
-    //                 MediaQuery.of(context).size.width * .5,
-    //                 10,
-    //                 MediaQuery.of(context).size.width * .5),
-    //             child: Column(
-    //               mainAxisAlignment: MainAxisAlignment.center,
-    //               children: <Widget>[
-    //                 showCircularProgress(),
-    //               ],
-    //             ),
-    //           ),
-    //         ),
-
-    //         //drawer: CustomDrawer(),
-    //         bottomNavigationBar: CustomBottomBar(barIndex: 1)),
-    //     onWillPop: willPopCallback,
-    //   ),
-    // );
-    //  } else {
-    // Widget categoryDropDown = Container(
-    //     width: MediaQuery.of(context).size.width * .48,
-    //     height: MediaQuery.of(context).size.width * .1,
-    //     decoration: new BoxDecoration(
-    //       shape: BoxShape.rectangle,
-    //       color: Colors.white,
-    //       // color: Colors.white,
-    //       borderRadius: BorderRadius.all(Radius.circular(5.0)),
-    //       border: new Border.all(
-    //         color: Colors.blueGrey[400],
-    //         width: 0.5,
-    //       ),
-    //     ),
-    //     child: DropdownButtonHideUnderline(
-    //         child: ButtonTheme(
-    //       alignedDropdown: true,
-    //       child: new DropdownButton(
-    //         iconEnabledColor: Colors.blueGrey[500],
-    //         dropdownColor: Colors.white,
-    //         itemHeight: kMinInteractiveDimension,
-    //         hint: new Text("Select a category"),
-    //         style: TextStyle(fontSize: 12, color: Colors.blueGrey[500]),
-    //         value: _entityType,
-    //         isDense: true,
-    //         // icon: Icon(Icons.search),
-    //         onChanged: (newValue) {
-    //           setState(() {
-    //             print('entity type - old value');
-    //             print(_entityType);
-    //             _entityType = newValue;
-    //             print('entity type - new value - $_entityType');
-    //             _isSearching = "searching";
-    //             _buildSearchList();
-    //           });
-    //         },
-    //         items: searchTypes.map((type) {
-    //           return DropdownMenuItem(
-    //             value: type,
-    //             child: new Text(type.toString(),
-    //                 style:
-    //                     TextStyle(fontSize: 12, color: Colors.blueGrey[500])),
-    //           );
-    //         }).toList(),
-    //       ),
-    //     )));
 
     Widget searchInputText = Container(
       width: MediaQuery.of(context).size.width * .95,
@@ -656,26 +597,8 @@ class _SearchEntityPageState extends State<SearchEntityPage>
                 ),
                 onPressed: () {
                   //Clear search text and build new search results
-                  searchBoxClicked = false;
-                  _searchTextController.clear();
-                  _searchText = "";
-                  setState(() {
-                    messageTitle = "";
-                    _isSearching = "searching";
-                  });
-                  _buildSearchList();
+                  searchClicked();
                 }),
-
-            // Container(
-            //   // transform: Matrix4.translationValues(3.0, 3, 0),
-            //   padding: EdgeInsets.all(0),
-            //   margin: ,
-            //   child:
-            // ),
-            // suffixIconConstraints: BoxConstraints(
-            //   maxWidth: 25,
-            //   maxHeight: 22,
-            // ),
             hintText: "Search by Name of Business/Place",
             hintStyle:
                 new TextStyle(fontSize: 12, color: Colors.blueGrey[500])),
@@ -696,8 +619,8 @@ class _SearchEntityPageState extends State<SearchEntityPage>
                 messageTitle = "";
                 _isSearching = "searching";
                 _searchText = _searchTextController.text;
-                _buildSearchList();
               });
+              _buildSearchList();
             }
           }
         },
