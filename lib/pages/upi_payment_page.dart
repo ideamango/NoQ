@@ -31,11 +31,13 @@ class UPIPaymentPage extends StatefulWidget {
   final String upiId;
   final String upiQrCodeImgPath;
   final dynamic backRoute;
+  final bool isDonation;
   UPIPaymentPage(
       {Key key,
       @required this.upiId,
       @required this.upiQrCodeImgPath,
-      @required this.backRoute})
+      @required this.backRoute,
+      @required this.isDonation})
       : super(key: key);
 
   @override
@@ -196,48 +198,55 @@ class _UPIPaymentPageState extends State<UPIPaymentPage> {
                       padding: EdgeInsets.symmetric(horizontal: 12),
                       child: ListView(
                         children: <Widget>[
-                          Container(
-                            //  height: MediaQuery.of(context).size.height * .1,
-                            margin: EdgeInsets.fromLTRB(
-                                MediaQuery.of(context).size.width * .05,
-                                MediaQuery.of(context).size.width * .04,
-                                MediaQuery.of(context).size.width * .05,
-                                MediaQuery.of(context).size.width * .04),
-                            child: Column(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceEvenly,
-                                //  padding: EdgeInsets.zero,
-                                children: <Widget>[
-                                  Text(
-                                    'Thats wonderful! ',
-                                    style: TextStyle(
-                                        color: Colors.blueGrey[800],
-                                        fontFamily: 'RalewayRegular',
-                                        fontSize: 17.0),
-                                  ),
-                                  verticalSpacer,
-                                  RichText(
-                                      textAlign: TextAlign.center,
-                                      text: TextSpan(
+                          (widget.isDonation)
+                              ? Container(
+                                  //  height: MediaQuery.of(context).size.height * .1,
+                                  margin: EdgeInsets.fromLTRB(
+                                      MediaQuery.of(context).size.width * .05,
+                                      MediaQuery.of(context).size.width * .04,
+                                      MediaQuery.of(context).size.width * .05,
+                                      MediaQuery.of(context).size.width * .04),
+                                  child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceEvenly,
+                                      //  padding: EdgeInsets.zero,
+                                      children: <Widget>[
+                                        Text(
+                                          'Thats wonderful! ',
                                           style: TextStyle(
-                                              height: 1.3,
                                               color: Colors.blueGrey[800],
                                               fontFamily: 'RalewayRegular',
-                                              fontSize: 12.0),
-                                          children: <TextSpan>[
-                                            TextSpan(
-                                                text: 'Do MORE with LESSs.\n',
+                                              fontSize: 17.0),
+                                        ),
+                                        verticalSpacer,
+                                        RichText(
+                                            textAlign: TextAlign.center,
+                                            text: TextSpan(
                                                 style: TextStyle(
-                                                  fontSize: 18,
-                                                  fontWeight: FontWeight.w800,
-                                                )),
-                                            TextSpan(
-                                              text:
-                                                  'Everything counts, So donate any amount as per your wish.',
-                                            ),
-                                          ])),
-                                ]),
-                          ),
+                                                    height: 1.3,
+                                                    color: Colors.blueGrey[800],
+                                                    fontFamily:
+                                                        'RalewayRegular',
+                                                    fontSize: 12.0),
+                                                children: <TextSpan>[
+                                                  TextSpan(
+                                                      text:
+                                                          'Do MORE with LESSs.\n',
+                                                      style: TextStyle(
+                                                        fontSize: 18,
+                                                        fontWeight:
+                                                            FontWeight.w800,
+                                                      )),
+                                                  TextSpan(
+                                                    text:
+                                                        'Everything counts, So donate any amount as per your wish.',
+                                                  ),
+                                                ])),
+                                      ]),
+                                )
+                              : Container(
+                                  height: 0,
+                                ),
                           Column(
                             children: [
                               Container(

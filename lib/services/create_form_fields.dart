@@ -1,5 +1,8 @@
 import 'dart:async';
 import 'dart:io';
+import 'package:LESSs/db/exceptions/MaxTokenReachedByUserPerDayException.dart';
+import 'package:LESSs/db/exceptions/MaxTokenReachedByUserPerSlotException.dart';
+import 'package:LESSs/pages/search_entity_page.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:another_flushbar/flushbar.dart';
@@ -43,7 +46,7 @@ class CreateFormFields extends StatefulWidget {
 
 class _CreateFormFieldsState extends State<CreateFormFields> {
   TextEditingController _fieldController = new TextEditingController();
-  Map<String, TextEditingController> listOfControllers =
+  Map<String, TextEditingController> listOfFieldControllers =
       new Map<String, TextEditingController>();
 
   final GlobalKey<FormState> _bookingFormKey = new GlobalKey<FormState>();
@@ -146,8 +149,14 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
 
   Widget buildChildItem(Field field, int index, bool isInit) {
     if (isInit) {
-      if (!listOfControllers.containsKey(field.label)) {
-        listOfControllers[field.label] = new TextEditingController();
+      //If field has text controller add to listOfFieldControllers
+      //If options field add to listOfOptionsField
+      if (field.type != FieldType.OPTIONS &&
+          field.type != FieldType.ATTACHMENT &&
+          field.type != FieldType.OPTIONS_ATTACHMENTS) {
+        if (!listOfFieldControllers.containsKey(field.label)) {
+          listOfFieldControllers[field.label] = new TextEditingController();
+        }
       }
     }
     Widget newField;
@@ -235,7 +244,7 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
                               //validator: validateText,
                               style: textInputTextStyle,
                               keyboardType: TextInputType.text,
-                              controller: listOfControllers[field.label],
+                              controller: listOfFieldControllers[field.label],
                               decoration: CommonStyle.textFieldStyle(
                                 labelTextStr: field.label,
                                 // hintTextStr: field.infoMessage
@@ -268,104 +277,104 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
                 color: Colors.grey[50],
                 shape: BoxShape.rectangle,
                 borderRadius: BorderRadius.all(Radius.circular(5.0))),
-            child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Column(children: <Widget>[
-                    Container(
-                      //padding: EdgeInsets.only(left: 5),
-                      decoration: darkContainer,
-                      child: Theme(
-                        data: ThemeData(
-                          unselectedWidgetColor: Colors.white,
-                          accentColor: Colors.grey[50],
-                        ),
-                        child: CustomExpansionTile(
-                          //key: PageStorageKey(this.widget.headerTitle),
-                          initiallyExpanded: false,
-                          title: Row(
-                            children: <Widget>[
-                              Text(
-                                field.label,
-                                style: TextStyle(
-                                    color: Colors.white, fontSize: 15),
-                              ),
-                              SizedBox(width: 5),
-                            ],
-                          ),
-                          backgroundColor: Colors.blueGrey[500],
-
-                          children: <Widget>[
-                            new Container(
-                              padding: EdgeInsets.only(left: 7),
-                              width: MediaQuery.of(context).size.width * .94,
-                              //decoration: darkContainer,
-                              color: containerColor,
-                              //padding: EdgeInsets.all(2.0),
-                              child: Row(
-                                children: <Widget>[
-                                  Expanded(
-                                    child: Text(field.infoMessage,
-                                        style: buttonXSmlTextStyle),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
+            child:
+                Column(crossAxisAlignment: CrossAxisAlignment.start, children: <
+                    Widget>[
+              Column(children: <Widget>[
+                Container(
+                  //padding: EdgeInsets.only(left: 5),
+                  decoration: darkContainer,
+                  child: Theme(
+                    data: ThemeData(
+                      unselectedWidgetColor: Colors.white,
+                      accentColor: Colors.grey[50],
                     ),
-                    Container(
-                      padding: EdgeInsets.only(left: 5.0, right: 5),
-                      child: Column(
-                        children: [
-                          Container(
-                            //   margin: EdgeInsets.fromLTRB(10, 5, 10, 5),
-                            padding: EdgeInsets.all(10),
-                            child: TextFormField(
-                              obscureText: false,
-                              readOnly: true,
-                              maxLines: 1,
-                              minLines: 1,
-                              validator: validateText,
-                              style: textInputTextStyle,
-                              keyboardType: TextInputType.text,
-                              controller: listOfControllers[newDateField.label],
-                              decoration: CommonStyle.textFieldStyle(
-                                  labelTextStr: newDateField.label,
-                                  hintTextStr: newDateField.label),
-                              onTap: () {
-                                setState(() {
-                                  pickDate(context).then((value) {
-                                    if (value != null) {
-                                      setState(() {
-                                        dateString = value.day.toString() +
-                                            " / " +
-                                            value.month.toString() +
-                                            " / " +
-                                            value.year.toString();
-                                        listOfControllers[newDateField.label]
-                                            .text = dateString;
-                                      });
-                                      newDateField.responseDateTime = value;
-                                    }
-                                  });
-                                });
-                              },
-                              maxLength: null,
-                              onChanged: (String value) {
-                                print(value);
-                              },
-                              onSaved: (String value) {
-                                print(value);
-                              },
-                            ),
+                    child: CustomExpansionTile(
+                      //key: PageStorageKey(this.widget.headerTitle),
+                      initiallyExpanded: false,
+                      title: Row(
+                        children: <Widget>[
+                          Text(
+                            field.label,
+                            style: TextStyle(color: Colors.white, fontSize: 15),
                           ),
+                          SizedBox(width: 5),
                         ],
                       ),
+                      backgroundColor: Colors.blueGrey[500],
+
+                      children: <Widget>[
+                        new Container(
+                          padding: EdgeInsets.only(left: 7),
+                          width: MediaQuery.of(context).size.width * .94,
+                          //decoration: darkContainer,
+                          color: containerColor,
+                          //padding: EdgeInsets.all(2.0),
+                          child: Row(
+                            children: <Widget>[
+                              Expanded(
+                                child: Text(field.infoMessage,
+                                    style: buttonXSmlTextStyle),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
                     ),
-                  ]),
-                ]),
+                  ),
+                ),
+                Container(
+                  padding: EdgeInsets.only(left: 5.0, right: 5),
+                  child: Column(
+                    children: [
+                      Container(
+                        //   margin: EdgeInsets.fromLTRB(10, 5, 10, 5),
+                        padding: EdgeInsets.all(10),
+                        child: TextFormField(
+                          obscureText: false,
+                          readOnly: true,
+                          maxLines: 1,
+                          minLines: 1,
+                          validator: validateText,
+                          style: textInputTextStyle,
+                          keyboardType: TextInputType.text,
+                          controller:
+                              listOfFieldControllers[newDateField.label],
+                          decoration: CommonStyle.textFieldStyle(
+                              labelTextStr: newDateField.label,
+                              hintTextStr: newDateField.label),
+                          onTap: () {
+                            setState(() {
+                              pickDate(context).then((value) {
+                                if (value != null) {
+                                  setState(() {
+                                    dateString = value.day.toString() +
+                                        " / " +
+                                        value.month.toString() +
+                                        " / " +
+                                        value.year.toString();
+                                    listOfFieldControllers[newDateField.label]
+                                        .text = dateString;
+                                  });
+                                  newDateField.responseDateTime = value;
+                                }
+                              });
+                            });
+                          },
+                          maxLength: null,
+                          onChanged: (String value) {
+                            print(value);
+                          },
+                          onSaved: (String value) {
+                            print(value);
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ]),
+            ]),
           );
         }
         break;
@@ -531,7 +540,7 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
                             minLines: 1,
                             style: textInputTextStyle,
                             keyboardType: TextInputType.phone,
-                            controller: listOfControllers[phone.label],
+                            controller: listOfFieldControllers[phone.label],
                             decoration: InputDecoration(
                               prefixText: '+91',
                               labelText: phone.label,
@@ -630,7 +639,7 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
                               validator: validateText,
                               style: textInputTextStyle,
                               keyboardType: TextInputType.number,
-                              controller: listOfControllers[field.label],
+                              controller: listOfFieldControllers[field.label],
                               decoration: CommonStyle.textFieldStyle(
                                   labelTextStr: field.label,
                                   hintTextStr: field.label),
@@ -1166,7 +1175,7 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
                             style: textInputTextStyle,
                             validator: validateText,
                             keyboardType: TextInputType.text,
-                            controller: listOfControllers[field.label],
+                            controller: listOfFieldControllers[field.label],
                             decoration: CommonStyle.textFieldStyle(
                                 labelTextStr: field.label,
                                 hintTextStr: field.label),
@@ -1270,11 +1279,15 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
 
   bool validateMandatoryFields() {
     for (int i = 0; i < listOfFields.length; i++) {
-      if (listOfFields[i].isMandatory) {
-        if (!Utils.isNotNullOrEmpty(
-            listOfControllers[listOfFields[i].label].text)) {
-          validationErrMsg =
-              validationErrMsg + "\n ${listOfFields[i].label} cannot be empty.";
+      if (listOfFields[i].type != FieldType.OPTIONS &&
+          listOfFields[i].type != FieldType.ATTACHMENT &&
+          listOfFields[i].type != FieldType.OPTIONS_ATTACHMENTS) {
+        if (listOfFields[i].isMandatory) {
+          if (!Utils.isNotNullOrEmpty(
+              listOfFieldControllers[listOfFields[i].label].text)) {
+            validationErrMsg = validationErrMsg +
+                "\n ${listOfFields[i].label} cannot be empty.";
+          }
         }
       }
     }
@@ -1285,36 +1298,60 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
   }
 
   saveRoute() async {
+    ///**Validation Starts */
+    validationErrMsg = "";
     setState(() {
       validateField = true;
     });
-
-    validationErrMsg = "";
-
-    if (_bookingFormKey.currentState.validate()) {
+    // if (_bookingFormKey.currentState.validate()) {
+    if (!validateMandatoryFields()) {
       Utils.showMyFlushbar(
           context,
-          Icons.info_outline,
+          Icons.error,
           Duration(
-            seconds: 4,
+            seconds: 5,
           ),
-          "Saving details!! ",
-          "This would take just a moment.",
-          null,
-          Colors.white,
-          true);
-
-//TODO SMITA - Check AGAIN if selected slot is stil available else prompt user to select another one.
-
-      _bookingFormKey.currentState.save();
-
-      //TODO : Smita - Upload all images to firebase storage.
-      List<Field> listOfFields =
-          bookingApplication.responseForm.getFormFields();
-
-      for (int i = 0; i < listOfFields.length; i++) {
-        switch (listOfFields[i].type) {
-          case FieldType.ATTACHMENT:
+          validationErrMsg,
+          'Its mandatory information.',
+          Colors.red);
+      return;
+    }
+    //***Handle the Options and Attachments field.****
+    List<Field> listOfFields = bookingApplication.responseForm.getFormFields();
+    for (int i = 0; i < listOfFields.length; i++) {
+      switch (listOfFields[i].type) {
+        case FieldType.OPTIONS:
+          FormInputFieldOptions f = listOfFields[i] as FormInputFieldOptions;
+          if (f.isMandatory && f.responseValues.length == 0) {
+            validationErrMsg = '${f.label} is empty.';
+            Utils.showMyFlushbar(
+                context,
+                Icons.error,
+                Duration(
+                  seconds: 5,
+                ),
+                validationErrMsg,
+                'Please fill and try again.',
+                Colors.red);
+            return;
+          }
+          break;
+        case FieldType.ATTACHMENT:
+          FormInputFieldAttachment f =
+              listOfFields[i] as FormInputFieldAttachment;
+          if (f.isMandatory && f.responseFilePaths.length == 0) {
+            validationErrMsg = '${f.label} is empty.';
+            Utils.showMyFlushbar(
+                context,
+                Icons.error,
+                Duration(
+                  seconds: 5,
+                ),
+                validationErrMsg,
+                'Please fill and try again.',
+                Colors.red);
+            return;
+          } else {
             List<String> targetPaths = [];
             for (String path in (listOfFields[i] as FormInputFieldAttachment)
                 .responseFilePaths) {
@@ -1332,9 +1369,27 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
                       as FormInputFieldAttachment)
                   .responseFilePaths = targetPaths;
             }
+          }
 
-            break;
-          case FieldType.OPTIONS_ATTACHMENTS:
+          break;
+        case FieldType.OPTIONS_ATTACHMENTS:
+          FormInputFieldOptionsWithAttachments f =
+              listOfFields[i] as FormInputFieldOptionsWithAttachments;
+          if (f.isMandatory &&
+              (f.responseFilePaths.length == 0 ||
+                  f.responseValues.length == 0)) {
+            validationErrMsg = '${f.label} is empty.';
+            Utils.showMyFlushbar(
+                context,
+                Icons.error,
+                Duration(
+                  seconds: 5,
+                ),
+                validationErrMsg,
+                'Please fill and try again.',
+                Colors.red);
+            return;
+          } else {
             print("df");
             List<String> targetPaths = [];
             for (String path
@@ -1354,27 +1409,18 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
                       as FormInputFieldOptionsWithAttachments)
                   .responseFilePaths = targetPaths;
             }
-            break;
-          default:
-            break;
-        }
+          }
+          break;
+        default:
+          break;
       }
+    }
 
-      //   List<String> frontLineTargetPaths = List<String>();
-      //   for (String path in frontlineWorkerField.responseFilePaths) {
-      //     String fileName = basename(path);
-      //     print(fileName);
+    ///**Validation Ends */
 
-      //     String targetFileName =
-      //         '${bookingApplication.id}#${frontlineWorkerField.id}#${_gs.getCurrentUser().id}#$fileName';
-
-      //     String targetPath = await uploadFilesToServer(path, targetFileName);
-      //     print(targetPath);
-      //     frontLineTargetPaths.add(targetPath);
-      //   }
-
-      //   frontlineWorkerField.responseFilePaths = frontLineTargetPaths;
-
+    //TODO SMITA - Check AGAIN if selected slot is stil available else prompt user to select another one.
+    if (Utils.isStrNullOrEmpty(validationErrMsg)) {
+      _bookingFormKey.currentState.save();
       _gs
           .getApplicationService()
           .submitApplication(bookingApplication, widget.metaEntity)
@@ -1384,42 +1430,47 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
               context,
               Icons.check,
               Duration(
-                seconds: 5,
+                seconds: 3,
               ),
               "Request submitted successfully!",
               'We will contact you as soon as slot opens up. Stay Safe!');
+          Future.delayed(Duration(seconds: 3)).then((value) {
+            Navigator.pushReplacement(context,
+                MaterialPageRoute(builder: (context) => SearchEntityPage()));
+          });
         } else {
-          print("Error in generating SLot for user");
+          //The application could not be submitted, Show appropriate msg to User.
+          print("Error in generating Slot for user");
+
           Utils.showMyFlushbar(context, Icons.error, Duration(seconds: 5),
               couldNotSubmitApplication, tryAgainToBook);
         }
       }).catchError((error) {
-        print("Error in generating SLot for user");
-        print("Error in token booking" + error.toString());
-
-        //TODO Smita - Not going in any of if bcoz exception is wrapped in type platform exception.
-        if (error is SlotFullException) {
-          Utils.showMyFlushbar(context, Icons.error, Duration(seconds: 5),
-              couldNotBookToken, slotsAlreadyBooked);
-        } else if (error.toString().contains("already submitted")) {
-          Utils.showMyFlushbar(context, Icons.error, Duration(seconds: 5),
-              "Your application is already submitted.", "");
-        } else {
-          Utils.showMyFlushbar(context, Icons.error, Duration(seconds: 5),
-              couldNotBookToken, tryAgainToBook);
+        switch (error.runtimeType) {
+          case MaxTokenReachedByUserPerDayException:
+            print("max token reached");
+            Utils.showMyFlushbar(context, Icons.error, Duration(seconds: 6),
+                maxTokenLimitReached, maxTokenLimitReachedSub);
+            break;
+          case MaxTokenReachedByUserPerSlotException:
+            Utils.showMyFlushbar(context, Icons.error, Duration(seconds: 6),
+                maxTokenForTimeReached, maxTokenLimitReachedSub);
+            print("max per slot reached");
+            break;
+          case TokenAlreadyExistsException:
+            Utils.showMyFlushbar(context, Icons.error, Duration(seconds: 6),
+                tokenAlreadyExists, selectDateSub);
+            print("token exists");
+            break;
+          case SlotFullException:
+            Utils.showMyFlushbar(context, Icons.error, Duration(seconds: 6),
+                slotsAlreadyBooked, selectDateSub);
+            print("slot full ");
+            break;
+          default:
+            break;
         }
       });
-    } else {
-      print(validationErrMsg);
-      Utils.showMyFlushbar(
-          context,
-          Icons.error,
-          Duration(
-            seconds: 10,
-          ),
-          "Please fill all mandatory fields and Save again.",
-          "",
-          Colors.red);
     }
   }
 
@@ -1738,26 +1789,38 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
                           itemCount: dummyForm.getFormFields().length,
                         ),
                       ),
-                      RaisedButton(
-                          color: btnColor,
-                          splashColor: highlightColor,
-                          child: Container(
-                            padding: EdgeInsets.all(10),
-                            // margin: EdgeInsets.all(10),
-                            width: MediaQuery.of(context).size.width * .84,
-                            child: Column(
-                              children: <Widget>[
-                                Text(
-                                  'Save Details & Request Token',
-                                  style: buttonMedTextStyle,
-                                ),
-                              ],
+                      Container(
+                        margin: EdgeInsets.only(bottom: 14),
+                        child: MaterialButton(
+                            elevation: 8,
+                            color: btnColor,
+                            splashColor: highlightColor,
+                            child: Container(
+                              padding: EdgeInsets.all(10),
+                              // margin: EdgeInsets.all(10),
+                              width: MediaQuery.of(context).size.width * .84,
+                              child: Column(
+                                children: <Widget>[
+                                  Text(
+                                    'Save Details & Request Token',
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.w500,
+                                      fontFamily: 'Montserrat',
+                                      letterSpacing: 1.3,
+                                      fontSize:
+                                          MediaQuery.of(context).size.width *
+                                              .04,
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
-                          ),
-                          onPressed: () {
-                            print("FlushbarStatus-------");
-                            processSaveWithTimer();
-                          }),
+                            onPressed: () {
+                              print("FlushbarStatus-------");
+                              processSaveWithTimer();
+                            }),
+                      ),
                     ],
                   ),
                 ),

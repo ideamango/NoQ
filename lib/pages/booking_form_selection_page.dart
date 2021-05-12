@@ -1,3 +1,4 @@
+import 'package:LESSs/widget/widgets.dart';
 import 'package:flutter/material.dart';
 import '../db/db_model/meta_entity.dart';
 import '../db/db_model/meta_form.dart';
@@ -206,7 +207,8 @@ class _BookingFormSelectionState extends State<BookingFormSelection> {
                                               ),
                                             ),
                                           ]),
-                                          forms[index].description != null
+                                          Utils.isNotNullOrEmpty(
+                                                  forms[index].description)
                                               ? new Text(
                                                   forms[index].description,
                                                   style: TextStyle(
@@ -217,7 +219,7 @@ class _BookingFormSelectionState extends State<BookingFormSelection> {
                                                           : Colors
                                                               .blueGrey[600]),
                                                 )
-                                              : Container(),
+                                              : Container(height: 0),
                                         ],
                                       ),
                                     ],
@@ -256,23 +258,74 @@ class _BookingFormSelectionState extends State<BookingFormSelection> {
                                             reportsRoute));
                                 }
                               }),
-                        FlatButton(
-                            minWidth: MediaQuery.of(context).size.width * .3,
+                        horizontalSpacer,
+                        MaterialButton(
+                            minWidth: MediaQuery.of(context).size.width * .4,
+                            elevation: _selectedValue != -1 ? 8 : 0,
+                            shape: RoundedRectangleBorder(
+                                side: BorderSide(color: btnDisabledolor),
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(5.0))),
                             child: (widget.isAdmin)
                                 ? Text("Dashboard")
                                 : Row(
                                     children: [
+                                      horizontalSpacer,
                                       Text("Next ",
-                                          style: TextStyle(fontSize: 18)),
-                                      Icon(Icons.arrow_forward_ios),
+                                          style: TextStyle(
+                                              fontSize: 18,
+                                              color: _selectedValue != -1
+                                                  ? Colors.white
+                                                  : headerBarColor)),
+                                      horizontalSpacer,
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: <Widget>[
+                                          Container(
+                                            padding:
+                                                EdgeInsets.fromLTRB(0, 0, 0, 0),
+                                            transform:
+                                                Matrix4.translationValues(
+                                                    4.0, 0, 0),
+                                            child: Icon(
+                                              Icons.arrow_forward_ios,
+                                              color: _selectedValue != -1
+                                                  ? Colors.white
+                                                  : btnDisabledolor,
+                                              size: 20,
+                                              // color: Colors.white38,
+                                            ),
+                                          ),
+                                          Container(
+                                            padding:
+                                                EdgeInsets.fromLTRB(0, 0, 0, 0),
+                                            transform:
+                                                Matrix4.translationValues(
+                                                    -8.0, 0, 0),
+                                            child: Icon(
+                                              Icons.arrow_forward_ios,
+                                              color: _selectedValue != -1
+                                                  ? Colors.white
+                                                  : headerBarColor,
+                                              size: 22,
+                                              // color: Colors.white,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      // Icon(Icons.arrow_forward_ios,
+                                      //     size: 20,
+                                      //     color: _selectedValue != -1
+                                      //         ? Colors.white
+                                      //         : btnColor),
                                     ],
                                   ),
-                            color: Colors.transparent,
-                            splashColor: Colors.blueGrey[300],
-                            shape: RoundedRectangleBorder(
-                                side: BorderSide(color: Colors.blueGrey[500]),
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(5.0))),
+                            color:
+                                _selectedValue != -1 ? btnColor : Colors.white,
+                            splashColor: _selectedValue != -1
+                                ? highlightColor
+                                : btnDisabledolor,
                             onPressed: () {
                               if (_selectedValue == -1) {
                                 print("Nothing selected");

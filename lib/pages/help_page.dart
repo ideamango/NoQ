@@ -251,14 +251,15 @@ class _HelpPageState extends State<HelpPage> {
                                                     // launch(
                                                     //     'https://docs.flutter.io/flutter/services/UrlLauncher-class.html');
                                                     Navigator.of(context).push(
-                                                        PageAnimation
-                                                            .createRoute(
-                                                                UPIPaymentPage(
-                                                      upiId: upiId,
-                                                      upiQrCodeImgPath:
-                                                          upiQrImgPath,
-                                                      backRoute: HelpPage(),
-                                                    )));
+                                                        PageAnimation.createRoute(
+                                                            UPIPaymentPage(
+                                                                upiId: upiId,
+                                                                upiQrCodeImgPath:
+                                                                    upiQrImgPath,
+                                                                backRoute:
+                                                                    HelpPage(),
+                                                                isDonation:
+                                                                    true)));
                                                   },
                                           ),
                                         ])),

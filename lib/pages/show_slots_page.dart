@@ -289,7 +289,7 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
                             itemCount: _slotList.length,
                             gridDelegate:
                                 SliverGridDelegateWithFixedCrossAxisCount(
-                                    crossAxisCount: 5,
+                                    crossAxisCount: 4,
                                     crossAxisSpacing: 2.0,
                                     mainAxisSpacing: 0.5),
                             itemBuilder: (BuildContext context, int index) {
@@ -684,7 +684,10 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              AutoSizeText(sl.totalBooked.toString(),
+              AutoSizeText(
+                  (sl.totalBooked -
+                          (sl.totalCancelled != null ? sl.totalCancelled : 0))
+                      .toString(),
                   minFontSize: 9,
                   maxFontSize: 11,
                   style: TextStyle(
