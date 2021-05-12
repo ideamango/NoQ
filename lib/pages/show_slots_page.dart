@@ -289,7 +289,7 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
                             itemCount: _slotList.length,
                             gridDelegate:
                                 SliverGridDelegateWithFixedCrossAxisCount(
-                                    crossAxisCount: 5,
+                                    crossAxisCount: 4,
                                     crossAxisSpacing: 2.0,
                                     mainAxisSpacing: 0.5),
                             itemBuilder: (BuildContext context, int index) {
