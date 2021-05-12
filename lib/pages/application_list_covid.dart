@@ -54,9 +54,6 @@ class _ApplicationsListCovidState extends State<ApplicationsListCovid> {
   void initState() {
     super.initState();
     getGlobalState().whenComplete(() {
-      //******gettinmg dummy data -remove this afterwards */
-      //  getListOfData();
-
       _gs
           .getApplicationService()
           .getApplications(
@@ -67,8 +64,8 @@ class _ApplicationsListCovidState extends State<ApplicationsListCovid> {
               null,
               null,
               null,
-              null,
-              null,
+              "timeOfSubmission",
+              true,
               null,
               lastDocOfPage,
               10)
@@ -100,7 +97,7 @@ class _ApplicationsListCovidState extends State<ApplicationsListCovid> {
             null,
             null,
             null,
-            null,
+            "timeOfSubmission",
             true,
             null,
             lastDocOfPage,

@@ -190,7 +190,7 @@ class UserToken {
   String bookingFormId;
   String bookingFormName;
   UserTokens parent;
-  int numberBeforeCancellation = -1;
+  int numberBeforeCancellation;
 
   Map<String, dynamic> toJson() => {
         'number': number,
@@ -213,10 +213,17 @@ class UserToken {
   }
 
   String getDisplayName() {
-    return parent.getDisplayNamePrefix() + number.toString();
+    if (number == -1) {
+      return parent.getDisplayNamePrefix() +
+          numberBeforeCancellation.toString();
+    }
+    return parent.getDisplayNamePrefix() + numberBeforeCancellation.toString();
   }
 
   String getID() {
+    if (number == -1) {
+      return parent.getTokenId() + "#" + numberBeforeCancellation.toString();
+    }
     return parent.getTokenId() + "#" + number.toString();
   }
 }
