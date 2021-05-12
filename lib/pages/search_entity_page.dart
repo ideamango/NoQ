@@ -39,7 +39,7 @@ class SearchEntityPage extends StatefulWidget {
 }
 
 class _SearchEntityPageState extends State<SearchEntityPage>
-    with SingleTickerProviderStateMixin {
+    with TickerProviderStateMixin {
   bool initCompleted = false;
   bool isFavourited = false;
   DateTime dateTime = DateTime.now();
@@ -85,6 +85,8 @@ class _SearchEntityPageState extends State<SearchEntityPage>
   double fontSize;
   bool isLoading = false;
   var sideInfoGrp = new AutoSizeGroup();
+  AnimationController _animationController;
+  Animation animation;
 
   Widget _buildCategoryItem(BuildContext context, EntityType type) {
     String name = Utils.getEntityTypeDisplayName(type);
@@ -124,6 +126,7 @@ class _SearchEntityPageState extends State<SearchEntityPage>
   @override
   void dispose() {
     super.dispose();
+    _animationController.dispose();
     _searchTextController.dispose();
     EventBus.unregisterEvent(_eventListener);
     _selectCategoryBtnController.dispose();
@@ -133,6 +136,11 @@ class _SearchEntityPageState extends State<SearchEntityPage>
   @override
   void initState() {
     super.initState();
+
+    _animationController = new AnimationController(
+        vsync: this, duration: Duration(milliseconds: 1500));
+    _animationController.repeat(reverse: true);
+    animation = Tween(begin: 0.5, end: 1.0).animate(_animationController);
 
     _searchTextController = new TextEditingController();
     _isSearching = "initial";
@@ -1004,7 +1012,7 @@ class _SearchEntityPageState extends State<SearchEntityPage>
     return showFab
         ? Container(
             width: MediaQuery.of(context).size.width * .92,
-            height: MediaQuery.of(context).size.height * .08,
+            height: MediaQuery.of(context).size.height * .07,
             padding: EdgeInsets.all(5),
             child: SlideTransition(
               position: offset,
@@ -1220,27 +1228,32 @@ class _SearchEntityPageState extends State<SearchEntityPage>
                                   ),
                                 ),
                                 (str.enableVideoChat)
-                                    ? Container(
-                                        width:
-                                            MediaQuery.of(context).size.width *
-                                                .08,
-                                        height:
-                                            MediaQuery.of(context).size.height *
-                                                .04,
-                                        child: IconButton(
-                                          icon: Icon(
+                                    ? FadeTransition(
+                                        opacity: animation,
+                                        child: Container(
+                                          padding: EdgeInsets.zero,
+                                          margin: EdgeInsets.zero,
+                                          width: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                              .08,
+                                          height: MediaQuery.of(context)
+                                                  .size
+                                                  .height *
+                                              .04,
+                                          child: Icon(
                                             Icons.videocam,
-                                            color: primaryIcon,
-                                            size: 25,
+                                            color: Colors.orange[700],
+                                            size: 30,
                                           ),
-                                          onPressed: () {
-                                            Utils.showMyFlushbar(
-                                                context,
-                                                Icons.info,
-                                                Duration(seconds: 5),
-                                                "This place provides Online Consultation on Whatsapp number ${str.whatsapp} !!",
-                                                "Help in reducing crowd at places.");
-                                          },
+                                          // onPressed: () {
+                                          //   Utils.showMyFlushbar(
+                                          //       context,
+                                          //       Icons.info,
+                                          //       Duration(seconds: 5),
+                                          //       "This place provides Online Consultation on Whatsapp number ${str.whatsapp} !!",
+                                          //       "Help in reducing crowd at places.");
+                                          // },
                                         ),
                                       )
                                     : Container(width: 0),
