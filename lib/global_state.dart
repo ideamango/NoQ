@@ -555,6 +555,7 @@ class GlobalState {
     return true;
   }
 
+  //Throws => MaxTokenReachedByUserPerSlotException, TokenAlreadyExistsException, SlotFullException, MaxTokenReachedByUserPerDayException
   Future<UserTokens> addBooking(
       MetaEntity meta, Slot slot, bool enableVideoChat) async {
     UserTokens tokens;
@@ -611,6 +612,7 @@ class GlobalState {
     _gs = null;
   }
 
+  //Throws => TokenAlreadyCancelledException, NoTokenFoundException
   Future<bool> cancelBooking(String tokenId, [int number]) async {
     UserTokens uts = await _tokenService.cancelToken(tokenId, number);
     if (uts != null) {

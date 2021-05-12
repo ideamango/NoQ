@@ -524,6 +524,7 @@ class TokenService {
       MetaEntity metaEntity, DateTime preferredDateTime, Transaction tx) {}
 
   //this method is used to generate the Token by the current user for himself
+  //Throws => MaxTokenReachedByUserPerSlotException, TokenAlreadyExistsException, SlotFullException, MaxTokenReachedByUserPerDayException
   Future<UserTokens> generateToken(MetaEntity metaEntity, DateTime dateTime,
       [bool enableVideoChat = false]) async {
     User user = getFirebaseAuth().currentUser;
@@ -708,9 +709,11 @@ class TokenService {
       } else {
         throw new NoTokenFoundException("Token does not exists");
       }
-    } catch (e) {
-      print("Error while canceling token -> Transactio Error: " + e.toString());
+    } catch (ex) {
+      print(
+          "Error while canceling token -> Transactio Error: " + ex.toString());
       isCancelled = false;
+      throw ex;
     }
 
     return null;
