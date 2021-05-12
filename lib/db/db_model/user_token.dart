@@ -217,7 +217,7 @@ class UserToken {
       return parent.getDisplayNamePrefix() +
           numberBeforeCancellation.toString();
     }
-    return parent.getDisplayNamePrefix() + numberBeforeCancellation.toString();
+    return parent.getDisplayNamePrefix() + number.toString();
   }
 
   String getID() {
