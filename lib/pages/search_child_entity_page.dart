@@ -48,7 +48,7 @@ class SearchChildEntityPage extends StatefulWidget {
 }
 
 class _SearchChildEntityPageState extends State<SearchChildEntityPage>
-    with SingleTickerProviderStateMixin {
+    with TickerProviderStateMixin {
   bool initCompleted = false;
   bool isFavourited = false;
   DateTime dateTime = DateTime.now();
@@ -101,12 +101,19 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
   AnimationController controller;
   Animation<Offset> offset;
   Eventify.Listener _eventListener;
+  AnimationController _animationController;
+  Animation animation;
 
   //List<String> searchTypes;
 
   @override
   void initState() {
     super.initState();
+    _animationController = new AnimationController(
+        vsync: this, duration: Duration(milliseconds: 1500));
+    _animationController.repeat(reverse: true);
+    animation = Tween(begin: 0.5, end: 1.0).animate(_animationController);
+
     _searchTextController = new TextEditingController();
     _isSearching = "initial";
     _fromPage = widget.pageName;
@@ -159,10 +166,11 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
 
   @override
   void dispose() {
-    super.dispose();
+    _animationController.dispose();
     _selectCategoryBtnController.dispose();
     EventBus.unregisterEvent(_eventListener);
     print("Search page dispose called...");
+    super.dispose();
   }
 
   void showFoatingActionButton(bool value) {
@@ -301,47 +309,49 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
             children: <Widget>[
               Column(
                 children: <Widget>[
-                  SizedBox(height: MediaQuery.of(context).size.height * .1),
+                  //  SizedBox(height: MediaQuery.of(context).size.height * .1),
                   Container(
                     height: MediaQuery.of(context).size.height * .2,
+                    margin: EdgeInsets.symmetric(
+                        vertical: MediaQuery.of(context).size.height * .1),
                     decoration: BoxDecoration(
                       image: DecorationImage(
                           image: AssetImage("assets/notFound.png"),
-                          fit: BoxFit.cover),
+                          fit: BoxFit.contain),
                     ),
                   ),
-                  verticalSpacer,
-                  verticalSpacer,
-                  InkWell(
-                    child: Container(
-                      height: MediaQuery.of(context).size.height * .1,
-                      decoration: BoxDecoration(
-                        image: DecorationImage(
-                            image: AssetImage("assets/notFound1.png"),
-                            fit: BoxFit.cover),
+                  Column(children: [
+                    InkWell(
+                      child: Container(
+                        height: MediaQuery.of(context).size.height * .1,
+                        decoration: BoxDecoration(
+                          image: DecorationImage(
+                              image: AssetImage("assets/notFound1.png"),
+                              fit: BoxFit.contain),
+                        ),
                       ),
+                      onTap: () {
+                        _searchTextController.text = "";
+                        Utils.generateLinkAndShare(null,
+                            appShareWithOwnerHeading, appShareWithOwnerMessage);
+                      },
                     ),
-                    onTap: () {
-                      _searchTextController.text = "";
-                      Utils.generateLinkAndShare(null, appShareWithOwnerHeading,
-                          appShareWithOwnerMessage);
-                    },
-                  ),
-                  InkWell(
-                    child: Container(
-                      height: MediaQuery.of(context).size.height * .1,
-                      decoration: BoxDecoration(
-                        image: DecorationImage(
-                            image: AssetImage("assets/notFound2.png"),
-                            fit: BoxFit.cover),
+                    InkWell(
+                      child: Container(
+                        height: MediaQuery.of(context).size.height * .1,
+                        decoration: BoxDecoration(
+                          image: DecorationImage(
+                              image: AssetImage("assets/notFound2.png"),
+                              fit: BoxFit.contain),
+                        ),
                       ),
-                    ),
-                    onTap: () {
-                      _searchTextController.text = "";
+                      onTap: () {
+                        _searchTextController.text = "";
 
-                      showContactUsSheet();
-                    },
-                  ),
+                        showContactUsSheet();
+                      },
+                    ),
+                  ]),
                 ],
               ),
             ],
@@ -886,7 +896,7 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
         ? (_fromPage != 'FavsSearch')
             ? Container(
                 width: MediaQuery.of(context).size.width * .92,
-                height: MediaQuery.of(context).size.height * .08,
+                height: MediaQuery.of(context).size.height * .07,
                 padding: EdgeInsets.all(5),
                 child: SlideTransition(
                   position: offset,
@@ -1111,20 +1121,10 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
                                   ),
                                 ),
                                 (str.enableVideoChat)
-                                    ? Container(
-                                        width:
-                                            MediaQuery.of(context).size.width *
-                                                .08,
-                                        height:
-                                            MediaQuery.of(context).size.height *
-                                                .04,
-                                        child: IconButton(
-                                          icon: Icon(
-                                            Icons.videocam,
-                                            color: primaryIcon,
-                                            size: 25,
-                                          ),
-                                          onPressed: () {
+                                    ? FadeTransition(
+                                        opacity: animation,
+                                        child: GestureDetector(
+                                          onTap: () {
                                             Utils.showMyFlushbar(
                                                 context,
                                                 Icons.info,
@@ -1132,6 +1132,23 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
                                                 "This place provides Online Consultation on Whatsapp number ${str.whatsapp} !!",
                                                 "Help in reducing crowd at places.");
                                           },
+                                          child: Container(
+                                            padding: EdgeInsets.zero,
+                                            margin: EdgeInsets.zero,
+                                            width: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                .08,
+                                            height: MediaQuery.of(context)
+                                                    .size
+                                                    .height *
+                                                .04,
+                                            child: Icon(
+                                              Icons.videocam,
+                                              color: Colors.orange[700],
+                                              size: 30,
+                                            ),
+                                          ),
                                         ),
                                       )
                                     : Container(width: 0),
@@ -1262,9 +1279,9 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
                                             minFontSize: 9,
                                             maxFontSize: 11,
                                             style: TextStyle(
-                                                color: Colors.green[600],
-                                                fontFamily: 'Monsterrat',
-                                                fontSize: fontSize * .022)),
+                                              color: Colors.green[600],
+                                              fontFamily: 'Monsterrat',
+                                            )),
                                         Text(' - ',
                                             style: TextStyle(
                                                 color: primaryDarkColor,

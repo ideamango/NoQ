@@ -1153,30 +1153,32 @@ class _SearchEntityPageState extends State<SearchEntityPage>
                                 (str.enableVideoChat)
                                     ? FadeTransition(
                                         opacity: animation,
-                                        child: Container(
-                                          padding: EdgeInsets.zero,
-                                          margin: EdgeInsets.zero,
-                                          width: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
-                                              .08,
-                                          height: MediaQuery.of(context)
-                                                  .size
-                                                  .height *
-                                              .04,
-                                          child: Icon(
-                                            Icons.videocam,
-                                            color: Colors.orange[700],
-                                            size: 30,
+                                        child: GestureDetector(
+                                          onTap: () {
+                                            Utils.showMyFlushbar(
+                                                context,
+                                                Icons.info,
+                                                Duration(seconds: 5),
+                                                "This place provides Online Consultation on Whatsapp number ${str.whatsapp} !!",
+                                                "Help in reducing crowd at places.");
+                                          },
+                                          child: Container(
+                                            padding: EdgeInsets.zero,
+                                            margin: EdgeInsets.zero,
+                                            width: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                .08,
+                                            height: MediaQuery.of(context)
+                                                    .size
+                                                    .height *
+                                                .04,
+                                            child: Icon(
+                                              Icons.videocam,
+                                              color: Colors.orange[700],
+                                              size: 30,
+                                            ),
                                           ),
-                                          // onPressed: () {
-                                          //   Utils.showMyFlushbar(
-                                          //       context,
-                                          //       Icons.info,
-                                          //       Duration(seconds: 5),
-                                          //       "This place provides Online Consultation on Whatsapp number ${str.whatsapp} !!",
-                                          //       "Help in reducing crowd at places.");
-                                          // },
                                         ),
                                       )
                                     : Container(width: 0),
@@ -1198,94 +1200,106 @@ class _SearchEntityPageState extends State<SearchEntityPage>
                             margin: EdgeInsets.zero,
                             //width: MediaQuery.of(context).size.width * .3,
                             child: Row(
-                              mainAxisAlignment: MainAxisAlignment.end,
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                Container(
-                                  width:
-                                      MediaQuery.of(context).size.width * .48,
-                                  child: Text(
-                                    Utils.isNotNullOrEmpty(
-                                            EnumToString.convertToString(
-                                                str.type))
-                                        ? Utils.getEntityTypeDisplayName(
-                                            str.type)
-                                        : "",
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
-                                    style: TextStyle(
-                                        color: Colors.black,
-                                        letterSpacing: 0.5,
-                                        fontFamily: 'Roboto',
-                                        fontSize: 12.0),
-                                  ),
-                                ),
-                                Container(
-                                  width:
-                                      MediaQuery.of(context).size.width * .12,
-                                  child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        (str.verificationStatus ==
-                                                VERIFICATION_VERIFIED)
-                                            ? new Container(
-                                                width: MediaQuery.of(context)
-                                                        .size
-                                                        .width *
-                                                    .06,
-                                                height: MediaQuery.of(context)
-                                                        .size
-                                                        .height *
-                                                    .03,
-                                                child: IconButton(
-                                                  padding: EdgeInsets.fromLTRB(
-                                                      1, 1, 0, 2),
-                                                  icon: Icon(
-                                                    Icons.verified_user,
-                                                    color: Colors.green,
-                                                    size: 15,
-                                                  ),
-                                                  onPressed: () {
-                                                    Utils.showMyFlushbar(
-                                                        context,
-                                                        Icons.info,
-                                                        Duration(seconds: 5),
-                                                        VERIFICATION_VERIFIED,
-                                                        "");
-                                                  },
-                                                ),
-                                              )
-                                            : Container(),
-                                        (str.isPublic != true)
-                                            ? Container(
-                                                width: MediaQuery.of(context)
-                                                        .size
-                                                        .width *
-                                                    .06,
-                                                height: MediaQuery.of(context)
-                                                        .size
-                                                        .height *
-                                                    .03,
-                                                child: IconButton(
-                                                  padding: EdgeInsets.fromLTRB(
-                                                      1, 1, 1, 2),
-                                                  icon: Icon(
-                                                    Icons.lock,
-                                                    color: primaryIcon,
-                                                    size: 15,
-                                                  ),
-                                                  onPressed: () {
-                                                    Utils.showMyFlushbar(
-                                                        context,
-                                                        Icons.info,
-                                                        Duration(seconds: 5),
-                                                        "Access to this place is restricted to its residents or employees.",
-                                                        "");
-                                                  },
-                                                ),
-                                              )
-                                            : Container(),
-                                      ]),
+                                Row(
+                                  children: [
+                                    Container(
+                                      width: MediaQuery.of(context).size.width *
+                                          .48,
+                                      child: Text(
+                                        Utils.isNotNullOrEmpty(
+                                                EnumToString.convertToString(
+                                                    str.type))
+                                            ? Utils.getEntityTypeDisplayName(
+                                                str.type)
+                                            : "",
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: TextStyle(
+                                            color: Colors.black,
+                                            letterSpacing: 0.5,
+                                            fontFamily: 'Roboto',
+                                            fontSize: 12.0),
+                                      ),
+                                    ),
+                                    Container(
+                                      width: MediaQuery.of(context).size.width *
+                                          .12,
+                                      child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            (str.verificationStatus ==
+                                                    VERIFICATION_VERIFIED)
+                                                ? new Container(
+                                                    width:
+                                                        MediaQuery.of(context)
+                                                                .size
+                                                                .width *
+                                                            .06,
+                                                    height:
+                                                        MediaQuery.of(context)
+                                                                .size
+                                                                .height *
+                                                            .03,
+                                                    child: IconButton(
+                                                      padding:
+                                                          EdgeInsets.fromLTRB(
+                                                              1, 1, 0, 2),
+                                                      icon: Icon(
+                                                        Icons.verified_user,
+                                                        color: Colors.green,
+                                                        size: 15,
+                                                      ),
+                                                      onPressed: () {
+                                                        Utils.showMyFlushbar(
+                                                            context,
+                                                            Icons.info,
+                                                            Duration(
+                                                                seconds: 5),
+                                                            VERIFICATION_VERIFIED,
+                                                            "");
+                                                      },
+                                                    ),
+                                                  )
+                                                : Container(),
+                                            (str.isPublic != true)
+                                                ? Container(
+                                                    width:
+                                                        MediaQuery.of(context)
+                                                                .size
+                                                                .width *
+                                                            .06,
+                                                    height:
+                                                        MediaQuery.of(context)
+                                                                .size
+                                                                .height *
+                                                            .03,
+                                                    child: IconButton(
+                                                      padding:
+                                                          EdgeInsets.fromLTRB(
+                                                              1, 1, 1, 2),
+                                                      icon: Icon(
+                                                        Icons.lock,
+                                                        color: primaryIcon,
+                                                        size: 15,
+                                                      ),
+                                                      onPressed: () {
+                                                        Utils.showMyFlushbar(
+                                                            context,
+                                                            Icons.info,
+                                                            Duration(
+                                                                seconds: 5),
+                                                            "Access to this place is restricted to its residents or employees.",
+                                                            "");
+                                                      },
+                                                    ),
+                                                  )
+                                                : Container(),
+                                          ]),
+                                    ),
+                                  ],
                                 ),
                                 if (str.startTimeHour != null)
                                   Container(
@@ -1307,9 +1321,9 @@ class _SearchEntityPageState extends State<SearchEntityPage>
                                             minFontSize: 9,
                                             maxFontSize: 11,
                                             style: TextStyle(
-                                                color: Colors.green[600],
-                                                fontFamily: 'Monsterrat',
-                                                fontSize: fontSize * .022)),
+                                              color: Colors.green[600],
+                                              fontFamily: 'Monsterrat',
+                                            )),
                                         Text(' - ',
                                             style: TextStyle(
                                                 color: primaryDarkColor,
