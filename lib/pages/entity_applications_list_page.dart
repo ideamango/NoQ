@@ -478,7 +478,7 @@ class _EntityApplicationListPageState extends State<EntityApplicationListPage> {
                       style: TextStyle(fontSize: 13, color: Colors.grey[600]),
                     ),
                     Text(
-                      slot.currentNumber.toString() + " tokens",
+                      slot.totalBooked.toString() + " tokens",
                       style: TextStyle(fontSize: 13, color: Colors.grey[600]),
                     ),
                   ],

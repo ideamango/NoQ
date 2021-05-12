@@ -23,7 +23,7 @@ class DBLayer {
 
     Slot sl = new Slot();
     sl.slotId = "TestEntId";
-    sl.currentNumber = 10;
+    sl.totalBooked = 10;
     sl.dateTime = DateTime.now();
     sl.maxAllowed = 60;
     sl.slotDuration = 30;

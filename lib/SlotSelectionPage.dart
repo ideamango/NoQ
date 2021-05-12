@@ -760,7 +760,7 @@ class _SlotSelectionPageState extends State<SlotSelectionPage> {
           ),
         ),
         Container(
-          child: Text(sl.currentNumber.toString() + ' Booked',
+          child: Text(sl.totalBooked.toString() + ' Booked',
               style: TextStyle(
                 color: Colors.black,
                 // fontWeight: FontWeight.w800,

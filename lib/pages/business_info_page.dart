@@ -128,7 +128,7 @@ class _ManageTokensState extends State<ManageTokens> {
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
                     Text(fromTime + " - " + toTime),
-                    Text(slot.currentNumber.toString() + " bookings"),
+                    Text(slot.totalBooked.toString() + " bookings"),
                   ],
                 ),
                 backgroundColor: Colors.cyan[100],

@@ -167,6 +167,7 @@ class BookingApplicationService {
   }
 
   //To be done by the Applicant
+  //Throws => MaxTokenReachedByUserPerSlotException, TokenAlreadyExistsException, SlotFullException, MaxTokenReachedByUserPerDayException
   Future<bool> submitApplication(BookingApplication ba, MetaEntity metaEntity,
       [bool enableVideoChat = false]) async {
     //Security: BookingApplication (Application Status by the applicant can be only Null, New, Cancelled), other statuses are reserved for the Manager/Admin
@@ -364,6 +365,7 @@ class BookingApplicationService {
   }
 
   //to be done by the Applicant
+  //Throws => TokenAlreadyCancelledException, NoTokenFoundException
   Future<bool> withDrawApplication(
       String applicationId, String notesOnCancellation) async {
     //set the BookingApplication status as cancelled
@@ -378,6 +380,7 @@ class BookingApplicationService {
     final User user = getFirebaseAuth().currentUser;
     FirebaseFirestore fStore = getFirestore();
     String userPhone = user.phoneNumber;
+    Exception e;
 
     BookingApplication ba;
 
@@ -570,12 +573,17 @@ class BookingApplicationService {
         // }
 
         isSuccess = true;
-      } catch (e) {
+      } catch (ex) {
         print("Exception in Application submission $bookingApplicationId " +
-            e.toString());
+            ex.toString());
         isSuccess = false;
+        e = ex;
       }
     });
+
+    if (e != null) {
+      throw e;
+    }
 
     return isSuccess;
   }
@@ -983,6 +991,24 @@ class BookingApplicationService {
       return false;
     }
     return true;
+  }
+
+  Future<void> deleteApplicationsForEntity(String entityId) async {
+    CollectionReference slots =
+        FirebaseFirestore.instance.collection('bookingApplications');
+
+    WriteBatch batch = FirebaseFirestore.instance.batch();
+    QuerySnapshot qs;
+    return slots
+        .where('entityId', isEqualTo: entityId)
+        .get()
+        .then((querySnapshot) {
+      querySnapshot.docs.forEach((document) {
+        batch.delete(document.reference);
+      });
+
+      return batch.commit();
+    });
   }
 
   Future<bool> deleteBookingForm(String formId) async {

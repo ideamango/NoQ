@@ -303,14 +303,14 @@ class TokenService {
                   "Token can't be generated as the slot is full");
             }
 
-            newNumber = sl.currentNumber + 1;
+            newNumber = sl.totalBooked + 1;
 
             if (sl.maxAllowed == newNumber) {
               // set the isFull for that slot to true
               sl.isFull = true;
             }
             // set the current number to be incremented
-            sl.currentNumber = newNumber;
+            sl.totalBooked = newNumber;
 
             existingSlot = sl;
             break;
@@ -376,12 +376,13 @@ class TokenService {
         if (existingSlot == null) {
           // Create a new Slot with current number as 1 and add to the Slots list of Entity_Slots object
           Slot newSlot = new Slot(
-              currentNumber: 1,
+              totalBooked: 1,
               slotId: slotId,
               maxAllowed: es.maxAllowed,
               dateTime: dateTime,
               slotDuration: es.slotDuration,
-              isFull: false);
+              isFull: false,
+              totalCancelled: 0);
           if (newSlot.tokens == null) {
             newSlot.tokens = [];
           }
@@ -466,12 +467,13 @@ class TokenService {
             endTimeMinute: endTimeMinute);
 
         Slot sl = new Slot(
-            currentNumber: 1,
+            totalBooked: 1,
             slotId: slotId,
             maxAllowed: es.maxAllowed,
             dateTime: dateTime,
             slotDuration: es.slotDuration,
-            isFull: false);
+            isFull: false,
+            totalCancelled: 0);
         if (sl.tokens == null) {
           sl.tokens = [];
         }
@@ -522,6 +524,7 @@ class TokenService {
       MetaEntity metaEntity, DateTime preferredDateTime, Transaction tx) {}
 
   //this method is used to generate the Token by the current user for himself
+  //Throws => MaxTokenReachedByUserPerSlotException, TokenAlreadyExistsException, SlotFullException, MaxTokenReachedByUserPerDayException
   Future<UserTokens> generateToken(MetaEntity metaEntity, DateTime dateTime,
       [bool enableVideoChat = false]) async {
     User user = getFirebaseAuth().currentUser;
@@ -642,6 +645,7 @@ class TokenService {
         for (Slot sl in es.slots) {
           if (sl.slotId == slotId) {
             sl.maxAllowed++;
+            sl.totalCancelled++;
             sl.isFull = false;
             break;
           }
@@ -705,9 +709,11 @@ class TokenService {
       } else {
         throw new NoTokenFoundException("Token does not exists");
       }
-    } catch (e) {
-      print("Error while canceling token -> Transactio Error: " + e.toString());
+    } catch (ex) {
+      print(
+          "Error while canceling token -> Transactio Error: " + ex.toString());
       isCancelled = false;
+      throw ex;
     }
 
     return null;
@@ -831,6 +837,58 @@ class TokenService {
     }
 
     return tokens;
+  }
+
+  Future<void> deleteSlotsForEntity(String entityId) async {
+    CollectionReference slots = FirebaseFirestore.instance.collection('slots');
+
+    WriteBatch batch = FirebaseFirestore.instance.batch();
+    QuerySnapshot qs;
+    return slots
+        .where('entityId', isEqualTo: entityId)
+        .get()
+        .then((querySnapshot) {
+      querySnapshot.docs.forEach((document) {
+        batch.delete(document.reference);
+      });
+
+      return batch.commit();
+    });
+  }
+
+  Future<void> deleteTokensForEntity(String entityId) async {
+    CollectionReference slots = FirebaseFirestore.instance.collection('tokens');
+
+    WriteBatch batch = FirebaseFirestore.instance.batch();
+    QuerySnapshot qs;
+    return slots
+        .where('entityId', isEqualTo: entityId)
+        .get()
+        .then((querySnapshot) {
+      querySnapshot.docs.forEach((document) {
+        batch.delete(document.reference);
+      });
+
+      return batch.commit();
+    });
+  }
+
+  Future<void> deleteTokenCountersForEntity(String entityId) async {
+    CollectionReference slots =
+        FirebaseFirestore.instance.collection('counter');
+
+    WriteBatch batch = FirebaseFirestore.instance.batch();
+    QuerySnapshot qs;
+    return slots
+        .where('entityId', isEqualTo: entityId)
+        .get()
+        .then((querySnapshot) {
+      querySnapshot.docs.forEach((document) {
+        batch.delete(document.reference);
+      });
+
+      return batch.commit();
+    });
   }
 
   Future<bool> deleteSlot(String slotId) async {

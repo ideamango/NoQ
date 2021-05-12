@@ -3,31 +3,34 @@ import 'package:LESSs/db/db_model/user_token.dart';
 class Slot {
   Slot(
       {this.slotId,
-      this.currentNumber,
+      this.totalBooked,
       this.maxAllowed,
       this.dateTime,
       this.slotDuration,
       this.isFull,
-      this.tokens});
+      this.tokens,
+      this.totalCancelled});
 
   //SlotId is entityID#20~06~01#9~30
 
   String slotId;
-  int currentNumber;
+  int totalBooked;
   int maxAllowed;
   DateTime dateTime;
   int slotDuration;
   bool isFull = false;
   List<UserTokens> tokens = [];
+  int totalCancelled;
 
   Map<String, dynamic> toJson() => {
         'slotId': slotId,
-        'currentNumber': currentNumber,
+        'totalBooked': totalBooked,
         'maxAllowed': maxAllowed,
         'dateTime': dateTime.millisecondsSinceEpoch,
         'slotDuration': slotDuration,
         'isFull': isFull,
-        'tokens': tokensToJson(tokens)
+        'tokens': tokensToJson(tokens),
+        'totalCancelled': totalCancelled
       };
 
   List<dynamic> tokensToJson(List<UserTokens> tokens) {
@@ -61,11 +64,12 @@ class Slot {
     if (json == null) return null;
     return new Slot(
         slotId: json['slotId'],
-        currentNumber: json['currentNumber'],
+        totalBooked: json['totalBooked'],
         maxAllowed: json['maxAllowed'],
         dateTime: new DateTime.fromMillisecondsSinceEpoch(json['dateTime']),
         slotDuration: json['slotDuration'],
         isFull: json['isFull'],
-        tokens: userTokensFromJson(json['tokens']));
+        tokens: userTokensFromJson(json['tokens']),
+        totalCancelled: json['totalCancelled']);
   }
 }
