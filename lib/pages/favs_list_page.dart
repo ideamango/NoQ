@@ -35,7 +35,8 @@ class FavsListPage extends StatefulWidget {
   _FavsListPageState createState() => _FavsListPageState();
 }
 
-class _FavsListPageState extends State<FavsListPage> {
+class _FavsListPageState extends State<FavsListPage>
+    with TickerProviderStateMixin {
   bool initCompleted = false;
   bool isFavourited = false;
   DateTime dateTime = DateTime.now();
@@ -67,15 +68,28 @@ class _FavsListPageState extends State<FavsListPage> {
   double fontSize;
 
   var sideInfoGrp = new AutoSizeGroup();
+
+  AnimationController _animationController;
+  Animation animation;
   @override
   void initState() {
     super.initState();
+    _animationController = new AnimationController(
+        vsync: this, duration: Duration(milliseconds: 1500));
+    _animationController.repeat(reverse: true);
+    animation = Tween(begin: 0.5, end: 1.0).animate(_animationController);
 
     getGlobalState().whenComplete(() {
       fetchFavStoresList().then((value) => setState(() {
             initCompleted = true;
           }));
     });
+  }
+
+  @override
+  void dispose() {
+    _animationController.dispose();
+    super.dispose();
   }
 
   Future<void> getGlobalState() async {
@@ -415,20 +429,10 @@ class _FavsListPageState extends State<FavsListPage> {
                                   ),
                                 ),
                                 (str.enableVideoChat)
-                                    ? Container(
-                                        width:
-                                            MediaQuery.of(context).size.width *
-                                                .08,
-                                        height:
-                                            MediaQuery.of(context).size.height *
-                                                .04,
-                                        child: IconButton(
-                                          icon: Icon(
-                                            Icons.videocam,
-                                            color: primaryIcon,
-                                            size: 25,
-                                          ),
-                                          onPressed: () {
+                                    ? FadeTransition(
+                                        opacity: animation,
+                                        child: GestureDetector(
+                                          onTap: () {
                                             Utils.showMyFlushbar(
                                                 context,
                                                 Icons.info,
@@ -436,6 +440,23 @@ class _FavsListPageState extends State<FavsListPage> {
                                                 "This place provides Online Consultation on Whatsapp number ${str.whatsapp} !!",
                                                 "Help in reducing crowd at places.");
                                           },
+                                          child: Container(
+                                            padding: EdgeInsets.zero,
+                                            margin: EdgeInsets.zero,
+                                            width: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                .08,
+                                            height: MediaQuery.of(context)
+                                                    .size
+                                                    .height *
+                                                .04,
+                                            child: Icon(
+                                              Icons.videocam,
+                                              color: Colors.orange[700],
+                                              size: 30,
+                                            ),
+                                          ),
                                         ),
                                       )
                                     : Container(width: 0),
@@ -459,63 +480,67 @@ class _FavsListPageState extends State<FavsListPage> {
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                Row(
-                                  children: [
-                                    Container(
-                                      width: MediaQuery.of(context).size.width *
-                                          .48,
-                                      child: Text(
-                                        Utils.isNotNullOrEmpty(
-                                                EnumToString.convertToString(
-                                                    str.type))
-                                            ? Utils.getEntityTypeDisplayName(
-                                                str.type)
-                                            : "",
-                                        maxLines: 1,
-                                        overflow: TextOverflow.ellipsis,
-                                        style: TextStyle(
-                                            color: Colors.black,
-                                            letterSpacing: 0.5,
-                                            fontFamily: 'Roboto',
-                                            fontSize: 12.0),
+                                Container(
+                                  width: MediaQuery.of(context).size.width * .6,
+                                  child: Row(
+                                    children: [
+                                      Container(
+                                        width:
+                                            MediaQuery.of(context).size.width *
+                                                .54,
+                                        child: Text(
+                                          Utils.isNotNullOrEmpty(
+                                                  EnumToString.convertToString(
+                                                      str.type))
+                                              ? Utils.getEntityTypeDisplayName(
+                                                  str.type)
+                                              : "",
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis,
+                                          style: TextStyle(
+                                              color: Colors.black,
+                                              letterSpacing: 0.5,
+                                              fontFamily: 'Roboto',
+                                              fontSize: 12.0),
+                                        ),
                                       ),
-                                    ),
-                                    (str.isPublic != true)
-                                        ? Container(
-                                            width: MediaQuery.of(context)
-                                                    .size
-                                                    .width *
-                                                .06,
-                                            height: MediaQuery.of(context)
-                                                    .size
-                                                    .height *
-                                                .03,
-                                            child: IconButton(
-                                              padding: EdgeInsets.fromLTRB(
-                                                  1, 1, 1, 2),
-                                              icon: Icon(
-                                                Icons.lock,
-                                                color: primaryIcon,
-                                                size: 15,
+                                      (str.isPublic != true)
+                                          ? Container(
+                                              width: MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                  .06,
+                                              height: MediaQuery.of(context)
+                                                      .size
+                                                      .height *
+                                                  .03,
+                                              child: IconButton(
+                                                padding: EdgeInsets.fromLTRB(
+                                                    1, 1, 1, 2),
+                                                icon: Icon(
+                                                  Icons.lock,
+                                                  color: primaryIcon,
+                                                  size: 15,
+                                                ),
+                                                onPressed: () {
+                                                  Utils.showMyFlushbar(
+                                                      context,
+                                                      Icons.info,
+                                                      Duration(seconds: 5),
+                                                      "Access to this place is restricted to its residents or employees.",
+                                                      "");
+                                                },
                                               ),
-                                              onPressed: () {
-                                                Utils.showMyFlushbar(
-                                                    context,
-                                                    Icons.info,
-                                                    Duration(seconds: 5),
-                                                    "Access to this place is restricted to its residents or employees.",
-                                                    "");
-                                              },
-                                            ),
-                                          )
-                                        : Container(),
-                                  ],
+                                            )
+                                          : Container(),
+                                    ],
+                                  ),
                                 ),
                                 if (str.startTimeHour != null)
                                   Container(
                                     width:
                                         MediaQuery.of(context).size.width * .18,
-                                    padding: EdgeInsets.all(0),
+                                    padding: EdgeInsets.only(bottom: 3),
                                     margin: EdgeInsets.all(0),
                                     child: Row(
                                       mainAxisAlignment: MainAxisAlignment.end,
@@ -574,7 +599,7 @@ class _FavsListPageState extends State<FavsListPage> {
                       child: Row(
                         children: [
                           Container(
-                            padding: EdgeInsets.only(top: 3),
+                            padding: EdgeInsets.only(bottom: 3),
                             margin: EdgeInsets.zero,
                             width: MediaQuery.of(context).size.width * .65,
                             child: AutoSizeText(
@@ -588,7 +613,7 @@ class _FavsListPageState extends State<FavsListPage> {
                             ),
                           ),
                           Container(
-                              padding: EdgeInsets.only(top: 3),
+                              padding: EdgeInsets.only(bottom: 3),
                               width: MediaQuery.of(context).size.width * .13,
                               child: AutoSizeText(
                                 (str.distance != null)
