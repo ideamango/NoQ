@@ -14,6 +14,7 @@ class BookingApplication {
   //when the Application status is Approved, then the token is assigned
   String tokenId;
   String entityId;
+  String entityName;
   String userId;
   ApplicationStatus status;
 
@@ -56,6 +57,7 @@ class BookingApplication {
       'bookingFormId': bookingFormId,
       'tokenId': tokenId,
       'entityId': entityId,
+      'entityName': entityName,
       'userId': userId,
       'status': EnumToString.convertToString(status),
       'timeOfSubmission': (timeOfSubmission != null)
@@ -149,6 +151,7 @@ class BookingApplication {
     ba.tokenId = json['tokenId'];
     ba.userId = json['userId'];
     ba.notes = json['notes'];
+    ba.entityName = json['entityName'];
 
     ba.status =
         EnumToString.fromString(ApplicationStatus.values, json['status']);
