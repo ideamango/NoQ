@@ -39,6 +39,7 @@ class _ShowUserApplicationDetailsState
   List<BookingApplication> list;
   TextEditingController notesController = new TextEditingController();
   MetaEntity metaEntity;
+  bool isEnabled = true;
   @override
   void initState() {
     super.initState();
@@ -388,7 +389,9 @@ class _ShowUserApplicationDetailsState
               ),
             );
             listOfControllers[field.label].text =
-                "+91 ${newfield.responsePhone.toString()}";
+                Utils.isNotNullOrEmpty(newfield.responsePhone)
+                    ? "+91 ${newfield.responsePhone.toString()}"
+                    : "";
           }
           break;
 
@@ -575,7 +578,7 @@ class _ShowUserApplicationDetailsState
                                           },
                                         );
                                         print(image);
-                                      } catch (e, s) {
+                                      } catch (e) {
                                         print(
                                             "ERROR caught in Image from network");
                                       }

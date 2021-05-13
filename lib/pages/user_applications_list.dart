@@ -1,4 +1,6 @@
 import 'package:LESSs/constants.dart';
+import 'package:LESSs/db/db_model/user_token.dart';
+import 'package:LESSs/services/circular_progress.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:enum_to_string/enum_to_string.dart';
 import 'package:flutter/material.dart';
@@ -35,21 +37,32 @@ class _UserApplicationsListState extends State<UserApplicationsList> {
   //List<BookingApplication> listOfBa;
   Map<String, TextEditingController> listOfControllers =
       new Map<String, TextEditingController>();
-
+  List<UserToken> tokens;
+  String entityName;
+  DateTime bookingTime;
   @override
   void initState() {
     super.initState();
     getGlobalState().whenComplete(() {
-      //******gettinmg dummy data -remove this afterwards */
-      //  getListOfData();
-
-      // listOfBa = widget.ba;
-      if (this.mounted) {
-        setState(() {
-          initCompleted = true;
-        });
-      } else
+      //get Token details from GS
+      if (Utils.isNotNullOrEmpty(widget.ba.tokenId)) {
+        List<UserToken> listOfAllTokens = _gs.bookings;
+        if (!Utils.isNullOrEmpty(listOfAllTokens)) {
+          tokens = [];
+          for (var token in listOfAllTokens) {
+            if (token.getID() == widget.ba.tokenId) {
+              tokens.add(token);
+            }
+          }
+        }
+      }
+      if (!Utils.isNullOrEmpty(tokens)) {
+        entityName = tokens[0].parent.entityName;
+        bookingTime = tokens[0].parent.dateTime;
+      }
+      setState(() {
         initCompleted = true;
+      });
     });
   }
 
@@ -1136,8 +1149,7 @@ class _UserApplicationsListState extends State<UserApplicationsList> {
                     maxFontSize: 11,
                     maxLines: 1,
                     overflow: TextOverflow.clip,
-                    style: TextStyle(
-                        color: Colors.black, fontFamily: 'RalewayRegular'),
+                    style: TextStyle(color: Colors.black, fontFamily: 'Roboto'),
                   ),
                 ),
                 horizontalSpacer,
@@ -1178,8 +1190,7 @@ class _UserApplicationsListState extends State<UserApplicationsList> {
                     maxLines: 1,
                     overflow: TextOverflow.clip,
                     style: TextStyle(
-                        color: Colors.blueGrey[700],
-                        fontFamily: 'RalewayRegular'),
+                        color: Colors.blueGrey[700], fontFamily: 'Roboto'),
                   ),
                 ),
                 horizontalSpacer,
@@ -1310,9 +1321,7 @@ class _UserApplicationsListState extends State<UserApplicationsList> {
                     maxFontSize: 11,
                     maxLines: 1,
                     overflow: TextOverflow.clip,
-                    style: TextStyle(
-                        color: Colors.blueGrey[700],
-                        fontFamily: 'RalewayRegular'),
+                    style: TextStyle(color: Colors.black, fontFamily: 'Roboto'),
                   ),
                 ),
                 // horizontalSpacer,
@@ -1375,7 +1384,7 @@ class _UserApplicationsListState extends State<UserApplicationsList> {
                     Row(
                       children: [
                         SizedBox(
-                          width: MediaQuery.of(context).size.width * .8,
+                          width: MediaQuery.of(context).size.width * .7,
                           //height: cardHeight * .1,
                           child: AutoSizeText(
                             (responseVals != null) ? responseVals : "None",
@@ -1461,6 +1470,16 @@ class _UserApplicationsListState extends State<UserApplicationsList> {
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            Container(
+              width: MediaQuery.of(context).size.width * .9,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Text(ba.),
+                  Text(ba.responseForm.formName)
+                ],
+              ),
+            ),
             Padding(
               padding: const EdgeInsets.fromLTRB(8, 10, 8, 4),
               child: Row(
@@ -1543,7 +1562,7 @@ class _UserApplicationsListState extends State<UserApplicationsList> {
             //   height: cardHeight * .4,
             // ),
             Container(
-              padding: EdgeInsets.fromLTRB(10, 5, 10, 5),
+              padding: EdgeInsets.fromLTRB(10, 5, 10, 10),
               margin: EdgeInsets.zero,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -1552,14 +1571,13 @@ class _UserApplicationsListState extends State<UserApplicationsList> {
                   SizedBox(
                       // width: cardWidth * .45,
                       child: AutoSizeText(
-                    "Current time-slot",
+                    "Preferred Time-Slot",
                     group: labelGroup,
                     minFontSize: 9,
                     maxFontSize: 11,
                     maxLines: 1,
                     overflow: TextOverflow.clip,
-                    style: TextStyle(
-                        color: Colors.black, fontFamily: 'RalewayRegular'),
+                    style: TextStyle(color: Colors.black, fontFamily: 'Roboto'),
                   )),
                   Container(
                     padding: EdgeInsets.all(0),
@@ -1583,37 +1601,160 @@ class _UserApplicationsListState extends State<UserApplicationsList> {
                 ],
               ),
             ),
+            if (!Utils.isNullOrEmpty(tokens))
+              Container(
+                margin: EdgeInsets.fromLTRB(10, 5, 10, 10),
+                padding: EdgeInsets.all(5),
+                width: MediaQuery.of(context).size.width * .9,
+                color: Colors.cyan[100],
+                child: ListView.builder(
+                  itemCount: tokens.length,
+                  physics: NeverScrollableScrollPhysics(),
+                  shrinkWrap: true,
+                  // reverse: true,
+                  itemBuilder: (BuildContext context, int index) {
+                    return Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              AutoSizeText(
+                                'Token#',
+                                group: labelGroup,
+                                minFontSize: 9,
+                                maxFontSize: 11,
+                                maxLines: 1,
+                                overflow: TextOverflow.clip,
+                                style: TextStyle(
+                                    color: Colors.black, fontFamily: 'Roboto'),
+                              ),
+                              AutoSizeText(
+                                ('${tokens[index].getDisplayName()}'),
+                                minFontSize: 12,
+                                maxFontSize: 14,
+                                maxLines: 1,
+                                overflow: TextOverflow.clip,
+                                style: TextStyle(
+                                    fontSize: 14,
+                                    color: Colors.indigo[900],
+                                    fontFamily: 'Roboto'),
+                              ),
+                            ]),
+                        Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              AutoSizeText(
+                                'Time-Slot',
+                                group: labelGroup,
+                                minFontSize: 9,
+                                maxFontSize: 11,
+                                maxLines: 1,
+                                overflow: TextOverflow.clip,
+                                style: TextStyle(
+                                    color: Colors.black, fontFamily: 'Roboto'),
+                              ),
+                              horizontalSpacer,
+                              AutoSizeText(
+                                ('${DateFormat('yyyy-MM-dd – kk:mm').format(tokens[index].parent.dateTime)}'),
+                                // group: medCondGroup,
+                                minFontSize: 12,
+                                maxFontSize: 14,
+                                maxLines: 1,
+                                overflow: TextOverflow.clip,
+                                style: TextStyle(
+                                    fontSize: 14,
+                                    color: Colors.indigo[900],
+                                    //  fontWeight: FontWeight.bold,
+                                    fontFamily: 'Roboto'),
+                              ),
+                            ]),
+                      ],
+                    );
+                  },
+                ),
+              ),
 
-            Row(
-              //  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Container(
-                    margin: EdgeInsets.zero,
-                    padding: EdgeInsets.fromLTRB(8, 0, 0, 0),
-                    width: cardWidth * .9,
-                    height: cardHeight * .2,
-                    child: TextFormField(
-                      controller: listOfControllers[ba.id],
-                      readOnly: (ba.status == ApplicationStatus.COMPLETED ||
-                              ba.status == ApplicationStatus.CANCELLED)
-                          ? true
-                          : false,
-                      style: TextStyle(
-                          fontSize: 15,
-                          color: Colors.black,
-                          fontFamily: 'RalewayRegular'),
-                      decoration: InputDecoration(
-                        labelText: 'Remarks',
-                        enabledBorder: UnderlineInputBorder(
-                            borderSide: BorderSide(color: Colors.grey)),
-                        focusedBorder: UnderlineInputBorder(
-                            borderSide: BorderSide(color: Colors.orange)),
-                      ),
-                      maxLines: 1,
-                      keyboardType: TextInputType.text,
-                    )),
-              ],
-            ),
+            if (widget.ba.status != ApplicationStatus.CANCELLED &&
+                widget.ba.status != ApplicationStatus.REJECTED &&
+                widget.ba.status != ApplicationStatus.COMPLETED)
+              Container(
+                  margin: EdgeInsets.zero,
+                  padding: EdgeInsets.fromLTRB(8, 0, 0, 0),
+                  width: cardWidth * .9,
+                  height: cardHeight * .2,
+                  child: TextFormField(
+                    controller: listOfControllers[ba.id],
+                    readOnly: (ba.status == ApplicationStatus.COMPLETED ||
+                            ba.status == ApplicationStatus.CANCELLED)
+                        ? true
+                        : false,
+                    style: TextStyle(
+                        fontSize: 15,
+                        color: Colors.black,
+                        fontFamily: 'Roboto'),
+                    decoration: InputDecoration(
+                      labelText: 'Remarks',
+                      enabledBorder: UnderlineInputBorder(
+                          borderSide: BorderSide(color: Colors.grey)),
+                      focusedBorder: UnderlineInputBorder(
+                          borderSide: BorderSide(color: Colors.orange)),
+                    ),
+                    maxLines: 1,
+                    keyboardType: TextInputType.text,
+                  )),
+            if (widget.ba.status != ApplicationStatus.CANCELLED &&
+                widget.ba.status != ApplicationStatus.REJECTED &&
+                widget.ba.status != ApplicationStatus.COMPLETED)
+              Container(
+                // width: MediaQuery.of(context).size.width * .8,
+                margin: EdgeInsets.all(9),
+                child: MaterialButton(
+                    elevation: 8,
+                    color: Colors.yellow[800],
+                    onPressed: () {
+                      //update status on server
+                      //TODO:GOV - Not working right now
+                      _gs
+                          .getApplicationService()
+                          .withDrawApplication(
+                              widget.ba.id, listOfControllers[ba.id].text)
+                          .then((value) {
+                        widget.ba.notesOnCancellation =
+                            listOfControllers[ba.id].text;
+                        setState(() {
+                          widget.ba.status = ApplicationStatus.CANCELLED;
+                        });
+
+                        Utils.showMyFlushbar(
+                            context,
+                            Icons.check,
+                            Duration(seconds: 4),
+                            "Application Cancelled!!",
+                            "");
+                      }).onError((error, stackTrace) {
+                        print("on error");
+                      });
+                    },
+                    child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            "Cancel",
+                            style: TextStyle(
+                              fontSize: 15,
+                              color: Colors.white,
+                            ),
+                          ),
+                          SizedBox(
+                            width: 2,
+                          ),
+                          Icon(
+                            Icons.block,
+                            color: Colors.white,
+                          )
+                        ])),
+              ),
 //             Row(
 //               mainAxisAlignment: MainAxisAlignment.end,
 //               children: [
@@ -1895,6 +2036,17 @@ class _UserApplicationsListState extends State<UserApplicationsList> {
 
   @override
   Widget build(BuildContext context) {
-    return Center(child: _buildItem(widget.ba));
+    if (initCompleted)
+      return Center(child: _buildItem(widget.ba));
+    else {
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            showCircularProgress(),
+          ],
+        ),
+      );
+    }
   }
 }
