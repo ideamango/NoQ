@@ -246,6 +246,7 @@ class BookingApplicationService {
         //setting up the mandatory fields on the Application object
         ba.timeOfSubmission = now;
         ba.entityId = metaEntity.entityId;
+        ba.entityName = metaEntity.name;
         ba.status = ApplicationStatus.NEW;
         ba.userId = userPhone;
 
