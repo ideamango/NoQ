@@ -258,7 +258,9 @@ class _BookingFormSelectionState extends State<BookingFormSelection> {
                                             reportsRoute));
                                 }
                               }),
-                        horizontalSpacer,
+                        SizedBox(
+                          width: MediaQuery.of(context).size.width * .11,
+                        ),
                         MaterialButton(
                             minWidth: MediaQuery.of(context).size.width * .4,
                             elevation: _selectedValue != -1 ? 8 : 0,
