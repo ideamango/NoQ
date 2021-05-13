@@ -93,6 +93,9 @@ class DBTest {
         SCHOOL_GENERAL_NEW_ADMISSION_BOOKING_FORM_ID);
     createBookingFormGlobalSchoolTC(SCHOOL_GENERAL_TC_REQUEST_FORM_ID);
     createBookingFormGlobalCovidVaccination(COVID_VACCINATION_BOOKING_FORM_ID);
+    //Create Testing Request Form for the Diagnostics center
+    //Create Hospital admission Request Form
+    //Create Doctor consultation form
   }
 
   Future<void> clearAll() async {
@@ -335,6 +338,11 @@ class DBTest {
 
     _gs.getUserService().deleteUser("+912626262626");
     _gs.getUserService().deleteUser("+916565656565");
+    _gs.getUserService().deleteUser("+919611006955");
+    _gs.getUserService().deleteUser("+919611009823");
+    _gs.getUserService().deleteUser("+911111111111");
+    _gs.getUserService().deleteUser("+913611009823");
+    _gs.getUserService().deleteUser("+919999999999");
   }
 
   Future<void> tests() async {

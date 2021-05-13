@@ -75,7 +75,7 @@ class _ApplicationsListState extends State<ApplicationsList> {
               true,
               null,
               lastDocOfPage,
-              10)
+              20)
           .then((value) {
         listOfBa = value;
         lastDocOfPage = listOfBa.last.item2;
@@ -108,7 +108,7 @@ class _ApplicationsListState extends State<ApplicationsList> {
             true,
             null,
             lastDocOfPage,
-            10)
+            20)
         .then((value) {
       if (Utils.isNullOrEmpty(value)) listOfBa = value;
     });

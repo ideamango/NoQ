@@ -724,6 +724,7 @@ class EntityService {
     return isSuccess;
   }
 
+  //Throws: CantRemoveAdminWithOneAdminException, AccessDeniedException,
   Future<bool> removeEmployee(String entityId, String phone) async {
     //check of the current user is admin
     //remove from the user.entities collection
