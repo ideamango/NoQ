@@ -1444,6 +1444,81 @@ class _UserApplicationsListState extends State<UserApplicationsList> {
     return fieldWidget;
   }
 
+  Future<bool> cancelBooking(BuildContext context) async {
+    bool cancelVal = await showDialog(
+        barrierDismissible: false,
+        context: context,
+        builder: (_) => AlertDialog(
+              titlePadding: EdgeInsets.fromLTRB(10, 15, 10, 10),
+              contentPadding: EdgeInsets.all(0),
+              actionsPadding: EdgeInsets.all(5),
+              //buttonPadding: EdgeInsets.all(0),
+              title: Container(
+                width: MediaQuery.of(context).size.width,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Text(
+                      "Do you really want to CANCEL this Application?",
+                      style: TextStyle(
+                        fontSize: 15,
+                        color: Colors.blueGrey[600],
+                      ),
+                    ),
+                    verticalSpacer,
+                    // myDivider,
+                  ],
+                ),
+              ),
+              content: Container(
+                width: MediaQuery.of(context).size.width,
+                child: Divider(
+                  color: Colors.blueGrey[400],
+                  height: 1,
+                  //indent: 40,
+                  //endIndent: 30,
+                ),
+              ),
+
+              //content: Text('This is my content'),
+              actions: <Widget>[
+                SizedBox(
+                  height: 24,
+                  child: FlatButton(
+                    color: Colors.transparent,
+                    splashColor: highlightColor.withOpacity(.8),
+                    textColor: Colors.orange,
+                    shape: RoundedRectangleBorder(
+                        side: BorderSide(color: Colors.orange)),
+                    child: Text('Yes'),
+                    onPressed: () {
+                      Navigator.of(_).pop(true);
+                    },
+                  ),
+                ),
+                SizedBox(
+                  height: 24,
+                  child: FlatButton(
+                    // elevation: 20,
+                    autofocus: true,
+                    focusColor: highlightColor,
+                    splashColor: highlightColor,
+                    color: Colors.white,
+                    textColor: Colors.orange,
+                    shape: RoundedRectangleBorder(
+                        side: BorderSide(color: Colors.orange)),
+                    child: Text('No'),
+                    onPressed: () {
+                      Navigator.of(_).pop(false);
+                    },
+                  ),
+                ),
+              ],
+            ));
+
+    return cancelVal;
+  }
+
   Widget _buildItem(BookingApplication ba) {
     List<Field> listOfMeta = new List<Field>();
     if (!listOfControllers.containsKey(ba.id)) {
@@ -1475,7 +1550,18 @@ class _UserApplicationsListState extends State<UserApplicationsList> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Text(ba.),
+                  Container(
+                    alignment: Alignment.center,
+                    margin: EdgeInsets.all(5),
+                    width: double.infinity,
+                    child: AutoSizeText(
+                      ba.entityName,
+                      minFontSize: 10,
+                      maxFontSize: 16,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(),
+                    ),
+                  ),
                   Text(ba.responseForm.formName)
                 ],
               ),
@@ -1517,7 +1603,7 @@ class _UserApplicationsListState extends State<UserApplicationsList> {
                           shape: BoxShape.rectangle,
                           borderRadius: BorderRadius.all(Radius.circular(5.0))),
                       child: SizedBox(
-                        width: cardWidth * .2,
+                        width: cardWidth * .22,
                         height: cardHeight * .11,
                         child: Center(
                           child: AutoSizeText(
@@ -1616,59 +1702,65 @@ class _UserApplicationsListState extends State<UserApplicationsList> {
                     return Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              AutoSizeText(
-                                'Token#',
-                                group: labelGroup,
-                                minFontSize: 9,
-                                maxFontSize: 11,
-                                maxLines: 1,
-                                overflow: TextOverflow.clip,
-                                style: TextStyle(
-                                    color: Colors.black, fontFamily: 'Roboto'),
-                              ),
-                              AutoSizeText(
-                                ('${tokens[index].getDisplayName()}'),
-                                minFontSize: 12,
-                                maxFontSize: 14,
-                                maxLines: 1,
-                                overflow: TextOverflow.clip,
-                                style: TextStyle(
-                                    fontSize: 14,
-                                    color: Colors.indigo[900],
-                                    fontFamily: 'Roboto'),
-                              ),
-                            ]),
-                        Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              AutoSizeText(
-                                'Time-Slot',
-                                group: labelGroup,
-                                minFontSize: 9,
-                                maxFontSize: 11,
-                                maxLines: 1,
-                                overflow: TextOverflow.clip,
-                                style: TextStyle(
-                                    color: Colors.black, fontFamily: 'Roboto'),
-                              ),
-                              horizontalSpacer,
-                              AutoSizeText(
-                                ('${DateFormat('yyyy-MM-dd – kk:mm').format(tokens[index].parent.dateTime)}'),
-                                // group: medCondGroup,
-                                minFontSize: 12,
-                                maxFontSize: 14,
-                                maxLines: 1,
-                                overflow: TextOverflow.clip,
-                                style: TextStyle(
-                                    fontSize: 14,
-                                    color: Colors.indigo[900],
-                                    //  fontWeight: FontWeight.bold,
-                                    fontFamily: 'Roboto'),
-                              ),
-                            ]),
+                        Container(
+                          width: MediaQuery.of(context).size.width * .38,
+                          child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                AutoSizeText(
+                                  'Token#',
+                                  group: labelGroup,
+                                  minFontSize: 9,
+                                  maxFontSize: 11,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.clip,
+                                  style: TextStyle(
+                                      color: Colors.black,
+                                      fontFamily: 'Roboto'),
+                                ),
+                                AutoSizeText(
+                                  ('${tokens[index].getDisplayName()}'),
+                                  minFontSize: 9,
+                                  maxFontSize: 12,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.clip,
+                                  style: TextStyle(
+                                      color: Colors.indigo[900],
+                                      fontFamily: 'Roboto'),
+                                ),
+                              ]),
+                        ),
+                        Container(
+                          width: MediaQuery.of(context).size.width * .38,
+                          child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                AutoSizeText(
+                                  'Time-Slot',
+                                  group: labelGroup,
+                                  minFontSize: 9,
+                                  maxFontSize: 11,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.clip,
+                                  style: TextStyle(
+                                      color: Colors.black,
+                                      fontFamily: 'Roboto'),
+                                ),
+                                horizontalSpacer,
+                                AutoSizeText(
+                                  ('${DateFormat('yyyy-MM-dd – kk:mm').format(tokens[index].parent.dateTime)}'),
+                                  // group: medCondGroup,
+                                  minFontSize: 9,
+                                  maxFontSize: 12,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.clip,
+                                  style: TextStyle(
+                                      color: Colors.indigo[900],
+                                      //  fontWeight: FontWeight.bold,
+                                      fontFamily: 'Roboto'),
+                                ),
+                              ]),
+                        ),
                       ],
                     );
                   },
@@ -1713,27 +1805,38 @@ class _UserApplicationsListState extends State<UserApplicationsList> {
                     elevation: 8,
                     color: Colors.yellow[800],
                     onPressed: () {
-                      //update status on server
-                      //TODO:GOV - Not working right now
-                      _gs
-                          .getApplicationService()
-                          .withDrawApplication(
-                              widget.ba.id, listOfControllers[ba.id].text)
-                          .then((value) {
-                        widget.ba.notesOnCancellation =
-                            listOfControllers[ba.id].text;
-                        setState(() {
-                          widget.ba.status = ApplicationStatus.CANCELLED;
-                        });
+                      cancelBooking(context).then((value) {
+                        if (value) {
+                          Utils.showMyFlushbar(
+                              context,
+                              Icons.info_outline,
+                              Duration(
+                                seconds: 3,
+                              ),
+                              "Cancelling the Application.. ",
+                              "This would take a moment");
+                          _gs
+                              .getApplicationService()
+                              .withDrawApplication(
+                                  widget.ba.id, listOfControllers[ba.id].text)
+                              .then((value) {
+                            widget.ba.notesOnCancellation =
+                                listOfControllers[ba.id].text;
+                            setState(() {
+                              widget.ba.status = ApplicationStatus.CANCELLED;
+                            });
 
-                        Utils.showMyFlushbar(
-                            context,
-                            Icons.check,
-                            Duration(seconds: 4),
-                            "Application Cancelled!!",
-                            "");
-                      }).onError((error, stackTrace) {
-                        print("on error");
+                            Utils.showMyFlushbar(
+                                context,
+                                Icons.check,
+                                Duration(seconds: 4),
+                                "Application Cancelled!!",
+                                "",
+                                Colors.greenAccent[400]);
+                          }).onError((error, stackTrace) {
+                            print("on error");
+                          });
+                        }
                       });
                     },
                     child: Row(

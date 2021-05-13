@@ -505,9 +505,8 @@ class BookingApplicationService {
           for (UserToken ut in _gs.bookings) {
             index++;
             for (UserToken cut in cancelledToken.tokens) {
-              if (cancelledToken.getTokenId() == cut.parent.getTokenId() &&
-                  tokenNumber == cut.numberBeforeCancellation &&
-                  ut.number == tokenNumber) {
+              if (ut.getID() == cut.getID() &&
+                  tokenNumber == cut.numberBeforeCancellation) {
                 matched = true;
                 cancelledTok = cut;
                 break;

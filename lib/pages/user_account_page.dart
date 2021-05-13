@@ -745,6 +745,7 @@ class _UserAccountPageState extends State<UserAccountPage> {
         theme: ThemeData.light().copyWith(),
         home: WillPopScope(
           child: Scaffold(
+            resizeToAvoidBottomInset: false,
             appBar: CustomAppBarWithBackButton(
               backRoute: UserHomePage(),
               titleTxt: title,
