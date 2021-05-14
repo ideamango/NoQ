@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import '../../enum/field_type.dart';
 import 'package:uuid/uuid.dart';
 
+import 'meta_form.dart';
+
 class BookingForm {
   String id = Uuid().v1();
   String formName;
@@ -13,6 +15,7 @@ class BookingForm {
   bool generateTokenOnApproval = true;
   bool appointmentRequired = true;
   bool isActive = true;
+  String originalFormID;
 
   //This is not supposed to be created by Entity Manager or Admin, right not will be done via backend on Request.
   //This implies that this BookingForm is global form not specific to any Entity
@@ -26,7 +29,7 @@ class BookingForm {
 
   String addField(Field field) {
     if (_formFields == null) {
-      _formFields = List<Field>();
+      _formFields = [];
     }
     int numberOfFields = _formFields.length;
     numberOfFields = ++numberOfFields * 10;
@@ -47,16 +50,46 @@ class BookingForm {
         'isSystemTemplate': isSystemTemplate,
         'generateTokenOnApproval': generateTokenOnApproval,
         'appointmentRequired': appointmentRequired,
-        'isActive': isActive
+        'isActive': isActive,
+        'originalFormID': originalFormID
       };
 
   List<dynamic> _formFieldsToJson(List<Field> fields) {
-    List<dynamic> fieldsJson = new List<dynamic>();
+    List<dynamic> fieldsJson = [];
     if (fields == null) return null;
     for (Field sl in fields) {
       fieldsJson.add(sl.toJson());
     }
     return fieldsJson;
+  }
+
+  BookingForm clone() {
+    BookingForm form = new BookingForm(
+        formName: this.formName,
+        headerMsg: this.headerMsg,
+        autoApproved: this.autoApproved,
+        footerMsg: this.footerMsg);
+    var newId = new Uuid().v1();
+    form.id = this.id + '#' + newId;
+    form.isSystemTemplate = this.isSystemTemplate;
+    form.generateTokenOnApproval = this.generateTokenOnApproval;
+    form.appointmentRequired = this.appointmentRequired;
+    form.isActive = this.isActive;
+    form.originalFormID = this.id;
+
+    for (Field f in _formFields) {
+      form.addField(f);
+    }
+
+    return form;
+  }
+
+  MetaForm getMetaForm() {
+    MetaForm mf = new MetaForm();
+    mf.id = this.id;
+    mf.name = this.formName;
+    mf.autoApproved = this.autoApproved;
+    return mf;
   }
 
   static BookingForm fromJson(Map<String, dynamic> json) {
@@ -73,12 +106,13 @@ class BookingForm {
     bf.generateTokenOnApproval = json["generateTokenOnApproval"];
     bf.appointmentRequired = json["appointmentRequired"];
     bf.isActive = json['isActive'];
+    bf.originalFormID = json['originalFormID'];
 
     return bf;
   }
 
   static List<Field> _convertToOptionValuesFromJson(List<dynamic> fieldsJson) {
-    List<Field> values = new List<Field>();
+    List<Field> values = [];
     if (fieldsJson == null) return null;
 
     for (Map<String, dynamic> value in fieldsJson) {
