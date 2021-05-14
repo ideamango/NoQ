@@ -6,3 +6,4 @@ const AUTO_VERIFICATION_COMPLETED_EVENT = 'auto_verification_completed';
 const OTP_RESEND_EVENT = 'otp_resend_event';
 const SEARCH_CATEGORY_SELECTED = 'search_category_selected';
 const SEARCH_CHILD_CATEGORY_SELECTED = 'search_child_category_selected';
+const TOKEN_STATUS_UPDATED = 'token_status_updated';

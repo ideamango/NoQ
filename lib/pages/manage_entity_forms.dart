@@ -462,7 +462,26 @@ class _ManageEntityFormsState extends State<ManageEntityForms> {
 //                                             ),
                                           ],
                                         ),
-                                      )
+                                      ),
+                                      Checkbox(
+                                        value: newItem.isDone,
+                                        onChanged: (value) {
+                                          if (widget.isReadOnly) {
+                                            Utils.showMyFlushbar(
+                                                context,
+                                                Icons.info,
+                                                Duration(seconds: 4),
+                                                "Only Admin/Manager can modify the details.",
+                                                "");
+                                          } else {
+                                            setState(() {
+                                              newItem.isDone = value;
+                                            });
+                                          }
+                                        },
+                                        activeColor: primaryIcon,
+                                        checkColor: primaryAccentColor,
+                                      ),
                                     ],
                                   ),
                                 );
@@ -471,7 +490,7 @@ class _ManageEntityFormsState extends State<ManageEntityForms> {
                               width: MediaQuery.of(context).size.width * .9,
                               alignment: Alignment.center,
                               child: Text(
-                                "No Forms added yet!!",
+                                "No Forms added for your place!",
                                 style: TextStyle(
                                     color: Colors.black,
                                     fontSize: 14,
