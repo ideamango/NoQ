@@ -395,7 +395,8 @@ class _ManageEmployeePageState extends State<ManageEmployeePage> {
               seconds: 4,
             ),
             "Admin Details Saved Successfully!",
-            "");
+            "",
+            successGreenSnackBar);
       });
     });
     return true;

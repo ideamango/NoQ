@@ -1911,7 +1911,7 @@ class _UserApplicationsListState extends State<UserApplicationsList> {
                                 Duration(seconds: 4),
                                 "Application Cancelled!!",
                                 "",
-                                Colors.greenAccent[700]);
+                                successGreenSnackBar);
                           }).onError((error, stackTrace) {
                             print("on error");
                           });

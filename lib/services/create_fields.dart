@@ -75,14 +75,15 @@ class _CreateFieldsState extends State<CreateFields> {
           Icons.check,
           Duration(seconds: 5),
           "Your message has been sent.",
-          "Our team will contact you as soon as possible."));
+          "Our team will contact you as soon as possible.",
+          successGreenSnackBar));
 
       print("Mail sent");
     } else {
       //throw 'Could not launch $url';
       Utils.showMyFlushbar(
           context,
-          Icons.check,
+          Icons.info,
           Duration(seconds: 3),
           "Seems to be some problem with internet connection, Please check and try again.",
           "");

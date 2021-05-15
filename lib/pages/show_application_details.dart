@@ -976,13 +976,14 @@ class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
                                               Icons.check,
                                               Duration(seconds: 4),
                                               "Application Saved!!",
-                                              "");
+                                              "",
+                                              successGreenSnackBar);
                                         } else {
                                           print(
                                               "Could not update application status");
                                           Utils.showMyFlushbar(
                                               context,
-                                              Icons.check,
+                                              Icons.info,
                                               Duration(seconds: 4),
                                               "Oops! Application could not be saved!!",
                                               "");
@@ -993,7 +994,7 @@ class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
                                           "Could not update application status");
                                       Utils.showMyFlushbar(
                                           context,
-                                          Icons.check,
+                                          Icons.info,
                                           Duration(seconds: 4),
                                           "Oops! Application could not be saved!!",
                                           "");
@@ -1048,13 +1049,14 @@ class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
                                             Icons.check,
                                             Duration(seconds: 4),
                                             "Application Saved!!",
-                                            "");
+                                            "",
+                                            successGreenSnackBar);
                                       } else {
                                         print(
                                             "Could not update application status");
                                         Utils.showMyFlushbar(
                                             context,
-                                            Icons.check,
+                                            Icons.info,
                                             Duration(seconds: 4),
                                             "Oops! Application could not be saved!!",
                                             "");
@@ -1110,13 +1112,14 @@ class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
                                           Icons.check,
                                           Duration(seconds: 4),
                                           "Application Saved!!",
-                                          "");
+                                          "",
+                                          successGreenSnackBar);
                                     } else {
                                       print(
                                           "Could not update application status");
                                       Utils.showMyFlushbar(
                                           context,
-                                          Icons.check,
+                                          Icons.info,
                                           Duration(seconds: 4),
                                           "Oops! Application could not be saved!!",
                                           "");
@@ -1171,13 +1174,14 @@ class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
                                           Icons.check,
                                           Duration(seconds: 4),
                                           "Application Saved!!",
-                                          "");
+                                          "",
+                                          successGreenSnackBar);
                                     } else {
                                       print(
                                           "Could not update application status");
                                       Utils.showMyFlushbar(
                                           context,
-                                          Icons.check,
+                                          Icons.info,
                                           Duration(seconds: 4),
                                           "Oops! Application could not be saved!!",
                                           "");
