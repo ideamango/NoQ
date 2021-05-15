@@ -301,7 +301,7 @@ class FormInputFieldOptions extends Field {
   }
 
   static List<Value> convertToValuesFromJson(List<dynamic> valuesJson) {
-    List<Value> values = new List<Value>();
+    List<Value> values = [];
     if (valuesJson == null) return values;
 
     for (Map<String, dynamic> json in valuesJson) {
@@ -311,7 +311,7 @@ class FormInputFieldOptions extends Field {
   }
 
   List<dynamic> convertValuesToJson(List<Value> options) {
-    List<dynamic> usersJson = new List<dynamic>();
+    List<dynamic> usersJson = [];
     if (options == null) return usersJson;
     for (Value val in options) {
       usersJson.add(val.toJson());
@@ -347,7 +347,7 @@ class FormInputFieldAttachment extends Field {
         'maxAttachments': maxAttachments
       };
   static List<String> convertToPathValuesFromJson(List<dynamic> valuesJson) {
-    List<String> values = new List<String>();
+    List<String> values = [];
     if (valuesJson == null) return values;
 
     for (String value in valuesJson) {
@@ -374,12 +374,9 @@ class FormInputFieldAttachment extends Field {
 class FormInputFieldDateTime extends Field {
   DateTime responseDateTime;
   bool isAge = false;
+  bool yearOnly = false;
 
-  FormInputFieldDateTime(
-    String label,
-    bool isMandatory,
-    String infoMessage,
-  ) {
+  FormInputFieldDateTime(String label, bool isMandatory, String infoMessage) {
     this.label = label;
     this.isMandatory = isMandatory;
     this.infoMessage = infoMessage;
@@ -397,7 +394,8 @@ class FormInputFieldDateTime extends Field {
         'responseDateTime': responseDateTime != null
             ? responseDateTime.millisecondsSinceEpoch
             : null,
-        'isAge': isAge
+        'isAge': isAge,
+        'yearOnly': yearOnly
       };
 
   static FormInputFieldDateTime fromJson(Map<String, dynamic> json) {
@@ -411,6 +409,7 @@ class FormInputFieldDateTime extends Field {
         : null;
     field.key = json["key"];
     field.isAge = json['isAge'];
+    field.yearOnly = json["yearOnly"];
 
     return field;
   }

@@ -59,8 +59,8 @@ class DBTest {
   }
 
   Future<void> systemSetUp() async {
-    await createConf();
-    await deleteBookingForms();
+    //await createConf();
+    //await deleteBookingForms();
     await createBookingForms();
   }
 
@@ -81,21 +81,32 @@ class DBTest {
 
     await _gs
         .getApplicationService()
-        .deleteBookingForm(SCHOOL_GENERAL_GRIEVANCE_FORM_ID);
+        .deleteBookingForm(HOSPITAL_ADMISSION_FORM);
 
     await _gs
         .getApplicationService()
-        .deleteBookingForm(SCHOOL_GENERAL_INQUIRY_FORM_ID);
+        .deleteBookingForm(DOCTOR_CONSULTATION_FORM);
+
+    await _gs
+        .getApplicationService()
+        .deleteBookingForm(MEDICAL_TEST_HOSPITAL_FORM);
+
+    await _gs
+        .getApplicationService()
+        .deleteBookingForm(MEDICAL_TEST_DIAGNOSTIC_FORM);
   }
 
   Future<void> createBookingForms() async {
-    createBookingGlobalSchoolNewAdmission(
+    await createBookingGlobalSchoolNewAdmission(
         SCHOOL_GENERAL_NEW_ADMISSION_BOOKING_FORM_ID);
-    createBookingFormGlobalSchoolTC(SCHOOL_GENERAL_TC_REQUEST_FORM_ID);
-    createBookingFormGlobalCovidVaccination(COVID_VACCINATION_BOOKING_FORM_ID);
-    //Create Testing Request Form for the Diagnostics center
-    //Create Hospital admission Request Form
-    //Create Doctor consultation form
+    await createBookingFormGlobalSchoolTC(SCHOOL_GENERAL_TC_REQUEST_FORM_ID);
+    await createBookingFormGlobalCovidVaccination(
+        COVID_VACCINATION_BOOKING_FORM_ID);
+    await createNewAdmissionFormForHospital(HOSPITAL_ADMISSION_FORM);
+    await createDoctorConsultationForm(DOCTOR_CONSULTATION_FORM);
+    await createMedicalTestRequestFormForHospital(MEDICAL_TEST_HOSPITAL_FORM);
+    await createMedicalTestRequestFormForDiagnosticCenter(
+        MEDICAL_TEST_DIAGNOSTIC_FORM);
   }
 
   Future<void> clearAll() async {
@@ -2003,7 +2014,7 @@ class DBTest {
         .getBookingForm(COVID_VACCINATION_BOOKING_FORM_ID);
 
     List<MetaForm> forms = [];
-    forms.add(MetaForm(id: bf.id, name: bf.formName));
+    forms.add(bf.getMetaForm());
 
     MyGeoFirePoint geoPoint = new MyGeoFirePoint(17.444317, 78.355321);
     Entity entity = new Entity(
@@ -2429,8 +2440,8 @@ class DBTest {
     print("TCForm for a school with is created");
 
     List<MetaForm> forms = [];
-    forms.add(MetaForm(id: admissionForm.id, name: admissionForm.formName));
-    forms.add(MetaForm(id: tcForm.id, name: tcForm.formName));
+    forms.add(admissionForm.getMetaForm());
+    forms.add(tcForm.getMetaForm());
 
     MyGeoFirePoint geoPoint = new MyGeoFirePoint(17.444317, 78.355321);
     Entity entity = new Entity(
@@ -2838,5 +2849,377 @@ class DBTest {
     //NOTE: If this is executed, every time the ID of the field is going to change
     await _gs.getApplicationService().saveBookingForm(bf);
     return bf;
+  }
+
+  Future<BookingForm> createNewAdmissionFormForHospital(String formId) async {
+    BookingForm admissionForm = new BookingForm(
+        formName: "Admission Request Form",
+        headerMsg:
+            "Your request will be approved based on the information provided by you, please enter the correct information.",
+        footerMsg:
+            "Please carry previous medical test results and doctor's prescription (if any). Please mark your presence 5 minutes prior to your appointment time.",
+        autoApproved: false);
+
+    admissionForm.isSystemTemplate = true;
+    admissionForm.id = formId;
+    admissionForm.autoApproved = false;
+
+    FormInputFieldText nameInput = FormInputFieldText("Name of the Patient",
+        true, "Please enter patient name as per Government ID proof", 100);
+    nameInput.isMeta = true;
+
+    admissionForm.addField(nameInput);
+
+    FormInputFieldDateTime dob = FormInputFieldDateTime(
+        "Year of Birth of the Patient",
+        true,
+        "Please select the patient's Year of Birth");
+    dob.isMeta = true;
+    dob.isAge = true;
+    dob.yearOnly = true;
+
+    admissionForm.addField(dob);
+
+    FormInputFieldOptions gender = FormInputFieldOptions(
+        "Gender",
+        false,
+        "Please select the Patient's gender ",
+        [Value('Male'), Value('Female'), Value('Other')],
+        false);
+
+    gender.isMeta = false;
+    gender.defaultValueIndex = 0;
+
+    admissionForm.addField(gender);
+
+    FormInputFieldOptions bloodGroup = FormInputFieldOptions(
+        "Gender",
+        false,
+        "Please select the Patient's Blood group/type",
+        [
+          Value('O-'),
+          Value('O+'),
+          Value('A-'),
+          Value('A+'),
+          Value('B-'),
+          Value('B+'),
+          Value('AB-'),
+          Value('AB+'),
+        ],
+        false);
+
+    bloodGroup.isMeta = true;
+    bloodGroup.defaultValueIndex = 0;
+
+    admissionForm.addField(bloodGroup);
+
+    FormInputFieldText emergencyContactName = FormInputFieldText(
+        "Name of the emergency contact",
+        true,
+        "Please enter name of the emergency contact",
+        50);
+    emergencyContactName.isMeta = false;
+
+    admissionForm.addField(emergencyContactName);
+
+    FormInputFieldPhone emergencyContactPhone = FormInputFieldPhone(
+        "Emergency contact phone number",
+        true,
+        "Please enter Emergency contact's phone number on which hospital can contact");
+    emergencyContactPhone.isMeta = false;
+
+    admissionForm.addField(emergencyContactPhone);
+
+    FormInputFieldAttachment medicalReport = FormInputFieldAttachment(
+        "Medical Report",
+        false,
+        "Please attach Medical report, if you have (optional)");
+
+    FormInputFieldAttachment medicalPrescription = FormInputFieldAttachment(
+        "Doctor's prescription",
+        false,
+        "Please attach Doctor's prescription, if you have (optional)");
+
+    admissionForm.addField(medicalReport);
+    admissionForm.addField(medicalPrescription);
+
+    FormInputFieldText specialNotes = FormInputFieldText(
+        "Special notes",
+        true,
+        "Please enter other details about patient's condition, symptoms, allergies, etc.",
+        500);
+    admissionForm.addField(specialNotes);
+
+    //NOTE: If this is executed, every time the ID of the field is going to change
+    await _gs.getApplicationService().saveBookingForm(admissionForm);
+
+    return admissionForm;
+  }
+
+  Future<BookingForm> createDoctorConsultationForm(String formId) async {
+    BookingForm admissionForm = new BookingForm(
+        formName: "Consultation Request Form",
+        headerMsg:
+            "Your request will be approved based on the information provided by you, please enter the correct information.",
+        footerMsg:
+            "Please carry previous medical test results and doctor's prescription (if any). Please mark your presence 5 minutes prior to your appointment time.",
+        autoApproved: false);
+
+    admissionForm.isSystemTemplate = true;
+    admissionForm.id = formId;
+    admissionForm.autoApproved = false;
+
+    FormInputFieldText nameInput = FormInputFieldText("Name of the Patient",
+        true, "Please enter patient name as per Government ID proof", 100);
+    nameInput.isMeta = true;
+
+    admissionForm.addField(nameInput);
+
+    FormInputFieldDateTime dob = FormInputFieldDateTime(
+        "Year of Birth of the Patient",
+        true,
+        "Please select the patient's Year of Birth");
+    dob.isMeta = true;
+    dob.isAge = true;
+    dob.yearOnly = true;
+
+    admissionForm.addField(dob);
+
+    FormInputFieldOptions gender = FormInputFieldOptions(
+        "Gender",
+        false,
+        "Please select the Patient's gender ",
+        [Value('Male'), Value('Female'), Value('Other')],
+        false);
+
+    gender.isMeta = false;
+    gender.defaultValueIndex = 0;
+
+    admissionForm.addField(gender);
+
+    FormInputFieldOptions bloodGroup = FormInputFieldOptions(
+        "Gender",
+        false,
+        "Please select the Patient's Blood group/type",
+        [
+          Value('O+'),
+          Value('O-'),
+          Value('A+'),
+          Value('A-'),
+          Value('B+'),
+          Value('B-'),
+          Value('AB+'),
+          Value('AB-')
+        ],
+        false);
+
+    bloodGroup.isMeta = true;
+    bloodGroup.defaultValueIndex = 0;
+
+    admissionForm.addField(bloodGroup);
+
+    FormInputFieldOptions problemType = FormInputFieldOptions(
+        "Medical Condition",
+        true,
+        "Please select patient's existing Health condition(s), you can provide more details in the Special Notes",
+        [
+          Value('Breathing difficulty'),
+          Value('Low Oxygen levels'),
+          Value('Chest pain'),
+          Value('Diabetes'),
+          Value('Fever'),
+          Value('Cold & Cough'),
+          Value('High Blood Pressure'),
+          Value('Low Blood Pressure '),
+          Value('Headache'),
+          Value('Backache'),
+          Value('Stomach issue'),
+          Value('Kidney disease'),
+          Value('Alergies'),
+          Value('Chronic Lung disease'),
+          Value('Heart Conditions'),
+          Value("HIV or weakened Immune System"),
+          Value("Liver disease"),
+          Value("Skin disease"),
+          Value("Neurologic conditions such as dementia"),
+          Value("Overweight and Severe Obesity"),
+          Value("Pregnancy"),
+          Value('Others'),
+        ],
+        true);
+
+    problemType.isMeta = true;
+    problemType.defaultValueIndex = 0;
+
+    admissionForm.addField(problemType);
+
+    FormInputFieldPhone patientContactPhone = FormInputFieldPhone(
+        "Patient's phone number",
+        true,
+        "Please enter Patient's phone number on which Doctor can contact");
+    patientContactPhone.isMeta = false;
+
+    admissionForm.addField(patientContactPhone);
+
+    FormInputFieldAttachment medicalReport = FormInputFieldAttachment(
+        "Medical Report",
+        false,
+        "Please attach Medical report, if you have (optional)");
+
+    admissionForm.addField(medicalReport);
+
+    FormInputFieldAttachment medicalPrescription = FormInputFieldAttachment(
+        "Doctor's prescription",
+        false,
+        "Please attach Doctor's prescription, if you have (optional)");
+
+    admissionForm.addField(medicalPrescription);
+
+    FormInputFieldText specialNotes = FormInputFieldText(
+        "Special notes",
+        true,
+        "Please enter other details about patient's condition, symptoms, allergies, etc.",
+        500);
+    admissionForm.addField(specialNotes);
+
+    //NOTE: If this is executed, every time the ID of the field is going to change
+    await _gs.getApplicationService().saveBookingForm(admissionForm);
+
+    return admissionForm;
+  }
+
+  Future<BookingForm> createMedicalTestRequestFormForHospital(
+      String formId) async {
+    BookingForm form = createMedicalTestRequestForm(formId);
+
+    //NOTE: If this is executed, every time the ID of the field is going to change
+    await _gs.getApplicationService().saveBookingForm(form);
+
+    return form;
+  }
+
+  Future<BookingForm> createMedicalTestRequestFormForDiagnosticCenter(
+      String formId) async {
+    BookingForm form = createMedicalTestRequestForm(formId);
+
+    FormInputFieldOptions atHomeSampleCollection = FormInputFieldOptions(
+        "Mode of Sample Collection (if applicable)",
+        false,
+        "Please select the place of sample collection (only if applicable), for certain tests your physical visit to the testing lab is necessary",
+        [Value('Lab'), Value('Home')],
+        false);
+
+    atHomeSampleCollection.isMeta = false;
+    atHomeSampleCollection.defaultValueIndex = 1;
+
+    form.addField(atHomeSampleCollection);
+
+    //NOTE: If this is executed, every time the ID of the field is going to change
+    await _gs.getApplicationService().saveBookingForm(form);
+
+    return form;
+  }
+
+  BookingForm createMedicalTestRequestForm(String formId) {
+    BookingForm medicalTestForm = new BookingForm(
+        formName: "Medical Test Request Form",
+        headerMsg:
+            "Your request will be approved based on the information provided by you, please enter the correct information.",
+        footerMsg:
+            "Please mark your presence 5 minutes prior to your appointment time.",
+        autoApproved: false);
+
+    medicalTestForm.isSystemTemplate = true;
+    medicalTestForm.id = formId;
+    medicalTestForm.autoApproved = false;
+
+    FormInputFieldText nameInput = FormInputFieldText("Name of the Patient",
+        true, "Please enter patient name as per Government ID proof", 100);
+    nameInput.isMeta = true;
+
+    medicalTestForm.addField(nameInput);
+
+    FormInputFieldDateTime dob = FormInputFieldDateTime(
+        "Year of Birth of the Patient",
+        true,
+        "Please select the patient's Year of Birth");
+    dob.isMeta = true;
+    dob.isAge = true;
+    dob.yearOnly = true;
+
+    medicalTestForm.addField(dob);
+
+    FormInputFieldOptions gender = FormInputFieldOptions(
+        "Gender",
+        false,
+        "Please select the Patient's gender ",
+        [Value('Male'), Value('Female'), Value('Other')],
+        false);
+
+    gender.isMeta = false;
+    gender.defaultValueIndex = 0;
+
+    medicalTestForm.addField(gender);
+
+    FormInputFieldOptions medicalTestType = FormInputFieldOptions(
+        "Medical Tests",
+        true,
+        "Please select the Medical test you want to conduct, you can provide more details in the Special Notes",
+        [
+          Value('Basic Health Checkup'),
+          Value('Advanced Full Body Checkup'),
+          Value('Covid-19 - Antigen Rapid'),
+          Value('Covid-19 - PCR'),
+          Value('Complete Blood Test'),
+          Value('Urine Routine & Microscopy'),
+          Value('Urine Culture'),
+          Value('CT Scan'),
+          Value('Cholesterol (lipid profile)'),
+          Value('Liver function'),
+          Value('Full blood count'),
+          Value('Complete Blood Count'),
+          Value('Lung function test'),
+          Value('Dental checkup'),
+          Value('Abdominal Ultrasound'),
+          Value('EKG/Echo'),
+          Value("Allergy Testing"),
+          Value("Liver disease"),
+          Value("Endoscopy"),
+          Value('Others'),
+        ],
+        true);
+
+    medicalTestType.isMeta = true;
+    medicalTestType.defaultValueIndex = 0;
+
+    medicalTestForm.addField(medicalTestType);
+
+    FormInputFieldPhone patientContactPhone = FormInputFieldPhone(
+        "Patient's phone number",
+        true,
+        "Please enter Patient's phone number on which Doctor can contact");
+    patientContactPhone.isMeta = false;
+
+    medicalTestForm.addField(patientContactPhone);
+
+    FormInputFieldText patientEmail = FormInputFieldText("Email", false,
+        "Please enter email to which you wish to receive test reports", 60);
+    patientEmail.isMeta = true;
+    patientEmail.isEmail = true;
+
+    medicalTestForm.addField(patientEmail);
+
+    FormInputFieldAttachment medicalPrescription = FormInputFieldAttachment(
+        "Doctor's prescription",
+        false,
+        "Please attach Doctor's prescription, certain tests are only done on doctor's prescription");
+
+    medicalTestForm.addField(medicalPrescription);
+
+    FormInputFieldText specialNotes = FormInputFieldText(
+        "Special notes", true, "Please provide additonal details", 500);
+    medicalTestForm.addField(specialNotes);
+
+    return medicalTestForm;
   }
 }
