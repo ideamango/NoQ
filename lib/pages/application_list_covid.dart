@@ -987,7 +987,7 @@ class _ApplicationsListCovidState extends State<ApplicationsListCovid> {
                                 print("Could not update application status");
                                 Utils.showMyFlushbar(
                                     context,
-                                    Icons.check,
+                                    Icons.info,
                                     Duration(seconds: 4),
                                     "Oops! Application could not be put On-Hold!!",
                                     "");
@@ -1024,7 +1024,7 @@ class _ApplicationsListCovidState extends State<ApplicationsListCovid> {
                                 print("Could not update application status");
                                 Utils.showMyFlushbar(
                                     context,
-                                    Icons.check,
+                                    Icons.info,
                                     Duration(seconds: 4),
                                     "Oops! Application could not be Rejected!!",
                                     "");

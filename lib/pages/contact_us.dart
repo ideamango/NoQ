@@ -82,7 +82,7 @@ class _ContactUsPageState extends State<ContactUsPage> {
       //throw 'Could not launch $url';
       Utils.showMyFlushbar(
           context,
-          Icons.check,
+          Icons.info,
           Duration(seconds: 3),
           "Seems to be some problem with internet connection, Please check and try again.",
           "");

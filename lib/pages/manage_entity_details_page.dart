@@ -1922,7 +1922,8 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
                         seconds: 5,
                       ),
                       "Place details saved!",
-                      'Be found by the customers, by marking it "ACTIVE".');
+                      'Be found by the customers, by marking it "ACTIVE".',
+                      successGreenSnackBar);
                 }
               });
             } else {

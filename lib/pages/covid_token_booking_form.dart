@@ -1204,7 +1204,8 @@ class _CovidTokenBookingFormPageState extends State<CovidTokenBookingFormPage>
                     seconds: 5,
                   ),
                   "Request submitted successfully!",
-                  'We will contact you as soon as slot opens up. Stay Safe!');
+                  'We will contact you as soon as slot opens up. Stay Safe!',
+                  successGreenSnackBar);
             }
           });
         } else {

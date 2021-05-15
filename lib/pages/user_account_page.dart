@@ -1,4 +1,6 @@
 //import 'package:barcode_scan/barcode_scan.dart';
+import 'package:LESSs/events/event_bus.dart';
+import 'package:LESSs/events/events.dart';
 import 'package:LESSs/pages/upi_payment_page.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:carousel_slider/carousel_slider.dart';
@@ -30,10 +32,10 @@ import '../widget/page_animation.dart';
 import '../widget/widgets.dart';
 import 'package:share/share.dart';
 import 'package:package_info/package_info.dart';
-
 import 'dart:io' show Platform;
 import 'package:flutter/foundation.dart';
 import 'package:app_review/app_review.dart';
+import 'package:eventify/eventify.dart' as Eventify;
 
 class UserAccountPage extends StatefulWidget {
   @override
@@ -61,7 +63,7 @@ class _UserAccountPageState extends State<UserAccountPage> {
   String appID = "";
   String output = "";
   bool _initCompleted = false;
-
+  Eventify.Listener _eventListener;
   //ScrollController _scrollController;
   // bool _expansionClick = false;
 
@@ -94,6 +96,41 @@ class _UserAccountPageState extends State<UserAccountPage> {
         });
       });
     });
+    _eventListener =
+        EventBus.registerEvent(TOKEN_STATUS_UPDATED, null, this.refreshToken);
+  }
+
+  void loadGS() {
+    _upcomingBkgStatus = 'Loading';
+    _pastBkgStatus = 'Loading';
+    _initCompleted = false;
+    getGlobalState().whenComplete(() {
+      _loadBookings().then((value) {
+        _gs
+            .getApplicationService()
+            .getApplications(null, null, null, _gs.getCurrentUser().ph, null,
+                null, null, "timeOfSubmission", true, null, null, 20)
+            .then((value) {
+          _listOfApplications = value;
+          setState(() {
+            _initCompleted = true;
+          });
+        });
+      });
+    });
+  }
+
+  void refreshToken(event, args) {
+    if (event == null) {
+      return;
+    }
+    String updatedTokenId = event.eventData;
+    for (UserToken token in _newBookingsList) {
+      print(token.getID());
+      if (token.getID() == updatedTokenId) {
+        loadGS();
+      }
+    }
   }
 
   void _setTargetPlatformForDesktop() {

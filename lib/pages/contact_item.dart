@@ -500,11 +500,12 @@ class ContactRowState extends State<ContactRow> {
                                                     Icons.check,
                                                     Duration(seconds: 3),
                                                     "Manager Removed Successfully!",
-                                                    "");
+                                                    "",
+                                                    successGreenSnackBar);
                                               } else {
                                                 Utils.showMyFlushbar(
                                                     context,
-                                                    Icons.check,
+                                                    Icons.info,
                                                     Duration(seconds: 3),
                                                     "Oho! Could not Remove Manager.",
                                                     "");

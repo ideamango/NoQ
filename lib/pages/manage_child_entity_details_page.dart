@@ -1974,7 +1974,8 @@ class _ManageChildEntityDetailsPageState
                       seconds: 5,
                     ),
                     'Place details saved!',
-                    'Be found, by marking it "ACTIVE".');
+                    'Be found, by marking it "ACTIVE".',
+                    successGreenSnackBar);
               }
             });
           } else {

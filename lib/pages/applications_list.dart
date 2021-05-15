@@ -1077,7 +1077,7 @@ class _ApplicationsListState extends State<ApplicationsList> {
                                       Duration(seconds: 2),
                                       "Application is Approved!!",
                                       "",
-                                      Colors.green,
+                                      successGreenSnackBar,
                                       Colors.white);
                                 } else {
                                   print("Could not update application status");

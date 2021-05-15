@@ -71,7 +71,7 @@ class BookingForm {
         footerMsg: this.footerMsg);
     var newId = new Uuid().v1();
     form.id = this.id + '#' + newId;
-    form.isSystemTemplate = this.isSystemTemplate;
+    form.isSystemTemplate = false;
     form.generateTokenOnApproval = this.generateTokenOnApproval;
     form.appointmentRequired = this.appointmentRequired;
     form.isActive = this.isActive;

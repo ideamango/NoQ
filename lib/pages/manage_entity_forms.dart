@@ -1,4 +1,6 @@
 import 'package:LESSs/constants.dart';
+import 'package:LESSs/db/db_model/booking_form.dart';
+import 'package:LESSs/db/db_service/booking_application_service.dart';
 import 'package:enum_to_string/enum_to_string.dart';
 import 'package:flutter/material.dart';
 import '../db/db_model/configurations.dart';
@@ -46,7 +48,10 @@ class ManageEntityForms extends StatefulWidget {
 class _ManageEntityFormsState extends State<ManageEntityForms> {
   MetaEntity metaEntity;
   List<MetaForm> forms = List<MetaForm>();
-  List<MetaForm> selectedForms = List<MetaForm>();
+  List<MetaForm> selectedForms = [];
+  List<BookingForm> newlyAddedForms = [];
+  List<String> entityDeletedForms = [];
+  List<MetaForm> entityModifiedForms = [];
   GlobalState _gs;
   bool initCompleted = false;
   int _radioValue1 = -1;
@@ -54,7 +59,7 @@ class _ManageEntityFormsState extends State<ManageEntityForms> {
   int index = 0;
   dynamic dashBoardRoute;
   dynamic reportsRoute;
-  List<String> listOfVals = new List<String>();
+  List<String> listOfVals = [];
   Entity entity;
   List<CheckBoxListTileModel> checkBoxListTileModel;
   @override
@@ -86,7 +91,9 @@ class _ManageEntityFormsState extends State<ManageEntityForms> {
 
       _gs.getEntity(widget.metaEntity.entityId).then((value) {
         entity = value.item1;
-        if (entity.forms != null) selectedForms.addAll(entity.forms);
+        if (!Utils.isNullOrEmpty(entity.forms)) {
+          selectedForms.addAll(entity.forms);
+        }
         setState(() {
           initCompleted = true;
         });
@@ -250,23 +257,60 @@ class _ManageEntityFormsState extends State<ManageEntityForms> {
                                                     checkBoxListTileModel[index]
                                                         .isCheck = true;
 
-                                                    if (selectedForms.contains(
-                                                        checkBoxListTileModel[
-                                                                index]
-                                                            .form)) {
+                                                    bool isFormAlreadyAdded =
+                                                        false;
+
+                                                    for (MetaForm metaForm
+                                                        in selectedForms) {
+                                                      String origFormId =
+                                                          metaForm.id
+                                                              .split('#')[0];
+                                                      if (checkBoxListTileModel[
+                                                                  index]
+                                                              .form
+                                                              .id ==
+                                                          origFormId) {
+                                                        isFormAlreadyAdded =
+                                                            true;
+                                                      }
+                                                    }
+                                                    if (isFormAlreadyAdded) {
                                                       Utils.showMyFlushbar(
                                                           context,
                                                           Icons.info,
                                                           Duration(seconds: 3),
-                                                          "This form is already added.",
+                                                          "This Booking Form is already added.",
                                                           "");
                                                     } else {
-                                                      selectedForms.add(
-                                                          checkBoxListTileModel[
-                                                                  index]
-                                                              .form);
+                                                      _gs
+                                                          .getApplicationService()
+                                                          .getBookingForm(
+                                                              checkBoxListTileModel[
+                                                                      index]
+                                                                  .form
+                                                                  .id)
+                                                          .then((value) {
+                                                        BookingForm
+                                                            bookingForm = value;
 
-                                                      setState(() {});
+                                                        BookingForm cloneForm =
+                                                            bookingForm.clone();
+
+                                                        newlyAddedForms
+                                                            .add(cloneForm);
+
+                                                        setState(() {
+                                                          selectedForms.add(
+                                                              cloneForm
+                                                                  .getMetaForm());
+                                                        });
+                                                      });
+
+                                                      // selectedForms.add(
+                                                      //     checkBoxListTileModel[
+                                                      //             index]
+                                                      //         .form);
+
                                                     }
                                                   }
                                                 },
@@ -415,8 +459,57 @@ class _ManageEntityFormsState extends State<ManageEntityForms> {
                                                           "");
                                                       return;
                                                     }
+
+                                                    //If the form being deleted is newly added just delete it
+                                                    // else if its old form of entity delete the ref from entity.forms
+                                                    int indexToBeRemoved;
+
+                                                    for (int i = 0;
+                                                        i <
+                                                            newlyAddedForms
+                                                                .length;
+                                                        i++) {
+                                                      if (newlyAddedForms[i]
+                                                              .id ==
+                                                          selectedForms[index]
+                                                              .id) {
+                                                        indexToBeRemoved = i;
+                                                        break;
+                                                      }
+                                                    }
+
+                                                    if (indexToBeRemoved !=
+                                                        null)
+                                                      newlyAddedForms.removeAt(
+                                                          indexToBeRemoved);
+                                                    else {
+                                                      int indexToBeRemovedForEntityForms;
+
+                                                      for (int i = 0;
+                                                          i <
+                                                              entity
+                                                                  .forms.length;
+                                                          i++) {
+                                                        if (entity
+                                                                .forms[i].id ==
+                                                            selectedForms[index]
+                                                                .id) {
+                                                          indexToBeRemovedForEntityForms =
+                                                              i;
+                                                          break;
+                                                        }
+                                                      }
+
+                                                      if (indexToBeRemovedForEntityForms !=
+                                                          null) {
+                                                        entityDeletedForms.add(
+                                                            selectedForms[index]
+                                                                .id);
+                                                      }
+                                                    }
                                                     selectedForms
                                                         .removeAt(index);
+
                                                     print(selectedForms.length);
                                                     setState(() {});
                                                   },
@@ -462,7 +555,66 @@ class _ManageEntityFormsState extends State<ManageEntityForms> {
 //                                             ),
                                           ],
                                         ),
-                                      )
+                                      ),
+                                      Row(
+                                        children: [
+                                          Checkbox(
+                                            value: selectedForms[index]
+                                                        .autoApproved ==
+                                                    null
+                                                ? false
+                                                : selectedForms[index]
+                                                    .autoApproved,
+                                            onChanged: (value) {
+                                              if (widget.isReadOnly) {
+                                                Utils.showMyFlushbar(
+                                                    context,
+                                                    Icons.info,
+                                                    Duration(seconds: 4),
+                                                    "Only Admin/Manager can modify the details.",
+                                                    "");
+                                              } else {
+//Update entity forms or newlyAddedForms
+                                                bool isFormNew = false;
+                                                for (int i = 0;
+                                                    i < newlyAddedForms.length;
+                                                    i++) {
+                                                  if (newlyAddedForms[i].id ==
+                                                      selectedForms[index].id) {
+                                                    newlyAddedForms[i]
+                                                        .autoApproved = value;
+                                                    isFormNew = true;
+                                                    break;
+                                                  }
+                                                }
+                                                if (!isFormNew) {
+                                                  for (var form
+                                                      in entity.forms) {
+                                                    if (form.id ==
+                                                        selectedForms[index]
+                                                            .id) {
+                                                      selectedForms[index]
+                                                          .autoApproved = value;
+                                                      entityModifiedForms.add(
+                                                          selectedForms[index]);
+                                                    }
+                                                  }
+                                                }
+                                                setState(() {
+                                                  selectedForms[index]
+                                                      .autoApproved = value;
+                                                });
+                                              }
+                                            },
+                                            activeColor: primaryIcon,
+                                            checkColor: primaryAccentColor,
+                                          ),
+                                          Text(
+                                            "Auto Approve Token on Application Submit",
+                                            style: TextStyle(fontSize: 11),
+                                          ),
+                                        ],
+                                      ),
                                     ],
                                   ),
                                 );
@@ -471,7 +623,7 @@ class _ManageEntityFormsState extends State<ManageEntityForms> {
                               width: MediaQuery.of(context).size.width * .9,
                               alignment: Alignment.center,
                               child: Text(
-                                "No Forms added yet!!",
+                                "No Forms added for your place!",
                                 style: TextStyle(
                                     color: Colors.black,
                                     fontSize: 14,
@@ -511,7 +663,7 @@ class _ManageEntityFormsState extends State<ManageEntityForms> {
                               side: BorderSide(color: Colors.blueGrey[500]),
                               borderRadius:
                                   BorderRadius.all(Radius.circular(5.0))),
-                          onPressed: () {
+                          onPressed: () async {
                             //Save Entity with updated changes.
                             if (widget.isReadOnly) {
                               Utils.showMyFlushbar(
@@ -521,12 +673,123 @@ class _ManageEntityFormsState extends State<ManageEntityForms> {
                                   "$noEditPermission Forms",
                                   "");
                               return;
-                              return;
                             } else {
                               if (entity.forms == null) entity.forms = [];
-                              entity.forms.clear();
-                              entity.forms.addAll(selectedForms);
-                              _gs.putEntity(entity, true);
+                              bool entityModified = false;
+                              //If all pre existing forms for entity are deleted.
+                              if (Utils.isNullOrEmpty(selectedForms) &&
+                                  (!Utils.isNullOrEmpty(entity.forms))) {
+                                entity.forms.clear();
+                                _gs.putEntity(entity, true).then((value) {
+                                  Utils.showMyFlushbar(
+                                      context,
+                                      Icons.check,
+                                      Duration(seconds: 2),
+                                      "Saved Application Form Successfully!",
+                                      "",
+                                      successGreenSnackBar);
+                                  // Navigator.of(context).pop();
+                                  if (widget.backRoute != null)
+                                    Navigator.of(context).push(
+                                        PageAnimation.createRoute(
+                                            widget.backRoute));
+                                });
+                              } else {
+                                //Check if any existing forms in entity are modified
+                                for (int i = 0;
+                                    i < entityModifiedForms.length;
+                                    i++) {
+                                  if (entity.forms.contains((element) =>
+                                      element.id == entityModifiedForms[i])) {
+                                    for (int i = 0;
+                                        i < entity.forms.length;
+                                        i++) {
+                                      for (int j = 0;
+                                          j < entityModifiedForms.length;
+                                          i++)
+                                        if (entity.forms[i].id ==
+                                            entityModifiedForms[j].id) {
+                                          entity.forms[i].autoApproved =
+                                              entityModifiedForms[j]
+                                                  .autoApproved;
+                                          entityModified = true;
+                                        }
+                                    }
+                                  }
+                                  entityModified = true;
+                                }
+                                //Check if any existing forms in entity are deleted
+                                if (!Utils.isNullOrEmpty(entityDeletedForms)) {
+                                  for (int i = 0;
+                                      i < entityDeletedForms.length;
+                                      i++) {
+                                    entity.forms.removeWhere((element) =>
+                                        element.id == entityDeletedForms[i]);
+                                    entityModified = true;
+                                  }
+                                }
+                                if (!Utils.isNullOrEmpty(entityModifiedForms)) {
+                                  for (int i = 0;
+                                      i < entityModifiedForms.length;
+                                      i++) {
+                                    for (var form in entity.forms) {
+                                      if (form.id ==
+                                          entityModifiedForms[i].id) {
+                                        form.autoApproved =
+                                            entityModifiedForms[i].autoApproved;
+                                      }
+                                    }
+
+                                    entityModified = true;
+                                  }
+                                }
+
+                                //Check if any newly added forms are there
+                                if (!Utils.isNullOrEmpty(newlyAddedForms)) {
+                                  for (int i = 0;
+                                      i < newlyAddedForms.length;
+                                      i++) {
+                                    bool isFormSaved = await _gs
+                                        .getApplicationService()
+                                        .saveBookingForm(newlyAddedForms[i]);
+
+                                    if (isFormSaved) {
+                                      entity.forms.add(
+                                          newlyAddedForms[i].getMetaForm());
+                                      entityModified = true;
+                                    } else {
+                                      Utils.showMyFlushbar(
+                                          context,
+                                          Icons.info,
+                                          Duration(seconds: 5),
+                                          "Oho..Could not add the Application Form.",
+                                          "Please try again.");
+                                    }
+                                  }
+                                }
+                              }
+                              //SAVE Entity
+                              if (entityModified) {
+                                _gs.putEntity(entity, true).then((value) {
+                                  Utils.showMyFlushbar(
+                                      context,
+                                      Icons.check,
+                                      Duration(seconds: 2),
+                                      "Saved Application Forms.",
+                                      "",
+                                      successGreenSnackBar,
+                                      Colors.white,
+                                      true);
+                                  Future.delayed(Duration(seconds: 2))
+                                      .then((value) {
+                                    // Navigator.of(context).pop();
+                                    if (widget.backRoute != null)
+                                      Navigator.of(context).push(
+                                          PageAnimation.createRoute(
+                                              widget.backRoute));
+                                  });
+                                });
+                              }
                             }
                           }),
                     )
@@ -587,7 +850,6 @@ class _ManageEntityFormsState extends State<ManageEntityForms> {
 
 class CheckBoxListTileModel {
   MetaForm form;
-
   bool isCheck;
 
   CheckBoxListTileModel({this.form, this.isCheck});

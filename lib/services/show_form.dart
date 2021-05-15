@@ -1379,7 +1379,8 @@ class _EntityFormState extends State<EntityForm> {
                 seconds: 5,
               ),
               "Request submitted successfully!",
-              'We will contact you as soon as slot opens up. Stay Safe!');
+              'We will contact you as soon as slot opens up. Stay Safe!',
+              successGreenSnackBar);
         } else {
           print("Error in generating SLot for user");
           Utils.showMyFlushbar(context, Icons.error, Duration(seconds: 5),
