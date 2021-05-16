@@ -618,6 +618,7 @@ class BookingApplicationService {
     final User user = getFirebaseAuth().currentUser;
     FirebaseFirestore fStore = getFirestore();
     String userPhone = user.phoneNumber;
+    String requestingUser;
     BookingForm bf;
     BookingApplication application;
     BookingApplicationCounter localCounter;
@@ -657,6 +658,7 @@ class BookingApplicationService {
 
         String entityId = application.entityId;
         String bookingFormId = application.bookingFormId;
+        requestingUser = application.userId;
 
         localCounterId =
             bookingFormId + "#" + entityId + "#" + now.year.toString();
@@ -720,7 +722,7 @@ class BookingApplicationService {
             try {
               toks = await _gs.getTokenService().generateTokenInTransaction(
                   tx,
-                  userPhone,
+                  requestingUser,
                   metaEntity,
                   tokenTime,
                   application.id,
