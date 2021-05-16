@@ -699,23 +699,34 @@ class _ManageEntityFormsState extends State<ManageEntityForms> {
                                 for (int i = 0;
                                     i < entityModifiedForms.length;
                                     i++) {
-                                  if (entity.forms.contains((element) =>
-                                      element.id == entityModifiedForms[i])) {
-                                    for (int i = 0;
-                                        i < entity.forms.length;
-                                        i++) {
-                                      for (int j = 0;
-                                          j < entityModifiedForms.length;
-                                          i++)
-                                        if (entity.forms[i].id ==
-                                            entityModifiedForms[j].id) {
-                                          entity.forms[i].autoApproved =
-                                              entityModifiedForms[j]
-                                                  .autoApproved;
-                                          entityModified = true;
-                                        }
+                                  for (int j = 0;
+                                      j < entity.forms.length;
+                                      j++) {
+                                    if (entity.forms[j].id ==
+                                        entityModifiedForms[i].id) {
+                                      entity.forms[j].autoApproved =
+                                          entityModifiedForms[i].autoApproved;
+                                      entityModified = true;
+                                      BookingForm bf = await _gs
+                                          .getApplicationService()
+                                          .getBookingForm(entity.forms[j].id);
+                                      bf.autoApproved =
+                                          entityModifiedForms[i].autoApproved;
+                                      bool isFormSaved = await _gs
+                                          .getApplicationService()
+                                          .saveBookingForm(bf);
+
+                                      if (!isFormSaved) {
+                                        Utils.showMyFlushbar(
+                                            context,
+                                            Icons.info,
+                                            Duration(seconds: 5),
+                                            "Oho..Could not save the Application Form changes.",
+                                            "Please try again.");
+                                      }
                                     }
                                   }
+
                                   entityModified = true;
                                 }
                                 //Check if any existing forms in entity are deleted

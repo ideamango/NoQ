@@ -85,7 +85,10 @@ class DBTest {
 
     await _gs
         .getApplicationService()
-        .deleteBookingForm(DOCTOR_CONSULTATION_FORM);
+        .deleteBookingForm(DOCTOR_CONSULTATION_HOSPITAL_FORM);
+    await _gs
+        .getApplicationService()
+        .deleteBookingForm(DOCTOR_CONSULTATION_CLINIC_FORM);
 
     await _gs
         .getApplicationService()
@@ -103,7 +106,10 @@ class DBTest {
     await createBookingFormGlobalCovidVaccination(
         COVID_VACCINATION_BOOKING_FORM_ID);
     await createNewAdmissionFormForHospital(HOSPITAL_ADMISSION_FORM);
-    await createDoctorConsultationForm(DOCTOR_CONSULTATION_FORM);
+
+    await createDoctorConsultationForm(DOCTOR_CONSULTATION_HOSPITAL_FORM);
+    await createDoctorConsultationForm(DOCTOR_CONSULTATION_CLINIC_FORM);
+
     await createMedicalTestRequestFormForHospital(MEDICAL_TEST_HOSPITAL_FORM);
     await createMedicalTestRequestFormForDiagnosticCenter(
         MEDICAL_TEST_DIAGNOSTIC_FORM);
@@ -2958,7 +2964,7 @@ class DBTest {
 
   Future<BookingForm> createDoctorConsultationForm(String formId) async {
     BookingForm admissionForm = new BookingForm(
-        formName: "Consultation Request Form",
+        formName: "Doctor Consultation Request",
         headerMsg:
             "Your request will be approved based on the information provided by you, please enter the correct information.",
         footerMsg:
@@ -3122,7 +3128,7 @@ class DBTest {
 
   BookingForm createMedicalTestRequestForm(String formId) {
     BookingForm medicalTestForm = new BookingForm(
-        formName: "Medical Test Request Form",
+        formName: "Medical Test Request",
         headerMsg:
             "Your request will be approved based on the information provided by you, please enter the correct information.",
         footerMsg:
