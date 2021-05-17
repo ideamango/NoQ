@@ -442,8 +442,12 @@ class _ManageEntityFormsState extends State<ManageEntityForms> {
                                               MainAxisAlignment.spaceBetween,
                                           children: [
                                             Row(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
                                               children: [
                                                 IconButton(
+                                                  alignment:
+                                                      Alignment.topCenter,
                                                   icon: Icon(
                                                     Icons.remove_circle,
                                                     color: Colors.cyan[700],
@@ -514,13 +518,111 @@ class _ManageEntityFormsState extends State<ManageEntityForms> {
                                                     setState(() {});
                                                   },
                                                 ),
-                                                Text(
-                                                  selectedForms[index].name,
-                                                  style: TextStyle(
-                                                      fontSize: 13,
-                                                      fontWeight:
-                                                          FontWeight.w400,
-                                                      letterSpacing: 0.5),
+                                                Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  children: [
+                                                    Container(
+                                                      margin:
+                                                          EdgeInsets.fromLTRB(
+                                                              10, 10, 0, 0),
+                                                      child: Text(
+                                                        selectedForms[index]
+                                                            .name,
+                                                        style: TextStyle(
+                                                            fontSize: 15,
+                                                            fontWeight:
+                                                                FontWeight.w400,
+                                                            letterSpacing: 0.5),
+                                                      ),
+                                                    ),
+                                                    Row(
+                                                      children: [
+                                                        Checkbox(
+                                                          visualDensity:
+                                                              VisualDensity
+                                                                  .compact,
+                                                          value: selectedForms[
+                                                                          index]
+                                                                      .autoApproved ==
+                                                                  null
+                                                              ? false
+                                                              : selectedForms[
+                                                                      index]
+                                                                  .autoApproved,
+                                                          onChanged: (value) {
+                                                            if (widget
+                                                                .isReadOnly) {
+                                                              Utils.showMyFlushbar(
+                                                                  context,
+                                                                  Icons.info,
+                                                                  Duration(
+                                                                      seconds:
+                                                                          4),
+                                                                  "Only Admin/Manager can modify the details.",
+                                                                  "");
+                                                            } else {
+//Update entity forms or newlyAddedForms
+                                                              bool isFormNew =
+                                                                  false;
+                                                              for (int i = 0;
+                                                                  i <
+                                                                      newlyAddedForms
+                                                                          .length;
+                                                                  i++) {
+                                                                if (newlyAddedForms[
+                                                                            i]
+                                                                        .id ==
+                                                                    selectedForms[
+                                                                            index]
+                                                                        .id) {
+                                                                  newlyAddedForms[
+                                                                              i]
+                                                                          .autoApproved =
+                                                                      value;
+                                                                  isFormNew =
+                                                                      true;
+                                                                  break;
+                                                                }
+                                                              }
+                                                              if (!isFormNew) {
+                                                                for (var form
+                                                                    in entity
+                                                                        .forms) {
+                                                                  if (form.id ==
+                                                                      selectedForms[
+                                                                              index]
+                                                                          .id) {
+                                                                    selectedForms[
+                                                                            index]
+                                                                        .autoApproved = value;
+                                                                    entityModifiedForms.add(
+                                                                        selectedForms[
+                                                                            index]);
+                                                                  }
+                                                                }
+                                                              }
+                                                              setState(() {
+                                                                selectedForms[
+                                                                            index]
+                                                                        .autoApproved =
+                                                                    value;
+                                                              });
+                                                            }
+                                                          },
+                                                          activeColor:
+                                                              primaryIcon,
+                                                          checkColor:
+                                                              primaryAccentColor,
+                                                        ),
+                                                        Text(
+                                                          "Auto Approve Token on Application Submit",
+                                                          style: TextStyle(
+                                                              fontSize: 11),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ],
                                                 ),
                                               ],
                                             ),
@@ -555,65 +657,6 @@ class _ManageEntityFormsState extends State<ManageEntityForms> {
 //                                             ),
                                           ],
                                         ),
-                                      ),
-                                      Row(
-                                        children: [
-                                          Checkbox(
-                                            value: selectedForms[index]
-                                                        .autoApproved ==
-                                                    null
-                                                ? false
-                                                : selectedForms[index]
-                                                    .autoApproved,
-                                            onChanged: (value) {
-                                              if (widget.isReadOnly) {
-                                                Utils.showMyFlushbar(
-                                                    context,
-                                                    Icons.info,
-                                                    Duration(seconds: 4),
-                                                    "Only Admin/Manager can modify the details.",
-                                                    "");
-                                              } else {
-//Update entity forms or newlyAddedForms
-                                                bool isFormNew = false;
-                                                for (int i = 0;
-                                                    i < newlyAddedForms.length;
-                                                    i++) {
-                                                  if (newlyAddedForms[i].id ==
-                                                      selectedForms[index].id) {
-                                                    newlyAddedForms[i]
-                                                        .autoApproved = value;
-                                                    isFormNew = true;
-                                                    break;
-                                                  }
-                                                }
-                                                if (!isFormNew) {
-                                                  for (var form
-                                                      in entity.forms) {
-                                                    if (form.id ==
-                                                        selectedForms[index]
-                                                            .id) {
-                                                      selectedForms[index]
-                                                          .autoApproved = value;
-                                                      entityModifiedForms.add(
-                                                          selectedForms[index]);
-                                                    }
-                                                  }
-                                                }
-                                                setState(() {
-                                                  selectedForms[index]
-                                                      .autoApproved = value;
-                                                });
-                                              }
-                                            },
-                                            activeColor: primaryIcon,
-                                            checkColor: primaryAccentColor,
-                                          ),
-                                          Text(
-                                            "Auto Approve Token on Application Submit",
-                                            style: TextStyle(fontSize: 11),
-                                          ),
-                                        ],
                                       ),
                                     ],
                                   ),
