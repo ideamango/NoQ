@@ -617,7 +617,8 @@ class ContactRowState extends State<ContactRow> {
                                               Icons.check,
                                               Duration(seconds: 3),
                                               "Employee Details Saved",
-                                              "");
+                                              "",
+                                              successGreenSnackBar);
                                         }
                                       });
                                     }

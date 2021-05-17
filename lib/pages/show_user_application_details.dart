@@ -266,11 +266,6 @@ class _ShowUserApplicationDetailsState
     );
   }
 
-  // List<Widget> showListOfData() {
-  //   return list.map(_buildItem).toList();
-  //   // return _stores.map((contact) => new ChildItem(contact.name)).toList();
-  // }
-
   Widget buildChildItem(Field field) {
     if (!listOfControllers.containsKey(field.label)) {
       listOfControllers[field.label] = new TextEditingController();
@@ -419,14 +414,7 @@ class _ShowUserApplicationDetailsState
                       borderSide: BorderSide(color: Colors.grey)),
                   focusedBorder: UnderlineInputBorder(
                       borderSide: BorderSide(color: Colors.orange)),
-                  // enabledBorder: OutlineInputBorder(
-                  //     borderSide: BorderSide(color: Colors.grey)),
-                  // focusedBorder: OutlineInputBorder(
-                  //     borderSide: BorderSide(color: Colors.orange)),
-                  // errorText:
-                  //     _validate ? 'Please enter your message' : null,
                 ),
-                //keyboardType: TextInputType.text,
               ),
             );
             listOfControllers[field.label].text = (newfield.isAge)
@@ -437,7 +425,7 @@ class _ShowUserApplicationDetailsState
                     .toStringAsFixed(0)
                 : (newfield.yearOnly)
                     ? newfield.responseDateTime.year.toString()
-                    : newfield.label;
+                    : newfield.responseDateTime.toString();
           }
           break;
         case FieldType.OPTIONS:
@@ -485,28 +473,152 @@ class _ShowUserApplicationDetailsState
                 if (conds != "")
                   conds = conds + "  &  " + newfield.responseValues[i].value;
                 else
-                  conds = conds + newfield.responseValues[i].toString();
+                  conds = conds + newfield.responseValues[i].value.toString();
               }
+            } else {
+              conds = newfield.responseValues[0].value.toString();
             }
 
             listOfControllers[field.label].text = conds;
           }
           break;
+        case FieldType.ATTACHMENT:
+          {
+            FormInputFieldAttachment newfield = field;
+
+            fieldWidget = Container(
+              padding: EdgeInsets.fromLTRB(5, 0, 0, 5),
+              // decoration: BoxDecoration(
+              //     border: Border.all(color: Colors.indigo[800], width: 1.5)),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  SizedBox(
+                    width: MediaQuery.of(context).size.width * .9,
+                    height: MediaQuery.of(context).size.height * .08,
+                    child: TextField(
+                      controller: listOfControllers[field.label],
+                      readOnly: true,
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: Colors.indigo[900],
+                      ),
+                      textAlign: TextAlign.start,
+                      decoration: InputDecoration(
+                        labelText: newfield.label,
+                        labelStyle: TextStyle(
+                            fontSize: 13,
+                            color: Colors.blueGrey[500],
+                            fontWeight: FontWeight.bold,
+                            fontFamily: 'RalewayRegular'),
+                        enabledBorder: UnderlineInputBorder(
+                            borderSide: BorderSide(color: Colors.grey)),
+                        focusedBorder: UnderlineInputBorder(
+                            borderSide: BorderSide(color: Colors.orange)),
+                      ),
+                    ),
+                  ),
+                  (newfield.responseFilePaths.length > 0)
+                      ? Wrap(
+                          children: newfield.responseFilePaths
+                              .map((item) => GestureDetector(
+                                    onTap: () {
+                                      Image image;
+                                      try {
+                                        image = Image.network(
+                                          item,
+                                          loadingBuilder: (BuildContext context,
+                                              Widget child,
+                                              ImageChunkEvent loadingProgress) {
+                                            if (loadingProgress == null)
+                                              return child;
+                                            return Center(
+                                              child: CircularProgressIndicator(
+                                                value: loadingProgress
+                                                            .expectedTotalBytes !=
+                                                        null
+                                                    ? loadingProgress
+                                                            .cumulativeBytesLoaded /
+                                                        loadingProgress
+                                                            .expectedTotalBytes
+                                                    : null,
+                                              ),
+                                            );
+                                          },
+                                        );
+                                        print(image);
+                                      } catch (e) {
+                                        print(
+                                            "ERROR caught in Image from network");
+                                      }
+                                      Utils.showImagePopUp(context, image);
+                                    },
+                                    child: Container(
+                                        padding: EdgeInsets.all(2),
+                                        margin: EdgeInsets.all(2),
+                                        // decoration: BoxDecoration(
+                                        //     border:
+                                        //         Border.all(color: Colors.blueGrey[800])),
+                                        width:
+                                            MediaQuery.of(context).size.width *
+                                                .37,
+                                        height:
+                                            MediaQuery.of(context).size.width *
+                                                .4,
+                                        child: Image.network(
+                                          item,
+                                          loadingBuilder: (BuildContext context,
+                                              Widget child,
+                                              ImageChunkEvent loadingProgress) {
+                                            if (loadingProgress == null)
+                                              return child;
+                                            return Center(
+                                              child: CircularProgressIndicator(
+                                                value: loadingProgress
+                                                            .expectedTotalBytes !=
+                                                        null
+                                                    ? loadingProgress
+                                                            .cumulativeBytesLoaded /
+                                                        loadingProgress
+                                                            .expectedTotalBytes
+                                                    : null,
+                                              ),
+                                            );
+                                          },
+                                        )),
+                                  ))
+                              .toList()
+                              .cast<Widget>(),
+                        )
+                      : SizedBox(
+                          child: Text("No attachments found."),
+                        ),
+                ],
+              ),
+            );
+            //  String conds = "";
+
+            // if (Utils.isNullOrEmpty(newfield.responseValues)) {
+            //   conds = "None";
+            // } else {
+            //   if (newfield.isMultiSelect) {
+            //     for (int i = 0; i < newfield.responseValues.length; i++) {
+            //       if (conds != "")
+            //         conds = conds + "  &  " + newfield.responseValues[i].value;
+            //       else
+            //         conds = conds + newfield.responseValues[i].value;
+            //     }
+            //   } else {
+            //     if (newfield.responseValues.length > 0)
+            //       conds = newfield.responseValues[0].value;
+            //   }
+            // }
+            // listOfControllers[field.label].text = conds;
+          }
+          break;
         case FieldType.OPTIONS_ATTACHMENTS:
           {
             FormInputFieldOptionsWithAttachments newfield = field;
-            // Widget attachmentList = Container(
-            //     child: ListView.builder(
-            //   itemBuilder: (BuildContext context, int index) {
-            //     return Container(
-            //       margin: EdgeInsets.fromLTRB(10, 10, 10, 10),
-            //       child: Container(
-
-            //         child: Image.network(newfield.responseFilePaths[index])),
-            //     );
-            //   },
-            //   itemCount: newfield.responseFilePaths.length,
-            // ));
 
             fieldWidget = Container(
               padding: EdgeInsets.fromLTRB(5, 0, 0, 5),
@@ -770,7 +882,7 @@ class _ShowUserApplicationDetailsState
                 child: TextField(
                   controller: notesController,
                   decoration: InputDecoration(
-                    labelText: 'Remarks',
+                    labelText: 'Reason for Cancellation',
                     enabledBorder: OutlineInputBorder(
                         borderSide: BorderSide(color: Colors.grey)),
                     focusedBorder: OutlineInputBorder(

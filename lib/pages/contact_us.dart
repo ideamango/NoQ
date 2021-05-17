@@ -75,7 +75,8 @@ class _ContactUsPageState extends State<ContactUsPage> {
           Icons.check,
           Duration(seconds: 5),
           "Your message has been sent.",
-          "Our team will contact you as soon as possible."));
+          "Our team will contact you as soon as possible.",
+          successGreenSnackBar));
 
       print("Mail sent");
     } else {

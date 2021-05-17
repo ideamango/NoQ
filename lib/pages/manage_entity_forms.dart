@@ -62,6 +62,7 @@ class _ManageEntityFormsState extends State<ManageEntityForms> {
   List<String> listOfVals = [];
   Entity entity;
   List<CheckBoxListTileModel> checkBoxListTileModel;
+
   @override
   void initState() {
     super.initState();

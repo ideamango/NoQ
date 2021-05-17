@@ -1761,6 +1761,22 @@ class _UserApplicationsListState extends State<UserApplicationsList> {
                   },
                 ),
               ),
+            if (Utils.isNullOrEmpty(tokens))
+              Container(
+                margin: EdgeInsets.fromLTRB(10, 10, 10, 10),
+                padding: EdgeInsets.all(5),
+                width: MediaQuery.of(context).size.width * .9,
+                // color: Colors.cyan[100],
+                decoration: BoxDecoration(
+                    border: Border.all(color: Colors.blueGrey[100]),
+                    color: Colors.white,
+                    shape: BoxShape.rectangle,
+                    borderRadius: BorderRadius.all(Radius.circular(5.0))),
+                child: Text(
+                  "Token not issued yet. Admin will review your application and issue Token based on availability of Time-Slot.",
+                  style: TextStyle(fontSize: 11, color: Colors.indigo),
+                ),
+              ),
 
             ListView.builder(
               itemCount: listOfMeta.length,
