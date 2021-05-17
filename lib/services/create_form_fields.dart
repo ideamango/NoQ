@@ -402,15 +402,19 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
                         child: CustomExpansionTile(
                           //key: PageStorageKey(this.widget.headerTitle),
                           initiallyExpanded: false,
-                          title: Row(
-                            children: <Widget>[
-                              Text(
-                                field.label,
-                                style: TextStyle(
-                                    color: Colors.white, fontSize: 15),
+                          title: Container(
+                            width: MediaQuery.of(context).size.width * .7,
+                            child: AutoSizeText(
+                              (field.isMandatory)
+                                  ? field.label + ' (mandatory)'
+                                  : field.label,
+                              maxLines: 2,
+                              minFontSize: 11,
+                              maxFontSize: 14,
+                              style: TextStyle(
+                                color: Colors.white,
                               ),
-                              SizedBox(width: 5),
-                            ],
+                            ),
                           ),
                           backgroundColor: Colors.blueGrey[500],
 
@@ -448,24 +452,35 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
                                   ? AutovalidateMode.always
                                   : AutovalidateMode.disabled,
                               validator: (value) {
-                                String valText = validateText(value);
-                                if (textField.isEmail) {
-                                  return (valText == null)
-                                      ? (EmailValidator.validate(value)
-                                          ? null
-                                          : "Please enter a valid email")
-                                      : valText;
-                                } else
-                                  return valText;
+                                if (Utils.isNotNullOrEmpty(value)) {
+                                  if (textField.isEmail) {
+                                    return EmailValidator.validate(value)
+                                        ? null
+                                        : "Please enter a valid Email";
+                                  }
+                                } else if (field.isMandatory &&
+                                    validateField &&
+                                    Utils.isStrNullOrEmpty(value)) {
+                                  return "Field is empty";
+                                }
+                                return null;
+
+                                // String valText = validateText(value);
+                                // if (textField.isEmail) {
+                                //   return (valText == null)
+                                //       ? (EmailValidator.validate(value)
+                                //           ? null
+                                //           : "Please enter a valid email")
+                                //       : valText;
+                                // } else
+                                //   return valText;
                               },
                               //validator: validateText,
                               style: textInputTextStyle,
                               keyboardType: TextInputType.text,
                               controller: listOfFieldControllers[field.label],
                               decoration: CommonStyle.textFieldStyle(
-                                labelTextStr: (field.isMandatory)
-                                    ? field.label + ' (mandatory field)'
-                                    : field.label,
+                                labelTextStr: field.label,
                                 // hintTextStr: field.infoMessage
                               ),
                               onChanged: (String value) {
@@ -513,10 +528,14 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
                           initiallyExpanded: false,
                           title: Row(
                             children: <Widget>[
-                              Text(
-                                field.label,
-                                style: TextStyle(
-                                    color: Colors.white, fontSize: 15),
+                              AutoSizeText(
+                                (field.isMandatory)
+                                    ? field.label + ' (mandatory)'
+                                    : field.label,
+                                maxLines: 2,
+                                minFontSize: 11,
+                                maxFontSize: 14,
+                                style: TextStyle(color: Colors.white),
                               ),
                               SizedBox(width: 5),
                             ],
@@ -555,7 +574,15 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
                               readOnly: true,
                               maxLines: 1,
                               minLines: 1,
-                              validator: validateText,
+                              autovalidateMode: AutovalidateMode.always,
+                              validator: (value) {
+                                if (validateField &&
+                                    newDateField.isMandatory &&
+                                    Utils.isStrNullOrEmpty(value)) {
+                                  return "Field is empty";
+                                } else
+                                  return null;
+                              },
                               style: textInputTextStyle,
                               keyboardType: TextInputType.text,
                               controller:
@@ -716,92 +743,105 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
                 color: Colors.grey[50],
                 shape: BoxShape.rectangle,
                 borderRadius: BorderRadius.all(Radius.circular(5.0))),
-            child:
-                Column(crossAxisAlignment: CrossAxisAlignment.start, children: <
-                    Widget>[
-              Column(children: <Widget>[
-                Container(
-                  //padding: EdgeInsets.only(left: 5),
-                  decoration: darkContainer,
-                  child: Theme(
-                    data: ThemeData(
-                      unselectedWidgetColor: Colors.white,
-                      accentColor: Colors.grey[50],
-                    ),
-                    child: CustomExpansionTile(
-                      //key: PageStorageKey(this.widget.headerTitle),
-                      initiallyExpanded: false,
-                      title: Row(
-                        children: <Widget>[
-                          Text(
-                            phone.label,
-                            style: TextStyle(color: Colors.white, fontSize: 15),
-                          ),
-                          SizedBox(width: 5),
-                        ],
-                      ),
-                      backgroundColor: Colors.blueGrey[500],
-
-                      children: <Widget>[
-                        new Container(
-                          width: MediaQuery.of(context).size.width * .94,
-                          color: containerColor,
-                          padding: EdgeInsets.only(left: 7),
-                          child: Row(
+            child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Column(children: <Widget>[
+                    Container(
+                      //padding: EdgeInsets.only(left: 5),
+                      decoration: darkContainer,
+                      child: Theme(
+                        data: ThemeData(
+                          unselectedWidgetColor: Colors.white,
+                          accentColor: Colors.grey[50],
+                        ),
+                        child: CustomExpansionTile(
+                          //key: PageStorageKey(this.widget.headerTitle),
+                          initiallyExpanded: false,
+                          title: Row(
                             children: <Widget>[
-                              Expanded(
-                                child: Text(phone.infoMessage,
-                                    style: buttonXSmlTextStyle),
+                              AutoSizeText(
+                                (field.isMandatory)
+                                    ? field.label + ' (mandatory)'
+                                    : field.label,
+                                maxLines: 2,
+                                minFontSize: 11,
+                                maxFontSize: 14,
+                                style: TextStyle(color: Colors.white),
                               ),
+                              SizedBox(width: 5),
                             ],
                           ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                Container(
-                  padding: EdgeInsets.only(left: 5.0, right: 5),
-                  child: Column(
-                    children: [
-                      Container(
-                          margin: EdgeInsets.fromLTRB(10, 5, 10, 5),
-                          child: TextFormField(
-                            obscureText: false,
-                            maxLines: 1,
-                            autovalidateMode: AutovalidateMode.always,
-                            minLines: 1,
-                            style: textInputTextStyle,
-                            keyboardType: TextInputType.phone,
-                            controller: listOfFieldControllers[phone.label],
-                            decoration: InputDecoration(
-                              prefixText: '+91',
-                              labelText: phone.label,
-                              enabledBorder: UnderlineInputBorder(
-                                  borderSide: BorderSide(color: Colors.grey)),
-                              focusedBorder: UnderlineInputBorder(
-                                  borderSide: BorderSide(color: Colors.orange)),
+                          backgroundColor: Colors.blueGrey[500],
+
+                          children: <Widget>[
+                            new Container(
+                              width: MediaQuery.of(context).size.width * .94,
+                              color: containerColor,
+                              padding: EdgeInsets.only(left: 7),
+                              child: Row(
+                                children: <Widget>[
+                                  Expanded(
+                                    child: Text(phone.infoMessage,
+                                        style: buttonXSmlTextStyle),
+                                  ),
+                                ],
+                              ),
                             ),
-                            validator: (value) {
-                              if (validateText(value) == null) {
-                                return Utils.validateMobileField(value);
-                              } else
-                                return null;
-                            },
-                            onChanged: (value) {
-                              if (value != "")
-                                phone.responsePhone = _phCountryCode + (value);
-                            },
-                            onSaved: (String value) {
-                              if (value != "")
-                                phone.responsePhone = _phCountryCode + (value);
-                            },
-                          )),
-                    ],
-                  ),
-                ),
-              ]),
-            ]),
+                          ],
+                        ),
+                      ),
+                    ),
+                    Container(
+                      padding: EdgeInsets.only(left: 5.0, right: 5),
+                      child: Column(
+                        children: [
+                          Container(
+                              margin: EdgeInsets.fromLTRB(10, 5, 10, 5),
+                              child: TextFormField(
+                                obscureText: false,
+                                maxLines: 1,
+                                autovalidateMode: AutovalidateMode.always,
+                                minLines: 1,
+                                style: textInputTextStyle,
+                                keyboardType: TextInputType.phone,
+                                controller: listOfFieldControllers[phone.label],
+                                decoration: InputDecoration(
+                                  prefixText: '+91',
+                                  labelText: phone.label,
+                                  enabledBorder: UnderlineInputBorder(
+                                      borderSide:
+                                          BorderSide(color: Colors.grey)),
+                                  focusedBorder: UnderlineInputBorder(
+                                      borderSide:
+                                          BorderSide(color: Colors.orange)),
+                                ),
+                                validator: (value) {
+                                  if (Utils.isNotNullOrEmpty(value)) {
+                                    return Utils.validateMobileField(value);
+                                  } else if (validateField &&
+                                      phone.isMandatory &&
+                                      Utils.isStrNullOrEmpty(value)) {
+                                    return "Field is empty";
+                                  }
+                                  return null;
+                                },
+                                onChanged: (value) {
+                                  if (value != "")
+                                    phone.responsePhone =
+                                        _phCountryCode + (value);
+                                },
+                                onSaved: (String value) {
+                                  if (value != "")
+                                    phone.responsePhone =
+                                        _phCountryCode + (value);
+                                },
+                              )),
+                        ],
+                      ),
+                    ),
+                  ]),
+                ]),
           );
         }
         break;
@@ -831,10 +871,16 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
                           initiallyExpanded: false,
                           title: Row(
                             children: <Widget>[
-                              Text(
-                                field.label,
+                              AutoSizeText(
+                                (field.isMandatory)
+                                    ? field.label + ' (mandatory)'
+                                    : field.label,
+                                maxLines: 2,
+                                minFontSize: 11,
+                                maxFontSize: 14,
                                 style: TextStyle(
-                                    color: Colors.white, fontSize: 15),
+                                  color: Colors.white,
+                                ),
                               ),
                               SizedBox(width: 5),
                             ],
@@ -920,10 +966,16 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
                       initiallyExpanded: false,
                       title: Row(
                         children: <Widget>[
-                          Text(
-                            newOptionsField.label,
-                            style: TextStyle(color: Colors.white, fontSize: 15),
-                          ),
+                          AutoSizeText(
+                              (newOptionsField.isMandatory)
+                                  ? newOptionsField.label + ' (mandatory)'
+                                  : newOptionsField.label,
+                              maxLines: 2,
+                              minFontSize: 11,
+                              maxFontSize: 14,
+                              style: TextStyle(
+                                color: Colors.white,
+                              )),
                           SizedBox(width: 5),
                         ],
                       ),
@@ -1033,9 +1085,16 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
                       initiallyExpanded: false,
                       title: Row(
                         children: <Widget>[
-                          Text(
-                            attsField.label,
-                            style: TextStyle(color: Colors.white, fontSize: 15),
+                          AutoSizeText(
+                            (attsField.isMandatory)
+                                ? attsField.label + ' (mandatory)'
+                                : attsField.label,
+                            maxLines: 2,
+                            minFontSize: 11,
+                            maxFontSize: 14,
+                            style: TextStyle(
+                              color: Colors.white,
+                            ),
                           ),
                           SizedBox(width: 5),
                         ],
@@ -1070,9 +1129,10 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
                               child: Text(
                               "No Image Selected",
                               style: TextStyle(
-                                  color: (validateField)
-                                      ? Colors.red
-                                      : Colors.black),
+                                  color:
+                                      (validateField && attsField.isMandatory)
+                                          ? Colors.red
+                                          : Colors.black),
                             ))
                           : Container(
                               width: MediaQuery.of(context).size.width * .6,
@@ -1182,9 +1242,16 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
                       initiallyExpanded: false,
                       title: Row(
                         children: <Widget>[
-                          Text(
-                            optsAttsField.label,
-                            style: TextStyle(color: Colors.white, fontSize: 15),
+                          AutoSizeText(
+                            (optsAttsField.isMandatory)
+                                ? optsAttsField.label + ' (mandatory)'
+                                : optsAttsField.label,
+                            maxLines: 2,
+                            minFontSize: 11,
+                            maxFontSize: 14,
+                            style: TextStyle(
+                              color: Colors.white,
+                            ),
                           ),
                           SizedBox(width: 5),
                         ],
@@ -1374,10 +1441,16 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
                           initiallyExpanded: false,
                           title: Row(
                             children: <Widget>[
-                              Text(
-                                field.label,
+                              AutoSizeText(
+                                (field.isMandatory)
+                                    ? field.label + ' (mandatory)'
+                                    : field.label,
+                                maxLines: 2,
+                                minFontSize: 11,
+                                maxFontSize: 14,
                                 style: TextStyle(
-                                    color: Colors.white, fontSize: 15),
+                                  color: Colors.white,
+                                ),
                               ),
                               SizedBox(width: 5),
                             ],
@@ -1524,7 +1597,9 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
           if (!Utils.isNotNullOrEmpty(
               listOfFieldControllers[listOfFields[i].label].text)) {
             validationErrMsg = validationErrMsg +
-                "\n ${listOfFields[i].label} cannot be empty.";
+                (Utils.isNotNullOrEmpty(validationErrMsg)
+                    ? "\n ${listOfFields[i].label} cannot be empty."
+                    : "${listOfFields[i].label} cannot be empty.");
           }
         }
       }
@@ -2042,41 +2117,43 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
                           margin: EdgeInsets.fromLTRB(10, 10, 10, 14),
                           child: Column(
                             children: [
-                              Container(
-                                padding: EdgeInsets.all(0),
-                                height:
-                                    MediaQuery.of(context).size.height * .05,
-                                child: Row(
-                                  children: [
-                                    new Radio(
-                                      value: 0,
-                                      visualDensity: VisualDensity.compact,
-                                      activeColor: Colors.cyan,
-                                      groupValue: _radioBookingPref,
-                                      onChanged: _handleBookingPrefChange,
-                                    ),
-                                    new Text(
-                                      "Book only if selected Time-Slot is available.",
-                                      style: new TextStyle(fontSize: 12.0),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              Row(
-                                children: [
-                                  new Radio(
-                                    value: 1,
-                                    visualDensity: VisualDensity.compact,
-                                    activeColor: Colors.cyan,
-                                    groupValue: _radioBookingPref,
-                                    onChanged: _handleBookingPrefChange,
-                                  ),
-                                  new Text(
-                                    "Book next available Time-Slot.",
-                                    style: new TextStyle(fontSize: 12.0),
-                                  ),
-                                ],
-                              ),
+                              //********TODO Phase2 : DONT DELETE *********************
+                              //       Container(
+                              //         padding: EdgeInsets.all(0),
+                              //         height:
+                              //             MediaQuery.of(context).size.height * .05,
+                              //         child: Row(
+                              //           children: [
+                              //             new Radio(
+                              //               value: 0,
+                              //               visualDensity: VisualDensity.compact,
+                              //               activeColor: Colors.cyan,
+                              //               groupValue: _radioBookingPref,
+                              //               onChanged: _handleBookingPrefChange,
+                              //             ),
+                              //             new Text(
+                              //               "Book only if selected Time-Slot is available.",
+                              //               style: new TextStyle(fontSize: 12.0),
+                              //             ),
+                              //           ],
+                              //         ),
+                              //       ),
+                              //       Row(
+                              //         children: [
+                              //           new Radio(
+                              //             value: 1,
+                              //             visualDensity: VisualDensity.compact,
+                              //             activeColor: Colors.cyan,
+                              //             groupValue: _radioBookingPref,
+                              //             onChanged: _handleBookingPrefChange,
+                              //           ),
+                              //           new Text(
+                              //             "Book next available Time-Slot.",
+                              //             style: new TextStyle(fontSize: 12.0),
+                              //           ),
+                              //         ],
+                              //       ),
+                              //********TODO Phase2 : DONT DELETE *********************
                               MaterialButton(
                                   elevation: 8,
                                   color: btnColor,
