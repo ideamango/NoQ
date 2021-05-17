@@ -407,7 +407,7 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
                             child: AutoSizeText(
                               (field.isMandatory)
                                   ? field.label + ' (mandatory)'
-                                  : field.label,
+                                  : field.label + ' (optional)',
                               maxLines: 2,
                               minFontSize: 11,
                               maxFontSize: 14,
@@ -531,7 +531,7 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
                               AutoSizeText(
                                 (field.isMandatory)
                                     ? field.label + ' (mandatory)'
-                                    : field.label,
+                                    : field.label + ' (optional)',
                                 maxLines: 2,
                                 minFontSize: 11,
                                 maxFontSize: 14,
@@ -763,7 +763,7 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
                               AutoSizeText(
                                 (field.isMandatory)
                                     ? field.label + ' (mandatory)'
-                                    : field.label,
+                                    : field.label + ' (optional)',
                                 maxLines: 2,
                                 minFontSize: 11,
                                 maxFontSize: 14,
@@ -874,7 +874,7 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
                               AutoSizeText(
                                 (field.isMandatory)
                                     ? field.label + ' (mandatory)'
-                                    : field.label,
+                                    : field.label + ' (optional)',
                                 maxLines: 2,
                                 minFontSize: 11,
                                 maxFontSize: 14,
@@ -969,7 +969,7 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
                           AutoSizeText(
                               (newOptionsField.isMandatory)
                                   ? newOptionsField.label + ' (mandatory)'
-                                  : newOptionsField.label,
+                                  : newOptionsField.label + ' (optional)',
                               maxLines: 2,
                               minFontSize: 11,
                               maxFontSize: 14,
@@ -1088,7 +1088,7 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
                           AutoSizeText(
                             (attsField.isMandatory)
                                 ? attsField.label + ' (mandatory)'
-                                : attsField.label,
+                                : attsField.label + ' (optional)',
                             maxLines: 2,
                             minFontSize: 11,
                             maxFontSize: 14,
@@ -1178,14 +1178,26 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
                                   color: primaryDarkColor,
                                 ),
                                 onPressed: () {
-                                  captureImage(false).then((value) {
-                                    if (value != null) {
-                                      // _medCondsProofimages.add(value);
-                                      attsField.responseFilePaths
-                                          .add(value.path);
-                                    }
-                                    setState(() {});
-                                  });
+                                  if (attsField.responseFilePaths.length <
+                                      attsField.maxAttachments) {
+                                    captureImage(false).then((value) {
+                                      if (value != null) {
+                                        // _medCondsProofimages.add(value);
+                                        attsField.responseFilePaths
+                                            .add(value.path);
+                                      }
+                                      setState(() {});
+                                    });
+                                  } else {
+                                    Utils.showMyFlushbar(
+                                        context,
+                                        Icons.info,
+                                        Duration(
+                                          seconds: 5,
+                                        ),
+                                        "Only ${attsField.maxAttachments} files at max could be attached.",
+                                        '');
+                                  }
                                 }),
                             IconButton(
                                 padding: EdgeInsets.zero,
@@ -1194,14 +1206,26 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
                                   color: primaryDarkColor,
                                 ),
                                 onPressed: () {
-                                  captureImage(true).then((value) {
-                                    if (value != null) {
-                                      // _medCondsProofimages.add(value);
-                                      attsField.responseFilePaths
-                                          .add(value.path);
-                                    }
-                                    setState(() {});
-                                  });
+                                  if (attsField.responseFilePaths.length <
+                                      attsField.maxAttachments) {
+                                    captureImage(true).then((value) {
+                                      if (value != null) {
+                                        // _medCondsProofimages.add(value);
+                                        attsField.responseFilePaths
+                                            .add(value.path);
+                                      }
+                                      setState(() {});
+                                    });
+                                  } else {
+                                    Utils.showMyFlushbar(
+                                        context,
+                                        Icons.info,
+                                        Duration(
+                                          seconds: 5,
+                                        ),
+                                        "Only ${attsField.maxAttachments} files at max could be attached.",
+                                        '');
+                                  }
                                 }),
                           ],
                         ),
@@ -1245,7 +1269,7 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
                           AutoSizeText(
                             (optsAttsField.isMandatory)
                                 ? optsAttsField.label + ' (mandatory)'
-                                : optsAttsField.label,
+                                : optsAttsField.label + ' (optional)',
                             maxLines: 2,
                             minFontSize: 11,
                             maxFontSize: 14,
@@ -1378,14 +1402,26 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
                                     color: primaryDarkColor,
                                   ),
                                   onPressed: () {
-                                    captureImage(false).then((value) {
-                                      if (value != null) {
-                                        //  _medCondsProofimages.add(value);
-                                        optsAttsField.responseFilePaths
-                                            .add(value.path);
-                                      }
-                                      setState(() {});
-                                    });
+                                    if (optsAttsField.responseFilePaths.length <
+                                        optsAttsField.maxAttachments) {
+                                      captureImage(false).then((value) {
+                                        if (value != null) {
+                                          //  _medCondsProofimages.add(value);
+                                          optsAttsField.responseFilePaths
+                                              .add(value.path);
+                                        }
+                                        setState(() {});
+                                      });
+                                    } else {
+                                      Utils.showMyFlushbar(
+                                          context,
+                                          Icons.info,
+                                          Duration(
+                                            seconds: 5,
+                                          ),
+                                          "Only ${optsAttsField.maxAttachments} files at max could be attached.",
+                                          '');
+                                    }
                                   }),
                               IconButton(
                                   padding: EdgeInsets.zero,
@@ -1394,14 +1430,26 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
                                     color: primaryDarkColor,
                                   ),
                                   onPressed: () {
-                                    captureImage(true).then((value) {
-                                      if (value != null) {
-                                        //  _medCondsProofimages.add(value);
-                                        optsAttsField.responseFilePaths
-                                            .add(value.path);
-                                      }
-                                      setState(() {});
-                                    });
+                                    if (optsAttsField.responseFilePaths.length <
+                                        optsAttsField.maxAttachments) {
+                                      captureImage(false).then((value) {
+                                        if (value != null) {
+                                          //  _medCondsProofimages.add(value);
+                                          optsAttsField.responseFilePaths
+                                              .add(value.path);
+                                        }
+                                        setState(() {});
+                                      });
+                                    } else {
+                                      Utils.showMyFlushbar(
+                                          context,
+                                          Icons.info,
+                                          Duration(
+                                            seconds: 5,
+                                          ),
+                                          "Only ${optsAttsField.maxAttachments} files at max could be attached.",
+                                          '');
+                                    }
                                   }),
                             ],
                           ),
@@ -1444,7 +1492,7 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
                               AutoSizeText(
                                 (field.isMandatory)
                                     ? field.label + ' (mandatory)'
-                                    : field.label,
+                                    : field.label + ' (optional)',
                                 maxLines: 2,
                                 minFontSize: 11,
                                 maxFontSize: 14,
