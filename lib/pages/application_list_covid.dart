@@ -65,7 +65,7 @@ class _ApplicationsListCovidState extends State<ApplicationsListCovid> {
               null,
               null,
               "timeOfSubmission",
-              true,
+              false,
               null,
               lastDocOfPage,
               20)
@@ -98,7 +98,7 @@ class _ApplicationsListCovidState extends State<ApplicationsListCovid> {
             null,
             null,
             "timeOfSubmission",
-            true,
+            false,
             null,
             lastDocOfPage,
             20)

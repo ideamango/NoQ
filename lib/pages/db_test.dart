@@ -2899,18 +2899,18 @@ class DBTest {
     admissionForm.addField(gender);
 
     FormInputFieldOptions bloodGroup = FormInputFieldOptions(
-        "Gender",
+        "Blood group",
         false,
         "Please select the Patient's Blood group/type",
         [
-          Value('O-'),
           Value('O+'),
-          Value('A-'),
+          Value('O-'),
           Value('A+'),
-          Value('B-'),
+          Value('A-'),
           Value('B+'),
-          Value('AB-'),
+          Value('B-'),
           Value('AB+'),
+          Value('AB-'),
         ],
         false);
 
@@ -3004,7 +3004,7 @@ class DBTest {
     admissionForm.addField(gender);
 
     FormInputFieldOptions bloodGroup = FormInputFieldOptions(
-        "Gender",
+        "Blood group",
         false,
         "Please select the Patient's Blood group/type",
         [

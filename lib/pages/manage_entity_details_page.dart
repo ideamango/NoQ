@@ -1125,7 +1125,7 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
         autovalidateMode: AutovalidateMode.always,
         decoration: InputDecoration(
           prefixText: '+91',
-          labelText: 'WhatsApp Number (optional)',
+          labelText: 'WhatsApp (for online consultation with your customers)',
           enabledBorder:
               UnderlineInputBorder(borderSide: BorderSide(color: Colors.grey)),
           focusedBorder: UnderlineInputBorder(

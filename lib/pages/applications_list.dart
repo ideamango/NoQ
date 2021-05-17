@@ -72,7 +72,7 @@ class _ApplicationsListState extends State<ApplicationsList> {
               null,
               null,
               "timeOfSubmission",
-              true,
+              false,
               null,
               lastDocOfPage,
               20)
@@ -105,7 +105,7 @@ class _ApplicationsListState extends State<ApplicationsList> {
             null,
             null,
             "timeOfSubmission",
-            true,
+            false,
             null,
             lastDocOfPage,
             20)

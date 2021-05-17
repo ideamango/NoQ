@@ -590,8 +590,9 @@ class _UserHomePageState extends State<UserHomePage> {
                 floatingActionButtonLocation:
                     FloatingActionButtonLocation.centerDocked,
                 drawer: CustomDrawer(
-                  phone: _state?.getCurrentUser()?.ph,
-                ),
+                    phone: _state.getCurrentUser() != null
+                        ? _state.getCurrentUser().ph
+                        : ""),
                 bottomNavigationBar: CustomBottomBar(
                   barIndex: 0,
                 ),
