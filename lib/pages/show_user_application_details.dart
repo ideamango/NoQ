@@ -409,10 +409,7 @@ class _ShowUserApplicationDetailsState
                   color: Colors.indigo[900],
                 ),
                 decoration: InputDecoration(
-                  labelText:
-                      (newfield.label == "Date of Birth of the Applicant")
-                          ? "Age"
-                          : newfield.label,
+                  labelText: (newfield.isAge) ? "Age" : newfield.label,
                   labelStyle: TextStyle(
                       fontSize: 13,
                       color: Colors.blueGrey[500],
@@ -432,13 +429,14 @@ class _ShowUserApplicationDetailsState
                 //keyboardType: TextInputType.text,
               ),
             );
-            listOfControllers[field.label].text =
-                (newfield.label == "Date of Birth of the Applicant")
-                    ? ((DateTime.now()
-                                .difference(newfield.responseDateTime)
-                                .inDays) /
-                            365)
-                        .toStringAsFixed(0)
+            listOfControllers[field.label].text = (newfield.isAge)
+                ? ((DateTime.now()
+                            .difference(newfield.responseDateTime)
+                            .inDays) /
+                        365)
+                    .toStringAsFixed(0)
+                : (newfield.yearOnly)
+                    ? newfield.responseDateTime.year.toString()
                     : newfield.label;
           }
           break;

@@ -470,24 +470,24 @@ class EntityRowState extends State<EntityRow> {
                       } else {
                         print("Over To overview page");
                         if (!Utils.isNullOrEmpty(_metaEntity.forms)) {
-                          if (_metaEntity.forms.length > 1) {
-                            Navigator.of(context).push(
-                                PageAnimation.createRoute(BookingFormSelection(
-                              forms: _metaEntity.forms,
-                              metaEntity: _metaEntity,
-                              preferredSlotTime: null,
-                              isAdmin: isAdmin,
-                              backRoute: ManageEntityListPage(),
-                            )));
-                          } else {
-                            Navigator.of(context).push(
-                                PageAnimation.createRoute(OverviewPage(
-                                    bookingFormId: _metaEntity.forms[0].id,
-                                    bookingFormName: _metaEntity.forms[0].name,
-                                    entityId: _metaEntity.entityId,
-                                    metaEntity: _metaEntity,
-                                    isExec: isExec)));
-                          }
+                          // if (_metaEntity.forms.length > 1) {
+                          Navigator.of(context).push(
+                              PageAnimation.createRoute(BookingFormSelection(
+                            forms: _metaEntity.forms,
+                            metaEntity: _metaEntity,
+                            preferredSlotTime: null,
+                            isAdmin: isAdmin,
+                            backRoute: ManageEntityListPage(),
+                          )));
+                          // } else {
+                          //   Navigator.of(context).push(
+                          //       PageAnimation.createRoute(OverviewPage(
+                          //           bookingFormId: _metaEntity.forms[0].id,
+                          //           bookingFormName: _metaEntity.forms[0].name,
+                          //           entityId: _metaEntity.entityId,
+                          //           metaEntity: _metaEntity,
+                          //           isExec: isExec)));
+                          // }
                         } else {
                           Utils.showMyFlushbar(
                               context,

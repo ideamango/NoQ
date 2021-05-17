@@ -1280,7 +1280,8 @@ class _UserApplicationsListState extends State<UserApplicationsList> {
                     maxLines: 1,
                     overflow: TextOverflow.clip,
                     style: TextStyle(
-                        color: Colors.black, fontFamily: 'RalewayRegular'),
+                      color: Colors.black,
+                    ),
                   ),
                 ),
                 // horizontalSpacer,
@@ -1288,9 +1289,11 @@ class _UserApplicationsListState extends State<UserApplicationsList> {
                   //  width: cardWidth * .4,
                   //height: cardHeight * .1,
                   child: AutoSizeText(
-                    DateFormat('dd-MM-yyyy')
-                        .format(newfield.responseDateTime)
-                        .toString(),
+                    (newfield.yearOnly)
+                        ? newfield.responseDateTime.year.toString()
+                        : DateFormat('dd-MM-yyyy')
+                            .format(newfield.responseDateTime)
+                            .toString(),
                     group: responseGroup,
                     minFontSize: 12,
                     maxFontSize: 14,
@@ -1312,7 +1315,10 @@ class _UserApplicationsListState extends State<UserApplicationsList> {
             String responseVals;
             for (Value val in newfield.responseValues) {
               if (!Utils.isNotNullOrEmpty(responseVals)) responseVals = "";
-              responseVals = responseVals + val.value.toString();
+              if (responseVals == "")
+                responseVals = val.value.toString();
+              else
+                responseVals = responseVals + ' | ' + val.value.toString();
             }
 
             fieldWidget = Column(
