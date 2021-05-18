@@ -3026,7 +3026,7 @@ class DBTest {
 
     FormInputFieldOptions problemType = FormInputFieldOptions(
         "Medical Condition",
-        true,
+        false,
         "Please select patient's existing Health condition(s), you can provide more details in the Special Notes",
         [
           Value('Breathing difficulty'),
