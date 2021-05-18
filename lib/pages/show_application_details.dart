@@ -986,6 +986,9 @@ class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
                                               "Oops! Application could not be saved!!",
                                               "");
                                         }
+                                      }).catchError((error) {
+                                        Utils.handleUpdateApplicationStatus(
+                                            error, context);
                                       });
                                     } else {
                                       print(

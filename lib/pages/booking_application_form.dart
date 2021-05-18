@@ -1264,7 +1264,7 @@ class _BookingApplicationFormPageState extends State<BookingApplicationFormPage>
                 .getApplicationService()
                 .submitApplication(bookingApplication, metaEntity)
                 .then((value) {
-              if (value) {
+              if (value != null) {
                 Utils.showMyFlushbar(
                     context,
                     Icons.check,

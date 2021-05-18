@@ -1,3 +1,6 @@
+import 'package:LESSs/db/exceptions/MaxTokenReachedByUserPerDayException.dart';
+import 'package:LESSs/db/exceptions/MaxTokenReachedByUserPerSlotException.dart';
+import 'package:LESSs/db/exceptions/token_already_exists_exception.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:enum_to_string/enum_to_string.dart';
@@ -1032,16 +1035,8 @@ class _ApplicationsListState extends State<ApplicationsList> {
                                       "Try again later.");
                                 }
                               }).catchError((error) {
-                                print(error.toString());
-                                print("Error in token booking" +
-                                    error.toString());
-
-                                Utils.showMyFlushbar(
-                                    context,
-                                    Icons.error,
-                                    Duration(seconds: 5),
-                                    "Oops! Application could not be marked Completed!!",
-                                    tryAgainLater);
+                                Utils.handleUpdateApplicationStatus(
+                                    error, context);
                               });
                             }
 //Update application status change on server.
@@ -1094,25 +1089,8 @@ class _ApplicationsListState extends State<ApplicationsList> {
                                       tryAgainToBook);
                                 }
                               }).catchError((error) {
-                                print(error.toString());
-                                print("Error in token booking" +
-                                    error.toString());
-
-                                if (error is SlotFullException) {
-                                  Utils.showMyFlushbar(
-                                      context,
-                                      Icons.error,
-                                      Duration(seconds: 5),
-                                      slotsAlreadyBooked,
-                                      tryAgainToBook);
-                                } else {
-                                  Utils.showMyFlushbar(
-                                      context,
-                                      Icons.error,
-                                      Duration(seconds: 5),
-                                      error.toString(),
-                                      tryAgainToBook);
-                                }
+                                Utils.handleUpdateApplicationStatus(
+                                    error, context);
                               });
                             }
 //Update application status change on server.
@@ -1168,16 +1146,8 @@ class _ApplicationsListState extends State<ApplicationsList> {
                                     tryAgainLater);
                               }
                             }).catchError((error) {
-                              print(error.toString());
-                              print(
-                                  "Error in token booking" + error.toString());
-
-                              Utils.showMyFlushbar(
-                                  context,
-                                  Icons.error,
-                                  Duration(seconds: 5),
-                                  "Oops! Application could not be put On-Hold!!",
-                                  tryAgainLater);
+                              Utils.handleUpdateApplicationStatus(
+                                  error, context);
                             });
                           }
                         },
@@ -1230,16 +1200,8 @@ class _ApplicationsListState extends State<ApplicationsList> {
                                     "");
                               }
                             }).catchError((error) {
-                              print(error.toString());
-                              print(
-                                  "Error in token booking" + error.toString());
-
-                              Utils.showMyFlushbar(
-                                  context,
-                                  Icons.error,
-                                  Duration(seconds: 5),
-                                  "Oops! Application could not be rejected!!",
-                                  tryAgainLater);
+                              Utils.handleUpdateApplicationStatus(
+                                  error, context);
                             });
                           }
                         },

@@ -1371,7 +1371,7 @@ class _EntityFormState extends State<EntityForm> {
           .getApplicationService()
           .submitApplication(bookingApplication, widget.metaEntity)
           .then((value) {
-        if (value) {
+        if (value != null) {
           Utils.showMyFlushbar(
               context,
               Icons.check,

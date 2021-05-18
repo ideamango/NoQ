@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:LESSs/db/exceptions/MaxTokenReachedByUserPerDayException.dart';
 import 'package:LESSs/db/exceptions/MaxTokenReachedByUserPerSlotException.dart';
 import 'package:LESSs/pages/search_entity_page.dart';
+import 'package:LESSs/pages/token_alert.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:another_flushbar/flushbar.dart';
@@ -1383,7 +1384,15 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
                                     itemBuilder:
                                         (BuildContext context, int index) {
                                       return Container(
-                                        padding: EdgeInsets.only(bottom: 5),
+                                        margin:
+                                            EdgeInsets.symmetric(vertical: 3),
+                                        decoration: BoxDecoration(
+                                            border: Border.all(
+                                                color: containerColor),
+                                            color: Colors.grey[50],
+                                            shape: BoxShape.rectangle,
+                                            borderRadius: BorderRadius.all(
+                                                Radius.circular(5.0))),
                                         child: showImageList(
                                             context,
                                             optsAttsField
@@ -1788,14 +1797,40 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
 
     ///**Validation Ends */
 
-    //TODO SMITA - Check AGAIN if selected slot is stil available else prompt user to select another one.
+    Utils.showMyFlushbar(
+        context,
+        Icons.check,
+        Duration(
+          seconds: 5,
+        ),
+        "Request submitted successfully!",
+        bookingApplication.responseForm.autoApproved
+            ? "Token is being issued. Please wait.."
+            : 'We will contact you as soon as slot opens up. Stay Safe!',
+        successGreenSnackBar);
     if (Utils.isStrNullOrEmpty(validationErrMsg)) {
       _bookingFormKey.currentState.save();
       _gs
           .getApplicationService()
           .submitApplication(bookingApplication, widget.metaEntity)
-          .then((value) {
-        if (value) {
+          .then((token) {
+        if (token != null) {
+          final dtFormat = new DateFormat(dateDisplayFormat);
+          String _dateFormatted =
+              dtFormat.format(bookingApplication.preferredSlotTiming);
+          String time =
+              " ${Utils.formatTime(bookingApplication.preferredSlotTiming.hour.toString())} : ${Utils.formatTime(bookingApplication.preferredSlotTiming.minute.toString())}";
+          Future.delayed(Duration(seconds: 2)).then((value) {
+            showTokenAlert(context, token.getDisplayName(),
+                    widget.metaEntity.name, _dateFormatted, time)
+                .then((value) {
+              Navigator.pushReplacement(context,
+                  MaterialPageRoute(builder: (context) => SearchEntityPage()));
+            });
+          });
+        } else {
+          //The application could not be submitted, Show appropriate msg to User.
+
           Utils.showMyFlushbar(
               context,
               Icons.check,
@@ -1803,19 +1838,12 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
                 seconds: 5,
               ),
               "Request submitted successfully!",
-              "",
-              // 'We will contact you as soon as slot opens up. Stay Safe!',
+              'We will contact you as soon as slot opens up. Stay Safe!',
               successGreenSnackBar);
-          Future.delayed(Duration(seconds: 3)).then((value) {
+          Future.delayed(Duration(seconds: 2)).then((value) {
             Navigator.pushReplacement(context,
                 MaterialPageRoute(builder: (context) => SearchEntityPage()));
           });
-        } else {
-          //The application could not be submitted, Show appropriate msg to User.
-          print("Error in generating Slot for user");
-
-          Utils.showMyFlushbar(context, Icons.error, Duration(seconds: 5),
-              couldNotSubmitApplication, tryAgainToBook);
         }
       }).catchError((error) {
         switch (error.runtimeType) {

@@ -3,11 +3,11 @@ import '../constants.dart';
 import '../widget/widgets.dart';
 import '../style.dart';
 
-Future<String> showTokenAlert(
-    BuildContext context, String tokenNo, String storeName, String time) {
+Future<String> showTokenAlert(BuildContext context, String tokenNo,
+    String storeName, String date, String time) {
   return showDialog(
       context: context,
-      barrierDismissible: true,
+      barrierDismissible: false,
       builder: (_) {
         return new AlertDialog(
           //  title:
@@ -32,7 +32,7 @@ Future<String> showTokenAlert(
                   Container(
                     alignment: Alignment.center,
                     margin: EdgeInsets.all(5),
-                    width: MediaQuery.of(context).size.width * .72,
+                    width: MediaQuery.of(context).size.width * .78,
                     height: MediaQuery.of(context).size.width * .12,
                     decoration: new BoxDecoration(
                       color: primaryIcon,
@@ -45,9 +45,23 @@ Future<String> showTokenAlert(
                           children: <TextSpan>[
                         TextSpan(text: tokenTextH2),
                         TextSpan(
-                            text: " $storeName at $time.",
-                            style:
-                                TextStyle(color: highlightColor, fontSize: 12)),
+                            text: " $storeName",
+                            style: TextStyle(
+                                color: Colors.amber[800], fontSize: 16)),
+                        TextSpan(
+                          text: " on ",
+                        ),
+                        TextSpan(
+                            text: "$date",
+                            style: TextStyle(
+                                color: Colors.greenAccent[700], fontSize: 16)),
+                        TextSpan(
+                          text: " at ",
+                        ),
+                        TextSpan(
+                            text: "$time.",
+                            style: TextStyle(
+                                color: Colors.greenAccent[700], fontSize: 16)),
                       ])),
                   verticalSpacer,
                   Divider(color: Colors.blueGrey[400], height: 1),
