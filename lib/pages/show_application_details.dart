@@ -698,9 +698,6 @@ class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
                                     child: Container(
                                         padding: EdgeInsets.all(2),
                                         margin: EdgeInsets.all(2),
-                                        // decoration: BoxDecoration(
-                                        //     border:
-                                        //         Border.all(color: Colors.blueGrey[800])),
                                         width:
                                             MediaQuery.of(context).size.width *
                                                 .37,

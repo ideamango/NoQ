@@ -89,3 +89,70 @@ Future<String> showTokenAlert(BuildContext context, String tokenNo,
     return val;
   });
 }
+
+Future<String> showMessageDialog(
+    BuildContext context, String headerMsg, String mainMsg, String btnText) {
+  return showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (_) {
+        return new AlertDialog(
+          //  title:
+          backgroundColor: Colors.grey[200],
+          titleTextStyle: inputTextStyle,
+          elevation: 10.0,
+          content: Container(
+              width: double.infinity,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  Text(
+                    headerMsg,
+                    style: TextStyle(
+                        color: primaryDarkColor,
+                        fontFamily: 'Monsterrat',
+                        fontSize: 18.0),
+                  ),
+                  Divider(color: Colors.blueGrey[400], height: 1),
+                  verticalSpacer,
+                  RichText(
+                      text: TextSpan(
+                          style: msgDialogTextStyle,
+                          children: <TextSpan>[
+                        TextSpan(text: mainMsg),
+                        TextSpan(
+                          text:
+                              '\nYou can check the status of your Application in ',
+                        ),
+                        TextSpan(
+                            text: 'My Account',
+                            style: TextStyle(color: Colors.cyan, fontSize: 15)),
+                        TextSpan(
+                          text: ' page.',
+                        ),
+                      ])),
+                  verticalSpacer,
+                  Divider(color: Colors.blueGrey[400], height: 1),
+                ],
+              )),
+          contentPadding: EdgeInsets.all(10),
+          actions: <Widget>[
+            Container(
+              margin: EdgeInsets.fromLTRB(0, 0, 10, 0),
+              child: MaterialButton(
+                elevation: 15.0,
+                color: highlightColor,
+                textColor: Colors.white,
+                child: Text(btnText),
+                onPressed: () {
+                  Navigator.of(_).pop();
+                },
+              ),
+            ),
+          ],
+        );
+      }).then((val) {
+    print(val);
+    return val;
+  });
+}

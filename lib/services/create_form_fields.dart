@@ -141,155 +141,157 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
                     style: TextStyle(
                         color: Colors.white, fontWeight: FontWeight.normal)),
               ),
-              content: Container(
-                  height: MediaQuery.of(context).size.height * .5,
-                  width: MediaQuery.of(context).size.width * .4,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Container(
-                        // color: Colors.blue,
-                        height: MediaQuery.of(context).size.height * .45,
-                        width: MediaQuery.of(context).size.width * .45,
-                        child: ListView.builder(
-                            itemCount: displayYears.length,
-                            controller: yearController,
-                            scrollDirection: Axis.vertical,
-                            itemBuilder: (BuildContext ctxt, int index) {
-                              return new Container(
-                                margin: EdgeInsets.all(10),
-                                height: 47,
-                                child: MaterialButton(
-                                  elevation: 5,
-                                  visualDensity: VisualDensity.compact,
-                                  padding: EdgeInsets.zero,
-                                  color:
-                                      (selectedYear.year == displayYears[index])
-                                          ? Colors.cyan
-                                          : Colors.white,
-                                  textColor:
-                                      (selectedYear.year == displayYears[index])
-                                          ? Colors.white
-                                          : Colors.blueGrey[600],
-                                  shape: CircleBorder(
-                                    side: BorderSide(
-                                        color: (selectedYear.year ==
-                                                displayYears[index])
-                                            ? Colors.cyan[300]
-                                            : Colors.cyan[300]),
+              content: SingleChildScrollView(
+                child: Container(
+                    height: MediaQuery.of(context).size.height * .5,
+                    width: MediaQuery.of(context).size.width * .4,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Container(
+                          // color: Colors.blue,
+                          height: MediaQuery.of(context).size.height * .45,
+                          width: MediaQuery.of(context).size.width * .45,
+                          child: ListView.builder(
+                              itemCount: displayYears.length,
+                              controller: yearController,
+                              scrollDirection: Axis.vertical,
+                              itemBuilder: (BuildContext ctxt, int index) {
+                                return new Container(
+                                  margin: EdgeInsets.all(10),
+                                  height: 47,
+                                  child: MaterialButton(
+                                    elevation: 5,
+                                    visualDensity: VisualDensity.compact,
+                                    padding: EdgeInsets.zero,
+                                    color: (selectedYear.year ==
+                                            displayYears[index])
+                                        ? Colors.cyan
+                                        : Colors.white,
+                                    textColor: (selectedYear.year ==
+                                            displayYears[index])
+                                        ? Colors.white
+                                        : Colors.blueGrey[600],
+                                    shape: CircleBorder(
+                                      side: BorderSide(
+                                          color: (selectedYear.year ==
+                                                  displayYears[index])
+                                              ? Colors.cyan[300]
+                                              : Colors.cyan[300]),
+                                    ),
+                                    child: Text(
+                                      displayYears[index].toString(),
+                                      style: TextStyle(
+                                          fontSize: 15,
+                                          fontWeight: FontWeight.normal),
+                                    ),
+                                    onPressed: () {
+                                      setState(() {
+                                        selectedYear = DateTime(
+                                            (displayYears[index]), 01, 01);
+                                      });
+                                    },
                                   ),
-                                  child: Text(
-                                    displayYears[index].toString(),
-                                    style: TextStyle(
-                                        fontSize: 15,
-                                        fontWeight: FontWeight.normal),
-                                  ),
-                                  onPressed: () {
-                                    setState(() {
-                                      selectedYear = DateTime(
-                                          (displayYears[index]), 01, 01);
-                                    });
-                                  },
-                                ),
-                              );
-                            }),
-                      ),
-                      //   SizedBox(
-                      //     height: 47,
-                      //     child: MaterialButton(
-                      //       visualDensity: VisualDensity.compact,
-                      //       padding: EdgeInsets.zero,
-                      //       color: (selectedYear.year == date.year - 1)
-                      //           ? Colors.cyan
-                      //           : Colors.transparent,
-                      //       textColor: (selectedYear.year == date.year - 1)
-                      //           ? Colors.white
-                      //           : Colors.blueGrey[600],
-                      //       shape: CircleBorder(
-                      //         side: BorderSide(
-                      //             color: (selectedYear.year == date.year - 1)
-                      //                 ? Colors.white
-                      //                 : Colors.transparent),
-                      //       ),
-                      //       child: Text(
-                      //         (date.year - 1).toString(),
-                      //         style: TextStyle(
-                      //             fontSize: 15, fontWeight: FontWeight.normal),
-                      //       ),
-                      //       onPressed: () {
-                      //         setState(() {
-                      //           yearStr = (date.year - 1).toString();
-                      //           selectedYear =
-                      //               DateTime(date.year - 1, date.month, date.day);
-                      //         });
-                      //       },
-                      //     ),
-                      //   ),
-                      //   SizedBox(
-                      //     height: 47,
-                      //     child: FlatButton(
-                      //       visualDensity: VisualDensity.compact,
-                      //       padding: EdgeInsets.zero,
-                      //       color: (selectedYear.year == date.year)
-                      //           ? Colors.cyan
-                      //           : Colors.transparent,
-                      //       textColor: (selectedYear.year == date.year)
-                      //           ? Colors.white
-                      //           : Colors.blueGrey[600],
-                      //       shape: CircleBorder(
-                      //         side: BorderSide(
-                      //             color: (selectedYear.year == date.year - 1)
-                      //                 ? Colors.white
-                      //                 : Colors.transparent),
-                      //       ),
-                      //       child: Text(
-                      //         (date.year).toString(),
-                      //         style: TextStyle(
-                      //             fontSize: 15, fontWeight: FontWeight.normal),
-                      //       ),
-                      //       onPressed: () {
-                      //         setState(() {
-                      //           yearStr = (date.year).toString();
-                      //           selectedYear = date;
-                      //         });
-                      //       },
-                      //     ),
-                      //   ),
-                      //   SizedBox(
-                      //     height: 47,
-                      //     child: FlatButton(
-                      //       visualDensity: VisualDensity.compact,
-                      //       padding: EdgeInsets.zero,
-                      //       color: (selectedYear.year == date.year + 1)
-                      //           ? Colors.cyan
-                      //           : Colors.transparent,
-                      //       textColor: (selectedYear.year == date.year + 1)
-                      //           ? Colors.white
-                      //           : Colors.blueGrey[600],
-                      //       shape: CircleBorder(
-                      //         side: BorderSide(
-                      //             color: (selectedYear.year == date.year - 1)
-                      //                 ? Colors.white
-                      //                 : Colors.transparent),
-                      //       ),
-                      //       child: Text(
-                      //         (date.year + 1).toString(),
-                      //         style: TextStyle(
-                      //             fontSize: 15, fontWeight: FontWeight.normal),
-                      //       ),
-                      //       onPressed: () {
-                      //         setState(() {
-                      //           yearStr = (date.year + 1).toString();
-                      //           selectedYear =
-                      //               DateTime(date.year + 1, date.month, date.day);
-                      //         });
-                      //       },
-                      //     ),
-                      //   ),
-                      //
-                    ],
-                  )),
+                                );
+                              }),
+                        ),
+                        //   SizedBox(
+                        //     height: 47,
+                        //     child: MaterialButton(
+                        //       visualDensity: VisualDensity.compact,
+                        //       padding: EdgeInsets.zero,
+                        //       color: (selectedYear.year == date.year - 1)
+                        //           ? Colors.cyan
+                        //           : Colors.transparent,
+                        //       textColor: (selectedYear.year == date.year - 1)
+                        //           ? Colors.white
+                        //           : Colors.blueGrey[600],
+                        //       shape: CircleBorder(
+                        //         side: BorderSide(
+                        //             color: (selectedYear.year == date.year - 1)
+                        //                 ? Colors.white
+                        //                 : Colors.transparent),
+                        //       ),
+                        //       child: Text(
+                        //         (date.year - 1).toString(),
+                        //         style: TextStyle(
+                        //             fontSize: 15, fontWeight: FontWeight.normal),
+                        //       ),
+                        //       onPressed: () {
+                        //         setState(() {
+                        //           yearStr = (date.year - 1).toString();
+                        //           selectedYear =
+                        //               DateTime(date.year - 1, date.month, date.day);
+                        //         });
+                        //       },
+                        //     ),
+                        //   ),
+                        //   SizedBox(
+                        //     height: 47,
+                        //     child: FlatButton(
+                        //       visualDensity: VisualDensity.compact,
+                        //       padding: EdgeInsets.zero,
+                        //       color: (selectedYear.year == date.year)
+                        //           ? Colors.cyan
+                        //           : Colors.transparent,
+                        //       textColor: (selectedYear.year == date.year)
+                        //           ? Colors.white
+                        //           : Colors.blueGrey[600],
+                        //       shape: CircleBorder(
+                        //         side: BorderSide(
+                        //             color: (selectedYear.year == date.year - 1)
+                        //                 ? Colors.white
+                        //                 : Colors.transparent),
+                        //       ),
+                        //       child: Text(
+                        //         (date.year).toString(),
+                        //         style: TextStyle(
+                        //             fontSize: 15, fontWeight: FontWeight.normal),
+                        //       ),
+                        //       onPressed: () {
+                        //         setState(() {
+                        //           yearStr = (date.year).toString();
+                        //           selectedYear = date;
+                        //         });
+                        //       },
+                        //     ),
+                        //   ),
+                        //   SizedBox(
+                        //     height: 47,
+                        //     child: FlatButton(
+                        //       visualDensity: VisualDensity.compact,
+                        //       padding: EdgeInsets.zero,
+                        //       color: (selectedYear.year == date.year + 1)
+                        //           ? Colors.cyan
+                        //           : Colors.transparent,
+                        //       textColor: (selectedYear.year == date.year + 1)
+                        //           ? Colors.white
+                        //           : Colors.blueGrey[600],
+                        //       shape: CircleBorder(
+                        //         side: BorderSide(
+                        //             color: (selectedYear.year == date.year - 1)
+                        //                 ? Colors.white
+                        //                 : Colors.transparent),
+                        //       ),
+                        //       child: Text(
+                        //         (date.year + 1).toString(),
+                        //         style: TextStyle(
+                        //             fontSize: 15, fontWeight: FontWeight.normal),
+                        //       ),
+                        //       onPressed: () {
+                        //         setState(() {
+                        //           yearStr = (date.year + 1).toString();
+                        //           selectedYear =
+                        //               DateTime(date.year + 1, date.month, date.day);
+                        //         });
+                        //       },
+                        //     ),
+                        //   ),
+                        //
+                      ],
+                    )),
+              ),
               actions: <Widget>[
                 SizedBox(
                   height: 30,
@@ -1799,15 +1801,12 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
 
     Utils.showMyFlushbar(
         context,
-        Icons.check,
+        Icons.info,
         Duration(
           seconds: 5,
         ),
-        "Request submitted successfully!",
-        bookingApplication.responseForm.autoApproved
-            ? "Token is being issued. Please wait.."
-            : 'We will contact you as soon as slot opens up. Stay Safe!',
-        successGreenSnackBar);
+        "Processing your Request..",
+        '');
     if (Utils.isStrNullOrEmpty(validationErrMsg)) {
       _bookingFormKey.currentState.save();
       _gs
@@ -1831,19 +1830,13 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
         } else {
           //The application could not be submitted, Show appropriate msg to User.
 
-          Utils.showMyFlushbar(
-              context,
-              Icons.check,
-              Duration(
-                seconds: 5,
-              ),
-              "Request submitted successfully!",
-              'We will contact you as soon as slot opens up. Stay Safe!',
-              successGreenSnackBar);
-          Future.delayed(Duration(seconds: 2)).then((value) {
-            Navigator.pushReplacement(context,
-                MaterialPageRoute(builder: (context) => SearchEntityPage()));
-          });
+          showMessageDialog(
+                  context,
+                  "Request submitted successfully!",
+                  'We will contact you as soon as slot opens up. Stay Safe!',
+                  'Ok')
+              .then((value) => Navigator.pushReplacement(context,
+                  MaterialPageRoute(builder: (context) => SearchEntityPage())));
         }
       }).catchError((error) {
         switch (error.runtimeType) {
