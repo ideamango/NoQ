@@ -563,7 +563,10 @@ class _ApplicationsListState extends State<ApplicationsList> {
             String responseVals;
             for (Value val in newfield.responseValues) {
               if (!Utils.isNotNullOrEmpty(responseVals)) responseVals = "";
-              responseVals = responseVals + val.value.toString();
+              responseVals = responseVals +
+                  ((responseVals != "")
+                      ? (' | ' + val.value.toString())
+                      : val.value.toString());
             }
 
             fieldWidget = Column(
@@ -593,7 +596,7 @@ class _ApplicationsListState extends State<ApplicationsList> {
                     minFontSize: 12,
                     maxFontSize: 14,
                     maxLines: 1,
-                    overflow: TextOverflow.clip,
+                    overflow: TextOverflow.ellipsis,
                     style: TextStyle(
                         fontSize: 14,
                         color: Colors.indigo[900],

@@ -428,7 +428,7 @@ class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
             FormInputFieldOptions newfield = field;
             fieldWidget = SizedBox(
               width: MediaQuery.of(context).size.width * .9,
-              height: MediaQuery.of(context).size.height * .08,
+              //  height: MediaQuery.of(context).size.height * .08,
               child: TextField(
                 controller: listOfControllers[field.label],
                 readOnly: true,
@@ -458,25 +458,35 @@ class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
                 // keyboardType: TextInputType.multiline,
               ),
             );
-            String conds = "";
+            // String conds = "";
 
-            if (newfield.isMultiSelect) {
-              if (Utils.isNullOrEmpty(newfield.responseValues)) {
-                conds = "None";
-              }
-              for (int i = 0; i < newfield.responseValues.length; i++) {
-                if (conds != "")
-                  conds = conds + "  &  " + newfield.responseValues[i].value;
-                else
-                  conds = conds + newfield.responseValues[i].toString();
-              }
-            } else {
-              conds = Utils.isNullOrEmpty(newfield.responseValues)
-                  ? "None"
-                  : newfield.responseValues[0].value;
+            // if (newfield.isMultiSelect) {
+            //   if (Utils.isNullOrEmpty(newfield.responseValues)) {
+            //     conds = "None";
+            //   }
+            //   for (int i = 0; i < newfield.responseValues.length; i++) {
+            //     if (conds != "")
+            //       conds = conds + "  &  " + newfield.responseValues[i].value;
+            //     else
+            //       conds = conds + newfield.responseValues[i].toString();
+            //   }
+            // } else {
+            //   conds = Utils.isNullOrEmpty(newfield.responseValues)
+            //       ? "None"
+            //       : newfield.responseValues[0].value;
+            // }
+
+            String responseVals;
+            for (Value val in newfield.responseValues) {
+              if (!Utils.isNotNullOrEmpty(responseVals)) responseVals = "";
+              responseVals = responseVals +
+                  ((responseVals != "")
+                      ? (' | ' + val.value.toString())
+                      : val.value.toString());
             }
-            print(conds);
-            listOfControllers[field.label].text = conds;
+
+            // print(conds);
+            listOfControllers[field.label].text = responseVals;
           }
           break;
         case FieldType.ATTACHMENT:
