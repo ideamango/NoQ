@@ -1,6 +1,7 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:enum_to_string/enum_to_string.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import '../db/db_model/booking_application.dart';
 import '../db/db_model/booking_form.dart';
 import '../db/db_model/meta_entity.dart';
@@ -392,10 +393,7 @@ class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
                   color: Colors.indigo[900],
                 ),
                 decoration: InputDecoration(
-                  labelText:
-                      (newfield.label == "Date of Birth of the Applicant")
-                          ? "Age"
-                          : newfield.label,
+                  labelText: newfield.label,
                   labelStyle: TextStyle(
                       fontSize: 13,
                       color: Colors.blueGrey[500],
@@ -415,14 +413,14 @@ class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
                 //keyboardType: TextInputType.text,
               ),
             );
-            listOfControllers[field.label].text =
-                (newfield.label == "Date of Birth of the Applicant")
-                    ? ((DateTime.now()
-                                .difference(newfield.responseDateTime)
-                                .inDays) /
-                            365)
-                        .toStringAsFixed(0)
-                    : newfield.label;
+            listOfControllers[field.label].text = ((newfield.yearOnly)
+                    ? newfield.responseDateTime.year.toString()
+                    : DateFormat('dd-MM-yyyy')
+                        .format(newfield.responseDateTime)
+                        .toString()) +
+                ((newfield.isAge)
+                    ? " (Age - ${((DateTime.now().difference(newfield.responseDateTime).inDays) / 365).toStringAsFixed(0)} years)"
+                    : "");
           }
           break;
         case FieldType.OPTIONS:

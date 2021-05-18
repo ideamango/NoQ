@@ -531,9 +531,14 @@ class _ApplicationsListState extends State<ApplicationsList> {
                   //  width: cardWidth * .4,
                   //height: cardHeight * .1,
                   child: AutoSizeText(
-                    DateFormat('dd-MM-yyyy')
-                        .format(newfield.responseDateTime)
-                        .toString(),
+                    ((newfield.yearOnly)
+                            ? newfield.responseDateTime.year.toString()
+                            : DateFormat('dd-MM-yyyy')
+                                .format(newfield.responseDateTime)
+                                .toString()) +
+                        ((newfield.isAge)
+                            ? " (Age - ${((DateTime.now().difference(newfield.responseDateTime).inDays) / 365).toStringAsFixed(0)} years)"
+                            : ""),
                     group: responseGroup,
                     minFontSize: 12,
                     maxFontSize: 14,

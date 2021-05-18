@@ -417,15 +417,9 @@ class _ShowUserApplicationDetailsState
                 ),
               ),
             );
-            listOfControllers[field.label].text = (newfield.isAge)
-                ? ((DateTime.now()
-                            .difference(newfield.responseDateTime)
-                            .inDays) /
-                        365)
-                    .toStringAsFixed(0)
-                : (newfield.yearOnly)
-                    ? newfield.responseDateTime.year.toString()
-                    : newfield.responseDateTime.toString();
+            listOfControllers[field.label].text = (newfield.yearOnly)
+                ? newfield.responseDateTime.year.toString()
+                : newfield.responseDateTime.toString();
           }
           break;
         case FieldType.OPTIONS:

@@ -511,130 +511,133 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
                 color: Colors.grey[50],
                 shape: BoxShape.rectangle,
                 borderRadius: BorderRadius.all(Radius.circular(5.0))),
-            child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Column(children: <Widget>[
-                    Container(
-                      //padding: EdgeInsets.only(left: 5),
-                      decoration: darkContainer,
-                      child: Theme(
-                        data: ThemeData(
-                          unselectedWidgetColor: Colors.white,
-                          accentColor: Colors.grey[50],
-                        ),
-                        child: CustomExpansionTile(
-                          //key: PageStorageKey(this.widget.headerTitle),
-                          initiallyExpanded: false,
-                          title: Row(
-                            children: <Widget>[
-                              AutoSizeText(
-                                (field.isMandatory)
-                                    ? field.label + ' (mandatory)'
-                                    : field.label + ' (optional)',
-                                maxLines: 2,
-                                minFontSize: 11,
-                                maxFontSize: 14,
-                                style: TextStyle(color: Colors.white),
-                              ),
-                              SizedBox(width: 5),
-                            ],
-                          ),
-                          backgroundColor: Colors.blueGrey[500],
-
-                          children: <Widget>[
-                            new Container(
-                              padding: EdgeInsets.only(left: 7),
-                              width: MediaQuery.of(context).size.width * .94,
-                              //decoration: darkContainer,
-                              color: containerColor,
-                              //padding: EdgeInsets.all(2.0),
-                              child: Row(
-                                children: <Widget>[
-                                  Expanded(
-                                    child: Text(field.infoMessage,
-                                        style: buttonXSmlTextStyle),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
+            child:
+                Column(crossAxisAlignment: CrossAxisAlignment.start, children: <
+                    Widget>[
+              Column(children: <Widget>[
+                Container(
+                  //padding: EdgeInsets.only(left: 5),
+                  decoration: darkContainer,
+                  child: Theme(
+                    data: ThemeData(
+                      unselectedWidgetColor: Colors.white,
+                      accentColor: Colors.grey[50],
                     ),
-                    Container(
-                      padding: EdgeInsets.only(left: 5.0, right: 5),
-                      child: Column(
-                        children: [
-                          Container(
-                            //   margin: EdgeInsets.fromLTRB(10, 5, 10, 5),
-                            padding: EdgeInsets.all(10),
-                            child: TextFormField(
-                              obscureText: false,
-                              readOnly: true,
-                              maxLines: 1,
-                              minLines: 1,
-                              autovalidateMode: AutovalidateMode.always,
-                              validator: (value) {
-                                if (validateField &&
-                                    newDateField.isMandatory &&
-                                    Utils.isStrNullOrEmpty(value)) {
-                                  return "Field is empty";
-                                } else
-                                  return null;
-                              },
-                              style: textInputTextStyle,
-                              keyboardType: TextInputType.text,
-                              controller:
-                                  listOfFieldControllers[newDateField.label],
-                              decoration: CommonStyle.textFieldStyle(
-                                  labelTextStr: newDateField.label,
-                                  hintTextStr: newDateField.label),
-                              onTap: () {
-                                setState(() {
-                                  pickAnyYear(context, DateTime.now())
-                                      .then((value) {
-                                    if (value != null) {
-                                      print(value);
-
-                                      listOfFieldControllers[newDateField.label]
-                                          .text = value.year.toString();
-
-                                      setState(() {
-                                        newDateField.responseDateTime = value;
-                                      });
-                                    }
-                                  });
-                                  // pickDate(context).then((value) {
-                                  //   if (value != null) {
-                                  //     setState(() {
-                                  //       dateString = value.day.toString() +
-                                  //           " / " +
-                                  //           value.month.toString() +
-                                  //           " / " +
-                                  //           value.year.toString();
-                                  //       listOfFieldControllers[newDateField.label]
-                                  //           .text = dateString;
-                                  //     });
-                                  //     newDateField.responseDateTime = value;
-                                  //   }
-                                  // });
-                                });
-                              },
-                              maxLength: null,
-                              onChanged: (String value) {
-                                print(value);
-                              },
-                              onSaved: (String value) {
-                                print(value);
-                              },
-                            ),
+                    child: CustomExpansionTile(
+                      //key: PageStorageKey(this.widget.headerTitle),
+                      initiallyExpanded: false,
+                      title: Row(
+                        children: <Widget>[
+                          AutoSizeText(
+                            (field.isMandatory)
+                                ? field.label + ' (mandatory)'
+                                : field.label + ' (optional)',
+                            maxLines: 2,
+                            minFontSize: 11,
+                            maxFontSize: 14,
+                            style: TextStyle(color: Colors.white),
                           ),
+                          SizedBox(width: 5),
                         ],
                       ),
+                      backgroundColor: Colors.blueGrey[500],
+
+                      children: <Widget>[
+                        new Container(
+                          padding: EdgeInsets.only(left: 7),
+                          width: MediaQuery.of(context).size.width * .94,
+                          //decoration: darkContainer,
+                          color: containerColor,
+                          //padding: EdgeInsets.all(2.0),
+                          child: Row(
+                            children: <Widget>[
+                              Expanded(
+                                child: Text(field.infoMessage,
+                                    style: buttonXSmlTextStyle),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
                     ),
-                  ]),
-                ]),
+                  ),
+                ),
+                Container(
+                  padding: EdgeInsets.only(left: 5.0, right: 5),
+                  child: Column(
+                    children: [
+                      Container(
+                        //   margin: EdgeInsets.fromLTRB(10, 5, 10, 5),
+                        padding: EdgeInsets.all(10),
+                        child: TextFormField(
+                          obscureText: false,
+                          readOnly: true,
+                          maxLines: 1,
+                          minLines: 1,
+                          autovalidateMode: AutovalidateMode.always,
+                          validator: (value) {
+                            if (validateField &&
+                                newDateField.isMandatory &&
+                                Utils.isStrNullOrEmpty(value)) {
+                              return "Field is empty";
+                            } else
+                              return null;
+                          },
+                          style: textInputTextStyle,
+                          keyboardType: TextInputType.text,
+                          controller:
+                              listOfFieldControllers[newDateField.label],
+                          decoration: CommonStyle.textFieldStyle(
+                              labelTextStr: newDateField.label,
+                              hintTextStr: newDateField.label),
+                          onTap: () {
+                            if (newDateField.yearOnly) {
+                              setState(() {
+                                pickAnyYear(context, DateTime.now())
+                                    .then((value) {
+                                  if (value != null) {
+                                    print(value);
+
+                                    listOfFieldControllers[newDateField.label]
+                                        .text = value.year.toString();
+
+                                    setState(() {
+                                      newDateField.responseDateTime = value;
+                                    });
+                                  }
+                                });
+                              });
+                            } else {
+                              pickDate(context).then((value) {
+                                if (value != null) {
+                                  setState(() {
+                                    dateString = value.day.toString() +
+                                        " / " +
+                                        value.month.toString() +
+                                        " / " +
+                                        value.year.toString();
+                                    listOfFieldControllers[newDateField.label]
+                                        .text = dateString;
+                                  });
+                                  newDateField.responseDateTime = value;
+                                }
+                              });
+                            }
+                          },
+                          maxLength: null,
+                          onChanged: (String value) {
+                            print(value);
+                          },
+                          onSaved: (String value) {
+                            print(value);
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ]),
+            ]),
           );
         }
         break;
@@ -1800,7 +1803,8 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
                 seconds: 5,
               ),
               "Request submitted successfully!",
-              'We will contact you as soon as slot opens up. Stay Safe!',
+              "",
+              // 'We will contact you as soon as slot opens up. Stay Safe!',
               successGreenSnackBar);
           Future.delayed(Duration(seconds: 3)).then((value) {
             Navigator.pushReplacement(context,
