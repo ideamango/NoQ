@@ -469,33 +469,32 @@ class EntityRowState extends State<EntityRow> {
                             contactAdmin);
                       } else {
                         print("Over To overview page");
-                        if (!Utils.isNullOrEmpty(_metaEntity.forms)) {
-                          // if (_metaEntity.forms.length > 1) {
-                          Navigator.of(context).push(
-                              PageAnimation.createRoute(BookingFormSelection(
-                            forms: _metaEntity.forms,
-                            metaEntity: _metaEntity,
-                            preferredSlotTime: null,
-                            isAdmin: isAdmin,
-                            backRoute: ManageEntityListPage(),
-                          )));
-                          // } else {
-                          //   Navigator.of(context).push(
-                          //       PageAnimation.createRoute(OverviewPage(
-                          //           bookingFormId: _metaEntity.forms[0].id,
-                          //           bookingFormName: _metaEntity.forms[0].name,
-                          //           entityId: _metaEntity.entityId,
-                          //           metaEntity: _metaEntity,
-                          //           isExec: isExec)));
-                          // }
-                        } else {
-                          Utils.showMyFlushbar(
-                              context,
-                              Icons.info_outline,
-                              Duration(seconds: 5),
-                              "No Applications found as of now!!",
-                              "");
-                        }
+                        _state
+                            .getEntityService()
+                            .getEntity(_metaEntity.entityId)
+                            .then((value) {
+                          if (value != null) {
+                            if (!Utils.isNullOrEmpty(value.forms)) {
+                              // if (_metaEntity.forms.length > 1) {
+                              Navigator.of(context).push(
+                                  PageAnimation.createRoute(
+                                      BookingFormSelection(
+                                forms: value.forms,
+                                metaEntity: _metaEntity,
+                                preferredSlotTime: null,
+                                isAdmin: isAdmin,
+                                backRoute: ManageEntityListPage(),
+                              )));
+                            } else {
+                              Utils.showMyFlushbar(
+                                  context,
+                                  Icons.info_outline,
+                                  Duration(seconds: 5),
+                                  "No Applications found as of now!!",
+                                  "");
+                            }
+                          }
+                        });
                       }
 
                       // Navigator.of(context)

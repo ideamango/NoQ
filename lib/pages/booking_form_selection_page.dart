@@ -93,6 +93,7 @@ class _BookingFormSelectionState extends State<BookingFormSelection> {
           entityId: widget.metaEntity.entityId,
           metaEntity: widget.metaEntity,
           bookingFormName: forms[_selectedValue].name,
+          isExec: !widget.isAdmin,
         );
       }
     });

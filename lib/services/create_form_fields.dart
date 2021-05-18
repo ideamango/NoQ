@@ -1646,15 +1646,17 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
               listOfFieldControllers[listOfFields[i].label].text)) {
             validationErrMsg = validationErrMsg +
                 (Utils.isNotNullOrEmpty(validationErrMsg)
-                    ? "\n ${listOfFields[i].label} cannot be empty."
-                    : "${listOfFields[i].label} cannot be empty.");
+                    ? ", ${listOfFields[i].label}"
+                    : "${listOfFields[i].label}");
           }
         }
       }
     }
-    if (Utils.isNotNullOrEmpty(validationErrMsg))
+    if (Utils.isNotNullOrEmpty(validationErrMsg)) {
+      validationErrMsg =
+          'Please provide all mandatory information like $validationErrMsg.';
       return false;
-    else
+    } else
       return true;
   }
 
@@ -1670,11 +1672,12 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
           context,
           Icons.error,
           Duration(
-            seconds: 5,
+            seconds: 8,
           ),
           validationErrMsg,
-          'Its mandatory information.',
-          Colors.red);
+          '',
+          Colors.red,
+          Colors.white);
       return;
     }
     //***Handle the Options and Attachments field.****
@@ -1692,8 +1695,9 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
                   seconds: 5,
                 ),
                 validationErrMsg,
-                'Please fill and try again.',
-                Colors.red);
+                'Please provide all mandatory information and try again.',
+                Colors.red,
+                Colors.white);
             return;
           }
           break;
@@ -1709,8 +1713,9 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
                   seconds: 5,
                 ),
                 validationErrMsg,
-                'Please fill and try again.',
-                Colors.red);
+                'Please provide all mandatory information and try again.',
+                Colors.red,
+                Colors.white);
             return;
           } else {
             List<String> targetPaths = [];
@@ -1747,8 +1752,9 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
                   seconds: 5,
                 ),
                 validationErrMsg,
-                'Please fill and try again.',
-                Colors.red);
+                'Please provide all mandatory information and try again.',
+                Colors.red,
+                Colors.white);
             return;
           } else {
             print("df");
