@@ -246,7 +246,7 @@ final highlightSubTextStyle = TextStyle(
     fontFamily: 'RalewayRegular',
     fontSize: 12.0,
     height: 1.5);
-    final msgDialogTextStyle = TextStyle(
+final msgDialogTextStyle = TextStyle(
     color: Colors.black,
     fontFamily: 'RalewayRegular',
     fontSize: 14.0,
