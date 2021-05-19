@@ -915,7 +915,7 @@ class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
                                   showApplicationStatusDialog(
                                           context,
                                           "Complete Application",
-                                          'Do you want to mark this Application as Complete?',
+                                          'Are you sure you want to mark this application as Completed?',
                                           completeDialogMsg,
                                           'Complete')
                                       .then((remarks) {
@@ -986,7 +986,7 @@ class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
                                   showApplicationStatusDialog(
                                           context,
                                           "Approve Application",
-                                          'Do you want to mark this Application as Approved?',
+                                          'Do you want to proceed with the Approval?',
                                           approveDialogMsg,
                                           'Approve')
                                       .then((remarks) {
@@ -1058,7 +1058,7 @@ class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
                                 showApplicationStatusDialog(
                                         context,
                                         "On-Hold Application",
-                                        'Do you want to mark this Application as On-Hold?',
+                                        'Are you sure you want to put this Application On-Hold?',
                                         onHoldDialogMsg,
                                         'On-Hold')
                                     .then((remarks) {
@@ -1130,8 +1130,8 @@ class _ShowApplicationDetailsState extends State<ShowApplicationDetails> {
                                       ApplicationStatus.CANCELLED) {
                                 showApplicationStatusDialog(
                                         context,
-                                        "Reject Application",
-                                        'Do you want to mark this Application as Rejected?',
+                                        "Confirm Rejection",
+                                        'Are you sure you want to Reject this Application?',
                                         rejectDialogMsg,
                                         'Reject')
                                     .then((remarks) {
