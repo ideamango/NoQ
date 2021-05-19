@@ -170,7 +170,8 @@ class BookingApplicationService {
 
   //To be done by the Applicant
   //Throws => MaxTokenReachedByUserPerSlotException, TokenAlreadyExistsException, SlotFullException, MaxTokenReachedByUserPerDayException
-  Future<bool> submitApplication(BookingApplication ba, MetaEntity metaEntity,
+  Future<UserToken> submitApplication(
+      BookingApplication ba, MetaEntity metaEntity,
       [bool enableVideoChat = false]) async {
     //Security: BookingApplication (Application Status by the applicant can be only Null, New, Cancelled), other statuses are reserved for the Manager/Admin
     //Case 1: Create the BookingApplication object in the Applications collection
@@ -185,6 +186,8 @@ class BookingApplicationService {
     }
 
     Exception e;
+
+    UserToken tok;
 
     bool isSuccess = false;
     DateTime now = DateTime.now();
@@ -343,6 +346,7 @@ class BookingApplicationService {
 
           //HACK: by accessing bookings of GS to add this new Token, so that it apears immediately in users list
           _gs.bookings.add(lastTok);
+          tok = lastTok;
         }
 
         tx.set(applicationRef, ba.toJson());
@@ -364,7 +368,7 @@ class BookingApplicationService {
       throw e;
     }
 
-    return isSuccess;
+    return tok;
   }
 
   //to be done by the Applicant

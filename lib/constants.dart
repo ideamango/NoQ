@@ -210,6 +210,15 @@ String contactInfoStr =
     'The person who can be contacted for any queries regarding your place.';
 String ratingMsg = "We really appreciate your time to provide the review.";
 
+String completeDialogMsg = "Once you mark this Application COMPLETE,.........";
+String approveDialogMsg =
+    'Once you APPROVE a Application, a Token will be issues for the given Time-Slot.';
+String cancelDialogMsg =
+    'Once you CANCEL this Application, any Token associated will also be cancelled.';
+String onHoldDialogMsg =
+    'Once you mark this Application as ON-HOLD, any Token associated will also be cancelled.';
+String rejectDialogMsg =
+    'Once you mark this Application as REJECTED, any Token associated will also be cancelled.';
 String correctQRCode =
     "It's not a valid LESSs QR code. Report this issue to the Place Owner.";
 String invalidQRCode =

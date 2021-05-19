@@ -234,7 +234,7 @@ class _BookingFormSelectionState extends State<BookingFormSelection> {
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
                         if (widget.isAdmin)
-                          FlatButton(
+                          MaterialButton(
                               minWidth: MediaQuery.of(context).size.width * .4,
                               child: Text("Reports"),
                               color: Colors.white,

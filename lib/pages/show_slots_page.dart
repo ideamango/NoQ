@@ -745,13 +745,16 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
         selectedSlot.totalBooked++;
       }
       _token = value.getDisplayName();
+      final dtFormat = new DateFormat(dateDisplayFormat);
+      String _dateFormatted = dtFormat.format(selectedSlot.dateTime);
 
       String slotTiming =
           Utils.formatTime(selectedSlot.dateTime.hour.toString()) +
               ':' +
               Utils.formatTime(selectedSlot.dateTime.minute.toString());
 
-      showTokenAlert(context, _token, _storeName, slotTiming).then((value) {
+      showTokenAlert(context, _token, _storeName, _dateFormatted, slotTiming)
+          .then((value) {
         _returnValues(value);
 
         setState(() {

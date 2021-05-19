@@ -1,4 +1,7 @@
 import 'dart:async';
+import 'package:LESSs/db/exceptions/MaxTokenReachedByUserPerSlotException.dart';
+import 'package:LESSs/db/exceptions/slot_full_exception.dart';
+import 'package:LESSs/db/exceptions/token_already_exists_exception.dart';
 import 'package:email_validator/email_validator.dart';
 import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:another_flushbar/flushbar.dart';
@@ -25,6 +28,7 @@ import 'db/db_model/entity.dart';
 import 'db/db_model/entity_slots.dart';
 import 'db/db_model/slot.dart';
 import 'db/db_model/user_token.dart';
+import 'db/exceptions/MaxTokenReachedByUserPerDayException.dart';
 import 'pages/qr_code_user_token.dart';
 
 class Utils {
@@ -1031,6 +1035,36 @@ class Utils {
                 ),
               ],
             ));
+  }
+
+  static void handleUpdateApplicationStatus(
+      dynamic error, BuildContext context) {
+    switch (error.runtimeType) {
+      case MaxTokenReachedByUserPerDayException:
+        print("max token reached");
+        Utils.showMyFlushbar(context, Icons.error, Duration(seconds: 6),
+            maxTokenLimitReached, maxTokenLimitReachedSub);
+        break;
+      case MaxTokenReachedByUserPerSlotException:
+        Utils.showMyFlushbar(context, Icons.error, Duration(seconds: 6),
+            maxTokenForTimeReached, maxTokenLimitReachedSub);
+        print("max per slot reached");
+        break;
+      case TokenAlreadyExistsException:
+        Utils.showMyFlushbar(context, Icons.error, Duration(seconds: 6),
+            tokenAlreadyExists, selectDateSub);
+        print("token exists");
+        break;
+      case SlotFullException:
+        Utils.showMyFlushbar(context, Icons.error, Duration(seconds: 6),
+            slotsAlreadyBooked, selectDateSub);
+        print("slot full ");
+        break;
+      default:
+        Utils.showMyFlushbar(context, Icons.error, Duration(seconds: 5),
+            error.toString(), tryAgainToBook);
+        break;
+    }
   }
 
   static Future<bool> showConfirmationDialog(

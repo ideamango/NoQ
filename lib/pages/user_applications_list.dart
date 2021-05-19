@@ -1535,9 +1535,9 @@ class _UserApplicationsListState extends State<UserApplicationsList> {
 
   Widget _buildItem(BookingApplication ba) {
     List<Field> listOfMeta = new List<Field>();
-    if (!listOfControllers.containsKey(ba.id)) {
-      listOfControllers[ba.id] = new TextEditingController();
-    }
+    // if (!listOfControllers.containsKey(ba.id)) {
+    //   listOfControllers[ba.id] = new TextEditingController();
+    // }
 
     listOfMeta.addAll(ba.responseForm
         .getFormFields()

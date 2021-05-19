@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:LESSs/db/exceptions/MaxTokenReachedByUserPerDayException.dart';
 import 'package:LESSs/db/exceptions/MaxTokenReachedByUserPerSlotException.dart';
 import 'package:LESSs/pages/search_entity_page.dart';
+import 'package:LESSs/pages/token_alert.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:another_flushbar/flushbar.dart';
@@ -140,155 +141,157 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
                     style: TextStyle(
                         color: Colors.white, fontWeight: FontWeight.normal)),
               ),
-              content: Container(
-                  height: MediaQuery.of(context).size.height * .5,
-                  width: MediaQuery.of(context).size.width * .4,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Container(
-                        // color: Colors.blue,
-                        height: MediaQuery.of(context).size.height * .45,
-                        width: MediaQuery.of(context).size.width * .45,
-                        child: ListView.builder(
-                            itemCount: displayYears.length,
-                            controller: yearController,
-                            scrollDirection: Axis.vertical,
-                            itemBuilder: (BuildContext ctxt, int index) {
-                              return new Container(
-                                margin: EdgeInsets.all(10),
-                                height: 47,
-                                child: MaterialButton(
-                                  elevation: 5,
-                                  visualDensity: VisualDensity.compact,
-                                  padding: EdgeInsets.zero,
-                                  color:
-                                      (selectedYear.year == displayYears[index])
-                                          ? Colors.cyan
-                                          : Colors.white,
-                                  textColor:
-                                      (selectedYear.year == displayYears[index])
-                                          ? Colors.white
-                                          : Colors.blueGrey[600],
-                                  shape: CircleBorder(
-                                    side: BorderSide(
-                                        color: (selectedYear.year ==
-                                                displayYears[index])
-                                            ? Colors.cyan[300]
-                                            : Colors.cyan[300]),
+              content: SingleChildScrollView(
+                child: Container(
+                    height: MediaQuery.of(context).size.height * .5,
+                    width: MediaQuery.of(context).size.width * .4,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Container(
+                          // color: Colors.blue,
+                          height: MediaQuery.of(context).size.height * .45,
+                          width: MediaQuery.of(context).size.width * .45,
+                          child: ListView.builder(
+                              itemCount: displayYears.length,
+                              controller: yearController,
+                              scrollDirection: Axis.vertical,
+                              itemBuilder: (BuildContext ctxt, int index) {
+                                return new Container(
+                                  margin: EdgeInsets.all(10),
+                                  height: 47,
+                                  child: MaterialButton(
+                                    elevation: 5,
+                                    visualDensity: VisualDensity.compact,
+                                    padding: EdgeInsets.zero,
+                                    color: (selectedYear.year ==
+                                            displayYears[index])
+                                        ? Colors.cyan
+                                        : Colors.white,
+                                    textColor: (selectedYear.year ==
+                                            displayYears[index])
+                                        ? Colors.white
+                                        : Colors.blueGrey[600],
+                                    shape: CircleBorder(
+                                      side: BorderSide(
+                                          color: (selectedYear.year ==
+                                                  displayYears[index])
+                                              ? Colors.cyan[300]
+                                              : Colors.cyan[300]),
+                                    ),
+                                    child: Text(
+                                      displayYears[index].toString(),
+                                      style: TextStyle(
+                                          fontSize: 15,
+                                          fontWeight: FontWeight.normal),
+                                    ),
+                                    onPressed: () {
+                                      setState(() {
+                                        selectedYear = DateTime(
+                                            (displayYears[index]), 01, 01);
+                                      });
+                                    },
                                   ),
-                                  child: Text(
-                                    displayYears[index].toString(),
-                                    style: TextStyle(
-                                        fontSize: 15,
-                                        fontWeight: FontWeight.normal),
-                                  ),
-                                  onPressed: () {
-                                    setState(() {
-                                      selectedYear = DateTime(
-                                          (displayYears[index]), 01, 01);
-                                    });
-                                  },
-                                ),
-                              );
-                            }),
-                      ),
-                      //   SizedBox(
-                      //     height: 47,
-                      //     child: MaterialButton(
-                      //       visualDensity: VisualDensity.compact,
-                      //       padding: EdgeInsets.zero,
-                      //       color: (selectedYear.year == date.year - 1)
-                      //           ? Colors.cyan
-                      //           : Colors.transparent,
-                      //       textColor: (selectedYear.year == date.year - 1)
-                      //           ? Colors.white
-                      //           : Colors.blueGrey[600],
-                      //       shape: CircleBorder(
-                      //         side: BorderSide(
-                      //             color: (selectedYear.year == date.year - 1)
-                      //                 ? Colors.white
-                      //                 : Colors.transparent),
-                      //       ),
-                      //       child: Text(
-                      //         (date.year - 1).toString(),
-                      //         style: TextStyle(
-                      //             fontSize: 15, fontWeight: FontWeight.normal),
-                      //       ),
-                      //       onPressed: () {
-                      //         setState(() {
-                      //           yearStr = (date.year - 1).toString();
-                      //           selectedYear =
-                      //               DateTime(date.year - 1, date.month, date.day);
-                      //         });
-                      //       },
-                      //     ),
-                      //   ),
-                      //   SizedBox(
-                      //     height: 47,
-                      //     child: FlatButton(
-                      //       visualDensity: VisualDensity.compact,
-                      //       padding: EdgeInsets.zero,
-                      //       color: (selectedYear.year == date.year)
-                      //           ? Colors.cyan
-                      //           : Colors.transparent,
-                      //       textColor: (selectedYear.year == date.year)
-                      //           ? Colors.white
-                      //           : Colors.blueGrey[600],
-                      //       shape: CircleBorder(
-                      //         side: BorderSide(
-                      //             color: (selectedYear.year == date.year - 1)
-                      //                 ? Colors.white
-                      //                 : Colors.transparent),
-                      //       ),
-                      //       child: Text(
-                      //         (date.year).toString(),
-                      //         style: TextStyle(
-                      //             fontSize: 15, fontWeight: FontWeight.normal),
-                      //       ),
-                      //       onPressed: () {
-                      //         setState(() {
-                      //           yearStr = (date.year).toString();
-                      //           selectedYear = date;
-                      //         });
-                      //       },
-                      //     ),
-                      //   ),
-                      //   SizedBox(
-                      //     height: 47,
-                      //     child: FlatButton(
-                      //       visualDensity: VisualDensity.compact,
-                      //       padding: EdgeInsets.zero,
-                      //       color: (selectedYear.year == date.year + 1)
-                      //           ? Colors.cyan
-                      //           : Colors.transparent,
-                      //       textColor: (selectedYear.year == date.year + 1)
-                      //           ? Colors.white
-                      //           : Colors.blueGrey[600],
-                      //       shape: CircleBorder(
-                      //         side: BorderSide(
-                      //             color: (selectedYear.year == date.year - 1)
-                      //                 ? Colors.white
-                      //                 : Colors.transparent),
-                      //       ),
-                      //       child: Text(
-                      //         (date.year + 1).toString(),
-                      //         style: TextStyle(
-                      //             fontSize: 15, fontWeight: FontWeight.normal),
-                      //       ),
-                      //       onPressed: () {
-                      //         setState(() {
-                      //           yearStr = (date.year + 1).toString();
-                      //           selectedYear =
-                      //               DateTime(date.year + 1, date.month, date.day);
-                      //         });
-                      //       },
-                      //     ),
-                      //   ),
-                      //
-                    ],
-                  )),
+                                );
+                              }),
+                        ),
+                        //   SizedBox(
+                        //     height: 47,
+                        //     child: MaterialButton(
+                        //       visualDensity: VisualDensity.compact,
+                        //       padding: EdgeInsets.zero,
+                        //       color: (selectedYear.year == date.year - 1)
+                        //           ? Colors.cyan
+                        //           : Colors.transparent,
+                        //       textColor: (selectedYear.year == date.year - 1)
+                        //           ? Colors.white
+                        //           : Colors.blueGrey[600],
+                        //       shape: CircleBorder(
+                        //         side: BorderSide(
+                        //             color: (selectedYear.year == date.year - 1)
+                        //                 ? Colors.white
+                        //                 : Colors.transparent),
+                        //       ),
+                        //       child: Text(
+                        //         (date.year - 1).toString(),
+                        //         style: TextStyle(
+                        //             fontSize: 15, fontWeight: FontWeight.normal),
+                        //       ),
+                        //       onPressed: () {
+                        //         setState(() {
+                        //           yearStr = (date.year - 1).toString();
+                        //           selectedYear =
+                        //               DateTime(date.year - 1, date.month, date.day);
+                        //         });
+                        //       },
+                        //     ),
+                        //   ),
+                        //   SizedBox(
+                        //     height: 47,
+                        //     child: FlatButton(
+                        //       visualDensity: VisualDensity.compact,
+                        //       padding: EdgeInsets.zero,
+                        //       color: (selectedYear.year == date.year)
+                        //           ? Colors.cyan
+                        //           : Colors.transparent,
+                        //       textColor: (selectedYear.year == date.year)
+                        //           ? Colors.white
+                        //           : Colors.blueGrey[600],
+                        //       shape: CircleBorder(
+                        //         side: BorderSide(
+                        //             color: (selectedYear.year == date.year - 1)
+                        //                 ? Colors.white
+                        //                 : Colors.transparent),
+                        //       ),
+                        //       child: Text(
+                        //         (date.year).toString(),
+                        //         style: TextStyle(
+                        //             fontSize: 15, fontWeight: FontWeight.normal),
+                        //       ),
+                        //       onPressed: () {
+                        //         setState(() {
+                        //           yearStr = (date.year).toString();
+                        //           selectedYear = date;
+                        //         });
+                        //       },
+                        //     ),
+                        //   ),
+                        //   SizedBox(
+                        //     height: 47,
+                        //     child: FlatButton(
+                        //       visualDensity: VisualDensity.compact,
+                        //       padding: EdgeInsets.zero,
+                        //       color: (selectedYear.year == date.year + 1)
+                        //           ? Colors.cyan
+                        //           : Colors.transparent,
+                        //       textColor: (selectedYear.year == date.year + 1)
+                        //           ? Colors.white
+                        //           : Colors.blueGrey[600],
+                        //       shape: CircleBorder(
+                        //         side: BorderSide(
+                        //             color: (selectedYear.year == date.year - 1)
+                        //                 ? Colors.white
+                        //                 : Colors.transparent),
+                        //       ),
+                        //       child: Text(
+                        //         (date.year + 1).toString(),
+                        //         style: TextStyle(
+                        //             fontSize: 15, fontWeight: FontWeight.normal),
+                        //       ),
+                        //       onPressed: () {
+                        //         setState(() {
+                        //           yearStr = (date.year + 1).toString();
+                        //           selectedYear =
+                        //               DateTime(date.year + 1, date.month, date.day);
+                        //         });
+                        //       },
+                        //     ),
+                        //   ),
+                        //
+                      ],
+                    )),
+              ),
               actions: <Widget>[
                 SizedBox(
                   height: 30,
@@ -511,130 +514,133 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
                 color: Colors.grey[50],
                 shape: BoxShape.rectangle,
                 borderRadius: BorderRadius.all(Radius.circular(5.0))),
-            child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Column(children: <Widget>[
-                    Container(
-                      //padding: EdgeInsets.only(left: 5),
-                      decoration: darkContainer,
-                      child: Theme(
-                        data: ThemeData(
-                          unselectedWidgetColor: Colors.white,
-                          accentColor: Colors.grey[50],
-                        ),
-                        child: CustomExpansionTile(
-                          //key: PageStorageKey(this.widget.headerTitle),
-                          initiallyExpanded: false,
-                          title: Row(
-                            children: <Widget>[
-                              AutoSizeText(
-                                (field.isMandatory)
-                                    ? field.label + ' (mandatory)'
-                                    : field.label + ' (optional)',
-                                maxLines: 2,
-                                minFontSize: 11,
-                                maxFontSize: 14,
-                                style: TextStyle(color: Colors.white),
-                              ),
-                              SizedBox(width: 5),
-                            ],
-                          ),
-                          backgroundColor: Colors.blueGrey[500],
-
-                          children: <Widget>[
-                            new Container(
-                              padding: EdgeInsets.only(left: 7),
-                              width: MediaQuery.of(context).size.width * .94,
-                              //decoration: darkContainer,
-                              color: containerColor,
-                              //padding: EdgeInsets.all(2.0),
-                              child: Row(
-                                children: <Widget>[
-                                  Expanded(
-                                    child: Text(field.infoMessage,
-                                        style: buttonXSmlTextStyle),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
+            child:
+                Column(crossAxisAlignment: CrossAxisAlignment.start, children: <
+                    Widget>[
+              Column(children: <Widget>[
+                Container(
+                  //padding: EdgeInsets.only(left: 5),
+                  decoration: darkContainer,
+                  child: Theme(
+                    data: ThemeData(
+                      unselectedWidgetColor: Colors.white,
+                      accentColor: Colors.grey[50],
                     ),
-                    Container(
-                      padding: EdgeInsets.only(left: 5.0, right: 5),
-                      child: Column(
-                        children: [
-                          Container(
-                            //   margin: EdgeInsets.fromLTRB(10, 5, 10, 5),
-                            padding: EdgeInsets.all(10),
-                            child: TextFormField(
-                              obscureText: false,
-                              readOnly: true,
-                              maxLines: 1,
-                              minLines: 1,
-                              autovalidateMode: AutovalidateMode.always,
-                              validator: (value) {
-                                if (validateField &&
-                                    newDateField.isMandatory &&
-                                    Utils.isStrNullOrEmpty(value)) {
-                                  return "Field is empty";
-                                } else
-                                  return null;
-                              },
-                              style: textInputTextStyle,
-                              keyboardType: TextInputType.text,
-                              controller:
-                                  listOfFieldControllers[newDateField.label],
-                              decoration: CommonStyle.textFieldStyle(
-                                  labelTextStr: newDateField.label,
-                                  hintTextStr: newDateField.label),
-                              onTap: () {
-                                setState(() {
-                                  pickAnyYear(context, DateTime.now())
-                                      .then((value) {
-                                    if (value != null) {
-                                      print(value);
-
-                                      listOfFieldControllers[newDateField.label]
-                                          .text = value.year.toString();
-
-                                      setState(() {
-                                        newDateField.responseDateTime = value;
-                                      });
-                                    }
-                                  });
-                                  // pickDate(context).then((value) {
-                                  //   if (value != null) {
-                                  //     setState(() {
-                                  //       dateString = value.day.toString() +
-                                  //           " / " +
-                                  //           value.month.toString() +
-                                  //           " / " +
-                                  //           value.year.toString();
-                                  //       listOfFieldControllers[newDateField.label]
-                                  //           .text = dateString;
-                                  //     });
-                                  //     newDateField.responseDateTime = value;
-                                  //   }
-                                  // });
-                                });
-                              },
-                              maxLength: null,
-                              onChanged: (String value) {
-                                print(value);
-                              },
-                              onSaved: (String value) {
-                                print(value);
-                              },
-                            ),
+                    child: CustomExpansionTile(
+                      //key: PageStorageKey(this.widget.headerTitle),
+                      initiallyExpanded: false,
+                      title: Row(
+                        children: <Widget>[
+                          AutoSizeText(
+                            (field.isMandatory)
+                                ? field.label + ' (mandatory)'
+                                : field.label + ' (optional)',
+                            maxLines: 2,
+                            minFontSize: 11,
+                            maxFontSize: 14,
+                            style: TextStyle(color: Colors.white),
                           ),
+                          SizedBox(width: 5),
                         ],
                       ),
+                      backgroundColor: Colors.blueGrey[500],
+
+                      children: <Widget>[
+                        new Container(
+                          padding: EdgeInsets.only(left: 7),
+                          width: MediaQuery.of(context).size.width * .94,
+                          //decoration: darkContainer,
+                          color: containerColor,
+                          //padding: EdgeInsets.all(2.0),
+                          child: Row(
+                            children: <Widget>[
+                              Expanded(
+                                child: Text(field.infoMessage,
+                                    style: buttonXSmlTextStyle),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
                     ),
-                  ]),
-                ]),
+                  ),
+                ),
+                Container(
+                  padding: EdgeInsets.only(left: 5.0, right: 5),
+                  child: Column(
+                    children: [
+                      Container(
+                        //   margin: EdgeInsets.fromLTRB(10, 5, 10, 5),
+                        padding: EdgeInsets.all(10),
+                        child: TextFormField(
+                          obscureText: false,
+                          readOnly: true,
+                          maxLines: 1,
+                          minLines: 1,
+                          autovalidateMode: AutovalidateMode.always,
+                          validator: (value) {
+                            if (validateField &&
+                                newDateField.isMandatory &&
+                                Utils.isStrNullOrEmpty(value)) {
+                              return "Field is empty";
+                            } else
+                              return null;
+                          },
+                          style: textInputTextStyle,
+                          keyboardType: TextInputType.text,
+                          controller:
+                              listOfFieldControllers[newDateField.label],
+                          decoration: CommonStyle.textFieldStyle(
+                              labelTextStr: newDateField.label,
+                              hintTextStr: newDateField.label),
+                          onTap: () {
+                            if (newDateField.yearOnly) {
+                              setState(() {
+                                pickAnyYear(context, DateTime.now())
+                                    .then((value) {
+                                  if (value != null) {
+                                    print(value);
+
+                                    listOfFieldControllers[newDateField.label]
+                                        .text = value.year.toString();
+
+                                    setState(() {
+                                      newDateField.responseDateTime = value;
+                                    });
+                                  }
+                                });
+                              });
+                            } else {
+                              pickDate(context).then((value) {
+                                if (value != null) {
+                                  setState(() {
+                                    dateString = value.day.toString() +
+                                        " / " +
+                                        value.month.toString() +
+                                        " / " +
+                                        value.year.toString();
+                                    listOfFieldControllers[newDateField.label]
+                                        .text = dateString;
+                                  });
+                                  newDateField.responseDateTime = value;
+                                }
+                              });
+                            }
+                          },
+                          maxLength: null,
+                          onChanged: (String value) {
+                            print(value);
+                          },
+                          onSaved: (String value) {
+                            print(value);
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ]),
+            ]),
           );
         }
         break;
@@ -1380,7 +1386,15 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
                                     itemBuilder:
                                         (BuildContext context, int index) {
                                       return Container(
-                                        padding: EdgeInsets.only(bottom: 5),
+                                        margin:
+                                            EdgeInsets.symmetric(vertical: 3),
+                                        decoration: BoxDecoration(
+                                            border: Border.all(
+                                                color: containerColor),
+                                            color: Colors.grey[50],
+                                            shape: BoxShape.rectangle,
+                                            borderRadius: BorderRadius.all(
+                                                Radius.circular(5.0))),
                                         child: showImageList(
                                             context,
                                             optsAttsField
@@ -1785,33 +1799,44 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
 
     ///**Validation Ends */
 
-    //TODO SMITA - Check AGAIN if selected slot is stil available else prompt user to select another one.
+    Utils.showMyFlushbar(
+        context,
+        Icons.info,
+        Duration(
+          seconds: 5,
+        ),
+        "Processing your Request..",
+        '');
     if (Utils.isStrNullOrEmpty(validationErrMsg)) {
       _bookingFormKey.currentState.save();
       _gs
           .getApplicationService()
           .submitApplication(bookingApplication, widget.metaEntity)
-          .then((value) {
-        if (value) {
-          Utils.showMyFlushbar(
-              context,
-              Icons.check,
-              Duration(
-                seconds: 5,
-              ),
-              "Request submitted successfully!",
-              'We will contact you as soon as slot opens up. Stay Safe!',
-              successGreenSnackBar);
-          Future.delayed(Duration(seconds: 3)).then((value) {
-            Navigator.pushReplacement(context,
-                MaterialPageRoute(builder: (context) => SearchEntityPage()));
+          .then((token) {
+        if (token != null) {
+          final dtFormat = new DateFormat(dateDisplayFormat);
+          String _dateFormatted =
+              dtFormat.format(bookingApplication.preferredSlotTiming);
+          String time =
+              " ${Utils.formatTime(bookingApplication.preferredSlotTiming.hour.toString())} : ${Utils.formatTime(bookingApplication.preferredSlotTiming.minute.toString())}";
+          Future.delayed(Duration(seconds: 2)).then((value) {
+            showTokenAlert(context, token.getDisplayName(),
+                    widget.metaEntity.name, _dateFormatted, time)
+                .then((value) {
+              Navigator.pushReplacement(context,
+                  MaterialPageRoute(builder: (context) => SearchEntityPage()));
+            });
           });
         } else {
           //The application could not be submitted, Show appropriate msg to User.
-          print("Error in generating Slot for user");
 
-          Utils.showMyFlushbar(context, Icons.error, Duration(seconds: 5),
-              couldNotSubmitApplication, tryAgainToBook);
+          showMessageDialog(
+                  context,
+                  "Request submitted successfully!",
+                  'We will contact you as soon as slot opens up. Stay Safe!',
+                  'Ok')
+              .then((value) => Navigator.pushReplacement(context,
+                  MaterialPageRoute(builder: (context) => SearchEntityPage())));
         }
       }).catchError((error) {
         switch (error.runtimeType) {
