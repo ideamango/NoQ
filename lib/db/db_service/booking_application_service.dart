@@ -1,3 +1,5 @@
+import 'package:LESSs/db/exceptions/application_status_not_allowed.dart';
+import 'package:LESSs/db/exceptions/slot_time_null_cant_approve_application_exception.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:enum_to_string/enum_to_string.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -588,7 +590,9 @@ class BookingApplicationService {
     return isSuccess;
   }
 
-  //To be done by Manager of the Entity who has restricted rights
+  //To be called by Manager of the Entity who has restricted rights or by the Admin
+  //Throws: SlotTimeNotDefinedCantApproveException, ApplicationStatusNotAllowed, TokenAlreadyExistsException
+  //MaxTokenReachedByUserPerSlotException, SlotFullException, MaxTokenReachedByUserPerDayException,
   Future<bool> updateApplicationStatus(
       String applicationId,
       ApplicationStatus status,
@@ -601,12 +605,13 @@ class BookingApplicationService {
     //TODO Security: Application can be only accessed and Updated by Entity Manager/Admin
     if (status == ApplicationStatus.NEW ||
         status == ApplicationStatus.CANCELLED) {
-      throw new Exception("Invalid Application Status for Admin/Manager");
+      throw new ApplicationStatusNotAllowed(
+          "Invalid Application Status for Admin/Manager");
     }
 
     if (status == ApplicationStatus.APPROVED &&
         (metaEntity == null || tokenTime == null)) {
-      throw new Exception(
+      throw new SlotTimeNotDefinedCantApproveException(
           "Entity and Time are required for the Token generation on Approval");
     }
     //For testing
