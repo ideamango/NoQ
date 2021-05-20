@@ -1027,9 +1027,9 @@ class _ApplicationsListState extends State<ApplicationsList> {
                               showApplicationStatusDialog(
                                       context,
                                       "Complete Application",
-                                      'Do you want to mark this Application as Complete?',
+                                      'Are you sure you want to mark this Application as Completed?',
                                       completeDialogMsg,
-                                      'Complete')
+                                      'Completed')
                                   .then((remarks) {
                                 //Update application status change on server.
                                 if (Utils.isNotNullOrEmpty(remarks)) {
@@ -1089,8 +1089,8 @@ class _ApplicationsListState extends State<ApplicationsList> {
                                 ba.status != ApplicationStatus.CANCELLED) {
                               showApplicationStatusDialog(
                                       context,
-                                      "Approve Application",
-                                      'Do you want to mark this Application as Approved?',
+                                      "Confirm Approval",
+                                      'Do you want to proceed?',
                                       approveDialogMsg,
                                       'Approve')
                                   .then((remarks) {
@@ -1156,8 +1156,8 @@ class _ApplicationsListState extends State<ApplicationsList> {
                               ba.status != ApplicationStatus.CANCELLED) {
                             showApplicationStatusDialog(
                                     context,
-                                    "On-Hold Application",
-                                    'Do you want to mark this Application as On-Hold?',
+                                    "On-Hold Confirmation",
+                                    'Are you sure you want to put this application On-Hold?',
                                     onHoldDialogMsg,
                                     'On-Hold')
                                 .then((remarks) {
@@ -1223,8 +1223,8 @@ class _ApplicationsListState extends State<ApplicationsList> {
                               ba.status != ApplicationStatus.CANCELLED) {
                             showApplicationStatusDialog(
                                     context,
-                                    "Reject Application",
-                                    'Do you want to mark this Application as Rejected?',
+                                    "Confirm Rejection",
+                                    'Are you sure you want to Reject this Application?',
                                     rejectDialogMsg,
                                     'Reject')
                                 .then((remarks) {

@@ -336,7 +336,7 @@ class _BookingFormSelectionState extends State<BookingFormSelection> {
                                     context,
                                     Icons.error,
                                     Duration(seconds: 5),
-                                    "Please select purpose of request!!",
+                                    "Please select the Request Form to view it's details.",
                                     "");
                               } else {
                                 if (dashBoardRoute != null)
