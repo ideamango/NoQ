@@ -1,6 +1,3 @@
-import 'package:LESSs/db/exceptions/MaxTokenReachedByUserPerDayException.dart';
-import 'package:LESSs/db/exceptions/MaxTokenReachedByUserPerSlotException.dart';
-import 'package:LESSs/db/exceptions/token_already_exists_exception.dart';
 import 'package:LESSs/pages/token_alert.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -12,14 +9,14 @@ import '../constants.dart';
 import '../db/db_model/booking_application.dart';
 import '../db/db_model/booking_form.dart';
 import '../db/db_model/meta_entity.dart';
-import '../db/exceptions/slot_full_exception.dart';
+
 import '../enum/application_status.dart';
 import '../enum/field_type.dart';
 import '../global_state.dart';
 import '../pages/covid_token_booking_form.dart';
-import '../pages/overview_page.dart';
+
 import '../pages/show_application_details.dart';
-import '../pages/show_slots_page.dart';
+
 import '../services/circular_progress.dart';
 import '../style.dart';
 import '../userHomePage.dart';
@@ -149,7 +146,7 @@ class _ApplicationsListState extends State<ApplicationsList> {
     FormInputFieldText notesInput;
     FormInputFieldText addressPin;
 
-    fields = List<Field>();
+    fields = [];
     idProofTypesStrList.add(Value('Passport'));
     idProofTypesStrList.add(Value('Driving License'));
     idProofTypesStrList.add(Value('Aadhar'));
@@ -203,8 +200,8 @@ class _ApplicationsListState extends State<ApplicationsList> {
 
     idProofField = FormInputFieldOptionsWithAttachments("Photo ID Proof", true,
         "Please upload Government Id proof", idProofTypesStrList, false);
-    idProofField.responseFilePaths = List<String>();
-    idProofField.responseValues = new List<Value>();
+    idProofField.responseFilePaths = [];
+    idProofField.responseValues = [];
     idProofField.responseValues.add(Value("DL"));
     idProofField.options.add(Value("DL"));
     idProofField.responseFilePaths.add(
@@ -220,8 +217,8 @@ class _ApplicationsListState extends State<ApplicationsList> {
         "Please upload supporting documents",
         [Value("MP"), Value("MLA"), Value("DOCTOR"), Value("NURSE")],
         false);
-    flWorkerField.responseFilePaths = List<String>();
-    flWorkerField.responseValues = new List<Value>();
+    flWorkerField.responseFilePaths = [];
+    flWorkerField.responseValues = [];
     flWorkerField.responseValues.add(Value("MP"));
     flWorkerField.responseFilePaths.add(
         "https://firebasestorage.googleapis.com/v0/b/sukoon-india.appspot.com/o/fe3de7b0-567e-11eb-ae5b-5772ee4a0592%23fe3c12f0-567e-11eb-a11e-7f5c09f04575%23O72Pv6XakoRlxNKYbZLruYaMlwi1%23scaled_323f121e-f284-4d7f-8d58-95c81a3d6f2d5266208110146393983.jpg?alt=media&token=3415fa17-fc43-42fe-8e97-55cffea2f368");
@@ -240,8 +237,8 @@ class _ApplicationsListState extends State<ApplicationsList> {
         medConditionsStrList,
         true);
     healthDetailsInput.isMeta = true;
-    healthDetailsInput.responseFilePaths = List<String>();
-    healthDetailsInput.responseValues = new List<Value>();
+    healthDetailsInput.responseFilePaths = [];
+    healthDetailsInput.responseValues = [];
     healthDetailsInput.responseValues.add(Value("Heart Conditions"));
     healthDetailsInput.responseValues
         .add(Value("Other Cardiovascular and Cerebrovascular Diseases"));
@@ -356,7 +353,7 @@ class _ApplicationsListState extends State<ApplicationsList> {
     bookingApplication4.status = ApplicationStatus.INPROCESS;
     bookingApplication4.responseForm = bookingForm;
 
-    List<BookingApplication> list = new List<BookingApplication>();
+    List<BookingApplication> list = [];
     list.add(bookingApplication1);
     list.add(bookingApplication2);
     list.add(bookingApplication3);
