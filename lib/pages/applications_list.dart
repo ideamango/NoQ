@@ -1,3 +1,4 @@
+import 'package:LESSs/db/db_model/user_token.dart';
 import 'package:LESSs/db/exceptions/MaxTokenReachedByUserPerDayException.dart';
 import 'package:LESSs/db/exceptions/MaxTokenReachedByUserPerSlotException.dart';
 import 'package:LESSs/db/exceptions/token_already_exists_exception.dart';
@@ -57,13 +58,21 @@ class _ApplicationsListState extends State<ApplicationsList> {
   List<Tuple<BookingApplication, QueryDocumentSnapshot>> listOfBa;
   Map<String, TextEditingController> listOfControllers =
       new Map<String, TextEditingController>();
-
+  TokenCounter tokenCounterForEntity;
   @override
   void initState() {
     super.initState();
     getGlobalState().whenComplete(() {
       //******gettinmg dummy data -remove this afterwards */
       //  getListOfData();
+
+      _gs
+          .getTokenService()
+          .getTokenCounterForEntity(
+              widget.metaEntity.entityId, DateTime.now().year.toString())
+          .then((tokenCounter) {
+        tokenCounterForEntity = tokenCounter;
+      });
 
       _gs
           .getApplicationService()
@@ -82,7 +91,8 @@ class _ApplicationsListState extends State<ApplicationsList> {
               20)
           .then((value) {
         listOfBa = value;
-        lastDocOfPage = listOfBa.last.item2;
+        lastDocOfPage =
+            Utils.isNullOrEmpty(listOfBa) ? null : listOfBa.last.item2;
         if (this.mounted) {
           setState(() {
             initCompleted = true;
@@ -371,7 +381,8 @@ class _ApplicationsListState extends State<ApplicationsList> {
         height: MediaQuery.of(context).size.height * .8,
         alignment: Alignment.center,
         child: Text(
-            "No ${EnumToString.convertToString(widget.status).toLowerCase()} Requests!"),
+            "No ${EnumToString.convertToString(widget.status)} Requests!",
+            style: TextStyle(fontSize: 18)),
       ),
     );
   }
@@ -948,6 +959,7 @@ class _ApplicationsListState extends State<ApplicationsList> {
                                             metaEntity: widget.metaEntity,
                                             dateTime: ba.preferredSlotTiming,
                                             forPage: "ApplicationList",
+                                            tokenCounter: tokenCounterForEntity,
                                           )));
 
                               print(result);

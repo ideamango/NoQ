@@ -1,3 +1,4 @@
+import 'package:LESSs/db/db_model/user_token.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:another_flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
@@ -22,12 +23,14 @@ class SlotSelectionPage extends StatefulWidget {
   final MetaEntity metaEntity;
   final DateTime dateTime;
   final String forPage;
+  final TokenCounter tokenCounter;
 
   SlotSelectionPage(
       {Key key,
       @required this.metaEntity,
       @required this.dateTime,
-      @required this.forPage})
+      @required this.forPage,
+      @required this.tokenCounter})
       : super(key: key);
 
   @override
@@ -60,13 +63,17 @@ class _SlotSelectionPageState extends State<SlotSelectionPage> {
   Entity parentEntity;
   DateTime currDateTime = DateTime.now();
   DateTime slotSelectionDate;
+  Map<String, int> _tokensMap = new Map<String, int>();
+  int maxAllowed;
 
   @override
   void initState() {
+    super.initState();
     entity = widget.metaEntity;
     _date = widget.dateTime;
     _storeId = entity.entityId;
     _storeName = entity.name;
+    maxAllowed = widget.metaEntity.maxAllowed;
     if (_date != null) {
       // Check if preferred date is later than today,
       //if not show as already expired date and show todays time-slots
@@ -79,12 +86,12 @@ class _SlotSelectionPageState extends State<SlotSelectionPage> {
         slotSelectionDate = currDateTime;
       }
     }
-
-    super.initState();
     if (entity.parentId != null) {
       getEntityDetails(entity.parentId).then((value) => parentEntity = value);
     }
-    getGlobalState().whenComplete(() => _loadSlots(_date));
+    getGlobalState().whenComplete(() {
+      _loadSlots(_date).then((value) => numberOfBookingsInSlot(_date));
+    });
   }
 
   Future<void> _loadSlots(DateTime datetime) async {
@@ -119,6 +126,22 @@ class _SlotSelectionPageState extends State<SlotSelectionPage> {
                 'Oops, something went wrong. Check your internet connection and try again.';
           });
           break;
+      }
+    });
+  }
+
+  void numberOfBookingsInSlot(DateTime time) {
+    getSlotsListForEntity(widget.metaEntity, time).then((value) {
+      List<Slot> list = value;
+      for (int i = 0; i <= list.length - 1; i++) {
+        String slotId = list[i].slotId.split('#')[1];
+        if (widget.tokenCounter != null) {
+          TokenStats slotStats = widget.tokenCounter.slotWiseStats[slotId];
+          int numberOfBookingsLeft = widget.metaEntity.maxAllowed -
+              (slotStats.numberOfTokensCreated -
+                  slotStats.numberOfTokensCancelled);
+          _tokensMap[list[i].slotId] = numberOfBookingsLeft;
+        }
       }
     });
   }
@@ -765,8 +788,9 @@ class _SlotSelectionPageState extends State<SlotSelectionPage> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               AutoSizeText(
-                  (sl.totalBooked -
-                          (sl.totalCancelled != null ? sl.totalCancelled : 0))
+                  (_tokensMap.containsKey([sl.slotId])
+                          ? _tokensMap[sl.slotId]
+                          : maxAllowed)
                       .toString(),
                   minFontSize: 9,
                   maxFontSize: 11,
@@ -775,7 +799,7 @@ class _SlotSelectionPageState extends State<SlotSelectionPage> {
                     fontFamily: 'Roboto',
                     letterSpacing: 0.5,
                   )),
-              AutoSizeText(' booked',
+              AutoSizeText(' left',
                   minFontSize: 8,
                   maxFontSize: 10,
                   style: TextStyle(
