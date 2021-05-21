@@ -263,11 +263,11 @@ class TokenService {
       if (entitySlotsSnapshot.exists) {
         DocumentSnapshot tokenSnapshot = await tx.get(tokRef);
         tokens = UserTokens.fromJson(tokenSnapshot.data());
-        if (tokenSnapshot.exists && metaEntity.maxTokensPerSlotByUser == 1) {
-          if (tokens.tokens[0].number != -1)
-            throw new TokenAlreadyExistsException(
-                "Token for this user is already booked");
-        }
+        // if (tokenSnapshot.exists && metaEntity.maxTokensPerSlotByUser == 1) {
+        //   if (tokens.tokens[0].number != -1)
+        //     throw new TokenAlreadyExistsException(
+        //         "Token for this user is already booked");
+        // }
 
         if (tokenSnapshot.exists &&
             metaEntity.maxTokensPerSlotByUser <= tokens.tokens.length) {

@@ -221,13 +221,17 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
               body: Padding(
                 padding: const EdgeInsets.fromLTRB(6, 6, 6, 6),
                 child: Container(
-                  decoration: BoxDecoration(
-                      border: Border.all(color: borderColor),
-                      color: Colors.white,
-                      shape: BoxShape.rectangle,
-                      borderRadius: BorderRadius.all(Radius.circular(5.0))),
+                  // decoration: BoxDecoration(
+                  //     border: Border.all(color: borderColor),
+                  //     color: Colors.white,
+                  //     shape: BoxShape.rectangle,
+                  //     borderRadius: BorderRadius.all(Radius.circular(5.0))),
                   child: Column(
                     children: <Widget>[
+                      Container(
+                          height: MediaQuery.of(context).size.height * .17,
+                          padding: EdgeInsets.all(4),
+                          child: Text('Details about Entity goes here.')),
                       Container(
                         height: MediaQuery.of(context).size.width * .11,
                         padding: EdgeInsets.fromLTRB(6, 0, 0, 0),

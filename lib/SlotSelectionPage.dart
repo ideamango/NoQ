@@ -133,14 +133,19 @@ class _SlotSelectionPageState extends State<SlotSelectionPage> {
   void numberOfBookingsInSlot(DateTime time) {
     getSlotsListForEntity(widget.metaEntity, time).then((value) {
       List<Slot> list = value;
-      for (int i = 0; i <= list.length - 1; i++) {
-        String slotId = list[i].slotId.split('#')[1];
-        if (widget.tokenCounter != null) {
-          TokenStats slotStats = widget.tokenCounter.slotWiseStats[slotId];
-          int numberOfBookingsLeft = widget.metaEntity.maxAllowed -
-              (slotStats.numberOfTokensCreated -
-                  slotStats.numberOfTokensCancelled);
-          _tokensMap[list[i].slotId] = numberOfBookingsLeft;
+      if (widget.tokenCounter != null) {
+        for (int i = 0; i <= list.length - 1; i++) {
+          List<String> slotIdVals = Utils.isNotNullOrEmpty(list[i].slotId)
+              ? list[i].slotId.split('#')
+              : null;
+          if (!Utils.isNullOrEmpty(slotIdVals)) {
+            String slotId = slotIdVals[1] + '#' + slotIdVals[2];
+            TokenStats slotStats = widget.tokenCounter.slotWiseStats[slotId];
+            int numberOfBookingsLeft = widget.metaEntity.maxAllowed -
+                (slotStats.numberOfTokensCreated -
+                    slotStats.numberOfTokensCancelled);
+            _tokensMap[list[i].slotId] = numberOfBookingsLeft;
+          }
         }
       }
     });
@@ -699,7 +704,7 @@ class _SlotSelectionPageState extends State<SlotSelectionPage> {
     return Column(
       children: <Widget>[
         Container(
-          child: RaisedButton(
+          child: MaterialButton(
             elevation: (isDisabled(sl.dateTime))
                 ? 0
                 : ((isSelected(sl.dateTime) == true) ? 0.0 : 10.0),
@@ -710,22 +715,18 @@ class _SlotSelectionPageState extends State<SlotSelectionPage> {
                 fontSize: 12,
                 color: isDisabled(sl.dateTime)
                     ? Colors.grey[500]
-                    : (isBookedFlg ? Colors.white : primaryDarkColor),
-                // textDirection: TextDirection.ltr,
-                // textAlign: TextAlign.center,
+                    : primaryDarkColor,
               ),
             ),
 
             autofocus: false,
             color: (isDisabled(sl.dateTime))
                 ? disabledColor
-                : ((isBookedFlg)
-                    ? Colors.greenAccent[700]
-                    : ((sl.isFull != true && isSelected(sl.dateTime) == true)
-                        ? highlightColor
-                        : (sl.isFull == false)
-                            ? Colors.cyan[50]
-                            : btnDisabledolor)),
+                : ((sl.isFull != true && isSelected(sl.dateTime) == true)
+                    ? highlightColor
+                    : (sl.isFull == false)
+                        ? Colors.cyan[50]
+                        : btnDisabledolor),
 
             disabledColor: Colors.grey[200],
             //textTheme: ButtonTextTheme.normal,
@@ -788,7 +789,7 @@ class _SlotSelectionPageState extends State<SlotSelectionPage> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               AutoSizeText(
-                  (_tokensMap.containsKey([sl.slotId])
+                  (_tokensMap.containsKey(sl.slotId)
                           ? _tokensMap[sl.slotId]
                           : maxAllowed)
                       .toString(),
@@ -924,9 +925,9 @@ class _SlotSelectionPageState extends State<SlotSelectionPage> {
     )..show(context);
   }
 
-  void _returnValues(String value) async {
-    //Load details from local files
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setString('tokenNum', value);
-  }
+  // void _returnValues(String value) async {
+  //   //Load details from local files
+  //   SharedPreferences prefs = await SharedPreferences.getInstance();
+  //   prefs.setString('tokenNum', value);
+  // }
 }
