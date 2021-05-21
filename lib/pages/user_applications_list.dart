@@ -2,6 +2,7 @@ import 'package:LESSs/constants.dart';
 import 'package:LESSs/db/db_model/user_token.dart';
 import 'package:LESSs/events/event_bus.dart';
 import 'package:LESSs/events/events.dart';
+import 'package:LESSs/pages/token_alert.dart';
 import 'package:LESSs/services/circular_progress.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:enum_to_string/enum_to_string.dart';
@@ -36,9 +37,6 @@ class _UserApplicationsListState extends State<UserApplicationsList> {
   bool initCompleted = false;
   GlobalState _gs;
 
-  //List<BookingApplication> listOfBa;
-  Map<String, TextEditingController> listOfControllers =
-      new Map<String, TextEditingController>();
   List<UserToken> tokens;
   String entityName;
   DateTime bookingTime;
@@ -1139,7 +1137,6 @@ class _UserApplicationsListState extends State<UserApplicationsList> {
         case FieldType.TEXT:
           {
             FormInputFieldText newfield = field;
-            //TODO Smita - Add case if field is isEmail
             fieldWidget = Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -1162,7 +1159,9 @@ class _UserApplicationsListState extends State<UserApplicationsList> {
                   width: MediaQuery.of(context).size.width * .8,
                   //height: cardHeight * .1,
                   child: AutoSizeText(
-                    newfield.response,
+                    Utils.isStrNullOrEmpty(newfield.response)
+                        ? 'No Data'
+                        : newfield.response,
                     group: responseGroup,
                     minFontSize: 12,
                     maxFontSize: 14,
@@ -1870,59 +1869,26 @@ class _UserApplicationsListState extends State<UserApplicationsList> {
                 widget.ba.status != ApplicationStatus.REJECTED &&
                 widget.ba.status != ApplicationStatus.COMPLETED)
               Container(
-                  margin: EdgeInsets.zero,
-                  padding: EdgeInsets.fromLTRB(8, 0, 0, 0),
-                  width: cardWidth * .9,
-                  height: cardHeight * .2,
-                  child: TextFormField(
-                    controller: listOfControllers[ba.id],
-                    readOnly: (ba.status == ApplicationStatus.COMPLETED ||
-                            ba.status == ApplicationStatus.CANCELLED)
-                        ? true
-                        : false,
-                    style: TextStyle(
-                        fontSize: 15,
-                        color: Colors.black,
-                        fontFamily: 'Roboto'),
-                    decoration: InputDecoration(
-                      labelText: 'Reason for Cancellation',
-                      enabledBorder: UnderlineInputBorder(
-                          borderSide: BorderSide(color: Colors.grey)),
-                      focusedBorder: UnderlineInputBorder(
-                          borderSide: BorderSide(color: Colors.orange)),
-                    ),
-                    maxLines: 1,
-                    keyboardType: TextInputType.text,
-                  )),
-            if (widget.ba.status != ApplicationStatus.CANCELLED &&
-                widget.ba.status != ApplicationStatus.REJECTED &&
-                widget.ba.status != ApplicationStatus.COMPLETED)
-              Container(
                 // width: MediaQuery.of(context).size.width * .8,
                 margin: EdgeInsets.all(9),
                 child: MaterialButton(
                     elevation: 8,
                     color: Colors.yellow[800],
                     onPressed: () {
-                      cancelBooking(context).then((value) {
-                        if (value) {
-                          Utils.showMyFlushbar(
+                      showApplicationStatusDialog(
                               context,
-                              Icons.info_outline,
-                              Duration(
-                                seconds: 3,
-                              ),
-                              "Cancelling the Application.. ",
-                              "This would take a moment");
+                              "Cancel Application",
+                              'Do you want to Cancel this Application?',
+                              cancelDialogMsg,
+                              'Cancel Application')
+                          .then((remarks) {
+                        //Update application status change on server.
+                        if (Utils.isNotNullOrEmpty(remarks)) {
                           _gs
                               .getApplicationService()
-                              .withDrawApplication(
-                                  widget.ba.id, listOfControllers[ba.id].text)
+                              .withDrawApplication(widget.ba.id, remarks)
                               .then((value) {
-                            widget.ba.notesOnCancellation =
-                                listOfControllers[ba.id].text;
-                            EventBus.fireEvent(
-                                TOKEN_STATUS_UPDATED, null, widget.ba.tokenId);
+                            widget.ba.notesOnCancellation = remarks;
                             setState(() {
                               widget.ba.status = ApplicationStatus.CANCELLED;
                             });
@@ -1934,8 +1900,6 @@ class _UserApplicationsListState extends State<UserApplicationsList> {
                                 "Application Cancelled!!",
                                 "",
                                 successGreenSnackBar);
-                          }).onError((error, stackTrace) {
-                            print("on error");
                           });
                         }
                       });
@@ -1944,7 +1908,7 @@ class _UserApplicationsListState extends State<UserApplicationsList> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Text(
-                            "Cancel",
+                            "Cancel Application",
                             style: TextStyle(
                               fontSize: 15,
                               color: Colors.white,
