@@ -1686,7 +1686,8 @@ class DBTest {
         upiPhoneNumber: "+919611009823",
         phone: "+918328592031",
         upiId: "+919611009823",
-        whatsapp: "+918328592031");
+        whatsapp: "+918328592031",
+        enableVideoChat: true);
 
     try {
       entity.regNum = "testReg111";

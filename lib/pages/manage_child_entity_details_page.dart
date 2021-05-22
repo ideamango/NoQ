@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import 'package:LESSs/enum/entity_role.dart';
+import 'package:LESSs/tuple.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:another_flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
@@ -47,10 +48,10 @@ import 'package:geolocator/geolocator.dart';
 import 'package:eventify/eventify.dart' as Eventify;
 
 class ManageChildEntityDetailsPage extends StatefulWidget {
-  final Entity childEntity;
+  final MetaEntity childMetaEntity;
   final bool isManager;
   ManageChildEntityDetailsPage(
-      {Key key, @required this.childEntity, @required this.isManager})
+      {Key key, @required this.childMetaEntity, @required this.isManager})
       : super(key: key);
   @override
   _ManageChildEntityDetailsPageState createState() =>
@@ -84,6 +85,11 @@ class _ManageChildEntityDetailsPageState
       new GlobalKey<FormFieldState>();
   final GlobalKey<FormFieldState> maxTokenUserKey =
       new GlobalKey<FormFieldState>();
+  final GlobalKey<FormFieldState> maxTokenUserInSlotKey =
+      new GlobalKey<FormFieldState>();
+  final GlobalKey<FormFieldState> maxPeoplePerTokenKey =
+      new GlobalKey<FormFieldState>();
+
   final GlobalKey<FormFieldState> advDaysKey = new GlobalKey<FormFieldState>();
   final GlobalKey<FormFieldState> latKey = new GlobalKey<FormFieldState>();
   final GlobalKey<FormFieldState> lonKey = new GlobalKey<FormFieldState>();
@@ -103,7 +109,7 @@ class _ManageChildEntityDetailsPageState
   bool _publicExpandClick = false;
   bool _activeExpandClick = false;
   bool _bookExpandClick = false;
-  final String title = "Managers Form";
+  String title = "Managers Form";
 
   String dateString = "Start Date";
   Offer insertOffer = new Offer();
@@ -122,6 +128,10 @@ class _ManageChildEntityDetailsPageState
   TextEditingController _maxPeopleController = TextEditingController();
   TextEditingController _maxBookingsInDayForUserController =
       TextEditingController();
+  TextEditingController _maxBookingsInTimeSlotForUserController =
+      TextEditingController();
+  TextEditingController _maxPeoplePerTokenController = TextEditingController();
+
   TextEditingController _slotDurationController = TextEditingController();
 
   TextEditingController _whatsappPhoneController = TextEditingController();
@@ -206,9 +216,10 @@ class _ManageChildEntityDetailsPageState
   void initState() {
     print("CHILD INIT");
     super.initState();
-    serviceEntity = widget.childEntity;
+
     getGlobalState().whenComplete(() {
       initializeEntity().whenComplete(() {
+        title = Utils.getEntityTypeDisplayName(serviceEntity.type);
         setState(() {
           _initCompleted = true;
         });
@@ -230,6 +241,11 @@ class _ManageChildEntityDetailsPageState
 
   initializeEntity() async {
     // serviceEntity = await getEntity(_metaEntity.entityId);
+
+    Tuple<Entity, bool> entityTuple =
+        await _gs.getEntity(widget.childMetaEntity.entityId);
+    serviceEntity = entityTuple.item1;
+
     if (serviceEntity != null) {
       isPublic = (serviceEntity.isPublic) ?? false;
       isBookable = (serviceEntity.isBookable) ?? false;
@@ -306,15 +322,26 @@ class _ManageChildEntityDetailsPageState
       _advBookingInDaysController.text = (serviceEntity.advanceDays != null)
           ? serviceEntity.advanceDays.toString()
           : "";
-
+//Max People
       _maxPeopleController.text = (serviceEntity.maxAllowed != null)
           ? serviceEntity.maxAllowed.toString()
           : "";
-
+//Max bookings by User in a Day
       _maxBookingsInDayForUserController.text =
+          (serviceEntity.maxTokensByUserInDay != null)
+              ? serviceEntity.maxTokensByUserInDay.toString()
+              : "";
+//Max Bookings in a slot by User
+      _maxBookingsInTimeSlotForUserController.text =
+          (serviceEntity.maxTokensPerSlotByUser != null)
+              ? serviceEntity.maxTokensPerSlotByUser.toString()
+              : "";
+//Max People in a token by User
+      _maxPeoplePerTokenController.text =
           (serviceEntity.maxPeoplePerToken != null)
               ? serviceEntity.maxPeoplePerToken.toString()
               : "";
+
       _whatsappPhoneController.text =
           Utils.isNotNullOrEmpty(serviceEntity.whatsapp)
               ? serviceEntity.whatsapp.toString().substring(3)
@@ -373,22 +400,6 @@ class _ManageChildEntityDetailsPageState
         _pinController.text = serviceEntity.address.zipcode;
       } else
         serviceEntity.address = new Address();
-
-      AppUser currUser = _gs.getCurrentUser();
-
-      EntityPrivate entityPrivateList;
-      entityPrivateList = await fetchAdmins(serviceEntity.entityId);
-      if (entityPrivateList != null) {
-        _regNumController.text = entityPrivateList.registrationNumber;
-      }
-    } else {
-      //TODO:do nothing as this metaEntity is just created and will saved in DB only on save
-      Map<String, dynamic> entityJSON = <String, dynamic>{
-        'type': serviceEntity.type,
-        'entityId': serviceEntity.entityId
-      };
-      serviceEntity = Entity.fromJson(entityJSON);
-
       Location lc = _gs.getLocation();
       Address defaultAdrs = new Address();
       if (lc != null) {
@@ -403,6 +414,14 @@ class _ManageChildEntityDetailsPageState
       _stateController.text = serviceEntity.address.state;
       _countryController.text = serviceEntity.address.country;
       _pinController.text = serviceEntity.address.zipcode;
+
+      AppUser currUser = _gs.getCurrentUser();
+
+      EntityPrivate entityPrivateList;
+      entityPrivateList = await fetchAdmins(serviceEntity.entityId);
+      if (entityPrivateList != null) {
+        _regNumController.text = entityPrivateList.registrationNumber;
+      }
     }
   }
 
@@ -699,6 +718,13 @@ class _ManageChildEntityDetailsPageState
       if (maxTokenUserKey.currentState != null) {
         error = (maxTokenUserKey.currentState.validate());
       }
+      if (maxTokenUserInSlotKey.currentState != null) {
+        error = (maxTokenUserInSlotKey.currentState.validate());
+      }
+      if (maxPeoplePerTokenKey.currentState != null) {
+        error = (maxPeoplePerTokenKey.currentState.validate());
+      }
+
       if (latKey.currentState != null) {
         error = (latKey.currentState.validate());
       }
@@ -1258,7 +1284,67 @@ class _ManageChildEntityDetailsPageState
         serviceEntity.maxTokensByUserInDay = int.tryParse(value);
       },
     );
+    final maxTokenPerSlotInDay = TextFormField(
+      key: maxTokenUserInSlotKey,
+      obscureText: false,
+      maxLines: 1,
+      minLines: 1,
+      autovalidateMode: AutovalidateMode.always,
+      enabled: widget.isManager ? false : true,
+      style: textInputTextStyle,
+      keyboardType: TextInputType.number,
+      controller: _maxBookingsInTimeSlotForUserController,
+      decoration: InputDecoration(
+        labelText: 'Max. bookings allowed for a user in a Time-Slot',
+        enabledBorder:
+            UnderlineInputBorder(borderSide: BorderSide(color: Colors.grey)),
+        focusedBorder:
+            UnderlineInputBorder(borderSide: BorderSide(color: Colors.orange)),
+      ),
+      validator: (value) {
+        if (isBookable) {
+          return validateText(value);
+        }
+        return null;
+      },
+      onChanged: (value) {
+        serviceEntity.maxTokensPerSlotByUser = int.tryParse(value);
+      },
+      onSaved: (String value) {
+        serviceEntity.maxTokensPerSlotByUser = int.tryParse(value);
+      },
+    );
 
+    final maxPeopleInAToken = TextFormField(
+      key: maxPeoplePerTokenKey,
+      obscureText: false,
+      maxLines: 1,
+      minLines: 1,
+      autovalidateMode: AutovalidateMode.always,
+      enabled: widget.isManager ? false : true,
+      style: textInputTextStyle,
+      keyboardType: TextInputType.number,
+      controller: _maxPeoplePerTokenController,
+      decoration: InputDecoration(
+        labelText: 'Max. people allowed with a user per Token',
+        enabledBorder:
+            UnderlineInputBorder(borderSide: BorderSide(color: Colors.grey)),
+        focusedBorder:
+            UnderlineInputBorder(borderSide: BorderSide(color: Colors.orange)),
+      ),
+      validator: (value) {
+        if (isBookable) {
+          return validateText(value);
+        }
+        return null;
+      },
+      onChanged: (value) {
+        serviceEntity.maxPeoplePerToken = int.tryParse(value);
+      },
+      onSaved: (String value) {
+        serviceEntity.maxPeoplePerToken = int.tryParse(value);
+      },
+    );
     final whatsappPhone = TextFormField(
       obscureText: false,
       key: whatsappPhnKey,
@@ -2013,9 +2099,7 @@ class _ManageChildEntityDetailsPageState
       return new Timer(duration, saveRoute);
     }
 
-    String title = Utils.getEntityTypeDisplayName(serviceEntity.type);
-
-    String _msg;
+    String msg;
     Flushbar flush;
     //bool _wasButtonClicked;
     backRoute() {
@@ -2387,6 +2471,8 @@ class _ManageChildEntityDetailsPageState
                                         advBookingInDays,
                                         maxpeopleInASlot,
                                         maxTokenPerDay,
+                                        maxTokenPerSlotInDay,
+                                        maxPeopleInAToken,
                                         whatsappPhone,
                                         callingPhone,
                                         emailId

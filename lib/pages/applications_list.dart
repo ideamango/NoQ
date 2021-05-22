@@ -1,3 +1,4 @@
+import 'package:LESSs/db/db_model/user_token.dart';
 import 'package:LESSs/pages/token_alert.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -54,13 +55,23 @@ class _ApplicationsListState extends State<ApplicationsList> {
   List<Tuple<BookingApplication, QueryDocumentSnapshot>> listOfBa;
   Map<String, TextEditingController> listOfControllers =
       new Map<String, TextEditingController>();
+  TokenCounter tokenCounterForEntity;
 
+  Map<String, DateTime> applicationNewSlotMap = Map<String, DateTime>();
   @override
   void initState() {
     super.initState();
     getGlobalState().whenComplete(() {
       //******gettinmg dummy data -remove this afterwards */
       //  getListOfData();
+
+      _gs
+          .getTokenService()
+          .getTokenCounterForEntity(
+              widget.metaEntity.entityId, DateTime.now().year.toString())
+          .then((tokenCounter) {
+        tokenCounterForEntity = tokenCounter;
+      });
 
       _gs
           .getApplicationService()
@@ -79,7 +90,8 @@ class _ApplicationsListState extends State<ApplicationsList> {
               20)
           .then((value) {
         listOfBa = value;
-        lastDocOfPage = listOfBa.last.item2;
+        lastDocOfPage =
+            Utils.isNullOrEmpty(listOfBa) ? null : listOfBa.last.item2;
         if (this.mounted) {
           setState(() {
             initCompleted = true;
@@ -362,13 +374,36 @@ class _ApplicationsListState extends State<ApplicationsList> {
     return list;
   }
 
+  bool isAvailable(DateTime date) {
+    String slotIdForDate = DateFormat('yyyy~M~d').format(date).toString() +
+        '#' +
+        date.hour.toString() +
+        '~' +
+        date.minute.toString();
+    print(slotIdForDate);
+    if (tokenCounterForEntity != null) {
+      if (tokenCounterForEntity.slotWiseStats.containsKey(slotIdForDate)) {
+        if ((tokenCounterForEntity
+                    .slotWiseStats[slotIdForDate].numberOfTokensCreated -
+                tokenCounterForEntity
+                    .slotWiseStats[slotIdForDate].numberOfTokensCancelled) <
+            widget.metaEntity.maxAllowed) {
+          return true;
+        } else
+          return false;
+      }
+    }
+    return true;
+  }
+
   Widget _emptyPage() {
     return Center(
       child: Container(
         height: MediaQuery.of(context).size.height * .8,
         alignment: Alignment.center,
         child: Text(
-            "No ${EnumToString.convertToString(widget.status).toLowerCase()} Requests!"),
+            "No ${EnumToString.convertToString(widget.status)} Requests!",
+            style: TextStyle(fontSize: 18)),
       ),
     );
   }
@@ -738,6 +773,7 @@ class _ApplicationsListState extends State<ApplicationsList> {
   }
 
   Widget _buildItem(BookingApplication ba) {
+    DateTime newSlot;
     List<Field> listOfMeta = new List<Field>();
     // if (!listOfControllers.containsKey(ba.id)) {
     //   listOfControllers[ba.id] = new TextEditingController();
@@ -762,62 +798,73 @@ class _ApplicationsListState extends State<ApplicationsList> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
-            Padding(
-              padding: const EdgeInsets.fromLTRB(8, 10, 8, 4),
-              child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    GestureDetector(
-                      onTap: () {
-                        Navigator.of(context).push(
-                            PageAnimation.createRoute(ShowApplicationDetails(
-                          bookingApplication: ba,
-                        )));
-                      },
-                      child: Container(
-                        child: Text("View details..",
-                            style: TextStyle(color: Colors.blue, fontSize: 12)),
+            Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+              Container(
+                  padding: EdgeInsets.fromLTRB(10, 5, 10, 5),
+                  margin: EdgeInsets.zero,
+                  child: Row(
+                    children: [
+                      AutoSizeText(
+                        "Submission Date - ",
+                        group: labelGroup,
+                        minFontSize: 9,
+                        maxFontSize: 11,
+                        maxLines: 1,
+                        overflow: TextOverflow.clip,
+                        style: TextStyle(
+                            color: Colors.black, fontFamily: 'RalewayRegular'),
                       ),
-                    ),
-                    Container(
-                      padding: EdgeInsets.all(2),
-                      margin: EdgeInsets.all(0),
-                      decoration: BoxDecoration(
-                          color: (ba.status == ApplicationStatus.NEW)
-                              ? Colors.blue
-                              : (ba.status == ApplicationStatus.ONHOLD
-                                  ? Colors.yellow[700]
-                                  : (ba.status == ApplicationStatus.REJECTED
-                                      ? Colors.red
-                                      : (ba.status == ApplicationStatus.APPROVED
-                                          ? Colors.green[400]
-                                          : (ba.status ==
-                                                  ApplicationStatus.COMPLETED
-                                              ? Colors.purple
-                                              : Colors.blueGrey)))),
-                          shape: BoxShape.rectangle,
-                          borderRadius: BorderRadius.all(Radius.circular(5.0))),
-                      child: SizedBox(
-                        width: cardWidth * .2,
-                        height: cardHeight * .11,
-                        child: Center(
-                          child: AutoSizeText(
-                              EnumToString.convertToString(ba.status),
-                              textAlign: TextAlign.center,
-                              minFontSize: 7,
-                              maxFontSize: 9,
-                              style: TextStyle(
-                                  fontSize: 9,
-                                  fontWeight: FontWeight.bold,
-                                  letterSpacing: 1,
-                                  color: Colors.white,
-                                  fontFamily: 'RalewayRegular')),
-                        ),
+                      AutoSizeText(
+                        DateFormat('yyyy-MM-dd – kk:mm')
+                            .format(ba.timeOfSubmission),
+                        group: responseGroup,
+                        minFontSize: 12,
+                        maxFontSize: 14,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                            fontSize: 14,
+                            color: Colors.indigo[900],
+                            fontFamily: 'Roboto'),
                       ),
-                    ),
-                  ]),
-            ),
-
+                    ],
+                  )),
+              Container(
+                padding: EdgeInsets.all(2),
+                margin: EdgeInsets.all(0),
+                decoration: BoxDecoration(
+                    color: (ba.status == ApplicationStatus.NEW)
+                        ? Colors.blue
+                        : (ba.status == ApplicationStatus.ONHOLD
+                            ? Colors.yellow[700]
+                            : (ba.status == ApplicationStatus.REJECTED
+                                ? Colors.red
+                                : (ba.status == ApplicationStatus.APPROVED
+                                    ? Colors.green[400]
+                                    : (ba.status == ApplicationStatus.COMPLETED
+                                        ? Colors.purple
+                                        : Colors.blueGrey)))),
+                    shape: BoxShape.rectangle,
+                    borderRadius:
+                        BorderRadius.only(bottomLeft: Radius.circular(5.0))),
+                child: SizedBox(
+                  width: cardWidth * .2,
+                  height: cardHeight * .1,
+                  child: Center(
+                    child: AutoSizeText(EnumToString.convertToString(ba.status),
+                        textAlign: TextAlign.center,
+                        minFontSize: 7,
+                        maxFontSize: 9,
+                        style: TextStyle(
+                            fontSize: 9,
+                            fontWeight: FontWeight.bold,
+                            letterSpacing: 1,
+                            color: Colors.white,
+                            fontFamily: 'RalewayRegular')),
+                  ),
+                ),
+              ),
+            ]),
             ListView.builder(
               itemCount: listOfMeta.length,
               physics: NeverScrollableScrollPhysics(),
@@ -838,25 +885,21 @@ class _ApplicationsListState extends State<ApplicationsList> {
                 );
               },
             ),
-            // SizedBox(
-            //   width: cardWidth * .9,
-            //   height: cardHeight * .4,
-            // ),
             Container(
-              padding: EdgeInsets.fromLTRB(10, 5, 10, 5),
+              padding: EdgeInsets.fromLTRB(10, 5, 10, 0),
               margin: EdgeInsets.zero,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
                   Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
                           SizedBox(
-                              // width: cardWidth * .45,
                               child: Wrap(
                             children: [
                               AutoSizeText(
@@ -872,314 +915,241 @@ class _ApplicationsListState extends State<ApplicationsList> {
                               ),
                             ],
                           )),
-                          Wrap(children: [
-                            Container(
-                              padding: EdgeInsets.all(0),
-                              child: AutoSizeText(
-                                ((ba.preferredSlotTiming != null)
-                                    ? DateFormat('yyyy-MM-dd – kk:mm')
-                                        .format(ba.preferredSlotTiming)
-                                    : "None"),
-                                // group: medCondGroup,
+                          Row(
+                            children: [
+                              Container(
+                                padding: EdgeInsets.fromLTRB(0, 0, 8, 0),
+                                child: Row(
+                                  children: [
+                                    AutoSizeText(
+                                      ((ba.preferredSlotTiming != null)
+                                          ? DateFormat('yyyy-MM-dd – kk:mm')
+                                              .format(ba.preferredSlotTiming)
+                                          : "None"),
+                                      minFontSize: 12,
+                                      maxFontSize: 14,
+                                      maxLines: 1,
+                                      overflow: TextOverflow.clip,
+                                      style: TextStyle(
+                                          fontSize: 14,
+                                          color: Colors.indigo[900],
+                                          fontFamily: 'Roboto'),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              horizontalSpacer,
+                              if ((ba.status == ApplicationStatus.NEW) ||
+                                  (ba.status == ApplicationStatus.ONHOLD))
+                                isAvailable(ba.preferredSlotTiming)
+                                    ? Row(
+                                        children: [
+                                          Icon(Icons.event_available,
+                                              color: Colors.greenAccent[700]),
+                                          Text('Available',
+                                              style: TextStyle(
+                                                  color:
+                                                      Colors.greenAccent[700])),
+                                        ],
+                                      )
+                                    : Row(
+                                        children: [
+                                          Icon(Icons.event_busy,
+                                              color: Colors.orangeAccent[700]),
+                                          Text('Not Available',
+                                              style: TextStyle(
+                                                  color:
+                                                      Colors.orangeAccent[700]))
+                                        ],
+                                      ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                  if ((ba.status == ApplicationStatus.NEW) ||
+                      (ba.status == ApplicationStatus.ONHOLD))
+                    Container(
+                      padding: EdgeInsets.all(5),
+                      color: Colors.cyan[50],
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              AutoSizeText(
+                                "Click to choose another Time-Slot",
+                                // group: labelGroup,
                                 minFontSize: 12,
-                                maxFontSize: 14,
+                                maxFontSize: 13,
                                 maxLines: 1,
                                 overflow: TextOverflow.clip,
                                 style: TextStyle(
-                                    fontSize: 14,
                                     color: Colors.indigo[900],
-                                    //  fontWeight: FontWeight.bold,
-                                    fontFamily: 'Roboto'),
+                                    fontFamily: 'RalewayRegular'),
                               ),
+                              IconButton(
+                                  padding: EdgeInsets.all(4),
+                                  constraints: BoxConstraints(
+                                    maxHeight: 30,
+                                    maxWidth: 30,
+                                  ),
+                                  icon: Icon(
+                                    Icons.date_range,
+                                    color: (ba.status !=
+                                                ApplicationStatus.COMPLETED &&
+                                            ba.status !=
+                                                ApplicationStatus.CANCELLED)
+                                        ? Colors.indigo[900]
+                                        : disabledColor,
+                                  ),
+                                  onPressed: () async {
+                                    if (ba.status !=
+                                            ApplicationStatus.COMPLETED &&
+                                        ba.status !=
+                                            ApplicationStatus.CANCELLED) {
+                                      if (ba.status ==
+                                          ApplicationStatus.APPROVED) {
+                                        Utils.showMyFlushbar(
+                                            context,
+                                            Icons.info_outline,
+                                            Duration(seconds: 6),
+                                            "This application is already approved, Cannot change timings now.",
+                                            "");
+                                        return;
+                                      }
+
+                                      final result = await Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  SlotSelectionPage(
+                                                    metaEntity:
+                                                        widget.metaEntity,
+                                                    dateTime:
+                                                        ba.preferredSlotTiming,
+                                                    forPage: "ApplicationList",
+                                                    tokenCounter:
+                                                        tokenCounterForEntity,
+                                                  )));
+
+                                      print(result);
+                                      setState(() {
+                                        if (result != null) {
+                                          applicationNewSlotMap[ba.id] = result;
+                                        }
+                                        //newSlot = result;
+                                      });
+                                    }
+                                  })
+                            ],
+                          ),
+                          if (applicationNewSlotMap.containsKey(ba.id))
+                            AutoSizeText(
+                              DateFormat('yyyy-MM-dd – kk:mm')
+                                  .format(applicationNewSlotMap[ba.id]),
+                              minFontSize: 12,
+                              maxFontSize: 14,
+                              maxLines: 1,
+                              overflow: TextOverflow.clip,
+                              style: TextStyle(
+                                  fontSize: 14,
+                                  color: Colors.indigo[900],
+                                  fontFamily: 'Roboto'),
                             ),
-                          ]),
                         ],
                       ),
-                      horizontalSpacer,
-                      Text("Availability status"),
-                    ],
-                  ),
+                    ),
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    mainAxisAlignment: MainAxisAlignment.end,
                     children: [
-                      AutoSizeText(
-                        "Click to choose another Time-Slot",
-                        group: labelGroup,
-                        minFontSize: 9,
-                        maxFontSize: 11,
-                        maxLines: 1,
-                        overflow: TextOverflow.clip,
-                        style: TextStyle(
-                            color: Colors.black, fontFamily: 'RalewayRegular'),
+                      GestureDetector(
+                        onTap: () {
+                          Navigator.of(context).push(
+                              PageAnimation.createRoute(ShowApplicationDetails(
+                            bookingApplication: ba,
+                          )));
+                        },
+                        child: Container(
+                          padding: EdgeInsets.fromLTRB(10, 10, 0, 0),
+                          child: Text("View full details..",
+                              style:
+                                  TextStyle(color: Colors.blue, fontSize: 14)),
+                        ),
                       ),
-                      IconButton(
-                          padding: EdgeInsets.all(4),
-                          constraints: BoxConstraints(
-                            maxHeight: 30,
-                            maxWidth: 30,
-                          ),
-                          icon: Icon(
-                            Icons.date_range,
-                            color: (ba.status != ApplicationStatus.COMPLETED &&
-                                    ba.status != ApplicationStatus.CANCELLED)
-                                ? Colors.indigo[900]
-                                : disabledColor,
-                          ),
-                          onPressed: () async {
-                            if (ba.status != ApplicationStatus.COMPLETED &&
-                                ba.status != ApplicationStatus.CANCELLED) {
-                              if (ba.status == ApplicationStatus.APPROVED) {
-                                Utils.showMyFlushbar(
-                                    context,
-                                    Icons.info_outline,
-                                    Duration(seconds: 6),
-                                    "This application is already approved, Cannot change timings now.",
-                                    "");
-                                return;
-                              }
-
-                              final result = await Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => SlotSelectionPage(
-                                            metaEntity: widget.metaEntity,
-                                            dateTime: ba.preferredSlotTiming,
-                                            forPage: "ApplicationList",
-                                          )));
-
-                              print(result);
-                              setState(() {
-                                if (result != null)
-                                  ba.preferredSlotTiming = result;
-                              });
-                            }
-                          })
                     ],
                   ),
                 ],
               ),
             ),
-
-            // Row(
-            //   //  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            //   children: [
-            //     Container(
-            //         margin: EdgeInsets.zero,
-            //         padding: EdgeInsets.fromLTRB(8, 0, 0, 0),
-            //         width: cardWidth * .9,
-            //         height: cardHeight * .2,
-            //         child: TextFormField(
-            //           controller: listOfControllers[ba.id],
-            //           readOnly: (ba.status == ApplicationStatus.COMPLETED ||
-            //                   ba.status == ApplicationStatus.CANCELLED)
-            //               ? true
-            //               : false,
-            //           style: TextStyle(
-            //               fontSize: 15,
-            //               color: Colors.black,
-            //               fontFamily: 'RalewayRegular'),
-            //           decoration: InputDecoration(
-            //             labelText: 'Remarks',
-            //             enabledBorder: UnderlineInputBorder(
-            //                 borderSide: BorderSide(color: Colors.grey)),
-            //             focusedBorder: UnderlineInputBorder(
-            //                 borderSide: BorderSide(color: Colors.orange)),
-            //           ),
-            //           maxLines: 1,
-            //           keyboardType: TextInputType.text,
-            //         )),
-            //   ],
-            // ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                Container(
-                  width: cardWidth * .6,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      IconButton(
-                          alignment: Alignment.center,
-                          //    visualDensity: VisualDensity.compact,
-                          padding: const EdgeInsets.fromLTRB(8, 2, 8, 0),
-                          color: (ba.status != ApplicationStatus.COMPLETED &&
-                                  ba.status != ApplicationStatus.CANCELLED)
-                              ? Colors.purple[400]
-                              : disabledColor,
-                          onPressed: () {
-                            if (ba.status != ApplicationStatus.COMPLETED &&
-                                ba.status != ApplicationStatus.CANCELLED) {
-                              showApplicationStatusDialog(
-                                      context,
-                                      "Complete Application",
-                                      'Are you sure you want to mark this Application as Completed?',
-                                      completeDialogMsg,
-                                      'Completed')
-                                  .then((remarks) {
-                                //Update application status change on server.
-                                if (Utils.isNotNullOrEmpty(remarks)) {
-                                  ba.notesOnCompletion = remarks;
-                                  _gs
-                                      .getApplicationService()
-                                      .updateApplicationStatus(
-                                          ba.id,
-                                          ApplicationStatus.COMPLETED,
-                                          remarks,
-                                          widget.metaEntity,
-                                          ba.preferredSlotTiming)
-                                      .then((value) {
-                                    if (value) {
-                                      setState(() {
-                                        ba.status = ApplicationStatus.COMPLETED;
-                                      });
-                                      Utils.showMyFlushbar(
-                                          context,
-                                          Icons.check,
-                                          Duration(seconds: 2),
-                                          "Application is marked completed!!",
-                                          "",
-                                          Colors.purple[400],
-                                          Colors.white);
-                                    } else {
-                                      print("Could not update application");
-                                      Utils.showMyFlushbar(
-                                          context,
-                                          Icons.error,
-                                          Duration(seconds: 4),
-                                          "Oops! Application could not be marked Completed!!",
-                                          "Try again later.");
-                                    }
-                                  }).catchError((error) {
-                                    Utils.handleUpdateApplicationStatus(
-                                        error, context);
-                                  });
-                                }
-                              });
-                            }
-                          },
-                          icon: Icon(
-                            Icons.thumb_up,
-                            size: 30,
-                          )),
-                      IconButton(
-                          alignment: Alignment.center,
-                          //    visualDensity: VisualDensity.compact,
-                          padding: const EdgeInsets.fromLTRB(8, 2, 8, 0),
-                          color: (ba.status != ApplicationStatus.COMPLETED &&
-                                  ba.status != ApplicationStatus.CANCELLED)
-                              ? Colors.green[400]
-                              : disabledColor,
-                          onPressed: () {
-                            if (ba.status != ApplicationStatus.COMPLETED &&
-                                ba.status != ApplicationStatus.CANCELLED) {
-                              showApplicationStatusDialog(
-                                      context,
-                                      "Confirm Approval",
-                                      'Do you want to proceed?',
-                                      approveDialogMsg,
-                                      'Approve')
-                                  .then((remarks) {
-                                //Update application status change on server.
-                                if (Utils.isNotNullOrEmpty(remarks)) {
-                                  ba.notesOnApproval = remarks;
-                                  _gs
-                                      .getApplicationService()
-                                      .updateApplicationStatus(
-                                          ba.id,
-                                          ApplicationStatus.APPROVED,
-                                          remarks,
-                                          widget.metaEntity,
-                                          ba.preferredSlotTiming)
-                                      .then((value) {
-                                    if (value) {
-                                      setState(() {
-                                        ba.status = ApplicationStatus.APPROVED;
-                                      });
-                                      Utils.showMyFlushbar(
-                                          context,
-                                          Icons.check,
-                                          Duration(seconds: 2),
-                                          "Application is Approved!!",
-                                          "",
-                                          successGreenSnackBar,
-                                          Colors.white);
-                                    } else {
-                                      print(
-                                          "Could not update application status");
-                                      Utils.showMyFlushbar(
-                                          context,
-                                          Icons.error,
-                                          Duration(seconds: 4),
-                                          "Oops! Application could not be Approved!!",
-                                          tryAgainToBook);
-                                    }
-                                  }).catchError((error) {
-                                    Utils.handleUpdateApplicationStatus(
-                                        error, context);
-                                  });
-                                }
-                              });
-                            }
-//Update application status change on server.
-                          },
-                          icon: Icon(
-                            Icons.check_circle,
-                            size: 30,
-                          )),
-                      IconButton(
+            Divider(
+              indent: 0,
+              endIndent: 0,
+              thickness: 0.5,
+              height: 5,
+              color: Colors.blueGrey[400],
+            ),
+            IntrinsicHeight(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Container(
+                    margin: EdgeInsets.zero,
+                    padding: EdgeInsets.zero,
+                    width: cardWidth * .2,
+                    child: IconButton(
                         alignment: Alignment.center,
                         //    visualDensity: VisualDensity.compact,
                         padding: const EdgeInsets.fromLTRB(8, 2, 8, 0),
-                        visualDensity: VisualDensity.compact,
-
                         color: (ba.status != ApplicationStatus.COMPLETED &&
                                 ba.status != ApplicationStatus.CANCELLED)
-                            ? Colors.yellow[700]
+                            ? Colors.purple[400]
                             : disabledColor,
                         onPressed: () {
                           if (ba.status != ApplicationStatus.COMPLETED &&
                               ba.status != ApplicationStatus.CANCELLED) {
                             showApplicationStatusDialog(
                                     context,
-                                    "On-Hold Confirmation",
-                                    'Are you sure you want to put this application On-Hold?',
-                                    onHoldDialogMsg,
-                                    'On-Hold')
+                                    "Complete Application",
+                                    'Are you sure you want to mark this Application as Completed?',
+                                    completeDialogMsg,
+                                    'Completed')
                                 .then((remarks) {
                               //Update application status change on server.
                               if (Utils.isNotNullOrEmpty(remarks)) {
-                                ba.notesOnPuttingOnHold = remarks;
-
+                                ba.notesOnCompletion = remarks;
                                 _gs
                                     .getApplicationService()
                                     .updateApplicationStatus(
                                         ba.id,
-                                        ApplicationStatus.ONHOLD,
+                                        ApplicationStatus.COMPLETED,
                                         remarks,
                                         widget.metaEntity,
                                         ba.preferredSlotTiming)
                                     .then((value) {
                                   if (value) {
                                     setState(() {
-                                      ba.status = ApplicationStatus.ONHOLD;
+                                      ba.status = ApplicationStatus.COMPLETED;
                                     });
                                     Utils.showMyFlushbar(
                                         context,
                                         Icons.check,
                                         Duration(seconds: 2),
-                                        "Application is put on-hold!!",
+                                        "Application is marked completed!!",
                                         "",
-                                        Colors.yellow[700],
+                                        Colors.purple[400],
                                         Colors.white);
                                   } else {
-                                    print(
-                                        "Could not update application status");
+                                    print("Could not update application");
                                     Utils.showMyFlushbar(
                                         context,
                                         Icons.error,
                                         Duration(seconds: 4),
-                                        "Oops! Application could not be put On-Hold!!",
-                                        tryAgainLater);
+                                        "Oops! Application could not be marked Completed!!",
+                                        "Try again later.");
                                   }
                                 }).catchError((error) {
                                   Utils.handleUpdateApplicationStatus(
@@ -1189,81 +1159,282 @@ class _ApplicationsListState extends State<ApplicationsList> {
                             });
                           }
                         },
-                        icon: Icon(
-                          Icons.pan_tool_rounded,
-                          size: 28,
-                        ),
-                      ),
-                      IconButton(
-                        // visualDensity: VisualDensity.compact,
-                        alignment: Alignment.center,
-                        //    visualDensity: VisualDensity.compact,
-                        padding: const EdgeInsets.fromLTRB(8, 2, 8, 0),
-                        color: (ba.status != ApplicationStatus.COMPLETED &&
-                                ba.status != ApplicationStatus.CANCELLED)
-                            ? Colors.red
-                            : disabledColor,
-                        onPressed: () {
-                          if (ba.status != ApplicationStatus.COMPLETED &&
-                              ba.status != ApplicationStatus.CANCELLED) {
-                            showApplicationStatusDialog(
-                                    context,
-                                    "Confirm Rejection",
-                                    'Are you sure you want to Reject this Application?',
-                                    rejectDialogMsg,
-                                    'Reject')
-                                .then((remarks) {
-                              //Update application status change on server.
-                              if (Utils.isNotNullOrEmpty(remarks)) {
-                                ba.notesOnRejection = remarks;
-                                _gs
-                                    .getApplicationService()
-                                    .updateApplicationStatus(
-                                        ba.id,
-                                        ApplicationStatus.REJECTED,
-                                        remarks,
-                                        widget.metaEntity,
-                                        ba.preferredSlotTiming)
-                                    .then((value) {
-                                  if (value) {
-                                    setState(() {
-                                      ba.status = ApplicationStatus.REJECTED;
-                                    });
-                                    Utils.showMyFlushbar(
-                                        context,
-                                        Icons.check,
-                                        Duration(seconds: 2),
-                                        "Application is rejected!!",
-                                        "",
-                                        Colors.red,
-                                        Colors.white);
-                                  } else {
-                                    print(
-                                        "Could not update application status");
-                                    Utils.showMyFlushbar(
-                                        context,
-                                        Icons.error,
-                                        Duration(seconds: 4),
-                                        "Oops! Application could not be rejected!!",
-                                        "");
-                                  }
-                                }).catchError((error) {
-                                  Utils.handleUpdateApplicationStatus(
-                                      error, context);
-                                });
-                              }
-                            });
-                          }
-                        },
-                        icon: Icon(
-                          Icons.cancel,
-                          size: 30,
-                        ),
-                      ),
-                    ],
+                        icon: Column(
+                          children: [
+                            Icon(
+                              Icons.thumb_up,
+                              size: 21,
+                            ),
+                            Text('COMPLETE',
+                                style: TextStyle(
+                                    fontSize: 11,
+                                    color: Colors.blueGrey[900],
+                                    fontFamily: 'Roboto')),
+                          ],
+                        )),
                   ),
-                ),
-              ],
+                  VerticalDivider(
+                    indent: 0,
+                    endIndent: 0,
+                    // thickness: 1,
+                    width: 5,
+                    color: Colors.blueGrey[400],
+                  ),
+                  Container(
+                    margin: EdgeInsets.zero,
+                    padding: EdgeInsets.zero,
+                    width: cardWidth * .2,
+                    child: IconButton(
+                        alignment: Alignment.center,
+                        //    visualDensity: VisualDensity.compact,
+                        padding: const EdgeInsets.fromLTRB(8, 2, 8, 0),
+                        color: (ba.status != ApplicationStatus.COMPLETED &&
+                                ba.status != ApplicationStatus.CANCELLED)
+                            ? Colors.green[400]
+                            : disabledColor,
+                        onPressed: () {
+                          if (ba.status != ApplicationStatus.COMPLETED &&
+                              ba.status != ApplicationStatus.CANCELLED) {
+                            showApplicationStatusDialog(
+                                    context,
+                                    "Confirm Approval",
+                                    'Do you want to proceed?',
+                                    approveDialogMsg,
+                                    'Approve')
+                                .then((remarks) {
+                              //Update application status change on server.
+                              if (Utils.isNotNullOrEmpty(remarks)) {
+                                ba.notesOnApproval = remarks;
+                                _gs
+                                    .getApplicationService()
+                                    .updateApplicationStatus(
+                                        ba.id,
+                                        ApplicationStatus.APPROVED,
+                                        remarks,
+                                        widget.metaEntity,
+                                        ba.preferredSlotTiming)
+                                    .then((value) {
+                                  if (value) {
+                                    setState(() {
+                                      ba.status = ApplicationStatus.APPROVED;
+                                    });
+                                    Utils.showMyFlushbar(
+                                        context,
+                                        Icons.check,
+                                        Duration(seconds: 2),
+                                        "Application is Approved!!",
+                                        "",
+                                        successGreenSnackBar,
+                                        Colors.white);
+                                  } else {
+                                    print(
+                                        "Could not update application status");
+                                    Utils.showMyFlushbar(
+                                        context,
+                                        Icons.error,
+                                        Duration(seconds: 4),
+                                        "Oops! Application could not be Approved!!",
+                                        tryAgainToBook);
+                                  }
+                                }).catchError((error) {
+                                  Utils.handleUpdateApplicationStatus(
+                                      error, context);
+                                });
+                              }
+                            });
+                          }
+//Update application status change on server.
+                        },
+                        icon: Column(
+                          children: [
+                            Icon(
+                              Icons.check_circle,
+                              size: 22,
+                            ),
+                            Text('APPROVE',
+                                style: TextStyle(
+                                    fontSize: 11,
+                                    color: Colors.blueGrey[900],
+                                    fontFamily: 'Roboto')),
+                          ],
+                        )),
+                  ),
+                  VerticalDivider(
+                    indent: 0,
+                    endIndent: 0,
+                    // thickness: 1,
+                    width: 5,
+                    color: Colors.blueGrey[400],
+                  ),
+                  Container(
+                    margin: EdgeInsets.zero,
+                    padding: EdgeInsets.zero,
+                    width: cardWidth * .2,
+                    child: IconButton(
+                      alignment: Alignment.center,
+                      //    visualDensity: VisualDensity.compact,
+                      padding: const EdgeInsets.fromLTRB(8, 2, 8, 0),
+                      visualDensity: VisualDensity.compact,
+
+                      color: (ba.status != ApplicationStatus.COMPLETED &&
+                              ba.status != ApplicationStatus.CANCELLED)
+                          ? Colors.yellow[700]
+                          : disabledColor,
+                      onPressed: () {
+                        if (ba.status != ApplicationStatus.COMPLETED &&
+                            ba.status != ApplicationStatus.CANCELLED) {
+                          showApplicationStatusDialog(
+                                  context,
+                                  "On-Hold Confirmation",
+                                  'Are you sure you want to put this application On-Hold?',
+                                  onHoldDialogMsg,
+                                  'On-Hold')
+                              .then((remarks) {
+                            //Update application status change on server.
+                            if (Utils.isNotNullOrEmpty(remarks)) {
+                              ba.notesOnPuttingOnHold = remarks;
+
+                              _gs
+                                  .getApplicationService()
+                                  .updateApplicationStatus(
+                                      ba.id,
+                                      ApplicationStatus.ONHOLD,
+                                      remarks,
+                                      widget.metaEntity,
+                                      ba.preferredSlotTiming)
+                                  .then((value) {
+                                if (value) {
+                                  setState(() {
+                                    ba.status = ApplicationStatus.ONHOLD;
+                                  });
+                                  Utils.showMyFlushbar(
+                                      context,
+                                      Icons.check,
+                                      Duration(seconds: 2),
+                                      "Application is put on-hold!!",
+                                      "",
+                                      Colors.yellow[700],
+                                      Colors.white);
+                                } else {
+                                  print("Could not update application status");
+                                  Utils.showMyFlushbar(
+                                      context,
+                                      Icons.error,
+                                      Duration(seconds: 4),
+                                      "Oops! Application could not be put On-Hold!!",
+                                      tryAgainLater);
+                                }
+                              }).catchError((error) {
+                                Utils.handleUpdateApplicationStatus(
+                                    error, context);
+                              });
+                            }
+                          });
+                        }
+                      },
+                      icon: Column(
+                        children: [
+                          Icon(
+                            Icons.pan_tool_rounded,
+                            size: 19,
+                          ),
+                          Text('ON-HOLD',
+                              style: TextStyle(
+                                  fontSize: 11,
+                                  color: Colors.blueGrey[900],
+                                  fontFamily: 'Roboto')),
+                        ],
+                      ),
+                    ),
+                  ),
+                  VerticalDivider(
+                    indent: 0,
+                    endIndent: 0,
+                    // thickness: 1,
+                    width: 5,
+                    color: Colors.blueGrey[400],
+                  ),
+                  Container(
+                    margin: EdgeInsets.zero,
+                    padding: EdgeInsets.zero,
+                    width: cardWidth * .2,
+                    child: IconButton(
+                      // visualDensity: VisualDensity.compact,
+                      alignment: Alignment.center,
+                      //    visualDensity: VisualDensity.compact,
+                      padding: const EdgeInsets.fromLTRB(8, 2, 8, 0),
+                      color: (ba.status != ApplicationStatus.COMPLETED &&
+                              ba.status != ApplicationStatus.CANCELLED)
+                          ? Colors.red
+                          : disabledColor,
+                      onPressed: () {
+                        if (ba.status != ApplicationStatus.COMPLETED &&
+                            ba.status != ApplicationStatus.CANCELLED) {
+                          showApplicationStatusDialog(
+                                  context,
+                                  "Confirm Rejection",
+                                  'Are you sure you want to Reject this Application?',
+                                  rejectDialogMsg,
+                                  'Reject')
+                              .then((remarks) {
+                            //Update application status change on server.
+                            if (Utils.isNotNullOrEmpty(remarks)) {
+                              ba.notesOnRejection = remarks;
+                              _gs
+                                  .getApplicationService()
+                                  .updateApplicationStatus(
+                                      ba.id,
+                                      ApplicationStatus.REJECTED,
+                                      remarks,
+                                      widget.metaEntity,
+                                      ba.preferredSlotTiming)
+                                  .then((value) {
+                                if (value) {
+                                  setState(() {
+                                    ba.status = ApplicationStatus.REJECTED;
+                                  });
+                                  Utils.showMyFlushbar(
+                                      context,
+                                      Icons.check,
+                                      Duration(seconds: 2),
+                                      "Application is rejected!!",
+                                      "",
+                                      Colors.red,
+                                      Colors.white);
+                                } else {
+                                  print("Could not update application status");
+                                  Utils.showMyFlushbar(
+                                      context,
+                                      Icons.error,
+                                      Duration(seconds: 4),
+                                      "Oops! Application could not be rejected!!",
+                                      "");
+                                }
+                              }).catchError((error) {
+                                Utils.handleUpdateApplicationStatus(
+                                    error, context);
+                              });
+                            }
+                          });
+                        }
+                      },
+                      icon: Column(
+                        children: [
+                          Icon(
+                            Icons.cancel,
+                            size: 23,
+                          ),
+                          Text('REJECT',
+                              style: TextStyle(
+                                  fontSize: 11,
+                                  color: Colors.blueGrey[900],
+                                  fontFamily: 'Roboto')),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
           ],
         ),

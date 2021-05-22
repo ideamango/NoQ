@@ -1043,16 +1043,16 @@ class Utils {
       case MaxTokenReachedByUserPerDayException:
         print("max token reached");
         Utils.showMyFlushbar(context, Icons.error, Duration(seconds: 6),
-            maxTokenLimitReached, maxTokenLimitReachedSub);
+            maxTokenInDayUserAdmin, maxTokenInDayUserSubAdmin);
         break;
       case MaxTokenReachedByUserPerSlotException:
         Utils.showMyFlushbar(context, Icons.error, Duration(seconds: 6),
-            maxTokenForTimeReached, maxTokenLimitReachedSub);
+            maxTokenInSlotUserAdmin, maxTokenInDayUserSubAdmin);
         print("max per slot reached");
         break;
       case TokenAlreadyExistsException:
         Utils.showMyFlushbar(context, Icons.error, Duration(seconds: 6),
-            tokenAlreadyExists, selectDateSub);
+            tokenAlreadyExistsAdmin, selectDateSub);
         print("token exists");
         break;
       case SlotFullException:

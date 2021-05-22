@@ -24,13 +24,11 @@ enum SelectedView { list, bar, pie, line }
 enum DateDisplayFormat { date, month, year }
 
 class EntityApplicationListPage extends StatefulWidget {
-  final String entityId;
   final String bookingFormId;
   final String bookingFormName;
   final MetaEntity metaEntity;
   EntityApplicationListPage(
       {Key key,
-      @required this.entityId,
       @required this.bookingFormId,
       @required this.bookingFormName,
       @required this.metaEntity})
@@ -72,8 +70,8 @@ class _EntityApplicationListPageState extends State<EntityApplicationListPage> {
 
       _gs
           .getApplicationService()
-          .getApplicationsOverview(
-              widget.bookingFormId, widget.entityId, DateTime.now().year)
+          .getApplicationsOverview(widget.bookingFormId,
+              widget.metaEntity.entityId, DateTime.now().year)
           .then((value) {
         _bookingApplicationsOverview = value;
 
@@ -302,7 +300,7 @@ class _EntityApplicationListPageState extends State<EntityApplicationListPage> {
         _gs
             .getApplicationService()
             .getApplicationsOverview(
-                widget.bookingFormId, widget.entityId, date.year)
+                widget.bookingFormId, widget.metaEntity.entityId, date.year)
             .then((value) {
           _bookingApplicationsOverview = value;
           dailyStatsKey = date.year.toString() +
@@ -347,7 +345,7 @@ class _EntityApplicationListPageState extends State<EntityApplicationListPage> {
         _gs
             .getApplicationService()
             .getApplicationsOverview(
-                widget.bookingFormId, widget.entityId, date.year)
+                widget.bookingFormId, widget.metaEntity.entityId, date.year)
             .then((value) {
           _bookingApplicationsOverview = value;
           dailyStatsKey = date.year.toString() + "~" + date.month.toString();
@@ -387,7 +385,7 @@ class _EntityApplicationListPageState extends State<EntityApplicationListPage> {
         _gs
             .getApplicationService()
             .getApplicationsOverview(
-                widget.bookingFormId, widget.entityId, date.year)
+                widget.bookingFormId, widget.metaEntity.entityId, date.year)
             .then((value) {
           _bookingApplicationsOverview = value;
           statsPresent = _bookingApplicationsOverview != null ? true : false;

@@ -1,3 +1,4 @@
+import 'package:LESSs/db/db_model/entity.dart';
 import 'package:LESSs/widget/widgets.dart';
 import 'package:flutter/material.dart';
 import '../db/db_model/meta_entity.dart';
@@ -18,15 +19,15 @@ import '../widget/header.dart';
 import '../widget/page_animation.dart';
 
 class BookingFormSelection extends StatefulWidget {
-  final MetaEntity metaEntity;
-  final List<MetaForm> forms;
+  final String entityId;
+  final Entity entity;
   final DateTime preferredSlotTime;
   final dynamic isAdmin;
   final dynamic backRoute;
   BookingFormSelection(
       {Key key,
-      @required this.metaEntity,
-      @required this.forms,
+      @required this.entityId,
+      @required this.entity,
       @required this.preferredSlotTime,
       @required this.isAdmin,
       @required this.backRoute})
@@ -38,6 +39,7 @@ class BookingFormSelection extends StatefulWidget {
 
 class _BookingFormSelectionState extends State<BookingFormSelection> {
   MetaEntity metaEntity;
+  Entity entity;
   List<MetaForm> forms;
   GlobalState _gs;
   bool initCompleted = false;
@@ -50,11 +52,23 @@ class _BookingFormSelectionState extends State<BookingFormSelection> {
   void initState() {
     super.initState();
     // metaEntity = this.widget.metaEntity;
-    forms = this.widget.forms;
+
     getGlobalState().whenComplete(() {
-      setState(() {
-        initCompleted = true;
-      });
+      if (widget.entity == null) {
+        _gs.getEntity(widget.entityId).then((value) {
+          entity = value.item1;
+          forms = entity.forms;
+          setState(() {
+            initCompleted = true;
+          });
+        });
+      } else {
+        entity = widget.entity;
+        forms = entity.forms;
+        setState(() {
+          initCompleted = true;
+        });
+      }
     });
   }
 
@@ -68,7 +82,7 @@ class _BookingFormSelectionState extends State<BookingFormSelection> {
       if (!widget.isAdmin) {
         dashBoardRoute = CreateFormFields(
           bookingFormId: forms[_selectedValue].id,
-          metaEntity: widget.metaEntity,
+          metaEntity: entity.getMetaEntity(),
           preferredSlotTime: widget.preferredSlotTime,
           backRoute: SearchEntityPage(),
         );
@@ -83,15 +97,13 @@ class _BookingFormSelectionState extends State<BookingFormSelection> {
       } else {
         reportsRoute = EntityApplicationListPage(
           bookingFormId: forms[_selectedValue].id,
-          entityId: widget.metaEntity.entityId,
-          metaEntity: widget.metaEntity,
+          metaEntity: entity.getMetaEntity(),
           bookingFormName: forms[_selectedValue].name,
         );
         //If admin then show overview page as per selected form id
         dashBoardRoute = OverviewPage(
           bookingFormId: forms[_selectedValue].id,
-          entityId: widget.metaEntity.entityId,
-          metaEntity: widget.metaEntity,
+          metaEntity: entity.getMetaEntity(),
           bookingFormName: forms[_selectedValue].name,
           isExec: !widget.isAdmin,
         );

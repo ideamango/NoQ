@@ -310,7 +310,10 @@ class _ShowUserApplicationDetailsState
                 // keyboardType: TextInputType.multiline,
               ),
             );
-            listOfControllers[field.label].text = newfield.response.toString();
+            listOfControllers[field.label].text =
+                Utils.isStrNullOrEmpty(newfield.response)
+                    ? 'No Data'
+                    : newfield.response.toString();
           }
           break;
         case FieldType.NUMBER:
@@ -587,7 +590,13 @@ class _ShowUserApplicationDetailsState
                               .cast<Widget>(),
                         )
                       : SizedBox(
-                          child: Text("No attachments found."),
+                          child: Text(
+                            "No attachments found.",
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: Colors.indigo[900],
+                            ),
+                          ),
                         ),
                 ],
               ),

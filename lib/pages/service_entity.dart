@@ -31,6 +31,7 @@ class ChildEntityRow extends StatefulWidget {
 }
 
 class ChildEntityRowState extends State<ChildEntityRow> {
+  Entity parentEntity;
   Entity entity;
   MetaEntity _metaEntity;
   GlobalState _gs;
@@ -61,14 +62,17 @@ class ChildEntityRowState extends State<ChildEntityRow> {
       readOnly = isManager || isExec;
 
       _gs.getEntity(_metaEntity.parentId).then((value) {
-        entity = value.item1;
-        if (this.mounted) {
-          setState(() {
-            _initCompleted = true;
-          });
-        } else {
-          _initCompleted = false;
-        }
+        parentEntity = value.item1;
+        _gs.getEntity(_metaEntity.entityId).then((value) {
+          entity = value.item1;
+          if (this.mounted) {
+            setState(() {
+              _initCompleted = true;
+            });
+          } else {
+            _initCompleted = false;
+          }
+        });
       });
     });
   }
@@ -78,14 +82,13 @@ class ChildEntityRowState extends State<ChildEntityRow> {
     showServiceForm() {
       // if Entity is inentityMap it means its a new entity and is not created yet,
       // else fetch from DB.
-      _gs.getEntity(_metaEntity.entityId).then((value) {
-        Navigator.of(context).pop();
-        Navigator.of(context)
-            .push(PageAnimation.createRoute(ManageChildEntityDetailsPage(
-          childEntity: value.item1,
-          isManager: isManager || isExec,
-        )));
-      });
+
+      Navigator.of(context).pop();
+      Navigator.of(context)
+          .push(PageAnimation.createRoute(ManageChildEntityDetailsPage(
+        childMetaEntity: _metaEntity,
+        isManager: isManager || isExec,
+      )));
     }
 
     generateLinkAndShareWithParams(String entityId, String name) async {
@@ -121,7 +124,7 @@ class ChildEntityRowState extends State<ChildEntityRow> {
             entityId: _metaEntity.entityId,
             entityName: _metaEntity.name,
             backRoute: ManageChildEntityListPage(
-              entity: entity,
+              entity: parentEntity,
             ),
           )));
       });
@@ -285,7 +288,7 @@ class ChildEntityRowState extends State<ChildEntityRow> {
                                   PageAnimation.createRoute(ManageEmployeePage(
                                 metaEntity: _metaEntity,
                                 backRoute: ManageChildEntityListPage(
-                                  entity: entity,
+                                  entity: parentEntity,
                                 ),
                                 defaultDate: null,
                                 isManager: isManager,
@@ -346,7 +349,7 @@ class ChildEntityRowState extends State<ChildEntityRow> {
                               preferredSlotTime: null,
                               isFullPermission: !readOnly,
                               backRoute: ManageChildEntityListPage(
-                                entity: entity,
+                                entity: parentEntity,
                               ),
                               isReadOnly: readOnly,
                             )));
@@ -398,36 +401,36 @@ class ChildEntityRowState extends State<ChildEntityRow> {
                                 "$noViewPermission Applications!!",
                                 contactAdmin);
                           } else {
-                            if (!Utils.isNullOrEmpty(_metaEntity.forms)) {
-                              if (_metaEntity.forms.length > 1) {
-                                Navigator.of(context).push(
-                                    PageAnimation.createRoute(
-                                        BookingFormSelection(
-                                  forms: _metaEntity.forms,
-                                  metaEntity: _metaEntity,
-                                  preferredSlotTime: null,
-                                  isAdmin: true,
-                                  backRoute: ManageChildEntityListPage(
-                                    entity: null,
-                                  ),
-                                )));
-                              } else {
-                                Navigator.of(context).push(
-                                    PageAnimation.createRoute(OverviewPage(
-                                  bookingFormId: _metaEntity.forms[0].id,
-                                  bookingFormName: _metaEntity.forms[0].name,
-                                  entityId: _metaEntity.entityId,
-                                  metaEntity: _metaEntity,
-                                  isExec: isExec,
-                                )));
-                              }
+                            if (!Utils.isNullOrEmpty(entity.forms)) {
+                              // if (entity.forms.length > 1) {
+                              Navigator.of(context).push(
+                                  PageAnimation.createRoute(
+                                      BookingFormSelection(
+                                entityId: entity.entityId,
+                                entity: entity,
+                                preferredSlotTime: null,
+                                isAdmin: true,
+                                backRoute: ManageChildEntityListPage(
+                                  entity: parentEntity,
+                                ),
+                              )));
+                              // } else {
+                              //   Navigator.of(context).push(
+                              //       PageAnimation.createRoute(OverviewPage(
+                              //     bookingFormId: _metaEntity.forms[0].id,
+                              //     bookingFormName: _metaEntity.forms[0].name,
+                              //     entityId: _metaEntity.entityId,
+                              //     metaEntity: _metaEntity,
+                              //     isExec: isExec,
+                              //   )));
+                              // }
                             } else {
                               Utils.showMyFlushbar(
                                   context,
                                   Icons.info_outline,
                                   Duration(seconds: 5),
-                                  "No Applications found as of now!!",
-                                  "");
+                                  "No Booking Forms found for your place!",
+                                  "Click FORMS to manage Forms.");
                             }
                           }
                         },
@@ -482,7 +485,7 @@ class ChildEntityRowState extends State<ChildEntityRow> {
                                   PageAnimation.createRoute(EntityTokenListPage(
                                 metaEntity: _metaEntity,
                                 backRoute: ManageChildEntityListPage(
-                                  entity: entity,
+                                  entity: parentEntity,
                                 ),
                                 defaultDate: null,
                               )));

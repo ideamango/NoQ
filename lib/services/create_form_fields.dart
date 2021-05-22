@@ -406,13 +406,13 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
                           //key: PageStorageKey(this.widget.headerTitle),
                           initiallyExpanded: false,
                           title: Container(
-                            width: MediaQuery.of(context).size.width * .7,
+                            width: MediaQuery.of(context).size.width * .8,
                             child: AutoSizeText(
                               (field.isMandatory)
                                   ? field.label + ' (mandatory)'
                                   : field.label + ' (optional)',
                               maxLines: 2,
-                              minFontSize: 11,
+                              minFontSize: 8,
                               maxFontSize: 14,
                               style: TextStyle(
                                 color: Colors.white,
@@ -1272,15 +1272,18 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
                       initiallyExpanded: false,
                       title: Row(
                         children: <Widget>[
-                          AutoSizeText(
-                            (optsAttsField.isMandatory)
-                                ? optsAttsField.label + ' (mandatory)'
-                                : optsAttsField.label + ' (optional)',
-                            maxLines: 2,
-                            minFontSize: 11,
-                            maxFontSize: 14,
-                            style: TextStyle(
-                              color: Colors.white,
+                          Container(
+                            width: MediaQuery.of(context).size.width * .74,
+                            child: AutoSizeText(
+                              (optsAttsField.isMandatory)
+                                  ? optsAttsField.label + ' (mandatory)'
+                                  : optsAttsField.label + ' (optional)',
+                              maxLines: 2,
+                              minFontSize: 8,
+                              maxFontSize: 14,
+                              style: TextStyle(
+                                color: Colors.white,
+                              ),
                             ),
                           ),
                           SizedBox(width: 5),
@@ -1446,7 +1449,7 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
                                   onPressed: () {
                                     if (optsAttsField.responseFilePaths.length <
                                         optsAttsField.maxAttachments) {
-                                      captureImage(false).then((value) {
+                                      captureImage(true).then((value) {
                                         if (value != null) {
                                           //  _medCondsProofimages.add(value);
                                           optsAttsField.responseFilePaths
@@ -1680,190 +1683,215 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
     setState(() {
       validateField = true;
     });
-    // if (_bookingFormKey.currentState.validate()) {
-    if (!validateMandatoryFields()) {
-      Utils.showMyFlushbar(
-          context,
-          Icons.error,
-          Duration(
-            seconds: 8,
-          ),
-          validationErrMsg,
-          '',
-          Colors.red,
-          Colors.white);
-      return;
-    }
-    //***Handle the Options and Attachments field.****
-    List<Field> listOfFields = bookingApplication.responseForm.getFormFields();
-    for (int i = 0; i < listOfFields.length; i++) {
-      switch (listOfFields[i].type) {
-        case FieldType.OPTIONS:
-          FormInputFieldOptions f = listOfFields[i] as FormInputFieldOptions;
-          if (f.isMandatory && f.responseValues.length == 0) {
-            validationErrMsg = '${f.label} is empty.';
-            Utils.showMyFlushbar(
-                context,
-                Icons.error,
-                Duration(
-                  seconds: 5,
-                ),
-                validationErrMsg,
-                'Please provide all mandatory information and try again.',
-                Colors.red,
-                Colors.white);
-            return;
-          }
-          break;
-        case FieldType.ATTACHMENT:
-          FormInputFieldAttachment f =
-              listOfFields[i] as FormInputFieldAttachment;
-          if (f.isMandatory && f.responseFilePaths.length == 0) {
-            validationErrMsg = '${f.label} is empty.';
-            Utils.showMyFlushbar(
-                context,
-                Icons.error,
-                Duration(
-                  seconds: 5,
-                ),
-                validationErrMsg,
-                'Please provide all mandatory information and try again.',
-                Colors.red,
-                Colors.white);
-            return;
-          } else {
-            List<String> targetPaths = [];
-            for (String path in (listOfFields[i] as FormInputFieldAttachment)
-                .responseFilePaths) {
-              String fileName = pathfile.basename(path);
-              print(fileName);
-
-              String targetFileName =
-                  '${bookingApplication.id}#${(listOfFields[i] as FormInputFieldAttachment).id}#${_gs.getCurrentUser().id}#$fileName';
-
-              String targetPath =
-                  await uploadFilesToServer(path, targetFileName);
-              print(targetPath);
-              targetPaths.add(targetPath);
-              (bookingApplication.responseForm.getFormFields()[i]
-                      as FormInputFieldAttachment)
-                  .responseFilePaths = targetPaths;
-            }
-          }
-
-          break;
-        case FieldType.OPTIONS_ATTACHMENTS:
-          FormInputFieldOptionsWithAttachments f =
-              listOfFields[i] as FormInputFieldOptionsWithAttachments;
-          if (f.isMandatory &&
-              (f.responseFilePaths.length == 0 ||
-                  f.responseValues.length == 0)) {
-            validationErrMsg = '${f.label} is empty.';
-            Utils.showMyFlushbar(
-                context,
-                Icons.error,
-                Duration(
-                  seconds: 5,
-                ),
-                validationErrMsg,
-                'Please provide all mandatory information and try again.',
-                Colors.red,
-                Colors.white);
-            return;
-          } else {
-            print("df");
-            List<String> targetPaths = [];
-            for (String path
-                in (listOfFields[i] as FormInputFieldOptionsWithAttachments)
-                    .responseFilePaths) {
-              String fileName = pathfile.basename(path);
-              print(fileName);
-
-              String targetFileName =
-                  '${bookingApplication.id}#${(listOfFields[i] as FormInputFieldOptionsWithAttachments).id}#${_gs.getCurrentUser().id}#$fileName';
-
-              String targetPath =
-                  await uploadFilesToServer(path, targetFileName);
-              print(targetPath);
-              targetPaths.add(targetPath);
-              (bookingApplication.responseForm.getFormFields()[i]
-                      as FormInputFieldOptionsWithAttachments)
-                  .responseFilePaths = targetPaths;
-            }
-          }
-          break;
-        default:
-          break;
+    if (_bookingFormKey.currentState.validate()) {
+      if (!validateMandatoryFields()) {
+        Utils.showMyFlushbar(
+            context,
+            Icons.error,
+            Duration(
+              seconds: 8,
+            ),
+            validationErrMsg,
+            '',
+            Colors.red,
+            Colors.white);
+        return;
       }
-    }
-
-    ///**Validation Ends */
-
-    Utils.showMyFlushbar(
-        context,
-        Icons.info,
-        Duration(
-          seconds: 5,
-        ),
-        "Processing your Request..",
-        '');
-    if (Utils.isStrNullOrEmpty(validationErrMsg)) {
-      _bookingFormKey.currentState.save();
-      _gs
-          .getApplicationService()
-          .submitApplication(bookingApplication, widget.metaEntity)
-          .then((token) {
-        if (token != null) {
-          final dtFormat = new DateFormat(dateDisplayFormat);
-          String _dateFormatted =
-              dtFormat.format(bookingApplication.preferredSlotTiming);
-          String time =
-              " ${Utils.formatTime(bookingApplication.preferredSlotTiming.hour.toString())} : ${Utils.formatTime(bookingApplication.preferredSlotTiming.minute.toString())}";
-          Future.delayed(Duration(seconds: 2)).then((value) {
-            showTokenAlert(context, tokenTextH2Walkin, token.getDisplayName(),
-                    widget.metaEntity.name, _dateFormatted, time)
-                .then((value) {
-              Navigator.pushReplacement(context,
-                  MaterialPageRoute(builder: (context) => SearchEntityPage()));
-            });
-          });
-        } else {
-          //The application could not be submitted, Show appropriate msg to User.
-
-          showMessageDialog(
+      //***Handle the Options and Attachments field.****
+      List<Field> listOfFields =
+          bookingApplication.responseForm.getFormFields();
+      for (int i = 0; i < listOfFields.length; i++) {
+        switch (listOfFields[i].type) {
+          case FieldType.OPTIONS:
+            FormInputFieldOptions f = listOfFields[i] as FormInputFieldOptions;
+            if (f.isMandatory && f.responseValues.length == 0) {
+              validationErrMsg = '${f.label} is empty.';
+              Utils.showMyFlushbar(
                   context,
-                  "Request submitted successfully!",
-                  'We will contact you as soon as slot opens up. Stay Safe!',
-                  'Ok')
-              .then((value) => Navigator.pushReplacement(context,
-                  MaterialPageRoute(builder: (context) => SearchEntityPage())));
-        }
-      }).catchError((error) {
-        switch (error.runtimeType) {
-          case MaxTokenReachedByUserPerDayException:
-            print("max token reached");
-            Utils.showMyFlushbar(context, Icons.error, Duration(seconds: 6),
-                maxTokenLimitReached, maxTokenLimitReachedSub);
+                  Icons.error,
+                  Duration(
+                    seconds: 5,
+                  ),
+                  validationErrMsg,
+                  'Please provide all mandatory information and try again.',
+                  Colors.red,
+                  Colors.white);
+              return;
+            }
             break;
-          case MaxTokenReachedByUserPerSlotException:
-            Utils.showMyFlushbar(context, Icons.error, Duration(seconds: 6),
-                maxTokenForTimeReached, maxTokenLimitReachedSub);
-            print("max per slot reached");
+          case FieldType.ATTACHMENT:
+            FormInputFieldAttachment f =
+                listOfFields[i] as FormInputFieldAttachment;
+            if (f.isMandatory && f.responseFilePaths.length == 0) {
+              validationErrMsg = '${f.label} is empty.';
+              Utils.showMyFlushbar(
+                  context,
+                  Icons.error,
+                  Duration(
+                    seconds: 5,
+                  ),
+                  validationErrMsg,
+                  'Please provide all mandatory information and try again.',
+                  Colors.red,
+                  Colors.white);
+              return;
+            } else {
+              List<String> targetPaths = [];
+              for (String path in (listOfFields[i] as FormInputFieldAttachment)
+                  .responseFilePaths) {
+                String fileName = pathfile.basename(path);
+                print(fileName);
+
+                String targetFileName =
+                    '${bookingApplication.id}#${(listOfFields[i] as FormInputFieldAttachment).id}#${_gs.getCurrentUser().id}#$fileName';
+
+                String targetPath =
+                    await uploadFilesToServer(path, targetFileName);
+                print(targetPath);
+                targetPaths.add(targetPath);
+                (bookingApplication.responseForm.getFormFields()[i]
+                        as FormInputFieldAttachment)
+                    .responseFilePaths = targetPaths;
+              }
+            }
+
             break;
-          case TokenAlreadyExistsException:
-            Utils.showMyFlushbar(context, Icons.error, Duration(seconds: 6),
-                tokenAlreadyExists, selectDateSub);
-            print("token exists");
-            break;
-          case SlotFullException:
-            Utils.showMyFlushbar(context, Icons.error, Duration(seconds: 6),
-                slotsAlreadyBooked, selectDateSub);
-            print("slot full ");
+          case FieldType.OPTIONS_ATTACHMENTS:
+            FormInputFieldOptionsWithAttachments f =
+                listOfFields[i] as FormInputFieldOptionsWithAttachments;
+            if (f.isMandatory &&
+                (f.responseFilePaths.length == 0 ||
+                    f.responseValues.length == 0)) {
+              validationErrMsg = '${f.label} is empty.';
+              Utils.showMyFlushbar(
+                  context,
+                  Icons.error,
+                  Duration(
+                    seconds: 5,
+                  ),
+                  validationErrMsg,
+                  'Please provide all mandatory information and try again.',
+                  Colors.red,
+                  Colors.white);
+              return;
+            } else {
+              print("df");
+              List<String> targetPaths = [];
+              for (String path
+                  in (listOfFields[i] as FormInputFieldOptionsWithAttachments)
+                      .responseFilePaths) {
+                String fileName = pathfile.basename(path);
+                print(fileName);
+
+                String targetFileName =
+                    '${bookingApplication.id}#${(listOfFields[i] as FormInputFieldOptionsWithAttachments).id}#${_gs.getCurrentUser().id}#$fileName';
+
+                String targetPath =
+                    await uploadFilesToServer(path, targetFileName);
+                print(targetPath);
+                targetPaths.add(targetPath);
+                (bookingApplication.responseForm.getFormFields()[i]
+                        as FormInputFieldOptionsWithAttachments)
+                    .responseFilePaths = targetPaths;
+              }
+            }
             break;
           default:
             break;
         }
-      });
+      }
+
+      ///**Validation Ends */
+
+      Utils.showMyFlushbar(
+          context,
+          Icons.info,
+          Duration(
+            seconds: 5,
+          ),
+          "Processing your Request..",
+          '');
+      if (Utils.isStrNullOrEmpty(validationErrMsg)) {
+        _bookingFormKey.currentState.save();
+        _gs
+            .getApplicationService()
+            .submitApplication(bookingApplication, widget.metaEntity)
+            .then((token) {
+          if (token != null) {
+            final dtFormat = new DateFormat(dateDisplayFormat);
+            String _dateFormatted =
+                dtFormat.format(bookingApplication.preferredSlotTiming);
+            String time =
+                " ${Utils.formatTime(bookingApplication.preferredSlotTiming.hour.toString())} : ${Utils.formatTime(bookingApplication.preferredSlotTiming.minute.toString())}";
+            Future.delayed(Duration(seconds: 2)).then((value) {
+              showTokenAlert(
+                      context,
+                      token.parent.enableVideoChat
+                          ? tokenTextH2Online
+                          : tokenTextH2Walkin,
+                      token.getDisplayName(),
+                      widget.metaEntity.name,
+                      _dateFormatted,
+                      time)
+                  .then((value) {
+                Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => SearchEntityPage()));
+              });
+            });
+          } else {
+            //The application could not be submitted, Show appropriate msg to User.
+
+            showMessageDialog(
+                    context,
+                    "Request submitted successfully!",
+                    'We will contact you as soon as slot opens up. Stay Safe!',
+                    'Ok')
+                .then((value) => Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => SearchEntityPage())));
+          }
+        }).catchError((error) {
+          switch (error.runtimeType) {
+            case MaxTokenReachedByUserPerDayException:
+              print("max token reached");
+              Utils.showMyFlushbar(context, Icons.error, Duration(seconds: 6),
+                  maxTokenLimitReached, maxTokenLimitReachedSub);
+              break;
+            case MaxTokenReachedByUserPerSlotException:
+              Utils.showMyFlushbar(context, Icons.error, Duration(seconds: 6),
+                  maxTokenForTimeReached, maxTokenLimitReachedSub);
+              print("max per slot reached");
+              break;
+            case TokenAlreadyExistsException:
+              Utils.showMyFlushbar(context, Icons.error, Duration(seconds: 6),
+                  tokenAlreadyExists, selectDateSub);
+              print("token exists");
+              break;
+            case SlotFullException:
+              Utils.showMyFlushbar(context, Icons.error, Duration(seconds: 6),
+                  slotsAlreadyBooked, selectDateSub);
+              print("slot full ");
+              break;
+            default:
+              break;
+          }
+        });
+      }
+    } else {
+      print("Fields not vbalid");
+      Utils.showMyFlushbar(
+          context,
+          Icons.error,
+          Duration(
+            seconds: 5,
+          ),
+          validationErrMsg,
+          'Please provide all mandatory information and try again.',
+          Colors.red,
+          Colors.white);
     }
   }
 

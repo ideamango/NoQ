@@ -469,18 +469,15 @@ class EntityRowState extends State<EntityRow> {
                             contactAdmin);
                       } else {
                         print("Over To overview page");
-                        _state
-                            .getEntityService()
-                            .getEntity(_metaEntity.entityId)
-                            .then((value) {
-                          if (value != null) {
-                            if (!Utils.isNullOrEmpty(value.forms)) {
+                        _state.getEntity(_metaEntity.entityId).then((value) {
+                          if (value.item1 != null) {
+                            if (!Utils.isNullOrEmpty(value.item1.forms)) {
                               // if (_metaEntity.forms.length > 1) {
                               Navigator.of(context).push(
                                   PageAnimation.createRoute(
                                       BookingFormSelection(
-                                forms: value.forms,
-                                metaEntity: _metaEntity,
+                                entityId: _metaEntity.entityId,
+                                entity: value.item1,
                                 preferredSlotTime: null,
                                 isAdmin: isAdmin,
                                 backRoute: ManageEntityListPage(),
