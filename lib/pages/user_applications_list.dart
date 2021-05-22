@@ -1313,12 +1313,14 @@ class _UserApplicationsListState extends State<UserApplicationsList> {
 
             String responseVals;
             for (Value val in newfield.responseValues) {
-              if (!Utils.isNotNullOrEmpty(responseVals)) responseVals = "";
+              if (Utils.isStrNullOrEmpty(responseVals)) responseVals = "";
               if (responseVals == "")
                 responseVals = val.value.toString();
               else
                 responseVals = responseVals + ' | ' + val.value.toString();
             }
+            if (Utils.isStrNullOrEmpty(responseVals))
+              responseVals = "No Data Found";
 
             fieldWidget = Column(
               crossAxisAlignment: CrossAxisAlignment.start,

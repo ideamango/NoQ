@@ -481,13 +481,14 @@ class _FavsListPageState extends State<FavsListPage>
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Container(
-                                  width: MediaQuery.of(context).size.width * .6,
+                                  width:
+                                      MediaQuery.of(context).size.width * .58,
                                   child: Row(
                                     children: [
                                       Container(
                                         width:
                                             MediaQuery.of(context).size.width *
-                                                .54,
+                                                .52,
                                         child: Text(
                                           Utils.isNotNullOrEmpty(
                                                   EnumToString.convertToString(
@@ -539,44 +540,56 @@ class _FavsListPageState extends State<FavsListPage>
                                 if (str.startTimeHour != null)
                                   Container(
                                     width:
-                                        MediaQuery.of(context).size.width * .18,
-                                    padding: EdgeInsets.only(bottom: 3),
+                                        MediaQuery.of(context).size.width * .2,
+                                    padding: EdgeInsets.all(0),
                                     margin: EdgeInsets.all(0),
                                     child: Row(
                                       mainAxisAlignment: MainAxisAlignment.end,
                                       children: <Widget>[
-                                        AutoSizeText(
-                                            Utils.formatTime(str.startTimeHour
-                                                    .toString()) +
-                                                ':' +
-                                                Utils.formatTime(str
-                                                    .startTimeMinute
-                                                    .toString()),
-                                            group: sideInfoGrp,
-                                            minFontSize: 9,
-                                            maxFontSize: 11,
+                                        SizedBox(
+                                          width: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                              .09,
+                                          child: AutoSizeText(
+                                              Utils.formatTime(str.startTimeHour
+                                                      .toString()) +
+                                                  ':' +
+                                                  Utils.formatTime(str
+                                                      .startTimeMinute
+                                                      .toString()),
+                                              group: sideInfoGrp,
+                                              minFontSize: 8,
+                                              maxFontSize: 11,
+                                              style: TextStyle(
+                                                color: Colors.green[600],
+                                                fontFamily: 'Monsterrat',
+                                              )),
+                                        ),
+                                        Text('~',
                                             style: TextStyle(
-                                              color: Colors.green[600],
-                                              fontFamily: 'Monsterrat',
-                                            )),
-                                        Text(' - ',
-                                            style: TextStyle(
-                                                color: primaryDarkColor,
-                                                fontSize: 10)),
-                                        AutoSizeText(
-                                            Utils.formatTime(str.endTimeHour
-                                                    .toString()) +
-                                                ':' +
-                                                Utils.formatTime(str
-                                                    .endTimeMinute
-                                                    .toString()),
-                                            group: sideInfoGrp,
-                                            minFontSize: 9,
-                                            maxFontSize: 11,
-                                            style: TextStyle(
-                                              color: Colors.red[900],
-                                              fontFamily: 'Monsterrat',
-                                            )),
+                                                color: Colors.black,
+                                                fontSize: 8)),
+                                        SizedBox(
+                                          width: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                              .09,
+                                          child: AutoSizeText(
+                                              Utils.formatTime(str.endTimeHour
+                                                      .toString()) +
+                                                  ':' +
+                                                  Utils.formatTime(str
+                                                      .endTimeMinute
+                                                      .toString()),
+                                              group: sideInfoGrp,
+                                              minFontSize: 8,
+                                              maxFontSize: 11,
+                                              style: TextStyle(
+                                                color: Colors.red[900],
+                                                fontFamily: 'Monsterrat',
+                                              )),
+                                        ),
                                       ],
                                     ),
                                   ),

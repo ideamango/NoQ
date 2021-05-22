@@ -854,7 +854,7 @@ class Utils {
     else if (image != null)
       entityImageWidget = ImageIcon(
         AssetImage('assets/$image'),
-        size: size - 10,
+        size: size,
         color: borderColor,
       );
     else
