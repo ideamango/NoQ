@@ -576,6 +576,8 @@ class Utils {
     String entityId = uuid.v1();
     var isPublic = true;
     var isBookable = true;
+    bool isOnlineAppointment = false;
+    bool isWalkInAppointment = true;
     if (entityType == EntityType.PLACE_TYPE_MALL ||
         entityType == EntityType.PLACE_TYPE_HOSPITAL ||
         entityType == EntityType.PLACE_TYPE_PUBLIC_OFFICE) {
@@ -588,6 +590,12 @@ class Utils {
       // is Private and Not bookable
       isPublic = false;
       isBookable = false;
+    } else if (entityType == EntityType.PLACE_TYPE_MEDICAL_CLINIC ||
+        entityType == EntityType.PLACE_TYPE_SCHOOL ||
+        entityType == EntityType.PLACE_TYPE_HOSPITAL) {
+      // is Private and Not bookable
+      isOnlineAppointment = true;
+      isWalkInAppointment = true;
     } else {
       // is public and bookable
       isPublic = true;
@@ -617,7 +625,9 @@ class Utils {
         isBookable: isBookable,
         isActive: false,
         coordinates: null,
-        offer: null);
+        offer: null,
+        allowOnlineAppointment: isOnlineAppointment,
+        allowWalkinAppointment: isWalkInAppointment);
 
     return entity;
   }

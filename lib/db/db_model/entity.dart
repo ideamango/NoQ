@@ -54,8 +54,8 @@ class Entity {
       this.parentGroupId,
       this.supportEmail,
       this.maxTokensByUserInDay = 1,
-      this.allowOnlineAppointment,
-      this.allowWalkinAppointment});
+      this.allowOnlineAppointment = false,
+      this.allowWalkinAppointment = true});
 
   //SlotDocumentId is entityID#20~06~01 it is not auto-generated, will help in not duplicating the record
   String entityId;
