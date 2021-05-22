@@ -584,6 +584,7 @@ class _FavsListPageState extends State<FavsListPage>
                                                       .toString()),
                                               group: sideInfoGrp,
                                               minFontSize: 8,
+                                              textAlign: TextAlign.right,
                                               maxFontSize: 11,
                                               style: TextStyle(
                                                 color: Colors.red[900],

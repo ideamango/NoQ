@@ -1305,6 +1305,7 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
                                                       .endTimeMinute
                                                       .toString()),
                                               group: sideInfoGrp,
+                                              textAlign: TextAlign.right,
                                               minFontSize: 8,
                                               maxFontSize: 11,
                                               style: TextStyle(
