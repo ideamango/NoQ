@@ -83,9 +83,9 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
 
     getGlobalState().whenComplete(() {
       _loadSlots();
-      entitySupportsVideo = (metaEntity.enableVideoChat == null)
+      entitySupportsVideo = (metaEntity.allowOnlineAppointment == null)
           ? false
-          : metaEntity.enableVideoChat;
+          : metaEntity.allowOnlineAppointment;
       if (metaEntity.parentId != null) {
         getEntityDetails(metaEntity.parentId)
             .then((value) => parentEntity = value);

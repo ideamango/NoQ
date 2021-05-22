@@ -54,7 +54,8 @@ class Entity {
       this.parentGroupId,
       this.supportEmail,
       this.maxTokensByUserInDay = 1,
-      this.enableVideoChat = false});
+      this.allowOnlineAppointment = false,
+      this.allowWalkinAppointment = true});
 
   //SlotDocumentId is entityID#20~06~01 it is not auto-generated, will help in not duplicating the record
   String entityId;
@@ -104,7 +105,8 @@ class Entity {
       parentGroupId; //this value will be present and common for different branches of same company
   String supportEmail;
   int maxTokensByUserInDay;
-  bool enableVideoChat;
+  bool allowOnlineAppointment;
+  bool allowWalkinAppointment;
 
   Map<String, dynamic> toJson() => {
         'entityId': entityId,
@@ -151,7 +153,8 @@ class Entity {
         'parentGroupId': parentGroupId,
         'supportEmail': supportEmail,
         'maxTokensByUserInDay': maxTokensByUserInDay,
-        'enableVideoChat': enableVideoChat
+        'allowOnlineAppointment': allowOnlineAppointment,
+        'allowWalkinAppointment': allowWalkinAppointment
       };
 
   List<dynamic> usersToJson(List<MetaUser> users) {
@@ -258,7 +261,8 @@ class Entity {
         parentGroupId: json['parentGroupId'],
         supportEmail: json['supportEmail'],
         maxTokensByUserInDay: json['maxTokensByUserInDay'],
-        enableVideoChat: json['enableVideoChat']);
+        allowOnlineAppointment: json['allowOnlineAppointment'],
+        allowWalkinAppointment: json['allowWalkinAppointment']);
   }
 
   static Address convertToAddressFromJson(Map<String, dynamic> json) {
@@ -362,7 +366,8 @@ class Entity {
           parentGroupId: parentGroupId,
           supportEmail: supportEmail,
           maxTokensByUserInDay: maxTokensByUserInDay,
-          enableVideoChat: enableVideoChat);
+          allowOnlineAppointment: allowOnlineAppointment,
+          allowWalkinAppointment: allowWalkinAppointment);
     } else {
       _meta.name = name;
       _meta.type = type;
@@ -402,7 +407,8 @@ class Entity {
       _meta.parentGroupId = parentGroupId;
       _meta.supportEmail = supportEmail;
       _meta.maxTokensByUserInDay = maxTokensByUserInDay;
-      _meta.enableVideoChat = enableVideoChat;
+      _meta.allowOnlineAppointment = allowOnlineAppointment;
+      _meta.allowWalkinAppointment = allowWalkinAppointment;
     }
     return _meta;
   }

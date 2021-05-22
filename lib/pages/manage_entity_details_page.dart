@@ -256,7 +256,7 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
       isPublic = (entity.isPublic) ?? false;
       isBookable = (entity.isBookable) ?? false;
       isActive = (entity.isActive) ?? false;
-      isVideoChatEnabled = entity.enableVideoChat ?? false;
+      isVideoChatEnabled = entity.allowOnlineAppointment ?? false;
 
       if (entity.offer != null) {
         insertOffer = entity.offer;
@@ -3767,7 +3767,8 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
                                               return;
                                             } else {
                                               isVideoChatEnabled = value;
-                                              entity.enableVideoChat = value;
+                                              entity.allowOnlineAppointment =
+                                                  value;
                                               if (value) {
                                                 String msg =
                                                     validateFieldsForOnlineConsultation();
@@ -3789,7 +3790,7 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
                                                       msg,
                                                       "");
                                                   isVideoChatEnabled = !value;
-                                                  entity.enableVideoChat =
+                                                  entity.allowOnlineAppointment =
                                                       !value;
                                                 }
                                               }
