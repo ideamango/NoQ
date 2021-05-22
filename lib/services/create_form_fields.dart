@@ -1826,7 +1826,7 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
             Future.delayed(Duration(seconds: 2)).then((value) {
               showTokenAlert(
                       context,
-                      token.parent.enableVideoChat
+                      token.parent.isOnlineAppointment
                           ? tokenTextH2Online
                           : tokenTextH2Walkin,
                       token.getDisplayName(),

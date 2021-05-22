@@ -1120,7 +1120,7 @@ class _SearchChildEntityPageState extends State<SearchChildEntityPage>
                                     ),
                                   ),
                                 ),
-                                (str.enableVideoChat)
+                                (str.allowOnlineAppointment)
                                     ? FadeTransition(
                                         opacity: animation,
                                         child: GestureDetector(

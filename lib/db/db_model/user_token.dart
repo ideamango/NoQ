@@ -22,7 +22,7 @@ class UserTokens {
       this.upiId,
       this.upiPhoneNumber,
       this.upiQRImagePath,
-      this.enableVideoChat});
+      this.isOnlineAppointment});
 
   String slotId; //entityID#20~06~01#9~30
   String entityId;
@@ -41,7 +41,7 @@ class UserTokens {
   String upiId;
   String upiPhoneNumber;
   String upiQRImagePath;
-  bool enableVideoChat;
+  bool isOnlineAppointment;
 
   //TokenDocumentId is SlotId#UserId it is not auto-generated, will help in not duplicating the record
 
@@ -63,7 +63,7 @@ class UserTokens {
         'upiId': upiId,
         'upiPhoneNumber': upiPhoneNumber,
         'upiQRImagePath': upiQRImagePath,
-        'enableVideoChat': enableVideoChat
+        'isOnlineAppointment': isOnlineAppointment
       };
 
   static UserTokens fromJson(Map<String, dynamic> json) {
@@ -88,7 +88,7 @@ class UserTokens {
         upiId: json['upiId'],
         upiPhoneNumber: json['upiPhoneNumber'],
         upiQRImagePath: json['upiQRImagePath'],
-        enableVideoChat: json['enableVideoChat']);
+        isOnlineAppointment: json['isOnlineAppointment']);
 
     for (UserToken token in tokens.tokens) {
       token.parent = tokens;
@@ -107,8 +107,6 @@ class UserTokens {
     }
     return toks;
   }
-
-  int getTokenPosition(String tokenId) {}
 
   List<dynamic> tokensToJson(List<UserToken> toks) {
     List<dynamic> tokensJson = [];

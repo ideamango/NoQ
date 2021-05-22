@@ -48,10 +48,10 @@ class NotificationService {
                 lastToken
                     .getNumber(), //assuming the last one in the UserToken is the latest one
             dateTime: dt1Hour,
-            title: tokens.enableVideoChat
+            title: tokens.isOnlineAppointment
                 ? "Online Appointment in 1 Hour at " + tokens.entityName
                 : "Walk-in Appointment in 1 Hour at " + tokens.entityName,
-            message: tokens.enableVideoChat
+            message: tokens.isOnlineAppointment
                 ? notificationMessage +
                     ". Make sure you have working internet connection and WhatsApp on your phone."
                 : notificationMessage +
@@ -66,10 +66,10 @@ class NotificationService {
         LocalNotificationData dataFor15Minutes = new LocalNotificationData(
             id: tokens.rNum - 15 + lastToken.getNumber(),
             dateTime: dt15Minutes,
-            title: tokens.enableVideoChat
+            title: tokens.isOnlineAppointment
                 ? "Online Appointment in 15 minutes at " + tokens.entityName
                 : "Walk-in Appointment in 15 minutes at " + tokens.entityName,
-            message: tokens.enableVideoChat
+            message: tokens.isOnlineAppointment
                 ? notificationMessage +
                     ". Make sure you have working internet connection and WhatsApp on your phone."
                 : notificationMessage +
@@ -84,12 +84,12 @@ class NotificationService {
         LocalNotificationData dataFor1Minutes = new LocalNotificationData(
             id: tokens.rNum - 1 + lastToken.getNumber(),
             dateTime: dt1Minutes,
-            title: tokens.enableVideoChat
+            title: tokens.isOnlineAppointment
                 ? "Online Appointment in less than a minute at " +
                     tokens.entityName
                 : "Walk-in Appointment in less than a minute at " +
                     tokens.entityName,
-            message: tokens.enableVideoChat
+            message: tokens.isOnlineAppointment
                 ? notificationMessage +
                     ". Make sure you have working internet connection and WhatsApp on your phone."
                 : notificationMessage +

@@ -360,7 +360,7 @@ class TokenService {
               rNum: (Random().nextInt(5000) + 100),
               address: metaEntity.address,
               tokens: [],
-              enableVideoChat: enableVideoChat);
+              isOnlineAppointment: enableVideoChat);
         }
 
         UserToken newToken = new UserToken(
@@ -440,7 +440,7 @@ class TokenService {
             rNum: (Random().nextInt(5000) + 100),
             address: metaEntity.address,
             tokens: [],
-            enableVideoChat: enableVideoChat);
+            isOnlineAppointment: enableVideoChat);
 
         UserToken newToken = new UserToken(
             number: 1,

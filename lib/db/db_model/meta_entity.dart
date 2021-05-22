@@ -46,7 +46,8 @@ class MetaEntity {
       this.parentGroupId = "",
       this.supportEmail = "",
       this.maxTokensByUserInDay = 1,
-      this.enableVideoChat = false});
+      this.allowOnlineAppointment,
+      this.allowWalkinAppointment});
 
   MetaEntity.withValues({this.entityId, this.type});
 
@@ -87,7 +88,8 @@ class MetaEntity {
   String parentGroupId;
   String supportEmail;
   int maxTokensByUserInDay;
-  bool enableVideoChat;
+  bool allowOnlineAppointment;
+  bool allowWalkinAppointment;
 
   static MetaEntity fromJson(Map<String, dynamic> json) {
     if (json == null) return null;
@@ -128,7 +130,8 @@ class MetaEntity {
         parentGroupId: json['parentGroupId'],
         supportEmail: json['supportEmail'],
         maxTokensByUserInDay: json['maxTokensByUserInDay'],
-        enableVideoChat: json['enableVideoChat']);
+        allowOnlineAppointment: json['allowOnlineAppointment'],
+        allowWalkinAppointment: json['allowWalkinAppointment']);
   }
 
   static List<String> convertToClosedOnArrayFromJson(List<dynamic> daysJson) {
@@ -196,7 +199,7 @@ class MetaEntity {
         'parentGroupId': parentGroupId,
         'supportEmail': supportEmail,
         'maxTokensByUserInDay': maxTokensByUserInDay,
-        'enableVideoChat': enableVideoChat
+        'allowOnlineAppointment': allowOnlineAppointment
       };
 
   bool isEqual(MetaEntity metaEnt) {
@@ -225,7 +228,8 @@ class MetaEntity {
         metaEnt.maxTokensPerSlotByUser == this.maxTokensPerSlotByUser &&
         metaEnt.maxPeoplePerToken == this.maxPeoplePerToken &&
         metaEnt.maxTokensByUserInDay == this.maxTokensByUserInDay &&
-        metaEnt.enableVideoChat == this.enableVideoChat) {
+        metaEnt.allowOnlineAppointment == this.allowOnlineAppointment &&
+        metaEnt.allowWalkinAppointment == this.allowWalkinAppointment) {
       if (this.closedOn != null && metaEnt.closedOn != null) {
         int matchCount = 0;
 

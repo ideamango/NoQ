@@ -250,7 +250,7 @@ class _ManageChildEntityDetailsPageState
       isPublic = (serviceEntity.isPublic) ?? false;
       isBookable = (serviceEntity.isBookable) ?? false;
       isActive = (serviceEntity.isActive) ?? false;
-      isVideoChatEnabled = serviceEntity.enableVideoChat ?? false;
+      isVideoChatEnabled = serviceEntity.allowOnlineAppointment ?? false;
       if (isActive) {
         isActiveValidation = true;
       }
@@ -3553,7 +3553,8 @@ class _ManageChildEntityDetailsPageState
                                                 return;
                                               } else {
                                                 isVideoChatEnabled = value;
-                                                serviceEntity.enableVideoChat =
+                                                serviceEntity
+                                                        .allowOnlineAppointment =
                                                     value;
                                                 if (value) {
                                                   String msg =
@@ -3577,7 +3578,7 @@ class _ManageChildEntityDetailsPageState
                                                         "");
                                                     isVideoChatEnabled = !value;
                                                     serviceEntity
-                                                            .enableVideoChat =
+                                                            .allowOnlineAppointment =
                                                         !value;
                                                   }
                                                 }

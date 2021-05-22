@@ -428,7 +428,7 @@ class _FavsListPageState extends State<FavsListPage>
                                     ),
                                   ),
                                 ),
-                                (str.enableVideoChat)
+                                (str.allowOnlineAppointment)
                                     ? FadeTransition(
                                         opacity: animation,
                                         child: GestureDetector(
