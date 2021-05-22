@@ -138,8 +138,10 @@ String noFavMsg = 'No favourites yet!!';
 String tokenHeading = 'Yay!! Your booking is confirmed.';
 String tokenTextH1 =
     "Booked your peace of mind. No more long waiting in queues!";
-String tokenTextH2 =
+String tokenTextH2Walkin =
     "Please be on time and maintain social distancing norms while at ";
+String tokenTextH2Online =
+    "Please ensure you have working internet connection and WhatsApp installed for the online consultation at ";
 String tokenTextH3 = "Be Safe !! Save Time !!";
 String drawerHeaderTxt = "You are logged in with ";
 String drawerHeaderTxt11 = 'Stay ';
@@ -280,7 +282,7 @@ String couldNotBookToken = "Oops! Couldn't book the token.";
 String maxTokenInDayUserAdmin =
     "The User has already booked allowed maximum number of token for a day.";
 String maxTokenInDayUserSubAdmin =
-    "Please try a different date, Or contact the User";
+    "Please try a different date OR contact the User";
 String maxTokenInSlotUserAdmin =
     "The User has already booked allowed maximum number of tokens in this Time-Slot.";
 String tokenAlreadyExistsAdmin =
@@ -289,7 +291,7 @@ String tokenAlreadyExistsAdmin =
 String maxTokenLimitReached =
     "You have already booked allowed maximum number of token for a day.";
 String maxTokenLimitReachedSub =
-    "Please try a different date, Or contact the Business";
+    "Please try a different date OR contact the Business";
 String maxTokenForTimeReached =
     "You have already booked allowed maximum number of tokens in a Time-Slot.";
 

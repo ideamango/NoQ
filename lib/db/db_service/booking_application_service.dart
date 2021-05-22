@@ -368,6 +368,10 @@ class BookingApplicationService {
       throw e;
     }
 
+    if (tok != null) {
+      //auto generated Token is issued, create a notification
+      _gs.getNotificationService().registerTokenNotification(tok.parent);
+    }
     return tok;
   }
 
@@ -388,6 +392,8 @@ class BookingApplicationService {
     FirebaseFirestore fStore = getFirestore();
     String userPhone = user.phoneNumber;
     Exception e;
+    UserTokens cancelledToken;
+    UserToken cancelledTok;
 
     BookingApplication ba;
 
@@ -500,14 +506,14 @@ class BookingApplicationService {
           String tokenId = ba.tokenId.substring(0, beforeLastHash);
 
           //cancel the token
-          UserTokens cancelledToken = await _gs
+          cancelledToken = await _gs
               .getTokenService()
               .cancelTokenInTransaction(tx, userPhone, tokenId, tokenNumber);
 
           //update the GlobalState bookings collection with the cancelled token
           int index = -1;
           bool matched = false;
-          UserToken cancelledTok;
+
           for (UserToken ut in _gs.bookings) {
             index++;
             for (UserToken cut in cancelledToken.tokens) {
@@ -591,6 +597,9 @@ class BookingApplicationService {
       throw e;
     }
 
+    if (isSuccess && cancelledToken != null && cancelledTok != null) {
+      _gs.getNotificationService().unRegisterTokenNotification(cancelledTok);
+    }
     return isSuccess;
   }
 

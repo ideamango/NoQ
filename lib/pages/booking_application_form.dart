@@ -1244,7 +1244,7 @@ class _BookingApplicationFormPageState extends State<BookingApplicationFormPage>
             }
             medConditionsField.responseFilePaths = medCondsTargetPaths;
 
-            List<String> frontLineTargetPaths = List<String>();
+            List<String> frontLineTargetPaths = [];
             for (String path in frontlineWorkerField.responseFilePaths) {
               String fileName = basename(path);
               print(fileName);

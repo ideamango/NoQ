@@ -24,4 +24,6 @@ class PushNotificationsManager {
       _initialized = true;
     }
   }
+
+  static void registerLocationNotification() {}
 }

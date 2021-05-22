@@ -1824,8 +1824,15 @@ class _CreateFormFieldsState extends State<CreateFormFields> {
             String time =
                 " ${Utils.formatTime(bookingApplication.preferredSlotTiming.hour.toString())} : ${Utils.formatTime(bookingApplication.preferredSlotTiming.minute.toString())}";
             Future.delayed(Duration(seconds: 2)).then((value) {
-              showTokenAlert(context, token.getDisplayName(),
-                      widget.metaEntity.name, _dateFormatted, time)
+              showTokenAlert(
+                      context,
+                      token.parent.enableVideoChat
+                          ? tokenTextH2Online
+                          : tokenTextH2Walkin,
+                      token.getDisplayName(),
+                      widget.metaEntity.name,
+                      _dateFormatted,
+                      time)
                   .then((value) {
                 Navigator.pushReplacement(
                     context,
