@@ -108,6 +108,8 @@ class UserTokens {
     return toks;
   }
 
+  int getTokenPosition(String tokenId) {}
+
   List<dynamic> tokensToJson(List<UserToken> toks) {
     List<dynamic> tokensJson = [];
     if (toks == null) return tokensJson;
@@ -218,6 +220,13 @@ class UserToken {
           numberBeforeCancellation.toString();
     }
     return parent.getDisplayNamePrefix() + number.toString();
+  }
+
+  int getNumber() {
+    if (number == -1) {
+      return numberBeforeCancellation;
+    }
+    return number;
   }
 
   String getID() {

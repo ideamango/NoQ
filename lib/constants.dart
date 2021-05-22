@@ -138,8 +138,10 @@ String noFavMsg = 'No favourites yet!!';
 String tokenHeading = 'Yay!! Your booking is confirmed.';
 String tokenTextH1 =
     "Booked your peace of mind. No more long waiting in queues!";
-String tokenTextH2 =
+String tokenTextH2Walkin =
     "Please be on time and maintain social distancing norms while at ";
+String tokenTextH2Online =
+    "Please ensure you have working internet connection and WhatsApp installed for the online consultation at ";
 String tokenTextH3 = "Be Safe !! Save Time !!";
 String drawerHeaderTxt = "You are logged in with ";
 String drawerHeaderTxt11 = 'Stay ';

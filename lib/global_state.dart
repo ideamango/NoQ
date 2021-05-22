@@ -27,6 +27,7 @@ import './tuple.dart';
 
 import './utils.dart';
 import 'package:package_info/package_info.dart';
+import 'db/db_service/notification_service.dart';
 import 'db/db_service/user_service.dart';
 import 'enum/entity_role.dart';
 import 'events/event_bus.dart';
@@ -51,6 +52,7 @@ class GlobalState {
   EntityService _entityService;
   UserService _userService;
   TokenService _tokenService;
+  NotificationService _notificationService;
   BookingApplicationService _applicationService;
   AuthService _authService;
   static Future<Null> isWorking;
@@ -256,6 +258,11 @@ class GlobalState {
       _gs._userService = new UserService(_gs._secondaryFirebaseApp);
     }
 
+    if (_gs._notificationService == null) {
+      _gs._notificationService =
+          new NotificationService(_gs._secondaryFirebaseApp);
+    }
+
     if (_gs._tokenService == null) {
       _gs._tokenService = new TokenService(_gs._secondaryFirebaseApp);
     }
@@ -322,6 +329,10 @@ class GlobalState {
 
   UserService getUserService() {
     return _gs._userService;
+  }
+
+  NotificationService getNotificationService() {
+    return _gs._notificationService;
   }
 
   EntityService getEntityService() {

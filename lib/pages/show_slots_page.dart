@@ -753,7 +753,10 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
               ':' +
               Utils.formatTime(selectedSlot.dateTime.minute.toString());
 
-      showTokenAlert(context, _token, _storeName, _dateFormatted, slotTiming)
+      String msg = enableVideoChat ? tokenTextH2Online : tokenTextH2Walkin;
+
+      showTokenAlert(
+              context, msg, _token, _storeName, _dateFormatted, slotTiming)
           .then((value) {
         _returnValues(value);
 

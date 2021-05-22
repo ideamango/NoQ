@@ -4,7 +4,7 @@ import '../constants.dart';
 import '../widget/widgets.dart';
 import '../style.dart';
 
-Future<String> showTokenAlert(BuildContext context, String tokenNo,
+Future<String> showTokenAlert(BuildContext context, String msg, String tokenNo,
     String storeName, String date, String time) {
   return showDialog(
       context: context,
@@ -44,7 +44,7 @@ Future<String> showTokenAlert(BuildContext context, String tokenNo,
                       text: TextSpan(
                           style: highlightSubTextStyle,
                           children: <TextSpan>[
-                        TextSpan(text: tokenTextH2),
+                        TextSpan(text: msg),
                         TextSpan(
                             text: " $storeName",
                             style: TextStyle(
