@@ -144,18 +144,22 @@ class _CustomExpansionTileState extends State<CustomExpansionTile>
             data: IconThemeData(color: _iconColor.evaluate(_easeInAnimation)),
             child: Container(
               padding: EdgeInsets.fromLTRB(6, 4, 0, 0),
-              height: 30,
+              height: MediaQuery.of(context).size.width * .08,
+              width: MediaQuery.of(context).size.width * .94,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
                   widget.title,
                   // SizedBox(width: 5),
-                  IconButton(
-                    padding: EdgeInsets.all(0),
-                    alignment: Alignment.topCenter,
-                    icon: Icon(Icons.info_outline),
-                    color: Colors.white,
-                    onPressed: _handleTap,
+                  SizedBox(
+                    width: MediaQuery.of(context).size.width * .08,
+                    child: IconButton(
+                      padding: EdgeInsets.all(0),
+                      alignment: Alignment.topCenter,
+                      icon: Icon(Icons.info_outline),
+                      color: Colors.white,
+                      onPressed: _handleTap,
+                    ),
                   ),
                 ],
               ),

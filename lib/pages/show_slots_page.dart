@@ -61,13 +61,10 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
   String _storeName;
   String _userId;
   String _strDateForSlot;
-  bool _showProgressInd = false;
 
   String title = "Book Slot";
   GlobalState _gs;
-  bool _gsInitFinished = false;
-  MetaEntity metaEn;
-  MetaEntity entity;
+  MetaEntity metaEntity;
   Entity parentEntity;
   DateTime currDateTime = DateTime.now();
   bool enableVideoChat = false;
@@ -77,19 +74,21 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
 
   @override
   void initState() {
-    entity = widget.metaEntity;
+    metaEntity = widget.metaEntity;
     _date = widget.dateTime;
-    _storeId = entity.entityId;
-    _storeName = entity.name;
+    _storeId = metaEntity.entityId;
+    _storeName = metaEntity.name;
 
     super.initState();
 
     getGlobalState().whenComplete(() {
       _loadSlots();
-      entitySupportsVideo =
-          (entity.enableVideoChat == null) ? false : entity.enableVideoChat;
-      if (entity.parentId != null) {
-        getEntityDetails(entity.parentId).then((value) => parentEntity = value);
+      entitySupportsVideo = (metaEntity.enableVideoChat == null)
+          ? false
+          : metaEntity.enableVideoChat;
+      if (metaEntity.parentId != null) {
+        getEntityDetails(metaEntity.parentId)
+            .then((value) => parentEntity = value);
       }
     });
   }
@@ -100,7 +99,7 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
     _dateFormatted = dtFormat.format(_date);
 
     //Fetch details from server
-    getSlotsListForEntity(entity, _date).then((slotList) {
+    getSlotsListForEntity(metaEntity, _date).then((slotList) {
       setState(() {
         _slotList = slotList;
         _initCompleted = true;
@@ -127,7 +126,6 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
 
   Future<void> getGlobalState() async {
     _gs = await GlobalState.getGlobalState();
-    _gsInitFinished = true;
   }
 
   Widget _noSlotsPage(String msg) {
@@ -262,7 +260,7 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
                                               fontSize: 13),
                                         )
                                       : (isBooked(selectedSlot.dateTime,
-                                              entity.entityId))
+                                              metaEntity.entityId))
                                           ? AutoSizeText(
                                               'You already have a booking at $bookingTime on $bookingDate',
                                               minFontSize: 8,
@@ -573,7 +571,7 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
     Slot sl = _slotList[index];
     String hrs = Utils.formatTime(sl.dateTime.hour.toString());
     String mnts = Utils.formatTime(sl.dateTime.minute.toString());
-    bool isBookedFlg = isBooked(sl.dateTime, entity.entityId);
+    bool isBookedFlg = isBooked(sl.dateTime, metaEntity.entityId);
     return Column(
       children: <Widget>[
         Container(
@@ -621,63 +619,22 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
                   ),
             onPressed: () {
               if (!isDisabled(sl.dateTime)) {
-                if (!Utils.isNullOrEmpty(entity.forms)) {
-                  if (entity.forms.length >= 1) {
-                    //Show Booking request form SELECTION page
-                    Navigator.of(context)
-                        .push(PageAnimation.createRoute(BookingFormSelection(
-                      forms: entity.forms,
-                      metaEntity: entity,
-                      preferredSlotTime: sl.dateTime,
-                      isAdmin: false,
-                      backRoute: SearchEntityPage(),
-                    )));
-                  }
-                  //  else {
-                  //   _gs
-                  //       .getApplicationService()
-                  //       .getBookingForm(entity.forms[0].id)
-                  //       .then((value) {
-                  //     print(value.appointmentRequired);
-                  //     //TODO: Build FORM page and NAVIGATE to display
-                  //     Navigator.push(
-                  //         context,
-                  //         MaterialPageRoute(
-                  //             builder: (context) => BookingApplicationFormPage(
-                  //                   metaEntity: entity,
-                  //                   bookingFormId: entity.forms[0].id,
-                  //                   preferredSlotTime: sl.dateTime,
-                  //                   backRoute: SearchEntityPage(),
-                  //                 )));
-                  //   });
-                  // }
-
-                  // Navigator.push(
-                  //     context,
-                  //     MaterialPageRoute(
-                  //         builder: (context) => CovidTokenBookingFormPage(
-                  //               metaEntity: entity,
-                  //               bookingFormId: entity.forms[0].id,
-                  //               preferredSlotTime: sl.dateTime,
-                  //             )));
-                } else {
-                  if (isBooked(sl.dateTime, entity.entityId)) {
-                    Utils.showMyFlushbar(
-                        context,
-                        Icons.info_outline,
-                        Duration(seconds: 6),
-                        alreadyHaveBooking,
-                        wantToBookAnotherSlot);
-                    return null;
-                  }
-                  if (sl.isFull == false) {
-                    setState(() {
-                      //unselect previously selected slot
-                      selectedSlot = sl;
-                    });
-                  } else
-                    return null;
+                if (isBooked(sl.dateTime, metaEntity.entityId)) {
+                  Utils.showMyFlushbar(
+                      context,
+                      Icons.info_outline,
+                      Duration(seconds: 6),
+                      alreadyHaveBooking,
+                      wantToBookAnotherSlot);
+                  return null;
                 }
+                if (sl.isFull == false) {
+                  setState(() {
+                    //unselect previously selected slot
+                    selectedSlot = sl;
+                  });
+                } else
+                  return null;
               } else
                 return null;
             },
@@ -725,9 +682,9 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
         ),
         slotBooking,
         takingMoment);
-    print(entity.maxTokensByUserInDay);
+    print(metaEntity.maxTokensByUserInDay);
 
-    if (entity.maxTokensByUserInDay <= bookedSlots.length) {
+    if (metaEntity.maxTokensByUserInDay <= bookedSlots.length) {
       //Max tokens already booked, then user cant book further slots.
       Utils.showMyFlushbar(context, Icons.error, Duration(seconds: 5),
           maxTokenLimitReached, maxTokenLimitReachedSub);
@@ -736,60 +693,72 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
       return;
     }
 
-    MetaEntity meta = entity;
-
-    bookSlotForStore(meta, selectedSlot, enableVideoChat).then((value) {
-      if (value == null) {
-        showFlushBar();
-        selectedSlot = null;
-        setState(() {});
-        return;
-      } else {
-        //update in global State
-        selectedSlot.totalBooked++;
+    if (!Utils.isNullOrEmpty(metaEntity.forms)) {
+      if (metaEntity.forms.length >= 1) {
+        //Show Booking request form SELECTION page
+        Navigator.of(context)
+            .push(PageAnimation.createRoute(BookingFormSelection(
+          entityId: metaEntity.entityId,
+          entity: null,
+          preferredSlotTime: selectedSlot.dateTime,
+          isAdmin: false,
+          backRoute: SearchEntityPage(),
+        )));
       }
-      _token = value.getDisplayName();
-      final dtFormat = new DateFormat(dateDisplayFormat);
-      String _dateFormatted = dtFormat.format(selectedSlot.dateTime);
-
-      String slotTiming =
-          Utils.formatTime(selectedSlot.dateTime.hour.toString()) +
-              ':' +
-              Utils.formatTime(selectedSlot.dateTime.minute.toString());
-
-      showTokenAlert(context, _token, _storeName, _dateFormatted, slotTiming)
-          .then((value) {
-        _returnValues(value);
-
-        setState(() {
-          bookedSlot = selectedSlot;
+    } else {
+      bookSlotForStore(metaEntity, selectedSlot, enableVideoChat).then((value) {
+        if (value == null) {
+          showFlushBar();
           selectedSlot = null;
-        });
-        //Ask user if he wants to receive the notifications
+          setState(() {});
+          return;
+        } else {
+          //update in global State
+          selectedSlot.totalBooked++;
+        }
+        _token = value.getDisplayName();
+        final dtFormat = new DateFormat(dateDisplayFormat);
+        String _dateFormatted = dtFormat.format(selectedSlot.dateTime);
 
-        //End of notification permission
+        String slotTiming =
+            Utils.formatTime(selectedSlot.dateTime.hour.toString()) +
+                ':' +
+                Utils.formatTime(selectedSlot.dateTime.minute.toString());
+
+        showTokenAlert(context, _token, _storeName, _dateFormatted, slotTiming)
+            .then((value) {
+          _returnValues(value);
+
+          setState(() {
+            bookedSlot = selectedSlot;
+            selectedSlot = null;
+          });
+          //Ask user if he wants to receive the notifications
+
+          //End of notification permission
 
 //Update local file with new booking.
 
-        String returnVal = value + '-' + slotTiming;
-        // Navigator.of(context).pop(returnVal);
-        // print(value);
-      });
-    }).catchError((error, stackTrace) {
-      print("Error in token booking" + error.toString());
+          String returnVal = value + '-' + slotTiming;
+          // Navigator.of(context).pop(returnVal);
+          // print(value);
+        });
+      }).catchError((error, stackTrace) {
+        print("Error in token booking" + error.toString());
 
-      //TODO Smita - Not going in any of if bcoz exception is wrapped in type platform exception.
-      if (error is SlotFullException) {
-        Utils.showMyFlushbar(context, Icons.error, Duration(seconds: 5),
-            couldNotBookToken, slotsAlreadyBooked);
-      } else if (error is TokenAlreadyExistsException) {
-        Utils.showMyFlushbar(context, Icons.error, Duration(seconds: 5),
-            couldNotBookToken, tokenAlreadyExists);
-      } else {
-        Utils.showMyFlushbar(context, Icons.error, Duration(seconds: 5),
-            couldNotBookToken, tryAgainToBook);
-      }
-    });
+        //TODO Smita - Not going in any of if bcoz exception is wrapped in type platform exception.
+        if (error is SlotFullException) {
+          Utils.showMyFlushbar(context, Icons.error, Duration(seconds: 5),
+              couldNotBookToken, slotsAlreadyBooked);
+        } else if (error is TokenAlreadyExistsException) {
+          Utils.showMyFlushbar(context, Icons.error, Duration(seconds: 5),
+              couldNotBookToken, tokenAlreadyExists);
+        } else {
+          Utils.showMyFlushbar(context, Icons.error, Duration(seconds: 5),
+              couldNotBookToken, tryAgainToBook);
+        }
+      });
+    }
   }
 
   void showFlushBar() {

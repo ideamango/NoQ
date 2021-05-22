@@ -406,8 +406,8 @@ class ChildEntityRowState extends State<ChildEntityRow> {
                               Navigator.of(context).push(
                                   PageAnimation.createRoute(
                                       BookingFormSelection(
-                                forms: entity.forms,
-                                metaEntity: _metaEntity,
+                                entityId: entity.entityId,
+                                entity: entity,
                                 preferredSlotTime: null,
                                 isAdmin: true,
                                 backRoute: ManageChildEntityListPage(

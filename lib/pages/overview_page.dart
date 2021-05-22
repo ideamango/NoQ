@@ -18,7 +18,6 @@ import '../widget/page_animation.dart';
 import '../widget/widgets.dart';
 
 class OverviewPage extends StatefulWidget {
-  final String entityId;
   final String bookingFormId;
   final String bookingFormName;
   final MetaEntity metaEntity;
@@ -26,7 +25,6 @@ class OverviewPage extends StatefulWidget {
 
   OverviewPage(
       {Key key,
-      @required this.entityId,
       @required this.bookingFormId,
       @required this.bookingFormName,
       @required this.metaEntity,
@@ -49,8 +47,8 @@ class _OverviewPageState extends State<OverviewPage> {
     getGlobalState().whenComplete(() {
       _gs
           .getApplicationService()
-          .getApplicationsOverview(
-              widget.bookingFormId, widget.entityId, DateTime.now().year)
+          .getApplicationsOverview(widget.bookingFormId,
+              widget.metaEntity.entityId, DateTime.now().year)
           .then((value) {
         //TODO SMITA - check that applications overview doesn't come null.
         _bookingApplicationsOverview = value;
@@ -74,8 +72,8 @@ class _OverviewPageState extends State<OverviewPage> {
   refreshData() {
     _gs
         .getApplicationService()
-        .getApplicationsOverview(
-            widget.bookingFormId, widget.entityId, DateTime.now().year)
+        .getApplicationsOverview(widget.bookingFormId,
+            widget.metaEntity.entityId, DateTime.now().year)
         .then((value) {
       _bookingApplicationsOverview = value;
       if (this.mounted) {
@@ -117,8 +115,8 @@ class _OverviewPageState extends State<OverviewPage> {
         home: Scaffold(
           appBar: CustomAppBarWithBackButton(
             backRoute: BookingFormSelection(
-              forms: widget.metaEntity.forms,
-              metaEntity: widget.metaEntity,
+              entityId: widget.metaEntity.entityId,
+              entity: null,
               preferredSlotTime: null,
               isAdmin: true,
               backRoute: ManageEntityListPage(),
