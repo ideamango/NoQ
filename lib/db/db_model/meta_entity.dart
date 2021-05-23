@@ -199,7 +199,8 @@ class MetaEntity {
         'parentGroupId': parentGroupId,
         'supportEmail': supportEmail,
         'maxTokensByUserInDay': maxTokensByUserInDay,
-        'allowOnlineAppointment': allowOnlineAppointment
+        'allowOnlineAppointment': allowOnlineAppointment,
+        'allowWalkinAppointment': allowWalkinAppointment
       };
 
   bool isEqual(MetaEntity metaEnt) {
