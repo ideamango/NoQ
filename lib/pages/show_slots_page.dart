@@ -69,6 +69,7 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
   DateTime currDateTime = DateTime.now();
   bool enableVideoChat = false;
   bool entitySupportsVideo = false;
+  bool entitySupportsOffline = false;
   int numOfTokensByUser = 0;
   List<String> bookedSlots = [];
 
@@ -86,6 +87,11 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
       entitySupportsVideo = (metaEntity.allowOnlineAppointment == null)
           ? false
           : metaEntity.allowOnlineAppointment;
+      entitySupportsOffline = (metaEntity.allowWalkinAppointment == null)
+          ? false
+          : metaEntity.allowWalkinAppointment;
+      enableVideoChat =
+          (entitySupportsVideo && !entitySupportsOffline) ? true : false;
       if (metaEntity.parentId != null) {
         getEntityDetails(metaEntity.parentId)
             .then((value) => parentEntity = value);
@@ -219,35 +225,31 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
               body: Padding(
                 padding: const EdgeInsets.fromLTRB(6, 6, 6, 6),
                 child: Container(
-                  // decoration: BoxDecoration(
-                  //     border: Border.all(color: borderColor),
-                  //     color: Colors.white,
-                  //     shape: BoxShape.rectangle,
-                  //     borderRadius: BorderRadius.all(Radius.circular(5.0))),
                   child: Column(
                     children: <Widget>[
                       if (entitySupportsVideo)
                         Container(
-                          height: MediaQuery.of(context).size.height * .05,
                           width: MediaQuery.of(context).size.width * .95,
                           child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Row(
-                                mainAxisAlignment: MainAxisAlignment.start,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
                                 children: [
                                   Text(
                                     "Opt for Video Consultation",
                                     style: TextStyle(
                                         color: Colors.blueGrey[800],
-                                        fontSize: 15),
+                                        fontSize: 19),
                                   ),
                                   SizedBox(
                                     height: MediaQuery.of(context).size.height *
                                         .08,
                                     width:
-                                        MediaQuery.of(context).size.width * .2,
+                                        MediaQuery.of(context).size.width * .22,
                                     child: Transform.scale(
-                                      scale: .7,
+                                      scale: .9,
                                       alignment: Alignment.centerRight,
                                       child: Switch(
                                         materialTapTargetSize:
@@ -267,59 +269,90 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
                                   )
                                 ],
                               ),
+                              if (entitySupportsVideo && !entitySupportsOffline)
+                                Text(
+                                  '* ' +
+                                      INFORMATION_ONLY_ONLINE_CONSULTATION +
+                                      '\n',
+                                  style: TextStyle(
+                                      fontSize: 11, color: Colors.indigo),
+                                ),
+                              if (entitySupportsVideo && entitySupportsOffline)
+                                Text(
+                                  '* ' +
+                                      INFORMATION_RECOMMEND_ONLINE_CONSULTATION +
+                                      '\n',
+                                  style: TextStyle(
+                                      fontSize: 11, color: Colors.deepPurple),
+                                ),
                             ],
                           ),
                         ),
                       Container(
-                        height: MediaQuery.of(context).size.width * .11,
-                        padding: EdgeInsets.fromLTRB(6, 0, 0, 0),
-                        decoration: darkContainer,
-                        child: Row(
-                          children: <Widget>[
-                            Icon(
-                              Icons.check_circle,
-                              size: 35,
-                              color: Colors.white,
-                            ),
-                            SizedBox(width: 12),
-                            SizedBox(
-                              width: MediaQuery.of(context).size.width * .8,
-                              height: MediaQuery.of(context).size.width * .11,
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: <Widget>[
-                                  (selectedSlot == null)
-                                      ? AutoSizeText(
-                                          "Select from available slots on " +
-                                              _dateFormatted +
-                                              ".",
-                                          minFontSize: 8,
-                                          style: TextStyle(
-                                              color: Colors.white,
-                                              fontSize: 13),
-                                        )
-                                      : (isBooked(selectedSlot.dateTime,
-                                              metaEntity.entityId))
-                                          ? AutoSizeText(
-                                              'You already have a booking at $bookingTime on $bookingDate',
-                                              minFontSize: 8,
-                                              style: TextStyle(
-                                                  color: primaryAccentColor,
-                                                  fontSize: 13),
-                                            )
-                                          : AutoSizeText(
-                                              'You selected a slot at $bookingTime on $bookingDate',
-                                              minFontSize: 8,
-                                              maxFontSize: 13,
-                                              style: TextStyle(
-                                                color: highlightColor,
-                                              ),
-                                            ),
-                                ],
+                        margin: EdgeInsets.only(top: 5),
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          '* ' +
+                              INFORMATION_MAX_ALLOWED_BOOKING_BY_USER_PER_DAY_1 +
+                              metaEntity.maxTokensByUserInDay.toString() +
+                              INFORMATION_MAX_ALLOWED_BOOKING_BY_USER_PER_DAY_2 +
+                              '\n',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(fontSize: 14, color: Colors.teal),
+                        ),
+                      ),
+                      Card(
+                        child: Container(
+                          height: MediaQuery.of(context).size.width * .11,
+                          padding: EdgeInsets.fromLTRB(6, 0, 0, 0),
+                          decoration: darkContainer,
+                          child: Row(
+                            children: <Widget>[
+                              Icon(
+                                Icons.check_circle,
+                                size: 35,
+                                color: Colors.white,
                               ),
-                            ),
-                          ],
+                              SizedBox(width: 12),
+                              SizedBox(
+                                width: MediaQuery.of(context).size.width * .8,
+                                height: MediaQuery.of(context).size.width * .11,
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: <Widget>[
+                                    (selectedSlot == null)
+                                        ? AutoSizeText(
+                                            "Select from available slots on " +
+                                                _dateFormatted +
+                                                ".",
+                                            minFontSize: 8,
+                                            style: TextStyle(
+                                                color: Colors.white,
+                                                fontSize: 13),
+                                          )
+                                        : (isBooked(selectedSlot.dateTime,
+                                                metaEntity.entityId))
+                                            ? AutoSizeText(
+                                                'You already have a booking at $bookingTime on $bookingDate',
+                                                minFontSize: 8,
+                                                style: TextStyle(
+                                                    color: primaryAccentColor,
+                                                    fontSize: 13),
+                                              )
+                                            : AutoSizeText(
+                                                'You selected a slot at $bookingTime on $bookingDate',
+                                                minFontSize: 8,
+                                                maxFontSize: 13,
+                                                style: TextStyle(
+                                                  color: highlightColor,
+                                                ),
+                                              ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                       Expanded(
@@ -350,7 +383,7 @@ class _ShowSlotsPageState extends State<ShowSlotsPage> {
                         ),
                       ),
                       Container(
-                        height: MediaQuery.of(context).size.height * .17,
+                        height: MediaQuery.of(context).size.height * .12,
                         padding: EdgeInsets.all(4),
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.end,

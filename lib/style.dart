@@ -320,6 +320,12 @@ final BoxDecoration lightCyanContainer = new BoxDecoration(
     color: Colors.cyan[100],
     borderRadius: BorderRadius.only(
         topLeft: Radius.circular(4.0), topRight: Radius.circular(4.0)));
+final BoxDecoration midCyanContainer = new BoxDecoration(
+    border: Border.all(color: Colors.cyan[200]),
+    shape: BoxShape.rectangle,
+    color: Colors.cyan[400],
+    borderRadius: BorderRadius.only(
+        topLeft: Radius.circular(4.0), topRight: Radius.circular(4.0)));
 final BoxDecoration lightAmberContainer = new BoxDecoration(
     border: Border.all(color: Colors.amber[200]),
     shape: BoxShape.rectangle,
