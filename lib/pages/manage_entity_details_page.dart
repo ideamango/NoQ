@@ -198,6 +198,12 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
   bool isBookable = false;
   bool isOnlineEnabled = false;
   bool isOfflineEnabled = false;
+  bool _isBookExpanded = false;
+  EdgeInsets _bookMargin = EdgeInsets.all(0);
+  double _bookWidth = 0;
+  double _bookHeight = 0;
+  Widget _bookText;
+  FocusNode whatsappFocus;
   Position pos;
   GlobalState _gs;
   String _phCountryCode;
@@ -233,6 +239,7 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
     entity = this.widget.entity;
     getGlobalState().whenComplete(() {
       initializeEntity().whenComplete(() {
+        whatsappFocus = new FocusNode();
         setState(() {
           _initCompleted = true;
         });
@@ -1214,6 +1221,7 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
       );
 
       final whatsappPhone = TextFormField(
+        focusNode: whatsappFocus,
         obscureText: false,
         maxLines: 1,
         minLines: 1,
@@ -2168,8 +2176,8 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
             barrierDismissible: false,
             context: context,
             builder: (_) => AlertDialog(
-                  titlePadding: EdgeInsets.fromLTRB(5, 10, 0, 0),
-                  contentPadding: EdgeInsets.all(0),
+                  titlePadding: EdgeInsets.all(10),
+                  contentPadding: EdgeInsets.all(8),
                   actionsPadding: EdgeInsets.all(0),
                   //buttonPadding: EdgeInsets.all(0),
                   title: Column(
@@ -2179,6 +2187,7 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
                         bookable,
                         style: TextStyle(
                           fontSize: 15,
+                          fontFamily: 'Roboto',
                           color: Colors.blueGrey[600],
                         ),
                       ),
@@ -2467,18 +2476,6 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
                                       nameField,
                                       descField,
                                       regNumField,
-                                      opensTimeField,
-                                      closeTimeField,
-                                      breakSartTimeField,
-                                      breakEndTimeField,
-                                      daysClosedField,
-                                      slotDuration,
-                                      advBookingInDays,
-                                      maxpeopleInASlot,
-                                      maxTokenPerDay,
-                                      maxTokenPerSlotInDay,
-                                      maxPeopleInAToken,
-                                      whatsappPhone,
                                       callingPhone,
                                       emailId,
                                     ],
@@ -2489,6 +2486,607 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
                           ],
                         ),
                       ),
+                      SizedBox(
+                        height: 7,
+                      ),
+                      Container(
+                        width: MediaQuery.of(context).size.width * .9,
+                        margin: EdgeInsets.all(5),
+                        padding: EdgeInsets.all(0),
+                        foregroundDecoration: widget.isManager
+                            ? BoxDecoration(
+                                color: Colors.grey[50],
+                                backgroundBlendMode: BlendMode.saturation,
+                              )
+                            : BoxDecoration(),
+                        // padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
+                        decoration: BoxDecoration(
+                            border: Border.all(color: containerColor),
+                            color: Colors.grey[50],
+                            shape: BoxShape.rectangle,
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(5.0))),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.max,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: <Widget>[
+                            Column(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              mainAxisSize: MainAxisSize.min,
+                              children: <Widget>[
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Container(
+                                      alignment: Alignment.centerLeft,
+                                      padding:
+                                          EdgeInsets.fromLTRB(10, 0, 10, 0),
+                                      width: rowWidth * .7,
+                                      child: FlatButton(
+                                          visualDensity: VisualDensity.compact,
+                                          padding: EdgeInsets.all(0),
+                                          child: Row(
+                                              mainAxisSize: MainAxisSize.min,
+                                              children: <Widget>[
+                                                Text('Allow Bookings',
+                                                    style: TextStyle(
+                                                        fontSize: 14)),
+                                                SizedBox(
+                                                  width: MediaQuery.of(context)
+                                                          .size
+                                                          .width *
+                                                      .1,
+                                                  child: Icon(Icons.info,
+                                                      color:
+                                                          Colors.blueGrey[600],
+                                                      size: 17),
+                                                ),
+                                              ]),
+                                          onPressed: () {
+                                            if (!_isBookExpanded) {
+                                              setState(() {
+                                                _isBookExpanded = true;
+                                                _bookMargin =
+                                                    EdgeInsets.only(bottom: 5);
+                                                _bookWidth =
+                                                    MediaQuery.of(context)
+                                                            .size
+                                                            .width *
+                                                        .9;
+                                                _bookText = AutoSizeText(
+                                                    bookableInfo,
+                                                    minFontSize: 10,
+                                                    maxFontSize: 14,
+                                                    style: TextStyle(
+                                                        color: primaryDarkColor,
+                                                        // fontWeight: FontWeight.w800,
+                                                        fontFamily:
+                                                            'Monsterrat',
+                                                        letterSpacing: 0.5,
+                                                        height: 1.5));
+
+                                                _bookHeight = 60;
+                                              });
+                                            } else {
+                                              setState(() {
+                                                _isBookExpanded = false;
+                                                _bookWidth = 0;
+                                                _bookHeight = 0;
+                                              });
+                                            }
+                                          }),
+                                    ),
+                                    SizedBox(
+                                      height:
+                                          MediaQuery.of(context).size.height *
+                                              .08,
+                                      width: MediaQuery.of(context).size.width *
+                                          .2,
+                                      child: Transform.scale(
+                                        scale: .7,
+                                        alignment: Alignment.centerRight,
+                                        child: Switch(
+                                          materialTapTargetSize:
+                                              MaterialTapTargetSize.shrinkWrap,
+                                          value: isBookable,
+                                          onChanged: (value) {
+                                            if (widget.isManager) {
+                                              return;
+                                            } else {
+                                              isBookable = value;
+                                              if (value) {
+                                                showConfirmationDialog();
+                                                //Check if all mandatory fields for being bookable are not empty.
+                                                String errMsg =
+                                                    validateMandatoryFieldsForBookable();
+                                                if (Utils.isNotNullOrEmpty(
+                                                    errMsg)) {
+                                                  Utils.showMyFlushbar(
+                                                      context,
+                                                      Icons.info_outline,
+                                                      Duration(
+                                                        seconds: 4,
+                                                      ),
+                                                      errMsg,
+                                                      "Please fill all mandatory details to allow Booking.");
+                                                  isBookable = !value;
+                                                  return;
+                                                }
+                                              }
+
+                                              entity.isBookable = value;
+
+                                              setState(() {});
+                                            }
+                                          },
+                                          // activeTrackColor: Colors.green,
+                                          activeColor: Colors.green,
+                                          inactiveThumbColor: Colors.grey[300],
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                AnimatedContainer(
+                                  // Use the properties stored in the State class.
+                                  margin: _bookMargin,
+                                  padding: EdgeInsets.all(8),
+                                  width: _bookWidth,
+                                  height: _bookHeight,
+                                  alignment: Alignment.center,
+                                  decoration: BoxDecoration(
+                                    color: Colors.transparent,
+                                    border: Border.all(color: primaryDarkColor),
+                                    borderRadius: _borderRadius,
+                                  ),
+                                  // Define how long the animation should take.
+                                  duration: Duration(seconds: 1),
+                                  // Provide an optional curve to make the animation feel smoother.
+                                  curve: Curves.easeInOutCirc,
+                                  child: Center(child: _bookText),
+                                ),
+                                if (isBookable)
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Container(
+                                        alignment: Alignment.centerLeft,
+                                        padding:
+                                            EdgeInsets.fromLTRB(10, 0, 10, 0),
+                                        width: rowWidth * .8,
+                                        child: MaterialButton(
+                                            visualDensity:
+                                                VisualDensity.compact,
+                                            padding: EdgeInsets.all(0),
+                                            child: Row(
+                                              mainAxisSize: MainAxisSize.min,
+                                              children: <Widget>[
+                                                Container(
+                                                  //  width: rowWidth * .5,
+                                                  child: Column(
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .start,
+                                                    children: [
+                                                      Row(
+                                                        children: [
+                                                          Text(
+                                                              'Enable Online Booking mode',
+                                                              style: TextStyle(
+                                                                  fontSize:
+                                                                      14)),
+                                                          SizedBox(
+                                                            width:
+                                                                rowWidth * .1,
+                                                            child: Icon(
+                                                              Icons.info,
+                                                              color: Colors
+                                                                      .blueGrey[
+                                                                  600],
+                                                              size: 17,
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                      Container(
+                                                        width: rowWidth * .7,
+                                                        child: Text(
+                                                            '(Booking refers to the Service provided upon an In-person visit of the person to your place.)',
+                                                            style: TextStyle(
+                                                                fontSize: 10)),
+                                                      )
+                                                    ],
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                            onPressed: () {
+                                              if (!_isVideoExpanded) {
+                                                setState(() {
+                                                  _isVideoExpanded = true;
+                                                  _videoMargin =
+                                                      EdgeInsets.fromLTRB(
+                                                          0, 0, 0, 5);
+                                                  _videoWidth =
+                                                      MediaQuery.of(context)
+                                                              .size
+                                                              .width *
+                                                          .9;
+                                                  _videoText = AutoSizeText(
+                                                      videoInfo,
+                                                      minFontSize: 8,
+                                                      maxFontSize: 14,
+                                                      style:
+                                                          textBotSheetTextStyle);
+
+                                                  _videoHeight = 60;
+                                                });
+                                              } else {
+                                                setState(() {
+                                                  _isVideoExpanded = false;
+                                                  _videoWidth = 0;
+                                                  _videoHeight = 0;
+                                                });
+                                              }
+                                            }),
+                                      ),
+                                      SizedBox(
+                                        height:
+                                            MediaQuery.of(context).size.height *
+                                                .08,
+                                        width:
+                                            MediaQuery.of(context).size.width *
+                                                .2,
+                                        child: Transform.scale(
+                                          scale: .7,
+                                          alignment: Alignment.centerRight,
+                                          child: Switch(
+                                            materialTapTargetSize:
+                                                MaterialTapTargetSize
+                                                    .shrinkWrap,
+                                            value: isOnlineEnabled,
+
+                                            onChanged: (value) {
+                                              if (widget.isManager) {
+                                                return;
+                                              } else {
+                                                isOnlineEnabled = value;
+                                                entity.allowOnlineAppointment =
+                                                    value;
+                                                if (value) {
+                                                  String msg =
+                                                      validateFieldsForOnlineConsultation();
+                                                  FocusScope.of(context)
+                                                      .requestFocus(
+                                                          whatsappFocus);
+                                                  if (Utils.isNotNullOrEmpty(
+                                                      msg)) {
+                                                    if (whatsappPhoneKey
+                                                            .currentState !=
+                                                        null) {
+                                                      whatsappPhoneKey
+                                                          .currentState
+                                                          .validate();
+                                                    }
+                                                    Utils.showMyFlushbar(
+                                                        context,
+                                                        Icons.info_outline,
+                                                        Duration(
+                                                          seconds: 6,
+                                                        ),
+                                                        msg,
+                                                        "");
+                                                    isOnlineEnabled = !value;
+                                                    entity.allowOnlineAppointment =
+                                                        !value;
+                                                  }
+                                                } else {
+                                                  if (!isOnlineEnabled &&
+                                                      !isOfflineEnabled) {
+                                                    Utils.showMyFlushbar(
+                                                        context,
+                                                        Icons.info_outline,
+                                                        Duration(
+                                                          seconds: 6,
+                                                        ),
+                                                        onlineOfflineMsg,
+                                                        "");
+                                                    isOnlineEnabled = !value;
+                                                    entity.allowOnlineAppointment =
+                                                        !value;
+                                                  }
+                                                }
+
+                                                setState(() {});
+                                              }
+                                            },
+                                            // activeTrackColor: Colors.green,
+                                            activeColor: Colors.green,
+                                            inactiveThumbColor:
+                                                Colors.grey[300],
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                if (isBookable)
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Container(
+                                        alignment: Alignment.centerLeft,
+                                        padding:
+                                            EdgeInsets.fromLTRB(10, 0, 10, 0),
+                                        width: rowWidth * .8,
+                                        child: MaterialButton(
+                                            visualDensity:
+                                                VisualDensity.compact,
+                                            padding: EdgeInsets.all(0),
+                                            child: Row(
+                                              mainAxisSize: MainAxisSize.min,
+                                              children: <Widget>[
+                                                Container(
+                                                  // width: rowWidth * .7,
+                                                  child: Column(
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .start,
+                                                    children: [
+                                                      Row(
+                                                        children: [
+                                                          Text(
+                                                              'Enable Offline Booking mode',
+                                                              style: TextStyle(
+                                                                  fontSize:
+                                                                      14)),
+                                                          SizedBox(
+                                                            width:
+                                                                rowWidth * .1,
+                                                            child: Icon(
+                                                              Icons.info,
+                                                              color: Colors
+                                                                      .blueGrey[
+                                                                  600],
+                                                              size: 17,
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                      Container(
+                                                        width: rowWidth * .7,
+                                                        child: Text(
+                                                            '(Booking refers to the Service provided upon an In-person visit of the person to your place.)',
+                                                            style: TextStyle(
+                                                                fontSize: 10)),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                            onPressed: () {
+                                              if (!_isVideoExpanded) {
+                                                setState(() {
+                                                  _isVideoExpanded = true;
+                                                  _videoMargin =
+                                                      EdgeInsets.fromLTRB(
+                                                          0, 0, 0, 5);
+                                                  _videoWidth =
+                                                      MediaQuery.of(context)
+                                                              .size
+                                                              .width *
+                                                          .9;
+                                                  _videoText = AutoSizeText(
+                                                      videoInfo,
+                                                      minFontSize: 8,
+                                                      maxFontSize: 14,
+                                                      style:
+                                                          textBotSheetTextStyle);
+
+                                                  _videoHeight = 60;
+                                                });
+                                              } else {
+                                                setState(() {
+                                                  _isVideoExpanded = false;
+                                                  _videoWidth = 0;
+                                                  _videoHeight = 0;
+                                                });
+                                              }
+                                            }),
+                                      ),
+                                      SizedBox(
+                                        height:
+                                            MediaQuery.of(context).size.height *
+                                                .08,
+                                        width:
+                                            MediaQuery.of(context).size.width *
+                                                .2,
+                                        child: Transform.scale(
+                                          scale: .7,
+                                          alignment: Alignment.centerRight,
+                                          child: Switch(
+                                            materialTapTargetSize:
+                                                MaterialTapTargetSize
+                                                    .shrinkWrap,
+                                            value: isOfflineEnabled,
+
+                                            onChanged: (value) {
+                                              if (widget.isManager) {
+                                                return;
+                                              } else {
+                                                isOfflineEnabled = value;
+                                                entity.allowWalkinAppointment =
+                                                    value;
+                                                if (value) {
+                                                  String msg =
+                                                      validateFieldsForOfflineConsultation();
+                                                  if (Utils.isNotNullOrEmpty(
+                                                      msg)) {
+                                                    // if (whatsappPhoneKey
+                                                    //         .currentState !=
+                                                    //     null) {
+                                                    //   whatsappPhoneKey
+                                                    //       .currentState
+                                                    //       .validate();
+                                                    // }
+                                                    Utils.showMyFlushbar(
+                                                        context,
+                                                        Icons.info_outline,
+                                                        Duration(
+                                                          seconds: 6,
+                                                        ),
+                                                        msg,
+                                                        "");
+                                                    isOfflineEnabled = !value;
+                                                    entity.allowWalkinAppointment =
+                                                        !value;
+                                                  }
+                                                } else {
+                                                  if (!isOnlineEnabled &&
+                                                      !isOfflineEnabled) {
+                                                    Utils.showMyFlushbar(
+                                                        context,
+                                                        Icons.info_outline,
+                                                        Duration(
+                                                          seconds: 6,
+                                                        ),
+                                                        onlineOfflineMsg,
+                                                        "");
+                                                    isOfflineEnabled = !value;
+                                                    entity.allowWalkinAppointment =
+                                                        !value;
+                                                  }
+                                                }
+
+                                                setState(() {});
+                                              }
+                                            },
+                                            // activeTrackColor: Colors.green,
+                                            activeColor: Colors.green,
+                                            inactiveThumbColor:
+                                                Colors.grey[300],
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                              ],
+                            ),
+                            AnimatedContainer(
+                              // Use the properties stored in the State class.
+                              margin: _videoMargin,
+                              padding: EdgeInsets.symmetric(horizontal: 5),
+                              width: _videoWidth,
+                              height: _videoHeight,
+                              alignment: Alignment.center,
+                              decoration: BoxDecoration(
+                                color: Colors.transparent,
+                                border: Border.all(color: Colors.blueGrey),
+                                borderRadius: _borderRadius,
+                              ),
+                              // Define how long the animation should take.
+                              duration: Duration(seconds: 1),
+                              // Provide an optional curve to make the animation feel smoother.
+                              curve: Curves.easeInOutCirc,
+                              child: Center(child: _videoText),
+                            ),
+                          ],
+                        ),
+                      ),
+                      SizedBox(
+                        height: 7,
+                      ),
+                      if (isBookable)
+                        Container(
+                          width: MediaQuery.of(context).size.width * .9,
+                          margin: EdgeInsets.all(5),
+                          padding: EdgeInsets.all(0),
+                          decoration: BoxDecoration(
+                              border: Border.all(color: borderColor),
+                              color: Colors.grey[50],
+                              shape: BoxShape.rectangle,
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(5.0))),
+                          foregroundDecoration: widget.isManager
+                              ? BoxDecoration(
+                                  color: Colors.grey[50],
+                                  backgroundBlendMode: BlendMode.saturation,
+                                )
+                              : BoxDecoration(),
+                          // padding: EdgeInsets.all(5.0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: <Widget>[
+                              Column(
+                                children: <Widget>[
+                                  Container(
+                                    decoration: darkContainer,
+                                    child: Theme(
+                                      data: ThemeData(
+                                        unselectedWidgetColor: Colors.white,
+                                        accentColor: Colors.grey[50],
+                                      ),
+                                      child: CustomExpansionTile(
+                                        //key: PageStorageKey(this.widget.headerTitle),
+                                        initiallyExpanded: false,
+                                        title: Row(
+                                          children: <Widget>[
+                                            Text(
+                                              "Booking Details",
+                                              style: TextStyle(
+                                                  color: Colors.white,
+                                                  fontSize: 15),
+                                            ),
+                                            SizedBox(width: 5),
+                                          ],
+                                        ),
+                                        backgroundColor: Colors.blueGrey[500],
+
+                                        children: <Widget>[
+                                          new Container(
+                                            width: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                .94,
+                                            decoration: darkContainer,
+                                            padding: EdgeInsets.all(2.0),
+                                            child: Expanded(
+                                              child: Text(basicInfoStr,
+                                                  style: buttonXSmlTextStyle),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                  Container(
+                                    padding:
+                                        EdgeInsets.only(left: 5.0, right: 5),
+                                    child: Column(
+                                      children: <Widget>[
+                                        whatsappPhone,
+                                        opensTimeField,
+                                        closeTimeField,
+                                        breakSartTimeField,
+                                        breakEndTimeField,
+                                        daysClosedField,
+                                        slotDuration,
+                                        advBookingInDays,
+                                        maxpeopleInASlot,
+                                        maxTokenPerDay,
+                                        maxTokenPerSlotInDay,
+                                        maxPeopleInAToken,
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
                       SizedBox(
                         height: 7,
                       ),
@@ -3298,7 +3896,7 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
                                                 setState(() {
                                                   _publicExpandClick = true;
                                                   _activeExpandClick = false;
-                                                  _bookExpandClick = false;
+
                                                   _isExpanded = true;
                                                   _margin = EdgeInsets.fromLTRB(
                                                       0, 0, 0, 8);
@@ -3323,7 +3921,7 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
                                     SizedBox(
                                       height:
                                           MediaQuery.of(context).size.height *
-                                              .08,
+                                              .06,
                                       width: MediaQuery.of(context).size.width *
                                           .2,
                                       child: Transform.scale(
@@ -3344,144 +3942,6 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
                                                 print(isPublic);
                                                 //}
                                               });
-                                            }
-                                          },
-                                          // activeTrackColor: Colors.green,
-                                          activeColor: Colors.green,
-                                          inactiveThumbColor: Colors.grey[300],
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Container(
-                                      alignment: Alignment.centerLeft,
-                                      padding:
-                                          EdgeInsets.fromLTRB(10, 0, 10, 0),
-                                      width: rowWidth * .4,
-                                      child: FlatButton(
-                                          visualDensity: VisualDensity.compact,
-                                          padding: EdgeInsets.all(0),
-                                          child: Row(
-                                              mainAxisSize: MainAxisSize.min,
-                                              children: <Widget>[
-                                                Text('Bookable',
-                                                    style: TextStyle(
-                                                        fontSize: 14)),
-                                                SizedBox(
-                                                  width: MediaQuery.of(context)
-                                                          .size
-                                                          .width *
-                                                      .1,
-                                                  // height: MediaQuery.of(context)
-                                                  //         .size
-                                                  //         .height *
-                                                  //     .02,
-                                                  child: Icon(Icons.info,
-                                                      color:
-                                                          Colors.blueGrey[600],
-                                                      size: 17),
-                                                ),
-                                              ]),
-                                          onPressed: () {
-                                            if (!_isExpanded) {
-                                              setState(() {
-                                                _bookExpandClick = true;
-                                                _isExpanded = true;
-                                                _margin = EdgeInsets.fromLTRB(
-                                                    0, 0, 0, 8);
-                                                _width = MediaQuery.of(context)
-                                                        .size
-                                                        .width *
-                                                    .9;
-                                                _text = AutoSizeText(
-                                                    bookableInfo,
-                                                    minFontSize: 8,
-                                                    maxFontSize: 14,
-                                                    style:
-                                                        textBotSheetTextStyle);
-                                                _height = 60;
-                                              });
-                                            } else {
-                                              //if bookable info is being shown
-                                              if (_bookExpandClick) {
-                                                setState(() {
-                                                  _width = 0;
-                                                  _height = 0;
-                                                  _isExpanded = false;
-                                                  _bookExpandClick = false;
-                                                });
-                                              } else {
-                                                setState(() {
-                                                  _publicExpandClick = false;
-                                                  _activeExpandClick = false;
-                                                  _bookExpandClick = true;
-                                                  _isExpanded = true;
-                                                  _margin = EdgeInsets.fromLTRB(
-                                                      0, 0, 0, 8);
-                                                  _width =
-                                                      MediaQuery.of(context)
-                                                              .size
-                                                              .width *
-                                                          .9;
-                                                  _text = AutoSizeText(
-                                                      bookableInfo,
-                                                      minFontSize: 8,
-                                                      maxFontSize: 14,
-                                                      style:
-                                                          textBotSheetTextStyle);
-
-                                                  _height = 60;
-                                                });
-                                              }
-                                            }
-                                          }),
-                                    ),
-                                    SizedBox(
-                                      height:
-                                          MediaQuery.of(context).size.height *
-                                              .08,
-                                      width: MediaQuery.of(context).size.width *
-                                          .2,
-                                      child: Transform.scale(
-                                        scale: .7,
-                                        alignment: Alignment.centerRight,
-                                        child: Switch(
-                                          materialTapTargetSize:
-                                              MaterialTapTargetSize.shrinkWrap,
-                                          value: isBookable,
-                                          onChanged: (value) {
-                                            if (widget.isManager) {
-                                              return;
-                                            } else {
-                                              isBookable = value;
-                                              if (value) {
-                                                showConfirmationDialog();
-                                                //Check if all mandatory fields for being bookable are not empty.
-                                                String errMsg =
-                                                    validateMandatoryFieldsForBookable();
-                                                if (Utils.isNotNullOrEmpty(
-                                                    errMsg)) {
-                                                  Utils.showMyFlushbar(
-                                                      context,
-                                                      Icons.info_outline,
-                                                      Duration(
-                                                        seconds: 4,
-                                                      ),
-                                                      errMsg,
-                                                      "Please fill all mandatory details to allow Booking.");
-                                                  isBookable = !value;
-                                                  return;
-                                                }
-                                              }
-
-                                              entity.isBookable = value;
-
-                                              setState(() {});
                                             }
                                           },
                                           // activeTrackColor: Colors.green,
@@ -3555,7 +4015,6 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
                                               setState(() {
                                                 _publicExpandClick = false;
                                                 _activeExpandClick = true;
-                                                _bookExpandClick = false;
                                                 _isExpanded = true;
                                                 _margin = EdgeInsets.fromLTRB(
                                                     0, 0, 0, 8);
@@ -3579,7 +4038,7 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
                                     SizedBox(
                                       height:
                                           MediaQuery.of(context).size.height *
-                                              .08,
+                                              .06,
                                       width: MediaQuery.of(context).size.width *
                                           .2,
                                       child: Transform.scale(
@@ -3674,331 +4133,7 @@ class _ManageEntityDetailsPageState extends State<ManageEntityDetailsPage> {
                       SizedBox(
                         height: 7,
                       ),
-                      Container(
-                        width: MediaQuery.of(context).size.width * .9,
-                        margin: EdgeInsets.all(5),
-                        padding: EdgeInsets.all(0),
-                        foregroundDecoration: widget.isManager
-                            ? BoxDecoration(
-                                color: Colors.grey[50],
-                                backgroundBlendMode: BlendMode.saturation,
-                              )
-                            : BoxDecoration(),
-                        // padding: EdgeInsets.symmetric(horizontal: 8, vertical: 0),
-                        decoration: BoxDecoration(
-                            border: Border.all(color: containerColor),
-                            color: Colors.grey[50],
-                            shape: BoxShape.rectangle,
-                            borderRadius:
-                                BorderRadius.all(Radius.circular(5.0))),
-                        child: Column(
-                          mainAxisSize: MainAxisSize.max,
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: <Widget>[
-                            Column(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              mainAxisSize: MainAxisSize.max,
-                              children: <Widget>[
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Container(
-                                      alignment: Alignment.centerLeft,
-                                      padding:
-                                          EdgeInsets.fromLTRB(10, 0, 10, 0),
-                                      width: rowWidth * .7,
-                                      child: MaterialButton(
-                                          visualDensity: VisualDensity.compact,
-                                          padding: EdgeInsets.all(0),
-                                          child: Row(
-                                            mainAxisSize: MainAxisSize.min,
-                                            children: <Widget>[
-                                              Container(
-                                                //  width: rowWidth * .5,
-                                                child: Column(
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.start,
-                                                  children: [
-                                                    Row(
-                                                      children: [
-                                                        Text(
-                                                            'Enable Online Booking mode',
-                                                            style: TextStyle(
-                                                                fontSize: 14)),
-                                                        SizedBox(
-                                                          width: rowWidth * .1,
-                                                          child: Icon(
-                                                            Icons.info,
-                                                            color: Colors
-                                                                .blueGrey[600],
-                                                            size: 17,
-                                                          ),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                    Container(
-                                                      width: rowWidth * .6,
-                                                      child: Text(
-                                                          '(Booking refers to the service provided to the user over a Video call on WhatsApp)',
-                                                          style: TextStyle(
-                                                              fontSize: 10)),
-                                                    )
-                                                  ],
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                          onPressed: () {
-                                            if (!_isVideoExpanded) {
-                                              setState(() {
-                                                _isVideoExpanded = true;
-                                                _videoMargin =
-                                                    EdgeInsets.fromLTRB(
-                                                        0, 0, 0, 5);
-                                                _videoWidth =
-                                                    MediaQuery.of(context)
-                                                            .size
-                                                            .width *
-                                                        .9;
-                                                _videoText = AutoSizeText(
-                                                    videoInfo,
-                                                    minFontSize: 8,
-                                                    maxFontSize: 14,
-                                                    style:
-                                                        textBotSheetTextStyle);
 
-                                                _videoHeight = 60;
-                                              });
-                                            } else {
-                                              setState(() {
-                                                _isVideoExpanded = false;
-                                                _videoWidth = 0;
-                                                _videoHeight = 0;
-                                              });
-                                            }
-                                          }),
-                                    ),
-                                    SizedBox(
-                                      height:
-                                          MediaQuery.of(context).size.height *
-                                              .08,
-                                      width: MediaQuery.of(context).size.width *
-                                          .2,
-                                      child: Transform.scale(
-                                        scale: .7,
-                                        alignment: Alignment.centerRight,
-                                        child: Switch(
-                                          materialTapTargetSize:
-                                              MaterialTapTargetSize.shrinkWrap,
-                                          value: isOnlineEnabled,
-
-                                          onChanged: (value) {
-                                            if (widget.isManager) {
-                                              return;
-                                            } else {
-                                              isOnlineEnabled = value;
-                                              entity.allowOnlineAppointment =
-                                                  value;
-                                              if (value) {
-                                                String msg =
-                                                    validateFieldsForOnlineConsultation();
-                                                if (Utils.isNotNullOrEmpty(
-                                                    msg)) {
-                                                  if (whatsappPhoneKey
-                                                          .currentState !=
-                                                      null) {
-                                                    whatsappPhoneKey
-                                                        .currentState
-                                                        .validate();
-                                                  }
-                                                  Utils.showMyFlushbar(
-                                                      context,
-                                                      Icons.info_outline,
-                                                      Duration(
-                                                        seconds: 6,
-                                                      ),
-                                                      msg,
-                                                      "");
-                                                  isOnlineEnabled = !value;
-                                                  entity.allowOnlineAppointment =
-                                                      !value;
-                                                }
-                                              }
-
-                                              setState(() {});
-                                            }
-                                          },
-                                          // activeTrackColor: Colors.green,
-                                          activeColor: Colors.green,
-                                          inactiveThumbColor: Colors.grey[300],
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Container(
-                                      alignment: Alignment.centerLeft,
-                                      padding:
-                                          EdgeInsets.fromLTRB(10, 0, 10, 0),
-                                      width: rowWidth * .8,
-                                      child: MaterialButton(
-                                          visualDensity: VisualDensity.compact,
-                                          padding: EdgeInsets.all(0),
-                                          child: Row(
-                                            mainAxisSize: MainAxisSize.min,
-                                            children: <Widget>[
-                                              Container(
-                                                //  width: rowWidth * .5,
-                                                child: Column(
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.start,
-                                                  children: [
-                                                    Row(
-                                                      children: [
-                                                        Text(
-                                                            'Enable Offline Booking mode',
-                                                            style: TextStyle(
-                                                                fontSize: 14)),
-                                                        SizedBox(
-                                                          width: rowWidth * .1,
-                                                          child: Icon(
-                                                            Icons.info,
-                                                            color: Colors
-                                                                .blueGrey[600],
-                                                            size: 17,
-                                                          ),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                    Text(
-                                                        '(Booking refers to the Service provided upon an In-person visit of the person to your place.)',
-                                                        style: TextStyle(
-                                                            fontSize: 10)),
-                                                  ],
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                          onPressed: () {
-                                            if (!_isVideoExpanded) {
-                                              setState(() {
-                                                _isVideoExpanded = true;
-                                                _videoMargin =
-                                                    EdgeInsets.fromLTRB(
-                                                        0, 0, 0, 5);
-                                                _videoWidth =
-                                                    MediaQuery.of(context)
-                                                            .size
-                                                            .width *
-                                                        .9;
-                                                _videoText = AutoSizeText(
-                                                    videoInfo,
-                                                    minFontSize: 8,
-                                                    maxFontSize: 14,
-                                                    style:
-                                                        textBotSheetTextStyle);
-
-                                                _videoHeight = 60;
-                                              });
-                                            } else {
-                                              setState(() {
-                                                _isVideoExpanded = false;
-                                                _videoWidth = 0;
-                                                _videoHeight = 0;
-                                              });
-                                            }
-                                          }),
-                                    ),
-                                    SizedBox(
-                                      height:
-                                          MediaQuery.of(context).size.height *
-                                              .08,
-                                      width: MediaQuery.of(context).size.width *
-                                          .2,
-                                      child: Transform.scale(
-                                        scale: .7,
-                                        alignment: Alignment.centerRight,
-                                        child: Switch(
-                                          materialTapTargetSize:
-                                              MaterialTapTargetSize.shrinkWrap,
-                                          value: isOfflineEnabled,
-
-                                          onChanged: (value) {
-                                            if (widget.isManager) {
-                                              return;
-                                            } else {
-                                              isOfflineEnabled = value;
-                                              entity.allowWalkinAppointment =
-                                                  value;
-                                              if (value) {
-                                                String msg =
-                                                    validateFieldsForOfflineConsultation();
-                                                if (Utils.isNotNullOrEmpty(
-                                                    msg)) {
-                                                  // if (whatsappPhoneKey
-                                                  //         .currentState !=
-                                                  //     null) {
-                                                  //   whatsappPhoneKey
-                                                  //       .currentState
-                                                  //       .validate();
-                                                  // }
-                                                  Utils.showMyFlushbar(
-                                                      context,
-                                                      Icons.info_outline,
-                                                      Duration(
-                                                        seconds: 6,
-                                                      ),
-                                                      msg,
-                                                      "");
-                                                  isOfflineEnabled = !value;
-                                                  entity.allowWalkinAppointment =
-                                                      !value;
-                                                }
-                                              }
-
-                                              setState(() {});
-                                            }
-                                          },
-                                          // activeTrackColor: Colors.green,
-                                          activeColor: Colors.green,
-                                          inactiveThumbColor: Colors.grey[300],
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
-                            AnimatedContainer(
-                              // Use the properties stored in the State class.
-                              margin: _videoMargin,
-                              padding: EdgeInsets.symmetric(horizontal: 5),
-                              width: _videoWidth,
-                              height: _videoHeight,
-                              alignment: Alignment.center,
-                              decoration: BoxDecoration(
-                                color: Colors.transparent,
-                                border: Border.all(color: Colors.blueGrey),
-                                borderRadius: _borderRadius,
-                              ),
-                              // Define how long the animation should take.
-                              duration: Duration(seconds: 1),
-                              // Provide an optional curve to make the animation feel smoother.
-                              curve: Curves.easeInOutCirc,
-                              child: Center(child: _videoText),
-                            ),
-                          ],
-                        ),
-                      ),
-
-                      SizedBox(
-                        height: 7,
-                      ),
                       Builder(
                         builder: (context) => Card(
                           elevation: 8,

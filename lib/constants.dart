@@ -301,7 +301,8 @@ String maxTokenInSlotUserAdmin =
     "The User has already booked allowed maximum number of tokens in this Time-Slot.";
 String tokenAlreadyExistsAdmin =
     "The User already has an active booking for the this Time-Slot.";
-
+String onlineOfflineMsg =
+    'Either Online or Offline mode of Bookings should be enabled.';
 String maxTokenLimitReached =
     "You have already booked allowed maximum number of token for a day.";
 String maxTokenLimitReachedSub =
